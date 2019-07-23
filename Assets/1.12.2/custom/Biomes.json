@@ -1,0 +1,383 @@
+[
+    {
+        "id": 0,
+        "name": "Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 1,
+        "name": "Plains",
+        "rainfall": 0.4,
+        "temperature": 0.8
+    },
+    {
+        "id": 2,
+        "name": "Desert",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 3,
+        "name": "Extreme Hills",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 4,
+        "name": "Forest",
+        "rainfall": 0.8,
+        "temperature": 0.7
+    },
+    {
+        "id": 5,
+        "name": "Taiga",
+        "rainfall": 0.8,
+        "temperature": 0.25
+    },
+    {
+        "id": 6,
+        "name": "Swampland",
+        "rainfall": 0.9,
+        "temperature": 0.8,
+		"biomeType": "Swamp"
+    },
+    {
+        "id": 7,
+        "name": "River",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 8,
+        "name": "Hell",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 9,
+        "name": "The End",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 10,
+        "name": "Frozen Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.0
+    },
+    {
+        "id": 11,
+        "name": "Frozen River",
+        "rainfall": 0.5,
+        "temperature": 0.0
+    },
+    {
+        "id": 12,
+        "name": "Ice Plains",
+        "rainfall": 0.5,
+        "temperature": 0.0
+    },
+    {
+        "id": 13,
+        "name": "Ice Mountains",
+        "rainfall": 0.5,
+        "temperature": 0.0
+    },
+    {
+        "id": 14,
+        "name": "Mushroom Island",
+        "rainfall": 1.0,
+        "temperature": 0.9
+    },
+    {
+        "id": 15,
+        "name": "Mushroom Island Shore",
+        "rainfall": 1.0,
+        "temperature": 0.9
+    },
+    {
+        "id": 16,
+        "name": "Beach",
+        "rainfall": 0.4,
+        "temperature": 0.8
+    },
+    {
+        "id": 17,
+        "name": "Desert Hills",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 18,
+        "name": "Forest Hills",
+        "rainfall": 0.8,
+        "temperature": 0.7
+    },
+    {
+        "id": 19,
+        "name": "Taiga Hills",
+        "rainfall": 0.8,
+        "temperature": 0.25
+    },
+    {
+        "id": 20,
+        "name": "Extreme Hills Edge",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 21,
+        "name": "Jungle",
+        "rainfall": 0.9,
+        "temperature": 0.95
+    },
+    {
+        "id": 22,
+        "name": "Jungle Hills",
+        "rainfall": 0.9,
+        "temperature": 0.95
+    },
+    {
+        "id": 23,
+        "name": "Jungle Edge",
+        "rainfall": 0.8,
+        "temperature": 0.95
+    },
+    {
+        "id": 24,
+        "name": "Deep Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 25,
+        "name": "Stone Beach",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 26,
+        "name": "Cold Beach",
+        "rainfall": 0.3,
+        "temperature": 0.05
+    },
+    {
+        "id": 27,
+        "name": "Birch Forest",
+        "rainfall": 0.6,
+        "temperature": 0.6
+    },
+    {
+        "id": 28,
+        "name": "Birch Forest Hills",
+        "rainfall": 0.6,
+        "temperature": 0.6
+    },
+    {
+        "id": 29,
+        "name": "Roofed Forest",
+        "rainfall": 0.8,
+        "temperature": 0.7
+    },
+    {
+        "id": 30,
+        "name": "Cold Taiga",
+        "rainfall": 0.4,
+        "temperature": -0.5
+    },
+    {
+        "id": 31,
+        "name": "Cold Taiga Hills",
+        "rainfall": 0.4,
+        "temperature": -0.5
+    },
+    {
+        "id": 32,
+        "name": "Mega Taiga",
+        "rainfall": 0.8,
+        "temperature": 0.3
+    },
+    {
+        "id": 33,
+        "name": "Mega Taiga Hills",
+        "rainfall": 0.8,
+        "temperature": 0.3
+    },
+    {
+        "id": 34,
+        "name": "Extreme Hills+",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 35,
+        "name": "Savanna",
+        "rainfall": 0.0,
+        "temperature": 1.2
+    },
+    {
+        "id": 36,
+        "name": "Savanna Plateau",
+        "rainfall": 0.0,
+        "temperature": 1.0
+    },
+    {
+        "id": 37,
+        "name": "Mesa",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+		"biomeType": "Badlands"
+    },
+    {
+        "id": 38,
+        "name": "Mesa Plateau F",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+		"biomeType": "Badlands"
+    },
+    {
+        "id": 39,
+        "name": "Mesa Plateau",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+		"biomeType": "Badlands"
+    },
+    {
+        "id": 127,
+        "name": "The Void",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 129,
+        "name": "Sunflower Plains",
+        "rainfall": 0.4,
+        "temperature": 0.8
+    },
+    {
+        "id": 130,
+        "name": "Desert M",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 131,
+        "name": "Extreme Hills M",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 132,
+        "name": "Flower Forest",
+        "rainfall": 0.8,
+        "temperature": 0.7
+    },
+    {
+        "id": 133,
+        "name": "Taiga M",
+        "rainfall": 0.8,
+        "temperature": 0.25
+    },
+    {
+        "id": 134,
+        "name": "Swampland M",
+        "rainfall": 0.9,
+        "temperature": 0.8,
+		"biomeType": "Swamp"
+    },
+    {
+        "id": 140,
+        "name": "Ice Plains Spikes",
+        "rainfall": 0.5,
+        "temperature": 0.0
+    },
+    {
+        "id": 149,
+        "name": "Jungle M",
+        "rainfall": 0.9,
+        "temperature": 0.95
+    },
+    {
+        "id": 151,
+        "name": "Jungle Edge M",
+        "rainfall": 0.8,
+        "temperature": 0.95
+    },
+    {
+        "id": 155,
+        "name": "Birch Forest M",
+        "rainfall": 0.6,
+        "temperature": 0.6
+    },
+    {
+        "id": 156,
+        "name": "Birch Forest Hills M",
+        "rainfall": 0.6,
+        "temperature": 0.6,
+		"biomeType": "DarkForest"
+    },
+    {
+        "id": 157,
+        "name": "Roofed Forest M",
+        "rainfall": 0.8,
+        "temperature": 0.7
+    },
+    {
+        "id": 158,
+        "name": "Cold Taiga M",
+        "rainfall": 0.4,
+        "temperature": -0.5
+    },
+    {
+        "id": 160,
+        "name": "Mega Spruce Taiga",
+        "rainfall": 0.8,
+        "temperature": 0.25
+    },
+    {
+        "id": 161,
+        "name": "Redwood Taiga Hills M",
+        "rainfall": 0.8,
+        "temperature": 0.25
+    },
+    {
+        "id": 162,
+        "name": "Extreme Hills+ M",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 163,
+        "name": "Savanna M",
+        "rainfall": 0.0,
+        "temperature": 1.1
+    },
+    {
+        "id": 164,
+        "name": "Savanna Plateau M",
+        "rainfall": 0.0,
+        "temperature": 1.0
+    },
+    {
+        "id": 165,
+        "name": "Mesa (Bryce)",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+		"biomeType": "Badlands"
+    },
+    {
+        "id": 166,
+        "name": "Mesa Plateau F M",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+		"biomeType": "Badlands"
+    },
+    {
+        "id": 167,
+        "name": "Mesa Plateau M",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+		"biomeType": "Badlands"
+    }
+]

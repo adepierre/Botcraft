@@ -1,0 +1,4 @@
+#pragma once
+
+#cmakedefine PROTOCOL_VERSION @PROTOCOL_VERSION@
+#cmakedefine GAME_VERSION "@GAME_VERSION@"

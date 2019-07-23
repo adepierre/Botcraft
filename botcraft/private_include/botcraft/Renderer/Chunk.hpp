@@ -1,0 +1,49 @@
+#pragma once
+
+#include <unordered_set>
+#include <mutex>
+
+#include "botcraft/Renderer/Face.hpp"
+
+namespace Botcraft
+{
+    namespace Renderer
+    {
+        // Status of a face buffer
+        enum class BufferStatus
+        {
+            Created,  // The buffer is new, must be created in OpenGL
+            Updated,  // The existing buffer has been updated
+            UpToDate, // The OpenGL buffer is up to date
+        };
+
+        class Chunk
+        {
+        public:
+            Chunk();
+            ~Chunk();
+
+            void Update();
+            void AddFace(const Face &f);
+            void RemoveFace(const Face &f);
+            const unsigned int GetNumFace() const;
+            void Render() const;
+
+        protected:
+            void GenerateOpenGLBuffer();
+            void DeleteOpenGLBuffer();
+
+        protected:
+            unsigned int faces_VAO;
+            unsigned int faces_VBO;
+            unsigned int data_VBO;
+            unsigned int face_number;
+
+            std::unordered_set<Face> faces_positions;
+
+            BufferStatus buffer_status;
+
+            std::mutex mutex_faces;
+        };
+    } // Renderer
+} // Botcraft
