@@ -7,7 +7,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 
 ## Features
 
-- Connection to minecraft server (offline/LAN mode only for now)
+- Connection to minecraft server (offline mode only for now)
 - Versions 1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3 and 1.14.4 supported
 - Compression
 - Physics and collisions
