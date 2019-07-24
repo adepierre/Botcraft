@@ -46,8 +46,8 @@ option(BOTCRAFT_INSTALL_ASSETS "Set to copy used assets to installation folder" 
 
 set(ASSET_DIR ../Assets/${GAME_VERSION})
 
-# Add Boost
-find_package(Boost COMPONENTS system date_time regex thread)
+# Add Asio
+include(${CMAKE_SOURCE_DIR}/cmake/asio.cmake)
 
 # Add picoJson
 include(${CMAKE_SOURCE_DIR}/cmake/picoJson.cmake)

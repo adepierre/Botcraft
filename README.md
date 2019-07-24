@@ -21,9 +21,9 @@ Example of pathfinding. Right of the screen is the integrated renderer
 
 ## Dependencies
 
-Except for boost that you need to install manually, all the libraries are included either directly or as submodules and are built locally automatically (if not already found on your system) so you don't have to do anything.
+All the libraries are included either directly or as submodules and are built locally automatically (if not already found on your system) so you don't have to do anything.
 
-- [boost](https://www.boost.org/)
+- [asio](https://think-async.com/Asio/)
 - [picoJson](https://github.com/kazuho/picojson)
 - [zlib](https://github.com/madler/zlib) (optional if you are sure compression is disabled on your server)
 
@@ -34,7 +34,7 @@ Optional dependencies (needed only if you want to build the OpenGL renderer)
 - [glm](https://github.com/g-truc/glm)
 - [imgui](https://github.com/ocornut/imgui)
 
-I only test the code on Windows with Visual 2013, 2017 and 2019 but it should also work with 2015. As all the code is cross-platform, everything should compile and run fine on macOS and Linux (with maybe some little modification in CMake and/or include, let me know if you encounter any trouble).
+I only test the code on Windows with Visual 2013 and 2019 but it should also work with 2015 and 2017. As all the code is cross-platform, everything should compile and run fine on macOS and Linux (with maybe some little modification in CMake and/or include, let me know if you encounter any trouble).
 
 ## Building and Installation
 

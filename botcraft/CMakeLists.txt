@@ -186,11 +186,10 @@ target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
 # Add picoJson
 target_link_libraries(botcraft PRIVATE picoJson)
 
-#Add boost
-target_link_libraries(botcraft PRIVATE Boost::dynamic_linking)
-target_link_libraries(botcraft PRIVATE Boost::boost Boost::system Boost::date_time Boost::regex Boost::thread)
-target_compile_definitions(botcraft PRIVATE _WIN32_WINNT=0x0501)
-   
+# Add Asio
+target_link_libraries(botcraft PRIVATE asio)
+target_compile_definitions(botcraft PRIVATE ASIO_STANDALONE)
+
 # Add graphical dependencies
 if(BOTCRAFT_USE_OPENGL_GUI)
     target_link_libraries(botcraft PRIVATE glfw glad glm OpenGL::GL stb_image)

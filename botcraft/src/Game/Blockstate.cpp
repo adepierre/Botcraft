@@ -4,9 +4,6 @@
 #include <random>
 #include <chrono>
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include <picojson/picojson.h>
 
 #include "botcraft/Game/Blockstate.hpp"
@@ -223,20 +220,36 @@ namespace Botcraft
         return output;
     }
 
+    const bool StartsWith(const std::string &mainStr, const std::string &toMatch)
+    {
+        return mainStr.find(toMatch) == 0;
+    }
+
+    const std::vector<std::string> SplitString(const std::string& s, const char delimiter)
+    {
+        std::vector<std::string> tokens;
+        std::string token;
+        std::istringstream tokenStream(s);
+        while (std::getline(tokenStream, token, delimiter))
+        {
+            tokens.push_back(token);
+        }
+        return tokens;
+    }
+
     const bool CheckCondition(const std::string &name, const std::string &value, const std::vector<std::string> &variables)
     {
-        std::vector<std::string> possible_values;
-        boost::split(possible_values, value, boost::is_any_of("|"), boost::algorithm::token_compress_on);
+        const std::vector<std::string> possible_values = SplitString(value, '|');
 
         bool output = false;
 
         for (int i = 0; i < variables.size(); ++i)
         {
-            if (boost::algorithm::starts_with(variables[i], name))
+            if (StartsWith(variables[i], name))
             {
                 for (int j = 0; j < possible_values.size(); ++j)
                 {
-                    if (boost::algorithm::ends_with(variables[i], possible_values[j]))
+                    if (StartsWith(variables[i], possible_values[j]))
                     {
                         output = true;
                         break;
@@ -251,7 +264,6 @@ namespace Botcraft
 
         return output;
     }
-
 
     // Blockstate implementation starts here
 #if PROTOCOL_VERSION < 347
@@ -361,9 +373,8 @@ namespace Botcraft
 
                 for (it2 = variants.begin(); it2 != variants.end(); ++it2)
                 {
-                    std::vector<std::string> variables_values;
-                    boost::split(variables_values, it2->first, boost::is_any_of(","), boost::algorithm::token_compress_on);
-
+                    const std::vector<std::string> variables_values = SplitString(it2->first, ',');
+                    
                     int num_match = 0;
                     for (int i = 0; i < variables.size(); ++i)
                     {

@@ -12,15 +12,15 @@ namespace Botcraft
     {
         NewPacketCallback = callback;
 
-        boost::asio::ip::tcp::resolver resolver(io_service);
-        boost::asio::ip::tcp::resolver::query query(ip, std::to_string(port));
-        boost::asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
+        asio::ip::tcp::resolver resolver(io_service);
+        asio::ip::tcp::resolver::query query(ip, std::to_string(port));
+        asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
         
-        boost::asio::async_connect(socket, iterator,
-            boost::bind(&TCP_Com::handle_connect, this,
-            boost::asio::placeholders::error));
+        asio::async_connect(socket, iterator,
+            std::bind(&TCP_Com::handle_connect, this,
+            std::placeholders::_1));
 
-        thread_com = std::thread(boost::bind(&boost::asio::io_service::run, &io_service));
+        thread_com = std::thread([&] { io_service.run(); });
     }
 
     TCP_Com::~TCP_Com()
@@ -37,22 +37,22 @@ namespace Botcraft
         WriteVarInt(msg.size(), sized_packet);
         sized_packet.insert(sized_packet.end(), msg.begin(), msg.end());
 
-        io_service.post(boost::bind(&TCP_Com::do_write, this, sized_packet));
+        io_service.post(std::bind(&TCP_Com::do_write, this, sized_packet));
     }
 
     void TCP_Com::close()
     {
-        io_service.post(boost::bind(&TCP_Com::do_close, this));
+        io_service.post(std::bind(&TCP_Com::do_close, this));
     }
 
-    void TCP_Com::handle_connect(const boost::system::error_code& error)
+    void TCP_Com::handle_connect(const asio::error_code& error)
     {
         if (!error)
         {
             std::cout << "Connected to server." << std::endl;
-            socket.async_read_some(boost::asio::buffer(read_msg.data(), read_msg.size()),
-                boost::bind(&TCP_Com::handle_read, this,
-                boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+            socket.async_read_some(asio::buffer(read_msg.data(), read_msg.size()),
+                std::bind(&TCP_Com::handle_read, this,
+                std::placeholders::_1, std::placeholders::_2));
         }
         else
         {
@@ -60,7 +60,7 @@ namespace Botcraft
         }
     }
 
-    void TCP_Com::handle_read(const boost::system::error_code& error, std::size_t bytes_transferred)
+    void TCP_Com::handle_read(const asio::error_code& error, std::size_t bytes_transferred)
     {
         if (!error)
         {
@@ -98,9 +98,9 @@ namespace Botcraft
                 }
             }
 
-            socket.async_read_some(boost::asio::buffer(read_msg.data(), read_msg.size()),
-                boost::bind(&TCP_Com::handle_read, this,
-                boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+            socket.async_read_some(asio::buffer(read_msg.data(), read_msg.size()),
+                std::bind(&TCP_Com::handle_read, this,
+                std::placeholders::_1, std::placeholders::_2));
         }
         else
         {
@@ -117,15 +117,15 @@ namespace Botcraft
 
         if (!write_in_progress)
         {
-            boost::asio::async_write(socket,
-                boost::asio::buffer(output_msg.front().data(),
+            asio::async_write(socket,
+                asio::buffer(output_msg.front().data(),
                 output_msg.front().size()),
-                boost::bind(&TCP_Com::handle_write, this,
-                boost::asio::placeholders::error));
+                std::bind(&TCP_Com::handle_write, this,
+                std::placeholders::_1));
         }
     }
 
-    void TCP_Com::handle_write(const boost::system::error_code& error)
+    void TCP_Com::handle_write(const asio::error_code& error)
     {
         if (!error)
         {
@@ -135,11 +135,11 @@ namespace Botcraft
 
             if (!output_msg.empty())
             {
-                boost::asio::async_write(socket,
-                    boost::asio::buffer(output_msg.front().data(),
+                asio::async_write(socket,
+                    asio::buffer(output_msg.front().data(),
                     output_msg.front().size()),
-                    boost::bind(&TCP_Com::handle_write, this,
-                    boost::asio::placeholders::error));
+                    std::bind(&TCP_Com::handle_write, this,
+                    std::placeholders::_1));
             }
         }
         else

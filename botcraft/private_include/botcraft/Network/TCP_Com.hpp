@@ -2,9 +2,7 @@
 
 #include <deque>
 #include <thread>
-#include <boost/bind.hpp>
-#include <boost/asio.hpp>
-#include <boost/thread/thread.hpp>
+#include <asio.hpp>
 
 namespace Botcraft
 {
@@ -21,21 +19,21 @@ namespace Botcraft
 
     private:
 
-        void handle_connect(const boost::system::error_code& error);
+        void handle_connect(const asio::error_code& error);
 
-        void handle_read(const boost::system::error_code& error, std::size_t bytes_transferred);
+        void handle_read(const asio::error_code& error, std::size_t bytes_transferred);
 
         void do_write(const std::vector<unsigned char> &msg);
 
-        void handle_write(const boost::system::error_code& error);
+        void handle_write(const asio::error_code& error);
 
         void do_close();
 
 
     private:
         // io_service must be declared before socket
-        boost::asio::io_service io_service;
-        boost::asio::ip::tcp::socket socket;
+        asio::io_service io_service;
+        asio::ip::tcp::socket socket;
 
         std::thread thread_com;
 
@@ -44,6 +42,6 @@ namespace Botcraft
         std::deque<std::vector<unsigned char> > output_msg;
 
         std::function<void(const std::vector<unsigned char>&)> NewPacketCallback;
-        boost::mutex mutex_output;
+        std::mutex mutex_output;
     };
 } // Botcraft
