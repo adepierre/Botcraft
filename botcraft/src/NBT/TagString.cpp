@@ -27,13 +27,13 @@ namespace Botcraft
         return TagType::String;
     }
 
-    void TagString::Read(ReadIterator &iterator, size_t &length)
+    void TagString::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         const unsigned short string_size = ReadData<unsigned short>(iterator, length);
         value = ReadRawString(iterator, length, string_size);
     }
 
-    void TagString::Write(WriteContainer &container) const
+    void TagString::WriteImpl(WriteContainer &container) const
     {
         WriteData<unsigned short>(value.size(), container);
         WriteRawString(value, container);

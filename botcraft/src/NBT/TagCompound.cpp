@@ -27,7 +27,7 @@ namespace Botcraft
         return TagType::Compound;
     }
 
-    void TagCompound::Read(ReadIterator &iterator, size_t &length)
+    void TagCompound::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         while (true)
         {
@@ -55,7 +55,7 @@ namespace Botcraft
         }
     }
 
-    void TagCompound::Write(WriteContainer &container) const
+    void TagCompound::WriteImpl(WriteContainer &container) const
     {
         for (auto it = tags.begin(); it != tags.end(); ++it)
         {

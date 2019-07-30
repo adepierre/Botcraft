@@ -29,13 +29,13 @@ namespace Botcraft
         return TagType::ByteArray;
     }
 
-    void TagByteArray::Read(ReadIterator &iterator, size_t &length)
+    void TagByteArray::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         const int data_size = ReadData<int>(iterator, length);
         values = ReadArrayData<char>(iterator, length, data_size);
     }
 
-    void TagByteArray::Write(WriteContainer &container) const
+    void TagByteArray::WriteImpl(WriteContainer &container) const
     {
         WriteData<int>(values.size(), container);
         WriteArrayData<char>(values, container);

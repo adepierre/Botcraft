@@ -57,6 +57,10 @@
 #if PROTOCOL_VERSION > 493
 #include "botcraft/Protocol/Messages/Play/Clientbound/AcknowledgePlayerDigging.hpp"
 #endif
+#include "botcraft/Protocol/Messages/Play/Clientbound/SetSlot.hpp"
+#include "botcraft/Protocol/Messages/Play/Clientbound/WindowItems.hpp"
+#include "botcraft/Protocol/Messages/Play/Clientbound/OpenWindow.hpp"
+#include "botcraft/Protocol/Messages/Play/Clientbound/HeldItemChangeClientbound.hpp"
 
 namespace Botcraft
 {
@@ -113,6 +117,10 @@ namespace Botcraft
         ,AcknowledgePlayerDigging
 #endif
         ,UpdateBlockEntity,
-        PlayerInfo
+        PlayerInfo,
+        SetSlot,
+        WindowItems,
+        OpenWindow,
+        HeldItemChangeClientbound
     > ;
 } //Botcraft

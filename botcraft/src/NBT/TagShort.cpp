@@ -27,12 +27,12 @@ namespace Botcraft
         return TagType::Short;
     }
 
-    void TagShort::Read(ReadIterator &iterator, size_t &length)
+    void TagShort::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         value = ReadData<short>(iterator, length);
     }
 
-    void TagShort::Write(WriteContainer &container) const
+    void TagShort::WriteImpl(WriteContainer &container) const
     {
         WriteData<short>(value, container);
     }

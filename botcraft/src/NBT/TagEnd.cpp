@@ -17,12 +17,12 @@ namespace Botcraft
         return TagType::End;
     }
 
-    void TagEnd::Read(ReadIterator &iterator, size_t &length)
+    void TagEnd::ReadImpl(ReadIterator &iterator, size_t &length)
     {
 
     }
 
-    void TagEnd::Write(WriteContainer &container) const
+    void TagEnd::WriteImpl(WriteContainer &container) const
     {
 
     }

@@ -27,12 +27,12 @@ namespace Botcraft
         return TagType::Long;
     }
 
-    void TagLong::Read(ReadIterator &iterator, size_t &length)
+    void TagLong::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         value = ReadData<long long int>(iterator, length);
     }
 
-    void TagLong::Write(WriteContainer &container) const
+    void TagLong::WriteImpl(WriteContainer &container) const
     {
         WriteData<long long int>(value, container);
     }

@@ -27,12 +27,12 @@ namespace Botcraft
         return TagType::Double;
     }
 
-    void TagDouble::Read(ReadIterator &iterator, size_t &length)
+    void TagDouble::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         value = ReadData<double>(iterator, length);
     }
 
-    void TagDouble::Write(WriteContainer &container) const
+    void TagDouble::WriteImpl(WriteContainer &container) const
     {
         WriteData<double>(value, container);
     }

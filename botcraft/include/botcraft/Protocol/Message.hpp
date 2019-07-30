@@ -2,13 +2,13 @@
 
 #include <vector>
 
-#include "botcraft/Protocol/Type.hpp"
+#include "botcraft/Protocol/NetworkType.hpp"
 
 namespace Botcraft
 {
     class Handler;
 
-    class Message : public Type
+    class Message : public NetworkType
     {
     public:
         virtual void Write(WriteContainer &container) const override

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "botcraft/Network/BinaryReadWrite.hpp"
+#include "botcraft/Protocol/NetworkType.hpp"
 #include "botcraft/NBT/TagCompound.hpp"
 
 namespace Botcraft
 {
-    class NBT
+    class NBT : public NetworkType
     {
     public:
         NBT();
@@ -17,8 +17,8 @@ namespace Botcraft
 
         // TODO: add methods to deal with files // compression?
 
-        void Read(ReadIterator &iterator, size_t &length);
-        void Write(WriteContainer &container) const;
+        virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
+        virtual void WriteImpl(WriteContainer &container) const override;
         const std::string Print() const;
 
 

@@ -1,5 +1,5 @@
 #include "botcraft/Game/InterfaceClient.hpp"
-#include "botcraft/Game/World.hpp"
+#include "botcraft/Game/World/World.hpp"
 
 #include <queue>
 #include <unordered_map>
@@ -343,6 +343,7 @@ namespace Botcraft
         }
     }
 
+#if PROTOCOL_VERSION > 493
     void InterfaceClient::Handle(AcknowledgePlayerDigging &msg)
     {
         BaseClient::Handle(msg);
@@ -352,6 +353,7 @@ namespace Botcraft
             StopDigging();
         }
     }
+#endif
 
     const float Heuristic(const Position &a, const Position &b)
     {

@@ -27,12 +27,12 @@ namespace Botcraft
         return TagType::Int;
     }
 
-    void TagInt::Read(ReadIterator &iterator, size_t &length)
+    void TagInt::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         value = ReadData<int>(iterator, length);
     }
 
-    void TagInt::Write(WriteContainer &container) const
+    void TagInt::WriteImpl(WriteContainer &container) const
     {
         WriteData<int>(value, container);
     }

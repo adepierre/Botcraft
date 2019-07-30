@@ -1,5 +1,5 @@
-#include "botcraft/Game/Chunk.hpp"
-#include "botcraft/Game/Section.hpp"
+#include "botcraft/Game/World/Chunk.hpp"
+#include "botcraft/Game/World/Section.hpp"
 
 namespace Botcraft
 {

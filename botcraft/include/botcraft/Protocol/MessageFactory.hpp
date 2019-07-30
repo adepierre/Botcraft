@@ -81,6 +81,15 @@ namespace Botcraft
                 case 0x11:
                     return std::shared_ptr<ConfirmTransactionClientbound>(new ConfirmTransactionClientbound);
                     break;
+                case 0x13:
+                    return std::shared_ptr<OpenWindow>(new OpenWindow);
+                    break;
+                case 0x14:
+                    return std::shared_ptr<WindowItems>(new WindowItems);
+                    break;
+                case 0x16:
+                    return std::shared_ptr<SetSlot>(new SetSlot);
+                    break;
                 case 0x1A:
                     return std::shared_ptr<DisconnectPlay>(new DisconnectPlay);
                     break;
@@ -120,6 +129,9 @@ namespace Botcraft
                 case 0x35:
                     return std::shared_ptr<Respawn>(new Respawn);
                     break;
+                case 0x3A:
+                    return std::shared_ptr<HeldItemChangeClientbound>(new HeldItemChangeClientbound);
+                    break;
                 case 0x41:
                     return std::shared_ptr<UpdateHealth>(new UpdateHealth);
                     break;
@@ -147,6 +159,15 @@ namespace Botcraft
                     break;
                 case 0x12:
                     return std::shared_ptr<ConfirmTransactionClientbound>(new ConfirmTransactionClientbound);
+                    break;
+                case 0x14:
+                    return std::shared_ptr<OpenWindow>(new OpenWindow);
+                    break;
+                case 0x15:
+                    return std::shared_ptr<WindowItems>(new WindowItems);
+                    break;
+                case 0x17:
+                    return std::shared_ptr<SetSlot>(new SetSlot);
                     break;
                 case 0x1B:
                     return std::shared_ptr<DisconnectPlay>(new DisconnectPlay);
@@ -187,6 +208,9 @@ namespace Botcraft
                 case 0x38:
                     return std::shared_ptr<Respawn>(new Respawn);
                     break;
+                case 0x3D:
+                    return std::shared_ptr<HeldItemChangeClientbound>(new HeldItemChangeClientbound);
+                    break;
                 case 0x44:
                     return std::shared_ptr<UpdateHealth>(new UpdateHealth);
                     break;
@@ -214,6 +238,15 @@ namespace Botcraft
                     break;
                 case 0x12:
                     return std::shared_ptr<ConfirmTransactionClientbound>(new ConfirmTransactionClientbound);
+                    break;
+                case 0x13:
+                    return std::shared_ptr<OpenWindow>(new OpenWindow);
+                    break;
+                case 0x14:
+                    return std::shared_ptr<WindowItems>(new WindowItems);
+                    break;
+                case 0x16:
+                    return std::shared_ptr<SetSlot>(new SetSlot);
                     break;
                 case 0x1A:
                     return std::shared_ptr<DisconnectPlay>(new DisconnectPlay);
@@ -256,6 +289,9 @@ namespace Botcraft
                     break;
                 case 0x3A:
                     return std::shared_ptr<Respawn>(new Respawn);
+                    break;
+                case 0x3F:
+                    return std::shared_ptr<HeldItemChangeClientbound>(new HeldItemChangeClientbound);
                     break;
                 case 0x48:
                     return std::shared_ptr<UpdateHealth>(new UpdateHealth);

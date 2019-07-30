@@ -20,6 +20,7 @@ namespace Botcraft
 {
     class World;
     class TCP_Com;
+    class InventoryManager;
 
     class Handler : public GenericHandler<Message, AllMessages> {};
 
@@ -77,6 +78,10 @@ namespace Botcraft
 #endif
         virtual void Handle(UpdateBlockEntity &msg) override;
         virtual void Handle(PlayerInfo &msg) override;
+        virtual void Handle(SetSlot &msg) override;
+        virtual void Handle(WindowItems &msg) override;
+        virtual void Handle(OpenWindow &msg) override;
+        virtual void Handle(HeldItemChangeClientbound &msg) override;
 
     protected:
         std::shared_ptr<TCP_Com> com;
@@ -84,6 +89,8 @@ namespace Botcraft
         std::mutex world_mutex;
         std::shared_ptr<Player> player;
         std::mutex player_mutex;
+        std::shared_ptr<InventoryManager> inventory_manager;
+        std::mutex inventory_manager_mutex;
 
 #if USE_GUI
         std::shared_ptr<Renderer::CubeWorldRenderer> renderer;

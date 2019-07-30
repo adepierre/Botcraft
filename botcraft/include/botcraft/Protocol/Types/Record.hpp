@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include "botcraft/Protocol/Type.hpp"
+#include "botcraft/Protocol/NetworkType.hpp"
 
 namespace Botcraft
 {
-    class Record : public Type
+    class Record : public NetworkType
     {
     public:
         void SetHorizontalPosition(const unsigned char h)
@@ -53,7 +53,6 @@ namespace Botcraft
             WriteData<unsigned char>(horizontal_position, container);
             WriteData<unsigned char>(y_coordinate, container);
             WriteVarInt(block_id, container);
-            
         }
 
     private:

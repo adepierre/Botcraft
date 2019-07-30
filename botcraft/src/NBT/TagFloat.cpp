@@ -27,12 +27,12 @@ namespace Botcraft
         return TagType::Float;
     }
 
-    void TagFloat::Read(ReadIterator &iterator, size_t &length)
+    void TagFloat::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         value = ReadData<float>(iterator, length);
     }
 
-    void TagFloat::Write(WriteContainer &container) const
+    void TagFloat::WriteImpl(WriteContainer &container) const
     {
         WriteData<float>(value, container);
     }

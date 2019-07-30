@@ -2,8 +2,8 @@
 #include <sstream>
 
 #include "botcraft/Game/AssetsManager.hpp"
-#include "botcraft/Game/Block.hpp"
-#include "botcraft/Game/Biome.hpp"
+#include "botcraft/Game/World/Block.hpp"
+#include "botcraft/Game/World/Biome.hpp"
 
 #include <picojson/picojson.h>
 

@@ -4,7 +4,7 @@
 
 #include "botcraft/Protocol/BaseMessage.hpp"
 
-#include "botcraft/Game/Chunk.hpp"
+#include "botcraft/Game/World/Chunk.hpp"
 
 #include "botcraft/Version.hpp"
 

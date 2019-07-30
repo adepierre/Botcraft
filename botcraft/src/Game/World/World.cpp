@@ -1,6 +1,6 @@
-#include "botcraft/Game/World.hpp"
-#include "botcraft/Game/Chunk.hpp"
-#include "botcraft/Game/Block.hpp"
+#include "botcraft/Game/World/World.hpp"
+#include "botcraft/Game/World/Chunk.hpp"
+#include "botcraft/Game/World/Block.hpp"
 #include "botcraft/NBT/NBT.hpp"
 #include "botcraft/Game/Enums.hpp"
 

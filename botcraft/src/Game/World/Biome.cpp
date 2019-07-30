@@ -1,7 +1,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "botcraft/Game/Biome.hpp"
+#include "botcraft/Game/World/Biome.hpp"
 
 namespace Botcraft
 {

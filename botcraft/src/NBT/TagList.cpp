@@ -37,7 +37,7 @@ namespace Botcraft
         return TagType::List;
     }
 
-    void TagList::Read(ReadIterator &iterator, size_t &length)
+    void TagList::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         // Read type
        tags_type = (TagType)ReadData<char>(iterator, length);
@@ -54,7 +54,7 @@ namespace Botcraft
        }
     }
 
-    void TagList::Write(WriteContainer &container) const
+    void TagList::WriteImpl(WriteContainer &container) const
     {
         // Write type
         WriteData<char>((char)tags_type, container);

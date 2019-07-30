@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 
-#include "botcraft/Game/Block.hpp"
+#include "botcraft/Game/World/Block.hpp"
 #include "botcraft/NBT/NBT.hpp"
 #include "botcraft/Game/Enums.hpp"
 

@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 
-#include "botcraft/Game/Chunk.hpp"
+#include "botcraft/Game/World/Chunk.hpp"
 
 namespace Botcraft
 {

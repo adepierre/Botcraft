@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include "botcraft/Protocol/Type.hpp"
+#include "botcraft/Protocol/NetworkType.hpp"
 
 namespace Botcraft
 {
-    class Chat : public Type
+    class Chat : public NetworkType
     {
     public:
         void SetText(const std::string &s)

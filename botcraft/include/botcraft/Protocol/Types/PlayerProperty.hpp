@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include "botcraft/Protocol/Type.hpp"
+#include "botcraft/Protocol/NetworkType.hpp"
 
 namespace Botcraft
 {
-    class PlayerProperty : public Type
+    class PlayerProperty : public NetworkType
     {
     public:
         const std::string& GetName() const

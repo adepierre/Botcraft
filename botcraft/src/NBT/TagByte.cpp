@@ -29,12 +29,12 @@ namespace Botcraft
         return TagType::Byte;
     }
 
-    void TagByte::Read(ReadIterator &iterator, size_t &length)
+    void TagByte::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         value = ReadData<char>(iterator, length);
     }
 
-    void TagByte::Write(WriteContainer &container) const
+    void TagByte::WriteImpl(WriteContainer &container) const
     {
         WriteData<char>(value, container);
     }

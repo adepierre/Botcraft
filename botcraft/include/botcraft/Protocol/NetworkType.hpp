@@ -5,7 +5,7 @@
 
 namespace Botcraft
 {
-    class Type
+    class NetworkType
     {
     public:
         virtual void Read(ReadIterator &iter, size_t &length)

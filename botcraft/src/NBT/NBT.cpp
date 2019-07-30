@@ -17,7 +17,7 @@ namespace Botcraft
         return root_tag;
     }
 
-    void NBT::Read(ReadIterator &iterator, size_t &length)
+    void NBT::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         // Read type
         const TagType type = (TagType)ReadData<char>(iterator, length);
@@ -44,9 +44,16 @@ namespace Botcraft
         has_data = true;
     }
 
-    void NBT::Write(WriteContainer &container) const
+    void NBT::WriteImpl(WriteContainer &container) const
     {
-        root_tag.Write(container);
+        if (has_data)
+        {
+            root_tag.Write(container);
+        }
+        else
+        {
+            WriteData<char>((char)TagType::End, container);
+        }
     }
 
     const std::string NBT::Print() const

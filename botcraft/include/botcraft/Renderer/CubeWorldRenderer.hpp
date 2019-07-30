@@ -15,7 +15,7 @@
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/Vector3.hpp"
-#include "botcraft/Game/Blockstate.hpp"
+#include "botcraft/Game/World/Blockstate.hpp"
 #include "botcraft/Renderer/Face.hpp"
 
 struct GLFWwindow;

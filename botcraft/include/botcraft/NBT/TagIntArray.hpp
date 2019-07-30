@@ -17,8 +17,8 @@ namespace Botcraft
 
         virtual const TagType GetType() const override;
 
-        virtual void Read(ReadIterator &iterator, size_t &length) override;
-        virtual void Write(WriteContainer &container) const override;
+        virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
+        virtual void WriteImpl(WriteContainer &container) const override;
         virtual const std::string Print(const std::string &prefix) const override;
 
     private:

@@ -1,4 +1,4 @@
-#include "botcraft/Game/Block.hpp"
+#include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/AssetsManager.hpp"
 
 namespace Botcraft

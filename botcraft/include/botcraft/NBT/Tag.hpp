@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "botcraft/Network/BinaryReadWrite.hpp"
+#include "botcraft/Protocol/NetworkType.hpp"
 
 namespace Botcraft
 {
@@ -24,7 +24,7 @@ namespace Botcraft
         LongArray
     };
 
-    class Tag
+    class Tag : public NetworkType
     {
     public:
         Tag();
@@ -34,8 +34,6 @@ namespace Botcraft
         static const std::string TagTypeToString(const TagType type);
 
         virtual const TagType GetType() const = 0;
-        virtual void Read(ReadIterator &iterator, size_t &length) = 0;
-        virtual void Write(WriteContainer &container) const = 0;
         virtual const std::string Print(const std::string &prefix) const = 0;
     };
 }

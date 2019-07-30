@@ -1,7 +1,7 @@
 #pragma once
 
-#include "botcraft/Game/Biome.hpp"
-#include "botcraft/Game/Blockstate.hpp"
+#include "botcraft/Game/World/Biome.hpp"
+#include "botcraft/Game/World/Blockstate.hpp"
 #include "botcraft/Version.hpp"
 
 #include <vector>
