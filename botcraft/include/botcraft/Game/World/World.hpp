@@ -34,8 +34,10 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 358
         bool SetBiome(const int x, const int z, const unsigned char biome);
-#else
+#elif PROTOCOL_VERSION < 552
         bool SetBiome(const int x, const int z, const int biome);
+#else
+		bool SetBiome(const int x, const int y, const int z, const int biome);
 #endif
         bool SetSkyLight(const Position &pos, const unsigned char skylight);
         bool SetBlockLight(const Position &pos, const unsigned char blocklight);

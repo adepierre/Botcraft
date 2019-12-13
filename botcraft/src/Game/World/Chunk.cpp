@@ -1,15 +1,19 @@
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/Section.hpp"
 
+#include <iostream>
+
 namespace Botcraft
 {
     Chunk::Chunk(const Dimension &dim)
     {
         dimension = dim;
 #if PROTOCOL_VERSION < 358
-        biomes = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH);
+        biomes = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
+#elif PROTOCOL_VERSION < 552
+        biomes = std::vector<int>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
 #else
-        biomes = std::vector<int>(CHUNK_WIDTH * CHUNK_WIDTH);
+		biomes = std::vector<int>(BIOMES_SIZE, 0);
 #endif
         sections = std::vector<std::shared_ptr<Section> >(CHUNK_HEIGHT / SECTION_HEIGHT);
     }
@@ -114,32 +118,87 @@ namespace Botcraft
 }
 
 #if PROTOCOL_VERSION < 358
-    const unsigned char Chunk::GetBiome(const int x, const int z) const
+	const unsigned char Chunk::GetBiome(const int x, const int z) const
+	{
+		if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
+		{
+			return 0;
+		}
+
+		return biomes[z * CHUNK_WIDTH + x];
+	}
+
+	void Chunk::SetBiome(const int x, const int z, const unsigned char b)
+	{
+		if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
+		{
+			return;
+		}
+
+		biomes[z * CHUNK_WIDTH + x] = b;
+	}
+
+#elif PROTOCOL_VERSION < 552
+	const int Chunk::GetBiome(const int x, const int z) const
+	{
+		if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
+		{
+			return 0;
+		}
+
+		return biomes[z * CHUNK_WIDTH + x];
+	}
+
+	void Chunk::SetBiome(const int x, const int z, const int b)
+	{
+		if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
+		{
+			return;
+		}
+
+		biomes[z * CHUNK_WIDTH + x] = b;
+	}
 #else
-    const int Chunk::GetBiome(const int x, const int z) const
+	const int Chunk::GetBiome(const int x, const int y, const int z) const
+	{
+		return GetBiome(((y >> 2) & 63) << 4 | ((z >> 2) & 3) << 2 | ((x >> 2) & 3));
+	}
+
+	const int Chunk::GetBiome(const int i) const
+	{
+		if (i < 0 || i > BIOMES_SIZE - 1)
+		{
+			return 0;
+		}
+
+		return biomes[i];
+	}
+
+	void Chunk::SetBiomes(const std::vector<int>& new_biomes)
+	{
+		if (new_biomes.size() != BIOMES_SIZE)
+		{
+			std::cerr << "Warning, trying to set biomes with a wrong size" << std::endl;
+			return;
+		}
+		biomes = new_biomes;
+	}
+
+	void Chunk::SetBiome(const int x, const int y, const int z, const int new_biome)
+	{
+		SetBiome(((y >> 2) & 63) << 4 | ((z >> 2) & 3) << 2 | ((x >> 2) & 3), new_biome);
+	}
+
+	void Chunk::SetBiome(const int i, const int new_biome)
+	{
+		if (i < 0 || i > BIOMES_SIZE - 1)
+		{
+			return;
+		}
+
+		biomes[i] = new_biome;
+	}
 #endif
-    {
-        if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
-        {
-            return 0;
-        }
-
-        return biomes[z * CHUNK_WIDTH + x];
-    }
-
-#if PROTOCOL_VERSION < 358
-    void Chunk::SetBiome(const int x, const int z, const unsigned char b)
-#else
-    void Chunk::SetBiome(const int x, const int z, const int b)
-#endif
-    {
-        if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
-        {
-            return;
-        }
-
-        biomes[z * CHUNK_WIDTH + x] = b;
-    }
 
     std::shared_ptr<NBT> Chunk::GetBlockEntityData(const Position &pos)
     {

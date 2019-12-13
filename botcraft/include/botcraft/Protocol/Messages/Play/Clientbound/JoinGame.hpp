@@ -20,6 +20,8 @@ namespace Botcraft
             return 0x25;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x25;
+#elif PROTOCOL_VERSION == 573
+			return 0x26;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -44,6 +46,13 @@ namespace Botcraft
         {
             return dimension;
         }
+
+#if PROTOCOL_VERSION > 551
+		const long long int GetHashedSeed() const
+		{
+			return hashed_seed;
+		}
+#endif
 
 #if PROTOCOL_VERSION < 477
         const Difficulty GetDifficulty() const
@@ -74,12 +83,22 @@ namespace Botcraft
             return reduced_debug_info;
         }
 
+#if PROTOCOL_VERSION > 565
+		const bool GetEnableRespawnScreen() const
+		{
+			return enable_respawn_screen;
+		}
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             entity_id = ReadData<int>(iter, length);
             gamemode = ReadData<unsigned char>(iter, length);
             dimension = (Dimension)ReadData<int>(iter, length);
+#if PROTOCOL_VERSION > 551
+			hashed_seed = ReadData<long long int>(iter, length);
+#endif
 #if PROTOCOL_VERSION < 477
             difficulty = (Difficulty)ReadData<unsigned char>(iter, length);
 #endif
@@ -89,6 +108,9 @@ namespace Botcraft
             view_distance = ReadVarInt(iter, length);
 #endif
             reduced_debug_info = ReadData<bool>(iter, length);
+#if PROTOCOL_VERSION > 565
+			enable_respawn_screen = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -100,6 +122,9 @@ namespace Botcraft
         int entity_id;
         unsigned char gamemode;
         Dimension dimension;
+#if PROTOCOL_VERSION > 551
+		long long int hashed_seed;
+#endif
         Difficulty difficulty;
         unsigned char max_players;
         std::string level_type;
@@ -107,5 +132,8 @@ namespace Botcraft
         int view_distance;
 #endif
         bool reduced_debug_info;
+#if PROTOCOL_VERSION > 565
+		bool enable_respawn_screen;
+#endif
     };
 } //Botcraft

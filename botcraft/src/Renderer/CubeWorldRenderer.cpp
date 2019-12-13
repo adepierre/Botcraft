@@ -343,8 +343,14 @@ namespace Botcraft
             rendered_world->SetBlock(pos, new_blockstate->GetId(), new_blockstate->GetMetadata(), new_model_id);
 #else
             rendered_world->SetBlock(pos, new_blockstate->GetId(), new_model_id);
-#endif                
+#endif
+
+#if PROTOCOL_VERSION < 552
             rendered_world->SetBiome(pos.x, pos.z, new_biome);
+#else
+			rendered_world->SetBiome(pos.x, pos.y, pos.z, new_biome);
+#endif
+
             rendered_world->SetBlockLight(pos, new_block_light);
             rendered_world->SetSkyLight(pos, new_sky_light);
 
@@ -659,7 +665,9 @@ namespace Botcraft
 #elif PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.1 && 1.13.2
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 1753) / 9) % 16));
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
-                    texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2056) / 9) % 16));
+					texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2056) / 9) % 16));
+#elif PROTOCOL_VERSION == 573 // 1.15.X
+					texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2056) / 9) % 16));
 #else
                     #error "Protocol version not implemented"
 #endif

@@ -20,6 +20,10 @@ namespace Botcraft
     static const unsigned int SECTION_HEIGHT = 16;
     static const unsigned int CHUNK_HEIGHT = 256;
 
+#if PROTOCOL_VERSION > 551
+	static const unsigned int BIOMES_SIZE = 1024;
+#endif
+
     class Chunk
     {
     public:
@@ -46,9 +50,15 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 358
         const unsigned char GetBiome(const int x, const int z) const;
         void SetBiome(const int x, const int z, const unsigned char b);
-#else
+#elif PROTOCOL_VERSION < 552
         const int GetBiome(const int x, const int z) const;
         void SetBiome(const int x, const int z, const int b);
+#else
+		const int GetBiome(const int x, const int y, const int z) const;
+		const int GetBiome(const int i) const;
+		void SetBiomes(const std::vector<int>& new_biomes);
+		void SetBiome(const int x, const int y, const int z, const int new_biome);
+		void SetBiome(const int i, const int new_biome);
 #endif
         std::shared_ptr<NBT> GetBlockEntityData(const Position &pos);
         

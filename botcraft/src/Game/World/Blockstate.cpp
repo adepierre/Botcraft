@@ -225,6 +225,15 @@ namespace Botcraft
         return mainStr.find(toMatch) == 0;
     }
 
+	const bool EndsWith(const std::string& mainStr, const std::string& toMatch)
+	{
+		if (toMatch.size() > mainStr.size())
+		{
+			return false;
+		}
+		return std::equal(toMatch.rbegin(), toMatch.rend(), mainStr.rbegin());
+	}
+
     const std::vector<std::string> SplitString(const std::string& s, const char delimiter)
     {
         std::vector<std::string> tokens;
@@ -249,7 +258,7 @@ namespace Botcraft
             {
                 for (int j = 0; j < possible_values.size(); ++j)
                 {
-                    if (StartsWith(variables[i], possible_values[j]))
+                    if (EndsWith(variables[i], possible_values[j]))
                     {
                         output = true;
                         break;

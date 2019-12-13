@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
     try
     {
-        bool ONLINE = true;
+        bool ONLINE = false;
         unsigned short port = 25565;
         std::string player_name = "BCUserControl";
         std::string ip = "127.0.0.1";

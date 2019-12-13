@@ -1,6 +1,6 @@
 #include <botcraft/Game/AssetsManager.hpp>
 #include <botcraft/Version.hpp>
-#include <botcraft/Game/World.hpp>
+#include <botcraft/Game/World/World.hpp>
 
 #include "UserControlledClient.hpp"
 
@@ -140,7 +140,6 @@ void UserControlledClient::CreateTestWorld()
         }
 
         world->SetBlock(pos, id);
-        world->SetBiome(pos.x, pos.z, 0);
 #ifdef USE_GUI
         updated_positions.push_back(pos);
 #endif
@@ -172,7 +171,13 @@ void UserControlledClient::CreateTestWorld()
         }
     }
 
-    for (int i = 0; i < num_biomes / 16 + 1; ++i)
+#if PROTOCOL_VERSION < 552
+	const int biome_spacing = 1;
+#else
+	const int biome_spacing = 4;
+#endif
+
+    for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
     {
         world->AddChunk(-i - 1, 0, Dimension::Overworld);
 #ifdef USE_GUI
@@ -193,18 +198,22 @@ void UserControlledClient::CreateTestWorld()
         std::shared_ptr<Biome> biome = AssetsManager::getInstance().GetBiome(i);
         if (biome)
         {
-            Position pos(-x - 1, 0, 0);
+            Position pos(-(x * biome_spacing) - 1, 0, 0);
 
 #if PROTOCOL_VERSION < 347
             world->SetBlock(pos, 2, 0);
 #else
             world->SetBlock(pos, 9);
 #endif
+#if PROTOCOL_VERSION < 552
             world->SetBiome(pos.x, pos.z, i);
+#else
+			world->SetBiome(pos.x, pos.y, pos.z, i);
+#endif
 #ifdef USE_GUI
             updated_positions.push_back(pos);
 #endif
-            pos = Position(-x - 1, 0, 1);
+            pos = Position(-(x * biome_spacing) - 1, 0, 1);
 
             const Block *block = world->GetBlock(pos);
             std::shared_ptr<Blockstate> previous_blockstate;
@@ -228,11 +237,15 @@ void UserControlledClient::CreateTestWorld()
 #else
             world->SetBlock(pos, 157);
 #endif
-            world->SetBiome(pos.x, pos.z, i);
+#if PROTOCOL_VERSION < 552
+			world->SetBiome(pos.x, pos.z, i);
+#else
+			world->SetBiome(pos.x, pos.y, pos.z, i);
+#endif
 #ifdef USE_GUI
             updated_positions.push_back(pos);
 #endif
-            pos = Position(-x - 1, 0, 2);
+            pos = Position(-(x * biome_spacing) - 1, 0, 2);
 
             block = world->GetBlock(pos);
             if (block != nullptr)
@@ -255,7 +268,11 @@ void UserControlledClient::CreateTestWorld()
 #else
             world->SetBlock(pos, 34);
 #endif
-            world->SetBiome(pos.x, pos.z, i);
+#if PROTOCOL_VERSION < 552
+			world->SetBiome(pos.x, pos.z, i);
+#else
+			world->SetBiome(pos.x, pos.y, pos.z, i);
+#endif
 #ifdef USE_GUI
             updated_positions.push_back(pos);
 #endif

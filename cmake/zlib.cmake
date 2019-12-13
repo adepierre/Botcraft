@@ -14,7 +14,7 @@ if(NOT TARGET ZLIB::ZLIB)
 	file(MAKE_DIRECTORY ${ZLIB_BUILD_PATH})
 
 	execute_process(
-		COMMAND "cmake" "${ZLIB_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-DCMAKE_INSTALL_PREFIX=install" 
+		COMMAND "cmake" "${ZLIB_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_INSTALL_PREFIX=install" 
 		WORKING_DIRECTORY ${ZLIB_BUILD_PATH})
 
 	execute_process(COMMAND "cmake" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY ${ZLIB_BUILD_PATH})

@@ -1,7 +1,7 @@
 #include <sstream>
 #include <fstream>
 
-#include <botcraft/Game/World.hpp>
+#include <botcraft/Game/world/World.hpp>
 
 #include "ChatCommandClient.hpp"
 

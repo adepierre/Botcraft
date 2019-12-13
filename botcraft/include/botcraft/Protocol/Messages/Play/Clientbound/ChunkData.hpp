@@ -35,6 +35,8 @@ namespace Botcraft
             return 0x22;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x21;
+#elif PROTOCOL_VERSION == 573
+			return 0x22;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -70,6 +72,13 @@ namespace Botcraft
         {
             return heightmaps;
         }
+#endif
+
+#if PROTOCOL_VERSION > 551
+		const std::vector<int>& GetBiomes() const
+		{
+			return biomes;
+		}
 #endif
 
         const int GetSize() const
@@ -248,6 +257,9 @@ namespace Botcraft
 #endif
             }
 
+#if PROTOCOL_VERSION > 551
+			chunk->SetBiomes(biomes);
+#else
             //The biomes
             if (ground_up_continuous)
             {
@@ -263,6 +275,7 @@ namespace Botcraft
                     }
                 }
             }
+#endif
 
             // Block entities data
             chunk->GetBlockEntitiesData().clear();
@@ -300,6 +313,12 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 442
             heightmaps.Read(iter, length);
 #endif
+#if PROTOCOL_VERSION > 551
+			if (ground_up_continuous)
+			{
+				biomes = ReadArrayData<int>(iter, length, 1024);
+			}
+#endif
             size = ReadVarInt(iter, length);
             data = ReadByteArray(iter, length, size);
             number_block_entities = ReadVarInt(iter, length);
@@ -326,6 +345,9 @@ namespace Botcraft
         int primary_bit_mask;
 #if PROTOCOL_VERSION > 442
         NBT heightmaps;
+#endif
+#if PROTOCOL_VERSION > 551
+		std::vector<int> biomes;
 #endif
         int size;
         std::vector<unsigned char> data;

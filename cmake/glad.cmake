@@ -14,7 +14,7 @@ if(NOT TARGET glad)
 	file(MAKE_DIRECTORY ${GLAD_BUILD_PATH})
 
 	execute_process(
-		COMMAND "cmake" "${GLAD_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-DCMAKE_INSTALL_PREFIX=install" 
+		COMMAND "cmake" "${GLAD_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_INSTALL_PREFIX=install" 
 		WORKING_DIRECTORY ${GLAD_BUILD_PATH})
 
 	execute_process(COMMAND "cmake" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY ${GLAD_BUILD_PATH})
