@@ -19,7 +19,7 @@ namespace Botcraft
             return 0x50;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x56;
-#elif PROTOCOL_VERSION == 573
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
 			return 0x57;
 #else
             #error "Protocol version not implemented"

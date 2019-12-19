@@ -17,7 +17,7 @@ namespace Botcraft
         {
 #if PROTOCOL_VERSION == 498 // 1.14.4
             return 0x5C;
-#elif PROTOCOL_VERSION == 573
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
 			return 0x08;
 #else
 #error "Protocol version not implemented"

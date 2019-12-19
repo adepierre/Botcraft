@@ -307,7 +307,7 @@ namespace Botcraft
                     return std::shared_ptr<AcknowledgePlayerDigging>(new AcknowledgePlayerDigging);
                     break;
 #endif
-#elif PROTOCOL_VERSION == 573 // 1.15.X
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 // 1.15.X
 				case 0x08:
 					return std::shared_ptr<AcknowledgePlayerDigging>(new AcknowledgePlayerDigging);
 					break;
