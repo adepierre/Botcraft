@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include <botcraft/Game/world/World.hpp>
+#include <botcraft/Game/World/Block.hpp>
 
 #include "ChatCommandClient.hpp"
 

@@ -3,6 +3,8 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <deque>
+#include <unordered_set>
 
 #include "botcraft/Protocol/Handler.hpp"
 #include "botcraft/Protocol/Message.hpp"
@@ -44,7 +46,7 @@ namespace Botcraft
         void Physics();
 
 #ifdef USE_GUI
-        void UpdateRendering(const Botcraft::Position &pos);
+        void AddChunkToUpdate(const int x, const int z);
         void WaitForRenderingUpdate();
 #endif
 
@@ -95,7 +97,7 @@ namespace Botcraft
 #if USE_GUI
         std::shared_ptr<Renderer::CubeWorldRenderer> renderer;
 
-        std::deque<std::vector<Position> > positions_to_render;
+        std::unordered_set<Position> chunks_to_render;
         std::mutex mutex_rendering;
         std::condition_variable condition_rendering;
         

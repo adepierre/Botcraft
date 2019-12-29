@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_set>
+#include <deque>
 #include <mutex>
 
 #include "botcraft/Renderer/Face.hpp"
@@ -25,7 +25,7 @@ namespace Botcraft
 
             void Update();
             void AddFace(const Face &f);
-            void RemoveFace(const Face &f);
+            void ClearFaces();
             const unsigned int GetNumFace() const;
             void Render() const;
 
@@ -39,7 +39,7 @@ namespace Botcraft
             unsigned int data_VBO;
             unsigned int face_number;
 
-            std::unordered_set<Face> faces_positions;
+            std::deque<Face> faces_positions;
 
             BufferStatus buffer_status;
 

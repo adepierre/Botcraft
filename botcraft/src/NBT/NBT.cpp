@@ -7,6 +7,13 @@ namespace Botcraft
         has_data = false;
     }
 
+    NBT::NBT(const NBT& nbt)
+    {
+        root_tag = nbt.root_tag;
+        root_name = nbt.root_name;
+        has_data = nbt.has_data;
+    }
+
     NBT::~NBT()
     {
 

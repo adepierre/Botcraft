@@ -1,6 +1,7 @@
 #include <botcraft/Game/AssetsManager.hpp>
 #include <botcraft/Version.hpp>
 #include <botcraft/Game/World/World.hpp>
+#include "botcraft/Game/World/Chunk.hpp"
 
 #include "UserControlledClient.hpp"
 
@@ -75,19 +76,9 @@ void UserControlledClient::CreateTestWorld()
         world->AddChunk(i, 1, Dimension::Overworld);
         world->AddChunk(i, -1, Dimension::Overworld);
         world->AddChunk(i, -2, Dimension::Overworld);
-#ifdef USE_GUI
-        {
-            std::lock_guard<std::mutex> lock_rendering(mutex_rendering);
-            positions_to_render.push_back({ Position(i, -1, 0), Position(i, -1, 1), Position(i, -1, -1), Position(i, -1, -2) });
-            condition_rendering.notify_all();
-        }
-#endif
     }
 
     int x = 0;
-#ifdef USE_GUI
-    std::vector<Position> updated_positions;
-#endif
 
 #if PROTOCOL_VERSION < 347
     for (auto it = AssetsManager::getInstance().Blockstates().begin(); it != AssetsManager::getInstance().Blockstates().end(); ++it)
@@ -109,9 +100,6 @@ void UserControlledClient::CreateTestWorld()
 
             world->SetBlock(pos, id, z);
             world->SetBiome(pos.x, pos.z, 0);
-#ifdef USE_GUI
-            updated_positions.push_back(pos);
-#endif
         }
         x++;
     }
@@ -140,9 +128,7 @@ void UserControlledClient::CreateTestWorld()
         }
 
         world->SetBlock(pos, id);
-#ifdef USE_GUI
-        updated_positions.push_back(pos);
-#endif
+
         z++;
         if (z == 16)
         {
@@ -153,12 +139,13 @@ void UserControlledClient::CreateTestWorld()
 #endif
 
 #ifdef USE_GUI
+    for (int i = 0; i < (int)floor(x / CHUNK_WIDTH); ++i)
     {
-        std::lock_guard<std::mutex> lock_rendering(mutex_rendering);
-        positions_to_render.push_back(updated_positions);
-        condition_rendering.notify_all();
+        AddChunkToUpdate(i, 0);
+        AddChunkToUpdate(i, 1);
+        AddChunkToUpdate(i, -1);
+        AddChunkToUpdate(i, -2);
     }
-    updated_positions.clear();
 #endif
 
     int num_biomes = 0;
@@ -180,19 +167,9 @@ void UserControlledClient::CreateTestWorld()
     for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
     {
         world->AddChunk(-i - 1, 0, Dimension::Overworld);
-#ifdef USE_GUI
-        {
-            std::lock_guard<std::mutex> lock_rendering(mutex_rendering);
-            positions_to_render.push_back({ Position(-i - 1, -1, 0) });
-            condition_rendering.notify_all();
-        }
-#endif
     }
 
     x = 0;
-#ifdef USE_GUI
-    updated_positions.clear();
-#endif
     for (int i = 0; i < 256; ++i)
     {
         std::shared_ptr<Biome> biome = AssetsManager::getInstance().GetBiome(i);
@@ -209,9 +186,6 @@ void UserControlledClient::CreateTestWorld()
             world->SetBiome(pos.x, pos.z, i);
 #else
 			world->SetBiome(pos.x, pos.y, pos.z, i);
-#endif
-#ifdef USE_GUI
-            updated_positions.push_back(pos);
 #endif
             pos = Position(-(x * biome_spacing) - 1, 0, 1);
 
@@ -242,9 +216,6 @@ void UserControlledClient::CreateTestWorld()
 #else
 			world->SetBiome(pos.x, pos.y, pos.z, i);
 #endif
-#ifdef USE_GUI
-            updated_positions.push_back(pos);
-#endif
             pos = Position(-(x * biome_spacing) - 1, 0, 2);
 
             block = world->GetBlock(pos);
@@ -273,17 +244,13 @@ void UserControlledClient::CreateTestWorld()
 #else
 			world->SetBiome(pos.x, pos.y, pos.z, i);
 #endif
-#ifdef USE_GUI
-            updated_positions.push_back(pos);
-#endif
             x++;
         }
     }
 #ifdef USE_GUI
+    for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
     {
-        std::lock_guard<std::mutex> lock_rendering(mutex_rendering);
-        positions_to_render.push_back(updated_positions);
-        condition_rendering.notify_all();
+        AddChunkToUpdate(-i - 1, 0);
     }
 #endif
     

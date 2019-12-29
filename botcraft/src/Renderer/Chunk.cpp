@@ -70,18 +70,13 @@ namespace Botcraft
                 buffer_status = BufferStatus::Updated;
             }
 
-            auto return_insertion = faces_positions.insert(f);
-            if (!return_insertion.second)
-            {
-                auto it2 = faces_positions.erase(return_insertion.first);
-                faces_positions.insert(it2, f);
-            }
+            faces_positions.push_back(f);
         }
 
-        void Chunk::RemoveFace(const Face &f)
+        void Chunk::ClearFaces()
         {
             std::lock_guard<std::mutex> lock_faces(mutex_faces);
-            faces_positions.erase(f);
+            faces_positions.clear();
             if (buffer_status != BufferStatus::Created)
             {
                 buffer_status = BufferStatus::Updated;

@@ -434,51 +434,18 @@ namespace Botcraft
     }
 
 #ifdef USE_GUI
-    void BaseClient::UpdateRendering(const Position &pos)
+
+    void BaseClient::AddChunkToUpdate(const int x, const int z)
     {
-        // Add chunk
-        if (pos.y == -1)
-        {
-            world_mutex.lock();
-            const Dimension dim = world->GetDimension(pos.x, pos.z);
-            world_mutex.unlock();
-            renderer->AddChunk(pos.x, pos.z, dim);
-            return;
-        }
+        const std::vector<Position> chunk_pos = { {Position(x, 0, z), Position(x - 1, 0, z),
+                    Position(x + 1, 0 , z), Position(x, 0, z - 1), Position(x, 0, z + 1)} };
 
-        // Unload chunk
-        if (pos.y == -2)
+        std::lock_guard<std::mutex> guard_rendering(mutex_rendering);
+        for (int i = 0; i < chunk_pos.size(); ++i)
         {
-            renderer->RemoveChunk(pos.x, pos.z);
-            return;
+            chunks_to_render.insert(chunk_pos[i]);
         }
-
-        // Get the new values in the world
-        world_mutex.lock();
-        const Block *block = world->GetBlock(pos);
-        std::shared_ptr<Blockstate> current_blockstate;
-        unsigned char current_model_id;
-        if (block == nullptr)
-        {
-#if PROTOCOL_VERSION < 347
-            current_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0);
-#else
-            current_blockstate = AssetsManager::getInstance().Blockstates().at(0);
-#endif
-            current_model_id = 0;
-        }
-        else
-        {
-            current_blockstate = block->GetBlockstate();
-            current_model_id = block->GetModelId();
-        }
-        const unsigned char current_block_light = world->GetBlockLight(pos);
-        const unsigned char current_sky_light = world->GetSkyLight(pos);
-        const int current_biome_value = world->GetBiome(pos);
-        world_mutex.unlock();
-
-        renderer->UpdatePosition(pos, current_blockstate, current_model_id,
-            current_block_light, current_sky_light, current_biome_value);
+        condition_rendering.notify_all();
     }
 
     void BaseClient::WaitForRenderingUpdate()
@@ -490,29 +457,40 @@ namespace Botcraft
                 condition_rendering.wait(lck);
             }
 
-            while (!positions_to_render.empty())
+            while (!chunks_to_render.empty())
             {
-                std::vector<Position> positions;
-
+                Position pos;
                 mutex_rendering.lock();
-                if (!positions_to_render.empty())
+                if (!chunks_to_render.empty())
                 {
-                    positions = positions_to_render.front();
-                    positions_to_render.pop_front();
+                    auto posIterator = chunks_to_render.begin();
+                    pos = *posIterator;
+                    chunks_to_render.erase(posIterator);
                 }
                 mutex_rendering.unlock();
 
-                for (int i = 0; i < positions.size(); ++i)
+                std::shared_ptr<const Chunk> chunk;
+                // Get the new values in the world
+                world_mutex.lock();
+                bool has_chunk_been_modified = world->HasChunkBeenModified(pos.x, pos.z);
+                if (has_chunk_been_modified)
                 {
-                    UpdateRendering(positions[i]);
+                    chunk = world->GetChunkCopy(pos.x, pos.z);
+                    world->ResetChunkModificationState(pos.x, pos.z);
                 }
-                renderer->UpdateBuffer();
+                world_mutex.unlock();
+
+                if (has_chunk_been_modified)
+                {
+                    renderer->UpdateChunk(pos.x, pos.z, chunk);
+                    renderer->UpdateBuffer();
+                }
 
                 // If we left the game, we don't need to process 
                 // the rest of the data, just discard them
                 if (state != State::Play)
                 {
-                    positions_to_render.clear();
+                    chunks_to_render.clear();
                     break;
                 }
             }
@@ -584,11 +562,8 @@ namespace Botcraft
         }
 
 #ifdef USE_GUI
-        {
-            std::lock_guard<std::mutex> guard_rendering(mutex_rendering);
-            positions_to_render.push_back({ msg.GetLocation() });
-            condition_rendering.notify_all();
-        }
+        Position chunk_coords = Chunk::BlockCoordsToChunkCoords(msg.GetLocation());
+        AddChunkToUpdate(chunk_coords.x, chunk_coords.z);
 #endif
     }
 
@@ -602,10 +577,6 @@ namespace Botcraft
 
     void BaseClient::Handle(MultiBlockChange &msg)
     {
-#ifdef USE_GUI
-        std::vector<Position> updated_positions;
-        updated_positions.reserve(msg.GetRecordCount());
-#endif
         { // Scope for lock guard
             std::lock_guard<std::mutex> world_guard(world_mutex);
             for (int i = 0; i < msg.GetRecordCount(); ++i)
@@ -624,18 +595,10 @@ namespace Botcraft
 #else
                 world->SetBlock(cube_pos, msg.GetRecords()[i].GetBlockId());
 #endif
-
-#ifdef USE_GUI
-                updated_positions.push_back(cube_pos);
-#endif // USE_GUI
             }
         }
 #ifdef USE_GUI
-        {
-            std::lock_guard<std::mutex> guard_rendering(mutex_rendering);
-            positions_to_render.push_back(updated_positions);
-            condition_rendering.notify_all();
-        }
+        AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
 #endif // USE_GUI
     }
 
@@ -671,9 +634,7 @@ namespace Botcraft
             world->RemoveChunk(msg.GetChunkX(), msg.GetChunkZ());
         }
 #if USE_GUI
-        std::unique_lock<std::mutex> guard_rendering(mutex_rendering);
-        positions_to_render.push_back({ Position(msg.GetChunkX(), -2, msg.GetChunkZ()) });
-        condition_rendering.notify_all();
+        AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
 #endif
     }
 
@@ -686,16 +647,16 @@ namespace Botcraft
 
     void BaseClient::Handle(ChunkData &msg)
     {
-        std::shared_ptr<Chunk> chunk;
+        Dimension chunk_dim;
         {
             std::lock_guard<std::mutex> world_guard(world_mutex);
-            chunk = world->GetChunk(msg.GetChunkX(), msg.GetChunkZ());
+            chunk_dim = world->GetDimension(msg.GetChunkX(), msg.GetChunkZ());
         }
 
         if (msg.GetGroundUpContinuous())
         {
             bool success = true;
-            if (!chunk || chunk->GetDimension() != dimension)
+            if (chunk_dim != dimension)
             {
                 std::lock_guard<std::mutex> world_guard(world_mutex);
                 success = world->AddChunk(msg.GetChunkX(), msg.GetChunkZ(), dimension);
@@ -706,42 +667,17 @@ namespace Botcraft
                 std::cerr << "Error adding chunk in pos : " << msg.GetChunkX() << ", " << msg.GetChunkZ() << " in dimension " << (int)dimension << std::endl;
                 return;
             }
-#ifdef USE_GUI
-            {
-                std::unique_lock<std::mutex> lck(mutex_rendering);
-                positions_to_render.push_back({ Position(msg.GetChunkX(), -1, msg.GetChunkZ()) });
-                condition_rendering.notify_all();
-            }
-#endif
         }
 
         { // lock guard scope
             std::lock_guard<std::mutex> world_guard(world_mutex);
-            chunk = world->GetChunk(msg.GetChunkX(), msg.GetChunkZ());
-            msg.DeserializeData(chunk);
+            world->LoadDataInChunk(msg.GetChunkX(), msg.GetChunkZ(), msg.GetData(), msg.GetPrimaryBitMask(), msg.GetGroundUpContinuous());
+            world->LoadBlockEntityDataInChunk(msg.GetChunkX(), msg.GetChunkZ(), msg.GetBlockEntitiesData(), msg.GetNumberBlockEntities());
         }
 
         //Update GUI
 #ifdef USE_GUI
-        std::vector<Position> updated_positions;
-        updated_positions.reserve(CHUNK_HEIGHT * CHUNK_WIDTH * CHUNK_WIDTH);
-        for (int block_y = 0; block_y < CHUNK_HEIGHT; ++block_y)
-        {
-            for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
-            {
-                for (int block_x = 0; block_x < CHUNK_WIDTH; ++block_x)
-                {
-                    Position pos = Position(msg.GetChunkX() * CHUNK_WIDTH + block_x, block_y, msg.GetChunkZ() * CHUNK_WIDTH + block_z);
-                    updated_positions.push_back(pos);
-                }
-            }
-        }
-
-        {
-            std::lock_guard<std::mutex> guard_rendering(mutex_rendering);
-            positions_to_render.push_back(updated_positions);
-            condition_rendering.notify_all();
-        }
+        AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
 #endif //USE_GUI
     }
 
@@ -924,27 +860,20 @@ namespace Botcraft
     void BaseClient::Handle(Respawn &msg)
     {
         std::lock_guard<std::mutex> world_guard(world_mutex);
-        // Clear all chunks of the current dimension
+        // Clear all current chunks
         const auto& chunks = world->GetAllChunks();
         std::vector<std::pair<int, int> > chunks_to_remove;
         chunks_to_remove.reserve(chunks.size());
         for (auto it = chunks.begin(); it != chunks.end(); ++it)
         {
-            if (it->second->GetDimension() != msg.GetDimension())
-            {
-                chunks_to_remove.push_back(it->first);
-            }
+            chunks_to_remove.push_back(it->first);
         }
 
         for (int i = 0; i < chunks_to_remove.size(); ++i)
         {
             world->RemoveChunk(chunks_to_remove[i].first, chunks_to_remove[i].second);
 #ifdef USE_GUI
-            {
-                std::lock_guard<std::mutex> guard_rendering(mutex_rendering);
-                positions_to_render.push_back({ Position(chunks_to_remove[i].first, -2, chunks_to_remove[i].second) });
-                condition_rendering.notify_all();
-            }
+            AddChunkToUpdate(chunks_to_remove[i].first, chunks_to_remove[i].second);
 #endif
         }
 
@@ -959,70 +888,10 @@ namespace Botcraft
     void BaseClient::Handle(UpdateLight &msg)
     {
         std::lock_guard<std::mutex> world_guard(world_mutex);
-        std::shared_ptr<Chunk> chunk = world->GetChunk(msg.GetChunkX(), msg.GetChunkZ());
-
-        if (!chunk)
-        {
-            const bool success = world->AddChunk(msg.GetChunkX(), msg.GetChunkZ(), dimension); 
-            if (!success)
-            {
-                std::cerr << "Error adding chunk in pos : " << msg.GetChunkX() << ", " << msg.GetChunkZ() << " in dimension " << (int)dimension << std::endl;
-                return;
-            }
-            chunk = world->GetChunk(msg.GetChunkX(), msg.GetChunkZ());
-        }
-
-        int counter_sky_arrays = 0;
-        int counter_block_arrays = 0;
-
-        for (int i = 0; i < 18; ++i)
-        {
-            const int section_Y = i - 1;
-
-            // Sky light
-            if ((msg.GetSkyLightMask() >> i) & 1)
-            {
-                if (i > 0 && i < 17)
-                {
-                    for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
-                    {
-                        for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
-                        {
-                            for (int block_x = 0; block_x < CHUNK_WIDTH; block_x += 2)
-                            {
-                                const char two_light_values = msg.GetSkyLightArrays()[counter_sky_arrays][(block_y * CHUNK_WIDTH * CHUNK_WIDTH + block_z * CHUNK_WIDTH + block_x) / 2];
-
-                                chunk->SetSkyLight(Position(block_x, block_y + section_Y * SECTION_HEIGHT, block_z), two_light_values & 0x0F);
-                                chunk->SetSkyLight(Position(block_x + 1, block_y + section_Y * SECTION_HEIGHT, block_z), (two_light_values >> 4) & 0x0F);
-                            }
-                        }
-                    }
-                }
-                counter_sky_arrays++;
-            }
-
-            // Block light
-            if ((msg.GetBlockLightMask() >> i) & 1)
-            {
-                if (i > 0 && i < 17)
-                {
-                    for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
-                    {
-                        for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
-                        {
-                            for (int block_x = 0; block_x < CHUNK_WIDTH; block_x += 2)
-                            {
-                                const char two_light_values = msg.GetBlockLightArrays()[counter_block_arrays][(block_y * CHUNK_WIDTH * CHUNK_WIDTH + block_z * CHUNK_WIDTH + block_x) / 2];
-
-                                chunk->SetBlockLight(Position(block_x, block_y + section_Y * SECTION_HEIGHT, block_z), two_light_values & 0x0F);
-                                chunk->SetBlockLight(Position(block_x, block_y + section_Y * SECTION_HEIGHT, block_z), (two_light_values >> 4) & 0x0F);
-                            }
-                        }
-                    }
-                }
-                counter_block_arrays++;
-            }
-        }
+        world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(),
+            msg.GetSkyLightMask(), msg.GetEmptySkyLightMask(), msg.GetSkyLightArrays(), true);
+        world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(),
+            msg.GetBlockLightMask(), msg.GetEmptyBlockLightMask(), msg.GetBlockLightArrays(), false);
     }
 #endif
 

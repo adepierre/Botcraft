@@ -24,13 +24,34 @@ namespace Botcraft
         bool AddChunk(const int x, const int z, const Dimension dim);
         bool RemoveChunk(const int x, const int z);
 
+#if USE_GUI
+        const bool HasChunkBeenModified(const int x, const int z);
+        void ResetChunkModificationState(const int x, const int z);
+#endif
+
+        bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
+            const int primary_bit_mask, const bool ground_up_continuous);
+        bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
+            const int number_block_entities);
+
+        // Update the neighbour blocks of this chunk and the
+        // one in the specified direction, if direction is 0,0,0
+        // then update all neighbours chunks
+        void UpdateChunk(const int x, const int z, const Position& pos = Position());
+
+        const std::shared_ptr<const Chunk> GetChunkCopy(const int x, const int z);
+
 #if PROTOCOL_VERSION < 347
         bool SetBlock(const Position &pos, const unsigned int id, unsigned char metadata, const int model_id = -1);
 #else
         bool SetBlock(const Position &pos, const unsigned int id, const int model_id = -1);
 #endif
+        //Get the block at a given position
+        const Block* GetBlock(const Position& pos);
 
         bool SetBlockEntityData(const Position &pos, const std::shared_ptr<NBT> data);
+        // Get the block entity data at a given position
+        std::shared_ptr<NBT> GetBlockEntityData(const Position& pos);
 
 #if PROTOCOL_VERSION < 358
         bool SetBiome(const int x, const int z, const unsigned char biome);
@@ -39,24 +60,21 @@ namespace Botcraft
 #else
 		bool SetBiome(const int x, const int y, const int z, const int biome);
 #endif
-        bool SetSkyLight(const Position &pos, const unsigned char skylight);
-        bool SetBlockLight(const Position &pos, const unsigned char blocklight);
-
-        //Get a pointer on a chunk (or null if not loaded)
-        std::shared_ptr<Chunk> GetChunk(const int x, const int z);
-
-        //Get the block at a given position
-        const Block *GetBlock(const Position &pos);
-        // Get the block entity data at a given position
-        std::shared_ptr<NBT> GetBlockEntityData(const Position &pos);
 
 #if PROTOCOL_VERSION < 358
-        const unsigned char GetBiome(const Position &pos);
+        const unsigned char GetBiome(const Position & pos);
 #else
-        const int GetBiome(const Position &pos);
+        const int GetBiome(const Position& pos);
 #endif
-        const unsigned char GetSkyLight(const Position &pos);
-        const unsigned char GetBlockLight(const Position &pos);
+
+        bool SetSkyLight(const Position &pos, const unsigned char skylight);
+        bool SetBlockLight(const Position &pos, const unsigned char blocklight);
+#if PROTOCOL_VERSION > 404
+        void UpdateChunkLight(const int x, const int z, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
+#endif
+        const unsigned char GetSkyLight(const Position& pos);
+        const unsigned char GetBlockLight(const Position& pos);
+
         const Dimension GetDimension(const int x, const int z);
 
         /**
@@ -79,6 +97,9 @@ namespace Botcraft
         std::map<std::string, OtherPlayer>::iterator GetPlayer(const std::string &uuid);
         const std::map<std::string, OtherPlayer>& GetAllPlayers() const;
         void RemovePlayer(const std::string &uuid);
+
+    private:
+        std::shared_ptr<Chunk> GetChunk(const int x, const int z);
 
     private:
         int cached_x;

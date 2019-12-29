@@ -79,5 +79,5 @@ namespace Botcraft
             }
         }
     }
-#endif
 } //Botcraft
+#endif

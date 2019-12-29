@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <unordered_set>
+
 #ifdef USE_IMGUI
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -35,7 +37,7 @@ namespace Botcraft
     {
         CubeWorldRenderer::CubeWorldRenderer(const unsigned int &window_width, const unsigned int &window_height,
             const std::vector<std::pair<std::string, std::string> > &textures_path_names,
-            const unsigned int chunk_size_, const bool headless_)
+            const unsigned int section_height_, const bool headless_)
         {
             mouse_last_x = window_width / 2.0f;
             mouse_last_y = window_height / 2.0f;
@@ -45,9 +47,8 @@ namespace Botcraft
 
             faces_should_be_updated = true;
 
-            rendered_world = std::shared_ptr<World>(new World);
-            chunks = std::unordered_map<Coords, std::shared_ptr<Chunk> >();
-            transparent_chunks = std::unordered_map<Coords, std::shared_ptr<TransparentChunk> >();
+            chunks = std::unordered_map<Position, std::shared_ptr<Chunk> >();
+            transparent_chunks = std::unordered_map<Position, std::shared_ptr<TransparentChunk> >();
 
             deltaTime = 0.0f;
             lastFrameTime = 0.0f;
@@ -59,7 +60,7 @@ namespace Botcraft
             MouseCallback = [](double, double) {};
             KeyboardCallback = [](std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, float) {};
 
-            chunk_size = chunk_size_;
+            section_height = section_height_;
 
             //Build atlas
             atlas = std::shared_ptr<Atlas>(new Atlas);
@@ -78,7 +79,6 @@ namespace Botcraft
             {
                 rendering_thread.join();
             }
-            rendered_world.reset();
         }
 
         void CubeWorldRenderer::Run()
@@ -114,147 +114,147 @@ namespace Botcraft
                     ImGui::ShowDemoWindow(&imgui_demo);
                 }
 
-        {
-            ImGui::SetNextWindowPos(ImVec2(0, 0));
-            ImGui::SetNextWindowSize(ImVec2(290, 70));
-            ImGui::Begin("Position");
-            ImGui::Text("%f, %f, %f", camera->GetPosition().x, camera->GetPosition().y - 1.62f, camera->GetPosition().z);
-            ImGui::Text("Yaw: %f  ||  ", camera->GetYaw());
-            ImGui::SameLine();
-            ImGui::Text("Pitch: %f", camera->GetPitch());
-            ImGui::End();
-        }
-        {
-            ImGui::SetNextWindowPos(ImVec2(0, 75));
-            ImGui::SetNextWindowSize(ImVec2(290, 70));
-            ImGui::Begin("Targeted cube");
-            Position raycasted_pos;
-            Position raycasted_normal; 
-            std::shared_ptr<Blockstate> raycasted_blockstate;
-            {
-                std::lock_guard<std::mutex> world_guard(world_mutex);
-                raycasted_blockstate =
-                    rendered_world->Raycast(Vector3<double>(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z),
-                    Vector3<double>(camera->GetFront().x, camera->GetFront().y, camera->GetFront().z),
-                    6.0f, raycasted_pos, raycasted_normal);
-            }
-            if (raycasted_blockstate)
-            {
-                ImGui::Text("Watching block at %i, %i, %i", raycasted_pos.x, raycasted_pos.y, raycasted_pos.z);
-                ImGui::Text((std::string("Block: ") + raycasted_blockstate->GetName()).c_str());
-            }
-            else
-            {
-                ImGui::Text("Watching block at");
-                ImGui::Text("Block: ");
-            }
-            ImGui::End();
-        }
+                {
+                    ImGui::SetNextWindowPos(ImVec2(0, 0));
+                    ImGui::SetNextWindowSize(ImVec2(290, 70));
+                    ImGui::Begin("Position");
+                    ImGui::Text("%f, %f, %f", camera->GetPosition().x, camera->GetPosition().y - 1.62f, camera->GetPosition().z);
+                    ImGui::Text("Yaw: %f  ||  ", camera->GetYaw());
+                    ImGui::SameLine();
+                    ImGui::Text("Pitch: %f", camera->GetPitch());
+                    ImGui::End();
+                }
+                {
+                    ImGui::SetNextWindowPos(ImVec2(0, 75));
+                    ImGui::SetNextWindowSize(ImVec2(290, 70));
+                    ImGui::Begin("Targeted cube");
+                    Position raycasted_pos;
+                    Position raycasted_normal;
+                    std::shared_ptr<Blockstate> raycasted_blockstate;
+                    {
+                        /*std::lock_guard<std::mutex> world_guard(world_mutex);
+                        raycasted_blockstate =
+                            rendered_world->Raycast(Vector3<double>(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z),
+                            Vector3<double>(camera->GetFront().x, camera->GetFront().y, camera->GetFront().z),
+                            6.0f, raycasted_pos, raycasted_normal);*/
+                    }
+                    if (raycasted_blockstate)
+                    {
+                        ImGui::Text("Watching block at %i, %i, %i", raycasted_pos.x, raycasted_pos.y, raycasted_pos.z);
+                        ImGui::Text((std::string("Block: ") + raycasted_blockstate->GetName()).c_str());
+                    }
+                    else
+                    {
+                        ImGui::Text("Watching block at");
+                        ImGui::Text("Block: ");
+                    }
+                    ImGui::End();
+                }
 #endif
-        const float current_day_time = day_time;
-        std::vector<float> current_color(3);
-        for (int i = 0; i < 3; ++i)
-        {
-            current_color[i] = 2.0f * ((0.5f - std::abs(current_day_time - 0.5f)) * color_day[i] + (0.5f - std::min(std::abs(1.0f - current_day_time), current_day_time)) * color_night[i]);
-        }
-        glClearColor(current_color[0], current_color[1], current_color[2], 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        //Change view matrix
-        if (camera->GetHasChangedOrientation() || camera->GetHasChangedPosition())
-        {
-            m_mutex_camera.lock();
-            glm::mat4 view_matrix = camera->GetViewMatrix();
-            if (camera->GetHasChangedPosition())
-            {
-                transparent_chunks_mutex.lock();
-                for (auto it = transparent_chunks.begin(); it != transparent_chunks.end(); ++it)
+                const float current_day_time = day_time;
+                std::vector<float> current_color(3);
+                for (int i = 0; i < 3; ++i)
                 {
-                    it->second->SetDisplayStatus(BufferStatus::Updated);
+                    current_color[i] = 2.0f * ((0.5f - std::abs(current_day_time - 0.5f)) * color_day[i] + (0.5f - std::min(std::abs(1.0f - current_day_time), current_day_time)) * color_night[i]);
                 }
-                transparent_chunks_mutex.unlock();
-            }
-            camera->ResetHasChangedPosition();
-            camera->ResetHasChangedOrientation();
-            m_mutex_camera.unlock();
-            glBindBuffer(GL_UNIFORM_BUFFER, view_uniform_buffer);
-            glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view_matrix));
-            glBindBuffer(GL_UNIFORM_BUFFER, 0);
-        }
+                glClearColor(current_color[0], current_color[1], current_color[2], 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (has_proj_changed)
-        {
-            glm::mat4 projection = glm::perspective(glm::radians(45.0f), current_window_width / (float)current_window_height, 0.1f, 200.0f);
-            my_shader->SetMat4("projection", projection);
-            m_mutex_camera.lock();
-            camera->SetProjection(projection);
-            m_mutex_camera.unlock();
-            has_proj_changed = false;
-        }
-
-        if (faces_should_be_updated)
-        {
-            faces_should_be_updated = false;
-            chunks_mutex.lock();
-            for (auto it = chunks.begin(); it != chunks.end();)
-            {
-                it->second->Update();
-                if (it->second->GetNumFace() == 0)
+                //Change view matrix
+                if (camera->GetHasChangedOrientation() || camera->GetHasChangedPosition())
                 {
-                    it = chunks.erase(it);
+                    m_mutex_camera.lock();
+                    glm::mat4 view_matrix = camera->GetViewMatrix();
+                    if (camera->GetHasChangedPosition())
+                    {
+                        transparent_chunks_mutex.lock();
+                        for (auto it = transparent_chunks.begin(); it != transparent_chunks.end(); ++it)
+                        {
+                            it->second->SetDisplayStatus(BufferStatus::Updated);
+                        }
+                        transparent_chunks_mutex.unlock();
+                    }
+                    camera->ResetHasChangedPosition();
+                    camera->ResetHasChangedOrientation();
+                    m_mutex_camera.unlock();
+                    glBindBuffer(GL_UNIFORM_BUFFER, view_uniform_buffer);
+                    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view_matrix));
+                    glBindBuffer(GL_UNIFORM_BUFFER, 0);
                 }
-                else
+
+                if (has_proj_changed)
                 {
-                    ++it;
+                    glm::mat4 projection = glm::perspective(glm::radians(45.0f), current_window_width / (float)current_window_height, 0.1f, 200.0f);
+                    my_shader->SetMat4("projection", projection);
+                    m_mutex_camera.lock();
+                    camera->SetProjection(projection);
+                    m_mutex_camera.unlock();
+                    has_proj_changed = false;
                 }
-            }
-            chunks_mutex.unlock();
-            transparent_chunks_mutex.lock();
-            for (auto it = transparent_chunks.begin(); it != transparent_chunks.end();)
-            {
-                it->second->Update();
-                if (it->second->GetNumFace() == 0)
+
+                if (faces_should_be_updated)
                 {
-                    it = transparent_chunks.erase(it);
+                    faces_should_be_updated = false;
+                    chunks_mutex.lock();
+                    for (auto it = chunks.begin(); it != chunks.end();)
+                    {
+                        it->second->Update();
+                        if (it->second->GetNumFace() == 0)
+                        {
+                            it = chunks.erase(it);
+                        }
+                        else
+                        {
+                            ++it;
+                        }
+                    }
+                    chunks_mutex.unlock();
+                    transparent_chunks_mutex.lock();
+                    for (auto it = transparent_chunks.begin(); it != transparent_chunks.end();)
+                    {
+                        it->second->Update();
+                        if (it->second->GetNumFace() == 0)
+                        {
+                            it = transparent_chunks.erase(it);
+                        }
+                        else
+                        {
+                            ++it;
+                        }
+                    }
+                    transparent_chunks_mutex.unlock();
                 }
-                else
-                {
-                    ++it;
-                }
-            }
-            transparent_chunks_mutex.unlock();
-        }
 
-        my_shader->Use();
+                my_shader->Use();
 
-        glBindTexture(GL_TEXTURE_2D, atlas_texture);
+                glBindTexture(GL_TEXTURE_2D, atlas_texture);
 
-        //Draw all faces
-        RenderFaces();
+                //Draw all faces
+                RenderFaces();
 
-        glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+                glBindVertexArray(0);
+                glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef USE_IMGUI
-        ImGui::Render();
+                ImGui::Render();
 
-        // Render ImGui
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+                // Render ImGui
+                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+                glfwSwapBuffers(window);
+                glfwPollEvents();
 
-        if (take_screenshot)
-        {
-            std::vector<unsigned char> pixels(current_window_height * current_window_width * 3);
-            glReadPixels(0, 0, current_window_width, current_window_height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+                if (take_screenshot)
+                {
+                    std::vector<unsigned char> pixels(current_window_height * current_window_width * 3);
+                    glReadPixels(0, 0, current_window_width, current_window_height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
-            WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
-            take_screenshot = false;
-        }
+                    WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
+                    take_screenshot = false;
+                }
 
-        //Wait to have 60 FPS
-        std::this_thread::sleep_until(end);
+                //Wait to have 60 FPS
+                std::this_thread::sleep_until(end);
             }
 
             chunks.clear();
@@ -281,246 +281,126 @@ namespace Botcraft
             glfwSetWindowShouldClose(window, true);
         }
 
-        void CubeWorldRenderer::AddChunk(const int x_, const int z_, const Dimension d)
+        void CubeWorldRenderer::UpdateChunk(const int x_, const int z_, const std::shared_ptr<const Botcraft::Chunk> chunk)
         {
-            std::lock_guard<std::mutex> world_guard(world_mutex);
-            rendered_world->AddChunk(x_, z_, d);
-        }
-
-        void CubeWorldRenderer::RemoveChunk(const int x_, const int z_)
-        {
-            for (int block_x = 0; block_x < CHUNK_WIDTH; ++block_x)
+            // Remove any previous version of this chunk
             {
-                for (int block_y = 0; block_y < CHUNK_HEIGHT; ++block_y)
+                std::lock_guard<std::mutex> lock(chunks_mutex);
+                Position pos(x_, 0, z_);
+                for (int y = 0; y < CHUNK_HEIGHT / section_height; ++y)
                 {
-                    for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
+                    pos.y = y;
+                    auto it = chunks.find(pos);
+                    if (it != chunks.end())
                     {
-                        Position pos(CHUNK_WIDTH * x_ + block_x, block_y, CHUNK_WIDTH * z_ + block_z);
-                        UpdatePosition(pos, nullptr);
+                        it->second->ClearFaces();
                     }
                 }
             }
-            std::lock_guard<std::mutex> world_guard(world_mutex);
-            rendered_world->RemoveChunk(x_, z_);
-        }
+            {
+                std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
+                Position pos(x_, 0, z_);
+                for (int y = 0; y < CHUNK_HEIGHT / CHUNK_WIDTH; ++y)
+                {
+                    pos.y = y; 
+                    auto it = transparent_chunks.find(pos);
+                    if (it != transparent_chunks.end())
+                    {
+                        it->second->ClearFaces();
+                    }
+                }
+            }
 
-        void CubeWorldRenderer::UpdatePosition(const Position &pos, std::shared_ptr<Blockstate> new_blockstate,
-                                               const unsigned char new_model_id, const unsigned char new_block_light, 
-                                               const unsigned char new_sky_light, const int new_biome)
-        {
+            if (chunk == nullptr)
+            {
+                return;
+            }
+
             auto& AssetsManager_ = AssetsManager::getInstance();
 
-            if (new_blockstate == nullptr)
-            {
-#if PROTOCOL_VERSION < 347
-                new_blockstate = AssetsManager_.Blockstates().at(0).at(0);
-#else
-                new_blockstate = AssetsManager_.Blockstates().at(0);
-#endif
-            }
-
-            std::lock_guard<std::mutex> world_guard(world_mutex);
-            const Block *previous_block = rendered_world->GetBlock(pos);
-            std::shared_ptr<Blockstate> previous_blockstate;
-            unsigned char previous_model_id;
-
-            if (previous_block == nullptr)
-            {
-#if PROTOCOL_VERSION < 347
-                previous_blockstate = AssetsManager_.Blockstates().at(0).at(0);
-#else
-                previous_blockstate = AssetsManager_.Blockstates().at(0);
-#endif
-                previous_model_id = 0;
-            }
-            else
-            {
-                previous_blockstate = previous_block->GetBlockstate();
-                previous_model_id = previous_block->GetModelId();
-            }
-                // Update the rendered world with the new value
-#if PROTOCOL_VERSION < 347
-            rendered_world->SetBlock(pos, new_blockstate->GetId(), new_blockstate->GetMetadata(), new_model_id);
-#else
-            rendered_world->SetBlock(pos, new_blockstate->GetId(), new_model_id);
-#endif
-
-#if PROTOCOL_VERSION < 552
-            rendered_world->SetBiome(pos.x, pos.z, new_biome);
-#else
-			rendered_world->SetBiome(pos.x, pos.y, pos.z, new_biome);
-#endif
-
-            rendered_world->SetBlockLight(pos, new_block_light);
-            rendered_world->SetSkyLight(pos, new_sky_light);
-
+            // For each block in the chunk, check its neighbours
+            // to see which face to draw
             const std::vector<Position> neighbour_positions({ Position(0, -1, 0), Position(0, 0, -1),
-                Position(-1, 0, 0), Position(1, 0, 0), Position(0, 0, 1), Position(0, 1, 0) });
+                            Position(-1, 0, 0), Position(1, 0, 0), Position(0, 0, 1), Position(0, 1, 0) });
 
             std::vector<std::shared_ptr<Blockstate> > neighbour_blockstates(6);
             std::vector<unsigned char> neighbour_model_ids(6);
 
-            for (int i = 0; i < 6; ++i)
+            Position pos;
+            for (int y = 0; y < CHUNK_HEIGHT; ++y)
             {
-                const Block *neighbour_block = rendered_world->GetBlock(pos + neighbour_positions[i]);
-                if (neighbour_block == nullptr)
+                pos.y = y;
+                for (int z = 0; z < CHUNK_WIDTH; ++z)
                 {
-                    neighbour_blockstates[i] = nullptr;
-                    neighbour_model_ids[i] = 0;
-                }
-                else
-                {
-                    neighbour_blockstates[i] = neighbour_block->GetBlockstate();
-                    neighbour_model_ids[i] = neighbour_block->GetModelId();
-                }
-            }
-
-            //Check if this block is not sourrounded by non transparent blocks
-            for (int i = 0; i < neighbour_positions.size(); ++i)
-            {
-                if (!neighbour_blockstates[i] || neighbour_blockstates[i]->IsTransparent())
-                {
-                    break;
-                }
-
-                //If we are here, all the neigbhours are non transparent blocks, so
-                //there is nothing to change for the renderer
-                if (i == neighbour_positions.size() - 1)
-                {
-                    return;
-                }
-            }
-
-            //Remove all faces of the previous state
-            const std::vector<FaceDescriptor> &previous_faces = previous_blockstate->GetModel(previous_model_id).GetFaces();
-            for (int i = 0; i < previous_faces.size(); ++i)
-            {
-                RemoveFace(pos.x, pos.y, pos.z, previous_faces[i].face, previous_faces[i].texture_names[0]);
-            }
-
-            //Add all faces of the current state
-            const std::vector<FaceDescriptor> &current_faces = new_blockstate->GetModel(new_model_id).GetFaces();
-            const std::shared_ptr<Biome> current_biome = AssetsManager_.GetBiome(new_biome);
-
-            for (int i = 0; i < current_faces.size(); ++i)
-            {
-                //Check if the neighbour in this direction is hidding this face
-                // We also remove the faces between two transparent blocks with the same id
-                // (example: faces between two water blocks)
-                if (current_faces[i].cullface_direction == Orientation::None ||
-                    !neighbour_blockstates[(int)current_faces[i].cullface_direction] ||
-                    (neighbour_blockstates[(int)current_faces[i].cullface_direction]->IsTransparent() &&
-                    neighbour_blockstates[(int)current_faces[i].cullface_direction]->GetId() != new_blockstate->GetId())
-                    )
-                {
-                    AddFace(pos.x, pos.y, pos.z, current_faces[i].face, current_faces[i].texture_names, GetColorModifier(pos.y, current_biome, new_blockstate, current_faces[i].use_tintindexes));
-                }
-            }
-
-            // Transition from transparent to non transparent
-            if (!new_blockstate->IsTransparent() && previous_blockstate->IsTransparent())
-            {
-                //Remove all faces which are now hidden by this block
-                for (int i = 0; i < neighbour_positions.size(); ++i)
-                {
-                    if (neighbour_blockstates[i])
+                    pos.z = z;
+                    for (int x = 0; x < CHUNK_WIDTH; ++x)
                     {
-                        const Position neighbour_position = pos + neighbour_positions[i];
-                        const std::vector<FaceDescriptor> &neighbour_faces = neighbour_blockstates[i]->GetModel(neighbour_model_ids[i]).GetFaces();
-
-                        for (int j = 0; j < neighbour_faces.size(); ++j)
+                        pos.x = x;
+                        
+                        // If this block is air, just skip it
+                        const Block* this_block = chunk->GetBlock(pos);
+                        if (this_block == nullptr ||
+                            this_block->GetBlockstate()->IsAir())
                         {
-                            if (neighbour_faces[j].cullface_direction == (Orientation)((int)Orientation::Top - i))
+                            continue;
+                        }
+
+                        // Else check its neighbours to find which face to draw
+                        for (int i = 0; i < 6; ++i)
+                        {
+                            const Block* neighbour_block = chunk->GetBlock(pos + neighbour_positions[i]);
+                            if (neighbour_block == nullptr)
                             {
-                                RemoveFace(neighbour_position.x, neighbour_position.y, neighbour_position.z, neighbour_faces[j].face, neighbour_faces[j].texture_names[0]);
+                                neighbour_blockstates[i] = nullptr;
+                                neighbour_model_ids[i] = 0;
+                            }
+                            else
+                            {
+                                neighbour_blockstates[i] = neighbour_block->GetBlockstate();
+                                neighbour_model_ids[i] = neighbour_block->GetModelId();
                             }
                         }
-                    }
-                }
-            }
 
-            // Transition from non transparent to transparent
-            if (new_blockstate->IsTransparent() && !previous_blockstate->IsTransparent())
-            {
-                //Add all faces which are no longer hidden by this block
-                for (int i = 0; i < neighbour_positions.size(); ++i)
-                {
-                    if (neighbour_blockstates[i])
-                    {
-                        const Position neighbour_position = pos + neighbour_positions[i];
-                        const std::vector<FaceDescriptor> &neighbour_faces = neighbour_blockstates[i]->GetModel(neighbour_model_ids[i]).GetFaces();
-                        const std::shared_ptr<Biome> biome = AssetsManager_.GetBiome(rendered_world->GetBiome(neighbour_position));
-
-                        for (int j = 0; j < neighbour_faces.size(); ++j)
+                        //Check if this block is sourrounded by non transparent blocks
+                        for (int i = 0; i < neighbour_positions.size(); ++i)
                         {
-                            if (neighbour_faces[j].cullface_direction == (Orientation)((int)Orientation::Top - i) &&
-                                neighbour_blockstates[i]->GetId() != new_blockstate->GetId())
+                            if (neighbour_blockstates[i] == nullptr || 
+                                neighbour_blockstates[i]->IsTransparent())
                             {
-                                AddFace(neighbour_position.x, neighbour_position.y, neighbour_position.z, neighbour_faces[j].face, neighbour_faces[j].texture_names, GetColorModifier(neighbour_position.y, biome, neighbour_blockstates[i], neighbour_faces[j].use_tintindexes));
+                                break;
+                            }
+
+                            //If we are here, all the neigbhours are non transparent blocks, so
+                            //there is no face to add to the renderer
+                            if (i == neighbour_positions.size() - 1)
+                            {
+                                continue;
                             }
                         }
-                    }
-                }
+                        
+                        //Add all faces of the current state
+                        const std::vector<FaceDescriptor>& current_faces = this_block->GetBlockstate()->GetModel(this_block->GetModelId()).GetFaces();
+#if PROTOCOL_VERSION < 358
+                        const std::shared_ptr<Biome> current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, z));
+#else
+                        const std::shared_ptr<Biome> current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, y, z));
+#endif
 
-                //Remove all faces which are now hidden by this block
-                for (int i = 0; i < neighbour_positions.size(); ++i)
-                {
-                    if (neighbour_blockstates[i])
-                    {
-                        if (new_blockstate->GetId() == neighbour_blockstates[i]->GetId())
+                        for (int i = 0; i < current_faces.size(); ++i)
                         {
-                            const Position neighbour_position = pos + neighbour_positions[i];
-                            const std::vector<FaceDescriptor> &neighbour_faces = neighbour_blockstates[i]->GetModel(neighbour_model_ids[i]).GetFaces();
-
-                            for (int j = 0; j < neighbour_faces.size(); ++j)
+                            //Check if the neighbour in this direction is hidding this face
+                            // We also remove the faces between two transparent blocks with the same id
+                            // (example: faces between two water blocks)
+                            if (current_faces[i].cullface_direction == Orientation::None ||
+                                !neighbour_blockstates[(int)current_faces[i].cullface_direction] ||
+                                (neighbour_blockstates[(int)current_faces[i].cullface_direction]->IsTransparent() &&
+                                    neighbour_blockstates[(int)current_faces[i].cullface_direction]->GetId() != this_block->GetBlockstate()->GetId())
+                                )
                             {
-                                if (neighbour_faces[j].cullface_direction == (Orientation)((int)Orientation::Top - i))
-                                {
-                                    RemoveFace(neighbour_position.x, neighbour_position.y, neighbour_position.z, neighbour_faces[j].face, neighbour_faces[j].texture_names[0]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // From transparent to transparent
-            if (previous_blockstate->IsTransparent() && new_blockstate->IsTransparent())
-            {
-                if (previous_blockstate->GetId() != new_blockstate->GetId())
-                {
-                    // Add all faces which were hidden by this block and are not anymore
-                    for (int i = 0; i < neighbour_positions.size(); ++i)
-                    {
-                        if (neighbour_blockstates[i] && previous_blockstate->GetId() == neighbour_blockstates[i]->GetId())
-                        {
-                            const Position neighbour_position = pos + neighbour_positions[i];
-                            const std::vector<FaceDescriptor> &neighbour_faces = neighbour_blockstates[i]->GetModel(neighbour_model_ids[i]).GetFaces();
-                            const std::shared_ptr<Biome> biome = AssetsManager_.GetBiome(rendered_world->GetBiome(neighbour_position));
-                            for (int j = 0; j < neighbour_faces.size(); ++j)
-                            {
-                                if (neighbour_faces[j].cullface_direction == (Orientation)((int)Orientation::Top - i))
-                                {
-                                    AddFace(neighbour_position.x, neighbour_position.y, neighbour_position.z, neighbour_faces[j].face, neighbour_faces[j].texture_names, GetColorModifier(neighbour_position.y, biome, neighbour_blockstates[i], neighbour_faces[j].use_tintindexes));
-                                }
-                            }
-                        }
-                    }
-
-                    //Remove all faces which are now hidden by this block
-                    for (int i = 0; i < neighbour_positions.size(); ++i)
-                    {
-                        if (neighbour_blockstates[i] && new_blockstate->GetId() == neighbour_blockstates[i]->GetId())
-                        {
-                            const Position neighbour_position = pos + neighbour_positions[i];
-                            const std::vector<FaceDescriptor> &neighbour_faces = neighbour_blockstates[i]->GetModel(neighbour_model_ids[i]).GetFaces();
-
-                            for (int j = 0; j < neighbour_faces.size(); ++j)
-                            {
-                                if (neighbour_faces[j].cullface_direction == (Orientation)((int)Orientation::Top - i))
-                                {
-                                    RemoveFace(neighbour_position.x, neighbour_position.y, neighbour_position.z, neighbour_faces[j].face, neighbour_faces[j].texture_names[0]);
-                                }
+                                AddFace(pos.x + CHUNK_WIDTH * x_, pos.y, pos.z + CHUNK_WIDTH * z_, 
+                                    current_faces[i].face, current_faces[i].texture_names, 
+                                    GetColorModifier(pos.y, current_biome, this_block->GetBlockstate(),
+                                        current_faces[i].use_tintindexes));
                             }
                         }
                     }
@@ -563,72 +443,30 @@ namespace Botcraft
                 face.SetDisplayBackface(false);
             }
 
-            const Coords position((int)floor(x_ / (double)chunk_size), (int)floor(y_ / (double)chunk_size), (int)floor(z_ / (double)chunk_size));
+            const Position position((int)floor(x_ / (double)CHUNK_WIDTH), (int)floor(y_ / (double)section_height), (int)floor(z_ / (double)CHUNK_WIDTH));
 
             if (transparency == Transparency::Partial)
             {
+                std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
                 auto chunk_it = transparent_chunks.find(position);
                 if (chunk_it == transparent_chunks.end())
                 {
-                    transparent_chunks_mutex.lock();
                     transparent_chunks[position] = std::shared_ptr<TransparentChunk>(new TransparentChunk);
-                    transparent_chunks_mutex.unlock();
                 }
                 transparent_chunks[position]->AddFace(face);
             }
             else
             {
+                std::lock_guard<std::mutex> lock(chunks_mutex);
                 auto chunk_it = chunks.find(position);
                 if (chunk_it == chunks.end())
                 {
-                    chunks_mutex.lock();
                     chunks[position] = std::shared_ptr<Chunk>(new Chunk);
-                    chunks_mutex.unlock();
                 }
                 chunks[position]->AddFace(face);
             }
         }
 
-
-        void CubeWorldRenderer::RemoveFace(const int x_, const int y_, const int z_,
-                                           const Face &face_, const std::string &texture_identifier_)
-        {
-            const std::pair<int, int> &atlas_pos = atlas->GetPosition(texture_identifier_);
-
-            Face face(face_);
-            
-            //Add 0.5 because the origin of the block is at the center
-            //but the coordinates start from the block corner
-            face.GetMatrix()[12] += x_ + 0.5f;
-            face.GetMatrix()[13] += y_ + 0.5f;
-            face.GetMatrix()[14] += z_ + 0.5f;
-
-            const Transparency transparency = atlas->GetTransparency(atlas_pos);
-
-            const Coords position((int)floor(x_ / (double)chunk_size), (int)floor(y_ / (double)chunk_size), (int)floor(z_ / (double)chunk_size));
-
-            if (transparency == Transparency::Partial)
-            {
-                auto it = transparent_chunks.find(position);
-                if (it != transparent_chunks.end())
-                {
-                    transparent_chunks_mutex.lock();
-                    it->second->RemoveFace(face);
-                    transparent_chunks_mutex.unlock();
-                }
-            }
-            else
-            {
-                auto it = chunks.find(position);
-                if (it != chunks.end())
-                {
-                    chunks_mutex.lock();
-                    it->second->RemoveFace(face);
-                    chunks_mutex.unlock();
-                }
-            }
-        }
-        
         const std::vector<unsigned int> CubeWorldRenderer::GetColorModifier(const int y, const std::shared_ptr<Biome> biome, const std::shared_ptr<Blockstate> blockstate, const std::vector<bool> &use_tintindex) const
         {
             std::vector<unsigned int> texture_modifier(use_tintindex.size(), 0xFFFFFFFF);
@@ -902,9 +740,9 @@ namespace Botcraft
             KeyboardCallback(isKeyPressed, deltaTime);
         }
 
-        float CubeWorldRenderer::DistanceToCamera(const Coords &chunk)
+        float CubeWorldRenderer::DistanceToCamera(const Position& chunk)
         {
-            return camera->GetDistance(chunk_size * (chunk.x + 0.5f), chunk_size * (chunk.y + 0.5f), chunk_size * (chunk.z + 0.5f));
+            return camera->GetDistance(CHUNK_WIDTH * (chunk.x + 0.5f), section_height * (chunk.y + 0.5f), CHUNK_WIDTH * (chunk.z + 0.5f));
         }
 
         void CubeWorldRenderer::RenderFaces()
@@ -912,7 +750,7 @@ namespace Botcraft
             const std::array<glm::vec4, 6> &frustum_planes = camera->GetFrustumPlanes();
 
             // Get a list of all loaded chunks
-            std::unordered_set<Coords> all_loaded_chunks;
+            std::unordered_set<Position> all_loaded_chunks;
             all_loaded_chunks.reserve(chunks.size() + transparent_chunks.size());
             int num_faces = 0;
 
@@ -933,19 +771,19 @@ namespace Botcraft
             const int num_chunks = all_loaded_chunks.size();
 
             // Apply frustum culling to render only the visible ones
-            std::vector<Coords> chunks_to_render;
+            std::vector<Position> chunks_to_render;
             chunks_to_render.reserve(all_loaded_chunks.size());
             // Frustum culling algorithm from http://old.cescg.org/CESCG-2002/DSykoraJJelinek/
             for (auto it = all_loaded_chunks.begin(); it != all_loaded_chunks.end(); ++it)
             {
                 FrustumResult result = FrustumResult::Inside;
 
-                const float min_x = (int)chunk_size * (*it).x;
-                const float max_x = (int)chunk_size * ((*it).x + 1);
-                const float min_y = (int)chunk_size * (*it).y;
-                const float max_y = (int)chunk_size * ((*it).y + 1);
-                const float min_z = (int)chunk_size * (*it).z;
-                const float max_z = (int)chunk_size * ((*it).z + 1);
+                const float min_x = CHUNK_WIDTH * (*it).x;
+                const float max_x = CHUNK_WIDTH * ((*it).x + 1);
+                const float min_y = (int)section_height * (*it).y;
+                const float max_y = (int)section_height * ((*it).y + 1);
+                const float min_z = CHUNK_WIDTH * (*it).z;
+                const float max_z = CHUNK_WIDTH * ((*it).z + 1);
 
                 for (int i = 0; i < 6; ++i)
                 {
@@ -977,7 +815,7 @@ namespace Botcraft
 
             // Sort the chunks from far to near the camera
             m_mutex_camera.lock();
-            std::sort(chunks_to_render.begin(), chunks_to_render.end(), [this](const Coords &p1, const Coords &p2){return this->DistanceToCamera(p1) > this->DistanceToCamera(p2); });
+            std::sort(chunks_to_render.begin(), chunks_to_render.end(), [this](const Position &p1, const Position&p2){return this->DistanceToCamera(p1) > this->DistanceToCamera(p2); });
             m_mutex_camera.unlock();
 
             // Render all non partially transparent faces

@@ -9,6 +9,7 @@ namespace Botcraft
     {
     public:
         NBT();
+        NBT(const NBT& nbt);
         ~NBT();
 
         const TagCompound& GetRoot() const;

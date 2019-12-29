@@ -21,6 +21,9 @@ namespace Botcraft
         }
 
         terrain[{x, z}] = std::shared_ptr<Chunk>(new Chunk(dim));
+        
+        //Not necessary, from void to air, there is no difference
+        //UpdateChunk(x, z);
 
         return true;
     }
@@ -37,9 +40,59 @@ namespace Botcraft
                 cached = nullptr;
             }
 
+            UpdateChunk(x, z);
             return true;
         }
 
+        return false;
+    }
+
+#if USE_GUI
+    const bool World::HasChunkBeenModified(const int x, const int z)
+    {
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
+        if (chunk == nullptr)
+        {
+            return true;
+        }
+
+        return chunk->GetModifiedSinceLastRender();
+    }
+
+    void World::ResetChunkModificationState(const int x, const int z)
+    {
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
+        if (chunk == nullptr)
+        {
+            return;
+        }
+
+        chunk->SetModifiedSinceLastRender(false);
+    }
+
+#endif
+
+    bool World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous)
+    {
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
+        if (chunk)
+        {
+            chunk->LoadChunkData(data, primary_bit_mask, ground_up_continuous);
+            UpdateChunk(x, z);
+            return true;
+        }
+        return false;
+    }
+
+    bool World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<unsigned char>& data, const int number_block_entities)
+    {
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
+        if (chunk)
+        {
+            chunk->LoadChunkBlockEntitiesData(data, number_block_entities);
+            UpdateChunk(x, z);
+            return true;
+        }
         return false;
     }
 
@@ -68,11 +121,41 @@ namespace Botcraft
             }
         }
 
+        const int in_chunk_x = (pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
+        const int in_chunk_z = (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
 #if PROTOCOL_VERSION < 347
-        cached->SetBlock(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH), id, metadata, model_id);
+        cached->SetBlock(Position(in_chunk_x, pos.y, in_chunk_z), id, metadata, model_id);
 #else
-        cached->SetBlock(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH), id, model_id);
+        cached->SetBlock(Position(in_chunk_x, pos.y, in_chunk_z), id, model_id);
 #endif
+
+        if (in_chunk_x > 0 && in_chunk_x < CHUNK_WIDTH - 1 &&
+            in_chunk_z > 0 && in_chunk_z < CHUNK_WIDTH - 1)
+        {
+            return true;
+        }
+
+        Position update_pos;
+        if (in_chunk_x == 0)
+        {
+            update_pos.x = -1;
+        }
+        else if (in_chunk_x == CHUNK_WIDTH - 1)
+        {
+            update_pos.x = 1;
+        }
+
+        if (in_chunk_z == 0)
+        {
+            update_pos.z = -1;
+        }
+        else if (in_chunk_z == CHUNK_WIDTH - 1)
+        {
+            update_pos.z = 1;
+        }
+
+        UpdateChunk(chunk_x, chunk_z, update_pos);
+
         return true;
     }
 
@@ -173,6 +256,197 @@ namespace Botcraft
         }
 
         return false;
+    }
+
+#if PROTOCOL_VERSION > 404
+    void World::UpdateChunkLight(const int x, const int z, const int light_mask, const int empty_light_mask,
+        const std::vector<std::vector<char>>& data, const bool sky)
+    {
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
+
+        if (chunk == nullptr)
+        {
+            std::cerr << "Error trying to update light of an unloaded chunk. Ignoring" << std::endl;
+            return;
+        }
+
+        int counter_arrays = 0;
+        Position pos1, pos2;
+
+        for (int i = 0; i < 18; ++i)
+        {
+            const int section_Y = i - 1;
+
+            // Sky light
+            if ((light_mask >> i) & 1)
+            {
+                if (i > 0 && i < 17)
+                {
+                    for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
+                    {
+                        pos1.y = block_y + section_Y * SECTION_HEIGHT;
+                        pos2.y = pos1.y;
+                        for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
+                        {
+                            pos1.z = block_z;
+                            pos2.z = block_z;
+                            for (int block_x = 0; block_x < CHUNK_WIDTH; block_x += 2)
+                            {
+                                pos1.x = block_x;
+                                pos2.x = block_x + 1;
+                                const char two_light_values = data[counter_arrays][(block_y * CHUNK_WIDTH * CHUNK_WIDTH + block_z * CHUNK_WIDTH + block_x) / 2];
+
+                                if (sky)
+                                {
+                                    chunk->SetSkyLight(pos1, two_light_values & 0x0F);
+                                    chunk->SetSkyLight(pos2, (two_light_values >> 4) & 0x0F);
+                                }
+                                else
+                                {
+                                    chunk->SetBlockLight(pos1, two_light_values & 0x0F);
+                                    chunk->SetBlockLight(pos2, (two_light_values >> 4) & 0x0F);
+                                }
+                            }
+                        }
+                    }
+                }
+                counter_arrays++;
+            }
+            else if ((empty_light_mask >> i) & 1)
+            {
+                if (i > 0 && i < 17)
+                {
+                    for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
+                    {
+                        pos1.y = block_y + section_Y * SECTION_HEIGHT;
+                        pos2.y = pos1.y;
+                        for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
+                        {
+                            pos1.z = block_z;
+                            pos2.z = block_z;
+                            for (int block_x = 0; block_x < CHUNK_WIDTH; block_x += 2)
+                            {
+                                pos1.x = block_x;
+                                pos2.x = block_x + 1;
+                                if (sky)
+                                {
+                                    chunk->SetSkyLight(pos1, 0);
+                                    chunk->SetSkyLight(pos2, 0);
+                                }
+                                else
+                                {
+                                    chunk->SetBlockLight(pos1, 0);
+                                    chunk->SetBlockLight(pos2, 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+#endif
+
+    void World::UpdateChunk(const int x, const int z, const Position& pos)
+    {
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
+        if (pos == Position())
+        {
+            if (chunk)
+            {
+                chunk->UpdateNeighbour(GetChunk(x - 1, z), Orientation::West);
+                chunk->UpdateNeighbour(GetChunk(x + 1, z), Orientation::East);
+                chunk->UpdateNeighbour(GetChunk(x, z - 1), Orientation::North);
+                chunk->UpdateNeighbour(GetChunk(x, z + 1), Orientation::South);
+            }
+            else
+            {
+                std::shared_ptr<Chunk> neighbour_chunk;
+                neighbour_chunk = GetChunk(x - 1, z);
+                if (neighbour_chunk)
+                {
+                    neighbour_chunk->UpdateNeighbour(nullptr, Orientation::East);
+                }
+                neighbour_chunk = GetChunk(x + 1, z);
+                if (neighbour_chunk)
+                {
+                    neighbour_chunk->UpdateNeighbour(nullptr, Orientation::West);
+                }
+                neighbour_chunk = GetChunk(x, z - 1);
+                if (neighbour_chunk)
+                {
+                    neighbour_chunk->UpdateNeighbour(nullptr, Orientation::South);
+                }
+                neighbour_chunk = GetChunk(x, z + 1);
+                if (neighbour_chunk)
+                {
+                    neighbour_chunk->UpdateNeighbour(nullptr, Orientation::North);
+                }
+            }
+            return;
+        }
+        
+        if (pos.x == -1)
+        {
+            std::shared_ptr<Chunk> neighbour_chunk = GetChunk(x - 1, z);
+            if (chunk)
+            {
+                chunk->UpdateNeighbour(neighbour_chunk, Orientation::West);
+            }
+            else if (neighbour_chunk)
+            {
+                neighbour_chunk->UpdateNeighbour(nullptr, Orientation::East);
+            }
+        }
+        else if (pos.x == 1)
+        {
+            std::shared_ptr<Chunk> neighbour_chunk = GetChunk(x + 1, z);
+            if (chunk)
+            {
+                chunk->UpdateNeighbour(neighbour_chunk, Orientation::East);
+            }
+            else if (neighbour_chunk)
+            {
+                neighbour_chunk->UpdateNeighbour(nullptr, Orientation::West);
+            }
+        }
+
+        if (pos.z == -1)
+        {
+            std::shared_ptr<Chunk> neighbour_chunk = GetChunk(x, z - 1);
+            if (chunk)
+            {
+                chunk->UpdateNeighbour(neighbour_chunk, Orientation::North);
+            }
+            else if (neighbour_chunk)
+            {
+                neighbour_chunk->UpdateNeighbour(nullptr, Orientation::South);
+            }
+        }
+        else if (pos.z == 1)
+        {
+            std::shared_ptr<Chunk> neighbour_chunk = GetChunk(x, z + 1);
+            if (chunk)
+            {
+                chunk->UpdateNeighbour(neighbour_chunk, Orientation::South);
+            }
+            else if (neighbour_chunk)
+            {
+                neighbour_chunk->UpdateNeighbour(nullptr, Orientation::North);
+            }
+        }
+    }
+
+    const std::shared_ptr<const Chunk> World::GetChunkCopy(const int x, const int z)
+    {
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
+        if (chunk == nullptr)
+        {
+            return nullptr;
+        }
+
+        return std::shared_ptr<const Chunk>(new Chunk(*chunk));
     }
 
     const Block* World::GetBlock(const Position &pos)
@@ -317,7 +591,7 @@ namespace Botcraft
             }
             else
             {
-                return Dimension::Overworld;
+                return Dimension::None;
             }
         }
         return cached->GetDimension();
@@ -349,7 +623,7 @@ namespace Botcraft
 
         return cached;
     }
-
+    
     std::shared_ptr<Blockstate> World::Raycast(const Vector3<double> &origin, const Vector3<double> &direction,
         const float max_radius, Position &out_pos, Position &out_normal)
     {

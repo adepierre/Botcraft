@@ -38,25 +38,6 @@ namespace Botcraft
             Inside         // Box is inside the frustum
         };
 
-        // A basic structure to hold chunk coordinates
-        struct Coords
-        {
-            Coords(const int x_, const int y_, const int z_)
-            {
-                x = x_;
-                y = y_;
-                z = z_;
-            }
-            int x;
-            int y;
-            int z;
-
-            bool operator==(const Coords &p) const
-            {
-                return (x == p.x && y == p.y && z == p.z);
-            }
-        };
-
         // Key that can be used in KeyboardCallback when set
         enum class KEY_CODE
         {
@@ -76,9 +57,9 @@ namespace Botcraft
 namespace std
 {
     template<>
-    struct hash<Botcraft::Renderer::Coords>
+    struct hash<Botcraft::Position>
     {
-        inline size_t operator()(const Botcraft::Renderer::Coords &p) const
+        inline size_t operator()(const Botcraft::Position &p) const
         {
             std::hash<int> hasher;
             size_t value = hasher(p.x);
@@ -96,6 +77,7 @@ namespace Botcraft
     class World;
     class Blockstate;
     class Biome;
+    class Chunk;
 
     namespace Renderer
     {
@@ -108,7 +90,7 @@ namespace Botcraft
             // Set headless_ to true to run without opening a window (rendering is still done)
             CubeWorldRenderer(const unsigned int &window_width, const unsigned int &window_height,
                 const std::vector<std::pair<std::string, std::string> > &textures_path_names,
-                const unsigned int chunk_size_ = 16, const bool headless_ = false);
+                const unsigned int section_height_ = 16, const bool headless_ = false);
             ~CubeWorldRenderer();
 
             // Main rendering loop
@@ -117,11 +99,8 @@ namespace Botcraft
             // Set a flag to terminate the rendering loop after the current frame
             void Close();
 
-            void AddChunk(const int x_, const int z_, const Dimension d);
-            void RemoveChunk(const int x_, const int z_);
-            void UpdatePosition(const Position &pos, std::shared_ptr<Blockstate> new_blockstate, const unsigned char new_model_id = 0,
-                                const unsigned char new_block_light = 0, const unsigned char new_sky_light = 0, const int new_biome = 0);
-
+            void UpdateChunk(const int x_, const int z_, const std::shared_ptr<const Botcraft::Chunk> chunk);
+            
             void SetDayTime(const float day_time_);
 
             // Sync OpenGL data with rendering data
@@ -141,18 +120,13 @@ namespace Botcraft
             // Initialize all the stuff
             bool Init();
 
-            float DistanceToCamera(const Coords &chunk);
+            float DistanceToCamera(const Position &chunk);
 
             // Add a face to the rendering data
             // It will not be rendered until the next call to UpdateBuffer
             void AddFace(const int x_, const int y_, const int z_, const Face &face_, 
                          const std::vector<std::string> &texture_identifiers_,
                          const std::vector<unsigned int> &texture_multipliers_);
-
-            // Remove a face from the rendering data
-            // It will still be rendered until the next call to UpdateBuffer
-            void RemoveFace(const int x_, const int y_, const int z_, const Face &face_,
-                            const std::string &texture_identifier_);
 
             const std::vector<unsigned int> GetColorModifier(const int y, const std::shared_ptr<Biome> biome, const std::shared_ptr<Blockstate> blockstate, const std::vector<bool> &use_tintindex) const;
 
@@ -181,21 +155,20 @@ namespace Botcraft
             int current_window_height;
             bool has_proj_changed;
 
-            unsigned int chunk_size;
+            // Each chunk faces are stored in rendering sections,
+            // They don't need to be the same size as real
+            // sections
+            unsigned int section_height;
 
             // 0.5 is noon, 0 and 1 are midnight
             float day_time;
 
             unsigned int view_uniform_buffer;
             unsigned int atlas_texture;
-
-            // Rendering data
-            std::shared_ptr<World> rendered_world;
-            std::mutex world_mutex;
-
-            std::unordered_map<Coords, std::shared_ptr<Chunk> > chunks;
+            
+            std::unordered_map<Position, std::shared_ptr<Chunk> > chunks;
             std::mutex chunks_mutex;
-            std::unordered_map<Coords, std::shared_ptr<TransparentChunk> > transparent_chunks;
+            std::unordered_map<Position, std::shared_ptr<TransparentChunk> > transparent_chunks;
             std::mutex transparent_chunks_mutex;
 
             bool faces_should_be_updated;

@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "botcraft/Game/World/Block.hpp"
-#include "botcraft/NBT/NBT.hpp"
 #include "botcraft/Game/Enums.hpp"
 
 #include "botcraft/Version.hpp"
@@ -13,12 +12,13 @@
 namespace Botcraft
 {
     struct Section;
+    class NBT;
 
     //We assume that a chunk is 16*256*16
     //And a section is 16*16*16
-    static const unsigned int CHUNK_WIDTH = 16;
-    static const unsigned int SECTION_HEIGHT = 16;
-    static const unsigned int CHUNK_HEIGHT = 256;
+    static const int CHUNK_WIDTH = 16;
+    static const int SECTION_HEIGHT = 16;
+    static const int CHUNK_HEIGHT = 256;
 
 #if PROTOCOL_VERSION > 551
 	static const unsigned int BIOMES_SIZE = 1024;
@@ -28,6 +28,17 @@ namespace Botcraft
     {
     public:
         Chunk(const Dimension &dim = Dimension::Overworld);
+        Chunk(const Chunk& c);
+
+        static const Position BlockCoordsToChunkCoords(const Position& pos);
+
+#if USE_GUI
+        const bool GetModifiedSinceLastRender() const;
+        void SetModifiedSinceLastRender(const bool b);
+#endif
+
+        void LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous);
+        void LoadChunkBlockEntitiesData(const std::vector<unsigned char>& data, const int number_block_entities);
 
         const Block *GetBlock(const Position &pos) const;
 #if PROTOCOL_VERSION < 347
@@ -35,6 +46,8 @@ namespace Botcraft
 #else
         void SetBlock(const Position &pos, const unsigned int id, const int model_id = -1);
 #endif
+        void SetBlock(const Position& pos, const Block* block);
+
         const unsigned char GetBlockLight(const Position &pos) const;
         void SetBlockLight(const Position &pos, const unsigned char v);
         const unsigned char GetSkyLight(const Position &pos) const;
@@ -61,6 +74,7 @@ namespace Botcraft
 		void SetBiome(const int i, const int new_biome);
 #endif
         std::shared_ptr<NBT> GetBlockEntityData(const Position &pos);
+        void UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction);
         
     private:
         std::vector<std::shared_ptr<Section> > sections;
@@ -71,5 +85,9 @@ namespace Botcraft
 #endif
         std::map<Position, std::shared_ptr<NBT> > block_entities_data;
         Dimension dimension;
+
+#if USE_GUI
+        bool modified_since_last_rendered;
+#endif
     };
 } // Botcraft

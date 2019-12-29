@@ -1,5 +1,6 @@
 #include "botcraft/Game/InterfaceClient.hpp"
 #include "botcraft/Game/World/World.hpp"
+#include "botcraft/Game/World/Block.hpp"
 
 #include <queue>
 #include <unordered_map>
