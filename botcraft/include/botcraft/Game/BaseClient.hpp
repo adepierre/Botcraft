@@ -23,6 +23,7 @@ namespace Botcraft
     class World;
     class TCP_Com;
     class InventoryManager;
+    class Authentifier;
 
     class Handler : public GenericHandler<Message, AllMessages> {};
 
@@ -32,8 +33,8 @@ namespace Botcraft
         BaseClient(const std::vector<int> &printed_packets_ = std::vector<int>(0));
         ~BaseClient();
 
-        // Connect to a server
-        void Connect(const std::string &ip, const unsigned int port, const std::string &player_name);
+        // Connect to a server, if password is empty, the server must be in offline mode
+        void Connect(const std::string &ip, const unsigned int port, const std::string &login, const std::string &password);
         void Disconnect();
 
     protected:
@@ -87,6 +88,7 @@ namespace Botcraft
 
     protected:
         std::shared_ptr<TCP_Com> com;
+        std::shared_ptr<Authentifier> authentifier;
         std::shared_ptr<World> world;
         std::mutex world_mutex;
         std::shared_ptr<Player> player;

@@ -11,6 +11,8 @@
 
 #include "botcraft/Network/Compression.hpp"
 #include "botcraft/Network/TCP_Com.hpp"
+#include "botcraft/Network/Authentifier.hpp"
+#include "botcraft/Network/AESEncrypter.hpp"
 
 #include "botcraft/Protocol/MessageFactory.hpp"
 
@@ -33,6 +35,7 @@ namespace Botcraft
         world = nullptr;
         inventory_manager = nullptr;
         com = nullptr;
+        authentifier = nullptr;
 
 #if USE_GUI
         renderer = nullptr;
@@ -59,10 +62,9 @@ namespace Botcraft
         Disconnect();
     }
 
-    void BaseClient::Connect(const std::string &ip, const unsigned int port, const std::string &player_name)
+    void BaseClient::Connect(const std::string &ip, const unsigned int port, const std::string &login, const std::string &password)
     {
         state = State::Handshaking;
-        name = player_name;
 
         //Start the thread to process the incoming packets
         m_thread_process = std::thread(&BaseClient::WaitForNewPackets, this);
@@ -82,8 +84,24 @@ namespace Botcraft
 
         state = State::Login;
 
+        // Offline mode case
+        if (password == "")
+        {
+            name = login;
+        }
+        // Online mode case
+        else
+        {
+            authentifier = std::shared_ptr<Authentifier>(new Authentifier());
+            if (!authentifier->AuthToken(login, password))
+            {
+                throw std::runtime_error("Error trying to authenticate on Mojang server");
+            }
+            name = authentifier->GetPlayerDisplayName();
+        }
+
         std::shared_ptr<LoginStart> loginstart_msg(new LoginStart);
-        loginstart_msg->SetName(player_name);
+        loginstart_msg->SetName(name);
         Send(loginstart_msg);
     }
 
@@ -99,7 +117,7 @@ namespace Botcraft
             }
             else
             {
-#ifdef USE_ZLIB
+#ifdef USE_COMPRESSION
                 if (msg_data.size() < compression)
                 {
                     msg_data.insert(msg_data.begin(), 0x00);
@@ -147,7 +165,7 @@ namespace Botcraft
                     }
                     else
                     {
-#ifdef USE_ZLIB
+#ifdef USE_COMPRESSION
                         size_t length = packet.size();
                         int data_length = ReadVarInt(packet.begin(), length);
 
@@ -167,7 +185,7 @@ namespace Botcraft
                             ProcessPacket(uncompressed_msg);
                         }
 #else
-                        throw(std::runtime_error("Program compiled without ZLIB. Cannot read compressed message"));
+                        throw(std::runtime_error("Program compiled without USE_COMPRESSION. Cannot read compressed message"));
 #endif
                     }
                 }
@@ -854,7 +872,29 @@ namespace Botcraft
 
     void BaseClient::Handle(EncryptionRequest &msg)
     {
-        throw(std::runtime_error("Encryption is not supported yet. Please make sure the server runs with online-mode=false"));
+#ifdef USE_ENCRYPTION
+        std::shared_ptr<AESEncrypter> encrypter = std::shared_ptr<AESEncrypter>(new AESEncrypter());
+
+        std::vector<unsigned char> encrypted_token;
+        std::vector<unsigned char> encrypted_shared_secret;
+        std::vector<unsigned char> raw_shared_secret;
+
+        encrypter->Init(msg.GetPublicKey(), msg.GetVerifyToken(),
+            raw_shared_secret, encrypted_token, encrypted_shared_secret);
+
+        authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());
+
+        std::shared_ptr<EncryptionResponse> response_msg(new EncryptionResponse);
+        response_msg->SetSharedSecret(encrypted_shared_secret);
+        response_msg->SetVerifyToken(encrypted_token);
+
+        Send(response_msg);
+        
+        // Enable encryption for now on
+        com->SetEncrypter(encrypter);
+#else
+        throw(std::runtime_error("Your version of botcraft doesn't support encryption. Either run your server with online-mode=false or recompile botcraft"));
+#endif
     }
 
     void BaseClient::Handle(Respawn &msg)

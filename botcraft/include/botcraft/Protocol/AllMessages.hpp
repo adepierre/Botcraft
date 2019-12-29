@@ -10,6 +10,7 @@
 
 // Login serverbound
 #include "botcraft/Protocol/Messages/Login/Serverbound/LoginStart.hpp"
+#include "botcraft/Protocol/Messages/Login/Serverbound/EncryptionResponse.hpp"
 
 // Login clientbound
 #include "botcraft/Protocol/Messages/Login/Clientbound/DisconnectLogin.hpp"
@@ -71,6 +72,7 @@ namespace Botcraft
 
         // Login serverbound
         LoginStart,
+        EncryptionResponse,
 
         // Login clientbound
         DisconnectLogin,

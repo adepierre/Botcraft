@@ -1,6 +1,6 @@
 #include "botcraft/Network/Compression.hpp"
 
-#ifdef USE_ZLIB
+#ifdef USE_COMPRESSION
 #include <zlib.h>
 #include <string>
 #include <stdexcept>

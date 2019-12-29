@@ -13,3 +13,6 @@
 [submodule "3rdparty/asio"]
 	path = 3rdparty/asio
 	url = https://github.com/chriskohlhoff/asio.git
+[submodule "3rdparty/openssl"]
+	path = 3rdparty/openssl
+	url = https://github.com/janbar/openssl-cmake

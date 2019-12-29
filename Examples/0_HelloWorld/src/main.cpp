@@ -7,14 +7,15 @@ int main(int argc, char* argv[])
 {
     try
     {
-        unsigned short port = 25565;
-        std::string player_name = "BCHelloWorld";
+        std::string login = "BCHelloWorld";
+        std::string password = "";
         std::string ip = "127.0.0.1";
+        unsigned short port = 25565;
 
         if (argc == 1)
         {
             std::cout << "No command arguments. Using default options.\n";
-            std::cout << "Usage: 0_HelloWorld [ip](127.0.0.1) [port](25565) [name](BCHelloWorld)" << std::endl;
+            std::cout << "Usage: 0_HelloWorld [ip](127.0.0.1) [port](25565) [login](BCHelloWorld) [password]()" << std::endl;
         }
 
         if (argc > 1)
@@ -29,14 +30,19 @@ int main(int argc, char* argv[])
 
         if (argc > 3)
         {
-            player_name = argv[3];
+            login = argv[3];
+        }
+
+        if (argc > 4)
+        {
+            password = argv[4];
         }
 
         Botcraft::InterfaceClient client;
         client.SetAutoRespawn(true);
 
         std::cout << "Starting connection process" << std::endl;
-        client.Connect(ip, port, player_name);
+        client.Connect(ip, port, login, password);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         client.Say("Hello world!");

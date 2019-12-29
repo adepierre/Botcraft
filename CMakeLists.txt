@@ -7,9 +7,10 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(BOTCRAFT_USE_OPENGL_GUI "Activate if you want to use OpenGL renderer" OFF)
 if(BOTCRAFT_USE_OPENGL_GUI)
-	option(BOTCRAFT_USE_IMGUI "Activate if you want to use display information on screen with ImGui" OFF)
+    option(BOTCRAFT_USE_IMGUI "Activate if you want to use display information on screen with ImGui" OFF)
 endif()
-option(BOTCRAFT_USE_ZLIB "Use Zlib if compression is enabled on the server" OFF)
+option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" ON)
+option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
 
 # Version selection stuffs
 set(GAME_VERSION "1.12.2" CACHE STRING "Each version of the game uses a specific protocol. Make sure this matches the version of your server.")
@@ -21,9 +22,9 @@ set_property(CACHE GAME_VERSION PROPERTY STRINGS ${GameVersionValues})
 if(GAME_VERSION STREQUAL "Other")
     message(SEND_ERROR "You must specify an actual value for GAME_VERSION")
 else()
-	list(FIND GameVersionValues ${GAME_VERSION} game_version_index)
-	list(GET ProtocolVersionValues ${game_version_index} PROTOCOL_VERSION)
-	message(STATUS "Selected game version: " ${GAME_VERSION} " || Protocol: " ${PROTOCOL_VERSION})
+    list(FIND GameVersionValues ${GAME_VERSION} game_version_index)
+    list(GET ProtocolVersionValues ${game_version_index} PROTOCOL_VERSION)
+    message(STATUS "Selected game version: " ${GAME_VERSION} " || Protocol: " ${PROTOCOL_VERSION})
     
     # Check if the minecraft assets folder already exists
     # If not, download the client and extract the assets
@@ -53,33 +54,38 @@ include(${CMAKE_SOURCE_DIR}/cmake/asio.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/picoJson.cmake)
 
 # Add ZLIB
-if(BOTCRAFT_USE_ZLIB)
-	include(${CMAKE_SOURCE_DIR}/cmake/zlib.cmake)
-endif(BOTCRAFT_USE_ZLIB)
+if(BOTCRAFT_COMPRESSION)
+    include(${CMAKE_SOURCE_DIR}/cmake/zlib.cmake)
+endif(BOTCRAFT_COMPRESSION)
+
+# Add OpenSSL
+if(BOTCRAFT_ENCRYPTION)
+    include(${CMAKE_SOURCE_DIR}/cmake/openssl.cmake)
+endif(BOTCRAFT_ENCRYPTION)
 
 if(BOTCRAFT_USE_OPENGL_GUI)
-	# Add OpenGL
-	find_package(OpenGL REQUIRED)
-	
-	# Add glad
-	include(${CMAKE_SOURCE_DIR}/cmake/glad.cmake)
-	
-	#Add GLFW
-	include(${CMAKE_SOURCE_DIR}/cmake/glfw.cmake)
-	
-	# Add GLM
-	include(${CMAKE_SOURCE_DIR}/cmake/glm.cmake)
-	
-	# Add stb_image
-	include(${CMAKE_SOURCE_DIR}/cmake/stb_image.cmake)
-	
-	if(BOTCRAFT_USE_IMGUI)
-		# Add Dear Imgui
-		include(${CMAKE_SOURCE_DIR}/cmake/imgui.cmake)
-	endif()
+    # Add OpenGL
+    find_package(OpenGL REQUIRED)
+    
+    # Add glad
+    include(${CMAKE_SOURCE_DIR}/cmake/glad.cmake)
+    
+    #Add GLFW
+    include(${CMAKE_SOURCE_DIR}/cmake/glfw.cmake)
+    
+    # Add GLM
+    include(${CMAKE_SOURCE_DIR}/cmake/glm.cmake)
+    
+    # Add stb_image
+    include(${CMAKE_SOURCE_DIR}/cmake/stb_image.cmake)
+    
+    if(BOTCRAFT_USE_IMGUI)
+        # Add Dear Imgui
+        include(${CMAKE_SOURCE_DIR}/cmake/imgui.cmake)
+    endif()
 endif()
 
 add_subdirectory(botcraft)
 if(BOTCRAFT_BUILD_EXAMPLES)
-	add_subdirectory(Examples)
+    add_subdirectory(Examples)
 endif()

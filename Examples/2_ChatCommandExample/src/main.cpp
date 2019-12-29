@@ -7,14 +7,15 @@ int main(int argc, char* argv[])
 {
     try
     {
-        unsigned short port = 25565;
-        std::string player_name = "BCChatCommand";
+        std::string login = "BCChatCommand";
+        std::string password = "";
         std::string ip = "127.0.0.1";
+        unsigned short port = 25565;
         
         if (argc == 1)
         {
             std::cout << "No command arguments. Using default options.\n";
-            std::cout << "Usage: 2_ChatCommandExample [ip](127.0.0.1) [port](25565) [name](BCChatCommand)" << std::endl;
+            std::cout << "Usage: 2_ChatCommandExample [ip](127.0.0.1) [port](25565) [login](BCChatCommand) [password]()" << std::endl;
         }
 
         if (argc > 1)
@@ -29,14 +30,19 @@ int main(int argc, char* argv[])
 
         if (argc > 3)
         {
-            player_name = argv[3];
+            login = argv[3];
+        }
+
+        if (argc > 4)
+        {
+            password = argv[4];
         }
 
         ChatCommandClient client;
         client.SetAutoRespawn(true);
 
         std::cout << "Starting connection process" << std::endl;
-        client.Connect(ip, port, player_name);
+        client.Connect(ip, port, login, password);
 
         while (!client.GetShouldBeClosed())
         {

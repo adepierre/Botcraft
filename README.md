@@ -3,11 +3,11 @@
 
 Botcraft is a cross-platform C++ library to connect and interact with Minecraft servers with (optional) integrated OpenGL renderer.
 
-This was my first project using OpenGL, multi-threading, networking and "sort-of-complete cmake" so it's a "learn-by-doing" code and many things are probably (really) badly done. Do not hesitate to open an issue or to send a PR if you know how to improve some part of it!
+This was my first project using OpenGL, multi-threading, networking and "sort-of-complete cmake" so it's a "learn-by-doing" code and many things are probably (really) badly done or should be refactored. Do not hesitate to open an issue or to send a PR if you know how to improve some part of it!
 
 ## Features
 
-- Connection to minecraft server (offline mode only for now)
+- Connection to minecraft server (both offline mode and online connection with Mojang account)
 - Versions 1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15 and 1.15.1 supported
 - Compression
 - Physics and collisions
@@ -25,7 +25,8 @@ All the libraries are included either directly or as submodules and are built lo
 
 - [asio](https://think-async.com/Asio/)
 - [picoJson](https://github.com/kazuho/picojson)
-- [zlib](https://github.com/madler/zlib) (optional if you are sure compression is disabled on your server)
+- [zlib](https://github.com/madler/zlib) (optional, used only if compression is enabled on your server)
+- [openssl](https://www.openssl.org/) (optional, used only if your server is in online mode)
 
 Optional dependencies (needed only if you want to build the OpenGL renderer)
 - [stb_image](https://github.com/nothings/stb)
@@ -39,16 +40,16 @@ I only test the code on Windows with Visual 2013 and 2019 but it should also wor
 ## Building and Installation
 
 ```
-git clone --recursive https://github.com/adepierre/Botcraft.git
+git clone https://github.com/adepierre/Botcraft.git
 cd botcraft
-git submodule init
-git submodule update
 mkdir build
 cd build
 cmake ..
 make all
 make install
 ```
+
+You don't have to clone the dependencies manually, cmake will clone the ones you need depending on your build configuration.
 
 Don't forget to change the cmake install directory if you don't want the library to be installed in the default location.
 
@@ -58,7 +59,8 @@ There are several cmake options you can modify:
 - GAME_VERSION [1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
 - BOTCRAFT_INSTALL_ASSETS [ON/OFF] Copy all the needed assets to the installation folder along with the library and executable
-- BOTCRAFT_USE_ZLIB [ON/OFF] Must be ON to connect to a server with compression enabled
+- BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
+- BOTCRAFT_ENCRYPTION [ON/OFF] Add encryption ability, must be ON to connect to a server in online mode
 - BOTCRAFT_USE_OPENGL_GUI [ON/OFF] If ON, botcraft will be compiled with the OpenGL GUI enabled
 - BOTCRAFT_USE_IMGUI [ON/OFF] If ON, additional information will be displayed on the GUI (need BOTCRAFT_USE_OPENGL_GUI to be ON)
 
@@ -67,7 +69,7 @@ There are several cmake options you can modify:
 Three examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, send Hello World! in the chat then disconnect
 - [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI, mouse and keyboard controlled player. Can be used in a dummy world (without any server) to test things like physics or rendering
-- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey command sent through vanilla chat. Knows three commands at this point, pathfinding, disconnecting and checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof).
+- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Knows three commands at this point, pathfinding, disconnecting and checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof).
 
 ## To-do list
 

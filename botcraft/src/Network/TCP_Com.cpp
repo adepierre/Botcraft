@@ -4,6 +4,10 @@
 #include "botcraft/Network/TCP_Com.hpp"
 #include "botcraft/Network/BinaryReadWrite.hpp"
 
+#ifdef USE_ENCRYPTION
+#include "botcraft/Network/AESEncrypter.hpp"
+#endif
+
 namespace Botcraft
 {
     TCP_Com::TCP_Com(const std::string &ip, const unsigned int port,
@@ -31,14 +35,33 @@ namespace Botcraft
         }
     }
 
-    void TCP_Com::SendPacket(const std::vector<unsigned char> &msg)
+    void TCP_Com::SendPacket(const std::vector<unsigned char>& msg)
     {
         std::vector<unsigned char> sized_packet;
         WriteVarInt(msg.size(), sized_packet);
         sized_packet.insert(sized_packet.end(), msg.begin(), msg.end());
 
+#ifdef USE_ENCRYPTION
+        if (encrypter != nullptr)
+        {
+            std::vector<unsigned char> encrypted = encrypter->Encrypt(sized_packet);
+            io_service.post(std::bind(&TCP_Com::do_write, this, encrypted));
+        }
+        else
+        {
+            io_service.post(std::bind(&TCP_Com::do_write, this, sized_packet));
+        }
+#else
         io_service.post(std::bind(&TCP_Com::do_write, this, sized_packet));
+#endif
     }
+
+#ifdef USE_ENCRYPTION
+    void TCP_Com::SetEncrypter(const std::shared_ptr<AESEncrypter> encrypter_)
+    {
+        encrypter = encrypter_;
+    }
+#endif
 
     void TCP_Com::close()
     {
@@ -64,10 +87,30 @@ namespace Botcraft
     {
         if (!error)
         {
+#ifdef USE_ENCRYPTION
+            if (encrypter != nullptr)
+            {
+                std::vector<unsigned char> decrypted(bytes_transferred);
+                std::copy_n(read_msg.begin(), bytes_transferred, decrypted.data());
+                decrypted = encrypter->Decrypt(decrypted);
+                for (int i = 0; i < decrypted.size(); ++i)
+                {
+                    input_msg.push_back(decrypted[i]);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < bytes_transferred; ++i)
+                {
+                    input_msg.push_back(read_msg[i]);
+                }
+            }
+#else
             for (int i = 0; i < bytes_transferred; ++i)
             {
                 input_msg.push_back(read_msg[i]);
             }
+#endif
 
             while (input_msg.size() != 0)
             {

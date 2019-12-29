@@ -9,13 +9,14 @@ int main(int argc, char* argv[])
     {
         bool ONLINE = true;
         unsigned short port = 25565;
-        std::string player_name = "BCUserControl";
+        std::string login = "BCUserControl";
+        std::string password = "";
         std::string ip = "127.0.0.1";
 
         if (argc == 1)
         {
             std::cout << "No command arguments. Using default options.\n";
-            std::cout << "Usage: 1_UserControlledExample [online](1) [ip](127.0.0.1) [port](25565) [name](BCUserControl)" << std::endl;
+            std::cout << "Usage: 1_UserControlledExample [online](1) [ip](127.0.0.1) [port](25565) [login](BCUserControl) [password]()" << std::endl;
         }
 
         if (argc > 1)
@@ -35,7 +36,7 @@ int main(int argc, char* argv[])
 
         if (argc > 4)
         {
-            player_name = argv[4];
+            login = argv[4];
         }
 
         UserControlledClient client(ONLINE);
@@ -44,7 +45,7 @@ int main(int argc, char* argv[])
         {
             client.SetAutoRespawn(true);
             std::cout << "Starting connection process" << std::endl;
-            client.Connect(ip, port, player_name);
+            client.Connect(ip, port, login, password);
         }
 
         while (!client.GetShouldBeClosed())

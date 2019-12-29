@@ -6,6 +6,10 @@
 
 namespace Botcraft
 {
+#ifdef USE_ENCRYPTION
+    class AESEncrypter;
+#endif
+
     class TCP_Com
     {
     public:
@@ -16,6 +20,9 @@ namespace Botcraft
         void close();
 
         void SendPacket(const std::vector<unsigned char> &msg);
+#ifdef USE_ENCRYPTION
+        void SetEncrypter(const std::shared_ptr<AESEncrypter> encrypter_);
+#endif
 
     private:
 
@@ -43,5 +50,9 @@ namespace Botcraft
 
         std::function<void(const std::vector<unsigned char>&)> NewPacketCallback;
         std::mutex mutex_output;
+
+#ifdef USE_ENCRYPTION
+        std::shared_ptr<AESEncrypter> encrypter;
+#endif
     };
 } // Botcraft
