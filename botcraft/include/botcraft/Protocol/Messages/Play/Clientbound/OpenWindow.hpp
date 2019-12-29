@@ -20,7 +20,7 @@ namespace Botcraft
 #elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
             return 0x14;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
-            return 0x13;
+            return 0x2E;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
 			return 0x2F;
 #else
@@ -33,6 +33,7 @@ namespace Botcraft
             return "Open Window";
         }
 
+#if PROTOCOL_VERSION < 452
         const unsigned char GetWindowId() const
         {
             return window_id;
@@ -42,12 +43,24 @@ namespace Botcraft
         {
             return window_type;
         }
+#else
+		const int GetWindowId() const
+		{
+			return window_id;
+		}
+
+		const int GetWindowType() const
+		{
+			return window_type;
+		}
+#endif
 
         const Chat& GetWindowTitle() const
         {
             return window_title;
         }
 
+#if PROTOCOL_VERSION < 452
         const unsigned char GetNumberOfSlots() const
         {
             return number_of_slots;
@@ -57,10 +70,12 @@ namespace Botcraft
         {
             return entity_id;
         }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
+#if PROTOCOL_VERSION < 452
             window_id = ReadData<unsigned char>(iter, length);
             window_type = ReadString(iter, length);
             window_title.Read(iter, length);
@@ -69,6 +84,11 @@ namespace Botcraft
             {
                 entity_id = ReadData<int>(iter, length);
             }
+#else
+			window_id = ReadVarInt(iter, length);
+			window_type = ReadVarInt(iter, length);
+			window_title.Read(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -77,10 +97,15 @@ namespace Botcraft
         }
 
     private:
+#if PROTOCOL_VERSION < 452
         unsigned char window_id;
-        std::string window_type;
-        Chat window_title;
-        unsigned char number_of_slots;
-        int entity_id;
+		std::string window_type;
+		unsigned char number_of_slots;
+		int entity_id;
+#else
+		int window_id;
+		int window_type;
+#endif
+		Chat window_title;
     };
 } //Botcraft
