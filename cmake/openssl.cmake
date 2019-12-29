@@ -11,9 +11,7 @@ if (NOT OPENSSL_FOUND)
     
     file(GLOB RESULT ${CMAKE_SOURCE_DIR}/3rdparty/openssl/include)
     list(LENGTH RESULT RES_LEN)
-    message(STATUS ${RES_LEN})
     if(RES_LEN EQUAL 0)
-        message(STATUS "OpenSSL not found, cloning it...")
         execute_process(COMMAND git submodule update --init -- 3rdparty/openssl WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
     endif()
 	
