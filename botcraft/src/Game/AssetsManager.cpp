@@ -429,7 +429,7 @@ namespace Botcraft
                         {
                             if (render == "fluid")
                             {
-                                blockstates[id][metadata] = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model(15 - metadata, textures[blockstate_name])));
+                                blockstates[id][metadata] = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name])));
                             }
                             else
                             {
@@ -441,7 +441,7 @@ namespace Botcraft
                             // We want to be sure that blockstates[id][0] exists    
                             if (render == "fluid")
                             {
-                                std::shared_ptr<Blockstate> b = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model(15 - metadata, textures[blockstate_name])));
+                                std::shared_ptr<Blockstate> b = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name])));
                                 blockstates[id];
                                 blockstates[id][0] = b;
                                 blockstates[id][metadata] = b;
@@ -461,7 +461,7 @@ namespace Botcraft
                     //If no metadata, set to default block
                     if (render == "fluid")
                     {
-                        blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, false, true, true, -2.0f, TintType::None, "", Model(15, "")));
+                        blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, false, true, true, -2.0f, TintType::None, "", Model::GetModel(15, "")));
                     }
                     else
                     {
@@ -552,7 +552,7 @@ namespace Botcraft
 
                     if (render == "fluid")
                     {
-                        blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, Model(15 - fluid_level, textures[blockstate_name])));
+                        blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, Model::GetModel(15 - fluid_level, textures[blockstate_name])));
                     }
                     else
                     {

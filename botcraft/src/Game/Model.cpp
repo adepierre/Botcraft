@@ -7,9 +7,27 @@
 
 namespace Botcraft
 {
+    std::unordered_map<std::string, Model> Model::cached_models;
+
     Model::Model()
     {
         ambient_occlusion = false;
+    }
+
+    const Model& Model::GetModel(const std::string& filepath)
+    {
+        auto cached = cached_models.find(filepath);
+        if (cached != cached_models.end())
+        {
+            return cached->second;
+        }
+        cached_models[filepath] = Model(filepath);
+        return cached_models[filepath];
+    }
+
+    const Model Model::GetModel(const unsigned char height, const std::string& texture)
+    {
+        return Model(height, texture);
     }
 
     Model::Model(const std::string &filepath)
@@ -84,7 +102,7 @@ namespace Botcraft
         auto it = obj.find("parent");
         if (it != obj.end())
         {
-            Model parent_model(it->second.get<std::string>());
+            const Model& parent_model = GetModel(it->second.get<std::string>());
             colliders = parent_model.colliders;
 #if USE_GUI
             textures_variables = parent_model.textures_variables;

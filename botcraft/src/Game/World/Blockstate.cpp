@@ -198,8 +198,11 @@ namespace Botcraft
 
         auto it = json.find("model");
         std::string model_path = it->second.get<std::string>();
-
+#if PROTOCOL_VERSION < 347
+        return "block/" + model_path;
+#else
         return model_path;
+#endif
     }
 
     int WeightFromJson(const std::string &s)
@@ -275,6 +278,8 @@ namespace Botcraft
     }
 
     // Blockstate implementation starts here
+    std::map<std::string, picojson::value> Blockstate::cached_jsons;
+
 #if PROTOCOL_VERSION < 347
     Blockstate::Blockstate(const int id_, const unsigned char metadata_, 
                            const bool transparent_, const bool solid_, const bool fluid_,
@@ -293,7 +298,6 @@ namespace Botcraft
     {
         weights_sum = 0;
         random_generator = std::mt19937(std::chrono::system_clock::now().time_since_epoch().count());
-        std::map<std::string, Model> models_cache;
 
         if (path == "none")
         {
@@ -313,33 +317,44 @@ namespace Botcraft
 
         if (!error)
         {
-            file.open(full_filepath);
-            if (!file.is_open())
+            auto cached = cached_jsons.find(path);
+            if (cached != cached_jsons.end())
             {
-                std::cerr << "Error reading blockstate file at " << full_filepath << std::endl;
-                error = true;
+                json = cached->second;
             }
-            if (!error)
+            else
             {
-                ss << file.rdbuf();
-                file.close();
-
-                ss >> json;
-                std::string err = picojson::get_last_error();
-
-                if (!err.empty())
+                file.open(full_filepath);
+                if (!file.is_open())
                 {
-                    std::cerr << "Error parsing blockstate file at " << full_filepath << "\n";
-                    std::cerr << err << std::endl;
+                    std::cerr << "Error reading blockstate file at " << full_filepath << std::endl;
                     error = true;
                 }
                 if (!error)
                 {
+                    ss << file.rdbuf();
+                    file.close();
 
-                    if (!json.is<picojson::object>())
+                    ss >> json;
+                    std::string err = picojson::get_last_error();
+
+                    if (!err.empty())
                     {
-                        std::cerr << "Error parsing blockstate file at " << full_filepath << std::endl;
+                        std::cerr << "Error parsing blockstate file at " << full_filepath << "\n";
+                        std::cerr << err << std::endl;
                         error = true;
+                    }
+                    if (!error)
+                    {
+                        if (!json.is<picojson::object>())
+                        {
+                            std::cerr << "Error parsing blockstate file at " << full_filepath << std::endl;
+                            error = true;
+                        }
+                        else
+                        {
+                            cached_jsons[path] = json;
+                        }
                     }
                 }
             }
@@ -347,13 +362,16 @@ namespace Botcraft
 
         if (error)
         {
-            models.push_back(Model(""));
+            models.push_back(Model::GetModel(""));
             models_weights.push_back(1);
             weights_sum += 1;
             return;
         }
 
         const picojson::object& base_object = json.get<picojson::object>();
+
+        // We store the models in a deque for efficiency
+        std::deque<Model> models_deque;
 
         //If it's a "normal" blockstate
         auto it = base_object.find("variants");
@@ -413,17 +431,8 @@ namespace Botcraft
                     {
                         const std::string serialized = models_array[i].serialize();
                         const std::string model_name = ModelNameFromJson(serialized);
-                        auto cache_it = models_cache.find(model_name);
-                        if (cache_it == models_cache.end())
-                        {
-#if PROTOCOL_VERSION < 347
-                            models_cache[model_name] = Model("block/" + model_name);
-#else
-                            models_cache[model_name] = Model(model_name);
-#endif
-                        }
                         const int weight = WeightFromJson(serialized);
-                        models.push_back(ModelModificationFromJson(models_cache[model_name], serialized));
+                        models_deque.push_back(ModelModificationFromJson(Model::GetModel(model_name), serialized));
                         models_weights.push_back(weight);
                         weights_sum += weight;
                     }
@@ -432,17 +441,8 @@ namespace Botcraft
                 {
                     const std::string serialized = variant_value.serialize();
                     const std::string model_name = ModelNameFromJson(serialized);
-                    auto cache_it = models_cache.find(model_name);
-                    if (cache_it == models_cache.end())
-                    {
-#if PROTOCOL_VERSION < 347
-                        models_cache[model_name] = Model("block/" + model_name);
-#else
-                        models_cache[model_name] = Model(model_name);
-#endif
-                    }
                     const int weight = WeightFromJson(serialized);
-                    models.push_back(ModelModificationFromJson(models_cache[model_name], serialized));
+                    models_deque.push_back(ModelModificationFromJson(Model::GetModel(model_name), serialized));
                     models_weights.push_back(weight);
                     weights_sum += weight;
                 }
@@ -450,7 +450,7 @@ namespace Botcraft
             else
             {
                 std::cerr << "Error reading " << full_filepath << std::endl;
-                models.push_back(Model(""));
+                models_deque.push_back(Model::GetModel(""));
                 models_weights.push_back(1);
                 weights_sum += 1;
             }
@@ -461,7 +461,7 @@ namespace Botcraft
         if (it != base_object.end())
         {
             //Start with an empty model
-            models.push_back(Model());
+            models_deque.push_back(Model());
             models_weights.push_back(1);
             weights_sum = 0;
 
@@ -480,46 +480,28 @@ namespace Botcraft
                     //If there are several models
                     if (it3->second.is<picojson::array>())
                     {
-                        size_t num_models = models.size();
+                        size_t num_models = models_deque.size();
                         const picojson::array &models_array = it3->second.get<picojson::array>();
                         for (int j = 0; j < models_array.size(); ++j)
                         {
                             const std::string serialized = models_array[i].serialize();
                             const std::string model_name = ModelNameFromJson(serialized);
-                            auto cache_it = models_cache.find(model_name);
-                            if (cache_it == models_cache.end())
-                            {
-#if PROTOCOL_VERSION < 347
-                                models_cache[model_name] = Model("block/" + model_name);
-#else
-                                models_cache[model_name] = Model(model_name);
-#endif
-                            }
                             for (int k = 0; k < num_models; ++k)
                             {
-                                models.push_back(models[k] + ModelModificationFromJson(models_cache[model_name], serialized));
+                                models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name), serialized));
                                 models_weights.push_back(models_weights[k] * WeightFromJson(serialized));
                             }
                         }
-                        models.erase(models.begin(), models.begin() + num_models);
+                        models_deque.erase(models_deque.begin(), models_deque.begin() + num_models);
                         models_weights.erase(models_weights.begin(), models_weights.begin() + num_models);
                     }
                     else
                     {
                         const std::string serialized = it3->second.serialize();
                         const std::string model_name = ModelNameFromJson(serialized);
-                        auto cache_it = models_cache.find(model_name);
-                        if (cache_it == models_cache.end())
+                        for (int k = 0; k < models_deque.size(); ++k)
                         {
-#if PROTOCOL_VERSION < 347
-                            models_cache[model_name] = Model("block/" + model_name);
-#else
-                            models_cache[model_name] = Model(model_name);
-#endif
-                        }
-                        for (int k = 0; k < models.size(); ++k)
-                        {
-                            models[k] += ModelModificationFromJson(models_cache[model_name], serialized);
+                            models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name), serialized);
                             models_weights[k] *= WeightFromJson(serialized);
                         }
                     }
@@ -614,46 +596,29 @@ namespace Botcraft
                         //If there are several models
                         if (it3->second.is<picojson::array>())
                         {
-                            size_t num_models = models.size();
+                            size_t num_models = models_deque.size();
                             const picojson::array &models_array = it3->second.get<picojson::array>();
                             for (int j = 0; j < models_array.size(); ++j)
                             {
                                 const std::string serialized = models_array[j].serialize();
                                 const std::string model_name = ModelNameFromJson(serialized);
-                                auto cache_it = models_cache.find(model_name);
-                                if (cache_it == models_cache.end())
-                                {
-#if PROTOCOL_VERSION < 347
-                                    models_cache[model_name] = Model("block/" + model_name);
-#else
-                                    models_cache[model_name] = Model(model_name);
-#endif
-                                }
                                 for (int k = 0; k < num_models; ++k)
                                 {
-                                    models.push_back(models[k] + ModelModificationFromJson(models_cache[model_name], serialized));
+                                    Model new_model = models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name), serialized);
+                                    models_deque.push_back(new_model);
                                     models_weights.push_back(models_weights[k] * WeightFromJson(serialized));
                                 }
                             }
-                            models.erase(models.begin(), models.begin() + num_models);
+                            models_deque.erase(models_deque.begin(), models_deque.begin() + num_models);
                             models_weights.erase(models_weights.begin(), models_weights.begin() + num_models);
                         }
                         else
                         {
                             const std::string serialized = it3->second.serialize();
                             const std::string model_name = ModelNameFromJson(serialized);
-                            auto cache_it = models_cache.find(model_name);
-                            if (cache_it == models_cache.end())
+                            for (int k = 0; k < models_deque.size(); ++k)
                             {
-#if PROTOCOL_VERSION < 347
-                                models_cache[model_name] = Model("block/" + model_name);
-#else
-                                models_cache[model_name] = Model(model_name);
-#endif
-                            }
-                            for (int k = 0; k < models.size(); ++k)
-                            {
-                                models[k] += ModelModificationFromJson(models_cache[model_name], serialized);
+                                models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name), serialized);
                                 models_weights[k] *= WeightFromJson(serialized);
                             }
                         }
@@ -666,6 +631,7 @@ namespace Botcraft
                 weights_sum += models_weights[i];
             }
         }
+        models = std::vector<Model>(std::make_move_iterator(models_deque.begin()), std::make_move_iterator(models_deque.end()));
     }
     
 #if PROTOCOL_VERSION < 347

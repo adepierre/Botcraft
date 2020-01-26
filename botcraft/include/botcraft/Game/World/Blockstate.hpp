@@ -2,6 +2,9 @@
 
 #include <string>
 #include <random>
+#include <map>
+
+#include <picojson/picojson.h>
 
 #include "botcraft/Game/Model.hpp"
 #include "botcraft/Game/Enums.hpp"
@@ -57,6 +60,8 @@ namespace Botcraft
 #endif
 
     private:
+        static std::map<std::string, picojson::value> cached_jsons;
+
         bool transparent;
         bool solid;
         bool fluid;

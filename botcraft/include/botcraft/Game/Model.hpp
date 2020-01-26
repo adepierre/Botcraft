@@ -3,6 +3,7 @@
 #include <string>
 #include <tuple>
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <deque>
 
@@ -34,13 +35,17 @@ namespace Botcraft
 
     class Model
     {
+
+    private:
+        // Constructor from a minecraft json file
+        Model(const std::string& filepath);
+        // Fluid constructor
+        Model(const unsigned char height, const std::string& texture);
     public:
         // Base constructor
         Model();
-        // Constructor from a minecraft json file
-        Model(const std::string &filepath);
-        // Fluid constructor
-        Model(const unsigned char height, const std::string &texture);
+        static const Model& GetModel(const std::string& filepath);
+        static const Model GetModel(const unsigned char height, const std::string& texture);
 
         Model &operator+=(const Model &m);
 
@@ -58,6 +63,8 @@ namespace Botcraft
         std::vector<FaceDescriptor> &GetFaces();
 #endif
     private:
+        static std::unordered_map<std::string, Model> cached_models;
+
         bool ambient_occlusion;
 
 #if USE_GUI
