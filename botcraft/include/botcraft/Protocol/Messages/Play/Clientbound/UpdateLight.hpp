@@ -7,7 +7,7 @@
 
 #include "botcraft/Version.hpp"
 
-#if PROTOCOL_VERSION > 404 
+#if PROTOCOL_VERSION > 404
 namespace Botcraft
 {
     class UpdateLight : public BaseMessage<UpdateLight>
@@ -17,7 +17,7 @@ namespace Botcraft
         {
 #if PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x24;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x25;
 #else
 #error "Protocol version not implemented"
@@ -103,6 +103,41 @@ namespace Botcraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             std::cerr << "Clientbound message" << std::endl;
+        }
+
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["chunk_x"] = picojson::value((double)chunk_x);
+            object["chunk_z"] = picojson::value((double)chunk_z);
+            object["sky_light_mask"] = picojson::value((double)sky_light_mask);
+            object["block_light_mask"] = picojson::value((double)block_light_mask);
+            object["empty_sky_light_mask"] = picojson::value((double)empty_sky_light_mask);
+            object["empty_block_light_mask"] = picojson::value((double)empty_block_light_mask);
+
+            object["sky_light_arrays"] = picojson::value(picojson::array_type, false);
+
+            picojson::array& array1 = object["sky_light_arrays"].get<picojson::array>();
+            array1.reserve(sky_light_arrays.size());
+
+            for (int i = 0; i < sky_light_arrays.size(); ++i)
+            {
+                array1.push_back(picojson::value("Vector of " + std::to_string(sky_light_arrays[i].size()) + " char"));
+            }
+
+            object["block_light_arrays"] = picojson::value(picojson::array_type, false);
+
+            picojson::array& array2 = object["block_light_arrays"].get<picojson::array>();
+            array2.reserve(block_light_arrays.size());
+
+            for (int i = 0; i < block_light_arrays.size(); ++i)
+            {
+                array2.push_back(picojson::value("Vector of " + std::to_string(block_light_arrays[i].size()) + " char"));
+            }
+
+            return value;
         }
 
     private:

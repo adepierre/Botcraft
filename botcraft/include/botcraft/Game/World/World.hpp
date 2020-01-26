@@ -7,7 +7,6 @@
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Version.hpp"
-#include "botcraft/Game/OtherPlayer.hpp"
 
 namespace Botcraft
 {
@@ -49,7 +48,7 @@ namespace Botcraft
         //Get the block at a given position
         const Block* GetBlock(const Position& pos);
 
-        bool SetBlockEntityData(const Position &pos, const std::shared_ptr<NBT> data);
+        bool SetBlockEntityData(const Position &pos, const NBT& data);
         // Get the block entity data at a given position
         std::shared_ptr<NBT> GetBlockEntityData(const Position& pos);
 
@@ -70,7 +69,7 @@ namespace Botcraft
         bool SetSkyLight(const Position &pos, const unsigned char skylight);
         bool SetBlockLight(const Position &pos, const unsigned char blocklight);
 #if PROTOCOL_VERSION > 404
-        void UpdateChunkLight(const int x, const int z, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
+        void UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
 #endif
         const unsigned char GetSkyLight(const Position& pos);
         const unsigned char GetBlockLight(const Position& pos);
@@ -93,11 +92,6 @@ namespace Botcraft
         // Get the list of chunks
         const std::map<std::pair<int, int>, std::shared_ptr<Chunk> >& GetAllChunks() const;
 
-        void AddPlayer(const OtherPlayer &p);
-        std::map<std::string, OtherPlayer>::iterator GetPlayer(const std::string &uuid);
-        const std::map<std::string, OtherPlayer>& GetAllPlayers() const;
-        void RemovePlayer(const std::string &uuid);
-
     private:
         std::shared_ptr<Chunk> GetChunk(const int x, const int z);
 
@@ -107,7 +101,5 @@ namespace Botcraft
         std::shared_ptr<Chunk> cached;
 
         std::map<std::pair<int, int>, std::shared_ptr<Chunk> > terrain;
-
-        std::map<std::string, OtherPlayer> all_players;
     };
 } // Botcraft

@@ -34,6 +34,5 @@ namespace Botcraft
         static const std::string TagTypeToString(const TagType type);
 
         virtual const TagType GetType() const = 0;
-        virtual const std::string Print(const std::string &prefix) const = 0;
     };
 }

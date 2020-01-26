@@ -4,16 +4,17 @@
 
 #include "botcraft/Game/Enums.hpp"
 
+#include "botcraft/Protocol/NetworkType.hpp"
 #include "botcraft/Protocol/Types/Chat.hpp"
 #include "botcraft/Protocol/Types/PlayerProperty.hpp"
 
 
 namespace Botcraft 
 {
-    class OtherPlayer
+    class PlayerInformation : public NetworkType
     {
     public:
-        OtherPlayer();
+        PlayerInformation();
 
         const std::string& GetUUID() const;
         const std::string& GetName() const;
@@ -31,6 +32,32 @@ namespace Botcraft
         void SetHasDisplayName(const bool b);
         void SetDisplayName(const Chat &c);
         void SetProperties(const std::vector<PlayerProperty> &p);
+
+    protected:
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+        {
+            name = ReadString(iter, length);
+            const int number_of_properties = ReadVarInt(iter, length);
+            properties = std::vector<PlayerProperty>(number_of_properties);
+            for (int i = 0; i < number_of_properties; ++i)
+            {
+                properties[i].Read(iter, length);
+            }
+            gamemode = (GameMode)ReadVarInt(iter, length);
+            ping = ReadVarInt(iter, length);
+            has_display_name = ReadData<bool>(iter, length);
+            if (has_display_name)
+            {
+                display_name.Read(iter, length);
+            }
+        }
+
+        virtual void WriteImpl(WriteContainer& container) const override
+        {
+            std::cerr << "Clientbound type" << std::endl;
+        }
+
+        virtual const picojson::value SerializeImpl() const override;
 
     private:
         std::string uuid;

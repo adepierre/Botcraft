@@ -72,6 +72,19 @@ namespace Botcraft
             }
         }
 
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value val(picojson::object_type, false);
+            picojson::object& object = val.get<picojson::object>();
+
+            object["name"] = picojson::value(name);
+            object["value"] = picojson::value(value);
+            object["is_signed"] = picojson::value(is_signed);
+            object["signature"] = picojson::value(signature);
+
+            return val;
+        }
+
     private:
         std::string name;
         std::string value;

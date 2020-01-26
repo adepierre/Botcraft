@@ -53,6 +53,19 @@ namespace Botcraft
             WriteVarInt(next_state, container);
         }
 
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["protocol_version"] = picojson::value((double)protocol_version);
+            object["server_address"] = picojson::value(server_address);
+            object["server_port"] = picojson::value((double)server_port);
+            object["next_state"] = picojson::value((double)next_state);
+
+            return value;
+        }
+
     private:
         int protocol_version;
         std::string server_address;

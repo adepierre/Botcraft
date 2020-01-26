@@ -37,8 +37,8 @@ namespace Botcraft
         WriteData<long long int>(value, container);
     }
 
-    const std::string TagLong::Print(const std::string &prefix) const
+    const picojson::value TagLong::SerializeImpl() const
     {
-        return std::to_string(value);
+        return picojson::value((double)value);
     }
 }

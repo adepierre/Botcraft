@@ -39,8 +39,8 @@ namespace Botcraft
         WriteData<char>(value, container);
     }
 
-    const std::string TagByte::Print(const std::string &prefix) const
+    const picojson::value TagByte::SerializeImpl() const
     {
-        return std::to_string(value);
+        return picojson::value((double)value);
     }
 }

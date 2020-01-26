@@ -22,7 +22,7 @@ namespace Botcraft
 
         virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
         virtual void WriteImpl(WriteContainer &container) const override;
-        virtual const std::string Print(const std::string &prefix) const override;
+        virtual const picojson::value SerializeImpl() const override;
 
     private:
         std::vector<std::shared_ptr<Tag> > tags;

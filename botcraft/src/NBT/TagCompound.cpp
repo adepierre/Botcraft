@@ -76,20 +76,25 @@ namespace Botcraft
         WriteData<char>((char)TagType::End, container);
     }
     
-    const std::string TagCompound::Print(const std::string &prefix) const
+    const picojson::value TagCompound::SerializeImpl() const
     {
-        std::string output = std::to_string(tags.size()) + " entr" + (tags.size() > 1 ? "ies" : "y") + "\n"
-            + prefix + "{\n";
+        picojson::value value(picojson::array_type, false);
+        picojson::array& array = value.get<picojson::array>();
 
         for (auto it = tags.begin(); it != tags.end(); ++it)
         {
             if (it->second->GetType() != TagType::End)
             {
-                output += prefix + "    " + Tag::TagTypeToString(it->second->GetType()) + "('" + it->first + "'): " + it->second->Print(prefix + "    ") + "\n";
+                picojson::value current_item(picojson::object_type, false);
+                picojson::object& object = current_item.get<picojson::object>();
+
+                object["type"] = picojson::value(Tag::TagTypeToString(it->second->GetType()));
+                object["name"] = picojson::value(it->first);
+                object["content"] = it->second->Serialize();
+                array.push_back(current_item);
             }
         }
-        output += prefix + "}";
 
-        return  output;
+        return value;
     }
 }

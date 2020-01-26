@@ -80,4 +80,13 @@ namespace Botcraft
         ShootArrow_FinishEating,
         SwapItemHand
     };
+
+    enum class PlayerInfoAction
+    {
+        AddPlayer = 0,
+        UpdateGamemode = 1,
+        UpdateLatency = 2,
+        UpdateDisplayName = 3,
+        RemovePlayer = 4
+    };
 } // Botcraft

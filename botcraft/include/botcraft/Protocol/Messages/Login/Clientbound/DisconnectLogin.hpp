@@ -36,6 +36,16 @@ namespace Botcraft
             std::cerr << "Clientbound message" << std::endl;
         }
 
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["reason"] = reason.Serialize();
+
+            return value;
+        }
+
     private:
         Chat reason;
     };

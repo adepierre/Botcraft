@@ -45,6 +45,8 @@ namespace Botcraft
 
         const std::string ParseChat(const std::string &json);
 
+        virtual const picojson::value SerializeImpl() const override;
+
     private:
         std::string text;
         std::string from;

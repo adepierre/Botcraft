@@ -7,7 +7,7 @@
 #include "botcraft/Protocol/BaseMessage.hpp"
 #include "botcraft/Protocol/Types/Chat.hpp"
 #include "botcraft/Game/Enums.hpp"
-#include "botcraft/Game/OtherPlayer.hpp"
+#include "botcraft/Game/PlayerInformation.hpp"
 
 #include "botcraft/Version.hpp"
 
@@ -25,7 +25,7 @@ namespace Botcraft
             return 0x30;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x33;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x34;
 #else
             #error "Protocol version not implemented"
@@ -42,7 +42,7 @@ namespace Botcraft
             return action;
         }
 
-        const std::map<std::string, OtherPlayer>& GetPlayers() const
+        const std::map<std::string, PlayerInformation>& GetPlayers() const
         {
             return players;
         }
@@ -80,43 +80,27 @@ namespace Botcraft
             for (int i = 0; i < number_of_players; ++i)
             {
                 std::string uuid = ReadRawString(iter, length, 16);
-                switch (action)
+                switch ((PlayerInfoAction)action)
                 {
-                case 0:
+                case PlayerInfoAction::AddPlayer:
                 {
-                    players[uuid].SetName(ReadString(iter, length));
-                    const int number_of_properties = ReadVarInt(iter, length);
-                    players[uuid].SetProperties(std::vector<PlayerProperty>(number_of_properties));
-                    for (int j = 0; j < number_of_properties; ++j)
-                    {
-                        players[uuid].GetProperties()[j].Read(iter, length);
-                    }
-
-                    players[uuid].SetGamemode((GameMode)ReadVarInt(iter, length));
-                    players[uuid].SetPing(ReadVarInt(iter, length));
-                    players[uuid].SetHasDisplayName(ReadData<bool>(iter, length));
-                    if (players[uuid].GetHasDisplayName())
-                    {
-                        Chat c;
-                        c.Read(iter, length);
-                        players[uuid].SetDisplayName(c);
-                    }
+                    players[uuid].Read(iter, length);
                 }
                     break;
-                case 1:
+                case PlayerInfoAction::UpdateGamemode:
                     gamemode[uuid] = (GameMode)ReadVarInt(iter, length);
                     break;
-                case 2:
+                case PlayerInfoAction::UpdateLatency:
                     ping[uuid] = ReadVarInt(iter, length);
                     break;
-                case 3:
+                case PlayerInfoAction::UpdateDisplayName:
                     has_display_name[uuid] = ReadData<bool>(iter, length);
                     if (has_display_name[uuid])
                     {
                         display_name[uuid].Read(iter, length);
                     }
                     break;
-                case 4:
+                case PlayerInfoAction::RemovePlayer:
                     removed.push_back(uuid);
                     break;
                 default:
@@ -130,9 +114,62 @@ namespace Botcraft
             std::cerr << "Clientbound message" << std::endl;
         }
 
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["action"] = picojson::value((double)action);
+            object["players"] = picojson::value(picojson::array_type, false);
+            picojson::array& array = object["players"].get<picojson::array>();
+
+            switch ((PlayerInfoAction)action)
+            {
+            case PlayerInfoAction::AddPlayer:
+                array.reserve(players.size());
+                for (auto it = players.begin(); it != players.end(); ++it)
+                {
+                    array.push_back(it->second.Serialize());
+                }
+                break;
+            case PlayerInfoAction::UpdateGamemode:
+                array.reserve(gamemode.size());
+                for (auto it = gamemode.begin(); it != gamemode.end(); ++it)
+                {
+                    array.push_back(picojson::value((double)it->second));
+                }
+                break;
+            case PlayerInfoAction::UpdateLatency:
+                array.reserve(ping.size());
+                for (auto it = ping.begin(); it != ping.end(); ++it)
+                {
+                    array.push_back(picojson::value((double)it->second));
+                }
+                break;
+            case PlayerInfoAction::UpdateDisplayName:
+                array.reserve(display_name.size());
+                for (auto it = display_name.begin(); it != display_name.end(); ++it)
+                {
+                    array.push_back(it->second.Serialize());
+                }
+                break;
+            case PlayerInfoAction::RemovePlayer:
+                array.reserve(display_name.size());
+                for (auto it = removed.begin(); it != removed.end(); ++it)
+                {
+                    array.push_back(picojson::value(*it));
+                }
+                break;
+            default:
+                break;
+            }
+
+            return value;
+        }
+
     private:
         int action;
-        std::map<std::string, OtherPlayer> players;
+        std::map<std::string, PlayerInformation> players;
         std::map<std::string, GameMode> gamemode;
         std::map<std::string, int> ping;
         std::map<std::string, bool> has_display_name;

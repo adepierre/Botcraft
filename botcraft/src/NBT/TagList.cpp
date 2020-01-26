@@ -69,17 +69,21 @@ namespace Botcraft
         }
     }
 
-    const std::string TagList::Print(const std::string &prefix) const
+    const picojson::value TagList::SerializeImpl() const
     {
-        std::string output = std::to_string(tags.size()) + " entr" + (tags.size() > 1 ? "ies" : "y") + "\n"
-            + prefix + "{\n";
+        picojson::value value(picojson::object_type, false);
+        picojson::object& object = value.get<picojson::object>();
+
+        object["type"] = picojson::value(Tag::TagTypeToString(tags_type));
+        object["content"] = picojson::value(picojson::array_type, false);
+
+        picojson::array& array = object["content"].get<picojson::array>();
 
         for (int i = 0; i < tags.size(); ++i)
         {
-            output += prefix + "    " + Tag::TagTypeToString(tags_type) + "(None): " + tags[i]->Print(prefix + "    ") + "\n";
+            array.push_back(tags[i]->Serialize());
         }
-        output += prefix + "}";
 
-        return  output;
+        return value;
     }
 }

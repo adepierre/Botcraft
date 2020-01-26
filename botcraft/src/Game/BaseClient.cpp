@@ -872,6 +872,13 @@ namespace Botcraft
 
     void BaseClient::Handle(EncryptionRequest &msg)
     {
+        if (authentifier == nullptr)
+        {
+            std::cerr << "Error, authentication asked while no password has been provided, make sure to connect with a valid Mojang Account" << std::endl;
+            Disconnect();
+            return;
+        }
+
 #ifdef USE_ENCRYPTION
         std::shared_ptr<AESEncrypter> encrypter = std::shared_ptr<AESEncrypter>(new AESEncrypter());
 
@@ -928,9 +935,9 @@ namespace Botcraft
     void BaseClient::Handle(UpdateLight &msg)
     {
         std::lock_guard<std::mutex> world_guard(world_mutex);
-        world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(),
+        world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), dimension,
             msg.GetSkyLightMask(), msg.GetEmptySkyLightMask(), msg.GetSkyLightArrays(), true);
-        world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(),
+        world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), dimension,
             msg.GetBlockLightMask(), msg.GetEmptyBlockLightMask(), msg.GetBlockLightArrays(), false);
     }
 #endif
@@ -943,56 +950,7 @@ namespace Botcraft
 
     void BaseClient::Handle(PlayerInfo &msg)
     {
-        switch (msg.GetAction())
-        {
-        case 0:
-            for (auto it = msg.GetPlayers().begin(); it != msg.GetPlayers().end(); ++it)
-            {
-                world->AddPlayer(it->second);
-            }
-            break;
-        case 1:
-            for (auto it = msg.GetGamemode().begin(); it != msg.GetGamemode().end(); ++it)
-            {
-                auto player_world = world->GetPlayer(it->first);
-                if (player_world == world->GetAllPlayers().end())
-                {
-                    continue;
-                }
-                player_world->second.SetGamemode(it->second);
-            }
-            break;
-        case 2:
-            for (auto it = msg.GetPing().begin(); it != msg.GetPing().end(); ++it)
-            {
-                auto player_world = world->GetPlayer(it->first);
-                if (player_world == world->GetAllPlayers().end())
-                {
-                    continue;
-                }
-                player_world->second.SetPing(it->second);
-            }
-            break;
-        case 3:
-            for (auto it = msg.GetDisplayName().begin(); it != msg.GetDisplayName().end(); ++it)
-            {
-                auto player_world = world->GetPlayer(it->first);
-                if (player_world == world->GetAllPlayers().end())
-                {
-                    continue;
-                }
-                player_world->second.SetDisplayName(it->second);
-            }
-            break;
-        case 4:
-            for (int i = 0; i < msg.GetRemoved().size(); ++i)
-            {
-                world->RemovePlayer(msg.GetRemoved()[i]);
-            }
-            break;
-        default:
-            break;
-        }
+
     }
 
     void BaseClient::Handle(SetSlot &msg)

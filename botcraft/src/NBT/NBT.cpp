@@ -63,9 +63,16 @@ namespace Botcraft
         }
     }
 
-    const std::string NBT::Print() const
+    const picojson::value NBT::SerializeImpl() const
     {
-        return Tag::TagTypeToString(TagType::Compound) + "(): " + root_tag.Print("");
+        picojson::value value(picojson::object_type, false);
+        picojson::object& object = value.get<picojson::object>();
+
+        object["type"] = picojson::value("NBT");
+        object["name"] = picojson::value(root_name);
+        object["content"] = root_tag.Serialize();
+
+        return value;
     }
 
     const std::shared_ptr<Tag> NBT::GetTag(const std::string &s) const

@@ -68,4 +68,15 @@ namespace Botcraft
 
         return "";
     }
+
+    const picojson::value Chat::SerializeImpl() const
+    {
+        picojson::value value(picojson::object_type, false);
+        picojson::object &object = value.get<picojson::object>();
+
+        object["from"] = picojson::value(from);
+        object["text"] = picojson::value(text);
+
+        return value;
+    }
 }

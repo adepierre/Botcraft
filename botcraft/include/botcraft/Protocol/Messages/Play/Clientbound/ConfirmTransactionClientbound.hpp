@@ -19,7 +19,7 @@ namespace Botcraft
             return 0x12;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x12;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x13;
 #else
             #error "Protocol version not implemented"
@@ -57,6 +57,18 @@ namespace Botcraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             std::cerr << "Clientbound message" << std::endl;
+        }
+
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["window_id"] = picojson::value((double)window_id);
+            object["action_number"] = picojson::value((double)action_number);
+            object["accepted"] = picojson::value(accepted);
+
+            return value;
         }
 
     private:

@@ -25,6 +25,7 @@ namespace Botcraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override;
         virtual void WriteImpl(WriteContainer &containenr) const override;
+        virtual const picojson::value SerializeImpl() const override;
 
     private:
 #if PROTOCOL_VERSION < 350

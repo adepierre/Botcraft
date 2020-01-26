@@ -11,7 +11,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Enums.hpp
     include/botcraft/Game/InterfaceClient.hpp
     include/botcraft/Game/Model.hpp
-    include/botcraft/Game/OtherPlayer.hpp
+    include/botcraft/Game/PlayerInformation.hpp
     include/botcraft/Game/Player.hpp
     include/botcraft/Game/World/Section.hpp
     include/botcraft/Game/Vector3.hpp
@@ -60,7 +60,7 @@ set(botcraft_SRC
     src/Game/World/Chunk.cpp
     src/Game/InterfaceClient.cpp
     src/Game/Model.cpp
-    src/Game/OtherPlayer.cpp
+    src/Game/PlayerInformation.cpp
     src/Game/Player.cpp
     src/Game/World/World.cpp
     src/Game/Inventory/Slot.cpp
@@ -242,7 +242,10 @@ target_include_directories(botcraft
 target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
 
 # Add picoJson
-target_link_libraries(botcraft PRIVATE picoJson)
+target_include_directories(botcraft 
+    PUBLIC 
+        $<BUILD_INTERFACE:${PICOJSON_INCLUDE_DIR}>
+)
 
 # Add Asio
 target_link_libraries(botcraft PRIVATE asio)
@@ -305,6 +308,10 @@ install(
     DESTINATION
         ${CMAKE_INSTALL_LIBDIR}/cmake/botcraft
 )
+
+# Copy picoJson
+install(DIRECTORY ${PICOJSON_INCLUDE_DIR}
+    DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 export(EXPORT botcraft-targets
     FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-targets.cmake

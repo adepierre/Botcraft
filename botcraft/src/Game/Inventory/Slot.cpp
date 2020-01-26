@@ -116,4 +116,26 @@ namespace Botcraft
         nbt.Write(container);
     }
 
+    const picojson::value Slot::SerializeImpl() const
+    {
+        picojson::value value(picojson::object_type, false);
+        picojson::object& object = value.get<picojson::object>();
+
+#if PROTOCOL_VERSION < 350
+        object["block_id"] = picojson::value((double)block_id);
+        object["item_damage"] = picojson::value((double)item_damage);
+#elif PROTOCOL_VERSION < 402
+        object["item_id"] = picojson::value((double)item_id);
+#elif PROTOCOL_VERSION >= 402
+        object["present"] = picojson::value(present);
+        object["item_id"] = picojson::value((double)item_id);
+#endif
+        object["item_count"] = picojson::value((double)item_count);
+        if (nbt.HasData())
+        {
+            object["nbt"] = nbt.Serialize();
+        }
+        return value;
+    }
+
 } //Botcraft

@@ -55,6 +55,18 @@ namespace Botcraft
             WriteVarInt(block_id, container);
         }
 
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["horizontal_position"] = picojson::value((double)horizontal_position);
+            object["y_coordinate"] = picojson::value((double)y_coordinate);
+            object["block_id"] = picojson::value((double)block_id);
+
+            return value;
+        }
+
     private:
         unsigned char horizontal_position;
         unsigned char y_coordinate;

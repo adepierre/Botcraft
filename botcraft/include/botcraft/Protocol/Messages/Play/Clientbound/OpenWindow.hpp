@@ -21,7 +21,7 @@ namespace Botcraft
             return 0x14;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x2E;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x2F;
 #else
             #error "Protocol version not implemented"
@@ -94,6 +94,26 @@ namespace Botcraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             std::cerr << "Clientbound message" << std::endl;
+        }
+
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+#if PROTOCOL_VERSION < 452
+            object["window_id"] = picojson::value((double)window_id);
+            object["window_type"] = picojson::value(window_type);
+            object["number_of_slots"] = picojson::value((double)number_of_slots);
+            object["entity_id"] = picojson::value((double)entity_id);
+#else
+            object["window_id"] = picojson::value((double)window_id);
+            object["window_type"] = picojson::value((double)window_type);
+#endif
+
+            object["window_title"] = window_title.Serialize();
+
+            return value;
         }
 
     private:

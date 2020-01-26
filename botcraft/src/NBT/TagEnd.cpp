@@ -27,8 +27,8 @@ namespace Botcraft
 
     }
 
-    const std::string TagEnd::Print(const std::string &prefix) const
+    const picojson::value TagEnd::SerializeImpl() const
     {
-        return "";
+        return picojson::value();
     }
 }

@@ -37,8 +37,8 @@ namespace Botcraft
         WriteData<short>(value, container);
     }
 
-    const std::string TagShort::Print(const std::string &prefix) const
+    const picojson::value TagShort::SerializeImpl() const
     {
-        return std::to_string(value);
+        return picojson::value((double)value);
     }
 }

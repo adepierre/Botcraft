@@ -45,6 +45,19 @@ namespace Botcraft
             WriteByteArray(verify_token, container);
         }
 
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["shared_secret_length"] = picojson::value((double)shared_secret_length);
+            object["shared_secret"] = picojson::value("vector of " + std::to_string(shared_secret.size()) + " unsigned char");
+            object["verify_token_length"] = picojson::value((double)verify_token_length);
+            object["verify_token"] = picojson::value("vector of " + std::to_string(verify_token.size()) + " unsigned char");
+
+            return value;
+        }
+
     private:
         int shared_secret_length;
         std::vector<unsigned char> shared_secret;

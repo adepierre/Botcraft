@@ -37,8 +37,8 @@ namespace Botcraft
         WriteData<float>(value, container);
     }
 
-    const std::string TagFloat::Print(const std::string &prefix) const
+    const picojson::value TagFloat::SerializeImpl() const
     {
-        return std::to_string(value);
+        return picojson::value((double)value);
     }
 }

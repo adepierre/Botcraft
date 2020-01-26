@@ -49,6 +49,20 @@ namespace Botcraft
             std::cerr << "Clientbound message" << std::endl;
         }
 
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["server_ID"] = picojson::value(server_ID);
+            object["public_key_length"] = picojson::value((double)public_key_length);
+            object["public_key"] = picojson::value("vector of " + std::to_string(public_key.size()) + " unsigned char");
+            object["verify_token_length"] = picojson::value((double)verify_token_length);
+            object["verify_token"] = picojson::value("vector of " + std::to_string(verify_token.size()) + " unsigned char");
+
+            return value;
+        }
+
     private:
         std::string server_ID;
         int public_key_length;

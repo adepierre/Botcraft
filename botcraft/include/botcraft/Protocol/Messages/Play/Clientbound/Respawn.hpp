@@ -20,7 +20,7 @@ namespace Botcraft
             return 0x38;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x3A;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x3B;
 #else
             #error "Protocol version not implemented"
@@ -79,6 +79,24 @@ namespace Botcraft
         {
             std::cerr << "Clientbound message" << std::endl;
         }
+
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["dimension"] = picojson::value((double)dimension);
+#if PROTOCOL_VERSION > 551
+            object["hashed_seed"] = picojson::value((double)hashed_seed);
+#endif
+#if PROTOCOL_VERSION < 477
+            object["difficulty"] = picojson::value((double)difficulty);
+#endif
+            object["gamemode"] = picojson::value((double)gamemode);
+            object["level_type"] = picojson::value(level_type);
+
+            return value;
+    }
 
     private:
         Dimension dimension;

@@ -15,12 +15,17 @@ namespace Botcraft
 
     bool World::AddChunk(const int x, const int z, const Dimension dim)
     {
-        if (RemoveChunk(x, z))
-        {
-            std::cerr << "Warning, trying to add a new chunk over an existing one. Deleting previous chunk." << std::endl;
-        }
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
 
-        terrain[{x, z}] = std::shared_ptr<Chunk>(new Chunk(dim));
+        if (!chunk)
+        {
+            terrain[{x, z}] = std::shared_ptr<Chunk>(new Chunk(dim));
+        }
+        else if (chunk->GetDimension() != dim)
+        {
+            RemoveChunk(x, z);
+            terrain[{x, z}] = std::shared_ptr<Chunk>(new Chunk(dim));
+        }
         
         //Not necessary, from void to air, there is no difference
         //UpdateChunk(x, z);
@@ -159,7 +164,7 @@ namespace Botcraft
         return true;
     }
 
-    bool World::SetBlockEntityData(const Position &pos, const std::shared_ptr<NBT> data)
+    bool World::SetBlockEntityData(const Position &pos, const NBT& data)
     {
         int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
         int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
@@ -180,9 +185,9 @@ namespace Botcraft
             }
         }
 
-        if (data && data->HasData())
+        if (data.HasData())
         {
-            cached->GetBlockEntitiesData()[pos] = data;
+            cached->GetBlockEntitiesData()[pos] = std::shared_ptr<NBT>(new NBT(data));
         }
         else
         {
@@ -259,15 +264,16 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 404
-    void World::UpdateChunkLight(const int x, const int z, const int light_mask, const int empty_light_mask,
+    void World::UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask,
         const std::vector<std::vector<char>>& data, const bool sky)
     {
         std::shared_ptr<Chunk> chunk = GetChunk(x, z);
 
         if (chunk == nullptr)
         {
-            std::cerr << "Error trying to update light of an unloaded chunk. Ignoring" << std::endl;
-            return;
+            std::cerr << "Trying to update light of an unexisting chunk, creating it" << std::endl;
+            AddChunk(x, z, dim);
+            chunk = GetChunk(x, z);
         }
 
         int counter_arrays = 0;
@@ -745,25 +751,4 @@ namespace Botcraft
             }
         }
     }
-
-    void World::AddPlayer(const OtherPlayer &p)
-    {
-        all_players[p.GetUUID()] = p;
-    }
-
-    std::map<std::string, OtherPlayer>::iterator World::GetPlayer(const std::string &uuid)
-    {
-        return all_players.find(uuid);
-    }
-
-    const std::map<std::string, OtherPlayer>& World::GetAllPlayers() const
-    {
-        return all_players;
-    }
-
-    void World::RemovePlayer(const std::string &uuid)
-    {
-        all_players.erase(uuid);
-    }
-
 } // Botcraft

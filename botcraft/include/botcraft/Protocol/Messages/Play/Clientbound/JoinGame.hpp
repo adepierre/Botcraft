@@ -20,7 +20,7 @@ namespace Botcraft
             return 0x25;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x25;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x26;
 #else
             #error "Protocol version not implemented"
@@ -116,6 +116,31 @@ namespace Botcraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             std::cerr << "Clientbound message" << std::endl;
+        }
+
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["entity_id"] = picojson::value((double)entity_id);
+            object["gamemode"] = picojson::value((double)gamemode);
+            object["dimension"] = picojson::value((double)dimension);
+#if PROTOCOL_VERSION > 551
+            object["hashed_seed"] = picojson::value((double)hashed_seed);
+#endif
+            object["difficulty"] = picojson::value((double)difficulty);
+            object["max_players"] = picojson::value((double)max_players);
+            object["level_type"] = picojson::value(level_type);
+#if PROTOCOL_VERSION >= 477
+            object["view_distance"] = picojson::value((double)view_distance);
+#endif
+            object["reduced_debug_info"] = picojson::value(reduced_debug_info);
+#if PROTOCOL_VERSION > 565
+            object["enable_respawn_screen"] = picojson::value(enable_respawn_screen);
+#endif
+
+            return value;
         }
 
     private:

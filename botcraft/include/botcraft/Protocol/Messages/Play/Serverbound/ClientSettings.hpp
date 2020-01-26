@@ -20,7 +20,7 @@ namespace Botcraft
             return 0x04;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x05;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x05;
 #else
             #error "Protocol version not implemented"
@@ -76,6 +76,21 @@ namespace Botcraft
             WriteData<bool>(chat_colors, container);
             WriteData<unsigned char>(displayed_skin_parts, container);
             WriteVarInt((int)main_hand, container);
+        }
+
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["locale"] = picojson::value(locale);
+            object["view_distance"] = picojson::value((double)view_distance);
+            object["chat_mode"] = picojson::value((double)chat_mode);
+            object["chat_colors"] = picojson::value(chat_colors);
+            object["displayed_skin_parts"] = picojson::value((double)displayed_skin_parts);
+            object["main_hand"] = picojson::value((double)main_hand);
+
+            return value;
         }
 
     private:

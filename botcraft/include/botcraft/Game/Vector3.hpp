@@ -3,6 +3,8 @@
 #include <ostream>
 #include <cassert>
 
+#include <picojson/picojson.h>
+
 namespace Botcraft
 {
     template <typename T>
@@ -134,6 +136,13 @@ namespace Botcraft
         {
             o << "(" << vec.x << "," << vec.y << "," << vec.z << ")";
             return o;
+        }
+
+        const picojson::value Serialize() const
+        {
+            return picojson::value("[" + std::to_string(x) + ", " +
+                std::to_string(y) + ", " +
+                std::to_string(z) + "]");
         }
     };
     typedef Vector3<int> Position;
