@@ -12,7 +12,7 @@ if(NOT TARGET ZLIB::ZLIB)
     list(LENGTH RESULT RES_LEN)
     message(STATUS ${RES_LEN})
     if(RES_LEN EQUAL 0)
-        message(STATUS "Glfw not found, cloning it...")
+        message(STATUS "Zlib not found, cloning it...")
         execute_process(COMMAND git submodule update --init -- 3rdparty/zlib WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
     endif()
 	
