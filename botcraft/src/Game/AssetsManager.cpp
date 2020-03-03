@@ -26,6 +26,9 @@ namespace Botcraft
         std::cout << "Loading biomes from file..." << std::endl;
         LoadBiomesFile();
         std::cout << "Done!" << std::endl;
+        std::cout << "Clearing cache from memory..." << std::endl;
+        ClearCaches();
+        std::cout << "Done!" << std::endl;
     }
 
 #if PROTOCOL_VERSION < 347
@@ -675,5 +678,11 @@ namespace Botcraft
 
             biomes[id] = std::shared_ptr<Biome>(new Biome(name, temperature, rainfall, biome_type));
         }
+    }
+
+    void AssetsManager::ClearCaches()
+    {
+        Blockstate::ClearCache();
+        Model::ClearCache();
     }
 } //Botcraft

@@ -577,6 +577,11 @@ namespace Botcraft
         return colliders;
     }
 
+    void Model::ClearCache()
+    {
+        cached_models.clear();
+    }
+
 #ifdef USE_GUI
     const std::vector<FaceDescriptor> &Model::GetFaces() const
     {

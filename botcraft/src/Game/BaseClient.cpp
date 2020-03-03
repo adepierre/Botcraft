@@ -20,8 +20,9 @@
 
 namespace Botcraft
 {
-    BaseClient::BaseClient(const std::vector<int> &printed_packets_)
+    BaseClient::BaseClient(const bool afk_only_, const std::vector<int> &printed_packets_)
     {
+        afk_only = afk_only_;
         state = State::None;
         game_mode = GameMode::None;
         dimension = Dimension::None;
@@ -240,40 +241,47 @@ namespace Botcraft
 
             if (player && player->GetPosition().y < 1000.0)
             {
-                std::lock_guard<std::mutex> player_guard(player_mutex);
-                //Check that we did not go through a block
-                Physics();
-
-                if (std::abs(player->GetSpeed().x) > 1e-3 ||
-                    std::abs(player->GetSpeed().y) > 1e-3 ||
-                    std::abs(player->GetSpeed().z) > 1e-3)
-                {
-                    has_moved = true;
-                }
-                else
+                if (afk_only)
                 {
                     has_moved = false;
                 }
-
-                //Avoid forever falling if position is <= 0.0
-                if (player->GetPosition().y <= 0.0)
-                {
-                    player->SetY(0.0);
-                    player->SetSpeedY(0.0);
-                    player->SetOnGround(true);
-                }
-
-                // Reset the speed until next frame
-                // Update the gravity value if needed
-                player->SetSpeedX(0.0);
-                player->SetSpeedZ(0.0);
-                if (player->GetOnGround())
-                {
-                    player->SetSpeedY(0.0);
-                }
                 else
                 {
-                    player->SetSpeedY((player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
+                    std::lock_guard<std::mutex> player_guard(player_mutex);
+                    //Check that we did not go through a block
+                    Physics();
+
+                    if (std::abs(player->GetSpeed().x) > 1e-3 ||
+                        std::abs(player->GetSpeed().y) > 1e-3 ||
+                        std::abs(player->GetSpeed().z) > 1e-3)
+                    {
+                        has_moved = true;
+                    }
+                    else
+                    {
+                        has_moved = false;
+                    }
+
+                    //Avoid forever falling if position is <= 0.0
+                    if (player->GetPosition().y <= 0.0)
+                    {
+                        player->SetY(0.0);
+                        player->SetSpeedY(0.0);
+                        player->SetOnGround(true);
+                    }
+
+                    // Reset the speed until next frame
+                    // Update the gravity value if needed
+                    player->SetSpeedX(0.0);
+                    player->SetSpeedZ(0.0);
+                    if (player->GetOnGround())
+                    {
+                        player->SetSpeedY(0.0);
+                    }
+                    else
+                    {
+                        player->SetSpeedY((player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
+                    }
                 }
 
 #if USE_GUI
@@ -665,6 +673,11 @@ namespace Botcraft
 
     void BaseClient::Handle(ChunkData &msg)
     {
+        if (afk_only)
+        {
+            return;
+        }
+
         Dimension chunk_dim;
         {
             std::lock_guard<std::mutex> world_guard(world_mutex);

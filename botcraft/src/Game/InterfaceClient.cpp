@@ -32,7 +32,7 @@ namespace Botcraft
     };
     
     InterfaceClient::InterfaceClient(const std::vector<int> &printed_packets_) :
-        BaseClient(printed_packets_)
+        BaseClient(false, printed_packets_)
     {
         pathfinding_state = PathFindingState::Waiting;
         digging_state = DiggingState::Waiting;

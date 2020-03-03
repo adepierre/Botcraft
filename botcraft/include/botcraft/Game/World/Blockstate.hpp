@@ -58,6 +58,7 @@ namespace Botcraft
         const static unsigned int IdMetadataToId(const unsigned int id_, const unsigned char metadata_);
         static void IdToIdMetadata(const unsigned int input_id, unsigned int &output_id, unsigned char &output_metadata);
 #endif
+        static void ClearCache();
 
     private:
         static std::map<std::string, picojson::value> cached_jsons;

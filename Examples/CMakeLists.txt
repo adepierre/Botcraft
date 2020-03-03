@@ -1,3 +1,4 @@
 add_subdirectory(0_HelloWorld)
 add_subdirectory(1_UserControlledExample)
 add_subdirectory(2_ChatCommandExample)
+add_subdirectory(3_SimpleAFKExample)

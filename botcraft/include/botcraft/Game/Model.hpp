@@ -58,6 +58,8 @@ namespace Botcraft
         const std::vector<AABB> &GetColliders() const;
         std::vector<AABB> &GetColliders();
 
+        static void ClearCache();
+
 #if USE_GUI
         const std::vector<FaceDescriptor> &GetFaces() const;
         std::vector<FaceDescriptor> &GetFaces();

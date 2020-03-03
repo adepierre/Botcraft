@@ -38,6 +38,7 @@ namespace Botcraft
 
         void LoadBlocksFile();
         void LoadBiomesFile();
+        void ClearCaches();
 
     private:
 #if PROTOCOL_VERSION < 347

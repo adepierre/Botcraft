@@ -737,6 +737,11 @@ namespace Botcraft
     }
 #endif
 
+    void Blockstate::ClearCache()
+    {
+        cached_jsons.clear();
+    }
+
     const int Blockstate::GetNumModels() const
     {
         return models.size();

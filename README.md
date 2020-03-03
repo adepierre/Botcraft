@@ -7,7 +7,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 
 ## Features
 
-- Connection to minecraft server (offline mode only for now)
+- Connection to minecraft server (both offline mode and online connection with Mojang account)
 - Versions 1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1 and 1.15.2 supported
 - Compression
 - Physics and collisions
@@ -70,6 +70,7 @@ Three examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, send Hello World! in the chat then disconnect
 - [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI, mouse and keyboard controlled player. Can be used in a dummy world (without any server) to test things like physics or rendering
 - [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Knows three commands at this point, pathfinding, disconnecting and checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof).
+- [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Simple example to stay at the same position. Physics is not processed, chunks are not saved in memory to save RAM.
 
 ## To-do list
 

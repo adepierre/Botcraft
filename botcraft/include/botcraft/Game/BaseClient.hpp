@@ -30,7 +30,7 @@ namespace Botcraft
     class BaseClient : public Handler
     {
     public:
-        BaseClient(const std::vector<int> &printed_packets_ = std::vector<int>(0));
+        BaseClient(const bool afk_only_ = false, const std::vector<int> &printed_packets_ = std::vector<int>(0));
         ~BaseClient();
 
         // Connect to a server, if password is empty, the server must be in offline mode
@@ -87,6 +87,12 @@ namespace Botcraft
         virtual void Handle(HeldItemChangeClientbound &msg) override;
 
     protected:
+        // If in afk only mode, the chunks will NOT
+        // be stored in memory and physics will NOT
+        // be calculated
+        // Use it only to afk at a specific spot
+        bool afk_only;
+
         std::shared_ptr<TCP_Com> com;
         std::shared_ptr<Authentifier> authentifier;
         std::shared_ptr<World> world;

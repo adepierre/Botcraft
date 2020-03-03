@@ -70,6 +70,8 @@ namespace Botcraft
 
             day_time = 0.0f;
 
+            camera = std::unique_ptr<Camera>(new Camera);
+
             rendering_thread = std::thread(&CubeWorldRenderer::Run, this);
         }
 
@@ -616,8 +618,6 @@ namespace Botcraft
 #endif
 
             my_shader = std::unique_ptr<Shader>(new Shader);
-
-            camera = std::unique_ptr<Camera>(new Camera);
 
             glEnable(GL_DEPTH_TEST);
             //glEnable(GL_CULL_FACE); 
