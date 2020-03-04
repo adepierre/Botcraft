@@ -27,6 +27,17 @@ namespace Botcraft
     Position ReadPosition(ReadIterator &iter, size_t &length);
     void WritePosition(const Position &my_position, WriteContainer &container);
 
+    template <typename T>
+    T ChangeEndianness(const T& in)
+    {
+        T in_cpy = in;
+        std::vector<char> p(sizeof(T));
+        memcpy(&p[0], &in_cpy, sizeof(T));
+        std::reverse(p.begin(), p.end());
+        memcpy(&in_cpy, &p[0], sizeof(T));
+        return in_cpy;
+    }
+
     template<typename T>
     static T ReadData(ReadIterator &iter, size_t &length)
     {
@@ -144,16 +155,5 @@ namespace Botcraft
             memcpy(bytes.data(), &big_endian_var, sizeof(T));
             container.insert(container.end(), bytes.begin(), bytes.end());
         }
-    }
-
-    template <typename T>
-    T ChangeEndianness(const T &in)
-    {
-        T in_cpy = in;
-        std::vector<char> p(sizeof(T));
-        memcpy(&p[0], &in_cpy, sizeof(T));
-        std::reverse(p.begin(), p.end());
-        memcpy(&in_cpy, &p[0], sizeof(T));
-        return in_cpy;
     }
 } // Botcraft

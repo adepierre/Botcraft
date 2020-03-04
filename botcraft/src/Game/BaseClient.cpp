@@ -168,7 +168,8 @@ namespace Botcraft
                     {
 #ifdef USE_COMPRESSION
                         size_t length = packet.size();
-                        int data_length = ReadVarInt(packet.begin(), length);
+                        ReadIterator iter = packet.begin();
+                        int data_length = ReadVarInt(iter, length);
 
                         //Packet not compressed
                         if (data_length == 0)
