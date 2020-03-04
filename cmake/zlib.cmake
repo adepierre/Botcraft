@@ -1,7 +1,7 @@
 #Add zlib library
 
 # We first try to find zlib in the system
-find_package(zlib QUIET)
+find_package(ZLIB QUIET)
 
 # If not found, build from sources
 if(NOT TARGET ZLIB::ZLIB)
@@ -29,5 +29,5 @@ if(NOT TARGET ZLIB::ZLIB)
 
 	# Find the freshly built library
 	set(ZLIB_ROOT ${ZLIB_BUILD_PATH}/install)
-	find_package(zlib QUIET)
+	find_package(ZLIB QUIET)
 endif()
