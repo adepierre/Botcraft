@@ -3,6 +3,7 @@
 #ifdef USE_COMPRESSION
 #include <zlib.h>
 #include <string>
+#include <cstring>
 #include <stdexcept>
 
 namespace Botcraft

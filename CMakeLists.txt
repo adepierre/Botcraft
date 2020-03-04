@@ -85,6 +85,9 @@ if(BOTCRAFT_USE_OPENGL_GUI)
     endif()
 endif()
 
+# Check pthreads
+find_package(Threads)
+
 add_subdirectory(botcraft)
 if(BOTCRAFT_BUILD_EXAMPLES)
     add_subdirectory(Examples)

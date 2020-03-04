@@ -1,5 +1,3 @@
-#pragma once
-
 #include "botcraft/NBT/TagLongArray.hpp"
 
 namespace Botcraft

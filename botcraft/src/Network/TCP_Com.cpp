@@ -1,5 +1,6 @@
 #include <iterator>
 #include <iostream>
+#include <functional>
 
 #include "botcraft/Network/TCP_Com.hpp"
 #include "botcraft/Network/BinaryReadWrite.hpp"

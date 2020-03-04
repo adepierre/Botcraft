@@ -31,7 +31,7 @@
 
 // Play clientbound
 #include "botcraft/Protocol/Messages/Play/Clientbound/BlockChange.hpp"
-#include "botcraft/Protocol/Messages/Play/Clientbound/ChatMessageClientBound.hpp"
+#include "botcraft/Protocol/Messages/Play/Clientbound/ChatMessageClientbound.hpp"
 #include "botcraft/Protocol/Messages/Play/Clientbound/ServerDifficulty.hpp"
 #include "botcraft/Protocol/Messages/Play/Clientbound/MultiBlockChange.hpp"
 #include "botcraft/Protocol/Messages/Play/Clientbound/ConfirmTransactionClientbound.hpp"

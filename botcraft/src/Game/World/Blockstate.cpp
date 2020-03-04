@@ -378,7 +378,8 @@ namespace Botcraft
         if (it != base_object.end())
         {
             const picojson::object& variants = it->second.get<picojson::object>();
-            picojson::value &variant_value = picojson::value();
+            picojson::value null_value = picojson::value();
+            picojson::value &variant_value = null_value;
 
             auto it2 = variants.find("");
             if (it2 != variants.end())

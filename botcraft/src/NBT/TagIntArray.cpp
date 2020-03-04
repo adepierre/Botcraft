@@ -1,5 +1,3 @@
-#pragma once
-
 #include "botcraft/NBT/TagIntArray.hpp"
 
 namespace Botcraft
