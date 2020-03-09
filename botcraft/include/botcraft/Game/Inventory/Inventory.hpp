@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include "botcraft/Game/Inventory/Slot.hpp"
+#include "protocolCraft/Types/Slot.hpp"
 
 namespace Botcraft
 {
@@ -13,11 +13,11 @@ namespace Botcraft
 
         Inventory();
 
-        const Slot GetSlot(const short index) const;
-        const std::map<short, Slot>& GetSlots() const;
-        std::map<short, Slot>& GetSlots();
+        const ProtocolCraft::Slot GetSlot(const short index) const;
+        const std::map<short, ProtocolCraft::Slot>& GetSlots() const;
+        std::map<short, ProtocolCraft::Slot>& GetSlots();
 
     private:
-        std::map<short, Slot> slots;
+        std::map<short, ProtocolCraft::Slot> slots;
     };
 } // Botcraft

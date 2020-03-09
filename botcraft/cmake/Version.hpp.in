@@ -1,4 +1,6 @@
 #pragma once
 
-#cmakedefine PROTOCOL_VERSION @PROTOCOL_VERSION@
-#cmakedefine GAME_VERSION "@GAME_VERSION@"
+#include <string>
+
+const int protocol_version = @PROTOCOL_VERSION@;
+const std::string game_version = "@GAME_VERSION@";

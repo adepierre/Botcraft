@@ -1,11 +1,11 @@
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/Block.hpp"
-#include "botcraft/NBT/NBT.hpp"
 #include "botcraft/Game/Enums.hpp"
 
 #include <iostream>
 #include <fstream>
+
 namespace Botcraft
 {
     World::World()
@@ -164,7 +164,7 @@ namespace Botcraft
         return true;
     }
 
-    bool World::SetBlockEntityData(const Position &pos, const NBT& data)
+    bool World::SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT& data)
     {
         int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
         int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
@@ -187,7 +187,7 @@ namespace Botcraft
 
         if (data.HasData())
         {
-            cached->GetBlockEntitiesData()[pos] = std::shared_ptr<NBT>(new NBT(data));
+            cached->GetBlockEntitiesData()[pos] = std::shared_ptr<ProtocolCraft::NBT>(new ProtocolCraft::NBT(data));
         }
         else
         {
@@ -478,7 +478,7 @@ namespace Botcraft
         return cached->GetBlock(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH));
     }
 
-    std::shared_ptr<NBT> World::GetBlockEntityData(const Position &pos)
+    std::shared_ptr<ProtocolCraft::NBT> World::GetBlockEntityData(const Position &pos)
     {
         int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
         int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);

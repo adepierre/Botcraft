@@ -9,8 +9,6 @@
 #include "botcraft/Game/Model.hpp"
 #include "botcraft/Game/Enums.hpp"
 
-#include "botcraft/Version.hpp"
-
 namespace Botcraft
 {
     class Blockstate

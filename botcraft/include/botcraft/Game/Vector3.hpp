@@ -5,6 +5,8 @@
 
 #include <picojson/picojson.h>
 
+#include "protocolCraft/Types/NetworkPosition.hpp"
+
 namespace Botcraft
 {
     template <typename T>
@@ -17,11 +19,18 @@ namespace Botcraft
             z = T(0);
         }
 
-        Vector3(const T &x_, const T &y_, const T &z_)
+        Vector3(const T& x_, const T& y_, const T& z_)
         {
             x = x_;
             y = y_;
             z = z_;
+        }
+
+        Vector3(const ProtocolCraft::NetworkPosition& position)
+        {
+            x = position.GetX();
+            y = position.GetY();
+            z = position.GetZ();
         }
 
         T x;
@@ -143,6 +152,16 @@ namespace Botcraft
             return picojson::value("[" + std::to_string(x) + ", " +
                 std::to_string(y) + ", " +
                 std::to_string(z) + "]");
+        }
+
+        const ProtocolCraft::NetworkPosition ToNetworkPosition() const
+        {
+            ProtocolCraft::NetworkPosition output;
+            output.SetX(x);
+            output.SetY(y);
+            output.SetZ(z);
+
+            return output;
         }
     };
     typedef Vector3<int> Position;

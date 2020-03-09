@@ -7,8 +7,6 @@
 
 #include <picojson/picojson.h>
 
-#include "botcraft/Version.hpp"
-
 namespace Botcraft
 {
     AssetsManager& AssetsManager::getInstance()

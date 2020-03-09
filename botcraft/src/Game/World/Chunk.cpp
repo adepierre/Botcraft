@@ -1,10 +1,12 @@
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/Section.hpp"
 
-#include "botcraft/NBT/NBT.hpp"
-#include "botcraft/NBT/TagInt.hpp"
+#include "protocolCraft/Types/NBT/NBT.hpp"
+#include "protocolCraft/Types/NBT/TagInt.hpp"
 
 #include <iostream>
+
+using namespace ProtocolCraft;
 
 namespace Botcraft
 {

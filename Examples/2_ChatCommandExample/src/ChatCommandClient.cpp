@@ -7,6 +7,7 @@
 #include "ChatCommandClient.hpp"
 
 using namespace Botcraft;
+using namespace ProtocolCraft;
 
 ChatCommandClient::ChatCommandClient(const std::vector<int> &printed_packets_) : 
     InterfaceClient(printed_packets_)

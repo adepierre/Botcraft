@@ -1,6 +1,8 @@
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Inventory.hpp"
 
+using namespace ProtocolCraft;
+
 namespace Botcraft
 {
     InventoryManager::InventoryManager()

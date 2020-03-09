@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <map>
-#include "botcraft/Game/Inventory/Slot.hpp"
+#include "protocolCraft/Types/Slot.hpp"
 
 namespace Botcraft
 {
@@ -13,7 +13,7 @@ namespace Botcraft
     public:
         InventoryManager();
 
-        void SetSlot(const short window_id, const short index, const Slot& slot);
+        void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
         std::shared_ptr<Inventory> GetInventory(const short window_id);
         std::shared_ptr<Inventory> GetPlayerInventory();
         const std::shared_ptr<Inventory> GetInventory(const short window_id) const;
@@ -22,15 +22,15 @@ namespace Botcraft
         void EraseInventory(const short window_id);
         void AddInventory(const short window_id);
 
-        const Slot GetHotbarSelected() const;
+        const ProtocolCraft::Slot GetHotbarSelected() const;
         void SetHotbarSelected(const short index);
 
-        const Slot& GetCursor() const;
-        void SetCursor(const Slot &c);
+        const ProtocolCraft::Slot& GetCursor() const;
+        void SetCursor(const ProtocolCraft::Slot &c);
 
     private:
         std::map<short, std::shared_ptr<Inventory> > inventories;
         short index_hotbar_selected;
-        Slot cursor;
+        ProtocolCraft::Slot cursor;
     };
 } // Botcraft

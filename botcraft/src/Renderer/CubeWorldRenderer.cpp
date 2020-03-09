@@ -26,7 +26,6 @@ static bool imgui_demo = false;
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
-#include "botcraft/Version.hpp"
 
 const std::vector<float> color_day({ 0.6f, 0.85f, 0.9f });
 const std::vector<float> color_night({0.1f, 0.1f, 0.1f});

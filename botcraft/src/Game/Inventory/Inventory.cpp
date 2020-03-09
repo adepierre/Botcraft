@@ -1,5 +1,7 @@
 #include "botcraft/Game/Inventory/Inventory.hpp"
 
+using namespace ProtocolCraft;
+
 namespace Botcraft
 {
     const short Inventory::PLAYER_INVENTORY_INDEX = 0;

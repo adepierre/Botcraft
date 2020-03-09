@@ -5,6 +5,8 @@
 #include <queue>
 #include <unordered_map>
 
+using namespace ProtocolCraft;
+
 namespace Botcraft
 {
     struct PathNode
@@ -111,8 +113,8 @@ namespace Botcraft
         }
 
         std::shared_ptr<PlayerDigging> msg_digging(new PlayerDigging);
-        msg_digging->SetStatus(PlayerDiggingStatus::StartDigging);
-        msg_digging->SetLocation(block_position);
+        msg_digging->SetStatus((int)PlayerDiggingStatus::StartDigging);
+        msg_digging->SetLocation(block_position.ToNetworkPosition());
         
         // TODO : maybe one magic and clever math formula can be used for this
         PlayerDiggingFace face;
@@ -140,16 +142,16 @@ namespace Botcraft
         {
             face = PlayerDiggingFace::South;
         }
-        msg_digging->SetFace(face);
+        msg_digging->SetFace((int)face);
 
         Send(msg_digging);
         
         if (creative_mode)
         {
             std::shared_ptr<PlayerDigging> end_digging(new PlayerDigging);
-            end_digging->SetLocation(block_position);
-            end_digging->SetStatus(PlayerDiggingStatus::FinishDigging);
-            end_digging->SetFace(face);
+            end_digging->SetLocation(block_position.ToNetworkPosition());
+            end_digging->SetStatus((int)PlayerDiggingStatus::FinishDigging);
+            end_digging->SetFace((int)face);
 
             Send(msg_digging);
             digging_state = DiggingState::Waiting;
@@ -166,9 +168,9 @@ namespace Botcraft
                 if (digging_state == DiggingState::Stop)
                 {
                     std::shared_ptr<PlayerDigging> stop_digging(new PlayerDigging);
-                    stop_digging->SetLocation(block_position);
-                    stop_digging->SetStatus(PlayerDiggingStatus::CancelDigging);
-                    stop_digging->SetFace(face);
+                    stop_digging->SetLocation(block_position.ToNetworkPosition());
+                    stop_digging->SetStatus((int)PlayerDiggingStatus::CancelDigging);
+                    stop_digging->SetFace((int)face);
 
                     Send(stop_digging);
 
@@ -190,9 +192,9 @@ namespace Botcraft
                     block_position != current_position)
                 {
                     std::shared_ptr<PlayerDigging> stop_digging(new PlayerDigging);
-                    stop_digging->SetLocation(block_position);
-                    stop_digging->SetStatus(PlayerDiggingStatus::CancelDigging);
-                    stop_digging->SetFace(face);
+                    stop_digging->SetLocation(block_position.ToNetworkPosition());
+                    stop_digging->SetStatus((int)PlayerDiggingStatus::CancelDigging);
+                    stop_digging->SetFace((int)face);
 
                     Send(stop_digging);
 
@@ -206,9 +208,9 @@ namespace Botcraft
 
             // If we are here it means the digging is supposed to be finished
             std::shared_ptr<PlayerDigging> stop_digging(new PlayerDigging);
-            stop_digging->SetLocation(block_position);
-            stop_digging->SetStatus(PlayerDiggingStatus::FinishDigging);
-            stop_digging->SetFace(face);
+            stop_digging->SetLocation(block_position.ToNetworkPosition());
+            stop_digging->SetStatus((int)PlayerDiggingStatus::FinishDigging);
+            stop_digging->SetFace((int)face);
 
             Send(stop_digging);
 

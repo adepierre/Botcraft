@@ -11,36 +11,12 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Enums.hpp
     include/botcraft/Game/InterfaceClient.hpp
     include/botcraft/Game/Model.hpp
-    include/botcraft/Game/PlayerInformation.hpp
     include/botcraft/Game/Player.hpp
     include/botcraft/Game/World/Section.hpp
     include/botcraft/Game/Vector3.hpp
     include/botcraft/Game/World/World.hpp
-    include/botcraft/Game/Inventory/Slot.hpp
     include/botcraft/Game/Inventory/Inventory.hpp
     include/botcraft/Game/Inventory/InventoryManager.hpp
-    include/botcraft/Network/BinaryReadWrite.hpp
-    include/botcraft/Protocol/AllMessages.hpp
-    include/botcraft/Protocol/BaseMessage.hpp
-    include/botcraft/Protocol/Handler.hpp
-    include/botcraft/Protocol/Message.hpp
-    include/botcraft/Protocol/MessageFactory.hpp
-    include/botcraft/Protocol/NetworkType.hpp
-    include/botcraft/NBT/NBT.hpp
-    include/botcraft/NBT/Tag.hpp
-    include/botcraft/NBT/TagEnd.hpp
-    include/botcraft/NBT/TagByte.hpp
-    include/botcraft/NBT/TagShort.hpp
-    include/botcraft/NBT/TagInt.hpp
-    include/botcraft/NBT/TagLong.hpp
-    include/botcraft/NBT/TagFloat.hpp
-    include/botcraft/NBT/TagDouble.hpp
-    include/botcraft/NBT/TagByteArray.hpp
-    include/botcraft/NBT/TagString.hpp
-    include/botcraft/NBT/TagList.hpp
-    include/botcraft/NBT/TagCompound.hpp
-    include/botcraft/NBT/TagIntArray.hpp
-    include/botcraft/NBT/TagLongArray.hpp
 )
 
 set(botcraft_PRIVATE_HDR
@@ -60,92 +36,15 @@ set(botcraft_SRC
     src/Game/World/Chunk.cpp
     src/Game/InterfaceClient.cpp
     src/Game/Model.cpp
-    src/Game/PlayerInformation.cpp
     src/Game/Player.cpp
     src/Game/World/World.cpp
-    src/Game/Inventory/Slot.cpp
     src/Game/Inventory/Inventory.cpp
     src/Game/Inventory/InventoryManager.cpp
     src/Network/Authentifier.cpp
-    src/Network/BinaryReadWrite.cpp
     src/Network/AESEncrypter.cpp
     src/Network/Compression.cpp
     src/Network/TCP_Com.cpp
-    src/NBT/NBT.cpp
-    src/NBT/Tag.cpp
-    src/NBT/TagEnd.cpp
-    src/NBT/TagByte.cpp
-    src/NBT/TagShort.cpp
-    src/NBT/TagInt.cpp
-    src/NBT/TagLong.cpp
-    src/NBT/TagFloat.cpp
-    src/NBT/TagDouble.cpp
-    src/NBT/TagByteArray.cpp
-    src/NBT/TagString.cpp
-    src/NBT/TagList.cpp
-    src/NBT/TagCompound.cpp
-    src/NBT/TagIntArray.cpp
-    src/NBT/TagLongArray.cpp
 )
-
-# Get the protocol files
-set(botcraft_PROTOCOL_HDR
-    include/botcraft/Protocol/Messages/Handshaking/Serverbound/Handshake.hpp
-    
-    include/botcraft/Protocol/Messages/Login/Serverbound/LoginStart.hpp
-    include/botcraft/Protocol/Messages/Login/Serverbound/EncryptionResponse.hpp
-    include/botcraft/Protocol/Messages/Login/Clientbound/DisconnectLogin.hpp
-    include/botcraft/Protocol/Messages/Login/Clientbound/EncryptionRequest.hpp
-    include/botcraft/Protocol/Messages/Login/Clientbound/LoginSuccess.hpp
-    include/botcraft/Protocol/Messages/Login/Clientbound/SetCompression.hpp
-    
-    include/botcraft/Protocol/Messages/Play/Serverbound/ChatMessageServerbound.hpp
-    include/botcraft/Protocol/Messages/Play/Serverbound/ClientSettings.hpp
-    include/botcraft/Protocol/Messages/Play/Serverbound/ClientStatus.hpp
-    include/botcraft/Protocol/Messages/Play/Serverbound/ConfirmTransactionServerbound.hpp
-    include/botcraft/Protocol/Messages/Play/Serverbound/KeepAliveServerbound.hpp
-    include/botcraft/Protocol/Messages/Play/Serverbound/PlayerDigging.hpp
-    include/botcraft/Protocol/Messages/Play/Serverbound/PlayerPositionAndLookServerbound.hpp
-    include/botcraft/Protocol/Messages/Play/Serverbound/TeleportConfirm.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/AcknowledgePlayerDigging.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/BlockChange.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/ChatMessageClientbound.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/ChunkData.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/ConfirmTransactionClientbound.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/DisconnectPlay.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/Entity.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/EntityLook.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/EntityLookAndRelativeMove.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/EntityRelativeMove.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/EntityTeleport.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/JoinGame.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/KeepAliveClientbound.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/MultiBlockChange.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/PlayerAbilitiesClientbound.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/PlayerInfo.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/PlayerPositionAndLookClientbound.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/Respawn.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/ServerDifficulty.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/TimeUpdate.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/UnloadChunk.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/UpdateBlockEntity.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/UpdateHealth.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/UpdateLight.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/SetSlot.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/WindowItems.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/OpenWindow.hpp
-    include/botcraft/Protocol/Messages/Play/Clientbound/HeldItemChangeClientbound.hpp
-    
-    include/botcraft/Protocol/Types/Chat.hpp
-    include/botcraft/Protocol/Types/PlayerProperty.hpp
-    include/botcraft/Protocol/Types/Record.hpp
-)
-list(APPEND botcraft_PUBLIC_HDR ${botcraft_PROTOCOL_HDR})
-
-set(botcraft_PROTOCOL_SRC
-    src/Protocol/Types/Chat.cpp
-)
-list(APPEND botcraft_SRC ${botcraft_PROTOCOL_SRC})
 
 if(BOTCRAFT_USE_OPENGL_GUI)
     list(APPEND botcraft_PUBLIC_HDR
@@ -240,6 +139,9 @@ target_include_directories(botcraft
         )
         
 target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
+
+# Add protocolCraft
+target_link_libraries(botcraft PUBLIC protocolCraft)
 
 # Add picoJson
 target_include_directories(botcraft 

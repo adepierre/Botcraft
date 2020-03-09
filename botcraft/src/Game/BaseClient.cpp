@@ -14,9 +14,9 @@
 #include "botcraft/Network/Authentifier.hpp"
 #include "botcraft/Network/AESEncrypter.hpp"
 
-#include "botcraft/Protocol/MessageFactory.hpp"
+#include "protocolCraft/MessageFactory.hpp"
 
-#include "botcraft/Version.hpp"
+using namespace ProtocolCraft;
 
 namespace Botcraft
 {
@@ -102,7 +102,7 @@ namespace Botcraft
         }
 
         std::shared_ptr<LoginStart> loginstart_msg(new LoginStart);
-        loginstart_msg->SetName(name);
+        loginstart_msg->SetName_(name);
         Send(loginstart_msg);
     }
 
@@ -207,7 +207,7 @@ namespace Botcraft
 
         int packet_id = ReadVarInt(packet_iterator, length);
 
-        std::shared_ptr<Message> msg = MessageFactory::CreateMessage(packet_id, (int)state);
+        std::shared_ptr<Message> msg = MessageFactory::CreateMessageClientbound(packet_id, (int)state);
 
         if (packet_id < printed_packets.size() && printed_packets[packet_id])
         {
@@ -596,7 +596,7 @@ namespace Botcraft
 
     void BaseClient::Handle(ServerDifficulty &msg)
     {
-        difficulty = msg.GetDifficulty();
+        difficulty = (Difficulty)msg.GetDifficulty();
 #if PROTOCOL_VERSION > 463
         difficulty_locked = msg.GetDifficultyLocked();
 #endif
@@ -721,10 +721,10 @@ namespace Botcraft
         game_mode = (GameMode)(msg.GetGamemode() & 0x03);
         is_hardcore = msg.GetGamemode() & 0x08;
 
-        dimension = msg.GetDimension();
+        dimension = (Dimension)msg.GetDimension();
 
 #if PROTOCOL_VERSION < 464
-        difficulty = msg.GetDifficulty();
+        difficulty = (Difficulty)msg.GetDifficulty();
 #endif
     }
 
@@ -869,10 +869,10 @@ namespace Botcraft
         std::shared_ptr<ClientSettings> settings_msg(new ClientSettings);
         settings_msg->SetLocale("fr_FR");
         settings_msg->SetViewDistance(10);
-        settings_msg->SetChatMode(ChatMode::Enabled);
+        settings_msg->SetChatMode((int)ChatMode::Enabled);
         settings_msg->SetChatColors(true);
         settings_msg->SetDisplayedSkinParts(0xFF);
-        settings_msg->SetMainHand(Hand::Right);
+        settings_msg->SetMainHand((int)Hand::Right);
 
         Send(settings_msg);
     }
@@ -906,7 +906,9 @@ namespace Botcraft
         authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());
 
         std::shared_ptr<EncryptionResponse> response_msg(new EncryptionResponse);
+        response_msg->SetSharedSecretLength(encrypted_shared_secret.size());
         response_msg->SetSharedSecret(encrypted_shared_secret);
+        response_msg->SetVerifyTokenLength(encrypted_token.size());
         response_msg->SetVerifyToken(encrypted_token);
 
         Send(response_msg);
@@ -938,11 +940,11 @@ namespace Botcraft
 #endif
         }
 
-        dimension = msg.GetDimension();
+        dimension = (Dimension)msg.GetDimension();
 #if PROTOCOL_VERSION < 464
-        difficulty = msg.GetDifficulty();
+        difficulty = (Difficulty)msg.GetDifficulty();
 #endif
-        game_mode = msg.GetGamemode();
+        game_mode = (GameMode)msg.GetGamemode();
     }
 
 #if PROTOCOL_VERSION > 404

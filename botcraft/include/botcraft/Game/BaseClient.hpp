@@ -6,17 +6,20 @@
 #include <deque>
 #include <unordered_set>
 
-#include "botcraft/Protocol/Handler.hpp"
-#include "botcraft/Protocol/Message.hpp"
-#include "botcraft/Protocol/AllMessages.hpp"
+#include "protocolCraft/Handler.hpp"
+#include "protocolCraft/Message.hpp"
+#include "protocolCraft/AllMessages.hpp"
 #include "botcraft/Game/Player.hpp"
 #include "botcraft/Game/Enums.hpp"
-
-#include "botcraft/Version.hpp"
 
 #if USE_GUI
 #include "botcraft/Renderer/CubeWorldRenderer.hpp"
 #endif
+
+namespace ProtocolCraft
+{
+    class Handler : public GenericHandler<Message, AllMessages> {};
+}
 
 namespace Botcraft
 {
@@ -25,9 +28,8 @@ namespace Botcraft
     class InventoryManager;
     class Authentifier;
 
-    class Handler : public GenericHandler<Message, AllMessages> {};
 
-    class BaseClient : public Handler
+    class BaseClient : public ProtocolCraft::Handler
     {
     public:
         BaseClient(const bool afk_only_ = false, const std::vector<int> &printed_packets_ = std::vector<int>(0));
@@ -38,7 +40,7 @@ namespace Botcraft
         void Disconnect();
 
     protected:
-        void Send(const std::shared_ptr<Message> msg);
+        void Send(const std::shared_ptr<ProtocolCraft::Message> msg);
         void WaitForNewPackets();
         void OnNewPacket(const std::vector<unsigned char> &packet);
         void ProcessPacket(const std::vector<unsigned char> &packet);
@@ -52,39 +54,39 @@ namespace Botcraft
 #endif
 
     protected:
-        virtual void Handle(Message &msg) override;
-        virtual void Handle(DisconnectLogin &msg) override;
-        virtual void Handle(LoginSuccess &msg) override;
-        virtual void Handle(SetCompression &msg) override;
-        virtual void Handle(BlockChange &msg) override;
-        virtual void Handle(ServerDifficulty &msg) override;
-        virtual void Handle(MultiBlockChange &msg) override;
-        virtual void Handle(ConfirmTransactionClientbound &msg) override;
-        virtual void Handle(DisconnectPlay &msg) override;
-        virtual void Handle(UnloadChunk &msg) override;
-        virtual void Handle(KeepAliveClientbound &msg) override;
-        virtual void Handle(ChunkData &msg) override;
-        virtual void Handle(JoinGame &msg) override;
-        virtual void Handle(Entity &msg) override;
-        virtual void Handle(EntityRelativeMove &msg) override;
-        virtual void Handle(EntityLookAndRelativeMove &msg) override;
-        virtual void Handle(EntityLook &msg) override;
-        virtual void Handle(PlayerPositionAndLookClientbound &msg) override;
-        virtual void Handle(UpdateHealth &msg) override;
-        virtual void Handle(EntityTeleport &msg) override;
-        virtual void Handle(PlayerAbilitiesClientbound &msg) override;
-        virtual void Handle(TimeUpdate &msg) override;
-        virtual void Handle(EncryptionRequest &msg) override;
-        virtual void Handle(Respawn &msg) override;
+        virtual void Handle(ProtocolCraft::Message &msg) override;
+        virtual void Handle(ProtocolCraft::DisconnectLogin &msg) override;
+        virtual void Handle(ProtocolCraft::LoginSuccess &msg) override;
+        virtual void Handle(ProtocolCraft::SetCompression &msg) override;
+        virtual void Handle(ProtocolCraft::BlockChange &msg) override;
+        virtual void Handle(ProtocolCraft::ServerDifficulty &msg) override;
+        virtual void Handle(ProtocolCraft::MultiBlockChange &msg) override;
+        virtual void Handle(ProtocolCraft::ConfirmTransactionClientbound &msg) override;
+        virtual void Handle(ProtocolCraft::DisconnectPlay &msg) override;
+        virtual void Handle(ProtocolCraft::UnloadChunk &msg) override;
+        virtual void Handle(ProtocolCraft::KeepAliveClientbound &msg) override;
+        virtual void Handle(ProtocolCraft::ChunkData &msg) override;
+        virtual void Handle(ProtocolCraft::JoinGame &msg) override;
+        virtual void Handle(ProtocolCraft::Entity &msg) override;
+        virtual void Handle(ProtocolCraft::EntityRelativeMove &msg) override;
+        virtual void Handle(ProtocolCraft::EntityLookAndRelativeMove &msg) override;
+        virtual void Handle(ProtocolCraft::EntityLook &msg) override;
+        virtual void Handle(ProtocolCraft::PlayerPositionAndLookClientbound &msg) override;
+        virtual void Handle(ProtocolCraft::UpdateHealth &msg) override;
+        virtual void Handle(ProtocolCraft::EntityTeleport &msg) override;
+        virtual void Handle(ProtocolCraft::PlayerAbilitiesClientbound &msg) override;
+        virtual void Handle(ProtocolCraft::TimeUpdate &msg) override;
+        virtual void Handle(ProtocolCraft::EncryptionRequest &msg) override;
+        virtual void Handle(ProtocolCraft::Respawn &msg) override;
 #if PROTOCOL_VERSION > 404
-        virtual void Handle(UpdateLight &msg) override;
+        virtual void Handle(ProtocolCraft::UpdateLight &msg) override;
 #endif
-        virtual void Handle(UpdateBlockEntity &msg) override;
-        virtual void Handle(PlayerInfo &msg) override;
-        virtual void Handle(SetSlot &msg) override;
-        virtual void Handle(WindowItems &msg) override;
-        virtual void Handle(OpenWindow &msg) override;
-        virtual void Handle(HeldItemChangeClientbound &msg) override;
+        virtual void Handle(ProtocolCraft::UpdateBlockEntity &msg) override;
+        virtual void Handle(ProtocolCraft::PlayerInfo &msg) override;
+        virtual void Handle(ProtocolCraft::SetSlot &msg) override;
+        virtual void Handle(ProtocolCraft::WindowItems &msg) override;
+        virtual void Handle(ProtocolCraft::OpenWindow &msg) override;
+        virtual void Handle(ProtocolCraft::HeldItemChangeClientbound &msg) override;
 
     protected:
         // If in afk only mode, the chunks will NOT

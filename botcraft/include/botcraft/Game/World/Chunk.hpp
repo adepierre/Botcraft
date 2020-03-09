@@ -7,12 +7,14 @@
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/Enums.hpp"
 
-#include "botcraft/Version.hpp"
+namespace ProtocolCraft
+{
+    class NBT;
+}
 
 namespace Botcraft
 {
     struct Section;
-    class NBT;
 
     //We assume that a chunk is 16*256*16
     //And a section is 16*16*16
@@ -54,8 +56,8 @@ namespace Botcraft
         void SetSkyLight(const Position &pos, const unsigned char v);
         const Dimension GetDimension() const;
 
-        std::map<Position, std::shared_ptr<NBT> >& GetBlockEntitiesData();
-        const std::map<Position, std::shared_ptr<NBT> >& GetBlockEntitiesData() const;
+        std::map<Position, std::shared_ptr<ProtocolCraft::NBT> >& GetBlockEntitiesData();
+        const std::map<Position, std::shared_ptr<ProtocolCraft::NBT> >& GetBlockEntitiesData() const;
 
         const bool HasSection(const int y) const;
         void AddSection(const int y);
@@ -73,7 +75,7 @@ namespace Botcraft
 		void SetBiome(const int x, const int y, const int z, const int new_biome);
 		void SetBiome(const int i, const int new_biome);
 #endif
-        std::shared_ptr<NBT> GetBlockEntityData(const Position &pos);
+        std::shared_ptr<ProtocolCraft::NBT> GetBlockEntityData(const Position &pos);
         void UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction);
         
     private:
@@ -83,7 +85,7 @@ namespace Botcraft
 #else
         std::vector<int> biomes;
 #endif
-        std::map<Position, std::shared_ptr<NBT> > block_entities_data;
+        std::map<Position, std::shared_ptr<ProtocolCraft::NBT> > block_entities_data;
         Dimension dimension;
 
 #if USE_GUI

@@ -10,7 +10,7 @@ public:
     ~ChatCommandClient();
 
 protected:
-    virtual void Handle(Botcraft::ChatMessageClientbound &msg) override;
+    virtual void Handle(ProtocolCraft::ChatMessageClientbound &msg) override;
 
     // Check for any spawnable blocks in a sphere from pos and prints
     // all the positions into a file

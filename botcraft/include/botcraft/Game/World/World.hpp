@@ -6,13 +6,13 @@
 
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/Enums.hpp"
-#include "botcraft/Version.hpp"
+
+#include "protocolCraft/Types/NBT/NBT.hpp"
 
 namespace Botcraft
 {
     class Chunk;
     class Block;
-    class NBT;
     class Blockstate;
 
     class World
@@ -48,9 +48,9 @@ namespace Botcraft
         //Get the block at a given position
         const Block* GetBlock(const Position& pos);
 
-        bool SetBlockEntityData(const Position &pos, const NBT& data);
+        bool SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT& data);
         // Get the block entity data at a given position
-        std::shared_ptr<NBT> GetBlockEntityData(const Position& pos);
+        std::shared_ptr<ProtocolCraft::NBT> GetBlockEntityData(const Position& pos);
 
 #if PROTOCOL_VERSION < 358
         bool SetBiome(const int x, const int z, const unsigned char biome);

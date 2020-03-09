@@ -4,8 +4,6 @@
 #include <string>
 #include <memory>
 
-#include "botcraft/Version.hpp"
-
 namespace Botcraft
 {
     // Enum for biomes with special color processing

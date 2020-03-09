@@ -7,7 +7,6 @@
 #include <picojson/picojson.h>
 
 #include "botcraft/Game/World/Blockstate.hpp"
-#include "botcraft/Version.hpp"
 
 namespace Botcraft
 {

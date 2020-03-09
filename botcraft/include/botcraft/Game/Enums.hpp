@@ -81,12 +81,13 @@ namespace Botcraft
         SwapItemHand
     };
 
-    enum class PlayerInfoAction
+    enum class PlayerDiggingFace
     {
-        AddPlayer = 0,
-        UpdateGamemode = 1,
-        UpdateLatency = 2,
-        UpdateDisplayName = 3,
-        RemovePlayer = 4
+        Bottom = 0, // -Y
+        Top,        // +Y
+        North,      // -Z
+        South,      // +Z
+        West,       // -X
+        East        // +X
     };
 } // Botcraft

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "botcraft/Version.hpp"
-
 #include "botcraft/Game/BaseClient.hpp"
 
 namespace Botcraft
@@ -45,10 +43,10 @@ namespace Botcraft
 
     protected:
         // Example of overriding the processing of an incoming packet
-        virtual void Handle(Botcraft::UpdateHealth &msg) override;
+        virtual void Handle(ProtocolCraft::UpdateHealth &msg) override;
 
 #if PROTOCOL_VERSION > 493
-        virtual void Handle(Botcraft::AcknowledgePlayerDigging &msg) override;
+        virtual void Handle(ProtocolCraft::AcknowledgePlayerDigging &msg) override;
 #endif
 
 

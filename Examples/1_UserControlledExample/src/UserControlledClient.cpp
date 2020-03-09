@@ -6,6 +6,7 @@
 #include "UserControlledClient.hpp"
 
 using namespace Botcraft;
+using namespace ProtocolCraft;
 
 UserControlledClient::UserControlledClient(bool online,
     const std::vector<int> &printed_packets_) : InterfaceClient(printed_packets_)
@@ -343,7 +344,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
 }
 #endif
 
-void UserControlledClient::Handle(Botcraft::LoginSuccess &msg)
+void UserControlledClient::Handle(LoginSuccess &msg)
 {
     Botcraft::BaseClient::Handle(msg);
 
