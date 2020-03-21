@@ -9,6 +9,7 @@
 #include "protocolCraft/Handler.hpp"
 #include "protocolCraft/Message.hpp"
 #include "protocolCraft/AllMessages.hpp"
+#include "protocolCraft/enums.hpp"
 #include "botcraft/Game/Player.hpp"
 #include "botcraft/Game/Enums.hpp"
 
@@ -116,7 +117,7 @@ namespace Botcraft
 
         bool auto_respawn;
 
-        State state;
+        ProtocolCraft::ConnectionState state;
         GameMode game_mode;
         Dimension dimension;
         Difficulty difficulty;

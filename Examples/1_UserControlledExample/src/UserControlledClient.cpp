@@ -20,7 +20,7 @@ UserControlledClient::UserControlledClient(bool online,
         world = std::shared_ptr<World>(new World);
         player = std::shared_ptr<Player>(new Player);
 
-        state = State::Play;
+        state = ProtocolCraft::ConnectionState::Play;
 
         should_be_closed = false;
 

@@ -1,12 +1,16 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 namespace ProtocolCraft
 {
     using ReadIterator = std::vector<unsigned char>::const_iterator;
     using WriteContainer = std::vector<unsigned char>;
 
+    using Angle = unsigned char;
+    using UUID = std::string;
+    using Identifier = std::string;
 
     int ReadVarInt(ReadIterator &iter, size_t &length);
     void WriteVarInt(const int my_int, WriteContainer &container);
@@ -18,6 +22,9 @@ namespace ProtocolCraft
     void WriteString(const std::string &my_string, WriteContainer &container);
     std::string ReadRawString(ReadIterator &iter, size_t &length, const int size);
     void WriteRawString(const std::string &s, WriteContainer &container);
+
+    UUID ReadUUID(ReadIterator& iter, size_t& length);
+    void WriteUUID(const UUID& s, WriteContainer& container);
 
     std::vector<unsigned char> ReadByteArray(ReadIterator &iter, size_t &length, const size_t &desired_length);
     void WriteByteArray(const std::vector<unsigned char> &my_array, WriteContainer &container);
@@ -70,7 +77,7 @@ namespace ProtocolCraft
     {
         std::vector<unsigned char> output(sizeof(T));
 
-        T big_endian_var;            
+        T big_endian_var;
         // The compiler should(?) optimize that
         // This check doesn't work if int and char
         // have the same size, but I guess this is not

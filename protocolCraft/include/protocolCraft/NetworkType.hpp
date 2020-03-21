@@ -31,4 +31,4 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const = 0;
         virtual const picojson::value SerializeImpl() const = 0;
     };
-} // Botcraft
+} // ProtocolCraft

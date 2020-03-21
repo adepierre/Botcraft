@@ -47,7 +47,7 @@ namespace Botcraft
 
     void InterfaceClient::Say(const std::string &msg)
     {
-        if (state == State::Play)
+        if (state == ProtocolCraft::ConnectionState::Play)
         {
             std::shared_ptr<ChatMessageServerbound> chat_message(new ChatMessageServerbound);
             chat_message->SetMessage(msg);
@@ -57,7 +57,7 @@ namespace Botcraft
 
     void InterfaceClient::Respawn()
     {
-        if (state == State::Play)
+        if (state == ProtocolCraft::ConnectionState::Play)
         {
             std::shared_ptr<ClientStatus> status_message(new ClientStatus);
             status_message->SetActionID(0);
@@ -233,7 +233,7 @@ namespace Botcraft
 
     const bool InterfaceClient::GoTo(const Position &goal, const float speed)
     {
-        if (state != State::Play)
+        if (state != ProtocolCraft::ConnectionState::Play)
         {
             return false;
         }

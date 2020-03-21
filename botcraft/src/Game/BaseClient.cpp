@@ -23,7 +23,7 @@ namespace Botcraft
     BaseClient::BaseClient(const bool afk_only_, const std::vector<int> &printed_packets_)
     {
         afk_only = afk_only_;
-        state = State::None;
+        state = ProtocolCraft::ConnectionState::None;
         game_mode = GameMode::None;
         dimension = Dimension::None;
         difficulty = Difficulty::None;
@@ -65,7 +65,7 @@ namespace Botcraft
 
     void BaseClient::Connect(const std::string &ip, const unsigned int port, const std::string &login, const std::string &password)
     {
-        state = State::Handshaking;
+        state = ProtocolCraft::ConnectionState::Handshake;
 
         //Start the thread to process the incoming packets
         m_thread_process = std::thread(&BaseClient::WaitForNewPackets, this);
@@ -80,10 +80,10 @@ namespace Botcraft
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
         handshake_msg->SetServerAddress(ip);
         handshake_msg->SetServerPort(port);
-        handshake_msg->SetNextState((int)State::Login);
+        handshake_msg->SetNextState((int)ProtocolCraft::ConnectionState::Login);
         Send(handshake_msg);
 
-        state = State::Login;
+        state = ProtocolCraft::ConnectionState::Login;
 
         // Offline mode case
         if (password == "")
@@ -141,7 +141,7 @@ namespace Botcraft
 
     void BaseClient::WaitForNewPackets()
     {
-        while (state != State::None)
+        while (state != ProtocolCraft::ConnectionState::None)
         {
             {
                 std::unique_lock<std::mutex> lck(mutex_process);
@@ -207,7 +207,7 @@ namespace Botcraft
 
         int packet_id = ReadVarInt(packet_iterator, length);
 
-        std::shared_ptr<Message> msg = MessageFactory::CreateMessageClientbound(packet_id, (int)state);
+        std::shared_ptr<Message> msg = MessageFactory::CreateMessageClientbound(packet_id, state);
 
         if (packet_id < printed_packets.size() && printed_packets[packet_id])
         {
@@ -235,7 +235,7 @@ namespace Botcraft
         std::shared_ptr<PlayerPositionAndLookServerbound> msg_position(new PlayerPositionAndLookServerbound);
         bool has_moved = false;
 
-        while (state == State::Play)
+        while (state == ProtocolCraft::ConnectionState::Play)
         {
             // End of the current tick
             auto end = std::chrono::system_clock::now() + std::chrono::milliseconds(50);
@@ -404,7 +404,7 @@ namespace Botcraft
 
     void BaseClient::Disconnect()
     {
-        state = State::None;
+        state = ProtocolCraft::ConnectionState::None;
         game_mode = GameMode::None;
         dimension = Dimension::None;
         difficulty = Difficulty::None;
@@ -477,7 +477,7 @@ namespace Botcraft
 
     void BaseClient::WaitForRenderingUpdate()
     {
-        while (state == State::Play)
+        while (state == ProtocolCraft::ConnectionState::Play)
         {
             {
                 std::unique_lock<std::mutex> lck(mutex_rendering);
@@ -515,7 +515,7 @@ namespace Botcraft
 
                 // If we left the game, we don't need to process 
                 // the rest of the data, just discard them
-                if (state != State::Play)
+                if (state != ProtocolCraft::ConnectionState::Play)
                 {
                     chunks_to_render.clear();
                     break;
@@ -540,7 +540,7 @@ namespace Botcraft
 
     void BaseClient::Handle(LoginSuccess &msg)
     {
-        state = State::Play;
+        state = ProtocolCraft::ConnectionState::Play;
 
         if (!player)
         {

@@ -147,6 +147,16 @@ namespace ProtocolCraft
         container.insert(container.end(), s.begin(), s.end());
     }
 
+    UUID ReadUUID(ReadIterator& iter, size_t& length)
+    {
+        return ReadRawString(iter, length, 16);
+    }
+
+    void WriteUUID(const UUID& s, WriteContainer& container)
+    {
+        WriteRawString(s, container);
+    }
+
     std::vector<unsigned char> ReadByteArray(ReadIterator &iter, size_t &length, const size_t &desired_length)
     {
         if (length < desired_length)

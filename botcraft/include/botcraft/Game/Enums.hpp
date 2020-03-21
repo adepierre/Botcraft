@@ -10,15 +10,6 @@ namespace Botcraft
         End
     };
 
-    enum class State
-    {
-        None = -1,
-        Handshaking,
-        Status,
-        Login,
-        Play
-    };
-
     enum class GameMode
     {
         None = -1,
