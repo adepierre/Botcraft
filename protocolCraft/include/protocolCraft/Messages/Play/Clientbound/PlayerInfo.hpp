@@ -39,7 +39,11 @@ namespace ProtocolCraft
 
         virtual const std::string GetName() const override
         {
+#if PROTOCOL_VERSION == 340
             return "Player List Item";
+#else
+            return "Player Info";
+#endif
         }
 
         void SetAction(const int action_)
@@ -47,32 +51,32 @@ namespace ProtocolCraft
             action = action_;
         }
 
-        void SetPlayers(const std::map<std::string, PlayerInformation>& players_)
+        void SetPlayers(const std::map<UUID, PlayerInformation>& players_)
         {
             players = players_;
         }
 
-        void SetGamemode(const std::map<std::string, int>& gamemode_)
+        void SetGamemode(const std::map<UUID, int>& gamemode_)
         {
             gamemode = gamemode_;
         }
 
-        void SetPing(const std::map<std::string, int>& ping_)
+        void SetPing(const std::map<UUID, int>& ping_)
         {
             ping = ping_;
         }
 
-        void SetHasDisplayName(const std::map<std::string, bool>& has_display_name_)
+        void SetHasDisplayName(const std::map<UUID, bool>& has_display_name_)
         {
             has_display_name = has_display_name_;
         }
 
-        void SetDisplayName(const std::map<std::string, Chat>& display_name_)
+        void SetDisplayName(const std::map<UUID, Chat>& display_name_)
         {
             display_name = display_name_;
         }
 
-        void SetRemoved(const std::vector<std::string>& removed_)
+        void SetRemoved(const std::vector<UUID>& removed_)
         {
             removed = removed_;
         }
@@ -82,32 +86,32 @@ namespace ProtocolCraft
             return action;
         }
 
-        const std::map<std::string, PlayerInformation>& GetPlayers() const
+        const std::map<UUID, PlayerInformation>& GetPlayers() const
         {
             return players;
         }
 
-        const std::map<std::string, int>& GetGamemode() const
+        const std::map<UUID, int>& GetGamemode() const
         {
             return gamemode;
         }
 
-        const std::map<std::string, int>& GetPing() const
+        const std::map<UUID, int>& GetPing() const
         {
             return ping;
         }
 
-        const std::map<std::string, bool>& GetHasDisplayName() const
+        const std::map<UUID, bool>& GetHasDisplayName() const
         {
             return has_display_name;
         }
 
-        const std::map<std::string, Chat>& GetDisplayName() const
+        const std::map<UUID, Chat>& GetDisplayName() const
         {
             return display_name;
         }
 
-        const std::vector<std::string>& GetRemoved() const
+        const std::vector<UUID>& GetRemoved() const
         {
             return removed;
         }
@@ -119,7 +123,7 @@ namespace ProtocolCraft
             const int number_of_players = ReadVarInt(iter, length);
             for (int i = 0; i < number_of_players; ++i)
             {
-                std::string uuid = ReadRawString(iter, length, 16);
+                UUID uuid = ReadUUID(iter, length);
                 switch ((PlayerInfoAction)action)
                 {
                 case PlayerInfoAction::AddPlayer:
@@ -158,7 +162,7 @@ namespace ProtocolCraft
                 WriteVarInt(players.size(), container);
                 for (auto it = players.begin(); it != players.end(); ++it)
                 {
-                    WriteString(it->first, container);
+                    WriteUUID(it->first, container);
                     it->second.Write(container);
                 }
                 break;
@@ -166,7 +170,7 @@ namespace ProtocolCraft
                 WriteVarInt(gamemode.size(), container);
                 for (auto it = gamemode.begin(); it != gamemode.end(); ++it)
                 {
-                    WriteString(it->first, container);
+                    WriteUUID(it->first, container);
                     WriteVarInt((int)it->second, container);
                 }
                 break;
@@ -174,7 +178,7 @@ namespace ProtocolCraft
                 WriteVarInt(ping.size(), container);
                 for (auto it = ping.begin(); it != ping.end(); ++it)
                 {
-                    WriteString(it->first, container);
+                    WriteUUID(it->first, container);
                     WriteVarInt((int)it->second, container);
                 }
                 break;
@@ -182,7 +186,7 @@ namespace ProtocolCraft
                 WriteVarInt(has_display_name.size(), container);
                 for (auto it = has_display_name.begin(); it != has_display_name.end(); ++it)
                 {
-                    WriteString(it->first, container);
+                    WriteUUID(it->first, container);
                     WriteData<bool>(it->second, container);
                     if (it->second)
                     {
@@ -194,7 +198,7 @@ namespace ProtocolCraft
                 WriteVarInt(removed.size(), container);
                 for (int i = 0; i < removed.size(); ++i)
                 {
-                    WriteString(removed[i], container);
+                    WriteUUID(removed[i], container);
                 }
                 break;
             default:
@@ -217,28 +221,48 @@ namespace ProtocolCraft
                 array.reserve(players.size());
                 for (auto it = players.begin(); it != players.end(); ++it)
                 {
-                    array.push_back(it->second.Serialize());
+                    picojson::value value2(picojson::object_type, false);
+                    picojson::object& object2 = value2.get<picojson::object>();
+                    object2["uuid"] = picojson::value(it->first);
+                    object2["player_info"] = it->second.Serialize();
+                    array.push_back(value2);
                 }
                 break;
             case PlayerInfoAction::UpdateGamemode:
                 array.reserve(gamemode.size());
                 for (auto it = gamemode.begin(); it != gamemode.end(); ++it)
                 {
-                    array.push_back(picojson::value((double)it->second));
+                    picojson::value value2(picojson::object_type, false);
+                    picojson::object& object2 = value2.get<picojson::object>();
+                    object2["uuid"] = picojson::value(it->first);
+                    object2["gamemode"] = picojson::value((double)it->second);
+                    array.push_back(value2);
                 }
                 break;
             case PlayerInfoAction::UpdateLatency:
                 array.reserve(ping.size());
                 for (auto it = ping.begin(); it != ping.end(); ++it)
                 {
-                    array.push_back(picojson::value((double)it->second));
+                    picojson::value value2(picojson::object_type, false);
+                    picojson::object& object2 = value2.get<picojson::object>();
+                    object2["uuid"] = picojson::value(it->first);
+                    object2["ping"] = picojson::value((double)it->second);
+                    array.push_back(value2);
                 }
                 break;
             case PlayerInfoAction::UpdateDisplayName:
-                array.reserve(display_name.size());
-                for (auto it = display_name.begin(); it != display_name.end(); ++it)
+                array.reserve(has_display_name.size());
+                for (auto it = has_display_name.begin(); it != has_display_name.end(); ++it)
                 {
-                    array.push_back(it->second.Serialize());
+                    picojson::value value2(picojson::object_type, false);
+                    picojson::object& object2 = value2.get<picojson::object>();
+                    object2["uuid"] = picojson::value(it->first);
+                    object2["has_display_name"] = picojson::value(it->second);
+                    if (it->second)
+                    {
+                        object2["display_name"] = display_name.at(it->first).Serialize();
+                    }
+                    array.push_back(value2);
                 }
                 break;
             case PlayerInfoAction::RemovePlayer:
@@ -257,11 +281,11 @@ namespace ProtocolCraft
 
     private:
         int action;
-        std::map<std::string, PlayerInformation> players;
-        std::map<std::string, int> gamemode;
-        std::map<std::string, int> ping;
-        std::map<std::string, bool> has_display_name;
-        std::map<std::string, Chat> display_name;
-        std::vector<std::string> removed;
+        std::map<UUID, PlayerInformation> players;
+        std::map<UUID, int> gamemode;
+        std::map<UUID, int> ping;
+        std::map<UUID, bool> has_display_name;
+        std::map<UUID, Chat> display_name;
+        std::vector<UUID> removed;
     };
 } //ProtocolCraft

@@ -151,7 +151,7 @@ namespace ProtocolCraft
             case WorldBorderAction::LerpSize:
                 old_diameter = ReadData<double>(iter, length);
                 new_diameter = ReadData<double>(iter, length);
-                speed = ReadData<long long int>(iter, length);
+                speed = ReadVarLong(iter, length);
                 break;
             case WorldBorderAction::SetCenter:
                 x = ReadData<double>(iter, length);
@@ -162,7 +162,7 @@ namespace ProtocolCraft
                 z = ReadData<double>(iter, length);
                 old_diameter = ReadData<double>(iter, length);
                 new_diameter = ReadData<double>(iter, length);
-                speed = ReadData<long long int>(iter, length);
+                speed = ReadVarLong(iter, length);
                 portal_teleport_boundary = ReadVarInt(iter, length);
                 warning_time = ReadVarInt(iter, length);
                 warning_blocks = ReadVarInt(iter, length);
@@ -189,7 +189,7 @@ namespace ProtocolCraft
             case WorldBorderAction::LerpSize:
                 WriteData<double>(old_diameter, container);
                 WriteData<double>(new_diameter, container);
-                WriteData<long long int>(speed, container);
+                WriteVarLong(speed, container);
                 break;
             case WorldBorderAction::SetCenter:
                 WriteData<double>(x, container);
@@ -200,7 +200,7 @@ namespace ProtocolCraft
                 WriteData<double>(z, container);
                 WriteData<double>(old_diameter, container);
                 WriteData<double>(new_diameter, container);
-                WriteData<long long int>(speed, container);
+                WriteVarLong(speed, container);
                 WriteVarInt(portal_teleport_boundary, container);
                 WriteVarInt(warning_time, container);
                 WriteVarInt(warning_blocks, container);

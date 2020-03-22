@@ -113,7 +113,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            uuid = ReadData<UUID>(iter, length);
+            uuid = ReadUUID(iter, length);
             action = ReadVarInt(iter, length);
             switch ((BossBarAction)action)
             {
@@ -146,7 +146,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<UUID>(uuid, container);
+            WriteUUID(uuid, container);
             WriteVarInt(action, container);
             switch ((BossBarAction)action)
             {

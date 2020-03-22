@@ -66,7 +66,7 @@ namespace ProtocolCraft
             array_size_1 = array_size_1_;
         }
 
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
         void SetRecipeIds1(const std::vector<Identifier>& recipe_ids_1_)
 #else
         void SetRecipeIds1(const std::vector<int>& recipe_ids_1_)
@@ -80,7 +80,7 @@ namespace ProtocolCraft
             array_size_2 = array_size_2_;
         }
 
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
         void SetRecipeIds2(const std::vector<Identifier>& recipe_ids_2_)
 #else
         void SetRecipeIds2(const std::vector<int>& recipe_ids_2_)
@@ -122,7 +122,7 @@ namespace ProtocolCraft
             return array_size_1;
         }
 
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
         const std::vector<Identifier>& GetRecipeIds1() const
 #else
         const std::vector<int>& GetRecipeIds1() const
@@ -136,7 +136,7 @@ namespace ProtocolCraft
             return array_size_2;
         }
 
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
         const std::vector<Identifier>& GetRecipeIds2() const
 #else
         const std::vector<int>& GetRecipeIds2() const
@@ -157,14 +157,14 @@ namespace ProtocolCraft
             smelting_recipe_book_filter_active = ReadData<bool>(iter, length);
 #endif
             array_size_1 = ReadVarInt(iter, length);
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
             recipe_ids_1 = std::vector<Identifier>(array_size_1);
 #else
             recipe_ids_1 = std::vector<int>(array_size_1);
 #endif
             for (int i = 0; i < array_size_1; ++i)
             {
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
                 recipe_ids_1[i] = ReadString(iter, length);
 #else
                 recipe_ids_1[i] = ReadVarInt(iter, length);
@@ -172,14 +172,15 @@ namespace ProtocolCraft
             }
             if ((UnlockRecipesAction)action == UnlockRecipesAction::Init)
             {
-#if PROTOCOL_VERSION < 348
+                array_size_2 = ReadVarInt(iter, length);
+#if PROTOCOL_VERSION > 348
                 recipe_ids_2 = std::vector<Identifier>(array_size_2);
 #else
                 recipe_ids_2 = std::vector<int>(array_size_2);
 #endif
                 for (int i = 0; i < array_size_2; ++i)
                 {
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
                     recipe_ids_2[i] = ReadString(iter, length);
 #else
                     recipe_ids_2[i] = ReadVarInt(iter, length);
@@ -200,7 +201,7 @@ namespace ProtocolCraft
             WriteVarInt(array_size_1, container);
             for (int i = 0; i < array_size_1; ++i)
             {
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
                 WriteString(recipe_ids_1[i], container);
 #else
                 WriteVarInt(recipe_ids_1[i], container);
@@ -211,7 +212,7 @@ namespace ProtocolCraft
                 WriteVarInt(array_size_2, container);
                 for (int i = 0; i < array_size_2; ++i)
                 {
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
                     WriteString(recipe_ids_2[i], container);
 #else
                     WriteVarInt(recipe_ids_2[i], container);
@@ -239,7 +240,7 @@ namespace ProtocolCraft
 
             for (int i = 0; i < array_size_1; ++i)
             {
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
                 array1.push_back(picojson::value(recipe_ids_1[i]));
 #else
                 array1.push_back(picojson::value((double)recipe_ids_1[i]));
@@ -248,12 +249,13 @@ namespace ProtocolCraft
 
             if ((UnlockRecipesAction)action == UnlockRecipesAction::Init)
             {
+                object["array_size_2"] = picojson::value((double)array_size_2);
                 object["recipe_ids_2"] = picojson::value(picojson::array_type, false);
                 picojson::array& array2 = object["recipe_ids_2"].get<picojson::array>();
 
                 for (int i = 0; i < array_size_2; ++i)
                 {
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
                     array2.push_back(picojson::value(recipe_ids_2[i]));
 #else
                     array2.push_back(picojson::value((double)recipe_ids_2[i]));
@@ -273,13 +275,13 @@ namespace ProtocolCraft
         bool smelting_recipe_book_filter_active;
 #endif
         int array_size_1;
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
         std::vector<Identifier> recipe_ids_1;
 #else
         std::vector<int> recipe_ids_1;
 #endif
         int array_size_2;
-#if PROTOCOL_VERSION < 348
+#if PROTOCOL_VERSION > 348
         std::vector<Identifier> recipe_ids_2;
 #else
         std::vector<int> recipe_ids_2;

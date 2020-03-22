@@ -12,11 +12,6 @@ namespace ProtocolCraft
     class PlayerInformation : public NetworkType
     {
     public:
-        
-        void SetUUID(const std::string& s)
-        {
-            uuid = s;
-        }
 
         void SetName(const std::string& s)
         {
@@ -48,10 +43,6 @@ namespace ProtocolCraft
             properties = p;
         }
 
-        const std::string& GetUUID() const
-        {
-            return uuid;
-        }
 
         const std::string& GetName() const
         {
@@ -129,7 +120,6 @@ namespace ProtocolCraft
             picojson::value val(picojson::object_type, false);
             picojson::object& object = val.get<picojson::object>();
 
-            object["uuid"] = picojson::value(uuid);
             object["name"] = picojson::value(name);
             object["gamemode"] = picojson::value((double)gamemode);
             object["ping"] = picojson::value((double)ping);
@@ -148,7 +138,6 @@ namespace ProtocolCraft
         }
 
     private:
-        std::string uuid;
         std::string name;
         int gamemode;
         int ping;

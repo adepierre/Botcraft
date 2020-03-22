@@ -62,6 +62,7 @@ namespace ProtocolCraft
         }
 
     private:
+        // This uuid is not a normal uuid but a regular string
         std::string uuid;
         std::string username;
     };

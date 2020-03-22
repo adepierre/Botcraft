@@ -32,7 +32,7 @@ namespace ProtocolCraft
             entity_id = entity_id_;
         }
 
-        void SetEntityUuid(const UUID entity_uuid_)
+        void SetEntityUuid(const UUID& entity_uuid_)
         {
             entity_uuid = entity_uuid_;
         }
@@ -100,7 +100,7 @@ namespace ProtocolCraft
             return entity_id;
         }
 
-        const UUID GetEntityUuid() const
+        const UUID& GetEntityUuid() const
         {
             return entity_uuid;
         }
@@ -167,7 +167,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             entity_id = ReadVarInt(iter, length);
-            entity_uuid = ReadData<UUID>(iter, length);
+            entity_uuid = ReadUUID(iter, length);
             type = ReadVarInt(iter, length);
             x = ReadData<double>(iter, length);
             y = ReadData<double>(iter, length);
@@ -186,7 +186,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteVarInt(entity_id, container);
-            WriteData<UUID>(entity_uuid, container);
+            WriteUUID(entity_uuid, container);
             WriteVarInt(type, container);
             WriteData<double>(x, container);
             WriteData<double>(y, container);
