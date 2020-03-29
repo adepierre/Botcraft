@@ -215,7 +215,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 458
         char type;
 #else
-        int type
+        int type;
 #endif
         double x;
         double y;

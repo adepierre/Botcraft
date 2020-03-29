@@ -153,7 +153,7 @@ namespace ProtocolCraft
             object["z"] = picojson::value((double)z);
 
 #if PROTOCOL_VERSION > 372
-            object["direction"] = picojson::value((double)direction;
+            object["direction"] = picojson::value((double)direction);
 #endif
 #if PROTOCOL_VERSION > 363
             object["has_display_name"] = picojson::value(has_display_name);
