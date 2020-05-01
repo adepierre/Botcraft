@@ -137,7 +137,7 @@ namespace Botcraft
             atlas_coords = coords;
 
             // Set use_overlay bit
-            if (atlas_coords[2] != 0 && atlas_coords[3] != 0)
+            if (atlas_coords[2] != 0 || atlas_coords[3] != 0)
             {
                 texture_data |= 1UL << 23;
             }
