@@ -101,7 +101,7 @@ if(MSVC)
 endif()
 
 add_library(botcraft SHARED ${botcraft_SRC} ${botcraft_PUBLIC_HDR} ${botcraft_PRIVATE_HDR})
-set_property(TARGET botcraft PROPERTY CXX_STANDARD 11)
+set_property(TARGET botcraft PROPERTY CXX_STANDARD 17)
 set_target_properties(botcraft PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(botcraft PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")
 
@@ -158,7 +158,7 @@ target_link_libraries(botcraft PUBLIC Threads::Threads)
 
 # Add graphical dependencies
 if(BOTCRAFT_USE_OPENGL_GUI)
-    target_link_libraries(botcraft PRIVATE glfw glad glm OpenGL::GL stb_image)
+    target_link_libraries(botcraft PRIVATE glfw glad glm rectpack2D OpenGL::GL stb_image)
     if(BOTCRAFT_USE_IMGUI)
         target_link_libraries(botcraft PRIVATE imgui)
         target_compile_definitions(botcraft PUBLIC USE_IMGUI=1)

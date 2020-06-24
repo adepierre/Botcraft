@@ -90,7 +90,6 @@ namespace Botcraft
             }
 
             my_shader->Use();
-            my_shader->SetVec2("atlas_dim", glm::vec2(atlas->GetWidth(), atlas->GetHeight()));
 
             while (!glfwWindowShouldClose(window))
             {
@@ -414,12 +413,20 @@ namespace Botcraft
                                         const std::vector<unsigned int> &texture_multipliers_)
         {
             std::array<unsigned short, 4> atlas_pos = { 0 };
+            std::array<unsigned short, 4> atlas_size = { 0 };
+            std::array<Transparency, 2> transparencies = { Transparency::Opaque };
+            std::array<Animation, 2> animated = { Animation::Static };
             
             for (int i = 0; i < std::min(2, (int)texture_identifiers_.size()); ++i)
             {
                 const std::pair<int, int> &atlas_coords = atlas->GetPosition(texture_identifiers_[i]);
                 atlas_pos[2 * i + 0] = atlas_coords.first;
                 atlas_pos[2 * i + 1] = atlas_coords.second;
+                const std::pair<int, int>& atlas_dims = atlas->GetSize(texture_identifiers_[i]);
+                atlas_size[2 * i + 0] = atlas_dims.first;
+                atlas_size[2 * i + 1] = atlas_dims.second;
+                transparencies[i] = atlas->GetTransparency(texture_identifiers_[i]);
+                animated[i] = atlas->GetAnimation(texture_identifiers_[i]);
             }
 
             std::array<unsigned int, 2> texture_multipliers = { 0xFFFFFFFF };
@@ -429,8 +436,28 @@ namespace Botcraft
             }
 
             Face face(face_);
-            face.SetAtlasCoords(atlas_pos);
             face.SetTextureMultipliers(texture_multipliers);
+            
+            std::array<float, 4> coords = face.GetTextureCoords(false);
+            unsigned short height_normalizer = animated[0] == Animation::Animated ? atlas_size[0] : atlas_size[1];
+            for (int i = 0; i < 2; ++i)
+            {
+                coords[2 * i + 0] = (atlas_pos[0] + coords[2 * i + 0] / 16.0f * atlas_size[0]) / atlas->GetWidth();
+                coords[2 * i + 1] = (atlas_pos[1] + coords[2 * i + 1] / 16.0f * height_normalizer) / atlas->GetHeight();
+            }
+            face.SetTextureCoords(coords, false);
+
+            if (texture_identifiers_.size() > 1)
+            {
+                coords = face.GetTextureCoords(true); 
+                height_normalizer = animated[1] == Animation::Animated ? atlas_size[2] : atlas_size[3];
+                for (int i = 0; i < 2; ++i)
+                {
+                    coords[2 * i + 0] = (atlas_pos[2] + coords[2 * i + 0] / 16.0f * atlas_size[2]) / atlas->GetWidth();
+                    coords[2 * i + 1] = (atlas_pos[3] + coords[2 * i + 1] / 16.0f * height_normalizer) / atlas->GetHeight();
+                }
+                face.SetTextureCoords(coords, true);
+            }
 
             //Add 0.5 because the origin of the block is at the center
             //but the coordinates start from the block corner
@@ -438,7 +465,7 @@ namespace Botcraft
             face.GetMatrix()[13] += y_ + 0.5f;
             face.GetMatrix()[14] += z_ + 0.5f;
 
-            const Transparency transparency = atlas->GetTransparency(std::pair<int, int>(atlas_pos[0], atlas_pos[1]));
+            const Transparency transparency = transparencies[0];
             if (transparency == Transparency::Opaque)
             {
                 face.SetDisplayBackface(false);
@@ -646,7 +673,7 @@ namespace Botcraft
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, atlas->GetTextureWidth() * atlas->GetWidth(), atlas->GetTextureHeight() * atlas->GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, atlas->Get());
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, atlas->GetWidth(), atlas->GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, atlas->Get());
             glGenerateMipmap(GL_TEXTURE_2D);
 
             glBindTexture(GL_TEXTURE_2D, 0);

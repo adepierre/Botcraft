@@ -5,7 +5,12 @@
 #define STBI_ONLY_PNG
 #include <stb_image/stb_image.h>
 
+// rectpack2D
+#include "finders_interface.h"
+
 #include <iostream>
+#include <fstream>
+#include <string>
 
 namespace Botcraft
 {
@@ -18,6 +23,7 @@ namespace Botcraft
             int height;
             int depth;
             std::string identifier;
+            bool animated;
             std::vector<unsigned char> data;
 
             const unsigned char Get(const int x, const int y, const int c) const
@@ -36,55 +42,43 @@ namespace Botcraft
 
         }
 
-        void Atlas::Reset(const int texture_height_, const int texture_width_, const int height_, const int width_)
+        void Atlas::Reset(const int height_, const int width_)
         {
-            texture_height = texture_height_;
-            texture_width = texture_width_;
             height = height_;
             width = width_;
-            data = std::vector<unsigned char>(texture_height * height * texture_width * width * 4, 0);
-            transparency_map = std::vector<std::vector<Transparency> >(width, std::vector<Transparency>(height, Transparency::Opaque));
-            positions.clear();
-            positions[""] = { 0, 0 };
+            data = std::vector<unsigned char>(height * width * 4, 0);
+            transparency_map.clear();
+            animation_map.clear();
+            textures_size_map.clear();
+            textures_position_map.clear();
 
             //Fill with "undefined" texture
-            for (int atlas_row = 0; atlas_row < height; ++atlas_row)
+            for (int row = 0; row < height; ++row)
             {
-                for (int atlas_col = 0; atlas_col < width; ++atlas_col)
+                for (int col = 0; col < width; ++col)
                 {
-                    for (int row = 0; row < texture_height; ++row)
-                    {
-                        for (int col = 0; col < texture_width; ++col)
-                        {
-                            unsigned char* pixel_pointer = Get(atlas_row, atlas_col, row, col);
+                    unsigned char* pixel_pointer = Get(row, col);
 
-                            bool is_magenta = !((row < texture_height / 2 && col < texture_width / 2) || (row >= texture_height / 2 && col >= texture_width / 2));
+                    bool is_magenta = !((row % 16 < 8 && col % 16 < 8) || (row % 16 >= 8 && col % 16 >= 8));
 
-                            *(pixel_pointer + 0) = is_magenta ? 255 : 0;
-                            *(pixel_pointer + 1) = 0;
-                            *(pixel_pointer + 2) = is_magenta ? 255 : 0;
-                            *(pixel_pointer + 3) = 255;
-                        }
-                    }
-                    transparency_map[atlas_col][atlas_row] = Transparency::Opaque;
+                    *(pixel_pointer + 0) = is_magenta ? 255 : 0;
+                    *(pixel_pointer + 1) = 0;
+                    *(pixel_pointer + 2) = is_magenta ? 255 : 0;
+                    *(pixel_pointer + 3) = 255;
                 }
             }
         }
 
-        void Atlas::LoadData(const std::vector<std::pair<std::string, std::string> > &textures_path_names)
+        void Atlas::LoadData(const std::vector<std::pair<std::string, std::string> >& textures_path_names)
         {
             if (textures_path_names.size() == 0)
             {
-                Reset(2, 2, 1, 1);
+                Reset(16, 16);
                 return;
             }
 
-            stbi_set_flip_vertically_on_load(true);
             std::vector<Texture> textures;
             textures.reserve(textures_path_names.size());
-
-            int textures_width = std::numeric_limits<int>::max();
-            int textures_height = std::numeric_limits<int>::max();
 
             for (int i = 0; i < textures_path_names.size(); ++i)
             {
@@ -93,27 +87,21 @@ namespace Botcraft
                     continue;
                 }
                 Texture tex;
-                unsigned char *data = stbi_load(textures_path_names[i].first.c_str(), &tex.width, &tex.height, &tex.depth, 0);
+                unsigned char* data = stbi_load(textures_path_names[i].first.c_str(), &tex.width, &tex.height, &tex.depth, 0);
                 if (data != nullptr)
                 {
                     tex.data = std::vector<unsigned char>(data, data + tex.width * tex.height * tex.depth);
                     tex.identifier = textures_path_names[i].second;
+                    std::ifstream animation_file((textures_path_names[i].first + ".mcmeta").c_str());
+                    tex.animated = animation_file.good();
+
                     textures.push_back(tex);
-                    if (tex.width < textures_width)
-                    {
-                        textures_width = tex.width;
-                    }
-                    if (tex.height < textures_height)
-                    {
-                        textures_height = tex.height;
-                    }
                 }
                 stbi_image_free(data);
             }
 
 
-            // Copy the textures with correct size (crop if the size is too big
-            // and ignore if the size is too small)
+            // Copy the textures with correct size (crop if it's an animated texture)
             std::vector<Texture> kept_textures;
             kept_textures.reserve(textures.size());
             for (int i = 0; i < textures.size(); ++i)
@@ -124,76 +112,59 @@ namespace Botcraft
                     std::cout << "Warning, unknown depth format (" << textures[i].depth << ") for texture " << textures[i].identifier << std::endl;
                     continue;
                 }
-
-                // If it's too small same
-                if (textures[i].width < textures_width || textures[i].height < textures_height)
-                {
-                    std::cout << "Warning, texture " << textures[i].identifier << " is too small" << std::endl;
-                    continue;
-                }
-
-                // If it's too big, keep the top left rectangle
-                // Simple case, just take te first N lines
-                if (textures[i].width == textures_width && textures[i].height > textures_height)
-                {
-                    std::cout << "Warning, textures height is not uniform, keep only the first rows for texture: " << textures[i].identifier << std::endl;
-                    Texture new_texture;
-                    new_texture.width = textures_width;
-                    new_texture.height = textures_height;
-                    new_texture.depth = textures[i].depth;
-                    new_texture.identifier = textures[i].identifier;
-                    new_texture.data = std::vector<unsigned char>(textures[i].data.begin(), textures[i].data.begin() + textures_width * textures_height * textures[i].depth);
-                    kept_textures.push_back(new_texture);
-                }
-                // Less straightforward case, copy data pixel by pixel
-                else if (textures[i].width > textures_width)
-                {
-                    std::cout << "Warning, textures height is not uniform, keep only the top left image for texture: " << textures[i].identifier << std::endl;
-                    Texture new_texture;
-                    new_texture.width = textures_width;
-                    new_texture.height = textures_height;
-                    new_texture.depth = textures[i].depth;
-                    new_texture.identifier = textures[i].identifier;
-                    new_texture.data = std::vector<unsigned char>(textures_width * textures_height * textures[i].depth);
-
-                    for (int y = 0; y < textures_height; ++y)
-                    {
-                        for (int x = 0; x < textures_width; ++x)
-                        {
-                            for (int c = 0; c < textures[i].depth; ++c)
-                            {
-                                new_texture.data[(y * textures_width + x) * textures[i].depth + c] = textures[i].Get(x, y, c);
-                            }
-                        }
-                    }
-
-                    kept_textures.push_back(new_texture);
-                }
-                else
-                {
-                    kept_textures.push_back(textures[i]);
-                }
+                kept_textures.push_back(textures[i]);
             }
 
-            //Compute atlas dimensions
+            //Compute atlas dimensions using rectpack2D
+            using spaces_type = rectpack2D::empty_spaces<false>;
+            using rect_type = rectpack2D::output_rect_t<spaces_type>;
 
-            //Add one for the "undefined" texture
-            int texture_counter = 1 + kept_textures.size();
+            std::vector<rect_type> rectangles;
+            rectangles.emplace_back(rectpack2D::rect_xywh(0, 0, 16, 16));
+            for (int i = 0; i < kept_textures.size(); ++i)
+            {
+                rectangles.emplace_back(rectpack2D::rect_xywh(0, 0, kept_textures[i].width, kept_textures[i].height));
+            }
 
-            int atlas_width = (int)std::ceil(std::sqrt(texture_counter));
-            int atlas_height = atlas_width;
+            const auto result_size = rectpack2D::find_best_packing<spaces_type>(
+                rectangles,
+                make_finder_input(
+                    10000,
+                    1,
+                    [](rect_type&) {
+                        return rectpack2D::callback_result::CONTINUE_PACKING;
+                    },
+                    [](rect_type&) {
+                        std::cerr << "Error packing the textures, aborting" << std::endl;
+                        return rectpack2D::callback_result::ABORT_PACKING;
+                    },
+                    rectpack2D::flipping_option::DISABLED
+                )
+                );
 
+            std::cout << "All textures packed, resultant atlas size: " << result_size.h << "x" << result_size.w << std::endl;
+            
             //Compute the global texture image
-            Reset(textures_height, textures_width, atlas_height, atlas_width);
+            Reset(result_size.h, result_size.w);
+
+            //Set the default texture
+            transparency_map[""] = Transparency::Opaque;
+            animation_map[""] = Animation::Static;
+            textures_size_map[""] = { rectangles[0].w, rectangles[0].h };
+            textures_position_map[""] = { rectangles[0].x, rectangles[0].y };
 
             for (int i = 0; i < kept_textures.size(); ++i)
             {
-                const int texture_index = i + 1;
-                positions[kept_textures[i].identifier] = std::pair<int, int>(texture_index % width, texture_index / width);
+                const rect_type& rectangle = rectangles[i + 1];
+                
+                transparency_map[kept_textures[i].identifier] = Transparency::Opaque;
+                animation_map[kept_textures[i].identifier] = (kept_textures[i].animated ? Animation::Animated : Animation::Static);
+                textures_size_map[kept_textures[i].identifier] = { rectangle.w, rectangle.h };
+                textures_position_map[kept_textures[i].identifier] = { rectangle.x, rectangle.y };
 
-                for (int row = 0; row < textures_height; ++row)
+                for (int row = 0; row < rectangle.h; ++row)
                 {
-                    for (int col = 0; col < textures_width; ++col)
+                    for (int col = 0; col < rectangle.w; ++col)
                     {
                         int r = 0;
                         int g = 0;
@@ -228,25 +199,26 @@ namespace Botcraft
                             break;
                         }
 
-                        *(Get(texture_index / width, texture_index % width, row, col, 0)) = r;
-                        *(Get(texture_index / width, texture_index % width, row, col, 1)) = g;
-                        *(Get(texture_index / width, texture_index % width, row, col, 2)) = b;
-                        *(Get(texture_index / width, texture_index % width, row, col, 3)) = a;
+                        *(Get(rectangle.y + row, rectangle.x + col, 0)) = r;
+                        *(Get(rectangle.y + row, rectangle.x + col, 1)) = g;
+                        *(Get(rectangle.y + row, rectangle.x + col, 2)) = b;
+                        *(Get(rectangle.y + row, rectangle.x + col, 3)) = a;
 
-                        if (a == 0 && transparency_map[texture_index % width][texture_index / width] != Transparency::Partial)
+                         
+                        if (a == 0 && transparency_map[kept_textures[i].identifier] != Transparency::Partial)
                         {
-                            transparency_map[texture_index % width][texture_index / width] = Transparency::Total;
+                            transparency_map[kept_textures[i].identifier] = Transparency::Total;
                         }
                         else if (a < 255)
                         {
-                            transparency_map[texture_index % width][texture_index / width] = Transparency::Partial;
+                            transparency_map[kept_textures[i].identifier] = Transparency::Partial;
                         }
                     }
                 }
             }
 
             //In case we want to save the atlas to check the data
-            //WriteImage("atlas.png", textures_height * height, textures_width * width, 4, data.data(), false);
+            WriteImage("atlas.png", height, width, 4, data.data(), false);
         }
 
         const int Atlas::GetWidth() const
@@ -259,35 +231,53 @@ namespace Botcraft
             return height;
         }
 
-        const int Atlas::GetTextureWidth() const
+        const std::pair<int, int>& Atlas::GetSize(const std::string& name) const
         {
-            return texture_width;
-        }
-
-        const int Atlas::GetTextureHeight() const
-        {
-            return texture_height;
-        }
-
-        const std::pair<int, int>& Atlas::GetPosition(const std::string &name) const
-        {
-            auto it = positions.find(name);
-            if (it != positions.end())
+            auto it =textures_size_map.find(name);
+            if (it != textures_size_map.end())
             {
                 return it->second;
             }
 
-            return positions.at("");
+            return textures_size_map.at("");
         }
 
-        const Transparency Atlas::GetTransparency(const std::pair<int, int> &pos) const
+        const std::pair<int, int>& Atlas::GetPosition(const std::string& name) const
         {
-            return transparency_map[pos.first][pos.second];
+            auto it = textures_position_map.find(name);
+            if (it != textures_position_map.end())
+            {
+                return it->second;
+            }
+
+            return textures_position_map.at("");
         }
 
-        unsigned char* Atlas::Get(const int y, const int x, const int row, const int col, const int depth)
+        const Transparency Atlas::GetTransparency(const std::string& name) const
         {
-            return data.data() + (((y * texture_height + row) * width + x) * texture_width + col) * 4 + depth;
+            auto it = transparency_map.find(name);
+            if (it != transparency_map.end())
+            {
+                return it->second;
+            }
+
+            return transparency_map.at("");
+        }
+
+        const Animation Atlas::GetAnimation(const std::string& name) const
+        {
+            auto it = animation_map.find(name);
+            if (it != animation_map.end())
+            {
+                return it->second;
+            }
+
+            return animation_map.at("");
+        }
+
+        unsigned char* Atlas::Get(const int row, const int col, const int depth)
+        {
+            return data.data() + ((row * width + col) * 4 + depth);
         }
     } // Renderer
 } // Botcraft

@@ -82,9 +82,6 @@ namespace Botcraft
 
         if (rotation_y != 0)
         {
-            // Not sure why I need this
-            rotation_y = 360 - rotation_y;
-
             std::vector<AABB> &colliders = output.GetColliders();
 
             for (int i = 0; i < colliders.size(); ++i)
@@ -177,7 +174,8 @@ namespace Botcraft
                     const auto it_orientation = std::find(rotated_orientations.begin(), rotated_orientations.end(), faces[f].orientation);
                     if (it_orientation == rotated_orientations.end())
                     {
-                        faces[f].transformations.rotation -= rotation_y / 90;
+                        // Not sure why it's always 2 here...
+                        faces[f].transformations.rotation += 2;
                     }
                 }
                 faces[f].face = Renderer::Face(faces[f].transformations, faces[f].orientation);

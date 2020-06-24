@@ -135,22 +135,28 @@ namespace Botcraft
             glVertexAttribDivisor(4, 1);
 
             glEnableVertexAttribArray(5);
-            //(atlas_index_col, atlas_index_row, atlas_index_col_overlay, atlas_index_row_overlay) for one face
-            glVertexAttribIPointer(5, 2, GL_UNSIGNED_INT, sizeof(Face), (void*)(16 * sizeof(float)));
+            //tex_coords(u0, v0, u1, v1) for one face
+            glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Face), (void*)(16 * sizeof(float)));
             //Specify that only one instance of this must be sent to one index
             glVertexAttribDivisor(5, 1);
-
+            
             glEnableVertexAttribArray(6);
-            //(texture_data) for one face
-            glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(Face), (void*)(18 * sizeof(float)));
+            //tex_coords_overlay(u0, v0, u1, v1) for one face
+            glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Face), (void*)(20 * sizeof(float)));
             //Specify that only one instance of this must be sent to one index
             glVertexAttribDivisor(6, 1);
 
             glEnableVertexAttribArray(7);
-            //(texture_multiplier, texture_multiplier_overlay) for one face
-            glVertexAttribIPointer(7, 2, GL_UNSIGNED_INT, sizeof(Face), (void*)(19 * sizeof(float)));
+            //(texture_data) for one face
+            glVertexAttribIPointer(7, 1, GL_UNSIGNED_INT, sizeof(Face), (void*)(24 * sizeof(float)));
             //Specify that only one instance of this must be sent to one index
             glVertexAttribDivisor(7, 1);
+
+            glEnableVertexAttribArray(8);
+            //(texture_multiplier, texture_multiplier_overlay) for one face
+            glVertexAttribIPointer(8, 2, GL_UNSIGNED_INT, sizeof(Face), (void*)(25 * sizeof(float)));
+            //Specify that only one instance of this must be sent to one index
+            glVertexAttribDivisor(8, 1);
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);

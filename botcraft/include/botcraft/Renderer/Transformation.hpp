@@ -71,10 +71,10 @@ namespace Botcraft
             unsigned char rotation = 0;
 
             //In 1/16th of the image
-            unsigned char offset_x1 = 0;
-            unsigned char offset_y1 = 0;
-            unsigned char offset_x2 = 16;
-            unsigned char offset_y2 = 16;
+            float offset_x1 = 0;
+            float offset_y1 = 0;
+            float offset_x2 = 16;
+            float offset_y2 = 16;
         };
     } // Renderer
 } // Botcraft

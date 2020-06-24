@@ -79,6 +79,9 @@ if(BOTCRAFT_USE_OPENGL_GUI)
     # Add stb_image
     include(${CMAKE_SOURCE_DIR}/cmake/stb_image.cmake)
     
+    # Add rectpack2D
+    include(${CMAKE_SOURCE_DIR}/cmake/rectpack2D.cmake)
+    
     if(BOTCRAFT_USE_IMGUI)
         # Add Dear Imgui
         include(${CMAKE_SOURCE_DIR}/cmake/imgui.cmake)
