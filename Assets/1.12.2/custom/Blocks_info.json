@@ -1412,14 +1412,14 @@
     {
         "name": "minecraft:chorus_plant",
         "transparent": true,
-        "solid": false,
+        "solid": true,
         "render": "block",
         "hardness": 0.4
     },
     {
         "name": "minecraft:chorus_flower",
         "transparent": true,
-        "solid": false,
+        "solid": true,
         "render": "block",
         "hardness": 0.4
     },

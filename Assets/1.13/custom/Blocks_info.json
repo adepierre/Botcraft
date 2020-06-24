@@ -3276,14 +3276,14 @@
         "hardness": 0.4,
         "name": "minecraft:chorus_plant",
         "render": "block",
-        "solid": false,
+        "solid": true,
         "transparent": true
     },
     {
         "hardness": 0.4,
         "name": "minecraft:chorus_flower",
         "render": "block",
-        "solid": false,
+        "solid": true,
         "transparent": true
     },
     {
@@ -4130,7 +4130,7 @@
         "hardness": 0,
         "name": "minecraft:sea_pickle",
         "render": "block",
-        "solid": false,
+        "solid": true,
         "transparent": true
     },
     {
