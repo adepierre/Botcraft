@@ -196,10 +196,14 @@ set(protocolCraft_PUBLIC_HDR
         
     include/protocolCraft/Types/Recipes/Recipe.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeData.hpp
+    include/protocolCraft/Types/Recipes/RecipeTypeDataBlasting.hpp
+    include/protocolCraft/Types/Recipes/RecipeTypeDataCampfireCooking.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataNone.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataShaped.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataShapeless.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmelting.hpp
+    include/protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp
+    include/protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp
     include/protocolCraft/Types/Recipes/Ingredient.hpp
     
     include/protocolCraft/Types/NBT/NBT.hpp

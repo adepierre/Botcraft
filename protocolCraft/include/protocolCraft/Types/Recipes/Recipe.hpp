@@ -48,7 +48,7 @@ namespace ProtocolCraft
         {
             recipe_id = ReadString(iter, length);
             type = ReadString(iter, length);
-            data = RecipeTypeData::CreateRecipeTypeData(type);
+            data = RecipeTypeData::CreateRecipeTypeData(recipe_id);
             data->Read(iter, length);
         }
 

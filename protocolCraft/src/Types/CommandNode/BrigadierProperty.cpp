@@ -30,7 +30,7 @@ namespace ProtocolCraft
         {
             return std::shared_ptr<BrigadierPropertyString>(new BrigadierPropertyString);
         }
-        else if (parser_identifier == "brigadier:entity")
+        else if (parser_identifier == "minecraft:entity")
         {
             return std::shared_ptr<BrigadierPropertyEntity>(new BrigadierPropertyEntity);
         }
