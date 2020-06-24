@@ -16,3 +16,6 @@
 [submodule "3rdparty/openssl"]
 	path = 3rdparty/openssl
 	url = https://github.com/janbar/openssl-cmake
+[submodule "3rdparty/rectpack2D"]
+	path = 3rdparty/rectpack2D
+	url = https://github.com/TeamHypersomnia/rectpack2D

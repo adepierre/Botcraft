@@ -140,7 +140,7 @@ void UserControlledClient::CreateTestWorld()
 #endif
 
 #ifdef USE_GUI
-    for (int i = 0; i < (int)floor(x / CHUNK_WIDTH); ++i)
+    for (int i = 0; i < (int)floor(x / CHUNK_WIDTH) + 1; ++i)
     {
         AddChunkToUpdate(i, 0);
         AddChunkToUpdate(i, 1);
