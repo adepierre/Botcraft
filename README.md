@@ -34,6 +34,7 @@ Optional dependencies (needed only if you want to build the OpenGL renderer)
 - [glfw](https://github.com/glfw/glfw)
 - [glm](https://github.com/g-truc/glm)
 - [imgui](https://github.com/ocornut/imgui)
+- [rectpack2D](https://github.com/TeamHypersomnia/rectpack2D)
 
 I only regularly test the code on Windows with Visual 2019 but it should also work with older versions (from 2013 to 2017). All the code is cross-platform so it should also work on Linux and macOS. I made some modifications to fix the errors, the code is currently compiling on a raspberry pi.
 
