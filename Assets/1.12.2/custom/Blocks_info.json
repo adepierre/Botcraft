@@ -593,7 +593,7 @@
     {
         "name": "minecraft:reeds",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "block",
         "hardness": 0
     },

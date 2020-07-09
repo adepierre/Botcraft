@@ -1325,7 +1325,7 @@
         "hardness": 0,
         "name": "minecraft:sugar_cane",
         "render": "block",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
