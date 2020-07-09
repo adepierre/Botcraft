@@ -84,6 +84,9 @@
 #if PROTOCOL_VERSION > 471
 #include "protocolCraft/Messages/Play/Serverbound/UpdateJigsawBlock.hpp"
 #endif
+#if PROTOCOL_VERSION > 711
+#include "protocolCraft/Messages/Play/Serverbound/GenerateStructure.hpp"
+#endif
 
 // Play clientbound
 #include "protocolCraft/Messages/Play/Clientbound/BlockChange.hpp"
@@ -120,7 +123,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/HeldItemChangeClientbound.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/SpawnObject.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/SpawnExperienceOrb.hpp"
+#if PROTOCOL_VERSION < 721
 #include "protocolCraft/Messages/Play/Clientbound/SpawnGlobalEntity.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/SpawnMob.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/SpawnPainting.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/SpawnPlayer.hpp"
@@ -255,6 +260,9 @@ namespace ProtocolCraft
         EnchantItem,
 #endif
         EntityAction,
+#if PROTOCOL_VERSION > 711
+        GenerateStructure,
+#endif
         HeldItemChangeServerbound,
         InteractEntity,
         KeepAliveServerbound,
@@ -394,7 +402,9 @@ namespace ProtocolCraft
         SetPassengers,
         SoundEffect,
         SpawnExperienceOrb,
+#if PROTOCOL_VERSION < 721
         SpawnGlobalEntity,
+#endif
         SpawnMob,
         SpawnObject,
         SpawnPainting,

@@ -7,6 +7,7 @@
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/Enums.hpp"
 
+
 namespace ProtocolCraft
 {
     class NBT;
@@ -29,7 +30,11 @@ namespace Botcraft
     class Chunk
     {
     public:
+#if PROTOCOL_VERSION < 719
         Chunk(const Dimension &dim = Dimension::Overworld);
+#else
+        Chunk(const std::string& dimension = "minecraft:overworld");
+#endif
         Chunk(const Chunk& c);
 
         static const Position BlockCoordsToChunkCoords(const Position& pos);
@@ -54,7 +59,11 @@ namespace Botcraft
         void SetBlockLight(const Position &pos, const unsigned char v);
         const unsigned char GetSkyLight(const Position &pos) const;
         void SetSkyLight(const Position &pos, const unsigned char v);
+#if PROTOCOL_VERSION < 719
         const Dimension GetDimension() const;
+#else
+        const std::string& GetDimension() const;
+#endif
 
         std::map<Position, std::shared_ptr<ProtocolCraft::NBT> >& GetBlockEntitiesData();
         const std::map<Position, std::shared_ptr<ProtocolCraft::NBT> >& GetBlockEntitiesData() const;
@@ -86,8 +95,11 @@ namespace Botcraft
         std::vector<int> biomes;
 #endif
         std::map<Position, std::shared_ptr<ProtocolCraft::NBT> > block_entities_data;
+#if PROTOCOL_VERSION < 719
         Dimension dimension;
-
+#else
+        std::string dimension;
+#endif
 #if USE_GUI
         bool modified_since_last_rendered;
 #endif

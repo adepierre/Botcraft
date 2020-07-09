@@ -18,6 +18,8 @@ namespace ProtocolCraft
             return 0x0E;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
             return 0x0E;
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+            return 0x0E;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -58,6 +60,13 @@ namespace ProtocolCraft
             hand = hand_;
         }
 
+#if PROTOCOL_VERSION > 722
+        void SetSneaking(const bool sneaking_)
+        {
+            sneaking = sneaking_;
+        }
+#endif
+
 
         const int GetEntityId() const
         {
@@ -89,6 +98,12 @@ namespace ProtocolCraft
             return hand;
         }
 
+#if PROTOCOL_VERSION > 722
+        const bool GetSneaking() const
+        {
+            return sneaking;
+        }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -105,6 +120,9 @@ namespace ProtocolCraft
             {
                 hand = ReadVarInt(iter, length);
             }
+#if PROTOCOL_VERSION > 722
+            sneaking = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -121,6 +139,9 @@ namespace ProtocolCraft
             {
                 WriteVarInt(hand, container);
             }
+#if PROTOCOL_VERSION > 722
+            WriteData<bool>(sneaking, container);
+#endif
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -140,6 +161,9 @@ namespace ProtocolCraft
             {
                 object["hand"] = picojson::value((double)hand);
             }
+#if PROTOCOL_VERSION > 722
+            object["sneaking"] = picojson::value(sneaking);
+#endif
 
             return value;
         }
@@ -151,6 +175,9 @@ namespace ProtocolCraft
         float target_y;
         float target_z;
         int hand;
+#if PROTOCOL_VERSION > 722
+        bool sneaking;
+#endif
 
     };
 } //ProtocolCraft

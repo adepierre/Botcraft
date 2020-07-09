@@ -18,6 +18,8 @@ namespace ProtocolCraft
             return 0x0E;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x0F;
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+            return 0x0E;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -38,6 +40,13 @@ namespace ProtocolCraft
             position = position_;
         }
 
+#if PROTOCOL_VERSION > 717
+        void SetSender(const UUID& sender_)
+        {
+            sender = sender_;
+        }
+#endif
+
         const Chat& GetJsonData() const
         {
             return json_data;
@@ -48,17 +57,30 @@ namespace ProtocolCraft
             return position;
         }
 
+#if PROTOCOL_VERSION > 717
+        const UUID& GetSender() const
+        {
+            return sender;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             json_data.Read(iter, length);
             position = ReadData<char>(iter, length);
+#if PROTOCOL_VERSION > 717
+            sender = ReadUUID(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             json_data.Write(container);
             WriteData<char>(position, container);
+#if PROTOCOL_VERSION > 717
+            WriteUUID(sender, container);
+#endif
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -68,6 +90,9 @@ namespace ProtocolCraft
 
             object["json_data"] = json_data.Serialize();
             object["position"] = picojson::value((double)position);
+#if PROTOCOL_VERSION > 717
+            object["sender"] = picojson::value(sender);
+#endif
 
             return value;
         }
@@ -75,5 +100,8 @@ namespace ProtocolCraft
     private:
         Chat json_data;
         char position;
+#if PROTOCOL_VERSION > 717
+        UUID sender;
+#endif
     };
 } //ProtocolCraft

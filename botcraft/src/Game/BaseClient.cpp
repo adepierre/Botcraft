@@ -25,7 +25,11 @@ namespace Botcraft
         afk_only = afk_only_;
         state = ProtocolCraft::ConnectionState::None;
         game_mode = GameMode::None;
+#if PROTOCOL_VERSION < 719
         dimension = Dimension::None;
+#else
+        dimension = "";
+#endif
         difficulty = Difficulty::None;
         is_hardcore = false;
 #if PROTOCOL_VERSION > 463
@@ -406,7 +410,11 @@ namespace Botcraft
     {
         state = ProtocolCraft::ConnectionState::None;
         game_mode = GameMode::None;
+#if PROTOCOL_VERSION < 719
         dimension = Dimension::None;
+#else
+        dimension = "";
+#endif
         difficulty = Difficulty::None;
 #if PROTOCOL_VERSION > 463
         difficulty_locked = true;
@@ -679,7 +687,11 @@ namespace Botcraft
             return;
         }
 
+#if PROTOCOL_VERSION < 719
         Dimension chunk_dim;
+#else
+        std::string chunk_dim;
+#endif
         {
             std::lock_guard<std::mutex> world_guard(world_mutex);
             chunk_dim = world->GetDimension(msg.GetChunkX(), msg.GetChunkZ());
@@ -696,7 +708,13 @@ namespace Botcraft
 
             if (!success)
             {
-                std::cerr << "Error adding chunk in pos : " << msg.GetChunkX() << ", " << msg.GetChunkZ() << " in dimension " << (int)dimension << std::endl;
+                std::cerr << "Error adding chunk in pos : " << msg.GetChunkX() << ", " << msg.GetChunkZ() << " in dimension " << 
+#if PROTOCOL_VERSION < 719
+                    (int)dimension
+#else
+                    dimension
+#endif
+                    << std::endl;
                 return;
             }
         }
@@ -721,7 +739,11 @@ namespace Botcraft
         game_mode = (GameMode)(msg.GetGamemode() & 0x03);
         is_hardcore = msg.GetGamemode() & 0x08;
 
+#if PROTOCOL_VERSION < 719
         dimension = (Dimension)msg.GetDimension();
+#else
+        dimension = msg.GetDimension();
+#endif
 
 #if PROTOCOL_VERSION < 464
         difficulty = (Difficulty)msg.GetDifficulty();
@@ -940,7 +962,11 @@ namespace Botcraft
 #endif
         }
 
+#if PROTOCOL_VERSION < 719
         dimension = (Dimension)msg.GetDimension();
+#else
+        dimension = msg.GetDimension();
+#endif
 #if PROTOCOL_VERSION < 464
         difficulty = (Difficulty)msg.GetDifficulty();
 #endif

@@ -8,6 +8,7 @@
 #include "protocolCraft/Types/Recipes/RecipeTypeDataShapeless.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeDataSmelting.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp"
+#include "protocolCraft/Types/Recipes/RecipeTypeDataSmithing.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp"
 
 namespace ProtocolCraft
@@ -43,6 +44,12 @@ namespace ProtocolCraft
         {
             return std::shared_ptr<RecipeTypeDataStoneCutting>(new RecipeTypeDataStoneCutting);
         }
+#if PROTOCOL_VERSION > 732
+        else if (recipe_type == "minecraft:smithing")
+        {
+            return std::shared_ptr<RecipeTypeDataSmithing>(new RecipeTypeDataSmithing);
+        }
+#endif
 #endif
         else
         {

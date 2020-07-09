@@ -38,6 +38,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/EditBook.hpp
     include/protocolCraft/Messages/Play/Serverbound/EnchantItem.hpp
     include/protocolCraft/Messages/Play/Serverbound/EntityAction.hpp
+    include/protocolCraft/Messages/Play/Serverbound/GenerateStructure.hpp
     include/protocolCraft/Messages/Play/Serverbound/HeldItemChangeServerbound.hpp
     include/protocolCraft/Messages/Play/Serverbound/InteractEntity.hpp
     include/protocolCraft/Messages/Play/Serverbound/KeepAliveServerbound.hpp
@@ -202,6 +203,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Recipes/RecipeTypeDataShaped.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataShapeless.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmelting.hpp
+    include/protocolCraft/Types/Recipes/RecipeTypeDataSmithing.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp
     include/protocolCraft/Types/Recipes/Ingredient.hpp

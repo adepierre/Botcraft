@@ -19,6 +19,8 @@ namespace ProtocolCraft
             return 0x21;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x22;
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+            return 0x21;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -43,6 +45,13 @@ namespace ProtocolCraft
         {
             ground_up_continuous = ground_up_continuous_;
         }
+
+#if PROTOCOL_VERSION > 730
+        void SetIgnoreOldData(const bool ignore_old_data_)
+        {
+            ignore_old_data = ignore_old_data_;
+        }
+#endif
 
         void SetPrimaryBitMask(const int primary_bit_mask_)
         {
@@ -98,6 +107,13 @@ namespace ProtocolCraft
             return ground_up_continuous;
         }
 
+#if PROTOCOL_VERSION > 730
+        const bool GetIgnoreOldData() const
+        {
+            return ignore_old_data;
+        }
+#endif
+
         const int GetPrimaryBitMask() const
         {
             return primary_bit_mask;
@@ -144,6 +160,9 @@ namespace ProtocolCraft
             chunk_x = ReadData<int>(iter, length);
             chunk_z = ReadData<int>(iter, length);
             ground_up_continuous = ReadData<bool>(iter, length);
+#if PROTOCOL_VERSION > 730
+            ignore_old_data = ReadData<bool>(iter, length);
+#endif
             primary_bit_mask = ReadVarInt(iter, length);
 #if PROTOCOL_VERSION > 442
             heightmaps.Read(iter, length);
@@ -173,6 +192,9 @@ namespace ProtocolCraft
             WriteData<int>(chunk_x, container);
             WriteData<int>(chunk_z, container);
             WriteData<bool>(ground_up_continuous, container);
+#if PROTOCOL_VERSION > 730
+            WriteData<bool>(ignore_old_data, container);
+#endif
             WriteVarInt(primary_bit_mask, container);
 #if PROTOCOL_VERSION > 442
             heightmaps.Write(container);
@@ -197,6 +219,9 @@ namespace ProtocolCraft
             object["chunk_x"] = picojson::value((double)chunk_x);
             object["chunk_z"] = picojson::value((double)chunk_z);
             object["ground_up_continuous"] = picojson::value(ground_up_continuous);
+#if PROTOCOL_VERSION > 730
+            object["ignore_old_data"] = picojson::value(ignore_old_data);
+#endif
             object["primary_bit_mask"] = picojson::value((double)primary_bit_mask);
 #if PROTOCOL_VERSION > 442
             object["heightmaps"] = heightmaps.Serialize();
@@ -216,6 +241,9 @@ namespace ProtocolCraft
         int chunk_x;
         int chunk_z;
         bool ground_up_continuous;
+#if PROTOCOL_VERSION > 730
+        bool ignore_old_data;
+#endif
         int primary_bit_mask;
 #if PROTOCOL_VERSION > 442
         NBT heightmaps;

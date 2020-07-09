@@ -11,10 +11,17 @@ namespace ProtocolCraft
     class EntityProperty : public NetworkType
     {
     public:
+#if PROTOCOL_VERSION > 709
+        void SetKey(const Identifier& key_)
+        {
+            key = key_;
+        }
+#else
         void SetKey(const std::string& key_)
         {
             key = key_;
         }
+#endif
 
         void SetValue(const double value_)
         {
@@ -32,10 +39,17 @@ namespace ProtocolCraft
         }
 
 
+#if PROTOCOL_VERSION > 709
+        const Identifier& GetKey() const
+        {
+            return key;
+        }
+#else
         const std::string& GetKey() const
         {
             return key;
         }
+#endif
 
         const double GetValue() const
         {
@@ -96,7 +110,11 @@ namespace ProtocolCraft
         }
 
     private:
+#if PROTOCOL_VERSION > 709
+        Identifier key;
+#else
         std::string key;
+#endif
         double value;
         int number_of_modifiers;
         std::vector<EntityModifierData> modifiers;

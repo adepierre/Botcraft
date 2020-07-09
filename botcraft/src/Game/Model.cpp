@@ -1,4 +1,5 @@
 #include "botcraft/Game/Model.hpp"
+#include "botcraft/Utilities/StringUtilities.hpp"
 
 #include <picojson/picojson.h>
 
@@ -102,7 +103,17 @@ namespace Botcraft
         auto it = obj.find("parent");
         if (it != obj.end())
         {
+#if PROTOCOL_VERSION > 578 // > 1.15.2
+            // Remove the minecraft: in front of the parent model name
+            std::string model_name = it->second.get<std::string>();
+            if (StartsWith(model_name, "minecraft:"))
+            {
+                model_name = model_name.substr(10);
+            }
+            const Model& parent_model = GetModel(model_name);
+#else
             const Model& parent_model = GetModel(it->second.get<std::string>());
+#endif
             colliders = parent_model.colliders;
 #if USE_GUI
             textures_variables = parent_model.textures_variables;
@@ -130,7 +141,17 @@ namespace Botcraft
             const picojson::value::object &obj_tex = it->second.get<picojson::object>();
             for (picojson::value::object::const_iterator j = obj_tex.begin(); j != obj_tex.end(); ++j)
             {
-                textures_variables["#" + j->first] = j->second.get<std::string>();
+#if PROTOCOL_VERSION > 578 // > 1.15.2
+                // Remove leading minecraft: from the path of the textures
+                std::string texture_name = j->second.get<std::string>();
+                if (StartsWith(texture_name, "minecraft:"))
+                {
+                     texture_name = texture_name.substr(10);
+                }
+#else
+                const std::string texture_name = j->second.get<std::string>();
+#endif
+                textures_variables["#" + j->first] = texture_name;
                 if (j->second.get<std::string>().rfind("#", 0) == 0)
                 {
                     textures_variables[j->second.get<std::string>()] = j->second.get<std::string>();

@@ -23,7 +23,11 @@ namespace Botcraft
         GlobalPalette
     };
 
+#if PROTOCOL_VERSION < 719
     Chunk::Chunk(const Dimension &dim)
+#else
+    Chunk::Chunk(const std::string& dim)
+#endif
     {
         dimension = dim;
 #if PROTOCOL_VERSION < 358
@@ -158,17 +162,33 @@ namespace Botcraft
             }
 
             //Blocks data
+#if PROTOCOL_VERSION > 712
+            int bit_offset = 0;
+#endif
             for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
             {
                 for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
                 {
                     for (int block_x = 0; block_x < CHUNK_WIDTH; ++block_x)
                     {
+
+#if PROTOCOL_VERSION > 712
+                        // From protocol version 713, the compacted array format has been adjusted so that
+                        //individual entries no longer span across multiple longs
+                        if (64 - (bit_offset % 64) < bits_per_block)
+                        {
+                            bit_offset += 64 - (bit_offset % 64);
+                        }
+                        int start_long_index = bit_offset / 64;
+                        int end_long_index = start_long_index;
+                        int start_offset = bit_offset % 64;
+                        bit_offset += bits_per_block;
+#else
                         int block_index = (((block_y * SECTION_HEIGHT) + block_z) * CHUNK_WIDTH) + block_x;
                         int start_long_index = (block_index * bits_per_block) / 64;
                         int start_offset = (block_index * bits_per_block) % 64;
                         int end_long_index = ((block_index + 1) * bits_per_block - 1) / 64;
-
+#endif
                         unsigned int raw_id;
                         if (start_long_index == end_long_index)
                         {
@@ -403,7 +423,12 @@ namespace Botcraft
 
     const unsigned char Chunk::GetSkyLight(const Position &pos) const
     {
-        if (dimension != Dimension::Overworld || pos.x < 0 || pos.x > CHUNK_WIDTH - 1 || pos.y < 0 || pos.y > CHUNK_HEIGHT - 1 || pos.z < 0 || pos.z > CHUNK_WIDTH - 1)
+#if PROTOCOL_VERSION < 719
+        if (dimension != Dimension::Overworld 
+#else
+        if (dimension != "minecraft:overworld"
+#endif
+            || pos.x < 0 || pos.x > CHUNK_WIDTH - 1 || pos.y < 0 || pos.y > CHUNK_HEIGHT - 1 || pos.z < 0 || pos.z > CHUNK_WIDTH - 1)
         {
             return 0;
         }
@@ -418,7 +443,12 @@ namespace Botcraft
 
     void Chunk::SetSkyLight(const Position &pos, const unsigned char v)
     {
-        if (dimension != Dimension::Overworld || pos.x < 0 || pos.x > CHUNK_WIDTH - 1 || pos.y < 0 || pos.y > CHUNK_HEIGHT - 1 || pos.z < 0 || pos.z > CHUNK_WIDTH - 1)
+#if PROTOCOL_VERSION < 719
+        if (dimension != Dimension::Overworld
+#else
+        if (dimension != "minecraft:overworld"
+#endif
+            || pos.x < 0 || pos.x > CHUNK_WIDTH - 1 || pos.y < 0 || pos.y > CHUNK_HEIGHT - 1 || pos.z < 0 || pos.z > CHUNK_WIDTH - 1)
         {
             return;
         }
@@ -694,7 +724,11 @@ namespace Botcraft
         }
     }
 
+#if PROTOCOL_VERSION < 719
     const Dimension Chunk::GetDimension() const
+#else
+    const std::string& Chunk::GetDimension() const
+#endif
     {
         return dimension;
     }
@@ -716,7 +750,11 @@ namespace Botcraft
 
     void Chunk::AddSection(const int y)
     {
+#if PROTOCOL_VERSION < 719
         sections[y] = std::shared_ptr<Section>(new Section(dimension == Dimension::Overworld));
+#else
+        sections[y] = std::shared_ptr<Section>(new Section(dimension == "minecraft:overworld"));
+#endif
     }
 
 } //Botcraft

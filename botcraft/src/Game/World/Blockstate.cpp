@@ -7,6 +7,7 @@
 #include <picojson/picojson.h>
 
 #include "botcraft/Game/World/Blockstate.hpp"
+#include "botcraft/Utilities/StringUtilities.hpp"
 
 namespace Botcraft
 {
@@ -197,6 +198,9 @@ namespace Botcraft
         std::string model_path = it->second.get<std::string>();
 #if PROTOCOL_VERSION < 347
         return "block/" + model_path;
+#elif PROTOCOL_VERSION > 578 //> 1.15.2
+        // Remove the minecraft: prefix from the model path
+        return model_path.substr(10);
 #else
         return model_path;
 #endif
@@ -218,32 +222,6 @@ namespace Botcraft
         }
 
         return output;
-    }
-
-    const bool StartsWith(const std::string &mainStr, const std::string &toMatch)
-    {
-        return mainStr.find(toMatch) == 0;
-    }
-
-	const bool EndsWith(const std::string& mainStr, const std::string& toMatch)
-	{
-		if (toMatch.size() > mainStr.size())
-		{
-			return false;
-		}
-		return std::equal(toMatch.rbegin(), toMatch.rend(), mainStr.rbegin());
-	}
-
-    const std::vector<std::string> SplitString(const std::string& s, const char delimiter)
-    {
-        std::vector<std::string> tokens;
-        std::string token;
-        std::istringstream tokenStream(s);
-        while (std::getline(tokenStream, token, delimiter))
-        {
-            tokens.push_back(token);
-        }
-        return tokens;
     }
 
     const bool CheckCondition(const std::string &name, const std::string &value, const std::vector<std::string> &variables)
@@ -482,7 +460,7 @@ namespace Botcraft
                         const picojson::array &models_array = it3->second.get<picojson::array>();
                         for (int j = 0; j < models_array.size(); ++j)
                         {
-                            const std::string serialized = models_array[i].serialize();
+                            const std::string serialized = models_array[j].serialize();
                             const std::string model_name = ModelNameFromJson(serialized);
                             for (int k = 0; k < num_models; ++k)
                             {

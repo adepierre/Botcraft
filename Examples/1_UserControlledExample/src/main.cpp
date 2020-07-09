@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
     try
     {
-        bool ONLINE = false;
+        bool ONLINE = true;
         unsigned short port = 25565;
         std::string login = "BCUserControl";
         std::string password = "";

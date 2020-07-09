@@ -13,7 +13,11 @@ namespace Botcraft
 
     }
 
+#if PROTOCOL_VERSION < 719
     bool World::AddChunk(const int x, const int z, const Dimension dim)
+#else
+    bool World::AddChunk(const int x, const int z, const std::string& dim)
+#endif
     {
         std::shared_ptr<Chunk> chunk = GetChunk(x, z);
 
@@ -241,7 +245,12 @@ namespace Botcraft
     {
         auto it = terrain.find({ floor(pos.x / (double)CHUNK_WIDTH), floor(pos.z / (double)CHUNK_WIDTH) });
 
-        if (it != terrain.end() && it->second->GetDimension() == Dimension::Overworld)
+        if (it != terrain.end() &&
+#if PROTOCOL_VERSION < 719
+            it->second->GetDimension() == Dimension::Overworld)
+#else
+            it->second->GetDimension() == "minecraft:overworld")
+#endif
         {
             it->second->SetSkyLight(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH), skylight);
             return true;
@@ -264,14 +273,18 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION < 719
     void World::UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask,
         const std::vector<std::vector<char>>& data, const bool sky)
+#else
+    void World::UpdateChunkLight(const int x, const int z, const std::string& dim, const int light_mask, const int empty_light_mask,
+        const std::vector<std::vector<char>>& data, const bool sky)
+#endif
     {
         std::shared_ptr<Chunk> chunk = GetChunk(x, z);
 
         if (chunk == nullptr)
         {
-            std::cerr << "Trying to update light of an unexisting chunk, creating it" << std::endl;
             AddChunk(x, z, dim);
             chunk = GetChunk(x, z);
         }
@@ -583,7 +596,11 @@ namespace Botcraft
         return cached->GetBlockLight(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH));
     }
 
+#if PROTOCOL_VERSION < 719
     const Dimension World::GetDimension(const int x, const int z)
+#else
+    const std::string World::GetDimension(const int x, const int z)
+#endif
     {
         if (!cached || cached_x != x || cached_z != z)
         {
@@ -597,7 +614,11 @@ namespace Botcraft
             }
             else
             {
+#if PROTOCOL_VERSION < 719
                 return Dimension::None;
+#else
+                return "";
+#endif
             }
         }
         return cached->GetDimension();

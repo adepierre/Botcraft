@@ -24,6 +24,8 @@ set(botcraft_PRIVATE_HDR
     private_include/botcraft/Network/AESEncrypter.hpp
     private_include/botcraft/Network/Compression.hpp
     private_include/botcraft/Network/TCP_Com.hpp
+    
+    private_include/botcraft/Utilities/StringUtilities.hpp
 )
 
 set(botcraft_SRC 
@@ -44,6 +46,7 @@ set(botcraft_SRC
     src/Network/AESEncrypter.cpp
     src/Network/Compression.cpp
     src/Network/TCP_Com.cpp
+    src/Utilities/StringUtilities.cpp
 )
 
 if(BOTCRAFT_USE_OPENGL_GUI)

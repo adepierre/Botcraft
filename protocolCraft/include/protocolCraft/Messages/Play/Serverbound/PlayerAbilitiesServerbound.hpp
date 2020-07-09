@@ -17,6 +17,8 @@ namespace ProtocolCraft
             return 0x19;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
             return 0x19;
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+            return 0x1A;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -32,6 +34,7 @@ namespace ProtocolCraft
             flags = flags_;
         }
 
+#if PROTOCOL_VERSION < 727
         void SetFlyingSpeed(const float flying_speed_)
         {
             flying_speed = flying_speed_;
@@ -41,6 +44,7 @@ namespace ProtocolCraft
         {
             walking_speed = walking_speed_;
         }
+#endif
 
 
         const char GetFlags() const
@@ -48,6 +52,7 @@ namespace ProtocolCraft
             return flags;
         }
 
+#if PROTOCOL_VERSION < 727
         const float GetFlyingSpeed() const
         {
             return flying_speed;
@@ -57,21 +62,26 @@ namespace ProtocolCraft
         {
             return walking_speed;
         }
+#endif
 
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             flags = ReadData<char>(iter, length);
+#if PROTOCOL_VERSION < 727
             flying_speed = ReadData<float>(iter, length);
             walking_speed = ReadData<float>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<char>(flags, container);
+#if PROTOCOL_VERSION < 727
             WriteData<float>(flying_speed, container);
             WriteData<float>(walking_speed, container);
+#endif
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -80,16 +90,20 @@ namespace ProtocolCraft
             picojson::object& object = value.get<picojson::object>();
 
             object["flags"] = picojson::value((double)flags);
+#if PROTOCOL_VERSION < 727
             object["flying_speed"] = picojson::value((double)flying_speed);
             object["walking_speed"] = picojson::value((double)walking_speed);
+#endif
 
             return value;
         }
 
     private:
         char flags;
+#if PROTOCOL_VERSION < 727
         float flying_speed;
         float walking_speed;
+#endif
 
     };
 } //ProtocolCraft

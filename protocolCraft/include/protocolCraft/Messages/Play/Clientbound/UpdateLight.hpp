@@ -14,6 +14,8 @@ namespace ProtocolCraft
             return 0x24;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x25;
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+            return 0x24;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -33,6 +35,13 @@ namespace ProtocolCraft
         {
             chunk_z = chunk_z_;
         }
+
+#if PROTOCOL_VERSION > 722
+        void SetTrustEdges(const bool trust_edges_)
+        {
+            trust_edges = trust_edges_;
+        }
+#endif
 
         void SetSkyLightMask(const int sky_light_mask_)
         {
@@ -74,6 +83,13 @@ namespace ProtocolCraft
             return chunk_z;
         }
 
+#if PROTOCOL_VERSION > 722
+        const bool GetTrustEdges() const
+        {
+            return trust_edges;
+        }
+#endif
+
         const int GetSkyLightMask() const
         {
             return sky_light_mask;
@@ -109,6 +125,9 @@ namespace ProtocolCraft
         {
             chunk_x = ReadVarInt(iter, length);
             chunk_z = ReadVarInt(iter, length);
+#if PROTOCOL_VERSION > 722
+            trust_edges = ReadData<bool>(iter, length);
+#endif
             sky_light_mask = ReadVarInt(iter, length);
             block_light_mask = ReadVarInt(iter, length);
             empty_sky_light_mask = ReadVarInt(iter, length);
@@ -139,6 +158,9 @@ namespace ProtocolCraft
         {
             WriteVarInt(chunk_x, container);
             WriteVarInt(chunk_z, container);
+#if PROTOCOL_VERSION > 722
+            WriteData<bool>(trust_edges, container);
+#endif
             WriteVarInt(sky_light_mask, container);
             WriteVarInt(block_light_mask, container);
             WriteVarInt(empty_sky_light_mask, container);
@@ -164,6 +186,9 @@ namespace ProtocolCraft
 
             object["chunk_x"] = picojson::value((double)chunk_x);
             object["chunk_z"] = picojson::value((double)chunk_z);
+#if PROTOCOL_VERSION > 722
+            object["trust_edges"] = picojson::value(trust_edges);
+#endif
             object["sky_light_mask"] = picojson::value((double)sky_light_mask);
             object["block_light_mask"] = picojson::value((double)block_light_mask);
             object["empty_sky_light_mask"] = picojson::value((double)empty_sky_light_mask);
@@ -195,6 +220,9 @@ namespace ProtocolCraft
     private:
         int chunk_x;
         int chunk_z;
+#if PROTOCOL_VERSION > 722
+        bool trust_edges;
+#endif
         int sky_light_mask;
         int block_light_mask;
         int empty_sky_light_mask;

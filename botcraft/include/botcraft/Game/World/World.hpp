@@ -20,7 +20,11 @@ namespace Botcraft
     public:
         World();
 
+#if PROTOCOL_VERSION < 719
         bool AddChunk(const int x, const int z, const Dimension dim);
+#else
+        bool AddChunk(const int x, const int z, const std::string& dim);
+#endif
         bool RemoveChunk(const int x, const int z);
 
 #if USE_GUI
@@ -68,13 +72,19 @@ namespace Botcraft
 
         bool SetSkyLight(const Position &pos, const unsigned char skylight);
         bool SetBlockLight(const Position &pos, const unsigned char blocklight);
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 && PROTOCOL_VERSION < 719
         void UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
+#elif PROTOCOL_VERSION > 718
+        void UpdateChunkLight(const int x, const int z, const std::string& dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
 #endif
         const unsigned char GetSkyLight(const Position& pos);
         const unsigned char GetBlockLight(const Position& pos);
 
+#if PROTOCOL_VERSION < 719
         const Dimension GetDimension(const int x, const int z);
+#else
+        const std::string GetDimension(const int x, const int z);
+#endif
 
         /**
         * Perform a raycast in the voxel world and return position, normal and blockstate which are hit

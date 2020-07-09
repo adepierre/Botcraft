@@ -2,6 +2,7 @@
 
 namespace Botcraft
 {
+#if PROTOCOL_VERSION < 719
     enum class Dimension
     {
         None = -2,
@@ -9,6 +10,7 @@ namespace Botcraft
         Overworld,
         End
     };
+#endif
 
     enum class GameMode
     {

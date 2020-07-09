@@ -119,7 +119,11 @@ namespace Botcraft
 
         ProtocolCraft::ConnectionState state;
         GameMode game_mode;
+#if PROTOCOL_VERSION < 719
         Dimension dimension;
+#else
+        std::string dimension;
+#endif
         Difficulty difficulty;
 #if PROTOCOL_VERSION > 463
         bool difficulty_locked;

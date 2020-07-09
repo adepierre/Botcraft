@@ -53,6 +53,11 @@ UserControlledClient::~UserControlledClient()
 
 void UserControlledClient::CreateTestWorld()
 {
+#if PROTOCOL_VERSION < 719
+    dimension = Dimension::Overworld;
+#else
+    dimension = "minecraft:overworld";
+#endif
     int max_id = 0;
     int min_id = std::numeric_limits<int>::max();
     for (auto it = AssetsManager::getInstance().Blockstates().begin(); it != AssetsManager::getInstance().Blockstates().end(); ++it)
@@ -73,10 +78,10 @@ void UserControlledClient::CreateTestWorld()
     for (int i = 0; i < (max_id - min_id) / 16 / 16 + 1; ++i)
 #endif
     {
-        world->AddChunk(i, 0, Dimension::Overworld);
-        world->AddChunk(i, 1, Dimension::Overworld);
-        world->AddChunk(i, -1, Dimension::Overworld);
-        world->AddChunk(i, -2, Dimension::Overworld);
+        world->AddChunk(i, 0, dimension);
+        world->AddChunk(i, 1, dimension);
+        world->AddChunk(i, -1, dimension);
+        world->AddChunk(i, -2, dimension);
     }
 
     int x = 0;
@@ -167,7 +172,7 @@ void UserControlledClient::CreateTestWorld()
 
     for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
     {
-        world->AddChunk(-i - 1, 0, Dimension::Overworld);
+        world->AddChunk(-i - 1, 0, dimension);
     }
 
     x = 0;
