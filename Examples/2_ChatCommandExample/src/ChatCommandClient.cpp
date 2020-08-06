@@ -3,14 +3,14 @@
 
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Block.hpp>
+#include <botcraft/Network/NetworkManager.hpp>
 
 #include "ChatCommandClient.hpp"
 
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-ChatCommandClient::ChatCommandClient(const std::vector<int> &printed_packets_) : 
-    InterfaceClient(printed_packets_)
+ChatCommandClient::ChatCommandClient()
 {
     std::cout << "Known commands:\n";
     std::cout << "    Pathfinding to position:\n";
@@ -36,7 +36,7 @@ void ChatCommandClient::Handle(ChatMessageClientbound &msg)
     std::istringstream ss{ msg.GetJsonData().GetText() };
     const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
 
-    if (splitted.size() < 2 || splitted[0] != name)
+    if (splitted.size() < 2 || splitted[0] != network_manager->GetMyName())
     {
         return;
     }

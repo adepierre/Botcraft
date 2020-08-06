@@ -1,6 +1,9 @@
 #include "botcraft/Game/InterfaceClient.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/World/Block.hpp"
+#include "botcraft/Network/NetworkManager.hpp"
+
+#include "protocolCraft/enums.hpp"
 
 #include <queue>
 #include <unordered_map>
@@ -33,8 +36,7 @@ namespace Botcraft
         Stop
     };
     
-    InterfaceClient::InterfaceClient(const std::vector<int> &printed_packets_) :
-        BaseClient(false, printed_packets_)
+    InterfaceClient::InterfaceClient() : BaseClient(false)
     {
         pathfinding_state = PathFindingState::Waiting;
         digging_state = DiggingState::Waiting;
@@ -47,21 +49,21 @@ namespace Botcraft
 
     void InterfaceClient::Say(const std::string &msg)
     {
-        if (state == ProtocolCraft::ConnectionState::Play)
+        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
             std::shared_ptr<ChatMessageServerbound> chat_message(new ChatMessageServerbound);
             chat_message->SetMessage(msg);
-            Send(chat_message);
+            network_manager->Send(chat_message);
         }
     }
 
     void InterfaceClient::Respawn()
     {
-        if (state == ProtocolCraft::ConnectionState::Play)
+        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
             std::shared_ptr<ClientStatus> status_message(new ClientStatus);
             status_message->SetActionID(0);
-            Send(status_message);
+            network_manager->Send(status_message);
         }
     }
 
@@ -77,6 +79,11 @@ namespace Botcraft
 
     void InterfaceClient::Dig()
     {
+        if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
+        {
+            return;
+        }
+
         if (digging_state != DiggingState::Waiting)
         {
             return;
@@ -144,7 +151,7 @@ namespace Botcraft
         }
         msg_digging->SetFace((int)face);
 
-        Send(msg_digging);
+        network_manager->Send(msg_digging);
         
         if (creative_mode)
         {
@@ -153,7 +160,7 @@ namespace Botcraft
             end_digging->SetStatus((int)PlayerDiggingStatus::FinishDigging);
             end_digging->SetFace((int)face);
 
-            Send(msg_digging);
+            network_manager->Send(msg_digging);
             digging_state = DiggingState::Waiting;
         }
         else
@@ -172,7 +179,7 @@ namespace Botcraft
                     stop_digging->SetStatus((int)PlayerDiggingStatus::CancelDigging);
                     stop_digging->SetFace((int)face);
 
-                    Send(stop_digging);
+                    network_manager->Send(stop_digging);
 
                     digging_state = DiggingState::Waiting;
 
@@ -196,7 +203,7 @@ namespace Botcraft
                     stop_digging->SetStatus((int)PlayerDiggingStatus::CancelDigging);
                     stop_digging->SetFace((int)face);
 
-                    Send(stop_digging);
+                    network_manager->Send(stop_digging);
 
                     digging_state = DiggingState::Waiting;
 
@@ -212,7 +219,7 @@ namespace Botcraft
             stop_digging->SetStatus((int)PlayerDiggingStatus::FinishDigging);
             stop_digging->SetFace((int)face);
 
-            Send(stop_digging);
+            network_manager->Send(stop_digging);
 
             digging_state = DiggingState::Waiting;
         }
@@ -233,7 +240,7 @@ namespace Botcraft
 
     const bool InterfaceClient::GoTo(const Position &goal, const float speed)
     {
-        if (state != ProtocolCraft::ConnectionState::Play)
+        if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
         {
             return false;
         }

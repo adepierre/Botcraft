@@ -10,8 +10,7 @@
 #include "botcraft/Game/BaseClient.hpp"
 
 #include "botcraft/Network/Compression.hpp"
-#include "botcraft/Network/TCP_Com.hpp"
-#include "botcraft/Network/Authentifier.hpp"
+#include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Network/AESEncrypter.hpp"
 
 #include "protocolCraft/MessageFactory.hpp"
@@ -20,10 +19,9 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    BaseClient::BaseClient(const bool afk_only_, const std::vector<int> &printed_packets_)
+    BaseClient::BaseClient(const bool afk_only_)
     {
         afk_only = afk_only_;
-        state = ProtocolCraft::ConnectionState::None;
         game_mode = GameMode::None;
 #if PROTOCOL_VERSION < 719
         dimension = Dimension::None;
@@ -39,24 +37,13 @@ namespace Botcraft
         player = nullptr;
         world = nullptr;
         inventory_manager = nullptr;
-        com = nullptr;
-        authentifier = nullptr;
 
 #if USE_GUI
         renderer = nullptr;
 #endif
-
-        printed_packets = std::vector<bool>(80, false);
-        for (int i = 0; i < printed_packets_.size(); ++i)
-        {
-            printed_packets[printed_packets_[i]] = true;
-        }
-
         auto_respawn = false;
 
         should_be_closed = false;
-
-        compression = -1;
 
         // Ensure the assets are loaded
         AssetsManager::getInstance();
@@ -69,165 +56,8 @@ namespace Botcraft
 
     void BaseClient::Connect(const std::string &ip, const unsigned int port, const std::string &login, const std::string &password)
     {
-        state = ProtocolCraft::ConnectionState::Handshake;
-
-        //Start the thread to process the incoming packets
-        m_thread_process = std::thread(&BaseClient::WaitForNewPackets, this);
-
-        com = std::shared_ptr<TCP_Com>(new TCP_Com(ip, port, std::bind(&BaseClient::OnNewPacket, this, std::placeholders::_1)));
-        
-        //Let some time to initialize the communication before actually send data
-        // TODO: make this in a cleaner way?
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-        std::shared_ptr<Handshake> handshake_msg(new Handshake);
-        handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
-        handshake_msg->SetServerAddress(ip);
-        handshake_msg->SetServerPort(port);
-        handshake_msg->SetNextState((int)ProtocolCraft::ConnectionState::Login);
-        Send(handshake_msg);
-
-        state = ProtocolCraft::ConnectionState::Login;
-
-        // Offline mode case
-        if (password == "")
-        {
-            name = login;
-        }
-        // Online mode case
-        else
-        {
-            authentifier = std::shared_ptr<Authentifier>(new Authentifier());
-            if (!authentifier->AuthToken(login, password))
-            {
-                throw std::runtime_error("Error trying to authenticate on Mojang server");
-            }
-            name = authentifier->GetPlayerDisplayName();
-        }
-
-        std::shared_ptr<LoginStart> loginstart_msg(new LoginStart);
-        loginstart_msg->SetName_(name);
-        Send(loginstart_msg);
-    }
-
-    void BaseClient::Send(const std::shared_ptr<Message> msg)
-    {
-        if (com)
-        {
-            std::vector<unsigned char> msg_data;
-            msg->Write(msg_data);
-            if (compression == -1)
-            {
-                com->SendPacket(msg_data);
-            }
-            else
-            {
-#ifdef USE_COMPRESSION
-                if (msg_data.size() < compression)
-                {
-                    msg_data.insert(msg_data.begin(), 0x00);
-                    com->SendPacket(msg_data);
-                }
-                else
-                {
-                    std::vector<unsigned char> compressed_msg;
-                    WriteVarInt(msg_data.size(), compressed_msg);
-                    std::vector<unsigned char> compressed_data = Compress(msg_data);
-                    compressed_msg.insert(compressed_msg.end(), compressed_data.begin(), compressed_data.end());
-                    com->SendPacket(compressed_msg);
-                }
-#else
-                throw(std::runtime_error("Program compiled without ZLIB. Cannot send compressed message"));
-#endif
-            }
-        }
-    }
-
-    void BaseClient::WaitForNewPackets()
-    {
-        while (state != ProtocolCraft::ConnectionState::None)
-        {
-            {
-                std::unique_lock<std::mutex> lck(mutex_process);
-                process_condition.wait(lck);
-            }
-            while (!packets_to_process.empty())
-            {
-                std::vector<unsigned char> packet;
-                { // process_guard scope
-                    std::lock_guard<std::mutex> process_guard(mutex_process);
-                    if (!packets_to_process.empty())
-                    {
-                        packet = packets_to_process.front();
-                        packets_to_process.pop_front();
-                    }
-                }
-                if (packet.size() > 0)
-                {
-                    if (compression == -1)
-                    {
-                        ProcessPacket(packet);
-                    }
-                    else
-                    {
-#ifdef USE_COMPRESSION
-                        size_t length = packet.size();
-                        ReadIterator iter = packet.begin();
-                        int data_length = ReadVarInt(iter, length);
-
-                        //Packet not compressed
-                        if (data_length == 0)
-                        {
-                            //Erase the first 0
-                            packet.erase(packet.begin());
-                            ProcessPacket(packet);
-                        }
-                        //Packet compressed
-                        else
-                        {
-                            int size_varint = packet.size() - length;
-
-                            std::vector<unsigned char> uncompressed_msg = Decompress(packet, size_varint);
-                            ProcessPacket(uncompressed_msg);
-                        }
-#else
-                        throw(std::runtime_error("Program compiled without USE_COMPRESSION. Cannot read compressed message"));
-#endif
-                    }
-                }
-            }
-        }
-    }
-
-    void BaseClient::ProcessPacket(const std::vector<unsigned char> &packet)
-    {
-        if (packet.empty())
-        {
-            return;
-        }
-
-        std::vector<unsigned char>::const_iterator packet_iterator = packet.begin();
-        size_t length = packet.size();
-
-        int packet_id = ReadVarInt(packet_iterator, length);
-
-        std::shared_ptr<Message> msg = MessageFactory::CreateMessageClientbound(packet_id, state);
-
-        if (packet_id < printed_packets.size() && printed_packets[packet_id])
-        {
-            std::cout << "Packet with id " << packet_id << " received. (Thread " << std::this_thread::get_id() << ")" << std::endl;
-        }
-
-        if (msg)
-        {
-            msg->Read(packet_iterator, length);
-            msg->Dispatch(this);
-        }
-
-        if (packet_id < printed_packets.size() && printed_packets[packet_id])
-        {
-            std::cout << "Packet with id " << packet_id << " processed. (Thread " << std::this_thread::get_id() << ")" << std::endl;
-        }
+        network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(ip, port, login, password));
+        network_manager->AddHandler(this);
     }
 
     void BaseClient::RunSyncPos()
@@ -239,7 +69,7 @@ namespace Botcraft
         std::shared_ptr<PlayerPositionAndLookServerbound> msg_position(new PlayerPositionAndLookServerbound);
         bool has_moved = false;
 
-        while (state == ProtocolCraft::ConnectionState::Play)
+        while (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
             // End of the current tick
             auto end = std::chrono::system_clock::now() + std::chrono::milliseconds(50);
@@ -304,7 +134,7 @@ namespace Botcraft
 
                 if (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_send).count() >= 1000)
                 {
-                    Send(msg_position);
+                    network_manager->Send(msg_position);
                     last_send = std::chrono::system_clock::now();
                 }
             }
@@ -408,7 +238,6 @@ namespace Botcraft
 
     void BaseClient::Disconnect()
     {
-        state = ProtocolCraft::ConnectionState::None;
         game_mode = GameMode::None;
 #if PROTOCOL_VERSION < 719
         dimension = Dimension::None;
@@ -420,19 +249,8 @@ namespace Botcraft
         difficulty_locked = true;
 #endif
         is_hardcore = false;
-        compression = -1;
 
-        if (com)
-        {
-            com->close();
-        }
-
-        process_condition.notify_all();
-
-        if (m_thread_process.joinable())
-        {
-            m_thread_process.join();
-        }
+        network_manager.reset();
 
 #if USE_GUI
         condition_rendering.notify_all();
@@ -452,20 +270,12 @@ namespace Botcraft
             m_thread_physics.join();
         }
 
-        com.reset();
         world.reset();
         inventory_manager.reset();
         player.reset();
 #if USE_GUI
         renderer.reset();
 #endif
-    }
-
-    void BaseClient::OnNewPacket(const std::vector<unsigned char> &packet)
-    {
-        std::unique_lock<std::mutex> lck(mutex_process);
-        packets_to_process.push_back(packet);
-        process_condition.notify_all();
     }
 
 #ifdef USE_GUI
@@ -485,7 +295,7 @@ namespace Botcraft
 
     void BaseClient::WaitForRenderingUpdate()
     {
-        while (state == ProtocolCraft::ConnectionState::Play)
+        while (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
             {
                 std::unique_lock<std::mutex> lck(mutex_rendering);
@@ -523,9 +333,11 @@ namespace Botcraft
 
                 // If we left the game, we don't need to process 
                 // the rest of the data, just discard them
-                if (state != ProtocolCraft::ConnectionState::Play)
+                if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
                 {
+                    mutex_rendering.lock();
                     chunks_to_render.clear();
+                    mutex_rendering.unlock();
                     break;
                 }
             }
@@ -548,8 +360,6 @@ namespace Botcraft
 
     void BaseClient::Handle(LoginSuccess &msg)
     {
-        state = ProtocolCraft::ConnectionState::Play;
-
         if (!player)
         {
             player = std::shared_ptr<Player>(new Player);
@@ -572,11 +382,6 @@ namespace Botcraft
         
         // Launch the physics thread (continuously sending the position to the server)
         m_thread_physics = std::thread(&BaseClient::RunSyncPos, this);
-    }
-
-    void BaseClient::Handle(SetCompression &msg)
-    {
-        compression = msg.GetThreshold();
     }
 
     void BaseClient::Handle(BlockChange &msg)
@@ -647,7 +452,7 @@ namespace Botcraft
             apologize_msg->SetActionNumber(msg.GetActionNumber());
             apologize_msg->SetAccepted(msg.GetAccepted());
 
-            Send(apologize_msg);
+            network_manager->Send(apologize_msg);
         }
         else
         {
@@ -677,7 +482,7 @@ namespace Botcraft
     {
         std::shared_ptr<KeepAliveServerbound> keep_alive_msg(new KeepAliveServerbound);
         keep_alive_msg->SetKeepAliveId(msg.GetKeepAliveId());
-        Send(keep_alive_msg);
+        network_manager->Send(keep_alive_msg);
     }
 
     void BaseClient::Handle(ChunkData &msg)
@@ -829,7 +634,7 @@ namespace Botcraft
         std::shared_ptr<TeleportConfirm> confirm_msg(new TeleportConfirm);
         confirm_msg->SetTeleportId(msg.GetTeleportId());
 
-        Send(confirm_msg);
+        network_manager->Send(confirm_msg);
 
 #ifdef USE_GUI
         renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
@@ -849,7 +654,7 @@ namespace Botcraft
         {
             std::shared_ptr<ClientStatus> status_message(new ClientStatus);
             status_message->SetActionID(0);
-            Send(status_message);
+            network_manager->Send(status_message);
         }
     }
 
@@ -897,49 +702,13 @@ namespace Botcraft
         settings_msg->SetDisplayedSkinParts(0xFF);
         settings_msg->SetMainHand((int)Hand::Right);
 
-        Send(settings_msg);
+        network_manager->Send(settings_msg);
     }
 
     void BaseClient::Handle(TimeUpdate &msg)
     {
 #ifdef USE_GUI
         renderer->SetDayTime(((msg.GetTimeOfDay() + 6000) % 24000) / 24000.0f);
-#endif
-    }
-
-    void BaseClient::Handle(EncryptionRequest &msg)
-    {
-        if (authentifier == nullptr)
-        {
-            std::cerr << "Error, authentication asked while no password has been provided, make sure to connect with a valid Mojang Account" << std::endl;
-            Disconnect();
-            return;
-        }
-
-#ifdef USE_ENCRYPTION
-        std::shared_ptr<AESEncrypter> encrypter = std::shared_ptr<AESEncrypter>(new AESEncrypter());
-
-        std::vector<unsigned char> encrypted_token;
-        std::vector<unsigned char> encrypted_shared_secret;
-        std::vector<unsigned char> raw_shared_secret;
-
-        encrypter->Init(msg.GetPublicKey(), msg.GetVerifyToken(),
-            raw_shared_secret, encrypted_token, encrypted_shared_secret);
-
-        authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());
-
-        std::shared_ptr<EncryptionResponse> response_msg(new EncryptionResponse);
-        response_msg->SetSharedSecretLength(encrypted_shared_secret.size());
-        response_msg->SetSharedSecret(encrypted_shared_secret);
-        response_msg->SetVerifyTokenLength(encrypted_token.size());
-        response_msg->SetVerifyToken(encrypted_token);
-
-        Send(response_msg);
-        
-        // Enable encryption for now on
-        com->SetEncrypter(encrypter);
-#else
-        throw(std::runtime_error("Your version of botcraft doesn't support encryption. Either run your server with online-mode=false or recompile botcraft"));
 #endif
     }
 
@@ -989,11 +758,6 @@ namespace Botcraft
     {
         std::lock_guard<std::mutex> world_guard(world->GetMutex());
         world->SetBlockEntityData(msg.GetLocation(), msg.GetNBTData());
-    }
-
-    void BaseClient::Handle(PlayerInfo &msg)
-    {
-
     }
 
     void BaseClient::Handle(SetSlot &msg)

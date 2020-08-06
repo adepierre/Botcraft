@@ -5,6 +5,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/BaseMessage.hpp 
     include/protocolCraft/BinaryReadWrite.hpp
     include/protocolCraft/enums.hpp
+    include/protocolCraft/GenericHandler.hpp
     include/protocolCraft/Handler.hpp
     include/protocolCraft/Message.hpp
     include/protocolCraft/MessageFactory.hpp

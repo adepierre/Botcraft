@@ -5,8 +5,7 @@
 class UserControlledClient : public Botcraft::InterfaceClient
 {
 public:
-    UserControlledClient(bool online,
-        const std::vector<int> &printed_packets_ = std::vector<int>(0));
+    UserControlledClient(bool online);
     ~UserControlledClient();
     
 protected:

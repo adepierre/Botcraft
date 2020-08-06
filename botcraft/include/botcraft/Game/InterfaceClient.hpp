@@ -16,7 +16,7 @@ namespace Botcraft
     class InterfaceClient : public BaseClient
     {
     public:
-        InterfaceClient(const std::vector<int> &printed_packets_ = std::vector<int>(0));
+        InterfaceClient();
         ~InterfaceClient();
 
         // Send a message in the chat

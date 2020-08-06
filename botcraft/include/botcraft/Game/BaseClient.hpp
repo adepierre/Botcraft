@@ -9,7 +9,6 @@
 #include "protocolCraft/Handler.hpp"
 #include "protocolCraft/Message.hpp"
 #include "protocolCraft/AllMessages.hpp"
-#include "protocolCraft/enums.hpp"
 #include "botcraft/Game/Player.hpp"
 #include "botcraft/Game/Enums.hpp"
 
@@ -17,23 +16,16 @@
 #include "botcraft/Renderer/CubeWorldRenderer.hpp"
 #endif
 
-namespace ProtocolCraft
-{
-    class Handler : public GenericHandler<Message, AllMessages> {};
-}
-
 namespace Botcraft
 {
     class World;
-    class TCP_Com;
     class InventoryManager;
-    class Authentifier;
-
+    class NetworkManager;
 
     class BaseClient : public ProtocolCraft::Handler
     {
     public:
-        BaseClient(const bool afk_only_ = false, const std::vector<int> &printed_packets_ = std::vector<int>(0));
+        BaseClient(const bool afk_only_ = false);
         ~BaseClient();
 
         // Connect to a server, if password is empty, the server must be in offline mode
@@ -41,11 +33,6 @@ namespace Botcraft
         void Disconnect();
 
     protected:
-        void Send(const std::shared_ptr<ProtocolCraft::Message> msg);
-        void WaitForNewPackets();
-        void OnNewPacket(const std::vector<unsigned char> &packet);
-        void ProcessPacket(const std::vector<unsigned char> &packet);
-
         void RunSyncPos();
         void Physics();
 
@@ -58,7 +45,6 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::Message &msg) override;
         virtual void Handle(ProtocolCraft::DisconnectLogin &msg) override;
         virtual void Handle(ProtocolCraft::LoginSuccess &msg) override;
-        virtual void Handle(ProtocolCraft::SetCompression &msg) override;
         virtual void Handle(ProtocolCraft::BlockChange &msg) override;
         virtual void Handle(ProtocolCraft::ServerDifficulty &msg) override;
         virtual void Handle(ProtocolCraft::MultiBlockChange &msg) override;
@@ -77,13 +63,11 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::EntityTeleport &msg) override;
         virtual void Handle(ProtocolCraft::PlayerAbilitiesClientbound &msg) override;
         virtual void Handle(ProtocolCraft::TimeUpdate &msg) override;
-        virtual void Handle(ProtocolCraft::EncryptionRequest &msg) override;
         virtual void Handle(ProtocolCraft::Respawn &msg) override;
 #if PROTOCOL_VERSION > 404
         virtual void Handle(ProtocolCraft::UpdateLight &msg) override;
 #endif
         virtual void Handle(ProtocolCraft::UpdateBlockEntity &msg) override;
-        virtual void Handle(ProtocolCraft::PlayerInfo &msg) override;
         virtual void Handle(ProtocolCraft::SetSlot &msg) override;
         virtual void Handle(ProtocolCraft::WindowItems &msg) override;
         virtual void Handle(ProtocolCraft::OpenWindow &msg) override;
@@ -96,11 +80,10 @@ namespace Botcraft
         // Use it only to afk at a specific spot
         bool afk_only;
 
-        std::shared_ptr<TCP_Com> com;
-        std::shared_ptr<Authentifier> authentifier;
         std::shared_ptr<World> world;
         std::shared_ptr<Player> player;
         std::shared_ptr<InventoryManager> inventory_manager;
+        std::shared_ptr<NetworkManager> network_manager;
 
 #if USE_GUI
         std::shared_ptr<Renderer::CubeWorldRenderer> renderer;
@@ -114,7 +97,7 @@ namespace Botcraft
 
         bool auto_respawn;
 
-        ProtocolCraft::ConnectionState state;
+        //ProtocolCraft::ConnectionState state;
         GameMode game_mode;
 #if PROTOCOL_VERSION < 719
         Dimension dimension;
@@ -131,18 +114,7 @@ namespace Botcraft
         bool creative_mode; // Instant break
 
         std::thread m_thread_physics;//Thread running to compute position and send it to the server every 50 ms (20 ticks/s)
-        std::thread m_thread_process;//Thread running to process incoming packets without blocking com
-
-        std::deque<std::vector<unsigned char> > packets_to_process;
-        std::mutex mutex_process;
-        std::condition_variable process_condition;
-
-        std::vector<bool> printed_packets;
 
         bool should_be_closed;
-
-        int compression;
-
-        std::string name;
     };
 } //Botcraft

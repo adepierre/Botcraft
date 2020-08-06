@@ -8,8 +8,7 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-UserControlledClient::UserControlledClient(bool online,
-    const std::vector<int> &printed_packets_) : InterfaceClient(printed_packets_)
+UserControlledClient::UserControlledClient(bool online)
 {
 #if USE_GUI
     mouse_sensitivity = 0.1f;
@@ -19,8 +18,6 @@ UserControlledClient::UserControlledClient(bool online,
     {
         world = std::shared_ptr<World>(new World);
         player = std::shared_ptr<Player>(new Player);
-
-        state = ProtocolCraft::ConnectionState::Play;
 
         should_be_closed = false;
 

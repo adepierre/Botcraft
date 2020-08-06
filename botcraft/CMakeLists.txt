@@ -17,6 +17,8 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/World/World.hpp
     include/botcraft/Game/Inventory/Inventory.hpp
     include/botcraft/Game/Inventory/InventoryManager.hpp
+    
+    include/botcraft/Network/NetworkManager.hpp
 )
 
 set(botcraft_PRIVATE_HDR
@@ -45,6 +47,7 @@ set(botcraft_SRC
     src/Network/Authentifier.cpp
     src/Network/AESEncrypter.cpp
     src/Network/Compression.cpp
+    src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
     src/Utilities/StringUtilities.cpp
 )

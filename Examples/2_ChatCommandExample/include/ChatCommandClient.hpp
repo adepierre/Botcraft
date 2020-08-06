@@ -6,7 +6,7 @@
 class ChatCommandClient : public Botcraft::InterfaceClient
 {
 public:
-    ChatCommandClient(const std::vector<int> &printed_packets_ = std::vector<int>(0));
+    ChatCommandClient();
     ~ChatCommandClient();
 
 protected:
