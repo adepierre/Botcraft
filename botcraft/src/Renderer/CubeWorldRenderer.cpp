@@ -389,12 +389,12 @@ namespace Botcraft
                         for (int i = 0; i < current_faces.size(); ++i)
                         {
                             //Check if the neighbour in this direction is hidding this face
-                            // We also remove the faces between two transparent blocks with the same id
+                            // We also remove the faces between two transparent blocks with the same names
                             // (example: faces between two water blocks)
                             if (current_faces[i].cullface_direction == Orientation::None ||
                                 !neighbour_blockstates[(int)current_faces[i].cullface_direction] ||
                                 (neighbour_blockstates[(int)current_faces[i].cullface_direction]->IsTransparent() &&
-                                    neighbour_blockstates[(int)current_faces[i].cullface_direction]->GetId() != this_block->GetBlockstate()->GetId())
+                                    neighbour_blockstates[(int)current_faces[i].cullface_direction]->GetName() != this_block->GetBlockstate()->GetName())
                                 )
                             {
                                 AddFace(pos.x + CHUNK_WIDTH * x_, pos.y, pos.z + CHUNK_WIDTH * z_, 
