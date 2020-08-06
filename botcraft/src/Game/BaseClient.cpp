@@ -252,7 +252,7 @@ namespace Botcraft
                 }
                 else
                 {
-                    std::lock_guard<std::mutex> player_guard(player_mutex);
+                    std::lock_guard<std::mutex> player_guard(player->GetMutex());
                     //Check that we did not go through a block
                     Physics();
 
@@ -348,7 +348,7 @@ namespace Botcraft
 
                     Block block;
                     {
-                        std::lock_guard<std::mutex> mutex_guard(world_mutex);
+                        std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
                         const Block *block_ptr = world->GetBlock(cube_pos);
 
                         if (block_ptr == nullptr)
@@ -506,14 +506,14 @@ namespace Botcraft
 
                 std::shared_ptr<const Chunk> chunk;
                 // Get the new values in the world
-                world_mutex.lock();
+                world->GetMutex().lock();
                 bool has_chunk_been_modified = world->HasChunkBeenModified(pos.x, pos.z);
                 if (has_chunk_been_modified)
                 {
                     chunk = world->GetChunkCopy(pos.x, pos.z);
                     world->ResetChunkModificationState(pos.x, pos.z);
                 }
-                world_mutex.unlock();
+                world->GetMutex().unlock();
 
                 if (has_chunk_been_modified)
                 {
@@ -587,7 +587,7 @@ namespace Botcraft
 #endif
         
         { // Scope for lock_guard
-            std::lock_guard<std::mutex> world_guard(world_mutex);
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
 #if PROTOCOL_VERSION < 347
             Blockstate::IdToIdMetadata(msg.GetBlockId(), id, metadata);
             world->SetBlock(msg.GetLocation(), id, metadata);
@@ -613,7 +613,7 @@ namespace Botcraft
     void BaseClient::Handle(MultiBlockChange &msg)
     {
         { // Scope for lock guard
-            std::lock_guard<std::mutex> world_guard(world_mutex);
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
             for (int i = 0; i < msg.GetRecordCount(); ++i)
             {
                 unsigned char x = (msg.GetRecords()[i].GetHorizontalPosition() >> 4) & 0x0F;
@@ -665,7 +665,7 @@ namespace Botcraft
     void BaseClient::Handle(UnloadChunk &msg)
     {
         { // Scope for lock_guard
-            std::lock_guard<std::mutex> world_guard(world_mutex);
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
             world->RemoveChunk(msg.GetChunkX(), msg.GetChunkZ());
         }
 #if USE_GUI
@@ -693,7 +693,7 @@ namespace Botcraft
         std::string chunk_dim;
 #endif
         {
-            std::lock_guard<std::mutex> world_guard(world_mutex);
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
             chunk_dim = world->GetDimension(msg.GetChunkX(), msg.GetChunkZ());
         }
 
@@ -702,7 +702,7 @@ namespace Botcraft
             bool success = true;
             if (chunk_dim != dimension)
             {
-                std::lock_guard<std::mutex> world_guard(world_mutex);
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
                 success = world->AddChunk(msg.GetChunkX(), msg.GetChunkZ(), dimension);
             }
 
@@ -720,7 +720,7 @@ namespace Botcraft
         }
 
         { // lock guard scope
-            std::lock_guard<std::mutex> world_guard(world_mutex);
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
             world->LoadDataInChunk(msg.GetChunkX(), msg.GetChunkZ(), msg.GetData(), msg.GetPrimaryBitMask(), msg.GetGroundUpContinuous());
             world->LoadBlockEntityDataInChunk(msg.GetChunkX(), msg.GetChunkZ(), msg.GetBlockEntitiesData(), msg.GetNumberBlockEntities());
         }
@@ -733,9 +733,9 @@ namespace Botcraft
 
     void BaseClient::Handle(JoinGame &msg)
     {
-        player_mutex.lock();
+        player->GetMutex().lock();
         player->SetEID(msg.GetEntityId());
-        player_mutex.unlock();
+        player->GetMutex().unlock();
         game_mode = (GameMode)(msg.GetGamemode() & 0x03);
         is_hardcore = msg.GetGamemode() & 0x08;
 
@@ -758,7 +758,7 @@ namespace Botcraft
 
     void BaseClient::Handle(EntityRelativeMove &msg)
     {
-        std::lock_guard<std::mutex> player_guard(player_mutex);
+        std::lock_guard<std::mutex> player_guard(player->GetMutex());
         if (msg.GetEntityId() == player->GetEID())
         {
             player->SetX((msg.GetDeltaX() / 128.0f + player->GetPosition().x * 32.0f) / 32.0f);
@@ -778,7 +778,7 @@ namespace Botcraft
 
     void BaseClient::Handle(EntityLookAndRelativeMove &msg)
     {
-        std::lock_guard<std::mutex> player_guard(player_mutex);
+        std::lock_guard<std::mutex> player_guard(player->GetMutex());
         if (msg.GetEntityId() == player->GetEID())
         {
             player->SetX((msg.GetDeltaX() / 128.0f + player->GetPosition().x * 32.0f) / 32.0f);
@@ -800,7 +800,7 @@ namespace Botcraft
 
     void BaseClient::Handle(EntityLook &msg)
     {
-        std::lock_guard<std::mutex> player_guard(player_mutex);
+        std::lock_guard<std::mutex> player_guard(player->GetMutex());
         if (msg.GetEntityId() == player->GetEID())
         {
             player->SetYaw(360.0f * msg.GetYaw() / 256.0f);
@@ -819,7 +819,7 @@ namespace Botcraft
 
     void BaseClient::Handle(PlayerPositionAndLookClientbound &msg)
     {
-        std::lock_guard<std::mutex> player_guard(player_mutex);
+        std::lock_guard<std::mutex> player_guard(player->GetMutex());
         (msg.GetFlags() & 0x01) ? player->SetX(player->GetPosition().x + msg.GetX()) : player->SetX(msg.GetX());
         (msg.GetFlags() & 0x02) ? player->SetY(player->GetPosition().y + msg.GetY()) : player->SetY(msg.GetY());
         (msg.GetFlags() & 0x04) ? player->SetZ(player->GetPosition().z + msg.GetZ()) : player->SetZ(msg.GetZ());
@@ -838,11 +838,12 @@ namespace Botcraft
 
     void BaseClient::Handle(UpdateHealth &msg)
     {
-        player_mutex.lock();
-        player->SetHealth(msg.GetHealth());
-        player->SetFood(msg.GetFood());
-        player->SetFoodSaturation(msg.GetFoodSaturation());
-        player_mutex.unlock();
+        {
+            std::lock_guard<std::mutex> player_lock(player->GetMutex());
+            player->SetHealth(msg.GetHealth());
+            player->SetFood(msg.GetFood());
+            player->SetFoodSaturation(msg.GetFoodSaturation());
+        }
 
         if (msg.GetHealth() <= 0.0f && auto_respawn)
         {
@@ -854,7 +855,7 @@ namespace Botcraft
 
     void BaseClient::Handle(EntityTeleport &msg)
     {
-        std::lock_guard<std::mutex> player_guard(player_mutex);
+        std::lock_guard<std::mutex> player_guard(player->GetMutex());
         if (msg.GetEntityId() == player->GetEID())
         {
             player->SetX(msg.GetX());
@@ -876,14 +877,14 @@ namespace Botcraft
 
     void BaseClient::Handle(PlayerAbilitiesClientbound &msg)
     {
-        player_mutex.lock();
-        player->SetIsInvulnerable(msg.GetFlags() & 0x01);
-        player->SetIsFlying(msg.GetFlags() & 0x02);
+        {
+            std::lock_guard<std::mutex> player_guard(player->GetMutex());
+            player->SetIsInvulnerable(msg.GetFlags() & 0x01);
+            player->SetIsFlying(msg.GetFlags() & 0x02);
+            player->SetFlyingSpeed(msg.GetFlyingSpeed());
+        }
         allow_flying = msg.GetFlags() & 0x04;
         creative_mode = msg.GetFlags() & 0x08;
-
-        player->SetFlyingSpeed(msg.GetFlyingSpeed());
-        player_mutex.unlock();
 
         //TODO do something with the field of view modifier
 
@@ -944,7 +945,7 @@ namespace Botcraft
 
     void BaseClient::Handle(Respawn &msg)
     {
-        std::lock_guard<std::mutex> world_guard(world_mutex);
+        std::lock_guard<std::mutex> world_guard(world->GetMutex());
         // Clear all current chunks
         const auto& chunks = world->GetAllChunks();
         std::vector<std::pair<int, int> > chunks_to_remove;
@@ -976,7 +977,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404
     void BaseClient::Handle(UpdateLight &msg)
     {
-        std::lock_guard<std::mutex> world_guard(world_mutex);
+        std::lock_guard<std::mutex> world_guard(world->GetMutex());
         world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), dimension,
             msg.GetSkyLightMask(), msg.GetEmptySkyLightMask(), msg.GetSkyLightArrays(), true);
         world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), dimension,
@@ -986,7 +987,7 @@ namespace Botcraft
 
     void BaseClient::Handle(UpdateBlockEntity &msg)
     {
-        std::lock_guard<std::mutex> world_guard(world_mutex);
+        std::lock_guard<std::mutex> world_guard(world->GetMutex());
         world->SetBlockEntityData(msg.GetLocation(), msg.GetNBTData());
     }
 
@@ -998,7 +999,7 @@ namespace Botcraft
     void BaseClient::Handle(SetSlot &msg)
     {
         {
-            std::lock_guard<std::mutex> inventories_locker(inventory_manager_mutex);
+            std::lock_guard<std::mutex> inventories_locker(inventory_manager->GetMutex());
         
             if (msg.GetWindowId() == -1 && msg.GetSlot() == -1)
             {
@@ -1022,8 +1023,7 @@ namespace Botcraft
     void BaseClient::Handle(WindowItems &msg)
     {
         {
-            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-
+            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
             for (int i = 0; i < msg.GetCount(); ++i)
             {
                 inventory_manager->SetSlot(msg.GetWindowId(), i, msg.GetSlotData()[i]);
@@ -1034,8 +1034,7 @@ namespace Botcraft
     void BaseClient::Handle(OpenWindow &msg)
     {
         {
-            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-
+            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
             inventory_manager->AddInventory(msg.GetWindowId());
         }
     }
@@ -1043,7 +1042,7 @@ namespace Botcraft
     void BaseClient::Handle(HeldItemChangeClientbound &msg)
     {
         {
-            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
             inventory_manager->SetHotbarSelected(msg.GetSlot());
         }
     }

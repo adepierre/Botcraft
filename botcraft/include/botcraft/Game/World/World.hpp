@@ -3,6 +3,7 @@
 #include <map>
 #include <array>
 #include <memory>
+#include <mutex>
 
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/Enums.hpp"
@@ -19,6 +20,8 @@ namespace Botcraft
     {
     public:
         World();
+
+        std::mutex& GetMutex();
 
 #if PROTOCOL_VERSION < 719
         bool AddChunk(const int x, const int z, const Dimension dim);
@@ -108,6 +111,7 @@ namespace Botcraft
     private:
         int cached_x;
         int cached_z;
+        std::mutex world_mutex;
         std::shared_ptr<Chunk> cached;
 
         std::map<std::pair<int, int>, std::shared_ptr<Chunk> > terrain;

@@ -132,7 +132,7 @@ void ChatCommandClient::CheckPerimeter(const Position &pos, const float radius, 
                     continue;
                 }
 
-                std::lock_guard<std::mutex> world_guard(world_mutex);
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
 
                 const Block *block = world->GetBlock(current_position);
 

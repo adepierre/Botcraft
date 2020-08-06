@@ -11,6 +11,11 @@ namespace Botcraft
         cursor = Slot();
     }
 
+    std::mutex& InventoryManager::GetMutex()
+    {
+        return inventory_manager_mutex;
+    }
+
     void InventoryManager::SetSlot(const short window_id, const short index, const Slot &slot)
     {
         auto it = inventories.find(window_id);

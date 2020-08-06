@@ -13,6 +13,11 @@ namespace Botcraft
 
     }
 
+    std::mutex& World::GetMutex()
+    {
+        return world_mutex;
+    }
+
 #if PROTOCOL_VERSION < 719
     bool World::AddChunk(const int x, const int z, const Dimension dim)
 #else

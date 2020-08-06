@@ -88,7 +88,7 @@ namespace Botcraft
         Position block_position;
         Position block_normal;
         {
-            std::lock_guard<std::mutex> world_guard(world_mutex);
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
             blockstate = world->Raycast(player->GetPosition() + Vector3<double>(0.0, 1.65, 0.0), player->GetFrontVector(), 6.5f, block_position, block_normal);
         
             if (!blockstate ||
@@ -183,7 +183,7 @@ namespace Botcraft
                 Position current_position;
                 Position current_normal;
                 {
-                    std::lock_guard<std::mutex> world_guard(world_mutex);
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
                     current_blockstate = world->Raycast(player->GetPosition() + Vector3<double>(0.0, 1.65, 0.0), player->GetFrontVector(), 6.5f, current_position, current_normal);
                 }
 
@@ -248,7 +248,6 @@ namespace Botcraft
         Position current_position;
         do
         {
-            player_mutex.lock();
             // Wait until we are on the ground
             while (!player->GetOnGround())
             {
@@ -257,7 +256,6 @@ namespace Botcraft
 
             // Get the position
             current_position = Position(std::floor(player->GetPosition().x), std::floor(player->GetPosition().y), std::floor(player->GetPosition().z));
-            player_mutex.unlock();
 
             std::vector<Position> path;
             pathfinding_state = PathFindingState::Searching;
@@ -296,28 +294,29 @@ namespace Botcraft
                     return false;
                 }
 
-                player_mutex.lock();
                 // Wait until we are on the ground
                 while (!player->GetOnGround())
                 {
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
 
-                player->SetPosition(Vector3<double>(path[i].x + 0.5, path[i].y, path[i].z + 0.5));
-                char delta_x = path[i].x - current_position.x;
-                if (delta_x != 0)
                 {
-                    player->SetYaw(-90 * delta_x);
-                }
-                else
-                {
-                    char delta_z = path[i].z - current_position.z;
-                    player->SetYaw(-180 * delta_z);
-                }
+                    std::lock_guard<std::mutex> player_lock(player->GetMutex());
+                    player->SetPosition(Vector3<double>(path[i].x + 0.5, path[i].y, path[i].z + 0.5));
+                    char delta_x = path[i].x - current_position.x;
+                    if (delta_x != 0)
+                    {
+                        player->SetYaw(-90 * delta_x);
+                    }
+                    else
+                    {
+                        char delta_z = path[i].z - current_position.z;
+                        player->SetYaw(-180 * delta_z);
+                    }
 
-                // Get the position
-                current_position = Position(std::floor(player->GetPosition().x), std::floor(player->GetPosition().y), std::floor(player->GetPosition().z));
-                player_mutex.unlock();
+                    // Get the position
+                    current_position = Position(std::floor(player->GetPosition().x), std::floor(player->GetPosition().y), std::floor(player->GetPosition().z));
+                }
                 std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000 / speed)));
             }
 
@@ -393,7 +392,7 @@ namespace Botcraft
             for (int i = 0; i < neighbour_offsets.size(); ++i)
             {
                 Position next_location = current_node.pos + neighbour_offsets[i];
-                std::lock_guard<std::mutex> world_guard(world_mutex);
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
 
                 // We want a solid block to walk on it
                 // with two non solid blocks on top of it to walk through

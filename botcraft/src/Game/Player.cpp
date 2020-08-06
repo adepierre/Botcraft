@@ -31,6 +31,11 @@ namespace Botcraft
         food_saturation = 5.0f;
     }
 
+    std::mutex& Player::GetMutex()
+    {
+        return player_mutex;
+    }
+
     const Vector3<double>& Player::GetPosition() const
     {
         return position;

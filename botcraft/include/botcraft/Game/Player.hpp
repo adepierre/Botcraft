@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mutex>
+
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/AABB.hpp"
 
@@ -9,6 +11,8 @@ namespace Botcraft
     {
     public:
         Player();
+
+        std::mutex& GetMutex();
 
         //Half size of the collider
         static const Vector3<double> boxSize;
@@ -55,6 +59,8 @@ namespace Botcraft
         void UpdateVectors();
 
     private:
+        std::mutex player_mutex;
+
         int eid;
 
         Vector3<double> position;

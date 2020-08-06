@@ -99,11 +99,8 @@ namespace Botcraft
         std::shared_ptr<TCP_Com> com;
         std::shared_ptr<Authentifier> authentifier;
         std::shared_ptr<World> world;
-        std::mutex world_mutex;
         std::shared_ptr<Player> player;
-        std::mutex player_mutex;
         std::shared_ptr<InventoryManager> inventory_manager;
-        std::mutex inventory_manager_mutex;
 
 #if USE_GUI
         std::shared_ptr<Renderer::CubeWorldRenderer> renderer;

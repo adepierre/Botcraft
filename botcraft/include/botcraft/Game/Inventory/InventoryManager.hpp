@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <map>
+#include <mutex>
 #include "protocolCraft/Types/Slot.hpp"
 
 namespace Botcraft
@@ -12,6 +13,8 @@ namespace Botcraft
     {
     public:
         InventoryManager();
+
+        std::mutex& GetMutex();
 
         void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
         std::shared_ptr<Inventory> GetInventory(const short window_id);
@@ -29,6 +32,7 @@ namespace Botcraft
         void SetCursor(const ProtocolCraft::Slot &c);
 
     private:
+        std::mutex inventory_manager_mutex;
         std::map<short, std::shared_ptr<Inventory> > inventories;
         short index_hotbar_selected;
         ProtocolCraft::Slot cursor;
