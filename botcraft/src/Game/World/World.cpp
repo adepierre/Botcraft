@@ -8,14 +8,19 @@
 
 namespace Botcraft
 {
-    World::World()
+    World::World(const bool is_shared_)
     {
-
+        is_shared = is_shared_;
     }
 
     std::mutex& World::GetMutex()
     {
         return world_mutex;
+    }
+
+    const bool World::IsShared() const
+    {
+        return is_shared;
     }
 
 #if PROTOCOL_VERSION < 719

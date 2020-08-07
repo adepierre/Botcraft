@@ -5,7 +5,7 @@
 class UserControlledClient : public Botcraft::InterfaceClient
 {
 public:
-    UserControlledClient(bool online);
+    UserControlledClient(bool online, bool use_renderer_);
     ~UserControlledClient();
     
 protected:

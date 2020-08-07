@@ -6,7 +6,7 @@
 class ChatCommandClient : public Botcraft::InterfaceClient
 {
 public:
-    ChatCommandClient();
+    ChatCommandClient(const bool use_renderer_, const bool is_afk_);
     ~ChatCommandClient();
 
 protected:

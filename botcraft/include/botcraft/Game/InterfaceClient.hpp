@@ -16,7 +16,7 @@ namespace Botcraft
     class InterfaceClient : public BaseClient
     {
     public:
-        InterfaceClient();
+        InterfaceClient(const bool use_renderer_, const bool afk_only_ = false);
         ~InterfaceClient();
 
         // Send a message in the chat

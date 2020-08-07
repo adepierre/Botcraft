@@ -8,7 +8,7 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-UserControlledClient::UserControlledClient(bool online)
+UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : InterfaceClient(use_renderer_)
 {
 #if USE_GUI
     mouse_sensitivity = 0.1f;
@@ -16,20 +16,23 @@ UserControlledClient::UserControlledClient(bool online)
 
     if (!online)
     {
-        world = std::shared_ptr<World>(new World);
+        world = std::shared_ptr<World>(new World(false));
         player = std::shared_ptr<Player>(new Player);
 
         should_be_closed = false;
 
 #ifdef USE_GUI
-        renderer = std::shared_ptr<Renderer::CubeWorldRenderer>(new Renderer::CubeWorldRenderer(800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
-        mouse_sensitivity = 0.1f;
+        if (use_renderer)
+        {
+            renderer = std::shared_ptr<Renderer::CubeWorldRenderer>(new Renderer::CubeWorldRenderer(800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
+            mouse_sensitivity = 0.1f;
 
-        // Launch the renderer updater thread
-        m_thread_update_renderer = std::thread(&UserControlledClient::WaitForRenderingUpdate, this);
+            // Launch the renderer updater thread
+            m_thread_update_renderer = std::thread(&UserControlledClient::WaitForRenderingUpdate, this);
 
-        renderer->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
-        renderer->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+            renderer->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
+            renderer->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+        }
 #endif
 
         // Launch the thread for the position
@@ -142,12 +145,15 @@ void UserControlledClient::CreateTestWorld()
 #endif
 
 #ifdef USE_GUI
-    for (int i = 0; i < (int)floor(x / CHUNK_WIDTH) + 1; ++i)
+    if (use_renderer)
     {
-        AddChunkToUpdate(i, 0);
-        AddChunkToUpdate(i, 1);
-        AddChunkToUpdate(i, -1);
-        AddChunkToUpdate(i, -2);
+        for (int i = 0; i < (int)floor(x / CHUNK_WIDTH) + 1; ++i)
+        {
+            AddChunkToUpdate(i, 0);
+            AddChunkToUpdate(i, 1);
+            AddChunkToUpdate(i, -1);
+            AddChunkToUpdate(i, -2);
+        }
     }
 #endif
 
@@ -251,9 +257,12 @@ void UserControlledClient::CreateTestWorld()
         }
     }
 #ifdef USE_GUI
-    for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
+    if (use_renderer)
     {
-        AddChunkToUpdate(-i - 1, 0);
+        for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
+        {
+            AddChunkToUpdate(-i - 1, 0);
+        }
     }
 #endif
     
@@ -351,7 +360,10 @@ void UserControlledClient::Handle(LoginSuccess &msg)
     Botcraft::BaseClient::Handle(msg);
 
 #if USE_GUI
-    renderer->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
-    renderer->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+    if (use_renderer)
+    {
+        renderer->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
+        renderer->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+    }
 #endif
 }

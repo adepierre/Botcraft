@@ -19,9 +19,10 @@ namespace Botcraft
     class World
     {
     public:
-        World();
+        World(const bool is_shared_);
 
         std::mutex& GetMutex();
+        const bool IsShared() const;
 
 #if PROTOCOL_VERSION < 719
         bool AddChunk(const int x, const int z, const Dimension dim);
@@ -115,5 +116,7 @@ namespace Botcraft
         std::shared_ptr<Chunk> cached;
 
         std::map<std::pair<int, int>, std::shared_ptr<Chunk> > terrain;
+
+        bool is_shared;
     };
 } // Botcraft

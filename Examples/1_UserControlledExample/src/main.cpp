@@ -2,6 +2,7 @@
 #include <string>
 
 #include "UserControlledClient.hpp"
+#include "botcraft/Game/World/World.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -39,8 +40,8 @@ int main(int argc, char* argv[])
             login = argv[4];
         }
 
-        UserControlledClient client(ONLINE);
-
+        UserControlledClient client(ONLINE, true);
+        
         if (ONLINE)
         {
             client.SetAutoRespawn(true);

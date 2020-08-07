@@ -36,7 +36,7 @@ namespace Botcraft
         Stop
     };
     
-    InterfaceClient::InterfaceClient() : BaseClient(false)
+    InterfaceClient::InterfaceClient(const bool use_renderer_, const bool afk_only_) : BaseClient(use_renderer_, afk_only_)
     {
         pathfinding_state = PathFindingState::Waiting;
         digging_state = DiggingState::Waiting;

@@ -25,12 +25,14 @@ namespace Botcraft
     class BaseClient : public ProtocolCraft::Handler
     {
     public:
-        BaseClient(const bool afk_only_ = false);
+        BaseClient(const bool use_renderer_, const bool afk_only_ = false);
         ~BaseClient();
 
         // Connect to a server, if password is empty, the server must be in offline mode
         void Connect(const std::string &ip, const unsigned int port, const std::string &login, const std::string &password);
         void Disconnect();
+
+        void SetSharedWorld(const std::shared_ptr<World> world_);
 
     protected:
         void RunSyncPos();
@@ -79,6 +81,13 @@ namespace Botcraft
         // be calculated
         // Use it only to afk at a specific spot
         bool afk_only;
+
+        // If true, opens a window to display the view
+        // from the bot. Only one renderer can be active
+        // at the same time
+#if USE_GUI
+        bool use_renderer;
+#endif
 
         std::shared_ptr<World> world;
         std::shared_ptr<Player> player;

@@ -10,7 +10,7 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-ChatCommandClient::ChatCommandClient()
+ChatCommandClient::ChatCommandClient(const bool use_renderer_, const bool is_afk_) : InterfaceClient(use_renderer_, is_afk_)
 {
     std::cout << "Known commands:\n";
     std::cout << "    Pathfinding to position:\n";

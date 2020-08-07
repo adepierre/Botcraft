@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
             password = argv[4];
         }
 
-        ChatCommandClient client;
+        ChatCommandClient client(true, false);
         client.SetAutoRespawn(true);
 
         std::cout << "Starting connection process" << std::endl;
