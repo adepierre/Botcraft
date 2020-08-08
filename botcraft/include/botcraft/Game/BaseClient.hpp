@@ -53,7 +53,6 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ConfirmTransactionClientbound &msg) override;
         virtual void Handle(ProtocolCraft::DisconnectPlay &msg) override;
         virtual void Handle(ProtocolCraft::UnloadChunk &msg) override;
-        virtual void Handle(ProtocolCraft::KeepAliveClientbound &msg) override;
         virtual void Handle(ProtocolCraft::ChunkData &msg) override;
         virtual void Handle(ProtocolCraft::JoinGame &msg) override;
         virtual void Handle(ProtocolCraft::Entity &msg) override;

@@ -35,6 +35,7 @@ namespace Botcraft
 		virtual void Handle(ProtocolCraft::SetCompression& msg) override;
 		virtual void Handle(ProtocolCraft::LoginSuccess& msg) override;
 		virtual void Handle(ProtocolCraft::EncryptionRequest& msg) override;
+		virtual void Handle(ProtocolCraft::KeepAliveClientbound& msg) override;
 
 	private:
 		std::vector<ProtocolCraft::Handler*> subscribed;

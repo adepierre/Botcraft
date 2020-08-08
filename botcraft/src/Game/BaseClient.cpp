@@ -501,13 +501,6 @@ namespace Botcraft
 #endif
     }
 
-    void BaseClient::Handle(KeepAliveClientbound &msg)
-    {
-        std::shared_ptr<KeepAliveServerbound> keep_alive_msg(new KeepAliveServerbound);
-        keep_alive_msg->SetKeepAliveId(msg.GetKeepAliveId());
-        network_manager->Send(keep_alive_msg);
-    }
-
     void BaseClient::Handle(ChunkData &msg)
     {
         if (afk_only)

@@ -266,4 +266,11 @@ namespace Botcraft
         throw(std::runtime_error("Your version of botcraft doesn't support encryption. Either run your server with online-mode=false or recompile botcraft"));
 #endif
     }
+
+    void NetworkManager::Handle(ProtocolCraft::KeepAliveClientbound& msg)
+    {
+        std::shared_ptr<ProtocolCraft::KeepAliveServerbound> keep_alive_msg(new ProtocolCraft::KeepAliveServerbound);
+        keep_alive_msg->SetKeepAliveId(msg.GetKeepAliveId());
+        Send(keep_alive_msg);
+    }
 }
