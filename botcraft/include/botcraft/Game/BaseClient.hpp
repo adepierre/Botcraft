@@ -12,15 +12,18 @@
 #include "botcraft/Game/Player.hpp"
 #include "botcraft/Game/Enums.hpp"
 
-#if USE_GUI
-#include "botcraft/Renderer/CubeWorldRenderer.hpp"
-#endif
-
 namespace Botcraft
 {
     class World;
     class InventoryManager;
     class NetworkManager;
+
+#if USE_GUI
+    namespace Renderer
+    {
+        class RenderingManager;
+    }
+#endif
 
     class BaseClient : public ProtocolCraft::Handler
     {
@@ -38,22 +41,13 @@ namespace Botcraft
         void RunSyncPos();
         void Physics();
 
-#ifdef USE_GUI
-        void AddChunkToUpdate(const int x, const int z);
-        void WaitForRenderingUpdate();
-#endif
-
     protected:
         virtual void Handle(ProtocolCraft::Message &msg) override;
         virtual void Handle(ProtocolCraft::DisconnectLogin &msg) override;
         virtual void Handle(ProtocolCraft::LoginSuccess &msg) override;
-        virtual void Handle(ProtocolCraft::BlockChange &msg) override;
         virtual void Handle(ProtocolCraft::ServerDifficulty &msg) override;
-        virtual void Handle(ProtocolCraft::MultiBlockChange &msg) override;
         virtual void Handle(ProtocolCraft::ConfirmTransactionClientbound &msg) override;
         virtual void Handle(ProtocolCraft::DisconnectPlay &msg) override;
-        virtual void Handle(ProtocolCraft::UnloadChunk &msg) override;
-        virtual void Handle(ProtocolCraft::ChunkData &msg) override;
         virtual void Handle(ProtocolCraft::JoinGame &msg) override;
         virtual void Handle(ProtocolCraft::Entity &msg) override;
         virtual void Handle(ProtocolCraft::EntityRelativeMove &msg) override;
@@ -63,7 +57,6 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::UpdateHealth &msg) override;
         virtual void Handle(ProtocolCraft::EntityTeleport &msg) override;
         virtual void Handle(ProtocolCraft::PlayerAbilitiesClientbound &msg) override;
-        virtual void Handle(ProtocolCraft::TimeUpdate &msg) override;
         virtual void Handle(ProtocolCraft::Respawn &msg) override;
         virtual void Handle(ProtocolCraft::SetSlot &msg) override;
         virtual void Handle(ProtocolCraft::WindowItems &msg) override;
@@ -88,15 +81,8 @@ namespace Botcraft
         std::shared_ptr<Player> player;
         std::shared_ptr<InventoryManager> inventory_manager;
         std::shared_ptr<NetworkManager> network_manager;
-
 #if USE_GUI
-        std::shared_ptr<Renderer::CubeWorldRenderer> renderer;
-
-        std::unordered_set<Position> chunks_to_render;
-        std::mutex mutex_rendering;
-        std::condition_variable condition_rendering;
-        
-        std::thread m_thread_update_renderer;// Thread used to update the renderer with world data 
+        std::shared_ptr<Renderer::RenderingManager> rendering_manager;
 #endif
 
         bool auto_respawn;

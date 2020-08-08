@@ -55,6 +55,7 @@ set(botcraft_SRC
 if(BOTCRAFT_USE_OPENGL_GUI)
     list(APPEND botcraft_PUBLIC_HDR
             include/botcraft/Renderer/CubeWorldRenderer.hpp
+            include/botcraft/Renderer/RenderingManager.hpp
             include/botcraft/Renderer/Face.hpp
             include/botcraft/Renderer/Transformation.hpp
             )
@@ -75,6 +76,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             src/Renderer/CubeWorldRenderer.cpp
             src/Renderer/Face.cpp
             src/Renderer/ImageSaver.cpp
+            src/Renderer/RenderingManager.cpp
             src/Renderer/Shader.cpp
             src/Renderer/Transformation.cpp
             src/Renderer/TransparentChunk.cpp

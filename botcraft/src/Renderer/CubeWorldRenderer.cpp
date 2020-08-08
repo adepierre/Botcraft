@@ -590,6 +590,13 @@ namespace Botcraft
             take_screenshot = true;
         }
 
+        void CubeWorldRenderer::RemoveAllChunks()
+        {
+            std::lock_guard<std::mutex> lock(chunks_mutex);
+            chunks = std::unordered_map<Position, std::shared_ptr<Chunk> >();
+            transparent_chunks = std::unordered_map<Position, std::shared_ptr<TransparentChunk> >();
+        }
+
         bool CubeWorldRenderer::Init()
         {
             glfwInit();

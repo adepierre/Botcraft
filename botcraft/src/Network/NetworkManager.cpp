@@ -40,12 +40,12 @@ namespace Botcraft
 
         state = ProtocolCraft::ConnectionState::Login;
 
-        // Offline mode case
+        // Online mode false
         if (password == "")
         {
             name = login;
         }
-        // Online mode case
+        // Online mode true
         else
         {
             authentifier = std::shared_ptr<Authentifier>(new Authentifier());
@@ -59,6 +59,11 @@ namespace Botcraft
         std::shared_ptr<ProtocolCraft::LoginStart> loginstart_msg(new ProtocolCraft::LoginStart);
         loginstart_msg->SetName_(name);
         Send(loginstart_msg);
+    }
+
+    NetworkManager::NetworkManager(const ProtocolCraft::ConnectionState constant_connection_state)
+    {
+        state = constant_connection_state;
     }
 
     NetworkManager::~NetworkManager()

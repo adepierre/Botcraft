@@ -801,19 +801,7 @@ namespace Botcraft
     void World::Handle(ProtocolCraft::Respawn& msg)
     {
         std::lock_guard<std::mutex> world_guard(world_mutex);
-        // Clear all current chunks
-        const auto& chunks = GetAllChunks();
-        std::vector<std::pair<int, int> > chunks_to_remove;
-        chunks_to_remove.reserve(chunks.size());
-        for (auto it = chunks.begin(); it != chunks.end(); ++it)
-        {
-            chunks_to_remove.push_back(it->first);
-        }
-
-        for (int i = 0; i < chunks_to_remove.size(); ++i)
-        {
-            RemoveChunk(chunks_to_remove[i].first, chunks_to_remove[i].second);
-        }
+        terrain = std::map<std::pair<int, int>, std::shared_ptr<Chunk> >();
 
 #if PROTOCOL_VERSION < 719
         current_dimension = (Dimension)msg.GetDimension();

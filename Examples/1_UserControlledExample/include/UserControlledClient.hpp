@@ -2,6 +2,8 @@
 
 #include "botcraft/Game/InterfaceClient.hpp"
 
+#include "botcraft/Renderer/CubeWorldRenderer.hpp"
+
 class UserControlledClient : public Botcraft::InterfaceClient
 {
 public:

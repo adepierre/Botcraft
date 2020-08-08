@@ -1,7 +1,10 @@
 #include <botcraft/Game/AssetsManager.hpp>
 #include <botcraft/Version.hpp>
 #include <botcraft/Game/World/World.hpp>
-#include "botcraft/Game/World/Chunk.hpp"
+#include <botcraft/Game/World/Chunk.hpp>
+#include <botcraft/Renderer/RenderingManager.hpp>
+#include <botcraft/Network/NetworkManager.hpp>
+#include <protocolCraft/enums.hpp>
 
 #include "UserControlledClient.hpp"
 
@@ -16,6 +19,7 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : In
 
     if (!online)
     {
+        network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(ConnectionState::Play));
         world = std::shared_ptr<World>(new World(false));
         player = std::shared_ptr<Player>(new Player);
 
@@ -24,14 +28,11 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : In
 #ifdef USE_GUI
         if (use_renderer)
         {
-            renderer = std::shared_ptr<Renderer::CubeWorldRenderer>(new Renderer::CubeWorldRenderer(800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
+            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world));
             mouse_sensitivity = 0.1f;
 
-            // Launch the renderer updater thread
-            m_thread_update_renderer = std::thread(&UserControlledClient::WaitForRenderingUpdate, this);
-
-            renderer->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
-            renderer->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+            rendering_manager->GetRenderer()->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
+            rendering_manager->GetRenderer()->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
         }
 #endif
 
@@ -54,9 +55,9 @@ UserControlledClient::~UserControlledClient()
 void UserControlledClient::CreateTestWorld()
 {
 #if PROTOCOL_VERSION < 719
-    dimension = Dimension::Overworld;
+    const Dimension dimension = Dimension::Overworld;
 #else
-    dimension = "minecraft:overworld";
+    const std::string dimension = "minecraft:overworld";
 #endif
     int max_id = 0;
     int min_id = std::numeric_limits<int>::max();
@@ -149,10 +150,10 @@ void UserControlledClient::CreateTestWorld()
     {
         for (int i = 0; i < (int)floor(x / CHUNK_WIDTH) + 1; ++i)
         {
-            AddChunkToUpdate(i, 0);
-            AddChunkToUpdate(i, 1);
-            AddChunkToUpdate(i, -1);
-            AddChunkToUpdate(i, -2);
+            rendering_manager->AddChunkToUpdate(i, 0);
+            rendering_manager->AddChunkToUpdate(i, 1);
+            rendering_manager->AddChunkToUpdate(i, -1);
+            rendering_manager->AddChunkToUpdate(i, -2);
         }
     }
 #endif
@@ -261,7 +262,7 @@ void UserControlledClient::CreateTestWorld()
     {
         for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
         {
-            AddChunkToUpdate(-i - 1, 0);
+            rendering_manager->AddChunkToUpdate(-i - 1, 0);
         }
     }
 #endif
@@ -285,7 +286,7 @@ void UserControlledClient::MouseCallback(const double &xoffset, const double &yo
     player->SetPitch(pitch);
     player->SetYaw(player->GetYaw() + xoffset * mouse_sensitivity);
 
-    renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+    rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
 }
 
 void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer::KEY_CODE::NUMBER_OF_KEYS> &is_key_pressed, const double &delta_time)
@@ -350,7 +351,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
 
     if (pos_has_changed)
     {
-        renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+        rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
     }
 }
 #endif
@@ -362,8 +363,8 @@ void UserControlledClient::Handle(LoginSuccess &msg)
 #if USE_GUI
     if (use_renderer)
     {
-        renderer->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
-        renderer->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+        rendering_manager->GetRenderer()->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
+        rendering_manager->GetRenderer()->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
     }
 #endif
 }

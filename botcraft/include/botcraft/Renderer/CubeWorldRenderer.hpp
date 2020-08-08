@@ -54,24 +54,6 @@ namespace Botcraft
     } // Renderer
 } // Botcraft
 
-namespace std
-{
-    template<>
-    struct hash<Botcraft::Position>
-    {
-        inline size_t operator()(const Botcraft::Position &p) const
-        {
-            std::hash<int> hasher;
-            size_t value = hasher(p.x);
-
-            value ^= hasher(p.y) + 0x9e3779b9 + (value << 6) + (value >> 2);
-            value ^= hasher(p.z) + 0x9e3779b9 + (value << 6) + (value >> 2);
-
-            return value;
-        }
-    };
-}
-
 namespace Botcraft
 {
     class World;
@@ -115,6 +97,8 @@ namespace Botcraft
 
             // Take a screenshot of the current frame and save it to path
             void Screenshot(const std::string &path);
+
+            void RemoveAllChunks();
 
         private:
             // Initialize all the stuff

@@ -18,6 +18,9 @@ namespace Botcraft
 	{
 	public:
 		NetworkManager(const std::string& ip, const unsigned int port, const std::string& login, const std::string& password);
+		// Used to create a dummy network manager that does not fire any message
+		// but is always in constant_connection_state
+		NetworkManager(const ProtocolCraft::ConnectionState constant_connection_state);
 		~NetworkManager();
 
 		void AddHandler(ProtocolCraft::Handler* h);

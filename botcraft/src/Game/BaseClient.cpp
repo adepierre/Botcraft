@@ -10,6 +10,10 @@
 #include "botcraft/Game/BaseClient.hpp"
 
 #include "botcraft/Network/NetworkManager.hpp"
+#if USE_GUI
+#include "botcraft/Renderer/RenderingManager.hpp"
+#include "botcraft/Renderer/CubeWorldRenderer.hpp"
+#endif
 
 using namespace ProtocolCraft;
 
@@ -31,7 +35,7 @@ namespace Botcraft
 
 #if USE_GUI
         use_renderer = use_renderer_;
-        renderer = nullptr;
+        rendering_manager = nullptr;
 #else
         if (use_renderer_)
         {
@@ -120,7 +124,7 @@ namespace Botcraft
 #if USE_GUI
                 if (use_renderer && has_moved)
                 {
-                    renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                    rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
                 }
 #endif
                 msg_position->SetX(player->GetPosition().x);
@@ -130,7 +134,8 @@ namespace Botcraft
                 msg_position->SetPitch(player->GetPitch());
                 msg_position->SetOnGround(player->GetOnGround());
 
-                if (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_send).count() >= 1000)
+                if (network_manager && 
+                    (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_send).count() >= 1000))
                 {
                     network_manager->Send(msg_position);
                     last_send = std::chrono::system_clock::now();
@@ -244,21 +249,8 @@ namespace Botcraft
         is_hardcore = false;
 
         network_manager.reset();
-
 #if USE_GUI
-        if (use_renderer)
-        {
-            condition_rendering.notify_all();
-            if (m_thread_update_renderer.joinable())
-            {
-                m_thread_update_renderer.join();
-            }
-
-            if (renderer)
-            {
-                renderer->Close();
-            }
-        }
+        rendering_manager.reset();
 #endif
 
         if (m_thread_physics.joinable())
@@ -266,88 +258,18 @@ namespace Botcraft
             m_thread_physics.join();
         }
 
-        if (!world->IsShared())
+        if (world && !world->IsShared())
         {
             world.reset();
         }
         inventory_manager.reset();
         player.reset();
-#if USE_GUI
-        renderer.reset();
-#endif
     }
 
     void BaseClient::SetSharedWorld(const std::shared_ptr<World> world_)
     {
         world = world_;
     }
-
-#ifdef USE_GUI
-
-    void BaseClient::AddChunkToUpdate(const int x, const int z)
-    {
-        const std::vector<Position> chunk_pos = { {Position(x, 0, z), Position(x - 1, 0, z),
-                    Position(x + 1, 0 , z), Position(x, 0, z - 1), Position(x, 0, z + 1)} };
-
-        std::lock_guard<std::mutex> guard_rendering(mutex_rendering);
-        for (int i = 0; i < chunk_pos.size(); ++i)
-        {
-            chunks_to_render.insert(chunk_pos[i]);
-        }
-        condition_rendering.notify_all();
-    }
-
-    void BaseClient::WaitForRenderingUpdate()
-    {
-        while (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
-        {
-            {
-                std::unique_lock<std::mutex> lck(mutex_rendering);
-                condition_rendering.wait(lck);
-            }
-
-            while (!chunks_to_render.empty())
-            {
-                Position pos;
-                mutex_rendering.lock();
-                if (!chunks_to_render.empty())
-                {
-                    auto posIterator = chunks_to_render.begin();
-                    pos = *posIterator;
-                    chunks_to_render.erase(posIterator);
-                }
-                mutex_rendering.unlock();
-
-                std::shared_ptr<const Chunk> chunk;
-                // Get the new values in the world
-                world->GetMutex().lock();
-                bool has_chunk_been_modified = world->HasChunkBeenModified(pos.x, pos.z);
-                if (has_chunk_been_modified)
-                {
-                    chunk = world->GetChunkCopy(pos.x, pos.z);
-                    world->ResetChunkModificationState(pos.x, pos.z);
-                }
-                world->GetMutex().unlock();
-
-                if (has_chunk_been_modified)
-                {
-                    renderer->UpdateChunk(pos.x, pos.z, chunk);
-                    renderer->UpdateBuffer();
-                }
-
-                // If we left the game, we don't need to process 
-                // the rest of the data, just discard them
-                if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
-                {
-                    mutex_rendering.lock();
-                    chunks_to_render.clear();
-                    mutex_rendering.unlock();
-                    break;
-                }
-            }
-        }
-    }
-#endif
 
     void BaseClient::Handle(Message &msg)
     {
@@ -356,10 +278,11 @@ namespace Botcraft
 
     void BaseClient::Handle(DisconnectLogin &msg)
     {
-        std::cout << msg.GetReason().GetText() << std::endl;
+        std::cout << "Disconnect during login with reason: " << 
+            msg.GetReason().GetText() << std::endl;
         std::cout << "Disconnecting ..." << std::endl;
 
-        Disconnect();
+        should_be_closed = true;
     }
 
     void BaseClient::Handle(LoginSuccess &msg)
@@ -384,26 +307,16 @@ namespace Botcraft
 #if USE_GUI
         if (use_renderer)
         {
-            renderer = std::shared_ptr<Renderer::CubeWorldRenderer>(new Renderer::CubeWorldRenderer(800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
-
-            // Launche the updating rendering thread
-            m_thread_update_renderer = std::thread(&BaseClient::WaitForRenderingUpdate, this);
+            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world));
+            if (!afk_only)
+            {
+                network_manager->AddHandler(rendering_manager.get());
+            }
         }
 #endif
         
         // Launch the physics thread (continuously sending the position to the server)
         m_thread_physics = std::thread(&BaseClient::RunSyncPos, this);
-    }
-
-    void BaseClient::Handle(BlockChange &msg)
-    {
-#ifdef USE_GUI
-        if (use_renderer)
-        {
-            Position chunk_coords = Chunk::BlockCoordsToChunkCoords(msg.GetLocation());
-            AddChunkToUpdate(chunk_coords.x, chunk_coords.z);
-        }
-#endif
     }
 
     void BaseClient::Handle(ServerDifficulty &msg)
@@ -412,16 +325,6 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 463
         difficulty_locked = msg.GetDifficultyLocked();
 #endif
-    }
-
-    void BaseClient::Handle(MultiBlockChange &msg)
-    {
-#ifdef USE_GUI
-        if (use_renderer)
-        {
-            AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
-        }
-#endif // USE_GUI
     }
 
     void BaseClient::Handle(ConfirmTransactionClientbound &msg)
@@ -444,30 +347,11 @@ namespace Botcraft
 
     void BaseClient::Handle(DisconnectPlay &msg)
     {
-        std::cout << msg.GetReason().GetText() << std::endl;
+        std::cout << "Disconnect during playing with reason: " << 
+            msg.GetReason().GetText() << std::endl;
         std::cout << "Disconnecting ..." << std::endl;
-        Disconnect();
-    }
-
-    void BaseClient::Handle(UnloadChunk &msg)
-    {
-#if USE_GUI
-        if (use_renderer)
-        {
-            AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
-        }
-#endif
-    }
-
-    void BaseClient::Handle(ChunkData &msg)
-    {
-        //Update GUI
-#ifdef USE_GUI
-        if (use_renderer)
-        {
-            AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
-        }
-#endif //USE_GUI
+        
+        should_be_closed = true;
     }
 
     void BaseClient::Handle(JoinGame &msg)
@@ -502,7 +386,7 @@ namespace Botcraft
 #ifdef USE_GUI
             if (use_renderer)
             {
-                renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
             }
 #endif // USE_GUI
         }
@@ -527,7 +411,7 @@ namespace Botcraft
 #ifdef USE_GUI
             if (use_renderer)
             {
-                renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
             }
 #endif // USE_GUI
         }
@@ -549,7 +433,7 @@ namespace Botcraft
 #ifdef USE_GUI
             if (use_renderer)
             {
-                renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
             }
 #endif // USE_GUI
         }
@@ -576,7 +460,7 @@ namespace Botcraft
 #ifdef USE_GUI
         if (use_renderer)
         {
-            renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+            rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
         }
 #endif // USE_GUI
     }
@@ -613,7 +497,7 @@ namespace Botcraft
 #ifdef USE_GUI
             if (use_renderer)
             {
-                renderer->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
             }
 #endif // USE_GUI
         }
@@ -648,37 +532,8 @@ namespace Botcraft
         network_manager->Send(settings_msg);
     }
 
-    void BaseClient::Handle(TimeUpdate &msg)
-    {
-#ifdef USE_GUI
-        if (use_renderer)
-        {
-            renderer->SetDayTime(((msg.GetTimeOfDay() + 6000) % 24000) / 24000.0f);
-        }
-#endif
-    }
-
     void BaseClient::Handle(Respawn &msg)
     {
-        std::lock_guard<std::mutex> world_guard(world->GetMutex());
-        // Clear all current chunks
-        const auto& chunks = world->GetAllChunks();
-        std::vector<std::pair<int, int> > chunks_to_remove;
-        chunks_to_remove.reserve(chunks.size());
-        for (auto it = chunks.begin(); it != chunks.end(); ++it)
-        {
-            chunks_to_remove.push_back(it->first);
-        }
-
-        for (int i = 0; i < chunks_to_remove.size(); ++i)
-        {
-#ifdef USE_GUI
-            if (use_renderer)
-            {
-                AddChunkToUpdate(chunks_to_remove[i].first, chunks_to_remove[i].second);
-            }
-#endif
-        }
 #if PROTOCOL_VERSION < 464
         difficulty = (Difficulty)msg.GetDifficulty();
 #endif

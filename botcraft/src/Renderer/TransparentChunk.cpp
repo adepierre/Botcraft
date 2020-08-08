@@ -5,6 +5,8 @@
 
 #include "botcraft/Renderer/TransparentChunk.hpp"
 
+#include <algorithm>
+
 namespace Botcraft
 {
     namespace Renderer
