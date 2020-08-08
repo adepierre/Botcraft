@@ -65,10 +65,6 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::PlayerAbilitiesClientbound &msg) override;
         virtual void Handle(ProtocolCraft::TimeUpdate &msg) override;
         virtual void Handle(ProtocolCraft::Respawn &msg) override;
-#if PROTOCOL_VERSION > 404
-        virtual void Handle(ProtocolCraft::UpdateLight &msg) override;
-#endif
-        virtual void Handle(ProtocolCraft::UpdateBlockEntity &msg) override;
         virtual void Handle(ProtocolCraft::SetSlot &msg) override;
         virtual void Handle(ProtocolCraft::WindowItems &msg) override;
         virtual void Handle(ProtocolCraft::OpenWindow &msg) override;
@@ -107,11 +103,7 @@ namespace Botcraft
 
         //ProtocolCraft::ConnectionState state;
         GameMode game_mode;
-#if PROTOCOL_VERSION < 719
-        Dimension dimension;
-#else
-        std::string dimension;
-#endif
+
         Difficulty difficulty;
 #if PROTOCOL_VERSION > 463
         bool difficulty_locked;

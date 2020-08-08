@@ -19,11 +19,6 @@ namespace Botcraft
     {
         afk_only = afk_only_;
         game_mode = GameMode::None;
-#if PROTOCOL_VERSION < 719
-        dimension = Dimension::None;
-#else
-        dimension = "";
-#endif
         difficulty = Difficulty::None;
         is_hardcore = false;
 #if PROTOCOL_VERSION > 463
@@ -242,11 +237,6 @@ namespace Botcraft
     void BaseClient::Disconnect()
     {
         game_mode = GameMode::None;
-#if PROTOCOL_VERSION < 719
-        dimension = Dimension::None;
-#else
-        dimension = "";
-#endif
         difficulty = Difficulty::None;
 #if PROTOCOL_VERSION > 463
         difficulty_locked = true;
@@ -381,6 +371,10 @@ namespace Botcraft
         if (!world)
         {
             world = std::shared_ptr<World>(new World(false));
+            if (!afk_only)
+            {
+                network_manager->AddHandler(world.get());
+            }
         }
         if (!inventory_manager)
         {
@@ -402,19 +396,7 @@ namespace Botcraft
     }
 
     void BaseClient::Handle(BlockChange &msg)
-    {        
-        { // Scope for lock_guard
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-#if PROTOCOL_VERSION < 347
-            unsigned int id;
-            unsigned char metadata;
-            Blockstate::IdToIdMetadata(msg.GetBlockId(), id, metadata);
-            world->SetBlock(msg.GetLocation(), id, metadata);
-#else
-            world->SetBlock(msg.GetLocation(), msg.GetBlockId());
-#endif
-        }
-
+    {
 #ifdef USE_GUI
         if (use_renderer)
         {
@@ -434,26 +416,6 @@ namespace Botcraft
 
     void BaseClient::Handle(MultiBlockChange &msg)
     {
-        { // Scope for lock guard
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            for (int i = 0; i < msg.GetRecordCount(); ++i)
-            {
-                unsigned char x = (msg.GetRecords()[i].GetHorizontalPosition() >> 4) & 0x0F;
-                unsigned char z = msg.GetRecords()[i].GetHorizontalPosition() & 0x0F;
-
-                Position cube_pos(CHUNK_WIDTH * msg.GetChunkX() + x, msg.GetRecords()[i].GetYCoordinate(), CHUNK_WIDTH * msg.GetChunkZ() + z);
-                
-#if PROTOCOL_VERSION < 347
-                unsigned int id;
-                unsigned char metadata;
-                Blockstate::IdToIdMetadata(msg.GetRecords()[i].GetBlockId(), id, metadata);
-
-                world->SetBlock(cube_pos, id, metadata);
-#else
-                world->SetBlock(cube_pos, msg.GetRecords()[i].GetBlockId());
-#endif
-            }
-        }
 #ifdef USE_GUI
         if (use_renderer)
         {
@@ -489,10 +451,6 @@ namespace Botcraft
 
     void BaseClient::Handle(UnloadChunk &msg)
     {
-        { // Scope for lock_guard
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            world->RemoveChunk(msg.GetChunkX(), msg.GetChunkZ());
-        }
 #if USE_GUI
         if (use_renderer)
         {
@@ -503,49 +461,6 @@ namespace Botcraft
 
     void BaseClient::Handle(ChunkData &msg)
     {
-        if (afk_only)
-        {
-            return;
-        }
-
-#if PROTOCOL_VERSION < 719
-        Dimension chunk_dim;
-#else
-        std::string chunk_dim;
-#endif
-        {
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            chunk_dim = world->GetDimension(msg.GetChunkX(), msg.GetChunkZ());
-        }
-
-        if (msg.GetGroundUpContinuous())
-        {
-            bool success = true;
-            if (chunk_dim != dimension)
-            {
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                success = world->AddChunk(msg.GetChunkX(), msg.GetChunkZ(), dimension);
-            }
-
-            if (!success)
-            {
-                std::cerr << "Error adding chunk in pos : " << msg.GetChunkX() << ", " << msg.GetChunkZ() << " in dimension " << 
-#if PROTOCOL_VERSION < 719
-                    (int)dimension
-#else
-                    dimension
-#endif
-                    << std::endl;
-                return;
-            }
-        }
-
-        { // lock guard scope
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            world->LoadDataInChunk(msg.GetChunkX(), msg.GetChunkZ(), msg.GetData(), msg.GetPrimaryBitMask(), msg.GetGroundUpContinuous());
-            world->LoadBlockEntityDataInChunk(msg.GetChunkX(), msg.GetChunkZ(), msg.GetBlockEntitiesData(), msg.GetNumberBlockEntities());
-        }
-
         //Update GUI
 #ifdef USE_GUI
         if (use_renderer)
@@ -562,12 +477,6 @@ namespace Botcraft
         player->GetMutex().unlock();
         game_mode = (GameMode)(msg.GetGamemode() & 0x03);
         is_hardcore = msg.GetGamemode() & 0x08;
-
-#if PROTOCOL_VERSION < 719
-        dimension = (Dimension)msg.GetDimension();
-#else
-        dimension = msg.GetDimension();
-#endif
 
 #if PROTOCOL_VERSION < 464
         difficulty = (Difficulty)msg.GetDifficulty();
@@ -763,7 +672,6 @@ namespace Botcraft
 
         for (int i = 0; i < chunks_to_remove.size(); ++i)
         {
-            world->RemoveChunk(chunks_to_remove[i].first, chunks_to_remove[i].second);
 #ifdef USE_GUI
             if (use_renderer)
             {
@@ -771,85 +679,52 @@ namespace Botcraft
             }
 #endif
         }
-
-#if PROTOCOL_VERSION < 719
-        dimension = (Dimension)msg.GetDimension();
-#else
-        dimension = msg.GetDimension();
-#endif
 #if PROTOCOL_VERSION < 464
         difficulty = (Difficulty)msg.GetDifficulty();
 #endif
         game_mode = (GameMode)msg.GetGamemode();
     }
 
-#if PROTOCOL_VERSION > 404
-    void BaseClient::Handle(UpdateLight &msg)
+    void BaseClient::Handle(SetSlot& msg)
     {
-        std::lock_guard<std::mutex> world_guard(world->GetMutex());
-        world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), dimension,
-            msg.GetSkyLightMask(), msg.GetEmptySkyLightMask(), msg.GetSkyLightArrays(), true);
-        world->UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), dimension,
-            msg.GetBlockLightMask(), msg.GetEmptyBlockLightMask(), msg.GetBlockLightArrays(), false);
-    }
-#endif
+        std::lock_guard<std::mutex> inventories_locker(inventory_manager->GetMutex());
 
-    void BaseClient::Handle(UpdateBlockEntity &msg)
-    {
-        std::lock_guard<std::mutex> world_guard(world->GetMutex());
-        world->SetBlockEntityData(msg.GetLocation(), msg.GetNBTData());
-    }
-
-    void BaseClient::Handle(SetSlot &msg)
-    {
+        if (msg.GetWindowId() == -1 && msg.GetSlot() == -1)
         {
-            std::lock_guard<std::mutex> inventories_locker(inventory_manager->GetMutex());
-        
-            if (msg.GetWindowId() == -1 && msg.GetSlot() == -1)
-            {
-                inventory_manager->SetCursor(msg.GetSlotData());
-            }
-            else if (msg.GetWindowId() == -2)
-            {
-                inventory_manager->SetSlot(Inventory::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetSlotData());
-            }
-            else if (msg.GetWindowId() >= 0)
-            {
-                inventory_manager->SetSlot(msg.GetWindowId(), msg.GetSlot(), msg.GetSlotData());
-            }
-            else
-            {
-                std::cerr << "Warning, unknown window called in SetSlot: " << msg.GetWindowId() << ", " << msg.GetSlot() << std::endl;
-            }
+            inventory_manager->SetCursor(msg.GetSlotData());
+        }
+        else if (msg.GetWindowId() == -2)
+        {
+            inventory_manager->SetSlot(Inventory::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetSlotData());
+        }
+        else if (msg.GetWindowId() >= 0)
+        {
+            inventory_manager->SetSlot(msg.GetWindowId(), msg.GetSlot(), msg.GetSlotData());
+        }
+        else
+        {
+            std::cerr << "Warning, unknown window called in SetSlot: " << msg.GetWindowId() << ", " << msg.GetSlot() << std::endl;
         }
     }
 
-    void BaseClient::Handle(WindowItems &msg)
+    void BaseClient::Handle(WindowItems& msg)
     {
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
+        for (int i = 0; i < msg.GetCount(); ++i)
         {
-            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
-            for (int i = 0; i < msg.GetCount(); ++i)
-            {
-                inventory_manager->SetSlot(msg.GetWindowId(), i, msg.GetSlotData()[i]);
-            }
+            inventory_manager->SetSlot(msg.GetWindowId(), i, msg.GetSlotData()[i]);
         }
     }
 
-    void BaseClient::Handle(OpenWindow &msg)
+    void BaseClient::Handle(OpenWindow& msg)
     {
-        {
-            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
-            inventory_manager->AddInventory(msg.GetWindowId());
-        }
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
+        inventory_manager->AddInventory(msg.GetWindowId());
     }
 
-    void BaseClient::Handle(HeldItemChangeClientbound &msg)
+    void BaseClient::Handle(HeldItemChangeClientbound& msg)
     {
-        {
-            std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
-            inventory_manager->SetHotbarSelected(msg.GetSlot());
-        }
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
+        inventory_manager->SetHotbarSelected(msg.GetSlot());
     }
-
-
 } //Botcraft

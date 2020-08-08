@@ -9,6 +9,7 @@
 #include "botcraft/Game/Enums.hpp"
 
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#include "protocolCraft/Handler.hpp"
 
 namespace Botcraft
 {
@@ -16,7 +17,7 @@ namespace Botcraft
     class Block;
     class Blockstate;
 
-    class World
+    class World : public ProtocolCraft::Handler
     {
     public:
         World(const bool is_shared_);
@@ -109,6 +110,18 @@ namespace Botcraft
     private:
         std::shared_ptr<Chunk> GetChunk(const int x, const int z);
 
+    protected:
+        virtual void Handle(ProtocolCraft::JoinGame& msg) override;
+        virtual void Handle(ProtocolCraft::Respawn& msg) override;
+        virtual void Handle(ProtocolCraft::BlockChange& msg) override;
+        virtual void Handle(ProtocolCraft::MultiBlockChange& msg) override;
+        virtual void Handle(ProtocolCraft::UnloadChunk& msg) override;
+        virtual void Handle(ProtocolCraft::ChunkData& msg) override;
+#if PROTOCOL_VERSION > 404
+        virtual void Handle(ProtocolCraft::UpdateLight& msg) override;
+#endif
+        virtual void Handle(ProtocolCraft::UpdateBlockEntity& msg) override;
+
     private:
         int cached_x;
         int cached_z;
@@ -118,5 +131,10 @@ namespace Botcraft
         std::map<std::pair<int, int>, std::shared_ptr<Chunk> > terrain;
 
         bool is_shared;
+#if PROTOCOL_VERSION < 719
+        Dimension current_dimension;
+#else
+        std::string current_dimension;
+#endif
     };
 } // Botcraft

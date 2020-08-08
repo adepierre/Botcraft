@@ -11,6 +11,12 @@ namespace Botcraft
     World::World(const bool is_shared_)
     {
         is_shared = is_shared_;
+
+#if PROTOCOL_VERSION < 719
+        current_dimension = Dimension::None;
+#else
+        current_dimension = "";
+#endif
     }
 
     std::mutex& World::GetMutex()
@@ -782,4 +788,136 @@ namespace Botcraft
             }
         }
     }
+
+    void World::Handle(ProtocolCraft::JoinGame& msg)
+    {
+#if PROTOCOL_VERSION < 719
+        current_dimension = (Dimension)msg.GetDimension();
+#else
+        current_dimension = msg.GetDimension();
+#endif
+    }
+
+    void World::Handle(ProtocolCraft::Respawn& msg)
+    {
+        std::lock_guard<std::mutex> world_guard(world_mutex);
+        // Clear all current chunks
+        const auto& chunks = GetAllChunks();
+        std::vector<std::pair<int, int> > chunks_to_remove;
+        chunks_to_remove.reserve(chunks.size());
+        for (auto it = chunks.begin(); it != chunks.end(); ++it)
+        {
+            chunks_to_remove.push_back(it->first);
+        }
+
+        for (int i = 0; i < chunks_to_remove.size(); ++i)
+        {
+            RemoveChunk(chunks_to_remove[i].first, chunks_to_remove[i].second);
+        }
+
+#if PROTOCOL_VERSION < 719
+        current_dimension = (Dimension)msg.GetDimension();
+#else
+        current_dimension = msg.GetDimension();
+#endif
+    }
+
+    void World::Handle(ProtocolCraft::BlockChange& msg)
+    {
+        std::lock_guard<std::mutex> world_guard(world_mutex);
+#if PROTOCOL_VERSION < 347
+        unsigned int id;
+        unsigned char metadata;
+        Blockstate::IdToIdMetadata(msg.GetBlockId(), id, metadata);
+        SetBlock(msg.GetLocation(), id, metadata);
+#else
+        SetBlock(msg.GetLocation(), msg.GetBlockId());
+#endif
+    }
+
+    void World::Handle(ProtocolCraft::MultiBlockChange& msg)
+    {
+        std::lock_guard<std::mutex> world_guard(world_mutex);
+        for (int i = 0; i < msg.GetRecordCount(); ++i)
+        {
+            unsigned char x = (msg.GetRecords()[i].GetHorizontalPosition() >> 4) & 0x0F;
+            unsigned char z = msg.GetRecords()[i].GetHorizontalPosition() & 0x0F;
+
+            Position cube_pos(CHUNK_WIDTH * msg.GetChunkX() + x, msg.GetRecords()[i].GetYCoordinate(), CHUNK_WIDTH * msg.GetChunkZ() + z);
+
+#if PROTOCOL_VERSION < 347
+            unsigned int id;
+            unsigned char metadata;
+            Blockstate::IdToIdMetadata(msg.GetRecords()[i].GetBlockId(), id, metadata);
+
+            SetBlock(cube_pos, id, metadata);
+#else
+            SetBlock(cube_pos, msg.GetRecords()[i].GetBlockId());
+#endif
+        }
+    }
+
+    void World::Handle(ProtocolCraft::UnloadChunk& msg)
+    {
+        std::lock_guard<std::mutex> world_guard(world_mutex);
+        RemoveChunk(msg.GetChunkX(), msg.GetChunkZ());
+    }
+
+    void World::Handle(ProtocolCraft::ChunkData& msg)
+    {
+#if PROTOCOL_VERSION < 719
+        Dimension chunk_dim;
+#else
+        std::string chunk_dim;
+#endif
+        {
+            std::lock_guard<std::mutex> world_guard(world_mutex);
+            chunk_dim = GetDimension(msg.GetChunkX(), msg.GetChunkZ());
+        }
+
+        if (msg.GetGroundUpContinuous())
+        {
+            bool success = true;
+            if (chunk_dim != current_dimension)
+            {
+                std::lock_guard<std::mutex> world_guard(world_mutex);
+                success = AddChunk(msg.GetChunkX(), msg.GetChunkZ(), current_dimension);
+            }
+
+            if (!success)
+            {
+                std::cerr << "Error adding chunk in pos : " << msg.GetChunkX() << ", " << msg.GetChunkZ() << " in dimension " <<
+#if PROTOCOL_VERSION < 719
+                    (int)current_dimension
+#else
+                    current_dimension
+#endif
+                    << std::endl;
+                return;
+            }
+        }
+
+        { // lock guard scope
+            std::lock_guard<std::mutex> world_guard(world_mutex);
+            LoadDataInChunk(msg.GetChunkX(), msg.GetChunkZ(), msg.GetData(), msg.GetPrimaryBitMask(), msg.GetGroundUpContinuous());
+            LoadBlockEntityDataInChunk(msg.GetChunkX(), msg.GetChunkZ(), msg.GetBlockEntitiesData(), msg.GetNumberBlockEntities());
+        }
+
+    }
+
+    void World::Handle(ProtocolCraft::UpdateLight& msg)
+    {
+        std::lock_guard<std::mutex> world_guard(world_mutex);
+        UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), current_dimension,
+            msg.GetSkyLightMask(), msg.GetEmptySkyLightMask(), msg.GetSkyLightArrays(), true);
+        UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), current_dimension,
+            msg.GetBlockLightMask(), msg.GetEmptyBlockLightMask(), msg.GetBlockLightArrays(), false);
+    }
+
+    void World::Handle(ProtocolCraft::UpdateBlockEntity& msg)
+    {
+        std::lock_guard<std::mutex> world_guard(world_mutex);
+        SetBlockEntityData(msg.GetLocation(), msg.GetNBTData());
+    }
+
 } // Botcraft
