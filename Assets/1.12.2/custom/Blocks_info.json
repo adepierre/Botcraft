@@ -902,7 +902,7 @@
     },
     {
         "name": "minecraft:cocoa",
-        "transparent": false,
+        "transparent": true,
         "solid": true,
         "render": "block",
         "hardness": 0.2
