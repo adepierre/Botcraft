@@ -19,8 +19,10 @@ namespace ProtocolCraft
             return 0x21;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x22;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.0 or 1.16.1
             return 0x21;
+#elif PROTOCOL_VERSION == 751 // 1.16.2
+            return 0x20;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -46,7 +48,7 @@ namespace ProtocolCraft
             ground_up_continuous = ground_up_continuous_;
         }
 
-#if PROTOCOL_VERSION > 730
+#if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
         void SetIgnoreOldData(const bool ignore_old_data_)
         {
             ignore_old_data = ignore_old_data_;
@@ -65,6 +67,12 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 738
+        void SetBiomesLength(const int biomes_length_)
+        {
+            biomes_length = biomes_length_;
+        }
+#endif
 #if PROTOCOL_VERSION > 551
         void SetBiomes(const std::vector<int>& biomes_)
         {
@@ -107,7 +115,7 @@ namespace ProtocolCraft
             return ground_up_continuous;
         }
 
-#if PROTOCOL_VERSION > 730
+#if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
         const bool GetIgnoreOldData() const
         {
             return ignore_old_data;
@@ -123,6 +131,13 @@ namespace ProtocolCraft
         const NBT& GetHeightmaps() const
         {
             return heightmaps;
+        }
+#endif
+
+#if PROTOCOL_VERSION > 738
+        const int GetBiomesLength() const
+        {
+            return biomes_length;
         }
 #endif
 
@@ -160,7 +175,7 @@ namespace ProtocolCraft
             chunk_x = ReadData<int>(iter, length);
             chunk_z = ReadData<int>(iter, length);
             ground_up_continuous = ReadData<bool>(iter, length);
-#if PROTOCOL_VERSION > 730
+#if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
             ignore_old_data = ReadData<bool>(iter, length);
 #endif
             primary_bit_mask = ReadVarInt(iter, length);
@@ -170,7 +185,16 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 551
 			if (ground_up_continuous)
 			{
-				biomes = ReadArrayData<int>(iter, length, 1024);
+#if PROTOCOL_VERSION > 738
+                biomes_length = ReadVarInt(iter, length);
+                biomes = std::vector<int>(biomes_length);
+                for (int i = 0; i < biomes_length; ++i)
+                {
+                    biomes[i] = ReadVarInt(iter, length);
+                }
+#else
+                biomes = ReadArrayData<int>(iter, length, 1024);
+#endif
 			}
 #endif
             size = ReadVarInt(iter, length);
@@ -192,7 +216,7 @@ namespace ProtocolCraft
             WriteData<int>(chunk_x, container);
             WriteData<int>(chunk_z, container);
             WriteData<bool>(ground_up_continuous, container);
-#if PROTOCOL_VERSION > 730
+#if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
             WriteData<bool>(ignore_old_data, container);
 #endif
             WriteVarInt(primary_bit_mask, container);
@@ -202,7 +226,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 551
             if (ground_up_continuous)
             {
+#if PROTOCOL_VERSION > 738
+                WriteVarInt(biomes_length, container);
+                for (int i = 0; i < biomes_length; ++i)
+                {
+                    WriteVarInt(biomes[i], container);
+                }
+#else
                 WriteArrayData(biomes, container);
+#endif
             }
 #endif
             WriteVarInt(size, container);
@@ -219,12 +251,15 @@ namespace ProtocolCraft
             object["chunk_x"] = picojson::value((double)chunk_x);
             object["chunk_z"] = picojson::value((double)chunk_z);
             object["ground_up_continuous"] = picojson::value(ground_up_continuous);
-#if PROTOCOL_VERSION > 730
+#if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
             object["ignore_old_data"] = picojson::value(ignore_old_data);
 #endif
             object["primary_bit_mask"] = picojson::value((double)primary_bit_mask);
 #if PROTOCOL_VERSION > 442
             object["heightmaps"] = heightmaps.Serialize();
+#endif
+#if PROTOCOL_VERSION > 738
+            object["biomes_length"] = picojson::value((double)biomes_length);
 #endif
 #if PROTOCOL_VERSION > 551
             object["biomes"] = picojson::value("Vector of " + std::to_string(biomes.size()) + " int");
@@ -241,12 +276,15 @@ namespace ProtocolCraft
         int chunk_x;
         int chunk_z;
         bool ground_up_continuous;
-#if PROTOCOL_VERSION > 730
+#if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
         bool ignore_old_data;
 #endif
         int primary_bit_mask;
 #if PROTOCOL_VERSION > 442
         NBT heightmaps;
+#endif
+#if PROTOCOL_VERSION > 738
+        int biomes_length;
 #endif
 #if PROTOCOL_VERSION > 551
 		std::vector<int> biomes;

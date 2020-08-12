@@ -360,7 +360,11 @@ namespace Botcraft
         player->SetEID(msg.GetEntityId());
         player->GetMutex().unlock();
         game_mode = (GameMode)(msg.GetGamemode() & 0x03);
+#if PROTOCOL_VERSION > 737
+        is_hardcore = msg.GetIsHardcore();
+#else
         is_hardcore = msg.GetGamemode() & 0x08;
+#endif
 
 #if PROTOCOL_VERSION < 464
         difficulty = (Difficulty)msg.GetDifficulty();

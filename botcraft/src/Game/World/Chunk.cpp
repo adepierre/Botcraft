@@ -1,7 +1,6 @@
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/Section.hpp"
 
-#include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Types/NBT/TagInt.hpp"
 
 #include <iostream>
@@ -424,7 +423,7 @@ namespace Botcraft
     const unsigned char Chunk::GetSkyLight(const Position &pos) const
     {
 #if PROTOCOL_VERSION < 719
-        if (dimension != Dimension::Overworld 
+        if (dimension != Dimension::Overworld
 #else
         if (dimension != "minecraft:overworld"
 #endif

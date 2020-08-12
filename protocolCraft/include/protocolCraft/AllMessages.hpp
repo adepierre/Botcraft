@@ -50,7 +50,13 @@
 #include "protocolCraft/Messages/Play/Serverbound/PlayerAbilitiesServerbound.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/EntityAction.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/SteerVehicle.hpp"
+#if PROTOCOL_VERSION < 737
 #include "protocolCraft/Messages/Play/Serverbound/RecipeBookData.hpp"
+#else
+#include "protocolCraft/Messages/Play/Serverbound/SetDisplayedRecipe.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/SetRecipeBookState.hpp"
+#endif
+
 #include "protocolCraft/Messages/Play/Serverbound/ResourcePackStatus.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/AdvancementTab.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/HeldItemChangeServerbound.hpp"
@@ -285,7 +291,12 @@ namespace ProtocolCraft
         QueryBlockNBT,
         QueryEntityNBT,
 #endif
+#if PROTOCOL_VERSION < 736
         RecipeBookData,
+#else
+        SetDisplayedRecipe,
+        SetRecipeBookState,
+#endif
         ResourcePackStatus,
 #if PROTOCOL_VERSION > 385
         SelectTrade,

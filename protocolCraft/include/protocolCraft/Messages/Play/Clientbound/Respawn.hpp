@@ -17,8 +17,10 @@ namespace ProtocolCraft
             return 0x3A;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
             return 0x3B;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.0 or 1.16.1
             return 0x3A;
+#elif PROTOCOL_VERSION == 751 // 1.16.2
+            return 0x39;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -30,7 +32,11 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 729
+#if PROTOCOL_VERSION > 747
+        void SetDimension(const NBT& dimension_)
+#else
         void SetDimension(const Identifier& dimension_)
+#endif
         {
             dimension = dimension_;
         }
@@ -93,7 +99,11 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 729
+#if PROTOCOL_VERSION > 747
+        const NBT& GetDimension() const
+#else
         const Identifier& GetDimension() const
+#endif
         {
             return dimension;
         }
@@ -159,7 +169,11 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
 #if PROTOCOL_VERSION > 729
+#if PROTOCOL_VERSION > 747
+            dimension.Read(iter, length);
+#else
             dimension = ReadString(iter, length);
+#endif
             world_name = ReadString(iter, length);
 #else
             dimension = ReadData<int>(iter, length);
@@ -184,7 +198,11 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
 #if PROTOCOL_VERSION > 729
+#if PROTOCOL_VERSION > 747
+            dimension.Write(container);
+#else
             WriteString(dimension, container);
+#endif
             WriteString(world_name, container);
 #else
             WriteData<int>(dimension, container);
@@ -212,7 +230,11 @@ namespace ProtocolCraft
             picojson::object& object = value.get<picojson::object>();
 
 #if PROTOCOL_VERSION > 729
+#if PROTOCOL_VERSION > 747
+            object["dimension"] = dimension.Serialize();
+#else
             object["dimension"] = picojson::value(dimension);
+#endif
             object["world_name"] = picojson::value(world_name);
 #else
             object["dimension"] = picojson::value((double)dimension);
@@ -238,7 +260,11 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION > 729
+#if PROTOCOL_VERSION > 747
+        NBT dimension;
+#else
         Identifier dimension;
+#endif
         Identifier world_name;
 #else
         int dimension;

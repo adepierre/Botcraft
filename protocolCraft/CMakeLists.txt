@@ -63,6 +63,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/SelectTrade.hpp
     include/protocolCraft/Messages/Play/Serverbound/SetBeaconEffect.hpp
     include/protocolCraft/Messages/Play/Serverbound/SetDifficulty.hpp
+    include/protocolCraft/Messages/Play/Serverbound/SetDisplayedRecipe.hpp
+    include/protocolCraft/Messages/Play/Serverbound/SetRecipeBookState.hpp
     include/protocolCraft/Messages/Play/Serverbound/SteerBoat.hpp
     include/protocolCraft/Messages/Play/Serverbound/SteerVehicle.hpp
     include/protocolCraft/Messages/Play/Serverbound/TeleportConfirm.hpp

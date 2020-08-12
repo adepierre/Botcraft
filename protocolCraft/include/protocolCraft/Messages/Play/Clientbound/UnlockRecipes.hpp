@@ -24,8 +24,10 @@ namespace ProtocolCraft
             return 0x36;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
             return 0x37;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.0 or 1.16.1
             return 0x36;
+#elif PROTOCOL_VERSION == 751 // 1.16.2
+            return 0x35;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -60,6 +62,28 @@ namespace ProtocolCraft
         void SetSmeltingRecipeBookFilterActive(const bool smelting_recipe_book_filter_active_)
         {
             smelting_recipe_book_filter_active = smelting_recipe_book_filter_active_;
+        }
+#endif
+
+#if PROTOCOL_VERSION > 736
+        void SetBlastFurnaceRecipeBookOpen(const bool smelting_recipe_book_open_)
+        {
+            blast_furnace_recipe_book_open = smelting_recipe_book_open_;
+        }
+
+        void SetBlastFurnaceRecipeBookFilterActive(const bool smelting_recipe_book_filter_active_)
+        {
+            blast_furnace_recipe_book_filter_active = smelting_recipe_book_filter_active_;
+        }
+
+        void SetSmokerRecipeBookOpen(const bool smelting_recipe_book_open_)
+        {
+            smoker_recipe_book_open = smelting_recipe_book_open_;
+        }
+
+        void SetSmokerRecipeBookFilterActive(const bool smelting_recipe_book_filter_active_)
+        {
+            smoker_recipe_book_filter_active = smelting_recipe_book_filter_active_;
         }
 #endif
 
@@ -119,6 +143,28 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 736
+        const bool GetBlastFurnaceRecipeBookOpen() const
+        {
+            return blast_furnace_recipe_book_open;
+        }
+
+        const bool GetBlastFurnaceRecipeBookFilterActive() const
+        {
+            return blast_furnace_recipe_book_filter_active;
+        }
+
+        const bool GetSmokerRecipeBookOpen() const
+        {
+            return smelting_recipe_book_open;
+        }
+
+        const bool GetSmokerFurnaceRecipeBookFilterActive() const
+        {
+            return smoker_recipe_book_filter_active;
+        }
+#endif
+
         const int GetArraySize1() const
         {
             return array_size_1;
@@ -157,6 +203,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 356
             smelting_recipe_book_open = ReadData<bool>(iter, length);
             smelting_recipe_book_filter_active = ReadData<bool>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 736
+            blast_furnace_recipe_book_open = ReadData<bool>(iter, length);
+            blast_furnace_recipe_book_filter_active = ReadData<bool>(iter, length);
+            smoker_recipe_book_open = ReadData<bool>(iter, length);
+            smoker_recipe_book_filter_active = ReadData<bool>(iter, length);
 #endif
             array_size_1 = ReadVarInt(iter, length);
 #if PROTOCOL_VERSION > 348
@@ -200,6 +252,12 @@ namespace ProtocolCraft
             WriteData<bool>(smelting_recipe_book_open, container);
             WriteData<bool>(smelting_recipe_book_filter_active, container);
 #endif
+#if PROTOCOL_VERSION > 736
+            WriteData<bool>(blast_furnace_recipe_book_open, container);
+            WriteData<bool>(blast_furnace_recipe_book_filter_active, container);
+            WriteData<bool>(smoker_recipe_book_open, container);
+            WriteData<bool>(smoker_recipe_book_filter_active, container);
+#endif
             WriteVarInt(array_size_1, container);
             for (int i = 0; i < array_size_1; ++i)
             {
@@ -232,8 +290,14 @@ namespace ProtocolCraft
             object["crafting_book_open"] = picojson::value((double)crafting_book_open);
             object["crafting_recipe_book_filter_active"] = picojson::value((double)crafting_recipe_book_filter_active);
 #if PROTOCOL_VERSION > 356
-            object["smelting_recipe_book_open"] = picojson::value((double)smelting_recipe_book_open);
-            object["smelting_recipe_book_filter_active"] = picojson::value((double)smelting_recipe_book_filter_active);
+            object["smelting_recipe_book_open"] = picojson::value(smelting_recipe_book_open);
+            object["smelting_recipe_book_filter_active"] = picojson::value(smelting_recipe_book_filter_active);
+#endif
+#if PROTOCOL_VERSION > 736
+            object["smelting_recipe_book_open"] = picojson::value(blast_furnace_recipe_book_open);
+            object["smelting_recipe_book_filter_active"] = picojson::value(blast_furnace_recipe_book_filter_active);
+            object["smelting_recipe_book_open"] = picojson::value(smoker_recipe_book_open);
+            object["smelting_recipe_book_filter_active"] = picojson::value(smoker_recipe_book_filter_active);
 #endif
             object["array_size_1"] = picojson::value((double)array_size_1);
 
@@ -275,6 +339,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 356
         bool smelting_recipe_book_open;
         bool smelting_recipe_book_filter_active;
+#endif
+#if PROTOCOL_VERSION > 736
+        bool blast_furnace_recipe_book_open;
+        bool blast_furnace_recipe_book_filter_active;
+        bool smoker_recipe_book_open;
+        bool smoker_recipe_book_filter_active;
 #endif
         int array_size_1;
 #if PROTOCOL_VERSION > 348

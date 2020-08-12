@@ -17,8 +17,10 @@ namespace ProtocolCraft
             return 0x25;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
 			return 0x26;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.0 or 1.16.1
             return 0x25;
+#elif PROTOCOL_VERSION == 751 // 1.16.2
+            return 0x24;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -33,6 +35,13 @@ namespace ProtocolCraft
         {
             entity_id = entity_id_;
         }
+
+#if PROTOCOL_VERSION > 737
+        void SetIsHardcore(const bool is_hardcore_)
+        {
+            is_hardcore = is_hardcore_;
+        }
+#endif
 
         void SetGamemode(const unsigned char gamemode_)
         {
@@ -60,7 +69,11 @@ namespace ProtocolCraft
             dimension_codec = dimension_codec_;
         }
 
+#if PROTOCOL_VERSION > 747
+        void SetDimension(const NBT& dimension_)
+#else
         void SetDimension(const Identifier& dimension_)
+#endif
         {
             dimension = dimension_;
         }
@@ -90,10 +103,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 749
         void SetMaxPlayers(const unsigned char max_players_)
         {
             max_players = max_players_;
         }
+#else
+        void SetMaxPlayers(const int max_players_)
+        {
+            max_players = max_players_;
+        }
+#endif
 
 #if PROTOCOL_VERSION < 719
         void SetLevelType(const std::string& level_type_)
@@ -138,6 +158,13 @@ namespace ProtocolCraft
             return entity_id;
         }
 
+#if PROTOCOL_VERSION > 737
+        const bool GetIsHardcore() const
+        {
+            return is_hardcore;
+        }
+#endif
+
         const unsigned char GetGamemode() const
         {
             return gamemode;
@@ -164,7 +191,11 @@ namespace ProtocolCraft
             return dimension_codec;
         }
 
+#if PROTOCOL_VERSION > 747
+        const NBT& GetDimension() const
+#else
         const Identifier& GetDimension() const
+#endif
         {
             return dimension;
         }
@@ -194,10 +225,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 749
         const unsigned char GetMaxPlayers() const
         {
             return max_players;
         }
+#else
+        const int GetMaxPlayers() const
+        {
+            return max_players;
+        }
+#endif
 
 #if PROTOCOL_VERSION < 719
         const std::string& GetLevelType() const
@@ -240,6 +278,9 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             entity_id = ReadData<int>(iter, length);
+#if PROTOCOL_VERSION > 737
+            is_hardcore = ReadData<bool>(iter, length);
+#endif
             gamemode = ReadData<unsigned char>(iter, length);
 #if PROTOCOL_VERSION > 718
             previous_gamemode = ReadData<unsigned char>(iter, length);
@@ -250,7 +291,11 @@ namespace ProtocolCraft
                 world_names[i] = ReadString(iter, length);
             }
             dimension_codec.Read(iter, length);
+#if PROTOCOL_VERSION > 747
+            dimension.Read(iter, length);
+#else
             dimension = ReadString(iter, length);
+#endif
             world_name = ReadString(iter, length);
 #else
             dimension = ReadData<int>(iter, length);
@@ -261,7 +306,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 477
             difficulty = ReadData<unsigned char>(iter, length);
 #endif
+#if PROTOCOL_VERSION < 749
             max_players = ReadData<unsigned char>(iter, length);
+#else
+            max_players = ReadVarInt(iter, length);
+#endif
 #if PROTOCOL_VERSION < 719
             level_type = ReadString(iter, length);
 #endif
@@ -281,6 +330,9 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<int>(entity_id, container);
+#if PROTOCOL_VERSION > 737
+            WriteData<bool>(is_hardcore, container);
+#endif
             WriteData<unsigned char>(gamemode, container);
 #if PROTOCOL_VERSION > 718
             WriteData<unsigned char>(previous_gamemode, container);
@@ -290,7 +342,11 @@ namespace ProtocolCraft
                 WriteString(world_names[i], container);
             }
             dimension_codec.Write(container);
+#if PROTOCOL_VERSION > 747
+            dimension.Write(container);
+#else
             WriteString(dimension, container);
+#endif
             WriteString(world_name, container);
 #else
             WriteData<int>(dimension, container);
@@ -301,7 +357,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 477
             WriteData<unsigned char>(difficulty, container);
 #endif
+#if PROTOCOL_VERSION < 749
             WriteData<unsigned char>(max_players, container);
+#else
+            WriteVarInt(max_players, container);
+#endif
 #if PROTOCOL_VERSION < 719
             WriteString(level_type, container);
 #endif
@@ -324,6 +384,9 @@ namespace ProtocolCraft
             picojson::object& object = value.get<picojson::object>();
 
             object["entity_id"] = picojson::value((double)entity_id);
+#if PROTOCOL_VERSION > 737
+            object["is_hardcore"] = picojson::value(is_hardcore);
+#endif
             object["gamemode"] = picojson::value((double)gamemode);
 #if PROTOCOL_VERSION > 718
             object["previous_gamemode"] = picojson::value((double)previous_gamemode);
@@ -335,7 +398,12 @@ namespace ProtocolCraft
                 array.push_back(picojson::value(world_names[i]));
             }
             object["dimension_codec"] = dimension_codec.Serialize();
+
+#if PROTOCOL_VERSION > 747
+            object["dimension"] = dimension.Serialize();
+#else
             object["dimension"] = picojson::value(dimension);
+#endif
             object["world_name"] = picojson::value(world_name);
 #else
             object["dimension"] = picojson::value((double)dimension);
@@ -365,13 +433,20 @@ namespace ProtocolCraft
 
     private:
         int entity_id;
+#if PROTOCOL_VERSION > 737
+        bool is_hardcore;
+#endif
         unsigned char gamemode;
 #if PROTOCOL_VERSION > 718
         unsigned char previous_gamemode;
         int world_count;
         std::vector<Identifier> world_names;
         NBT dimension_codec;
+#if PROTOCOL_VERSION > 747
+        NBT dimension;
+#else
         Identifier dimension;
+#endif
         Identifier world_name;
 #else
         int dimension;
@@ -380,7 +455,11 @@ namespace ProtocolCraft
 		long long int hashed_seed;
 #endif
         unsigned char difficulty;
+#if PROTOCOL_VERSION < 749
         unsigned char max_players;
+#else
+        int max_players;
+#endif
 #if PROTOCOL_VERSION < 719
         std::string level_type;
 #endif

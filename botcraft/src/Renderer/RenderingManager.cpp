@@ -114,7 +114,11 @@ namespace Botcraft
 
         void RenderingManager::Handle(ProtocolCraft::MultiBlockChange& msg)
         {
+#if PROTOCOL_VERSION < 737
             AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
+#else
+            AddChunkToUpdate((msg.GetChunkSectionCoordinate() >> 42) & 0x3FFFFF, (msg.GetChunkSectionCoordinate() >> 0) & 0x3FFFFF);
+#endif
         }
 
         void RenderingManager::Handle(ProtocolCraft::UnloadChunk& msg)

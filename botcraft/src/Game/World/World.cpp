@@ -264,8 +264,11 @@ namespace Botcraft
         if (it != terrain.end() &&
 #if PROTOCOL_VERSION < 719
             it->second->GetDimension() == Dimension::Overworld)
-#else
+#elif PROTOCOL_VERSION < 737
             it->second->GetDimension() == "minecraft:overworld")
+#else
+            // TODO
+            true)//it->second->GetDimension() == "minecraft:overworld")
 #endif
         {
             it->second->SetSkyLight(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH), skylight);
@@ -793,8 +796,10 @@ namespace Botcraft
     {
 #if PROTOCOL_VERSION < 719
         current_dimension = (Dimension)msg.GetDimension();
-#else
+#elif PROTOCOL_VERSION < 737
         current_dimension = msg.GetDimension();
+#else
+        current_dimension = msg.GetWorldName();
 #endif
     }
 
@@ -805,8 +810,10 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 719
         current_dimension = (Dimension)msg.GetDimension();
-#else
+#elif PROTOCOL_VERSION < 737
         current_dimension = msg.GetDimension();
+#else
+        current_dimension = msg.GetWorldName();
 #endif
     }
 
@@ -826,12 +833,29 @@ namespace Botcraft
     void World::Handle(ProtocolCraft::MultiBlockChange& msg)
     {
         std::lock_guard<std::mutex> world_guard(world_mutex);
+#if PROTOCOL_VERSION < 739
         for (int i = 0; i < msg.GetRecordCount(); ++i)
         {
             unsigned char x = (msg.GetRecords()[i].GetHorizontalPosition() >> 4) & 0x0F;
             unsigned char z = msg.GetRecords()[i].GetHorizontalPosition() & 0x0F;
 
-            Position cube_pos(CHUNK_WIDTH * msg.GetChunkX() + x, msg.GetRecords()[i].GetYCoordinate(), CHUNK_WIDTH * msg.GetChunkZ() + z);
+            const int x_pos = CHUNK_WIDTH * msg.GetChunkX() + x;
+            const int y_pos = msg.GetRecords()[i].GetYCoordinate();
+            const int z_pos = CHUNK_WIDTH * msg.GetChunkZ() + z;
+#else
+        const int chunk_x = (msg.GetChunkSectionCoordinate() >> 42) & 0x3FFFFF; // 22 bits
+        const int chunk_y = (msg.GetChunkSectionCoordinate() >> 22) & 0xFFFFF; // 20 bits
+        const int chunk_z = (msg.GetChunkSectionCoordinate() >> 0) & 0x3FFFFF; // 22 bits
+
+        for (int i = 0; i < msg.GetArraySize(); ++i)
+        {
+            const unsigned int block_id = msg.GetData()[i] >> 12;
+
+            const int x_pos = CHUNK_WIDTH * chunk_x + ((msg.GetData()[i] >> 8) & 0xF);
+            const int y_pos = SECTION_HEIGHT * chunk_y + ((msg.GetData()[i] >> 4) & 0xF);
+            const int z_pos = CHUNK_WIDTH * chunk_z + ((msg.GetData()[i] >> 0) & 0xF);
+#endif
+            Position cube_pos(x_pos, y_pos, z_pos);
 
 #if PROTOCOL_VERSION < 347
             unsigned int id;
@@ -839,8 +863,10 @@ namespace Botcraft
             Blockstate::IdToIdMetadata(msg.GetRecords()[i].GetBlockId(), id, metadata);
 
             SetBlock(cube_pos, id, metadata);
-#else
+#elif PROTOCOL_VERSION < 739
             SetBlock(cube_pos, msg.GetRecords()[i].GetBlockId());
+#else
+            SetBlock(cube_pos, block_id);
 #endif
         }
     }
@@ -866,7 +892,8 @@ namespace Botcraft
         if (msg.GetGroundUpContinuous())
         {
             bool success = true;
-            if (chunk_dim != current_dimension)
+            // TODO
+            if (false)//chunk_dim != current_dimension)
             {
                 std::lock_guard<std::mutex> world_guard(world_mutex);
                 success = AddChunk(msg.GetChunkX(), msg.GetChunkZ(), current_dimension);

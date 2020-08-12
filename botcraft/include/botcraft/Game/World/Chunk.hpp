@@ -6,12 +6,7 @@
 
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/Enums.hpp"
-
-
-namespace ProtocolCraft
-{
-    class NBT;
-}
+#include "protocolCraft/Types/NBT/NBT.hpp"
 
 namespace Botcraft
 {
@@ -33,7 +28,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 719
         Chunk(const Dimension &dim = Dimension::Overworld);
 #else
-        Chunk(const std::string& dimension = "minecraft:overworld");
+        Chunk(const std::string& dim = "minecraft:overworld");
 #endif
         Chunk(const Chunk& c);
 

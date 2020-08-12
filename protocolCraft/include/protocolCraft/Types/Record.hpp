@@ -1,5 +1,6 @@
 #pragma once
 
+#if PROTOCOL_VERSION < 739
 #include <string>
 
 #include "protocolCraft/NetworkType.hpp"
@@ -73,3 +74,4 @@ namespace ProtocolCraft
         int block_id;
     };
 }
+#endif
