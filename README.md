@@ -57,7 +57,7 @@ Don't forget to change the cmake install directory if you don't want the library
 On Windows with Visual, you can replace the last five steps by launching cmake-gui and then compiling the .sln from Visual.
 
 There are several cmake options you can modify:
-- GAME_VERSION [1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2]
+- GAME_VERSION [1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2, 1.16, 1.16.1, 1.16.2]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
 - BOTCRAFT_INSTALL_ASSETS [ON/OFF] Copy all the needed assets to the installation folder along with the library and executable
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
@@ -67,7 +67,7 @@ There are several cmake options you can modify:
 
 ## Examples
 
-Three examples can be found in the [Examples](Examples/) folder:
+Examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, send Hello World! in the chat then disconnect
 - [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI, mouse and keyboard controlled player. Can be used in a dummy world (without any server) to test things like physics or rendering
 - [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Knows three commands at this point, pathfinding, disconnecting and checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof).
