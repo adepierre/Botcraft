@@ -12,7 +12,6 @@
 #include "botcraft/Network/NetworkManager.hpp"
 #if USE_GUI
 #include "botcraft/Renderer/RenderingManager.hpp"
-#include "botcraft/Renderer/CubeWorldRenderer.hpp"
 #endif
 
 using namespace ProtocolCraft;
@@ -124,7 +123,7 @@ namespace Botcraft
 #if USE_GUI
                 if (use_renderer && has_moved)
                 {
-                    rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                    rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
                 }
 #endif
                 msg_position->SetX(player->GetPosition().x);
@@ -250,6 +249,10 @@ namespace Botcraft
 
         network_manager.reset();
 #if USE_GUI
+        if (rendering_manager)
+        {
+            rendering_manager->Close();
+        }
         rendering_manager.reset();
 #endif
 
@@ -307,7 +310,7 @@ namespace Botcraft
 #if USE_GUI
         if (use_renderer)
         {
-            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world));
+            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world, 800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
             if (!afk_only)
             {
                 network_manager->AddHandler(rendering_manager.get());
@@ -390,7 +393,7 @@ namespace Botcraft
 #ifdef USE_GUI
             if (use_renderer)
             {
-                rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
             }
 #endif // USE_GUI
         }
@@ -415,7 +418,7 @@ namespace Botcraft
 #ifdef USE_GUI
             if (use_renderer)
             {
-                rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
             }
 #endif // USE_GUI
         }
@@ -437,7 +440,7 @@ namespace Botcraft
 #ifdef USE_GUI
             if (use_renderer)
             {
-                rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
             }
 #endif // USE_GUI
         }
@@ -464,7 +467,7 @@ namespace Botcraft
 #ifdef USE_GUI
         if (use_renderer)
         {
-            rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+            rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
         }
 #endif // USE_GUI
     }
@@ -501,7 +504,7 @@ namespace Botcraft
 #ifdef USE_GUI
             if (use_renderer)
             {
-                rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
             }
 #endif // USE_GUI
         }

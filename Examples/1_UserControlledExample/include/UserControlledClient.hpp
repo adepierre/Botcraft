@@ -2,7 +2,7 @@
 
 #include "botcraft/Game/InterfaceClient.hpp"
 
-#include "botcraft/Renderer/CubeWorldRenderer.hpp"
+#include "botcraft/Renderer/RenderingManager.hpp"
 
 class UserControlledClient : public Botcraft::InterfaceClient
 {

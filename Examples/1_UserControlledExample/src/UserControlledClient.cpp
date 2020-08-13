@@ -28,11 +28,11 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : In
 #ifdef USE_GUI
         if (use_renderer)
         {
-            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world));
+            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world, 800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
             mouse_sensitivity = 0.1f;
 
-            rendering_manager->GetRenderer()->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
-            rendering_manager->GetRenderer()->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+            rendering_manager->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
+            rendering_manager->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
         }
 #endif
 
@@ -286,7 +286,7 @@ void UserControlledClient::MouseCallback(const double &xoffset, const double &yo
     player->SetPitch(pitch);
     player->SetYaw(player->GetYaw() + xoffset * mouse_sensitivity);
 
-    rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+    rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
 }
 
 void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer::KEY_CODE::NUMBER_OF_KEYS> &is_key_pressed, const double &delta_time)
@@ -351,7 +351,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
 
     if (pos_has_changed)
     {
-        rendering_manager->GetRenderer()->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+        rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
     }
 }
 #endif
@@ -363,8 +363,8 @@ void UserControlledClient::Handle(LoginSuccess &msg)
 #if USE_GUI
     if (use_renderer)
     {
-        rendering_manager->GetRenderer()->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
-        rendering_manager->GetRenderer()->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+        rendering_manager->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
+        rendering_manager->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
     }
 #endif
 }
