@@ -66,6 +66,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             private_include/botcraft/Renderer/ImageSaver.hpp
             private_include/botcraft/Renderer/Shader.hpp
             private_include/botcraft/Renderer/TransparentChunk.hpp
+            private_include/botcraft/Renderer/WorldRenderer.hpp
             )
             
     list(APPEND botcraft_SRC
@@ -78,6 +79,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             src/Renderer/Shader.cpp
             src/Renderer/Transformation.cpp
             src/Renderer/TransparentChunk.cpp
+            src/Renderer/WorldRenderer.cpp
             )
 endif(BOTCRAFT_USE_OPENGL_GUI)
 
