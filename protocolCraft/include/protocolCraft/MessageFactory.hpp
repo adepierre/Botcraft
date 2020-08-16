@@ -1524,7 +1524,7 @@ namespace ProtocolCraft
                 case 0x26:
                     return std::shared_ptr<TradeList>(new TradeList);
                     break;
-                case 0x278:
+                case 0x27:
                     return std::shared_ptr<EntityRelativeMove>(new EntityRelativeMove);
                     break;
                 case 0x28:
