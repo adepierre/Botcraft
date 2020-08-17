@@ -58,10 +58,6 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::EntityTeleport &msg) override;
         virtual void Handle(ProtocolCraft::PlayerAbilitiesClientbound &msg) override;
         virtual void Handle(ProtocolCraft::Respawn &msg) override;
-        virtual void Handle(ProtocolCraft::SetSlot &msg) override;
-        virtual void Handle(ProtocolCraft::WindowItems &msg) override;
-        virtual void Handle(ProtocolCraft::OpenWindow &msg) override;
-        virtual void Handle(ProtocolCraft::HeldItemChangeClientbound &msg) override;
 
     protected:
         // If in afk only mode, the chunks will NOT

@@ -4,12 +4,13 @@
 #include <map>
 #include <mutex>
 #include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Handler.hpp"
 
 namespace Botcraft
 {
     class Inventory;
 
-    class InventoryManager
+    class InventoryManager : public ProtocolCraft::Handler
     {
     public:
         InventoryManager();
@@ -30,6 +31,13 @@ namespace Botcraft
 
         const ProtocolCraft::Slot& GetCursor() const;
         void SetCursor(const ProtocolCraft::Slot &c);
+    private:
+
+        virtual void Handle(ProtocolCraft::Message& msg) override;
+        virtual void Handle(ProtocolCraft::SetSlot& msg) override;
+        virtual void Handle(ProtocolCraft::WindowItems& msg) override;
+        virtual void Handle(ProtocolCraft::OpenWindow& msg) override;
+        virtual void Handle(ProtocolCraft::HeldItemChangeClientbound& msg) override;
 
     private:
         std::mutex inventory_manager_mutex;

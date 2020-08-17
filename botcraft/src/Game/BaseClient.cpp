@@ -305,6 +305,10 @@ namespace Botcraft
         if (!inventory_manager)
         {
             inventory_manager = std::shared_ptr<InventoryManager>(new InventoryManager);
+            if (!afk_only)
+            {
+                network_manager->AddHandler(inventory_manager.get());
+            }
         }
 
 #if USE_GUI
@@ -545,48 +549,5 @@ namespace Botcraft
         difficulty = (Difficulty)msg.GetDifficulty();
 #endif
         game_mode = (GameMode)msg.GetGamemode();
-    }
-
-    void BaseClient::Handle(SetSlot& msg)
-    {
-        std::lock_guard<std::mutex> inventories_locker(inventory_manager->GetMutex());
-
-        if (msg.GetWindowId() == -1 && msg.GetSlot() == -1)
-        {
-            inventory_manager->SetCursor(msg.GetSlotData());
-        }
-        else if (msg.GetWindowId() == -2)
-        {
-            inventory_manager->SetSlot(Inventory::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetSlotData());
-        }
-        else if (msg.GetWindowId() >= 0)
-        {
-            inventory_manager->SetSlot(msg.GetWindowId(), msg.GetSlot(), msg.GetSlotData());
-        }
-        else
-        {
-            std::cerr << "Warning, unknown window called in SetSlot: " << msg.GetWindowId() << ", " << msg.GetSlot() << std::endl;
-        }
-    }
-
-    void BaseClient::Handle(WindowItems& msg)
-    {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
-        for (int i = 0; i < msg.GetCount(); ++i)
-        {
-            inventory_manager->SetSlot(msg.GetWindowId(), i, msg.GetSlotData()[i]);
-        }
-    }
-
-    void BaseClient::Handle(OpenWindow& msg)
-    {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
-        inventory_manager->AddInventory(msg.GetWindowId());
-    }
-
-    void BaseClient::Handle(HeldItemChangeClientbound& msg)
-    {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
-        inventory_manager->SetHotbarSelected(msg.GetSlot());
     }
 } //Botcraft

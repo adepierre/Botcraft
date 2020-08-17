@@ -97,4 +97,54 @@ namespace Botcraft
     {
         cursor = c;
     }
+
+    void InventoryManager::Handle(ProtocolCraft::Message& msg)
+    {
+
+    }
+
+    void InventoryManager::Handle(ProtocolCraft::SetSlot& msg)
+    {
+        std::lock_guard<std::mutex> inventories_locker(inventory_manager_mutex);
+
+        if (msg.GetWindowId() == -1 && msg.GetSlot() == -1)
+        {
+            SetCursor(msg.GetSlotData());
+        }
+        else if (msg.GetWindowId() == -2)
+        {
+            SetSlot(Inventory::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetSlotData());
+        }
+        else if (msg.GetWindowId() >= 0)
+        {
+            SetSlot(msg.GetWindowId(), msg.GetSlot(), msg.GetSlotData());
+        }
+        else
+        {
+            std::cerr << "Warning, unknown window called in SetSlot: " << msg.GetWindowId() << ", " << msg.GetSlot() << std::endl;
+        }
+    }
+
+    void InventoryManager::Handle(ProtocolCraft::WindowItems& msg)
+    {
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+        for (int i = 0; i < msg.GetCount(); ++i)
+        {
+            SetSlot(msg.GetWindowId(), i, msg.GetSlotData()[i]);
+        }
+    }
+
+    void InventoryManager::Handle(ProtocolCraft::OpenWindow& msg)
+    {
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+        AddInventory(msg.GetWindowId());
+    }
+
+    void InventoryManager::Handle(ProtocolCraft::HeldItemChangeClientbound& msg)
+    {
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+        SetHotbarSelected(msg.GetSlot());
+    }
+
+
 } //Botcraft
