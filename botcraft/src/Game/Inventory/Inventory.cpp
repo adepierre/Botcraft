@@ -22,6 +22,7 @@ namespace Botcraft
         
         return it->second;
     }
+
     const std::map<short, Slot>& Inventory::GetSlots() const
     {
         return slots;

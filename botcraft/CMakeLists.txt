@@ -17,6 +17,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/World/World.hpp
     include/botcraft/Game/Inventory/Inventory.hpp
     include/botcraft/Game/Inventory/InventoryManager.hpp
+    include/botcraft/Game/Inventory/Item.hpp
     
     include/botcraft/Network/NetworkManager.hpp
 )
@@ -44,6 +45,7 @@ set(botcraft_SRC
     src/Game/World/World.cpp
     src/Game/Inventory/Inventory.cpp
     src/Game/Inventory/InventoryManager.cpp
+    src/Game/Inventory/Item.cpp
     src/Network/Authentifier.cpp
     src/Network/AESEncrypter.cpp
     src/Network/Compression.cpp

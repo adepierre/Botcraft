@@ -17,20 +17,21 @@ namespace Botcraft
 
         std::mutex& GetMutex();
 
-        void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
-        std::shared_ptr<Inventory> GetInventory(const short window_id);
-        std::shared_ptr<Inventory> GetPlayerInventory();
         const std::shared_ptr<Inventory> GetInventory(const short window_id) const;
         const std::shared_ptr<Inventory> GetPlayerInventory() const;
+        std::shared_ptr<Inventory> GetInventory(const short window_id);
+        std::shared_ptr<Inventory> GetPlayerInventory();
+        const ProtocolCraft::Slot GetHotbarSelected() const;
+        const ProtocolCraft::Slot& GetCursor() const;
+
+    private:
+        void SetHotbarSelected(const short index);
+        void SetCursor(const ProtocolCraft::Slot& c);
 
         void EraseInventory(const short window_id);
         void AddInventory(const short window_id);
+        void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
 
-        const ProtocolCraft::Slot GetHotbarSelected() const;
-        void SetHotbarSelected(const short index);
-
-        const ProtocolCraft::Slot& GetCursor() const;
-        void SetCursor(const ProtocolCraft::Slot &c);
     private:
 
         virtual void Handle(ProtocolCraft::Message& msg) override;

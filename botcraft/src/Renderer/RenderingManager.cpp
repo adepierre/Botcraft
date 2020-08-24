@@ -28,6 +28,9 @@ static bool imgui_demo = false;
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 
+#include "botcraft/Game/Inventory/InventoryManager.hpp"
+#include "botcraft/Game/Inventory/Inventory.hpp"
+
 const std::vector<float> color_day({ 0.6f, 0.85f, 0.9f });
 const std::vector<float> color_night({0.1f, 0.1f, 0.1f});
 
@@ -35,17 +38,21 @@ namespace Botcraft
 {
     namespace Renderer
     {
-        RenderingManager::RenderingManager(std::shared_ptr<World> world_,
+        RenderingManager::RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
             const unsigned int &window_width, const unsigned int &window_height,
             const std::vector<std::pair<std::string, std::string> > &textures_path_names,
-            const unsigned int section_height_, const bool headless_)
+            const unsigned int section_height_, const bool headless)
         {
             world = world_;
+            inventory_manager = inventory_manager_;
+#if USE_IMGUI
+            inventory_open = false;
+            last_time_inventory_changed = 0;
+#endif
+
             mouse_last_x = window_width / 2.0f;
             mouse_last_y = window_height / 2.0f;
             first_mouse = true;
-
-            headless = headless_;
 
             deltaTime = 0.0f;
             lastFrameTime = 0.0f;
@@ -64,7 +71,7 @@ namespace Botcraft
             day_time = 0.0f;
 
             running = true;
-            rendering_thread = std::thread(&RenderingManager::Run, this);
+            rendering_thread = std::thread(&RenderingManager::Run, this, headless);
             thread_updating_chunks = std::thread(&RenderingManager::WaitForRenderingUpdate, this);
 
         }
@@ -85,9 +92,9 @@ namespace Botcraft
             }
         }
 
-        void RenderingManager::Run()
+        void RenderingManager::Run(const bool headless)
         {
-            if (!Init())
+            if (!Init(headless))
             {
                 return;
             }
@@ -203,6 +210,29 @@ namespace Botcraft
                 glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef USE_IMGUI
+                // Draw the inventory if it's open
+                if (inventory_open)
+                {
+                    ImGui::SetNextWindowPos(ImVec2(current_window_width, current_window_height), 0, ImVec2(1.0f, 1.0f));
+                    ImGui::SetNextWindowSize(ImVec2(275, 450));
+                    ImGui::Begin("Inventory");
+                    if (inventory_manager && inventory_manager->GetPlayerInventory())
+                    {
+                        const std::map<short, ProtocolCraft::Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
+                        for (auto it = slots.begin(); it != slots.end(); ++it)
+                        {
+#if PROTOCOL_VERSION < 347
+                            std::string name = AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName();
+#else
+                            std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName();
+#endif
+                            ImGui::Text(std::string("Slot %i: " + name + " (x%i)").c_str(), it->first, it->second.GetItemCount());
+                        }
+                    }
+                    ImGui::End();
+                }
+
+
                 ImGui::Render();
 
                 // Render ImGui
@@ -260,7 +290,7 @@ namespace Botcraft
             take_screenshot = true;
         }
 
-        bool RenderingManager::Init()
+        bool RenderingManager::Init(const bool headless)
         {
             glfwInit();
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -404,6 +434,21 @@ namespace Botcraft
             if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
             {
                 imgui_demo = !imgui_demo;
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS &&
+                std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - last_time_inventory_changed > 1000)
+            {
+                last_time_inventory_changed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+                inventory_open = !inventory_open;
+                if (inventory_open)
+                {
+                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                }
+                else
+                {
+                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                }
             }
 #endif
 

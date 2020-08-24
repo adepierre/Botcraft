@@ -25,6 +25,7 @@ struct GLFWwindow;
 namespace Botcraft
 {
     class World;
+    class InventoryManager;
 
     namespace Renderer
     {
@@ -45,15 +46,7 @@ namespace Botcraft
             MOUSE_LEFT,
             NUMBER_OF_KEYS
         };
-    } // Renderer
-} // Botcraft
 
-namespace Botcraft
-{
-    class World;
-
-    namespace Renderer
-    {
         class RenderingManager : public ProtocolCraft::Handler
         {
         public:
@@ -61,14 +54,11 @@ namespace Botcraft
             // Window can be resized at runtime
             // Chunks in renderer are independant of chunks in the corresponding world.
             // Set headless_ to true to run without opening a window (rendering is still done)
-            RenderingManager(std::shared_ptr<World> world_, 
+            RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
                 const unsigned int &window_width, const unsigned int &window_height,
                 const std::vector<std::pair<std::string, std::string> > &textures_path_names,
-                const unsigned int section_height_ = 16, const bool headless_ = false);
+                const unsigned int section_height_ = 16, const bool headless = false);
             ~RenderingManager();
-
-            // Main rendering loop
-            void Run();
 
             // Set a flag to terminate the rendering loop after the current frame
             void Close();
@@ -97,7 +87,10 @@ namespace Botcraft
 
         private:
             // Initialize all the stuff
-            bool Init();
+            bool Init(const bool headless);
+
+            // Main rendering loop
+            void Run(const bool headless);
 
             // Callbacks called by glfw
             static void ResizeCallback(GLFWwindow* window, int width, int height);
@@ -107,6 +100,15 @@ namespace Botcraft
             void InternalProcessInput(GLFWwindow *window);
 
         private:
+            // External modules
+            std::shared_ptr<World> world;
+            std::shared_ptr<InventoryManager> inventory_manager;
+
+#if USE_IMGUI
+            bool inventory_open;
+            unsigned long long int last_time_inventory_changed;
+#endif
+
             std::thread rendering_thread;// OpenGL thread
             
             double mouse_last_x;
@@ -131,13 +133,9 @@ namespace Botcraft
             std::function<void(double, double)> MouseCallback;
             std::function<void(std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, double)> KeyboardCallback;
 
-            //Whether the window should be displayed or hidden
-            bool headless;
-
             std::string screenshot_path;
             bool take_screenshot;
 
-            std::shared_ptr<World> world;
             bool running;
 
             std::unordered_set<Position> chunks_to_udpate;

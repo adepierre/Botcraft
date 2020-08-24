@@ -314,7 +314,7 @@ namespace Botcraft
 #if USE_GUI
         if (use_renderer)
         {
-            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world, 800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
+            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world, inventory_manager, 800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
             if (!afk_only)
             {
                 network_manager->AddHandler(rendering_manager.get());

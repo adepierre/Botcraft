@@ -266,9 +266,6 @@ namespace Botcraft
             it->second->GetDimension() == Dimension::Overworld)
 #elif PROTOCOL_VERSION < 737
             it->second->GetDimension() == "minecraft:overworld")
-#else
-            // TODO
-            true)//it->second->GetDimension() == "minecraft:overworld")
 #endif
         {
             it->second->SetSkyLight(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH), skylight);
@@ -892,8 +889,8 @@ namespace Botcraft
         if (msg.GetGroundUpContinuous())
         {
             bool success = true;
-            // TODO
-            if (false)//chunk_dim != current_dimension)
+
+            if (chunk_dim != current_dimension)
             {
                 std::lock_guard<std::mutex> world_guard(world_mutex);
                 success = AddChunk(msg.GetChunkX(), msg.GetChunkZ(), current_dimension);
@@ -920,6 +917,7 @@ namespace Botcraft
 
     }
 
+#if PROTOCOL_VERSION > 404
     void World::Handle(ProtocolCraft::UpdateLight& msg)
     {
         std::lock_guard<std::mutex> world_guard(world_mutex);
@@ -928,6 +926,7 @@ namespace Botcraft
         UpdateChunkLight(msg.GetChunkX(), msg.GetChunkZ(), current_dimension,
             msg.GetBlockLightMask(), msg.GetEmptyBlockLightMask(), msg.GetBlockLightArrays(), false);
     }
+#endif
 
     void World::Handle(ProtocolCraft::UpdateBlockEntity& msg)
     {

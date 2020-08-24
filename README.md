@@ -15,6 +15,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 - Bot control with mouse and keyboard
 - Path finding
 - Block breaking
+- Inventory managing
 
 Example of pathfinding. Right of the screen is the integrated renderer
 ![](video.gif)
@@ -75,7 +76,7 @@ Examples can be found in the [Examples](Examples/) folder:
 
 ## To-do list
 
-It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to activate a farm with almost 0% usage of CPU/GPU. The next step is to add some functionalities like block breaking with a tool and block placing, inventory managing, entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
+It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to activate a farm with almost 0% usage of CPU/GPU. The next step is to add some functionalities like block breaking with a tool and block placing, entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
 
 There are also some minor improvements to existing features that have to be done:
 - Improve water/lava/ladder physics (the player can walk on fluids and can't climb the ladders)

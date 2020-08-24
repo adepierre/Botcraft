@@ -24,6 +24,9 @@ namespace Botcraft
         std::cout << "Loading biomes from file..." << std::endl;
         LoadBiomesFile();
         std::cout << "Done!" << std::endl;
+        std::cout << "Loading items from file..." << std::endl;
+        LoadItemsFile();
+        std::cout << "Done!" << std::endl;
         std::cout << "Clearing cache from memory..." << std::endl;
         ClearCaches();
         std::cout << "Done!" << std::endl;
@@ -62,6 +65,15 @@ namespace Botcraft
         {
             return nullptr;
         }
+    }
+
+#if PROTOCOL_VERSION < 347
+    const std::map<int, std::map<unsigned char, std::shared_ptr<Item> > >& AssetsManager::Items() const
+#else
+    const std::map<int, std::shared_ptr<Item>>& AssetsManager::Items() const
+#endif
+    {
+        return items;
     }
 
 #ifdef USE_GUI
@@ -675,6 +687,81 @@ namespace Botcraft
             }
 
             biomes[id] = std::shared_ptr<Biome>(new Biome(name, temperature, rainfall, biome_type));
+        }
+    }
+
+    void AssetsManager::LoadItemsFile()
+    {
+        std::string file_path = ASSETS_PATH + std::string("/custom/Items.json");
+
+        std::stringstream ss;
+        std::ifstream file;
+
+        file.open(file_path);
+        if (!file.is_open())
+        {
+            std::cerr << "Error reading item file at " << file_path << std::endl;
+            return;
+        }
+
+        ss << file.rdbuf();
+        file.close();
+
+        picojson::value json;
+        ss >> json;
+        std::string err = picojson::get_last_error();
+
+        if (!err.empty())
+        {
+            std::cerr << "Error parsing item file at " << file_path << "\n";
+            std::cerr << err << std::endl;
+            return;
+        }
+
+        if (!json.is<picojson::object>())
+        {
+            std::cerr << "Error parsing item file at " << file_path << std::endl;
+            return;
+        }
+
+        // Add a default item
+#if PROTOCOL_VERSION < 347
+        items[-1] = { { 0, std::shared_ptr<Item>(new Item(-1, 0, "default")) } };
+#else
+        items[-1] = std::shared_ptr<Item>(new Item(-1, "default"));
+#endif
+
+        //Load all the items from JSON file
+        const picojson::value::object& obj = json.get<picojson::object>();
+
+        for (picojson::value::object::const_iterator items_it = obj.begin(); items_it != obj.end(); ++items_it)
+        {
+            int id = -1;
+            std::string item_name = items_it->first;
+
+            const picojson::object properties = items_it->second.get<picojson::object>();
+
+            auto it = properties.find("id");
+            if (it == properties.end() || !it->second.is<double>())
+            {
+                continue;
+            }
+            id = it->second.get<double>();
+#if PROTOCOL_VERSION < 347
+            it = properties.find("damage_id");
+            if (it == properties.end() || !it->second.is<double>())
+            {
+                continue;
+            }
+            unsigned char damage_id = it->second.get<double>();
+            if (items.find(id) == items.end())
+            {
+                items[id] = std::map<unsigned char, std::shared_ptr<Item> >();
+            }
+            items[id][damage_id] = std::shared_ptr<Item>(new Item(id, damage_id, item_name));
+#else
+            items[id] = std::shared_ptr<Item>(new Item(id, item_name));
+#endif
         }
     }
 
