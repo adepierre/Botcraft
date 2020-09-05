@@ -5,7 +5,13 @@ using namespace ProtocolCraft;
 namespace Botcraft
 {
     const short Inventory::PLAYER_INVENTORY_INDEX = 0;
-    const short Inventory::HOTBAR_START_INDEX = 36;
+
+    const short Inventory::INVENTORY_CRAFTING_OUTPUT_INDEX = 0;
+    const short Inventory::INVENTORY_CRAFTING_INPUT_START = 1;
+    const short Inventory::INVENTORY_ARMOR_START = 5;
+    const short Inventory::INVENTORY_STORAGE_START = 9;
+    const short Inventory::INVENTORY_HOTBAR_START = 36;
+    const short Inventory::INVENTORY_OFFHAND_INDEX = 45;
 
     Inventory::Inventory()
     {

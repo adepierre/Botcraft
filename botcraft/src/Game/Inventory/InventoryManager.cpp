@@ -70,7 +70,7 @@ namespace Botcraft
             return Slot();
         }
 
-        inventory->GetSlot(Inventory::HOTBAR_START_INDEX + index_hotbar_selected);
+        inventory->GetSlot(Inventory::INVENTORY_HOTBAR_START + index_hotbar_selected);
     }
 
     void InventoryManager::EraseInventory(const short window_id)

@@ -15,7 +15,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 - Bot control with mouse and keyboard
 - Path finding
 - Block breaking
-- Inventory managing
+- Inventory displaying
 
 Example of pathfinding. Right of the screen is the integrated renderer
 ![](video.gif)

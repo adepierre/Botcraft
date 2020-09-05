@@ -219,14 +219,46 @@ namespace Botcraft
                     if (inventory_manager && inventory_manager->GetPlayerInventory())
                     {
                         const std::map<short, ProtocolCraft::Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
-                        for (auto it = slots.begin(); it != slots.end(); ++it)
+                        for (short i = 0; i <= Inventory::INVENTORY_OFFHAND_INDEX; ++i)
                         {
+                            auto it = slots.find(i);
+                            if (it == slots.end())
+                            {
+                                continue;
+                            }
+                            if (i == Inventory::INVENTORY_CRAFTING_OUTPUT_INDEX)
+                            {
+                                ImGui::Text("Crafting output");
+                            }
+                            else if (i == Inventory::INVENTORY_CRAFTING_INPUT_START)
+                            {
+                                ImGui::Text("Crafting input");
+                            }
+                            else if (i == Inventory::INVENTORY_ARMOR_START)
+                            {
+                                ImGui::Text("Equiped Armor");
+                            }
+                            else if (i == Inventory::INVENTORY_STORAGE_START)
+                            {
+                                ImGui::Text("Inventory");
+                            }
+                            else if (i == Inventory::INVENTORY_HOTBAR_START)
+                            {
+                                ImGui::Text("Hotbar");
+                            }
+                            else if (i == Inventory::INVENTORY_OFFHAND_INDEX)
+                            {
+                                ImGui::Text("Offhand");
+                            }
 #if PROTOCOL_VERSION < 347
                             std::string name = AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName();
 #else
                             std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName();
 #endif
-                            ImGui::Text(std::string("Slot %i: " + name + " (x%i)").c_str(), it->first, it->second.GetItemCount());
+                            if (name != "minecraft:air")
+                            {
+                                ImGui::Text(std::string("    (%i) " + name + " (x%i)").c_str(), i, it->second.GetItemCount());
+                            }
                         }
                     }
                     ImGui::End();

@@ -9,7 +9,13 @@ namespace Botcraft
     {
     public:
         static const short PLAYER_INVENTORY_INDEX;
-        static const short HOTBAR_START_INDEX;
+
+        static const short INVENTORY_CRAFTING_OUTPUT_INDEX;
+        static const short INVENTORY_CRAFTING_INPUT_START;
+        static const short INVENTORY_ARMOR_START;
+        static const short INVENTORY_STORAGE_START;
+        static const short INVENTORY_HOTBAR_START;
+        static const short INVENTORY_OFFHAND_INDEX;
 
         Inventory();
 

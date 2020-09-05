@@ -264,7 +264,7 @@ namespace Botcraft
         if (it != terrain.end() &&
 #if PROTOCOL_VERSION < 719
             it->second->GetDimension() == Dimension::Overworld)
-#elif PROTOCOL_VERSION < 737
+#else
             it->second->GetDimension() == "minecraft:overworld")
 #endif
         {
