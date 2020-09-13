@@ -556,10 +556,10 @@ namespace Botcraft
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2056) / 9) % 16));
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2056) / 9) % 16));
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 || PROTOCOL_VERSION == 751 // 1.16.X
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 || PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 // 1.16.X
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2058) / 9) % 16));
 #else
-#error "Protocol version not implemented"
+                    #error "Protocol version not implemented"
 #endif
                     break;
                 case TintType::Water:

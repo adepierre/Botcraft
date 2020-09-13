@@ -10,10 +10,10 @@ namespace ProtocolCraft
     public:
         virtual const int GetId() const override
         {
-#if PROTOCOL_VERSION == 751 // 1.16.2
+#if PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 // 1.16.2 or 1.16.3
             return 0x1F;
 #else
-#error "Protocol version not implemented"
+            #error "Protocol version not implemented"
 #endif
         }
 

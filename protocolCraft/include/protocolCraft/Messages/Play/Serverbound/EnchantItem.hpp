@@ -15,7 +15,7 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
             return 0x07;
 #else
-#error "Protocol version not implemented"
+            #error "Protocol version not implemented"
 #endif
         }
 
