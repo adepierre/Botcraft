@@ -4,7 +4,7 @@
 
 #include <picojson/picojson.h>
 
-#include "ProtocolCraft/BinaryReadWrite.hpp"
+#include "protocolCraft/BinaryReadWrite.hpp"
 
 namespace ProtocolCraft
 {
