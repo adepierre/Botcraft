@@ -20,7 +20,7 @@ namespace Botcraft
         {
         public:
             Face();
-            Face(const FaceTransformation &transformations, const Orientation or);
+            Face(const FaceTransformation &transformations, const Orientation orientation);
 
             bool operator ==(const Face &other) const
             {

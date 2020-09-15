@@ -37,16 +37,17 @@ Optional dependencies (needed only if you want to build the OpenGL renderer)
 - [imgui](https://github.com/ocornut/imgui)
 - [rectpack2D](https://github.com/TeamHypersomnia/rectpack2D)
 
-I only regularly test the code on Windows with Visual 2019 but it should also work with older versions (from 2013 to 2017). All the code is cross-platform so it should also work on Linux and macOS. I made some modifications to fix the errors, the code is currently compiling on a raspberry pi.
+I only regularly test the code on Windows with Visual 2019 but it should also work with older versions (from 2013 to 2017). All the code is cross-platform and I sometimes test the compilation on Linux with GCC so it should also work on Linux and macOS.
 
 ## Building and Installation
 
+To build the library for the 1.16.3 version of the game with both encryption and compression support and without OpenGL rendering:
 ```
 git clone https://github.com/adepierre/Botcraft.git
 cd botcraft
 mkdir build
 cd build
-cmake ..
+cmake -DGAME_VERSION=1.16.3 -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
 make all
 make install
 ```

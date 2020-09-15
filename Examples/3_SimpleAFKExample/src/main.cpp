@@ -38,7 +38,11 @@ int main(int argc, char* argv[])
             password = argv[4];
         }
 
-        Botcraft::BaseClient client(true);
+#if USE_GUI
+        Botcraft::BaseClient client(true, true);
+#else
+        Botcraft::BaseClient client(false, true);
+#endif
 
         std::cout << "Starting connection process" << std::endl;
         client.Connect(ip, port, login, password);

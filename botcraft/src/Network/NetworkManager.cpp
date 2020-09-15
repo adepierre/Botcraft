@@ -1,3 +1,5 @@
+#include <functional>
+
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Network/TCP_Com.hpp"
 #include "botcraft/Network/Authentifier.hpp"

@@ -32,7 +32,7 @@ namespace Botcraft
 
         }
 
-        Face::Face(const FaceTransformation& transformations, const Orientation or )
+        Face::Face(const FaceTransformation& transformations, const Orientation orientation)
         {
             IMatrix model;
 
@@ -62,7 +62,7 @@ namespace Botcraft
             }
 
             //Apply the transformations to get the good face from the base one
-            switch (or )
+            switch (orientation)
             {
             case Orientation::Top:
                 model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
