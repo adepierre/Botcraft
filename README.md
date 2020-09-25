@@ -44,7 +44,7 @@ I only regularly test the code on Windows with Visual 2019 but it should also wo
 To build the library for the 1.16.3 version of the game with both encryption and compression support and without OpenGL rendering:
 ```
 git clone https://github.com/adepierre/Botcraft.git
-cd botcraft
+cd Botcraft
 mkdir build
 cd build
 cmake -DGAME_VERSION=1.16.3 -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
