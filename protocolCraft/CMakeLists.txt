@@ -269,6 +269,7 @@ endif()
 
 add_library(protocolCraft STATIC ${protocolCraft_SRC} ${protocolCraft_PUBLIC_HDR})
 set_property(TARGET protocolCraft PROPERTY CXX_STANDARD 11)
+set_property(TARGET protocolCraft PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_target_properties(protocolCraft PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(protocolCraft PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")
 
