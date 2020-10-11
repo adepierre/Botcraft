@@ -2,6 +2,9 @@
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Game/Inventory/InventoryManager.hpp"
+#include "botcraft/Game/AssetsManager.hpp"
+#include "botcraft/Game/Inventory/Window.hpp"
 
 #include "protocolCraft/enums.hpp"
 
@@ -27,14 +30,6 @@ namespace Botcraft
     {
         return a.score > b.score;
     }
-
-    enum class PathFindingState
-    {
-        Waiting,
-        Searching,
-        Moving,
-        Stop
-    };
     
     InterfaceClient::InterfaceClient(const bool use_renderer_, const bool afk_only_) : BaseClient(use_renderer_, afk_only_)
     {
@@ -309,17 +304,9 @@ namespace Botcraft
 
                 {
                     std::lock_guard<std::mutex> player_lock(player->GetMutex());
-                    player->SetPosition(Vector3<double>(path[i].x + 0.5, path[i].y, path[i].z + 0.5));
-                    char delta_x = path[i].x - current_position.x;
-                    if (delta_x != 0)
-                    {
-                        player->SetYaw(-90 * delta_x);
-                    }
-                    else
-                    {
-                        char delta_z = path[i].z - current_position.z;
-                        player->SetYaw(-180 * delta_z);
-                    }
+                    const Vector3<double> temp_dest(path[i].x + 0.5, path[i].y, path[i].z + 0.5);
+                    player->LookAt(temp_dest);
+                    player->SetPosition(temp_dest);
 
                     // Get the position
                     current_position = Position(std::floor(player->GetPosition().x), std::floor(player->GetPosition().y), std::floor(player->GetPosition().z));
@@ -339,6 +326,178 @@ namespace Botcraft
         {
             pathfinding_state = PathFindingState::Stop;
         }
+    }
+
+    const bool InterfaceClient::PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face)
+    {
+        if (!network_manager
+            || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play
+            || !inventory_manager
+            || !inventory_manager->GetPlayerInventory()
+            || !player)
+        {
+            return false;
+        }
+
+        const Vector3<double> dist(std::floor(player->GetPosition().x) - location.x, std::floor(player->GetPosition().y) - location.y, std::floor(player->GetPosition().z) - location.z);
+        double distance = std::sqrt(dist.dot(dist));
+        if (distance > 5.0f)
+        {
+            std::cout << "I am asked to place a " << item << " at " << location << " but I'm affraid that's out of my range (" << distance << "m)." << std::endl;
+            return false;
+        }
+
+        std::shared_ptr<PlayerBlockPlacement> place_block_msg(new PlayerBlockPlacement);
+        place_block_msg->SetLocation(location.ToNetworkPosition());
+        place_block_msg->SetFace((int)placed_face);
+        switch (placed_face)
+        {
+        case PlayerDiggingFace::Bottom:
+            place_block_msg->SetCursorPositionX(0.5f);
+            place_block_msg->SetCursorPositionY(0.0f);
+            place_block_msg->SetCursorPositionZ(0.5f);
+            break;
+        case PlayerDiggingFace::Top:
+            place_block_msg->SetCursorPositionX(0.5f);
+            place_block_msg->SetCursorPositionY(1.0f);
+            place_block_msg->SetCursorPositionZ(0.5f);
+            break;
+        case PlayerDiggingFace::North:
+            place_block_msg->SetCursorPositionX(0.5f);
+            place_block_msg->SetCursorPositionY(0.5f);
+            place_block_msg->SetCursorPositionZ(0.0f);
+            break;
+        case PlayerDiggingFace::South:
+            place_block_msg->SetCursorPositionX(0.5f);
+            place_block_msg->SetCursorPositionY(0.5f);
+            place_block_msg->SetCursorPositionZ(1.0f);
+            break;
+        case PlayerDiggingFace::East:
+            place_block_msg->SetCursorPositionX(1.0f);
+            place_block_msg->SetCursorPositionY(0.5f);
+            place_block_msg->SetCursorPositionZ(0.5f);
+            break;
+        case PlayerDiggingFace::West:
+            place_block_msg->SetCursorPositionX(0.0f);
+            place_block_msg->SetCursorPositionY(0.5f);
+            place_block_msg->SetCursorPositionZ(0.5f);
+            break;
+        default:
+            break;
+        }
+        place_block_msg->SetInsideBlock(false);
+
+        // Left click case
+        place_block_msg->SetHand((int)Hand::Left);
+
+        // We need to check the inventory
+        // If the currently selected item is the right one, just go for it
+        const Slot& current_selected = inventory_manager->GetHotbarSelected();
+        if (!current_selected.IsEmptySlot()
+#if PROTOCOL_VERSION < 347
+            && AssetsManager::getInstance().Items().at(current_selected.GetBlockID()).at(current_selected.GetItemDamage())->GetName() == item)
+#else
+            && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item)
+#endif
+        {
+            network_manager->Send(place_block_msg);
+            std::lock_guard<std::mutex> lock(player->GetMutex());
+            player->LookAt(Vector3<double>(location) + Vector3<double>(0.5, 0.5, 0.5), true);
+            return true;
+        }
+
+        // Otherwise we need to find a slot with the given item
+        short inventory_correct_slot_index = -1;
+        const std::map<short, Slot>& inventory_slots = inventory_manager->GetPlayerInventory()->GetSlots();
+
+        for (auto it = inventory_slots.begin(); it != inventory_slots.end(); ++it)
+        {
+            if (it->first >= Window::INVENTORY_STORAGE_START
+                && it->first < Window::INVENTORY_OFFHAND_INDEX
+                && !it->second.IsEmptySlot()
+#if PROTOCOL_VERSION < 347
+                && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item)
+#else
+                && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item)
+#endif
+            {
+                inventory_correct_slot_index = it->first;
+                break;
+            }
+        }
+
+        if (inventory_correct_slot_index == -1)
+        {
+            std::cout << "I am asked to place a " << item << " at " << location << " but I'm affraid I don't have that kind of item in my inventory." << std::endl;
+            return false;
+        }
+
+        // We need to swap the currently selected slot in the
+        // hotbar with the one with the correct item
+        int transaction_id = inventory_manager->GetPlayerInventory()->GetNextTransactionId();
+
+        std::shared_ptr<ClickWindow> click_window_msg(new ClickWindow);
+
+        // Click on the desired item
+        click_window_msg->SetWindowId(Window::PLAYER_INVENTORY_INDEX);
+        click_window_msg->SetSlot(inventory_correct_slot_index);
+        click_window_msg->SetButton(0); // Left click to select the stack
+        click_window_msg->SetActionNumber(transaction_id);
+        click_window_msg->SetMode(0); // Regular click
+        click_window_msg->SetClickedItem(inventory_slots.at(inventory_correct_slot_index));
+
+        transaction_id++;
+        inventory_manager->GetPlayerInventory()->SetNextTransactionId(transaction_id);
+        inventory_manager->AddPendingTransaction(click_window_msg);
+        network_manager->Send(click_window_msg);
+
+        // Click in the hotbar
+        click_window_msg->SetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
+        click_window_msg->SetActionNumber(transaction_id);
+        click_window_msg->SetClickedItem(inventory_manager->GetHotbarSelected());
+
+        transaction_id++;
+        inventory_manager->GetPlayerInventory()->SetNextTransactionId(transaction_id);
+        inventory_manager->AddPendingTransaction(click_window_msg);
+        network_manager->Send(click_window_msg);
+
+        // Click back on the slot where the desired item was
+        click_window_msg->SetSlot(inventory_correct_slot_index);
+        click_window_msg->SetActionNumber(transaction_id);
+        click_window_msg->SetClickedItem(inventory_slots.at(inventory_correct_slot_index));
+
+        transaction_id++;
+        inventory_manager->GetPlayerInventory()->SetNextTransactionId(transaction_id);
+        inventory_manager->AddPendingTransaction(click_window_msg);
+        network_manager->Send(click_window_msg);
+
+        // Wait for the server confirmation so
+        // the hotbar selected slot is the item we need
+        auto start = std::chrono::system_clock::now();
+        while (
+#if PROTOCOL_VERSION < 347
+            AssetsManager::getInstance().Items().at(inventory_manager->GetHotbarSelected().GetBlockID()).at(inventory_manager->GetHotbarSelected().GetItemDamage())->GetName() != item)
+#else
+            AssetsManager::getInstance().Items().at(inventory_manager->GetHotbarSelected().GetItemID())->GetName() != item)
+#endif
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            {
+                std::cerr << "Something went wrong trying to swap inventory slots for block placing (Timeout)." << std::endl;
+                return false;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+
+        // Small delay to be sure the server set our new hotbar item as the current item
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        // Place the block
+        network_manager->Send(place_block_msg);
+        std::lock_guard<std::mutex> lock(player->GetMutex());
+        player->LookAt(Vector3<double>(location) + Vector3<double>(0.5, 0.5, 0.5), true);
+
+        return true;
     }
 
     void InterfaceClient::Handle(UpdateHealth &msg)

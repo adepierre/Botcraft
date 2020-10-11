@@ -1,5 +1,5 @@
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
-#include "botcraft/Game/Inventory/Inventory.hpp"
+#include "botcraft/Game/Inventory/Window.hpp"
 
 using namespace ProtocolCraft;
 
@@ -22,16 +22,16 @@ namespace Botcraft
 
         if (it == inventories.end())
         {
-            inventories[window_id] = std::shared_ptr<Inventory>(new Inventory);
-            inventories[window_id]->GetSlots()[index] = slot;
+            inventories[window_id] = std::shared_ptr<Window>(new Window);
+            inventories[window_id]->SetSlot(index, slot);
         }
         else
         {
-            it->second->GetSlots()[index] = slot;
+            it->second->SetSlot(index, slot);
         }
     }
 
-    std::shared_ptr<Inventory> InventoryManager::GetInventory(const short window_id)
+    std::shared_ptr<Window> InventoryManager::GetWindow(const short window_id)
     {
         auto it = inventories.find(window_id);
         if (it == inventories.end())
@@ -41,12 +41,17 @@ namespace Botcraft
         return it->second;
     }
     
-    std::shared_ptr<Inventory> InventoryManager::GetPlayerInventory()
+    std::shared_ptr<Window> InventoryManager::GetPlayerInventory()
     {
-        return GetInventory(Inventory::PLAYER_INVENTORY_INDEX);
+        return GetWindow(Window::PLAYER_INVENTORY_INDEX);
+    }
+
+    const short InventoryManager::GetIndexHotbarSelected() const
+    {
+        return index_hotbar_selected;
     }
     
-    const std::shared_ptr<Inventory> InventoryManager::GetInventory(const short window_id) const
+    const std::shared_ptr<Window> InventoryManager::GetWindow(const short window_id) const
     {
         auto it = inventories.find(window_id);
         if (it == inventories.end())
@@ -56,21 +61,21 @@ namespace Botcraft
         return it->second;
     }
 
-    const std::shared_ptr<Inventory> InventoryManager::GetPlayerInventory() const
+    const std::shared_ptr<Window> InventoryManager::GetPlayerInventory() const
     {
-        return GetInventory(Inventory::PLAYER_INVENTORY_INDEX);
+        return GetWindow(Window::PLAYER_INVENTORY_INDEX);
     }
     
-    const Slot InventoryManager::GetHotbarSelected() const
+    const Slot& InventoryManager::GetHotbarSelected() const
     {
-        const std::shared_ptr<Inventory> inventory = GetPlayerInventory();
+        const std::shared_ptr<Window> inventory = GetPlayerInventory();
 
         if (!inventory)
         {
-            return Slot();
+            return Window::EMPTY_SLOT;
         }
 
-        inventory->GetSlot(Inventory::INVENTORY_HOTBAR_START + index_hotbar_selected);
+        return inventory->GetSlot(Window::INVENTORY_HOTBAR_START + index_hotbar_selected);
     }
 
     void InventoryManager::EraseInventory(const short window_id)
@@ -80,7 +85,7 @@ namespace Botcraft
 
     void InventoryManager::AddInventory(const short window_id)
     {
-        inventories[window_id] = std::shared_ptr<Inventory>(new Inventory);
+        inventories[window_id] = std::shared_ptr<Window>(new Window);
     }
 
     void InventoryManager::SetHotbarSelected(const short index)
@@ -93,7 +98,16 @@ namespace Botcraft
         return cursor;
     }
 
-    void InventoryManager::SetCursor(const Slot &c)
+    void InventoryManager::AddPendingTransaction(const std::shared_ptr<ClickWindow> transaction)
+    {
+        if (!transaction)
+        {
+            return;
+        }
+        pending_transactions.push_back(*transaction);
+    }
+
+    void InventoryManager::SetCursor(const Slot& c)
     {
         cursor = c;
     }
@@ -113,7 +127,7 @@ namespace Botcraft
         }
         else if (msg.GetWindowId() == -2)
         {
-            SetSlot(Inventory::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetSlotData());
+            SetSlot(Window::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetSlotData());
         }
         else if (msg.GetWindowId() >= 0)
         {
@@ -144,6 +158,62 @@ namespace Botcraft
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
         SetHotbarSelected(msg.GetSlot());
+    }
+
+    void InventoryManager::Handle(ProtocolCraft::ConfirmTransactionClientbound& msg)
+    {
+        // BaseClient is in charge of the apologize in this case
+        if (!msg.GetAccepted())
+        {
+            return;
+        }
+
+        auto transaction = pending_transactions.end();
+
+        for (auto it = pending_transactions.begin(); it != pending_transactions.end(); ++it)
+        {
+            if (it->GetWindowId() == msg.GetWindowId()
+                && it->GetActionNumber() == msg.GetActionNumber())
+            {
+                transaction = it;
+                break;
+            }
+        }
+
+        // Get the corresponding transaction
+        if (transaction == pending_transactions.end())
+        {
+            std::cerr << "Warning, server accepted an unknown transaction" << std::endl;
+            return;
+        }
+
+        // Check the window exists
+        std::shared_ptr<Window> window = GetWindow(transaction->GetWindowId());
+        if (!window)
+        {
+            std::cerr << "Warning, server accepted a transaction for an unknown window" << std::endl;
+            pending_transactions.erase(transaction);
+            return;
+        }
+
+
+        // Process the transaction
+        switch (transaction->GetMode())
+        {
+        case 0:
+            // "Left click"
+            if (transaction->GetButton() == 0)
+            {
+                const Slot& switched_slot = window->GetSlot(transaction->GetSlot());
+                window->SetSlot(transaction->GetSlot(), cursor);
+                cursor = switched_slot;
+            }
+            break;
+        default:
+            break;
+        }
+
+        pending_transactions.erase(transaction);
     }
 
 

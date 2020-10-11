@@ -29,6 +29,8 @@ namespace Botcraft
         health = 0.0f;
         food = 20;
         food_saturation = 5.0f;
+
+        has_moved = true;
     }
 
     std::mutex& Player::GetMutex()
@@ -119,36 +121,53 @@ namespace Botcraft
         return food_saturation;
     }
 
+    const bool Player::GetHasMoved() const
+    {
+        return has_moved;
+    }
+
     void Player::SetX(const double x)
     {
+        has_moved = position.x != x;
         position.x = x;
     }
 
     void Player::SetY(const double y)
     {
+        has_moved = position.y != y;
         position.y = y;
     }
 
     void Player::SetZ(const double z)
     {
+        has_moved = position.z != z;
         position.z = z;
     }
 
     void Player::SetPosition(const Vector3<double> &pos)
     {
+        has_moved = position != pos;
         position = pos;
     }
 
     void Player::SetYaw(const float yaw_)
     {
-        yaw = yaw_;
-        UpdateVectors();
+        if (yaw != yaw_)
+        {
+            has_moved = true;
+            yaw = yaw_;
+            UpdateVectors();
+        }
     }
 
     void Player::SetPitch(const float pitch_)
     {
-        pitch = pitch_;
-        UpdateVectors();
+        if (pitch != pitch_)
+        {
+            has_moved = true;
+            pitch = pitch_;
+            UpdateVectors();
+        }
     }
 
     void Player::SetSpeed(const Vector3<double> &speed_)
@@ -216,10 +235,38 @@ namespace Botcraft
         food_saturation = food_saturation_;
     }
 
+    void Player::SetHasMoved(const bool has_moved_)
+    {
+        has_moved = has_moved_;
+    }
+
+    void Player::LookAt(const Vector3<double>& pos, const bool set_pitch)
+    {
+        Vector3<double> direction = (pos - position);
+        direction.Normalize();
+        const double new_pitch = asin(direction.y) * 180.0 / PI;
+        double new_yaw = -atan2(direction.x, direction.z) * 180.0 / PI;
+        if (new_yaw < 0)
+        {
+            new_yaw += 360;
+        }
+        if (new_yaw != yaw ||
+            (set_pitch && new_pitch != pitch))
+        {
+            if (set_pitch)
+            {
+                pitch = new_pitch;
+            }
+            yaw = new_yaw;
+            has_moved = true;
+            UpdateVectors();
+        }
+    }
+
     void Player::UpdateVectors()
     {
-        double rad_yaw = yaw * PI / 180.0;
-        double rad_pitch = pitch * PI / 180.0;
+        const double rad_yaw = yaw * PI / 180.0;
+        const double rad_pitch = pitch * PI / 180.0;
         frontVector = Vector3<double>(-sin(rad_yaw) * cos(rad_pitch), -sin(rad_pitch), cos(rad_yaw) * cos(rad_pitch));
 
         frontVector.Normalize();

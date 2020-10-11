@@ -4,7 +4,16 @@
 
 namespace Botcraft
 {
-    enum class PathFindingState;
+    // This looks like a state machine A LOT
+    // could be a good idea to refactor this
+    // before it's too big
+    enum class PathFindingState
+    {
+        Waiting,
+        Searching,
+        Moving,
+        Stop
+    };
 
     enum class DiggingState
     {
@@ -41,6 +50,12 @@ namespace Botcraft
         const bool GoTo(const Position &goal, const float speed = 1.0f);
         void StopPathFinding();
 
+        // Place a given block at a given location
+        // item: name of the item to place, fails if not present in the inventory
+        // location: position of the placed block, the player must be < 5 blocks away
+        // placed_face: face on wich placing the block
+        const bool PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face);
+
     protected:
         // Example of overriding the processing of an incoming packet
         virtual void Handle(ProtocolCraft::UpdateHealth &msg) override;
@@ -52,7 +67,6 @@ namespace Botcraft
 
     private:
         // Find a path between two positions
-        // /!\ target pos must be in a loaded chunk
         const std::vector<Position> FindPath(const Position &start, const Position &end);
     
     private:

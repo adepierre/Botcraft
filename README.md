@@ -15,10 +15,14 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 - Bot control with mouse and keyboard
 - Path finding
 - Block breaking
-- Inventory displaying
+- Inventory managing
+- **NEW** : Block placing
 
 Example of pathfinding. Right of the screen is the integrated renderer
-![](video.gif)
+![](gifs/video.gif)
+
+Example of block placing and inventory managing. Right of the screen is the integrated renderer
+![](gifs/beacon.gif)
 
 ## Dependencies
 
@@ -70,14 +74,18 @@ There are several cmake options you can modify:
 ## Examples
 
 Examples can be found in the [Examples](Examples/) folder:
-- [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, send Hello World! in the chat then disconnect
+- [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, sends Hello World! in the chat then disconnect
 - [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI, mouse and keyboard controlled player. Can be used in a dummy world (without any server) to test things like physics or rendering
-- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Knows three commands at this point, pathfinding, disconnecting and checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof).
+- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Knows four commands at this point:
+  - pathfinding
+  - disconnecting 
+  - checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof)
+  - placing a block
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Simple example to stay at the same position. Physics is not processed, chunks are not saved in memory to save RAM.
 
 ## To-do list
 
-It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to activate a farm with almost 0% usage of CPU/GPU. The next step is to add some functionalities like block breaking with a tool and block placing, entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
+It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to activate a farm with almost 0% usage of CPU/GPU. The next step is to add some functionalities like entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
 
 There are also some minor improvements to existing features that have to be done:
 - Improve water/lava/ladder physics (the player can walk on fluids and can't climb the ladders)

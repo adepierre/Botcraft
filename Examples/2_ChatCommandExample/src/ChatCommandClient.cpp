@@ -45,6 +45,7 @@ void ChatCommandClient::Handle(ChatMessageClientbound &msg)
     {
         if (splitted.size() < 5)
         {
+            Say("Usage: [BotName] [goto] [x] [y] [z]");
             return;
         }
         Position target_position;
@@ -105,6 +106,30 @@ void ChatCommandClient::Handle(ChatMessageClientbound &msg)
     else if (splitted[1] == "die")
     {
         should_be_closed = true;
+    }
+    else if (splitted[1] == "place_block")
+    {
+        if (splitted.size() < 6)
+        {
+            Say("Usage: [BotName] [place_block] [item] [x] [y] [z]");
+            return;
+        }
+        const std::string item = splitted[2];
+        Position pos;
+        try
+        {
+            pos = Position(std::stoi(splitted[3]), std::stoi(splitted[4]), std::stoi(splitted[5]));
+        }
+        catch (const std::invalid_argument& e)
+        {
+            return;
+        }
+        catch (const std::out_of_range& e)
+        {
+            return;
+        }
+
+        PlaceBlock(item, pos, PlayerDiggingFace::Top);
     }
     else
     {

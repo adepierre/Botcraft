@@ -34,6 +34,7 @@ namespace Botcraft
         const float GetHealth() const;
         const int GetFood() const;
         const float GetFoodSaturation() const;
+        const bool GetHasMoved() const;
 
         void SetX(const double x);
         void SetY(const double y);
@@ -54,6 +55,9 @@ namespace Botcraft
         void SetHealth(const float health_);
         void SetFood(const int food_);
         void SetFoodSaturation(const float food_saturation_);
+        void SetHasMoved(const bool has_moved_);
+
+        void LookAt(const Vector3<double>& pos, const bool set_pitch = false);
 
     private:
         void UpdateVectors();
@@ -84,5 +88,7 @@ namespace Botcraft
         float health;
         int food;
         float food_saturation;
+
+        bool has_moved;
     };
 } // Botcraft

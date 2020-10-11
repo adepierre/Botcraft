@@ -29,7 +29,7 @@ static bool imgui_demo = false;
 #include "botcraft/Game/World/Chunk.hpp"
 
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
-#include "botcraft/Game/Inventory/Inventory.hpp"
+#include "botcraft/Game/Inventory/Window.hpp"
 
 const std::vector<float> color_day({ 0.6f, 0.85f, 0.9f });
 const std::vector<float> color_night({0.1f, 0.1f, 0.1f});
@@ -219,34 +219,34 @@ namespace Botcraft
                     if (inventory_manager && inventory_manager->GetPlayerInventory())
                     {
                         const std::map<short, ProtocolCraft::Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
-                        for (short i = 0; i <= Inventory::INVENTORY_OFFHAND_INDEX; ++i)
+                        for (short i = 0; i <= Window::INVENTORY_OFFHAND_INDEX; ++i)
                         {
                             auto it = slots.find(i);
                             if (it == slots.end())
                             {
                                 continue;
                             }
-                            if (i == Inventory::INVENTORY_CRAFTING_OUTPUT_INDEX)
+                            if (i == Window::INVENTORY_CRAFTING_OUTPUT_INDEX)
                             {
                                 ImGui::Text("Crafting output");
                             }
-                            else if (i == Inventory::INVENTORY_CRAFTING_INPUT_START)
+                            else if (i == Window::INVENTORY_CRAFTING_INPUT_START)
                             {
                                 ImGui::Text("Crafting input");
                             }
-                            else if (i == Inventory::INVENTORY_ARMOR_START)
+                            else if (i == Window::INVENTORY_ARMOR_START)
                             {
                                 ImGui::Text("Equiped Armor");
                             }
-                            else if (i == Inventory::INVENTORY_STORAGE_START)
+                            else if (i == Window::INVENTORY_STORAGE_START)
                             {
                                 ImGui::Text("Inventory");
                             }
-                            else if (i == Inventory::INVENTORY_HOTBAR_START)
+                            else if (i == Window::INVENTORY_HOTBAR_START)
                             {
                                 ImGui::Text("Hotbar");
                             }
-                            else if (i == Inventory::INVENTORY_OFFHAND_INDEX)
+                            else if (i == Window::INVENTORY_OFFHAND_INDEX)
                             {
                                 ImGui::Text("Offhand");
                             }

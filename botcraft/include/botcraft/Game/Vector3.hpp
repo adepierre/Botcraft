@@ -33,6 +33,13 @@ namespace Botcraft
             z = position.GetZ();
         }
 
+        Vector3(const Vector3<int>& position)
+        {
+            x = position.x;
+            y = position.y;
+            z = position.z;
+        }
+
         T x;
         T y;
         T z;

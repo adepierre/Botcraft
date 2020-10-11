@@ -6,7 +6,7 @@
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Biome.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
-#include "botcraft/Game/Inventory/Inventory.hpp"
+#include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Game/BaseClient.hpp"
 
 #include "botcraft/Network/NetworkManager.hpp"
@@ -87,11 +87,14 @@ namespace Botcraft
                     //Check that we did not go through a block
                     Physics();
 
-                    if (std::abs(player->GetSpeed().x) > 1e-3 ||
+                    if (player->GetHasMoved() ||
+                        std::abs(player->GetSpeed().x) > 1e-3 ||
                         std::abs(player->GetSpeed().y) > 1e-3 ||
                         std::abs(player->GetSpeed().z) > 1e-3)
                     {
                         has_moved = true;
+                        // Reset the player move state until next tick
+                        player->SetHasMoved(false);
                     }
                     else
                     {
@@ -147,7 +150,8 @@ namespace Botcraft
     void BaseClient::Physics()
     {
         //If the player did not move we assume it does not collide
-        if (abs(player->GetSpeed().x) < 1e-3 && 
+        if (!player->GetHasMoved() &&
+            abs(player->GetSpeed().x) < 1e-3 && 
             abs(player->GetSpeed().y) < 1e-3 && 
             abs(player->GetSpeed().z) < 1e-3)
         {
@@ -336,7 +340,8 @@ namespace Botcraft
 
     void BaseClient::Handle(ConfirmTransactionClientbound &msg)
     {
-        //If the transaction was not accepted, we must apologize
+        // If the transaction was not accepted, we must apologize
+        // else it's processed in InventoryManager
         if (!msg.GetAccepted())
         {
             std::shared_ptr<ConfirmTransactionServerbound> apologize_msg(new ConfirmTransactionServerbound);
@@ -345,10 +350,6 @@ namespace Botcraft
             apologize_msg->SetAccepted(msg.GetAccepted());
 
             network_manager->Send(apologize_msg);
-        }
-        else
-        {
-            // TODO if accepted
         }
     }
 

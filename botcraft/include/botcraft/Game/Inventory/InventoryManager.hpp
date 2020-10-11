@@ -4,11 +4,12 @@
 #include <map>
 #include <mutex>
 #include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ClickWindow.hpp"
 #include "protocolCraft/Handler.hpp"
 
 namespace Botcraft
 {
-    class Inventory;
+    class Window;
 
     class InventoryManager : public ProtocolCraft::Handler
     {
@@ -17,12 +18,14 @@ namespace Botcraft
 
         std::mutex& GetMutex();
 
-        const std::shared_ptr<Inventory> GetInventory(const short window_id) const;
-        const std::shared_ptr<Inventory> GetPlayerInventory() const;
-        std::shared_ptr<Inventory> GetInventory(const short window_id);
-        std::shared_ptr<Inventory> GetPlayerInventory();
-        const ProtocolCraft::Slot GetHotbarSelected() const;
+        const std::shared_ptr<Window> GetWindow(const short window_id) const;
+        const std::shared_ptr<Window> GetPlayerInventory() const;
+        std::shared_ptr<Window> GetWindow(const short window_id);
+        std::shared_ptr<Window> GetPlayerInventory();
+        const short GetIndexHotbarSelected() const;
+        const ProtocolCraft::Slot& GetHotbarSelected() const;
         const ProtocolCraft::Slot& GetCursor() const;
+        void AddPendingTransaction(const std::shared_ptr<ProtocolCraft::ClickWindow> transaction);
 
     private:
         void SetHotbarSelected(const short index);
@@ -39,11 +42,16 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::WindowItems& msg) override;
         virtual void Handle(ProtocolCraft::OpenWindow& msg) override;
         virtual void Handle(ProtocolCraft::HeldItemChangeClientbound& msg) override;
+        virtual void Handle(ProtocolCraft::ConfirmTransactionClientbound& msg) override;
 
     private:
         std::mutex inventory_manager_mutex;
-        std::map<short, std::shared_ptr<Inventory> > inventories;
+        std::map<short, std::shared_ptr<Window> > inventories;
         short index_hotbar_selected;
         ProtocolCraft::Slot cursor;
+
+        // Vector storing all the transacations that have neither been accepted
+        // nor refused by the server yet
+        std::vector<ProtocolCraft::ClickWindow> pending_transactions;
     };
 } // Botcraft

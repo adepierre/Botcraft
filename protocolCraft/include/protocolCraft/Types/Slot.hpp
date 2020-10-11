@@ -8,6 +8,30 @@ namespace ProtocolCraft
     class Slot : public NetworkType
     {
     public:
+        // Default constructor for empty slot
+        Slot()
+        {
+#if PROTOCOL_VERSION < 350
+            block_id = -1;
+#elif PROTOCOL_VERSION < 402
+            item_id = -1;
+#elif PROTOCOL_VERSION >= 402
+            present = false;
+            item_id = -1;
+#endif
+            item_count = 0;
+        }
+
+        const bool IsEmptySlot() const
+        {
+#if PROTOCOL_VERSION < 350
+            return block_id == -1;
+#elif PROTOCOL_VERSION < 402
+            return item_id == -1;;
+#elif PROTOCOL_VERSION >= 402
+            return !present;
+#endif
+        }
 
 #if PROTOCOL_VERSION < 350
         void SetBlockID(const short block_id_)
