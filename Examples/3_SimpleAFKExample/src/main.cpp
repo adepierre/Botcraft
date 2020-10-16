@@ -9,33 +9,27 @@ int main(int argc, char* argv[])
     {
         std::string login = "BCAFK";
         std::string password = "";
-        std::string ip = "127.0.0.1";
-        unsigned short port = 25565;
+        std::string address = "127.0.0.1:25565";
         
         if (argc == 1)
         {
             std::cout << "No command arguments. Using default options.\n";
-            std::cout << "Usage: 3_SimpleAFKExample [ip](127.0.0.1) [port](25565) [login](BCAFK) [password]()" << std::endl;
+            std::cout << "Usage: 3_SimpleAFKExample [address](127.0.0.1:25565) [login](BCAFK) [password]()" << std::endl;
         }
 
         if (argc > 1)
         {
-            ip = argv[1];
+            address = argv[1];
         }
 
         if (argc > 2)
         {
-            port = std::stoi(argv[2]);
+            login = argv[2];
         }
 
         if (argc > 3)
         {
-            login = argv[3];
-        }
-
-        if (argc > 4)
-        {
-            password = argv[4];
+            password = argv[3];
         }
 
 #if USE_GUI
@@ -45,7 +39,7 @@ int main(int argc, char* argv[])
 #endif
 
         std::cout << "Starting connection process" << std::endl;
-        client.Connect(ip, port, login, password);
+        client.Connect(address, login, password);
 
         while (true)
         {

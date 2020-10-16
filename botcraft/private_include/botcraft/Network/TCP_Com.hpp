@@ -13,7 +13,7 @@ namespace Botcraft
     class TCP_Com
     {
     public:
-        TCP_Com(const std::string &ip, const unsigned int port,
+        TCP_Com(const std::string &address,
             std::function<void(const std::vector<unsigned char>&)> callback);
         ~TCP_Com();
 
@@ -23,6 +23,9 @@ namespace Botcraft
 #ifdef USE_ENCRYPTION
         void SetEncrypter(const std::shared_ptr<AESEncrypter> encrypter_);
 #endif
+
+        const std::string& GetIp() const;
+        const unsigned short GetPort() const;
 
     private:
 
@@ -35,6 +38,8 @@ namespace Botcraft
         void handle_write(const asio::error_code& error);
 
         void do_close();
+
+        void SetIPAndPortFromAddress(const std::string& address);
 
 
     private:
@@ -50,6 +55,9 @@ namespace Botcraft
 
         std::function<void(const std::vector<unsigned char>&)> NewPacketCallback;
         std::mutex mutex_output;
+
+        std::string ip;
+        unsigned short port;
 
 #ifdef USE_ENCRYPTION
         std::shared_ptr<AESEncrypter> encrypter;

@@ -32,7 +32,7 @@ namespace Botcraft
         ~BaseClient();
 
         // Connect to a server, if password is empty, the server must be in offline mode
-        void Connect(const std::string &ip, const unsigned int port, const std::string &login, const std::string &password);
+        void Connect(const std::string &address, const std::string &login, const std::string &password);
         void Disconnect();
 
         void SetSharedWorld(const std::shared_ptr<World> world_);

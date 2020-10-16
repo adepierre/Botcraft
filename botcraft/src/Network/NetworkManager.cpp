@@ -14,7 +14,7 @@
 
 namespace Botcraft
 {
-    NetworkManager::NetworkManager(const std::string& ip, const unsigned int port, const std::string& login, const std::string& password)
+    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const std::string& password)
     {
         com = nullptr;
         authentifier = nullptr;
@@ -27,7 +27,7 @@ namespace Botcraft
         //Start the thread to process the incoming packets
         m_thread_process = std::thread(&NetworkManager::WaitForNewPackets, this);
 
-        com = std::shared_ptr<TCP_Com>(new TCP_Com(ip, port, std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1)));
+        com = std::shared_ptr<TCP_Com>(new TCP_Com(address, std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1)));
 
         //Let some time to initialize the communication before actually send data
         // TODO: make this in a cleaner way?
@@ -35,8 +35,8 @@ namespace Botcraft
 
         std::shared_ptr<ProtocolCraft::Handshake> handshake_msg(new ProtocolCraft::Handshake);
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
-        handshake_msg->SetServerAddress(ip);
-        handshake_msg->SetServerPort(port);
+        handshake_msg->SetServerAddress(com->GetIp());
+        handshake_msg->SetServerPort(com->GetPort());
         handshake_msg->SetNextState((int)ProtocolCraft::ConnectionState::Login);
         Send(handshake_msg);
 

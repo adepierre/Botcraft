@@ -2,8 +2,12 @@
 #include <iostream>
 #include <functional>
 
-#include "botcraft/Network/TCP_Com.hpp"
 #include "protocolCraft/BinaryReadWrite.hpp"
+
+#include "botcraft/Network/TCP_Com.hpp"
+#include "botcraft/Utilities/StringUtilities.hpp"
+#include "botcraft/Network/DNS/DNSMessage.hpp"
+#include "botcraft/Network/DNS/DNSSrvData.hpp"
 
 #ifdef USE_ENCRYPTION
 #include "botcraft/Network/AESEncrypter.hpp"
@@ -11,16 +15,18 @@
 
 namespace Botcraft
 {
-    TCP_Com::TCP_Com(const std::string &ip, const unsigned int port,
+    TCP_Com::TCP_Com(const std::string &address,
         std::function<void(const std::vector<unsigned char>&)> callback)
         : socket(io_service)
     {
         NewPacketCallback = callback;
 
+        SetIPAndPortFromAddress(address);
+
         asio::ip::tcp::resolver resolver(io_service);
         asio::ip::tcp::resolver::query query(ip, std::to_string(port));
         asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
-        
+        std::cout << "Trying to connect to " << ip << ":" << port << std::endl;
         asio::async_connect(socket, iterator,
             std::bind(&TCP_Com::handle_connect, this,
             std::placeholders::_1));
@@ -63,6 +69,16 @@ namespace Botcraft
         encrypter = encrypter_;
     }
 #endif
+
+    const std::string& TCP_Com::GetIp() const
+    {
+        return ip;
+    }
+
+    const unsigned short TCP_Com::GetPort() const
+    {
+        return port;
+    }
 
     void TCP_Com::close()
     {
@@ -195,5 +211,104 @@ namespace Botcraft
     void TCP_Com::do_close()
     {
         socket.close();
+    }
+
+    void TCP_Com::SetIPAndPortFromAddress(const std::string& address)
+    {
+        std::string addressOnly;
+
+        const std::vector<std::string> splitted_port = SplitString(address, ':');
+        // address:port format
+        if (splitted_port.size() > 1)
+        {
+            try
+            {
+                port = std::stoi(splitted_port[1]);
+                ip = splitted_port[0];
+                return;
+            }
+            catch (const std::exception&)
+            {
+                port = 0;
+            }
+            addressOnly = splitted_port[0];
+        }
+        // address only format
+        else
+        {
+            addressOnly = address;
+            port = 0;
+        }
+
+        // If port is unknown we first try a SRV DNS lookup
+        std::cout << "Performing SRV DNS lookup on " << "_minecraft._tcp." << address << " to find an endpoint" << std::endl;
+        asio::ip::udp::socket udp_socket(io_service);
+
+        // Create the query
+        DNSMessage query;
+        // Random identification
+        query.SetIdentification({ 0x42, 0x42 });
+        query.SetFlagQR(0);
+        query.SetFlagOPCode(0);
+        query.SetFlagAA(0);
+        query.SetFlagTC(0);
+        query.SetFlagRD(1);
+        query.SetFlagRA(0);
+        query.SetFlagZ(0);
+        query.SetFlagRCode(0);
+        query.SetNumberQuestion(1);
+        query.SetNumberAnswer(0);
+        query.SetNumberAuthority(0);
+        query.SetNumberAdditionalRR(0);
+        DNSQuestion question;
+        // SRV type
+        question.SetTypeCode(33);
+        question.SetClassCode(1);
+        question.SetNameLabels(SplitString("_minecraft._tcp." + address, '.'));
+        query.SetQuestions({ question });
+
+        // Write the request and send it to google DNS
+        std::vector<unsigned char> encoded_query;
+        query.Write(encoded_query);
+        udp_socket.open(asio::ip::udp::v4());
+        asio::ip::udp::endpoint endpoint(asio::ip::address::from_string("8.8.8.8"), 53);
+        udp_socket.send_to(asio::buffer(encoded_query), endpoint);
+
+        // Wait for the answer
+        std::vector<unsigned char> answer_buffer(512);
+        asio::ip::udp::endpoint sender_endpoint;
+        const size_t len = udp_socket.receive_from(asio::buffer(answer_buffer), sender_endpoint);
+
+        auto iter = answer_buffer.begin();
+        size_t remaining = len;
+
+        // Read answer
+        DNSMessage answer;
+        answer.Read(iter, remaining);
+
+        // If there is an answer and it's a SRV one (as it should be)
+        if (answer.GetNumberAnswer() > 0
+            && answer.GetAnswers()[0].GetTypeCode() == 0x21)
+        {
+            DNSSrvData data;
+            auto iter2 = answer.GetAnswers()[0].GetRData().begin();
+            size_t len2 = answer.GetAnswers()[0].GetRDLength();
+            data.Read(iter2, len2);
+            ip = "";
+            for (int i = 0; i < data.GetNameLabels().size(); ++i)
+            {
+                ip += data.GetNameLabels()[i] + (i == data.GetNameLabels().size() - 1 ? "" : ".");
+            }
+            port = data.GetPort();
+
+            std::cout << "SRV DNS lookup successful!" << std::endl;
+            return;
+        }
+        std::cout << "SRV DNS lookup failed to find an address" << std::endl;
+
+        // If we are here either the port was given or the SRV failed 
+        // In both cases we need to assume the given address is the correct one
+        port = (port == 0) ? 25565 : port;
+        ip = addressOnly;
     }
 } //Botcraft

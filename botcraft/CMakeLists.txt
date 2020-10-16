@@ -28,6 +28,11 @@ set(botcraft_PRIVATE_HDR
     private_include/botcraft/Network/Compression.hpp
     private_include/botcraft/Network/TCP_Com.hpp
     
+    private_include/botcraft/Network/DNS/DNSMessage.hpp
+    private_include/botcraft/Network/DNS/DNSQuestion.hpp
+    private_include/botcraft/Network/DNS/DNSResourceRecord.hpp
+    private_include/botcraft/Network/DNS/DNSSrvData.hpp
+    
     private_include/botcraft/Utilities/StringUtilities.hpp
 )
 
