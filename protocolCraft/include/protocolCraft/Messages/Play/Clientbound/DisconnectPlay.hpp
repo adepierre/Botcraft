@@ -58,7 +58,7 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["entity_id"] = reason.Serialize();
+            object["reason"] = reason.Serialize();
 
             return value;
         }

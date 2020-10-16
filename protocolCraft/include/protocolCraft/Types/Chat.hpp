@@ -14,14 +14,24 @@ namespace ProtocolCraft
             text = s;
         }
 
-        void SetFrom(const std::string &s)
+        void SetFrom(const std::string& s)
         {
             from = s;
+        }
+
+        void SetRawText(const std::string& s)
+        {
+            raw_text = s;
         }
 
         const std::string& GetText() const
         {
             return text;
+        }
+
+        const std::string& GetRawText() const
+        {
+            return raw_text;
         }
 
         const std::string& GetFrom() const
@@ -32,10 +42,10 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            const std::string json = ReadString(iter, length);
+            raw_text = ReadString(iter, length);
             
             from = "";
-            text = ParseChat(json);
+            text = ParseChat(raw_text);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -50,5 +60,6 @@ namespace ProtocolCraft
     private:
         std::string text;
         std::string from;
+        std::string raw_text;
     };
 }

@@ -32,9 +32,9 @@ namespace ProtocolCraft
             return "Display Scoreboard";
         }
 
-        void SetPosition(const NetworkPosition& Position_)
+        void SetPosition(const char position_)
         {
-            position = Position_;
+            position = position_;
         }
 
         void SetScoreName(const std::string& score_name_)
@@ -43,7 +43,7 @@ namespace ProtocolCraft
         }
 
 
-        const NetworkPosition& GetPosition() const
+        const char GetPosition() const
         {
             return position;
         }
@@ -57,13 +57,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            position.Read(iter, length);
+            position = ReadData<char>(iter, length);
             score_name = ReadString(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            position.Write(container);
+            WriteData<char>(position, container);
             WriteString(score_name, container);
         }
 
@@ -72,14 +72,14 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["Position"] = position.Serialize();
+            object["position"] = picojson::value((double)position);
             object["score_name"] = picojson::value(score_name);
 
             return value;
         }
 
     private:
-        NetworkPosition position;
+        char position;
         std::string score_name;
 
     };

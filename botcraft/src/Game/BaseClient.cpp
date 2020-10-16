@@ -356,7 +356,7 @@ namespace Botcraft
     void BaseClient::Handle(DisconnectPlay &msg)
     {
         std::cout << "Disconnect during playing with reason: " << 
-            msg.GetReason().GetText() << std::endl;
+            msg.GetReason().GetRawText() << std::endl;
         std::cout << "Disconnecting ..." << std::endl;
         
         should_be_closed = true;
