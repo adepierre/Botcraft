@@ -279,7 +279,7 @@ namespace Botcraft
         asio::ip::udp::endpoint sender_endpoint;
         const size_t len = udp_socket.receive_from(asio::buffer(answer_buffer), sender_endpoint);
 
-        auto iter = answer_buffer.begin();
+        ProtocolCraft::ReadIterator iter = answer_buffer.begin();
         size_t remaining = len;
 
         // Read answer
