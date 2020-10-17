@@ -100,14 +100,15 @@ namespace Botcraft
             }
 
             my_shader->Use();
+            float real_fps = 1.0f;
 
             while (!glfwWindowShouldClose(window))
             {
                 double currentFrame = glfwGetTime();
-                auto now = std::chrono::system_clock::now();
+                auto start = std::chrono::high_resolution_clock::now();
 
                 //Max 60 FPS
-                auto end = now + std::chrono::microseconds(1000000 / 60);
+                auto end = start + std::chrono::microseconds(1000000 / 60);
 
                 deltaTime = currentFrame - lastFrameTime;
                 lastFrameTime = currentFrame;
@@ -193,9 +194,10 @@ namespace Botcraft
                 world_renderer->RenderFaces(&num_chunks, &num_rendered_chunks, &num_faces, &num_rendered_faces);
                 {
                     ImGui::SetNextWindowPos(ImVec2(current_window_width, 0), 0, ImVec2(1.0f, 0.0f));
-                    ImGui::SetNextWindowSize(ImVec2(175, 125));
+                    ImGui::SetNextWindowSize(ImVec2(180, 140));
                     ImGui::Begin("Rendering");
-                    ImGui::Text("FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
+                    ImGui::Text("Lim. FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
+                    ImGui::Text("Real FPS: %.1f (%.2fms)", 1.0 / real_fps, real_fps * 1000.0);
                     ImGui::Text("Loaded sections: %i", num_chunks);
                     ImGui::Text("Rendered sections: %i", num_rendered_chunks);
                     ImGui::Text("Loaded faces: %i", num_faces);
@@ -282,6 +284,7 @@ namespace Botcraft
                     take_screenshot = false;
                 }
 
+                real_fps = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1e6;
                 //Wait to have 60 FPS
                 std::this_thread::sleep_until(end);
             }
