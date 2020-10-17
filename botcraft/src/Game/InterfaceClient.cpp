@@ -434,7 +434,6 @@ namespace Botcraft
 
         // We need to swap the currently selected slot in the
         // hotbar with the one with the correct item
-        int transaction_id = inventory_manager->GetPlayerInventory()->GetNextTransactionId();
 
         std::shared_ptr<ClickWindow> click_window_msg(new ClickWindow);
 
@@ -442,34 +441,22 @@ namespace Botcraft
         click_window_msg->SetWindowId(Window::PLAYER_INVENTORY_INDEX);
         click_window_msg->SetSlot(inventory_correct_slot_index);
         click_window_msg->SetButton(0); // Left click to select the stack
-        click_window_msg->SetActionNumber(transaction_id);
         click_window_msg->SetMode(0); // Regular click
         click_window_msg->SetClickedItem(inventory_slots.at(inventory_correct_slot_index));
 
-        transaction_id++;
-        inventory_manager->GetPlayerInventory()->SetNextTransactionId(transaction_id);
-        inventory_manager->AddPendingTransaction(click_window_msg);
-        network_manager->Send(click_window_msg);
+        SendInventoryTransaction(click_window_msg);
 
         // Click in the hotbar
         click_window_msg->SetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
-        click_window_msg->SetActionNumber(transaction_id);
         click_window_msg->SetClickedItem(inventory_manager->GetHotbarSelected());
 
-        transaction_id++;
-        inventory_manager->GetPlayerInventory()->SetNextTransactionId(transaction_id);
-        inventory_manager->AddPendingTransaction(click_window_msg);
-        network_manager->Send(click_window_msg);
+        SendInventoryTransaction(click_window_msg);
 
         // Click back on the slot where the desired item was
         click_window_msg->SetSlot(inventory_correct_slot_index);
-        click_window_msg->SetActionNumber(transaction_id);
         click_window_msg->SetClickedItem(inventory_slots.at(inventory_correct_slot_index));
 
-        transaction_id++;
-        inventory_manager->GetPlayerInventory()->SetNextTransactionId(transaction_id);
-        inventory_manager->AddPendingTransaction(click_window_msg);
-        network_manager->Send(click_window_msg);
+        SendInventoryTransaction(click_window_msg);
 
         // Wait for the server confirmation so
         // the hotbar selected slot is the item we need

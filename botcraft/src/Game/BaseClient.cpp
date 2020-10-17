@@ -242,6 +242,24 @@ namespace Botcraft
         }
     }
 
+    void BaseClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ClickWindow> transaction)
+    {
+        if (!transaction)
+        {
+            return;
+        }
+        std::shared_ptr<Window> window = inventory_manager->GetWindow(transaction->GetWindowId());
+        if (!window)
+        {
+            std::cerr << "Warning, trying to set a transaction for an unknown window" << std::endl;
+        }
+        const int transaction_id = window->GetNextTransactionId();
+        transaction->SetActionNumber(transaction_id);
+        window->SetNextTransactionId(transaction_id + 1);
+        inventory_manager->AddPendingTransaction(transaction);
+        network_manager->Send(transaction);
+    }
+
     void BaseClient::Disconnect()
     {
         game_mode = GameMode::None;

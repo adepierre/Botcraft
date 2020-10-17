@@ -40,6 +40,9 @@ namespace Botcraft
     protected:
         void RunSyncPos();
         void Physics();
+        // Set the right transaction id, add it to the inventory manager,
+        // update the next transaction id and send it to the server
+        void SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ClickWindow> transaction);
 
     protected:
         virtual void Handle(ProtocolCraft::Message &msg) override;

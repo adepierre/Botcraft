@@ -21,6 +21,8 @@ ChatCommandClient::ChatCommandClient(const bool use_renderer_, const bool is_afk
     std::cout << "        name check_perimeter [x y z (default = player position)] radius (default = 128) [check_lighting (default = true)]\n";
     std::cout << "    Disconnect:\n";
     std::cout << "        name die\n";
+    std::cout << "    Place a block:\n";
+    std::cout << "        name place_block minecraft:item x y z\n";
 }
 
 ChatCommandClient::~ChatCommandClient()
