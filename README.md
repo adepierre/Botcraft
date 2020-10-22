@@ -43,17 +43,17 @@ Optional dependencies (needed only if you want to build the OpenGL renderer)
 - [imgui](https://github.com/ocornut/imgui)
 - [rectpack2D](https://github.com/TeamHypersomnia/rectpack2D)
 
-I only regularly test the code on Windows with Visual 2019 but it should also work with older versions (from 2013 to 2017). All the code is cross-platform and I sometimes test the compilation on Linux with GCC so it should also work on Linux and macOS.
+The code is cross-platform and is automatically built on both Windows with Visual 2019 and Linux at each push. It should also work on reasonably older versions of Visual Studio and macOS as well.
 
 ## Building and Installation
 
-To build the library for the 1.16.3 version of the game with both encryption and compression support and without OpenGL rendering:
+To build the library for the latest version of the game with both encryption and compression support and without OpenGL rendering:
 ```
 git clone https://github.com/adepierre/Botcraft.git
 cd Botcraft
 mkdir build
 cd build
-cmake -DGAME_VERSION=1.16.3 -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
+cmake -DGAME_VERSION=latest -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
 make all
 make install
 ```
@@ -65,7 +65,7 @@ Don't forget to change the cmake install directory if you don't want the library
 On Windows with Visual, you can replace the last five steps by launching cmake-gui and then compiling the .sln from Visual.
 
 There are several cmake options you can modify:
-- GAME_VERSION [1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2, 1.16, 1.16.1, 1.16.2, 1.16.3]
+- GAME_VERSION [1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2, 1.16, 1.16.1, 1.16.2, 1.16.3, latest]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
 - BOTCRAFT_INSTALL_ASSETS [ON/OFF] Copy all the needed assets to the installation folder along with the library and executable
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
