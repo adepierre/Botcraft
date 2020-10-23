@@ -23,6 +23,8 @@ ChatCommandClient::ChatCommandClient(const bool use_renderer_, const bool is_afk
     std::cout << "        name die\n";
     std::cout << "    Place a block:\n";
     std::cout << "        name place_block minecraft:item x y z\n";
+    std::cout << "    Interact (right click) a block:\n";
+    std::cout << "        name interact x y z\n";
 }
 
 ChatCommandClient::~ChatCommandClient()
@@ -132,6 +134,29 @@ void ChatCommandClient::Handle(ChatMessageClientbound &msg)
         }
 
         PlaceBlock(item, pos, PlayerDiggingFace::Top);
+    }
+    else if (splitted[1] == "interact")
+    {
+        if (splitted.size() < 5)
+        {
+            Say("Usage: [BotName] [interact] [x] [y] [z]");
+            return;
+        }
+        Position pos;
+        try
+        {
+            pos = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
+        }
+        catch (const std::invalid_argument& e)
+        {
+            return;
+        }
+        catch (const std::out_of_range& e)
+        {
+            return;
+        }
+
+        InteractBlock(pos, PlayerDiggingFace::Top, true);
     }
     else
     {

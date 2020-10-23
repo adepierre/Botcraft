@@ -487,6 +487,75 @@ namespace Botcraft
         return true;
     }
 
+    const bool InterfaceClient::InteractBlock(const Position& location, const PlayerDiggingFace interact_face, const bool animation)
+    {
+        if (!network_manager
+            || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play
+            || !player)
+        {
+            return false;
+        }
+
+        const Vector3<double> dist(std::floor(player->GetPosition().x) - location.x, std::floor(player->GetPosition().y) - location.y, std::floor(player->GetPosition().z) - location.z);
+        double distance = std::sqrt(dist.dot(dist));
+        if (distance > 5.0f)
+        {
+            std::cout << "I am asked to interact at " << location << " but I'm affraid that's out of my range (" << distance << "m)." << std::endl;
+            return false;
+        }
+
+        std::shared_ptr<PlayerBlockPlacement> place_block_msg(new PlayerBlockPlacement);
+        place_block_msg->SetLocation(location.ToNetworkPosition());
+        place_block_msg->SetFace((int)interact_face);
+        switch (interact_face)
+        {
+        case PlayerDiggingFace::Bottom:
+            place_block_msg->SetCursorPositionX(0.5f);
+            place_block_msg->SetCursorPositionY(0.0f);
+            place_block_msg->SetCursorPositionZ(0.5f);
+            break;
+        case PlayerDiggingFace::Top:
+            place_block_msg->SetCursorPositionX(0.5f);
+            place_block_msg->SetCursorPositionY(1.0f);
+            place_block_msg->SetCursorPositionZ(0.5f);
+            break;
+        case PlayerDiggingFace::North:
+            place_block_msg->SetCursorPositionX(0.5f);
+            place_block_msg->SetCursorPositionY(0.5f);
+            place_block_msg->SetCursorPositionZ(0.0f);
+            break;
+        case PlayerDiggingFace::South:
+            place_block_msg->SetCursorPositionX(0.5f);
+            place_block_msg->SetCursorPositionY(0.5f);
+            place_block_msg->SetCursorPositionZ(1.0f);
+            break;
+        case PlayerDiggingFace::East:
+            place_block_msg->SetCursorPositionX(1.0f);
+            place_block_msg->SetCursorPositionY(0.5f);
+            place_block_msg->SetCursorPositionZ(0.5f);
+            break;
+        case PlayerDiggingFace::West:
+            place_block_msg->SetCursorPositionX(0.0f);
+            place_block_msg->SetCursorPositionY(0.5f);
+            place_block_msg->SetCursorPositionZ(0.5f);
+            break;
+        default:
+            break;
+        }
+        place_block_msg->SetInsideBlock(false);
+        place_block_msg->SetHand((int)Hand::Left);
+        network_manager->Send(place_block_msg);
+
+        if (animation)
+        {
+            std::shared_ptr<AnimationServerbound> animation_msg(new AnimationServerbound);
+            animation_msg->SetHand((int)Hand::Left);
+            network_manager->Send(animation_msg);
+        }
+
+        return true;
+    }
+
     void InterfaceClient::Handle(UpdateHealth &msg)
     {
         BaseClient::Handle(msg);

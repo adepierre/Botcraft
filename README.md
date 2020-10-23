@@ -18,7 +18,8 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 - Path finding
 - Block breaking
 - Inventory managing
-- **NEW** : Block placing
+- Block placing
+- **NEW** : Block interaction (button, lever etc...)
 
 Example of pathfinding. Right of the screen is the integrated renderer
 ![](gifs/video.gif)

@@ -55,6 +55,12 @@ namespace Botcraft
         // location: position of the placed block, the player must be < 5 blocks away
         // placed_face: face on wich placing the block
         const bool PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face);
+        
+        // Interact (right click) with a the block at the given location
+        // location: position of the block, the player must be < 5 blocks away
+        // placed_face: face on wich the player wants to click
+        // animation: whether or not to send the animation to the server (vanilla client does)
+        const bool InteractBlock(const Position& location, const PlayerDiggingFace interact_face, const bool animation = false);
 
     protected:
         // Example of overriding the processing of an incoming packet
