@@ -10,7 +10,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 
 - Connection to minecraft server (both offline mode and online connection with Mojang account)
 - DNS name resolution with and without SRV record
-- Versions 1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2, 1.16, 1.16.1, 1.16.2 and 1.16.3 supported
+- All official releases from 1.12.2 to 1.16.4 supported
 - Compression
 - Physics and collisions
 - (Optional) Rendering of all the blocks (not entities)
@@ -19,7 +19,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 - Block breaking
 - Inventory managing
 - Block placing
-- **NEW** : Block interaction (button, lever etc...)
+- Block interaction (button, lever etc...)
 
 Example of pathfinding. Right of the screen is the integrated renderer
 ![](gifs/video.gif)
@@ -66,7 +66,7 @@ Don't forget to change the cmake install directory if you don't want the library
 On Windows with Visual, you can replace the last five steps by launching cmake-gui and then compiling the .sln from Visual.
 
 There are several cmake options you can modify:
-- GAME_VERSION [1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2, 1.16, 1.16.1, 1.16.2, 1.16.3, latest]
+- GAME_VERSION [1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2, 1.16, 1.16.1, 1.16.2, 1.16.3, 1.16.4, latest]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
 - BOTCRAFT_INSTALL_ASSETS [ON/OFF] Copy all the needed assets to the installation folder along with the library and executable
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
@@ -79,11 +79,12 @@ There are several cmake options you can modify:
 Examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, sends Hello World! in the chat then disconnect
 - [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI, mouse and keyboard controlled player. Can be used in a dummy world (without any server) to test things like physics or rendering
-- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Knows four commands at this point:
+- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Known commands at this point:
   - pathfinding
   - disconnecting 
   - checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof)
   - placing a block
+  - interacting with a block (lever, button ...)
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Simple example to stay at the same position. Physics is not processed, chunks are not saved in memory to save RAM.
 
 ## To-do list
