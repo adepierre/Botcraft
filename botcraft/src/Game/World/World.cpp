@@ -840,17 +840,18 @@ namespace Botcraft
             const int y_pos = msg.GetRecords()[i].GetYCoordinate();
             const int z_pos = CHUNK_WIDTH * msg.GetChunkZ() + z;
 #else
-        const int chunk_x = (msg.GetChunkSectionCoordinate() >> 42) & 0x3FFFFF; // 22 bits
-        const int chunk_y = (msg.GetChunkSectionCoordinate() >> 22) & 0xFFFFF; // 20 bits
-        const int chunk_z = (msg.GetChunkSectionCoordinate() >> 0) & 0x3FFFFF; // 22 bits
+        const int chunk_x = CHUNK_WIDTH * ((msg.GetChunkSectionCoordinate() >> 42) & 0x3FFFFF); // 22 bits
+        const int chunk_z = CHUNK_WIDTH * ((msg.GetChunkSectionCoordinate() >> 20) & 0x3FFFFF); // 22 bits
+        const int chunk_y = SECTION_HEIGHT * ((msg.GetChunkSectionCoordinate() >> 0) & 0xFFFFF); // 20 bits
 
+        const std::vector<long long int>& data = msg.GetData();
         for (int i = 0; i < msg.GetArraySize(); ++i)
         {
-            const unsigned int block_id = msg.GetData()[i] >> 12;
+            const unsigned int block_id = data[i] >> 12;
 
-            const int x_pos = CHUNK_WIDTH * chunk_x + ((msg.GetData()[i] >> 8) & 0xF);
-            const int y_pos = SECTION_HEIGHT * chunk_y + ((msg.GetData()[i] >> 4) & 0xF);
-            const int z_pos = CHUNK_WIDTH * chunk_z + ((msg.GetData()[i] >> 0) & 0xF);
+            const int x_pos = chunk_x + ((data[i] >> 8) & 0xF);
+            const int z_pos = chunk_z + ((data[i] >> 4) & 0xF);
+            const int y_pos = chunk_y + ((data[i] >> 0) & 0xF);
 #endif
             Position cube_pos(x_pos, y_pos, z_pos);
 
