@@ -658,7 +658,7 @@
         "name": "minecraft:sticky_piston",
         "render": "block",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 4,
@@ -709,7 +709,7 @@
         "name": "minecraft:piston",
         "render": "block",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": -1,
