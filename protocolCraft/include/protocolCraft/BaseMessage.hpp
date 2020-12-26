@@ -10,9 +10,6 @@ namespace ProtocolCraft
     class BaseMessage : public Message
     {
     protected:
-        virtual void DispatchImpl(Handler *handler) override
-        {
-            handler->Handle(static_cast<TDerived&>(*this));
-        }
+        virtual void DispatchImpl(Handler* handler) override;
     };
 }

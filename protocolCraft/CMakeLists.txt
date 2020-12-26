@@ -229,6 +229,7 @@ set(protocolCraft_PUBLIC_HDR
 )
 
 set(protocolCraft_SRC 
+    src/BaseMessage.cpp
     src/BinaryReadWrite.cpp
     src/Types/Chat.cpp
     src/Types/NBT/NBT.cpp
