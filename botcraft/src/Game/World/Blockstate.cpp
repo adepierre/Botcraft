@@ -58,7 +58,7 @@ namespace Botcraft
                     break;
                 case 1:
                     new_center = colliders[i].GetCenter() - 0.5;
-                    new_center = Vector3<double>(new_center.x, -new_center.z, new_center.y);
+                    new_center = Vector3<double>(new_center.x, new_center.z, -new_center.y);
                     new_center = new_center + 0.5;
                     colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().x, colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y));
                     break;
@@ -70,7 +70,7 @@ namespace Botcraft
                     break;
                 case 3:
                     new_center = colliders[i].GetCenter() - 0.5;
-                    new_center = Vector3<double>(new_center.x, new_center.z, -new_center.y);
+                    new_center = Vector3<double>(new_center.x, -new_center.z, new_center.y);
                     new_center = new_center + 0.5;
                     colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().x, colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y));
                     break;
@@ -94,9 +94,9 @@ namespace Botcraft
                     break;
                 case 1:
                     new_center = colliders[i].GetCenter() - 0.5;
-                    new_center = Vector3<double>(new_center.z, new_center.y, -new_center.x);
+                    new_center = Vector3<double>(-new_center.z, new_center.y, new_center.x);
                     new_center = new_center + 0.5;
-                    colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().x));
+                    colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y, colliders[i].GetHalfSize().x));
                     break;
                 case 2:
                     new_center = colliders[i].GetCenter() - 0.5;
@@ -106,7 +106,7 @@ namespace Botcraft
                     break;
                 case 3:
                     new_center = colliders[i].GetCenter() - 0.5;
-                    new_center = Vector3<double>(-new_center.z, new_center.y, new_center.x);
+                    new_center = Vector3<double>(new_center.z, new_center.y, -new_center.x);
                     new_center = new_center + 0.5;
                     colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y, colliders[i].GetHalfSize().x));
                     break;
@@ -124,13 +124,13 @@ namespace Botcraft
         {
             std::vector<FaceDescriptor> &faces = output.GetFaces();
 
-            std::vector<Orientation> rotated_orientations = { Orientation::Top, Orientation::South, Orientation::Bottom, Orientation::North };
+            std::vector<Orientation> rotated_orientations = { Orientation::Top, Orientation::North, Orientation::Bottom, Orientation::South };
 
             for (int f = 0; f < faces.size(); ++f)
             {
                 //We want to add this transformation after the local translations,
                 //Just before the global translation to final position
-                faces[f].transformations.translations.insert(faces[f].transformations.translations.begin(), Renderer::TransformationPtr(new Renderer::Rotation(1.0f, 0.0f, 0.0f, rotation_x)));
+                faces[f].transformations.translations.insert(faces[f].transformations.translations.begin(), Renderer::TransformationPtr(new Renderer::Rotation(1.0f, 0.0f, 0.0f, -rotation_x)));
 
                 const auto it_cullface = std::find(rotated_orientations.begin(), rotated_orientations.end(), faces[f].cullface_direction);
 
@@ -155,13 +155,13 @@ namespace Botcraft
         {
             std::vector<FaceDescriptor> &faces = output.GetFaces();
 
-            std::vector<Orientation> rotated_orientations = { Orientation::South, Orientation::East, Orientation::North, Orientation::West };
+            std::vector<Orientation> rotated_orientations = { Orientation::South, Orientation::West, Orientation::North, Orientation::East };
 
             for (int f = 0; f < faces.size(); ++f)
             {
                 //We want to add this transformation after the local translations,
                 //Just before the global translation to final position
-                faces[f].transformations.translations.insert(faces[f].transformations.translations.begin(), Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 1.0f, 0.0f, rotation_y)));
+                faces[f].transformations.translations.insert(faces[f].transformations.translations.begin(), Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 1.0f, 0.0f, -rotation_y)));
 
                 const auto it_cullface = std::find(rotated_orientations.begin(), rotated_orientations.end(), faces[f].cullface_direction);
 
