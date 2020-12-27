@@ -548,6 +548,8 @@ namespace Botcraft
                 faces[i].transformations.offset_y1 *= 16.0f / it->second.second;
                 faces[i].transformations.offset_x2 *= 16.0f / it->second.first;
                 faces[i].transformations.offset_y2 *= 16.0f / it->second.second;
+
+                faces[i].face = Renderer::Face(faces[i].transformations, faces[i].orientation);
             }
         }
 #endif
