@@ -218,7 +218,7 @@ namespace Botcraft
             }
 
             //In case we want to save the atlas to check the data
-            //WriteImage("atlas.png", height, width, 4, data.data(), false);
+            WriteImage("atlas.png", height, width, 4, data.data(), false);
         }
 
         const int Atlas::GetWidth() const

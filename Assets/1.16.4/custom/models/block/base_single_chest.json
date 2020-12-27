@@ -1,0 +1,20 @@
+{
+	"textures": {
+		"all": "#all"
+	},
+	"elements": [
+		{
+			"__comment": "Chest base",
+			"from": [1, 0, 1],
+			"to": [15, 10, 15],
+			"faces": {
+				"down":  { "uv": [ 14, 19, 28, 33 ], "texture": "#all", "cullface": "down" },
+                "up":    { "uv": [ 28, 19, 42, 33 ], "texture": "#all"},
+                "north": { "uv": [ 0, 43, 14, 33 ], "texture": "#all" },
+                "south": { "uv": [ 14, 43, 28, 33 ], "texture": "#all" },
+                "west":  { "uv": [ 28, 43, 42, 33 ], "texture": "#all" },
+                "east":  { "uv": [ 42, 43, 56, 33 ], "texture": "#all" }
+			}
+		}
+	]
+}

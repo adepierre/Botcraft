@@ -264,7 +264,7 @@ namespace Botcraft
                            hardness(hardness_), tint_type(tint_type_), m_name(name_)
 #else
     Blockstate::Blockstate(const int id_,
-                           const bool transparent_, const bool solid_, const bool fluid_,
+                           const bool transparent_, const bool solid_, const bool fluid_, const bool custom,
                            const float hardness_, const TintType tint_type_, const std::string &name_,
                            const std::string &path, const std::vector<std::string> &variables) :
                            id(id_), transparent(transparent_), solid(solid_), fluid(fluid_),
@@ -282,7 +282,16 @@ namespace Botcraft
             return;
         }
 
-        std::string full_filepath = ASSETS_PATH + std::string("/minecraft/blockstates/") + path + ".json";
+        std::string full_filepath;
+        
+        if (custom)
+        {
+            full_filepath = ASSETS_PATH + std::string("/custom/blockstates/") + path + ".json";
+        }
+        else
+        {
+            full_filepath = ASSETS_PATH + std::string("/minecraft/blockstates/") + path + ".json";
+        }
 
         std::stringstream ss;
         std::ifstream file;
@@ -302,7 +311,15 @@ namespace Botcraft
                 file.open(full_filepath);
                 if (!file.is_open())
                 {
-                    std::cerr << "Error reading blockstate file at " << full_filepath << std::endl;
+                    if (custom)
+                    {
+                        std::cout << "Missing custom definition for " << full_filepath << std::endl;
+                    }
+                    else
+                    {
+                        std::cerr << "Error reading blockstate file at " << full_filepath << std::endl;
+                    }
+
                     error = true;
                 }
                 if (!error)
@@ -337,7 +354,7 @@ namespace Botcraft
 
         if (error)
         {
-            models.push_back(Model::GetModel(""));
+            models.push_back(Model::GetModel("", false));
             models_weights.push_back(1);
             weights_sum += 1;
             return;
@@ -408,7 +425,7 @@ namespace Botcraft
                         const std::string serialized = models_array[i].serialize();
                         const std::string model_name = ModelNameFromJson(serialized);
                         const int weight = WeightFromJson(serialized);
-                        models_deque.push_back(ModelModificationFromJson(Model::GetModel(model_name), serialized));
+                        models_deque.push_back(ModelModificationFromJson(Model::GetModel(model_name, custom), serialized));
                         models_weights.push_back(weight);
                         weights_sum += weight;
                     }
@@ -418,7 +435,7 @@ namespace Botcraft
                     const std::string serialized = variant_value.serialize();
                     const std::string model_name = ModelNameFromJson(serialized);
                     const int weight = WeightFromJson(serialized);
-                    models_deque.push_back(ModelModificationFromJson(Model::GetModel(model_name), serialized));
+                    models_deque.push_back(ModelModificationFromJson(Model::GetModel(model_name, custom), serialized));
                     models_weights.push_back(weight);
                     weights_sum += weight;
                 }
@@ -426,7 +443,7 @@ namespace Botcraft
             else
             {
                 std::cerr << "Error reading " << full_filepath << std::endl;
-                models_deque.push_back(Model::GetModel(""));
+                models_deque.push_back(Model::GetModel("", false));
                 models_weights.push_back(1);
                 weights_sum += 1;
             }
@@ -464,7 +481,7 @@ namespace Botcraft
                             const std::string model_name = ModelNameFromJson(serialized);
                             for (int k = 0; k < num_models; ++k)
                             {
-                                models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name), serialized));
+                                models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), serialized));
                                 models_weights.push_back(models_weights[k] * WeightFromJson(serialized));
                             }
                         }
@@ -477,7 +494,7 @@ namespace Botcraft
                         const std::string model_name = ModelNameFromJson(serialized);
                         for (int k = 0; k < models_deque.size(); ++k)
                         {
-                            models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name), serialized);
+                            models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, custom), serialized);
                             models_weights[k] *= WeightFromJson(serialized);
                         }
                     }
@@ -580,7 +597,7 @@ namespace Botcraft
                                 const std::string model_name = ModelNameFromJson(serialized);
                                 for (int k = 0; k < num_models; ++k)
                                 {
-                                    Model new_model = models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name), serialized);
+                                    Model new_model = models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), serialized);
                                     models_deque.push_back(new_model);
                                     models_weights.push_back(models_weights[k] * WeightFromJson(serialized));
                                 }
@@ -594,7 +611,7 @@ namespace Botcraft
                             const std::string model_name = ModelNameFromJson(serialized);
                             for (int k = 0; k < models_deque.size(); ++k)
                             {
-                                models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name), serialized);
+                                models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, custom), serialized);
                                 models_weights[k] *= WeightFromJson(serialized);
                             }
                         }

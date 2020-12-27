@@ -316,7 +316,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 347
         blockstates[-1] = std::map<unsigned char, std::shared_ptr<Blockstate> >({ { 0, std::shared_ptr<Blockstate>(new Blockstate(-1, 0, false, true, false, -2.0f, TintType::None, "default", "")) } });
 #else
-        blockstates[-1] = std::shared_ptr<Blockstate>(new Blockstate(-1, false, true, false, -2.0f, TintType::None, "default", ""));
+        blockstates[-1] = std::shared_ptr<Blockstate>(new Blockstate(-1, false, true, false, false, -2.0f, TintType::None, "default", ""));
 #endif
 
         const std::string file_path = ASSETS_PATH + std::string("/custom/Blocks.json");
@@ -554,25 +554,30 @@ namespace Botcraft
 
                 if (render == "none")
                 {
-                    blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, true, false, false, -2, TintType::None, blockstate_name, "none"));
+                    blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, true, false, false, false, -2, TintType::None, blockstate_name, "none"));
                 }
-                else if (render == "block" || render == "fluid" || render == "other")
+                else if (render == "fluid")
                 {
-                    if (render == "fluid" && textures.find(blockstate_name) == textures.end())
+                    if (textures.find(blockstate_name) == textures.end())
                     {
                         std::cerr << "Error, blockstate " << blockstate_name << " is a fluid, but it does not have a texture file specified in Blocks_info.json" << std::endl;
                     }
-
-                    if (render == "fluid")
+                    else
                     {
                         blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, Model::GetModel(15 - fluid_level, textures[blockstate_name])));
                     }
-                    else
-                    {
-                        // Remove the minecraft: prefix to get the blockstate name
-                        std::string blockstate = blockstate_name.substr(10);
-                        blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], false, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables));
-                    }
+                }
+                else if (render == "block")
+                {
+                    // Remove the minecraft: prefix to get the blockstate name
+                    std::string blockstate = blockstate_name.substr(10);
+                    blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], false, false, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables));
+                }
+                else if (render == "other")
+                {
+                    // Remove the minecraft: prefix to get the blockstate name
+                    std::string blockstate = blockstate_name.substr(10);
+                    blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], false, true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables));
                 }
             }
         }

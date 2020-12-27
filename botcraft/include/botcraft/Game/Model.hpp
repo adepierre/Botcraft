@@ -37,14 +37,14 @@ namespace Botcraft
     {
 
     private:
-        // Constructor from a minecraft json file
-        Model(const std::string& filepath);
+        // Constructor from a json file
+        Model(const std::string& filepath, const bool custom);
         // Fluid constructor
         Model(const unsigned char height, const std::string& texture);
     public:
         // Base constructor
         Model();
-        static const Model& GetModel(const std::string& filepath);
+        static const Model& GetModel(const std::string& filepath, const bool custom);
         static const Model GetModel(const unsigned char height, const std::string& texture);
 
         Model &operator+=(const Model &m);
@@ -71,6 +71,7 @@ namespace Botcraft
 
 #if USE_GUI
         std::map<std::string, std::string> textures_variables;
+        std::map<std::string, std::pair<int, int> > textures_base_size;
 
         //All the faces of this model
         std::vector<FaceDescriptor> faces;

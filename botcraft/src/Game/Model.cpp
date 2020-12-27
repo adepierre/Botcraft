@@ -15,14 +15,14 @@ namespace Botcraft
         ambient_occlusion = false;
     }
 
-    const Model& Model::GetModel(const std::string& filepath)
+    const Model& Model::GetModel(const std::string& filepath, const bool custom)
     {
         auto cached = cached_models.find(filepath);
         if (cached != cached_models.end())
         {
             return cached->second;
         }
-        cached_models[filepath] = Model(filepath);
+        cached_models[filepath] = Model(filepath, custom);
         return cached_models[filepath];
     }
 
@@ -31,9 +31,18 @@ namespace Botcraft
         return Model(height, texture);
     }
 
-    Model::Model(const std::string &filepath)
+    Model::Model(const std::string &filepath, const bool custom)
     {
-        std::string full_filepath = ASSETS_PATH + std::string("/minecraft/models/") + filepath + ".json";
+        std::string full_filepath;
+        
+        if (custom)
+        {
+            full_filepath = ASSETS_PATH + std::string("/custom/models/") + filepath + ".json";
+        }
+        else
+        {
+            full_filepath = ASSETS_PATH + std::string("/minecraft/models/") + filepath + ".json";
+        }
 
         std::stringstream ss;
         std::ifstream file;
@@ -110,9 +119,9 @@ namespace Botcraft
             {
                 model_name = model_name.substr(10);
             }
-            const Model& parent_model = GetModel(model_name);
+            const Model& parent_model = GetModel(model_name, custom);
 #else
-            const Model& parent_model = GetModel(it->second.get<std::string>());
+            const Model& parent_model = GetModel(it->second.get<std::string>(), custom);
 #endif
             colliders = parent_model.colliders;
 #if USE_GUI
@@ -135,6 +144,19 @@ namespace Botcraft
         }
 
 #if USE_GUI
+        it = obj.find("textures_base_size");
+        if (it != obj.end())
+        {
+            const picojson::value::object& obj_tex = it->second.get<picojson::object>();
+            for (picojson::value::object::const_iterator j = obj_tex.begin(); j != obj_tex.end(); ++j)
+            {
+                const std::string texture_name = j->first;
+
+                picojson::array width_height = j->second.get<picojson::array>();
+                textures_base_size[texture_name] = std::pair<int, int>(width_height[0].get<double>(), width_height[1].get<double>());
+            }
+        }
+
         it = obj.find("textures");
         if (it != obj.end())
         {
@@ -298,19 +320,16 @@ namespace Botcraft
                         }
 
                         const picojson::value::object &face_params = face->second.get<picojson::object>();
+                        
                         auto it3 = face_params.find("uv");
                         if (it3 != face_params.end())
                         {
                             picojson::array values = it3->second.get<picojson::array>();
-                            int x1 = (int)values[0].get<double>();
-                            int y1 = (int)values[1].get<double>();
-                            int x2 = (int)values[2].get<double>();
-                            int y2 = (int)values[3].get<double>();
 
-                            current_face.transformations.offset_x1 = x1;
-                            current_face.transformations.offset_y1 = y1;
-                            current_face.transformations.offset_x2 = x2;
-                            current_face.transformations.offset_y2 = y2;
+                            current_face.transformations.offset_x1 = values[0].get<double>();
+                            current_face.transformations.offset_y1 = values[1].get<double>();
+                            current_face.transformations.offset_x2 = values[2].get<double>();
+                            current_face.transformations.offset_y2 = values[3].get<double>();
                         }
                         //If UV are not specified, we have to get them from [x,y,z] coordinates
                         else
@@ -508,6 +527,27 @@ namespace Botcraft
                     }
                     faces[i].texture_names[s] = variable_name;
                 }
+            }
+        }
+
+        // Once all the texture names have been replaced
+        // by their identifiers, multiply uv by texture
+        // sizes for special cases with non 64x64 default
+        // sizes
+        for (size_t i = 0; i < faces.size(); ++i)
+        {
+            if (faces[i].texture_names.size() == 0)
+            {
+                continue;
+            }
+
+            auto it = textures_base_size.find(faces[i].texture_names[0]);
+            if (it != textures_base_size.end())
+            {
+                faces[i].transformations.offset_x1 *= 16.0f / it->second.first;
+                faces[i].transformations.offset_y1 *= 16.0f / it->second.second;
+                faces[i].transformations.offset_x2 *= 16.0f / it->second.first;
+                faces[i].transformations.offset_y2 *= 16.0f / it->second.second;
             }
         }
 #endif
