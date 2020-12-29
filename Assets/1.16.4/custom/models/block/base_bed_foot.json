@@ -1,0 +1,31 @@
+{
+	"textures": {
+		"all": "#all"
+	},
+	"elements": [
+		{
+			"__comment": "First leg",
+			"from": [0, 0, 0],
+			"to": [3, 3, 3],
+			"faces": {
+				"down":  { "uv": [ 56, 0, 59, 3 ], "texture": "#all", "cullface": "down" },
+                "north": { "uv": [ 50, 3, 53, 6 ], "texture": "#all" },
+                "west":  { "uv": [ 53, 3, 56, 6 ], "texture": "#all" },
+                "south": { "uv": [ 56, 3, 59, 6 ], "texture": "#all" },
+                "east":  { "uv": [ 59, 3, 62, 6 ], "texture": "#all" }
+			}
+		},
+		{
+			"__comment": "Second leg",
+			"from": [0, 0, 13],
+			"to": [3, 3, 16],
+			"faces": {
+				"down":  { "uv": [ 56, 6, 59, 9 ], "texture": "#all", "cullface": "down" },
+                "north": { "uv": [ 50, 9, 53, 12 ], "texture": "#all" },
+                "west":  { "uv": [ 53, 9, 56, 12 ], "texture": "#all" },
+                "south": { "uv": [ 56, 9, 59, 12 ], "texture": "#all" },
+                "east":  { "uv": [ 59, 9, 62, 12 ], "texture": "#all" }
+			}
+		}
+	]
+}
