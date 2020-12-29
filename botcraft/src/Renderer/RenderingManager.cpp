@@ -586,7 +586,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 737
             AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
 #else
-            AddChunkToUpdate((msg.GetChunkSectionCoordinate() >> 42) & 0x3FFFFF, (msg.GetChunkSectionCoordinate() >> 20) & 0x3FFFFF);
+            AddChunkToUpdate(msg.GetChunkSectionCoordinate() >> 42, msg.GetChunkSectionCoordinate() << 22 >> 42);
 #endif
         }
 
