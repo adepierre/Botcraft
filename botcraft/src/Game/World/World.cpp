@@ -840,9 +840,9 @@ namespace Botcraft
             const int y_pos = msg.GetRecords()[i].GetYCoordinate();
             const int z_pos = CHUNK_WIDTH * msg.GetChunkZ() + z;
 #else
-        const int chunk_x = CHUNK_WIDTH * ((msg.GetChunkSectionCoordinate() >> 42) & 0x3FFFFF); // 22 bits
-        const int chunk_z = CHUNK_WIDTH * ((msg.GetChunkSectionCoordinate() >> 20) & 0x3FFFFF); // 22 bits
-        const int chunk_y = SECTION_HEIGHT * ((msg.GetChunkSectionCoordinate() >> 0) & 0xFFFFF); // 20 bits
+        const int chunk_x = CHUNK_WIDTH * (msg.GetChunkSectionCoordinate() >> 42); // 22 bits
+        const int chunk_z = CHUNK_WIDTH * (msg.GetChunkSectionCoordinate() << 22 >> 42); // 22 bits
+        const int chunk_y = SECTION_HEIGHT * (msg.GetChunkSectionCoordinate() << 44 >> 44); // 20 bits
 
         const std::vector<long long int>& data = msg.GetData();
         for (int i = 0; i < msg.GetArraySize(); ++i)
