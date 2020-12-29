@@ -9,8 +9,8 @@
 			"to": [3, 3, 3],
 			"faces": {
 				"down":  { "uv": [ 56, 0, 59, 3 ], "texture": "#all", "cullface": "down" },
-                "north": { "uv": [ 50, 3, 53, 6 ], "texture": "#all" },
-                "west":  { "uv": [ 53, 3, 56, 6 ], "texture": "#all" },
+                "north": { "uv": [ 50, 3, 53, 6 ], "texture": "#all", "cullface": "north" },
+                "west":  { "uv": [ 53, 3, 56, 6 ], "texture": "#all", "cullface": "west" },
                 "south": { "uv": [ 56, 3, 59, 6 ], "texture": "#all" },
                 "east":  { "uv": [ 59, 3, 62, 6 ], "texture": "#all" }
 			}
@@ -22,10 +22,22 @@
 			"faces": {
 				"down":  { "uv": [ 56, 6, 59, 9 ], "texture": "#all", "cullface": "down" },
                 "north": { "uv": [ 50, 9, 53, 12 ], "texture": "#all" },
-                "west":  { "uv": [ 53, 9, 56, 12 ], "texture": "#all" },
-                "south": { "uv": [ 56, 9, 59, 12 ], "texture": "#all" },
+                "west":  { "uv": [ 53, 9, 56, 12 ], "texture": "#all", "cullface": "west" },
+                "south": { "uv": [ 56, 9, 59, 12 ], "texture": "#all", "cullface": "south" },
                 "east":  { "uv": [ 59, 9, 62, 12 ], "texture": "#all" }
 			}
-		}
+		},
+        {
+            "__comment": "Main bed part",
+			"from": [0, 3, 0],
+			"to": [16, 9, 16],
+			"faces": {
+				"down":  { "uv": [ 28, 28, 44, 44 ], "texture": "#all", "cullface": "down" },
+				"up":  { "uv": [ 6, 28, 22, 44 ], "texture": "#all" },
+                "north": { "uv": [ 0, 28, 6, 44 ], "texture": "#all", "cullface": "north", "rotation": 270 },
+                "west":  { "uv": [ 22, 22, 38, 28 ], "texture": "#all", "cullface": "west", "rotation": 180 },
+                "south": { "uv": [ 22, 28, 28, 44 ], "texture": "#all", "cullface": "south", "rotation": 90 }
+			}
+        }
 	]
 }
