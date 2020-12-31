@@ -2941,224 +2941,224 @@
         "name": "minecraft:white_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:orange_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:magenta_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:light_blue_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:yellow_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:lime_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:pink_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:gray_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:light_gray_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:cyan_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:purple_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:blue_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:brown_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:green_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:red_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:black_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:white_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:orange_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:magenta_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:light_blue_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:yellow_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:lime_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:pink_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:gray_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:light_gray_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:cyan_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:purple_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:blue_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:brown_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:green_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:red_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:black_wall_banner",
         "render": "other",
         "solid": false,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 0.8,

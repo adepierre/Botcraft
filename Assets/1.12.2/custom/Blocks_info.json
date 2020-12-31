@@ -1250,14 +1250,14 @@
     },
     {
         "name": "minecraft:standing_banner",
-        "transparent": false,
+        "transparent": true,
         "solid": false,
         "render": "other",
         "hardness": 1
     },
     {
         "name": "minecraft:wall_banner",
-        "transparent": false,
+        "transparent": true,
         "solid": false,
         "render": "other",
         "hardness": 1
