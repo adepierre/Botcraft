@@ -1021,7 +1021,7 @@
     },
     {
         "name": "minecraft:skull",
-        "transparent": false,
+        "transparent": true,
         "solid": true,
         "render": "other",
         "hardness": 1

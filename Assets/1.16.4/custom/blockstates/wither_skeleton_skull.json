@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=1": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=2": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=3": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=4": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=5": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=6": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=7": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=8": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=9": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=10": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=11": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=12": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=13": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=14": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    },
+    "rotation=15": {
+      "model": "minecraft:block/wither_skeleton_skull"
+    }
+  }
+}

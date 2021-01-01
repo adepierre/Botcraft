@@ -2057,84 +2057,84 @@
         "name": "minecraft:skeleton_wall_skull",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:skeleton_skull",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:wither_skeleton_wall_skull",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:wither_skeleton_skull",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:zombie_wall_head",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:zombie_head",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:player_wall_head",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:player_head",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:creeper_wall_head",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:creeper_head",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:dragon_wall_head",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:dragon_head",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 5,
