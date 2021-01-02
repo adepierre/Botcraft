@@ -15,6 +15,20 @@ namespace ProtocolCraft
 {
     std::shared_ptr<RecipeTypeData> RecipeTypeData::CreateRecipeTypeData(const std::string& recipe_type)
     {
+#if PROTOCOL_VERSION < 453
+        if (recipe_type == "crafting_shapeless")
+        {
+            return std::shared_ptr<RecipeTypeDataShapeless>(new RecipeTypeDataShapeless);
+        }
+        else if (recipe_type == "crafting_shaped")
+        {
+            return std::shared_ptr<RecipeTypeDataShaped>(new RecipeTypeDataShaped);
+        }
+        else if (recipe_type == "smelting")
+        {
+            return std::shared_ptr<RecipeTypeDataSmelting>(new RecipeTypeDataSmelting);
+        }
+#else
         if (recipe_type == "minecraft:crafting_shapeless")
         {
             return std::shared_ptr<RecipeTypeDataShapeless>(new RecipeTypeDataShapeless);
@@ -27,6 +41,7 @@ namespace ProtocolCraft
         {
             return std::shared_ptr<RecipeTypeDataSmelting>(new RecipeTypeDataSmelting);
         }
+#endif
 #if PROTOCOL_VERSION > 572
         else if (recipe_type == "minecraft:blasting")
         {

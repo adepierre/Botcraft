@@ -46,16 +46,26 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 453
             recipe_id = ReadString(iter, length);
             type = ReadString(iter, length);
-            data = RecipeTypeData::CreateRecipeTypeData(recipe_id);
+#else
+            type = ReadString(iter, length);
+            recipe_id = ReadString(iter, length);
+#endif
+            data = RecipeTypeData::CreateRecipeTypeData(type);
             data->Read(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 578
             WriteString(recipe_id, container);
             WriteString(type, container);
+#else
+            WriteString(type, container);
+            WriteString(recipe_id, container);
+#endif
             data->Write(container);
         }
 
