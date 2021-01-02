@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=1": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=2": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=3": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=4": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=5": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=6": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=7": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=8": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=9": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=10": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=11": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=12": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=13": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=14": {
+      "model": "minecraft:block/zombie_head"
+    },
+    "rotation=15": {
+      "model": "minecraft:block/zombie_head"
+    }
+  }
+}
