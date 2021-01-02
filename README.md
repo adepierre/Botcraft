@@ -13,7 +13,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 - All official releases from 1.12.2 to 1.16.4 supported
 - Compression
 - Physics and collisions
-- (Optional) Rendering of all the blocks (not entities)
+- (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...)
 - Bot control with mouse and keyboard
 - Path finding
 - Block breaking
