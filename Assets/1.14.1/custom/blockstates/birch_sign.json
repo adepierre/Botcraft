@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "block/birch_sign"
+    },
+    "rotation=1": {
+      "model": "block/birch_sign"
+    },
+    "rotation=2": {
+      "model": "block/birch_sign"
+    },
+    "rotation=3": {
+      "model": "block/birch_sign"
+    },
+    "rotation=4": {
+      "model": "block/birch_sign"
+    },
+    "rotation=5": {
+      "model": "block/birch_sign"
+    },
+    "rotation=6": {
+      "model": "block/birch_sign"
+    },
+    "rotation=7": {
+      "model": "block/birch_sign"
+    },
+    "rotation=8": {
+      "model": "block/birch_sign"
+    },
+    "rotation=9": {
+      "model": "block/birch_sign"
+    },
+    "rotation=10": {
+      "model": "block/birch_sign"
+    },
+    "rotation=11": {
+      "model": "block/birch_sign"
+    },
+    "rotation=12": {
+      "model": "block/birch_sign"
+    },
+    "rotation=13": {
+      "model": "block/birch_sign"
+    },
+    "rotation=14": {
+      "model": "block/birch_sign"
+    },
+    "rotation=15": {
+      "model": "block/birch_sign"
+    }
+  }
+}

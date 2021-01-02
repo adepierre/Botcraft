@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_dragon_wall_head",
+	"textures": {
+		"all": "entity/enderdragon/dragon"
+	},
+	"textures_base_size": {
+		"entity/enderdragon/dragon": [256, 256]
+	}
+}

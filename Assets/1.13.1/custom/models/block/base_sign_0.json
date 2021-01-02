@@ -1,0 +1,33 @@
+{
+	"textures": {
+		"all": "#all"
+	},
+	"elements": [
+		{
+			"__comment": "Sign stick",
+			"from": [7, 0, 7],
+			"to": [9, 9, 9],
+			"faces": {
+				"down":  { "uv": [ 2, 14, 4, 16 ], "texture": "#all", "cullface": "down" },
+                "up":    { "uv": [ 4, 14, 6, 16 ], "texture": "#all" },
+                "south": { "uv": [ 0, 16, 2, 30 ], "texture": "#all" },
+                "west":  { "uv": [ 2, 16, 4, 30 ], "texture": "#all" },
+                "north":  { "uv": [ 4, 16, 6, 30 ], "texture": "#all" },
+                "east":  { "uv": [ 6, 16, 8, 30 ], "texture": "#all" }
+			}
+		},        
+		{
+			"__comment": "Sign",
+			"from": [0, 9, 7],
+			"to": [16, 17, 9],
+			"faces": {
+				"down":  { "uv": [ 2, 0, 26, 2 ], "texture": "#all" },
+                "up":    { "uv": [ 26, 0, 50, 2 ], "texture": "#all" },
+                "south": { "uv": [ 2, 2, 26, 14 ], "texture": "#all" },
+                "west":  { "uv": [ 26, 2, 28, 14 ], "texture": "#all" },
+                "north": { "uv": [ 28, 2, 52, 14 ], "texture": "#all" },
+                "east":  { "uv": [ 0, 2, 2, 14 ], "texture": "#all" }
+			}
+		}
+	]
+}

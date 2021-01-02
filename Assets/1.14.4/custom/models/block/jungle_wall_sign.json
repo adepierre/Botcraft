@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_wall_sign",
+	"textures": {
+		"all": "entity/signs/jungle"
+	},
+	"textures_base_size": {
+		"entity/signs/jungle": [64, 32]
+	}
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ender_chest"
+    },
+    "facing=north": {
+      "model": "ender_chest",
+	  "y": 270
+    },
+    "facing=west": {
+      "model": "ender_chest",
+	  "y": 180
+    },
+    "facing=south": {
+      "model": "ender_chest",
+	  "y": 90
+    }
+  }
+}

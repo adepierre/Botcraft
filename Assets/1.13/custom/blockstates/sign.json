@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "block/sign"
+    },
+    "rotation=1": {
+      "model": "block/sign"
+    },
+    "rotation=2": {
+      "model": "block/sign"
+    },
+    "rotation=3": {
+      "model": "block/sign"
+    },
+    "rotation=4": {
+      "model": "block/sign"
+    },
+    "rotation=5": {
+      "model": "block/sign"
+    },
+    "rotation=6": {
+      "model": "block/sign"
+    },
+    "rotation=7": {
+      "model": "block/sign"
+    },
+    "rotation=8": {
+      "model": "block/sign"
+    },
+    "rotation=9": {
+      "model": "block/sign"
+    },
+    "rotation=10": {
+      "model": "block/sign"
+    },
+    "rotation=11": {
+      "model": "block/sign"
+    },
+    "rotation=12": {
+      "model": "block/sign"
+    },
+    "rotation=13": {
+      "model": "block/sign"
+    },
+    "rotation=14": {
+      "model": "block/sign"
+    },
+    "rotation=15": {
+      "model": "block/sign"
+    }
+  }
+}

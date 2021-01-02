@@ -1213,7 +1213,7 @@
                     "occupied=false",
                     "part=foot"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 1,
@@ -1222,7 +1222,7 @@
                     "occupied=false",
                     "part=foot"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 2,
@@ -1231,7 +1231,7 @@
                     "occupied=false",
                     "part=foot"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 3,
@@ -1240,7 +1240,7 @@
                     "occupied=false",
                     "part=foot"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 8,
@@ -1249,7 +1249,7 @@
                     "occupied=false",
                     "part=head"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 9,
@@ -1258,7 +1258,7 @@
                     "occupied=false",
                     "part=head"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 10,
@@ -1267,7 +1267,7 @@
                     "occupied=false",
                     "part=head"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 11,
@@ -1276,7 +1276,7 @@
                     "occupied=false",
                     "part=head"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 12,
@@ -1285,7 +1285,7 @@
                     "occupied=true",
                     "part=head"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 13,
@@ -1294,7 +1294,7 @@
                     "occupied=true",
                     "part=head"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 14,
@@ -1303,7 +1303,7 @@
                     "occupied=true",
                     "part=head"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             },
             {
                 "value": 15,
@@ -1312,7 +1312,7 @@
                     "occupied=true",
                     "part=head"
                 ],
-                "blockstate": ""
+                "blockstate": "bed"
             }
         ]
     },
@@ -2568,28 +2568,28 @@
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "chest"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "chest"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "chest"
             },
             {
                 "value": 5,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "chest"
             }
         ]
     },
@@ -2996,7 +2996,7 @@
         "metadata": [
             {
                 "value": 0,
-                "blockstate": ""
+                "blockstate": "standing_sign"
             }
         ]
     },
@@ -3337,7 +3337,7 @@
         "metadata": [
             {
                 "value": 0,
-                "blockstate": ""
+                "blockstate": "wall_sign"
             }
         ]
     },
@@ -6346,28 +6346,28 @@
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "ender_chest"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "ender_chest"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "ender_chest"
             },
             {
                 "value": 5,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "ender_chest"
             }
         ]
     },
@@ -7266,7 +7266,7 @@
         "metadata": [
             {
                 "value": 0,
-                "blockstate": ""
+                "blockstate": "skull"
             }
         ]
     },
@@ -7383,28 +7383,28 @@
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "trapped_chest"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "trapped_chest"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "trapped_chest"
             },
             {
                 "value": 5,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "trapped_chest"
             }
         ]
     },
@@ -8958,7 +8958,7 @@
         "metadata": [
             {
                 "value": 0,
-                "blockstate": ""
+                "blockstate": "barrier"
             }
         ]
     },
@@ -9348,112 +9348,112 @@
                 "variables": [
                     "rotation=0"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 1,
                 "variables": [
                     "rotation=1"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 2,
                 "variables": [
                     "rotation=2"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 3,
                 "variables": [
                     "rotation=3"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 4,
                 "variables": [
                     "rotation=4"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 5,
                 "variables": [
                     "rotation=5"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 6,
                 "variables": [
                     "rotation=6"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 7,
                 "variables": [
                     "rotation=7"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 8,
                 "variables": [
                     "rotation=8"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 9,
                 "variables": [
                     "rotation=9"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 10,
                 "variables": [
                     "rotation=10"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 11,
                 "variables": [
                     "rotation=11"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 12,
                 "variables": [
                     "rotation=12"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 13,
                 "variables": [
                     "rotation=13"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 14,
                 "variables": [
                     "rotation=14"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             },
             {
                 "value": 15,
                 "variables": [
                     "rotation=15"
                 ],
-                "blockstate": ""
+                "blockstate": "standing_banner"
             }
         ]
     },
@@ -9467,28 +9467,28 @@
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "wall_banner"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "wall_banner"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "wall_banner"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "wall_banner"
             }
         ]
     },
@@ -11694,7 +11694,7 @@
         "metadata": [
             {
                 "value": 0,
-                "blockstate": ""
+                "blockstate": "end_gateway"
             }
         ]
     },
@@ -12070,42 +12070,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "white_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "white_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "white_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "white_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "white_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "white_shulker_box"
             }
         ]
     },
@@ -12119,42 +12119,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "orange_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "orange_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "orange_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "orange_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "orange_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "orange_shulker_box"
             }
         ]
     },
@@ -12168,42 +12168,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "magenta_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "magenta_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "magenta_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "magenta_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "magenta_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "magenta_shulker_box"
             }
         ]
     },
@@ -12217,42 +12217,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "light_blue_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "light_blue_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "light_blue_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "light_blue_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "light_blue_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "light_blue_shulker_box"
             }
         ]
     },
@@ -12266,42 +12266,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "yellow_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "yellow_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "yellow_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "yellow_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "yellow_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "yellow_shulker_box"
             }
         ]
     },
@@ -12315,42 +12315,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "lime_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "lime_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "lime_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "lime_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "lime_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "lime_shulker_box"
             }
         ]
     },
@@ -12364,42 +12364,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "pink_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "pink_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "pink_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "pink_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "pink_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "pink_shulker_box"
             }
         ]
     },
@@ -12413,42 +12413,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "gray_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "gray_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "gray_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "gray_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "gray_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "gray_shulker_box"
             }
         ]
     },
@@ -12462,42 +12462,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "silver_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "silver_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "silver_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "silver_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "silver_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "silver_shulker_box"
             }
         ]
     },
@@ -12511,42 +12511,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "cyan_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "cyan_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "cyan_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "cyan_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "cyan_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "cyan_shulker_box"
             }
         ]
     },
@@ -12560,42 +12560,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "purple_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "purple_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "purple_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "purple_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "purple_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "purple_shulker_box"
             }
         ]
     },
@@ -12609,42 +12609,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "blue_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "blue_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "blue_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "blue_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "blue_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "blue_shulker_box"
             }
         ]
     },
@@ -12658,42 +12658,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "brown_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "brown_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "brown_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "brown_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "brown_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "brown_shulker_box"
             }
         ]
     },
@@ -12707,42 +12707,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "green_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "green_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "green_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "green_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "green_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "green_shulker_box"
             }
         ]
     },
@@ -12756,42 +12756,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "red_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "red_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "red_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "red_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "red_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "red_shulker_box"
             }
         ]
     },
@@ -12805,42 +12805,42 @@
                 "variables": [
                     "facing=down"
                 ],
-                "blockstate": ""
+                "blockstate": "black_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=up"
                 ],
-                "blockstate": ""
+                "blockstate": "black_shulker_box"
             },
             {
                 "value": 2,
                 "variables": [
                     "facing=north"
                 ],
-                "blockstate": ""
+                "blockstate": "black_shulker_box"
             },
             {
                 "value": 3,
                 "variables": [
                     "facing=south"
                 ],
-                "blockstate": ""
+                "blockstate": "black_shulker_box"
             },
             {
                 "value": 4,
                 "variables": [
                     "facing=west"
                 ],
-                "blockstate": ""
+                "blockstate": "black_shulker_box"
             },
             {
                 "value": 1,
                 "variables": [
                     "facing=east"
                 ],
-                "blockstate": ""
+                "blockstate": "black_shulker_box"
             }
         ]
     },

@@ -1,0 +1,96 @@
+{
+	"textures": {
+		"all": "#all"
+	},
+	"elements": [
+		{
+			"__comment": "Base Head",
+			"from": [2, 4, 4],
+			"to": [14, 16, 16],
+			"faces": {
+				"down":  { "uv": [ 144, 30, 166, 46 ], "texture": "#all" },
+                "up":    { "uv": [ 128, 30, 144, 46 ], "texture": "#all" },
+                "south": { "uv": [ 160, 46, 176, 62 ], "texture": "#all", "cullface": "south" },
+                "west":  { "uv": [ 144, 46, 160, 62 ], "texture": "#all" },
+                "north":  { "uv": [ 128, 46, 144, 62 ], "texture": "#all" },
+                "east":  { "uv": [ 112, 46, 128, 62 ], "texture": "#all" }
+			}
+		},
+		{
+			"__comment": "First horn",
+			"from": [4, 16, 7],
+			"to": [6, 19, 11],
+			"faces": {
+                "up":    { "uv": [ 232, 53, 236, 65 ], "texture": "#all" },
+                "south": { "uv": [ 246, 65, 248, 71 ], "texture": "#all" },
+                "west":  { "uv": [ 234, 65, 246, 71 ], "texture": "#all" },
+                "north":  { "uv": [ 232, 65, 234, 71 ], "texture": "#all" },
+                "east":  { "uv": [ 220, 65, 232, 71 ], "texture": "#all" }
+			}
+		},
+		{
+			"__comment": "Second horn",
+			"from": [10, 16, 7],
+			"to": [12, 19, 11],
+			"faces": {
+                "up":    { "uv": [ 232, 53, 236, 65 ], "texture": "#all" },
+                "south": { "uv": [ 246, 65, 248, 71 ], "texture": "#all" },
+                "west":  { "uv": [ 234, 65, 246, 71 ], "texture": "#all" },
+                "north":  { "uv": [ 232, 65, 234, 71 ], "texture": "#all" },
+                "east":  { "uv": [ 220, 65, 232, 71 ], "texture": "#all" }
+			}
+		},
+		{
+			"__comment": "Bottom mouth",
+			"from": [3, 4, -7],
+			"to": [13, 7, 4],
+			"faces": {
+                "bottom":    { "uv": [ 204, 81, 220, 85 ], "texture": "#all" },
+                "up":    { "uv": [ 192, 81, 204, 65 ], "texture": "#all" },
+                "south": { "uv": [ 220, 81, 232, 85 ], "texture": "#all" },
+                "west":  { "uv": [ 204, 81, 216, 65 ], "texture": "#all" },
+                "north":  { "uv": [ 192, 81, 204, 85 ], "texture": "#all" },
+                "east":  { "uv": [ 176, 81, 192, 85 ], "texture": "#all" }
+			}
+		},
+		{
+			"__comment": "Top mouth",
+			"from": [3, 7, -7],
+			"to": [13, 11, 4],
+			"faces": {
+                "bottom":    { "uv": [ 204, 81, 220, 85 ], "texture": "#all" },
+                "up":    { "uv": [ 192, 60, 204, 44 ], "texture": "#all" },
+                "south": { "uv": [ 220, 81, 232, 85 ], "texture": "#all" },
+                "west":  { "uv": [ 204, 44, 216, 60 ], "texture": "#all" },
+                "north":  { "uv": [ 192, 81, 204, 85 ], "texture": "#all" },
+                "east":  { "uv": [ 176, 81, 192, 85 ], "texture": "#all" }
+			}
+		},
+		{
+			"__comment": "First nose",
+			"from": [4, 11, -6],
+			"to": [6, 13, -2],
+			"faces": {
+                "bottom":    { "uv": [ 116, 0, 118, 4 ], "texture": "#all" },
+                "up":    { "uv": [ 118, 0, 120, 4 ], "texture": "#all" },
+                "south": { "uv": [ 120, 4, 122, 6 ], "texture": "#all" },
+                "west":  { "uv": [ 118, 4, 120, 6 ], "texture": "#all" },
+                "north":  { "uv": [ 114, 4, 118, 6 ], "texture": "#all" },
+                "east":  { "uv": [ 112, 4, 114, 6 ], "texture": "#all" }
+			}
+		},
+		{
+			"__comment": "Second nose",
+			"from": [10, 11, -6],
+			"to": [12, 13, -2],
+			"faces": {
+                "bottom":    { "uv": [ 116, 0, 118, 4 ], "texture": "#all" },
+                "up":    { "uv": [ 118, 0, 120, 4 ], "texture": "#all" },
+                "south": { "uv": [ 120, 4, 122, 6 ], "texture": "#all" },
+                "west":  { "uv": [ 118, 4, 120, 6 ], "texture": "#all" },
+                "north":  { "uv": [ 114, 4, 118, 6 ], "texture": "#all" },
+                "east":  { "uv": [ 112, 4, 114, 6 ], "texture": "#all" }
+			}
+		}
+	]
+}

@@ -242,7 +242,7 @@ namespace Botcraft
 
                         //Add all faces of the current state
                         const std::vector<FaceDescriptor>& current_faces = this_block->GetBlockstate()->GetModel(this_block->GetModelId()).GetFaces();
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 552
                         const std::shared_ptr<Biome> current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, z));
 #else
                         const std::shared_ptr<Biome> current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, y, z));

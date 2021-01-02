@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_sign_0",
+	"textures": {
+		"all": "entity/signs/spruce"
+	},
+	"textures_base_size": {
+		"entity/signs/spruce": [64, 32]
+	}
+}

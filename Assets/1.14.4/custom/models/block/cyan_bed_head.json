@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_bed_head",
+	"textures": {
+		"all": "entity/bed/cyan"
+	},
+	"textures_base_size": {
+		"entity/bed/cyan": [64, 64]
+	}
+}

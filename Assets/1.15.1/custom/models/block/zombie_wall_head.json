@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_wall_head",
+	"textures": {
+		"all": "entity/zombie/zombie"
+	},
+	"textures_base_size": {
+		"entity/zombie/zombie": [64, 64]
+	}
+}

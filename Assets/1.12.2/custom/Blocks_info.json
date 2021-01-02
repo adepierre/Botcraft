@@ -264,7 +264,7 @@
         "name": "minecraft:piston_extension",
         "transparent": false,
         "solid": false,
-        "render": "other",
+        "render": "none",
         "hardness": -1
     },
     {

@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_head_0",
+	"textures": {
+		"all": "entity/steve"
+	},
+	"textures_base_size": {
+		"entity/steve": [64, 64]
+	}
+}

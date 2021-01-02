@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "block/lime_banner"
+    },
+    "rotation=1": {
+      "model": "block/lime_banner"
+    },
+    "rotation=2": {
+      "model": "block/lime_banner"
+    },
+    "rotation=3": {
+      "model": "block/lime_banner"
+    },
+    "rotation=4": {
+      "model": "block/lime_banner"
+    },
+    "rotation=5": {
+      "model": "block/lime_banner"
+    },
+    "rotation=6": {
+      "model": "block/lime_banner"
+    },
+    "rotation=7": {
+      "model": "block/lime_banner"
+    },
+    "rotation=8": {
+      "model": "block/lime_banner"
+    },
+    "rotation=9": {
+      "model": "block/lime_banner"
+    },
+    "rotation=10": {
+      "model": "block/lime_banner"
+    },
+    "rotation=11": {
+      "model": "block/lime_banner"
+    },
+    "rotation=12": {
+      "model": "block/lime_banner"
+    },
+    "rotation=13": {
+      "model": "block/lime_banner"
+    },
+    "rotation=14": {
+      "model": "block/lime_banner"
+    },
+    "rotation=15": {
+      "model": "block/lime_banner"
+    }
+  }
+}

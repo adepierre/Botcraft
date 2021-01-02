@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_wall_banner",
+	"textures": {
+		"all": "entity/banner_base"
+	},
+	"textures_base_size": {
+		"entity/banner_base": [64, 64]
+	}
+}

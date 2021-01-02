@@ -17,7 +17,7 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 347
         Blockstate(const int id_, const unsigned char metadata_,
-                   const bool transparent_, const bool solid_,  const bool fluid_,
+                   const bool transparent_, const bool solid_,  const bool fluid_, const bool custom,
                    const float hardness_, const TintType tint_type_, const std::string &name_,
                    const std::string &path = "", const std::vector<std::string> &variables = std::vector<std::string>());
 

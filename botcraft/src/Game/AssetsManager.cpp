@@ -314,7 +314,7 @@ namespace Botcraft
 
         // Add a default block
 #if PROTOCOL_VERSION < 347
-        blockstates[-1] = std::map<unsigned char, std::shared_ptr<Blockstate> >({ { 0, std::shared_ptr<Blockstate>(new Blockstate(-1, 0, false, true, false, -2.0f, TintType::None, "default", "")) } });
+        blockstates[-1] = std::map<unsigned char, std::shared_ptr<Blockstate> >({ { 0, std::shared_ptr<Blockstate>(new Blockstate(-1, 0, false, true, false, false, -2.0f, TintType::None, "default", "")) } });
 #else
         blockstates[-1] = std::shared_ptr<Blockstate>(new Blockstate(-1, false, true, false, false, -2.0f, TintType::None, "default", ""));
 #endif
@@ -389,7 +389,7 @@ namespace Botcraft
 
             if (render == "none")
             {
-                blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, true, false, false, -2.0f, TintType::None, blockstate_name, "none"));
+                blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, true, false, false, false, -2.0f, TintType::None, blockstate_name, "none"));
             }
             else if (render == "block" || render == "fluid" || render == "other")
             {
@@ -446,7 +446,7 @@ namespace Botcraft
                             }
                             else
                             {
-                                blockstates[id][metadata] = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables));
+                                blockstates[id][metadata] = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables));
                             }
                         }
                         else
@@ -461,7 +461,7 @@ namespace Botcraft
                             }
                             else
                             {
-                                std::shared_ptr<Blockstate> b = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables));
+                                std::shared_ptr<Blockstate> b = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables));
                                 blockstates[id];
                                 blockstates[id][0] = b;
                                 blockstates[id][metadata] = b;
@@ -478,7 +478,7 @@ namespace Botcraft
                     }
                     else
                     {
-                        blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, false, true, false, -2.0f, TintType::None, "", ""));
+                        blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, false, true, false, false, -2.0f, TintType::None, "", ""));
                     }
                 }
             }

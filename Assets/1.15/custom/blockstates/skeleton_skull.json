@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=1": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=2": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=3": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=4": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=5": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=6": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=7": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=8": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=9": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=10": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=11": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=12": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=13": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=14": {
+      "model": "block/skeleton_skull"
+    },
+    "rotation=15": {
+      "model": "block/skeleton_skull"
+    }
+  }
+}

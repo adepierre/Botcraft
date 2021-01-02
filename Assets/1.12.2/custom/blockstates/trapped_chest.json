@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "trapped_chest"
+    },
+    "facing=north": {
+      "model": "trapped_chest",
+	  "y": 270
+    },
+    "facing=west": {
+      "model": "trapped_chest",
+	  "y": 180
+    },
+    "facing=south": {
+      "model": "trapped_chest",
+	  "y": 90
+    }
+  }
+}

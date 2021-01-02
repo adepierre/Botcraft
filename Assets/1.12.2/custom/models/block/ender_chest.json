@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_single_chest",
+	"textures": {
+		"all": "entity/chest/ender"
+	},
+	"textures_base_size": {
+		"entity/chest/ender": [64, 64]
+	}
+}

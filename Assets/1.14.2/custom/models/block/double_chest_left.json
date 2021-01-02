@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_left_chest",
+	"textures": {
+		"all": "entity/chest/normal_left"
+	},
+	"textures_base_size": {
+		"entity/chest/normal_left": [64, 64]
+	}
+}

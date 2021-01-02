@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "block/dragon_head"
+    },
+    "rotation=1": {
+      "model": "block/dragon_head"
+    },
+    "rotation=2": {
+      "model": "block/dragon_head"
+    },
+    "rotation=3": {
+      "model": "block/dragon_head"
+    },
+    "rotation=4": {
+      "model": "block/dragon_head"
+    },
+    "rotation=5": {
+      "model": "block/dragon_head"
+    },
+    "rotation=6": {
+      "model": "block/dragon_head"
+    },
+    "rotation=7": {
+      "model": "block/dragon_head"
+    },
+    "rotation=8": {
+      "model": "block/dragon_head"
+    },
+    "rotation=9": {
+      "model": "block/dragon_head"
+    },
+    "rotation=10": {
+      "model": "block/dragon_head"
+    },
+    "rotation=11": {
+      "model": "block/dragon_head"
+    },
+    "rotation=12": {
+      "model": "block/dragon_head"
+    },
+    "rotation=13": {
+      "model": "block/dragon_head"
+    },
+    "rotation=14": {
+      "model": "block/dragon_head"
+    },
+    "rotation=15": {
+      "model": "block/dragon_head"
+    }
+  }
+}

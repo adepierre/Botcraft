@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "block/zombie_wall_head",
+	  "y": 90
+    },
+    "facing=north": {
+      "model": "block/zombie_wall_head"
+    },
+    "facing=west": {
+      "model": "block/zombie_wall_head",
+	  "y": 270
+    },
+    "facing=south": {
+      "model": "block/zombie_wall_head",
+	  "y": 180
+    }
+  }
+}

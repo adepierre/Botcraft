@@ -385,7 +385,9 @@ namespace Botcraft
         default:
             break;
         }
+#if PROTOCOL_VERSION > 452
         place_block_msg->SetInsideBlock(false);
+#endif
 
         // Left click case
         place_block_msg->SetHand((int)Hand::Left);
@@ -542,7 +544,9 @@ namespace Botcraft
         default:
             break;
         }
+#if PROTOCOL_VERSION > 452
         place_block_msg->SetInsideBlock(false);
+#endif
         place_block_msg->SetHand((int)Hand::Left);
         network_manager->Send(place_block_msg);
 

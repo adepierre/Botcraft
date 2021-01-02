@@ -1,0 +1,45 @@
+{
+	"textures": {
+		"all": "#all"
+	},
+	"elements": [
+		{
+			"__comment": "Chest base",
+			"from": [1, 0, 1],
+			"to": [15, 10, 15],
+			"faces": {
+				"down":  { "uv": [ 28, 19, 42, 33 ], "texture": "#all", "cullface": "down" },
+                "up":    { "uv": [ 14, 19, 28, 33 ], "texture": "#all" },
+                "north": { "uv": [ 0, 43, 14, 33 ], "texture": "#all" },
+                "south": { "uv": [ 14, 43, 28, 33 ], "texture": "#all" },
+                "west":  { "uv": [ 28, 43, 42, 33 ], "texture": "#all" },
+                "east":  { "uv": [ 42, 43, 56, 33 ], "texture": "#all" }
+			}
+		},        
+		{
+			"__comment": "Chest top",
+			"from": [1, 9, 1],
+			"to": [15, 14, 15],
+			"faces": {
+				"down":  { "uv": [ 28, 0, 42, 14 ], "texture": "#all" },
+                "up":    { "uv": [ 14, 14, 28, 0 ], "texture": "#all", "rotation": 270 },
+                "north": { "uv": [ 0, 19, 14, 14 ], "texture": "#all" },
+                "south": { "uv": [ 14, 19, 28, 14 ], "texture": "#all" },
+                "west":  { "uv": [ 28, 19, 42, 14 ], "texture": "#all" },
+                "east":  { "uv": [ 42, 19, 56, 14 ], "texture": "#all" }
+			}
+		},        
+		{
+			"__comment": "Chest lock",
+			"from": [15, 7, 7],
+			"to": [16, 11, 9],
+			"faces": {
+				"down":  { "uv": [ 0, 3, 1, 1 ], "texture": "#all" },
+                "up":    { "uv": [ 5, 0, 3, 1 ], "texture": "#all", "rotation": 90 },
+                "north": { "uv": [ 0, 5, 1, 1 ], "texture": "#all" },
+                "south": { "uv": [ 3, 5, 4, 1 ], "texture": "#all" },
+                "east":  { "uv": [ 6, 5, 4, 1 ], "texture": "#all" }
+			}
+		}
+	]
+}
