@@ -59,7 +59,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION < 578
+#if PROTOCOL_VERSION < 453
             WriteString(recipe_id, container);
             WriteString(type, container);
 #else
