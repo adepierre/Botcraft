@@ -1176,7 +1176,7 @@
     },
     {
         "name": "minecraft:barrier",
-        "transparent": false,
+        "transparent": true,
         "solid": true,
         "render": "other",
         "hardness": -2

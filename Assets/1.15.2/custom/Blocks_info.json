@@ -833,7 +833,7 @@
     {
         "hardness": -1,
         "name": "minecraft:moving_piston",
-        "render": "other",
+        "render": "none",
         "solid": false,
         "transparent": false
     },
@@ -2617,7 +2617,7 @@
         "name": "minecraft:barrier",
         "render": "other",
         "solid": true,
-        "transparent": false
+        "transparent": true
     },
     {
         "hardness": 5,

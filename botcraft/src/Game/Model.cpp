@@ -126,6 +126,7 @@ namespace Botcraft
             colliders = parent_model.colliders;
 #if USE_GUI
             textures_variables = parent_model.textures_variables;
+            textures_base_size = parent_model.textures_base_size;
             faces = parent_model.faces;
             ambient_occlusion = parent_model.ambient_occlusion;
 #endif
