@@ -1406,7 +1406,7 @@ namespace ProtocolCraft
                 case 0x5B:
                     return std::shared_ptr<Tags>(new Tags);
                     break;
-#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4
+#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
                 case 0x00:
                     return std::shared_ptr<SpawnObject>(new SpawnObject);
                     break;
@@ -2400,7 +2400,7 @@ namespace ProtocolCraft
                 case 0x2E:
                     return std::shared_ptr<UseItem>(new UseItem);
                     break;
-#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4
+#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
                 case 0x00:
                     return std::shared_ptr<TeleportConfirm>(new TeleportConfirm);
                     break;

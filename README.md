@@ -10,7 +10,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 
 - Connection to minecraft server (both offline mode and online connection with Mojang account)
 - DNS name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.16.4 supported
+- All official releases from 1.12.2 to 1.16.5 supported
 - Compression
 - Physics and collisions
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...)
@@ -66,7 +66,7 @@ Don't forget to change the cmake install directory if you don't want the library
 On Windows with Visual, you can replace the last five steps by launching cmake-gui and then compiling the .sln from Visual.
 
 There are several cmake options you can modify:
-- GAME_VERSION [1.12.2, 1.13, 1.13.1, 1.13.2, 1.14, 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2, 1.16, 1.16.1, 1.16.2, 1.16.3, 1.16.4, latest]
+- GAME_VERSION [1.XX.X or latest]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
 - BOTCRAFT_INSTALL_ASSETS [ON/OFF] Copy all the needed assets to the installation folder along with the library and executable
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
