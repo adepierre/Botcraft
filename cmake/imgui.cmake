@@ -28,6 +28,7 @@ if(NOT TARGET imgui)
         ${IMGUI_DIR}/examples/imgui_impl_opengl3.h)
 
     add_library(imgui STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
+    set_property(TARGET imgui PROPERTY POSITION_INDEPENDENT_CODE ON)
     target_include_directories(imgui PUBLIC ${IMGUI_DIR})
     target_include_directories(imgui PUBLIC ${IMGUI_DIR}/examples)
 
