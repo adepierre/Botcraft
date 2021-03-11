@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 #include "botcraft/Network/Authentifier.hpp"
 
@@ -32,6 +33,55 @@ namespace Botcraft
 #ifndef USE_ENCRYPTION
         return false;
 #else
+		if(login[0] == '/' || login[0] == '.') { // mc username is A-Z a-z 0-9 and _
+			std::cout << "Trying to process launcher_accounts json file on path [" << login << "]" << std::endl;
+			std::ifstream f(login);
+			std::string str((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+			// std::cout << str;
+			picojson::value jsonr;
+			std::string err = picojson::parse(jsonr, str);
+			if(!picojson::get_last_error().empty()) {
+	            std::cerr << "Error trying to parse launcher_accounts" << std::endl;
+	            return false;
+	        }
+			picojson::value::object json = jsonr.get<picojson::object>();
+			if(json.find("accounts") == json.end()) {
+	            std::cerr << "Error trying to authenticate, no accounts section found" << std::endl;
+	            return false;
+	        }
+			picojson::value::object accounts = json.at("accounts").get<picojson::object>();
+			if(accounts.size() < 1) {
+				std::cerr << "Error trying to authenticate, no accounts found" << std::endl;
+				return false;
+			}
+			picojson::object account = accounts.at(accounts.begin()->first).get<picojson::object>();
+			if(account.find("accessToken") == json.end()) {
+	            std::cerr << "Error trying to authenticate, no accessToken found" << std::endl;
+	            return false;
+	        }
+			access_token = account.at("accessToken").get<std::string>();
+			if(account.find("minecraftProfile") == json.end()) {
+	            std::cerr << "Error trying to authenticate, no minecraftProfile found" << std::endl;
+	            return false;
+	        }
+			picojson::object profile = account.at("minecraftProfile").get<picojson::object>();
+			if(profile.find("id") == json.end()) {
+	            std::cerr << "Error trying to authenticate, no id found" << std::endl;
+	            return false;
+	        }
+			player_uuid = profile.at("id").get<std::string>();
+			if(profile.find("name") == json.end()) {
+	            std::cerr << "Error trying to authenticate, no name found" << std::endl;
+	            return false;
+	        }
+			player_display_name = profile.at("name").get<std::string>();
+			std::cout << "Logged in as: [" << player_display_name << "] (" << player_uuid << ")" << std::endl;
+			return true;
+		}
+
+
+
+
         const std::string data = "{"
             "\"agent\":{\"name\":\"Minecraft\",\"version\":1},"
             "\"username\":\"" + login + "\","

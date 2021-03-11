@@ -87,6 +87,13 @@ Examples can be found in the [Examples](Examples/) folder:
   - interacting with a block (lever, button ...)
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Simple example to stay at the same position. Physics is not processed, chunks are not saved in memory to save RAM.
 
+## Microsoft accounts system
+
+It is too difficult to replicate Microsoft's Oauth algorithms properly so we introduced "helper" feature to make it work properly.
+If you log in inside official launcher it will create launcher_accounts.json file in .minecraft directory, specify path to it (starts with '.' or '/') as a username (any password, will be ignored anyways) and Authentifier will grab credentials (uuid, nickname and token) from this file.
+Example: `1_UserControlledExample_d 1 myserver.works /home/max/.minecraft/launcher_accounts.json 1`
+The only downside is that it needs to be refreshed after a week or so, field accessTokenExpiresAt indicates that but I did not implemented a check so if you are getting 403 out of nowhere it might be it, to solve it just open up official launcher and it will renew it for you
+
 ## To-do list
 
 It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to activate a farm with almost 0% usage of CPU/GPU. The next step is to add some functionalities like entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
