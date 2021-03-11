@@ -351,6 +351,8 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
 
     if (pos_has_changed)
     {
+		player->SetHasMoved(true);
+		// RunSyncPos();
         rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
     }
 }
