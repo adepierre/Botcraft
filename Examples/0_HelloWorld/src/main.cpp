@@ -3,40 +3,104 @@
 
 #include "botcraft/Game/InterfaceClient.hpp"
 
+void ShowHelp(const char* argv0)
+{
+    std::cout << "Usage: " << argv0 << " <options>\n"
+        << "Options:\n"
+        << "\t-h, --help\tShow this help message\n"
+        << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
+        << "\t--login\t\tMojang account login for connection, default: BCHelloWorld\n"
+        << "\t--password\tMojang account password for connection, empty for servers in offline mode, default: empty\n"
+        << "\t--jsonaccount\tPath to a json file from the official minecraft launcher, can be used for people with a Microsoft account, default: empty"
+        << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     try
     {
+        std::string address = "127.0.0.1:25565";
         std::string login = "BCHelloWorld";
         std::string password = "";
-        std::string address = "127.0.0.1:25565";
+        std::string launcher_accounts_file = "";
 
         if (argc == 1)
         {
             std::cout << "No command arguments. Using default options.\n";
-            std::cout << "Usage: 0_HelloWorld [address](127.0.0.1:25565) [login](BCHelloWorld) [password]()" << std::endl;
+            ShowHelp(argv[0]);
         }
 
-        if (argc > 1)
+        for (int i = 1; i < argc; ++i)
         {
-            address = argv[1];
-        }
-
-        if (argc > 2)
-        {
-            login = argv[2];
-        }
-
-        if (argc > 3)
-        {
-            password = argv[3];
+            std::string arg = argv[i];
+            if (arg == "-h" || arg == "--help")
+            {
+                ShowHelp(argv[0]);
+                return 0;
+            }
+            else if (arg == "--address")
+            {
+                if (i + 1 < argc)
+                {
+                    address = argv[++i];
+                }
+                else
+                {
+                    std::cerr << "--address requires an argument" << std::endl;
+                    return 1;
+                }
+            }
+            else if (arg == "--login")
+            {
+                if (i + 1 < argc)
+                {
+                    login = argv[++i];
+                }
+                else
+                {
+                    std::cerr << "--login requires an argument" << std::endl;
+                    return 1;
+                }
+            }
+            else if (arg == "--password")
+            {
+                if (i + 1 < argc)
+                {
+                    password = argv[++i];
+                }
+                else
+                {
+                    std::cerr << "--password requires an argument" << std::endl;
+                    return 1;
+                }
+            }
+            else if (arg == "--jsonaccount")
+            {
+                if (i + 1 < argc)
+                {
+                    launcher_accounts_file = argv[++i];
+                }
+                else
+                {
+                    std::cerr << "--jsonaccount requires an argument" << std::endl;
+                    return 1;
+                }
+            }
         }
 
         Botcraft::InterfaceClient client(true, false);
         client.SetAutoRespawn(true);
 
-        std::cout << "Starting connection process" << std::endl;
-        client.Connect(address, login, password);
+        if (!launcher_accounts_file.empty())
+        {
+            std::cout << "Starting connection process using launcher accounts file" << std::endl;
+            client.Connect(address, launcher_accounts_file);
+        }
+        else
+        {
+            std::cout << "Starting connection process using login and password" << std::endl;
+            client.Connect(address, login, password);
+        }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         client.Say("Hello world!");

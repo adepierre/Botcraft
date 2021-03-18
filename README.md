@@ -8,7 +8,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 
 ## Features
 
-- Connection to minecraft server (both offline mode and online connection with Mojang account)
+- Connection to minecraft server (both offline mode and online connection with Mojang account, Microsoft accounts are supported using a json file created by the official launcher)
 - DNS name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.16.5 supported
 - Compression
@@ -86,6 +86,12 @@ Examples can be found in the [Examples](Examples/) folder:
   - placing a block
   - interacting with a block (lever, button ...)
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Simple example to stay at the same position. Physics is not processed, chunks are not saved in memory to save RAM.
+
+## Connection
+
+If the server is in online-mode: false mode, you can connect with any username.
+
+If the server is in online-mode: true mode, you can connect with a Mojang account (login+password) or with a json file created by the official minecraft launcher ``launcher/install/path/launcher_accounts.json``. For users with a Microsoft account, only the second option is available, as implementing the full [Microsoft oauth procedure](https://wiki.vg/Microsoft_Authentication_Scheme) would be rather complicated and tedious.
 
 ## To-do list
 

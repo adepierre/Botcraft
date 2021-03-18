@@ -14,6 +14,10 @@ namespace Botcraft
         // return true if authenticated successfully, false otherwise
         bool AuthToken(const std::string& login, const std::string& password);
 
+        // Take a launcher accounts file as input,
+        // return true if authenticated successfully, false otherwise
+        bool AuthToken(const std::string& launcher_accounts_path);
+
         // Join a server after encryption request arrived
         bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key);
 

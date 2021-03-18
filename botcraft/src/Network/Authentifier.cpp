@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
+#include <sstream>
 
 #include "botcraft/Network/Authentifier.hpp"
 
@@ -162,6 +164,86 @@ namespace Botcraft
         if (profile.find("name") == profile.end())
         {
             std::cerr << "Error trying to authenticate, no name in selected profile" << std::endl;
+            return false;
+        }
+
+        player_display_name = profile.at("name").get<std::string>();
+        player_uuid = profile.at("id").get<std::string>();
+
+        return true;
+#endif
+    }
+
+    bool Authentifier::AuthToken(const std::string& launcher_accounts_path)
+    {
+
+#ifndef USE_ENCRYPTION
+        return false;
+#else
+        std::stringstream ss;
+        std::ifstream file;
+
+        file.open(launcher_accounts_path);
+        if (!file.is_open())
+        {
+            std::cerr << "Error reading launcher accounts file at " << launcher_accounts_path << std::endl;
+            return false;
+        }
+
+        ss << file.rdbuf();
+        file.close();
+
+        picojson::value raw_json;
+        ss >> raw_json;
+        std::string err = picojson::get_last_error();
+
+        if (!err.empty())
+        {
+            std::cerr << "Error parsing launcher accounts file at " << launcher_accounts_path << "\n";
+            std::cerr << err << std::endl;
+            return false;
+        }
+
+        const picojson::value::object& json = raw_json.get<picojson::object>();
+
+        if (!picojson::get_last_error().empty())
+        {
+            std::cerr << "Error trying to parse launcher accounts file at " << launcher_accounts_path << std::endl;
+            return false;
+        }
+
+        if (json.find("accounts") == json.end() || json.find("activeAccountLocalId") == json.end())
+        {
+            std::cerr << "No active account in launcher accounts file at " << launcher_accounts_path << std::endl;
+            return false;
+        }
+
+        const picojson::object& account = json.at("accounts").get<picojson::object>().at(json.at("activeAccountLocalId").get<std::string>()).get<picojson::object>();
+
+        if (account.find("accessToken") == account.end())
+        {
+            std::cerr << "Error trying to authenticate, no accessToken found" << std::endl;
+            return false;
+        }
+        access_token = account.find("accessToken")->second.get<std::string>();
+
+        if (account.find("minecraftProfile") == account.end())
+        {
+            std::cerr << "Error trying to authenticate, no minecraftProfile item found" << std::endl;
+            return false;
+        }
+
+        const picojson::object& profile = account.at("minecraftProfile").get<picojson::object>();
+
+        if (profile.find("name") == profile.end())
+        {
+            std::cerr << "Error trying to authenticate, no name in profile" << std::endl;
+            return false;
+        }
+
+        if (profile.find("id") == profile.end())
+        {
+            std::cerr << "Error trying to authenticate, no id in profile" << std::endl;
             return false;
         }
 
