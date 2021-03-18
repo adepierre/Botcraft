@@ -41,8 +41,6 @@ namespace ProtocolCraft
         {
             return std::shared_ptr<RecipeTypeDataSmelting>(new RecipeTypeDataSmelting);
         }
-#endif
-#if PROTOCOL_VERSION > 572
         else if (recipe_type == "minecraft:blasting")
         {
             return std::shared_ptr<RecipeTypeDataBlasting>(new RecipeTypeDataBlasting);
