@@ -385,7 +385,8 @@ namespace Botcraft
         }
         if (status_code != 204)
         {
-            std::cerr << "Response returned with status code " << status_code << " during server join\n";
+            std::cerr << "Response returned with status code " << status_code << "(" << status_message << ") during server join\n";
+            std::cerr << "If you tried to connect with the json file, restart your official MC launcher to refresh the access token and then retry." << std::endl;
             return false;
         }
 
