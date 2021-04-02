@@ -24,6 +24,10 @@ namespace Botcraft
         const std::string& GetPlayerDisplayName() const;
 
     private:
+        const std::string SendPostRequest(const std::string& host, const std::string& endpoint, const std::string& data,
+            unsigned int& status_code, std::string& status_message);
+
+    private:
 
         static const std::string auth_server_URL;
         static const std::string session_server_URL;

@@ -40,97 +40,20 @@ namespace Botcraft
             "\"password\":\"" + password + "\""
             "}";
 
-        asio::io_context io_context;
 
-        // Get a list of endpoints corresponding to the server name.
-        asio::ip::tcp::resolver resolver(io_context);
-        asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(auth_server_URL, "https");
-
-        asio::ssl::context ctx(asio::ssl::context::sslv23);
-        ctx.set_default_verify_paths();
-        ctx.set_options(asio::ssl::context::default_workarounds | asio::ssl::context::verify_none);
-
-        asio::ssl::stream<asio::ip::tcp::socket> socket(io_context, ctx);
-        socket.set_verify_mode(asio::ssl::verify_none);
-        socket.set_verify_callback([](bool, asio::ssl::verify_context&) {return true; });
-        asio::connect(socket.lowest_layer(), endpoints);
-        socket.handshake(socket.client);
-        socket.lowest_layer().set_option(asio::ip::tcp::no_delay(true));
-
-        // Form the request. We specify the "Connection: close" header so that the
-        // server will close the socket after transmitting the response. This will
-        // allow us to treat all data up until the EOF as the content.
-        asio::streambuf request;
-        std::ostream request_stream(&request);
-        request_stream << "POST /authenticate HTTP/1.1 \r\n";
-        request_stream << "Host: " << auth_server_URL << "\r\n";
-        request_stream << "User-Agent: C/1.0\r\n";
-        request_stream << "Content-Type: application/json; charset=utf-8 \r\n";
-        request_stream << "Accept: */*\r\n";
-        request_stream << "Content-Length: " << data.length() << "\r\n";
-        request_stream << "Connection: close\r\n\r\n";
-        request_stream << data;
-
-        asio::write(socket, request);
-
-        // Read the response status line. The response streambuf will automatically
-        // grow to accommodate the entire line. The growth may be limited by passing
-        // a maximum size to the streambuf constructor.
-        asio::streambuf response;
-        asio::read_until(socket, response, "\r\n");
-
-        // Check that response is OK.
-        std::stringstream output_string;
-        std::istream response_stream(&response);
-        std::string http_version;
-        response_stream >> http_version;
         unsigned int status_code;
-        response_stream >> status_code;
         std::string status_message;
-        std::getline(response_stream, status_message);
 
+        const std::string output_string = SendPostRequest(auth_server_URL, "/authenticate", data, status_code, status_message);
 
-        if (!response_stream || http_version.substr(0, 5) != "HTTP/")
-        {
-            std::cerr << "Invalid response during authentication\n";
-            return false;
-        }
         if (status_code != 200)
         {
-            std::cerr << "Authentication response returned with status code " << status_code << "\n";
-            return false;
-        }
-
-        // Read the response headers, which are terminated by a blank line.
-        asio::read_until(socket, response, "\r\n\r\n");
-
-        // Process the response headers.
-        std::string header;
-        while (std::getline(response_stream, header) && header != "\r")
-        {
-
-        }
-
-        // Write whatever content we already have to output.
-        if (response.size() > 0)
-        {
-            output_string << &response;
-        }
-
-        // Read until EOF, writing data to output as we go.
-        asio::error_code error;
-        while (asio::read(socket, response, asio::transfer_at_least(1), error))
-        {
-            output_string << &response;
-        }
-        if (error != asio::error::eof)
-        {
-            std::cerr << "Error trying to read authentication response" << std::endl;
+            std::cerr << "Error during authentication, returned status code " << status_code << "(" << status_message << ")\n";
             return false;
         }
 
         picojson::value raw_json;
-        output_string >> raw_json;
+        picojson::parse(raw_json, output_string);
 
         const picojson::value::object& json = raw_json.get<picojson::object>();
 
@@ -204,7 +127,7 @@ namespace Botcraft
             return false;
         }
 
-        const picojson::value::object& json = raw_json.get<picojson::object>();
+        picojson::value::object& json = raw_json.get<picojson::object>();
 
         if (!picojson::get_last_error().empty())
         {
@@ -218,7 +141,14 @@ namespace Botcraft
             return false;
         }
 
-        const picojson::object& account = json.at("accounts").get<picojson::object>().at(json.at("activeAccountLocalId").get<std::string>()).get<picojson::object>();
+        if (json.find("mojangClientToken") == json.end())
+        {
+            std::cerr << "No mojangClientToken in launcher accounts file at " << launcher_accounts_path << std::endl;
+            return false;
+        }
+        const std::string client_token = json.at("mojangClientToken").get<std::string>();
+
+        picojson::object& account = json.at("accounts").get<picojson::object>().at(json.at("activeAccountLocalId").get<std::string>()).get<picojson::object>();
 
         if (account.find("accessToken") == account.end())
         {
@@ -249,6 +179,62 @@ namespace Botcraft
 
         player_display_name = profile.at("name").get<std::string>();
         player_uuid = profile.at("id").get<std::string>();
+
+        // Trying to validate the token
+        unsigned int validation_status_code;
+        std::string validation_status_message;
+        const std::string validation_response = SendPostRequest(auth_server_URL, "/validate",
+            "{\"accessToken\":\"" + access_token + "\"}", validation_status_code, validation_status_message);
+
+        if (validation_status_code != 204)
+        {
+            std::cout << "Token needs to be refreshed" << std::endl;
+
+            // Refresh token
+
+            unsigned int refresh_status_code;
+            std::string refresh_status_message;
+            const std::string refresh_response = SendPostRequest(auth_server_URL, "/refresh",
+                "{\"accessToken\":\"" + access_token + "\",\"clientToken\":\"" + client_token + "\"}", refresh_status_code, refresh_status_message);
+
+            if (refresh_status_code != 200)
+            {
+                std::cerr << "Error refreshing the token, status code: " << refresh_status_code << " (" << refresh_status_message << ")" << std::endl;
+                return false;
+            }
+
+            picojson::value refresh_raw_json;
+            picojson::parse(refresh_raw_json, refresh_response);
+
+            const picojson::value::object& refresh_json = refresh_raw_json.get<picojson::object>();
+
+            if (!picojson::get_last_error().empty())
+            {
+                std::cerr << "Error trying to parse refresh response" << std::endl;
+                return false;
+            }
+
+            if (refresh_json.find("accessToken") == refresh_json.end())
+            {
+                std::cerr << "Error trying to get refreshed token, no accessToken field found in response" << std::endl;
+                return false;
+            }
+            access_token = refresh_json.find("accessToken")->second.get<std::string>();
+
+            std::cout << "Token refreshed, saving new one into launcher file..." << std::endl;
+            // We need to update the refresh token in the launcher file
+            // for the next time
+            account["accessToken"] = picojson::value(access_token);
+
+            std::ofstream json_account_file;
+            json_account_file.open(launcher_accounts_path);
+            json_account_file << raw_json.serialize(true);
+            json_account_file.close();
+        }
+        else
+        {
+            std::cout << "Token is valid, no need to refresh it." << std::endl;
+        }
 
         return true;
 #endif
@@ -329,11 +315,33 @@ namespace Botcraft
             "\"serverId\":\"" + server_hash +
             "\"}";
 
+        unsigned int status_code;
+        std::string status_message;
+
+        SendPostRequest(session_server_URL, "/session/minecraft/join", data, status_code, status_message);
+
+        if (status_code != 204)
+        {
+            std::cerr << "Response returned with status code " << status_code << "(" << status_message << ") during server join\n";
+            return false;
+        }
+
+        return true;
+#endif
+    }
+
+    const std::string& Authentifier::GetPlayerDisplayName() const
+    {
+        return player_display_name;
+    }
+
+    const std::string Authentifier::SendPostRequest(const std::string& host, const std::string& endpoint, const std::string& data, unsigned int& status_code, std::string& status_message)
+    {
         asio::io_context io_context;
 
         // Get a list of endpoints corresponding to the server name.
         asio::ip::tcp::resolver resolver(io_context);
-        asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(session_server_URL, "https");
+        asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(host, "https");
 
         asio::ssl::context ctx(asio::ssl::context::sslv23);
         ctx.set_default_verify_paths();
@@ -351,8 +359,8 @@ namespace Botcraft
         // allow us to treat all data up until the EOF as the content.
         asio::streambuf request;
         std::ostream request_stream(&request);
-        request_stream << "POST /session/minecraft/join HTTP/1.1 \r\n";
-        request_stream << "Host: " << session_server_URL << "\r\n";
+        request_stream << "POST "<< endpoint << " HTTP/1.1 \r\n";
+        request_stream << "Host: " << host << "\r\n";
         request_stream << "User-Agent: C/1.0\r\n";
         request_stream << "Content-Type: application/json; charset=utf-8 \r\n";
         request_stream << "Accept: */*\r\n";
@@ -369,33 +377,54 @@ namespace Botcraft
         asio::read_until(socket, response, "\r\n");
 
         // Check that response is OK.
-        std::stringstream output_string;
         std::istream response_stream(&response);
         std::string http_version;
         response_stream >> http_version;
-        unsigned int status_code;
         response_stream >> status_code;
-        std::string status_message;
         std::getline(response_stream, status_message);
+
 
         if (!response_stream || http_version.substr(0, 5) != "HTTP/")
         {
-            std::cerr << "Invalid response during server join\n";
-            return false;
+            std::cerr << "Invalid response during POST\n";
+            return "";
         }
-        if (status_code != 204)
+
+        // Empty response
+        if (status_code == 204)
         {
-            std::cerr << "Response returned with status code " << status_code << "(" << status_message << ") during server join\n";
-            std::cerr << "If you tried to connect with the json file, restart your official MC launcher to refresh the access token and then retry." << std::endl;
-            return false;
+            return "";
         }
 
-        return true;
-#endif
-    }
+        // Read the response headers, which are terminated by a blank line.
+        asio::read_until(socket, response, "\r\n\r\n");
 
-    const std::string& Authentifier::GetPlayerDisplayName() const
-    {
-        return player_display_name;
+        // Process the response headers.
+        std::string header;
+        while (std::getline(response_stream, header) && header != "\r")
+        {
+
+        }
+
+        // Write whatever content we already have to output.
+        std::stringstream output_string;
+        if (response.size() > 0)
+        {
+            output_string << &response;
+        }
+
+        // Read until EOF, writing data to output as we go.
+        asio::error_code error;
+        while (asio::read(socket, response, asio::transfer_at_least(1), error))
+        {
+            output_string << &response;
+        }
+        if (error != asio::error::eof)
+        {
+            std::cerr << "Error trying to read POST response (" << error << ")" << std::endl;
+            return "";
+        }
+
+        return output_string.str();
     }
 }

@@ -9,6 +9,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 ## Features
 
 - Connection to minecraft server (both offline mode and online connection with Mojang account, Microsoft accounts are supported using a json file created by the official launcher)
+- Automatic refresh of the token when required
 - DNS name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.16.5 supported
 - Compression
@@ -29,7 +30,7 @@ Example of block placing and inventory managing. Right of the screen is the inte
 
 ## Dependencies
 
-All the libraries are included either directly or as submodules and are built locally automatically (if not already found on your system) so you don't have to do anything.
+All the libraries are included either directly or as submodules and are built locally automatically (if not already found on your system) so you don't have to install anything manually.
 
 - [asio](https://think-async.com/Asio/)
 - [picoJson](https://github.com/kazuho/picojson)
@@ -92,6 +93,8 @@ Examples can be found in the [Examples](Examples/) folder:
 If the server is in online-mode: false mode, you can connect with any username.
 
 If the server is in online-mode: true mode, you can connect with a Mojang account (login+password) or with a json file created by the official minecraft launcher ``launcher/install/path/launcher_accounts.json``. For users with a Microsoft account, only the second option is available, as implementing the full [Microsoft oauth procedure](https://wiki.vg/Microsoft_Authentication_Scheme) would be rather complicated and tedious.
+
+If the access token present in the launcher file is too old, it will be automatically refreshed, and the file will be updated with the new one.
 
 ## To-do list
 
