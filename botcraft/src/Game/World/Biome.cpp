@@ -64,7 +64,7 @@ namespace Botcraft
             const unsigned int base_color = ComputeColorTriangle(relativ_height, is_grass);
             // Average the base color with the hardcoded value
             // Average formula from https://www.compuphase.com/graphic/scale3.htm
-            return ((((base_color ^ 0xFF28340A) & 0xfefefefe) >> 1) + (base_color & 0xFF28340A));
+            return ((((base_color ^ 0xFF28340A) & 0xFFFEFEFE) >> 1) + (base_color & 0xFF28340A));
 
         }
         case BiomeType::Badlands:
@@ -73,6 +73,7 @@ namespace Botcraft
             return base_color;
         }
         }
+        return 0xFFFFFFFF;
     }
 
     const unsigned int Biome::GetWaterColorMultiplier() const
