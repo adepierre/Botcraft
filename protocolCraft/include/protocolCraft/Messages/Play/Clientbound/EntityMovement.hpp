@@ -4,7 +4,7 @@
 
 namespace ProtocolCraft
 {
-    class Entity : public BaseMessage<Entity>
+    class EntityMovement : public BaseMessage<EntityMovement>
     {
     public:
         virtual const int GetId() const override
@@ -28,7 +28,7 @@ namespace ProtocolCraft
 
         virtual const std::string GetName() const override
         {
-            return "Entity";
+            return "EntityMovement";
         }
 
         void SetEntityId(const int entity_id_)

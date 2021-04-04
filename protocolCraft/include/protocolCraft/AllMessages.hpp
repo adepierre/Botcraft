@@ -105,7 +105,7 @@
 #include "protocolCraft/Messages/Play/Clientbound/KeepAliveClientbound.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ChunkData.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/JoinGame.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Entity.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/EntityMovement.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/EntityRelativeMove.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/EntityLookAndRelativeMove.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/EntityLook.hpp"
@@ -369,7 +369,7 @@ namespace ProtocolCraft
         ChunkData,
         JoinGame,
         Effect,
-        Entity,
+        EntityMovement,
         EntityAnimationClientbound,
         EntityEquipment,
         EntityEffect,

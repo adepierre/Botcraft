@@ -98,7 +98,6 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/DisconnectPlay.hpp
     include/protocolCraft/Messages/Play/Clientbound/DisplayScoreboard.hpp
     include/protocolCraft/Messages/Play/Clientbound/Effect.hpp
-    include/protocolCraft/Messages/Play/Clientbound/Entity.hpp
     include/protocolCraft/Messages/Play/Clientbound/EntityAnimationClientbound.hpp
     include/protocolCraft/Messages/Play/Clientbound/EntityEffect.hpp
     include/protocolCraft/Messages/Play/Clientbound/EntityEquipment.hpp
@@ -106,6 +105,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/EntityLook.hpp
     include/protocolCraft/Messages/Play/Clientbound/EntityLookAndRelativeMove.hpp
     include/protocolCraft/Messages/Play/Clientbound/EntityMetadata.hpp
+    include/protocolCraft/Messages/Play/Clientbound/EntityMovement.hpp
     include/protocolCraft/Messages/Play/Clientbound/EntityProperties.hpp
     include/protocolCraft/Messages/Play/Clientbound/EntityRelativeMove.hpp
     include/protocolCraft/Messages/Play/Clientbound/EntitySoundEffect.hpp

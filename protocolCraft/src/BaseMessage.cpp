@@ -158,7 +158,7 @@ namespace ProtocolCraft
     template class BaseMessage<ChunkData>;
     template class BaseMessage<JoinGame>;
     template class BaseMessage<Effect>;
-    template class BaseMessage<Entity>;
+    template class BaseMessage<EntityMovement>;
     template class BaseMessage<EntityAnimationClientbound>;
     template class BaseMessage<EntityEquipment>;
     template class BaseMessage<EntityEffect>;

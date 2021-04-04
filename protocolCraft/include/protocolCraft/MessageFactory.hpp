@@ -180,7 +180,7 @@ namespace ProtocolCraft
                     return std::shared_ptr<MapData>(new MapData);
                     break;
                 case 0x25:
-                    return std::shared_ptr<Entity>(new Entity);
+                    return std::shared_ptr<EntityMovement>(new EntityMovement);
                     break;
                 case 0x26:
                     return std::shared_ptr<EntityRelativeMove>(new EntityRelativeMove);
@@ -427,7 +427,7 @@ namespace ProtocolCraft
                     return std::shared_ptr<MapData>(new MapData);
                     break;
                 case 0x27:
-                    return std::shared_ptr<Entity>(new Entity);
+                    return std::shared_ptr<EntityMovement>(new EntityMovement);
                     break;
                 case 0x28:
                     return std::shared_ptr<EntityRelativeMove>(new EntityRelativeMove);
@@ -698,7 +698,7 @@ namespace ProtocolCraft
                     return std::shared_ptr<EntityLook>(new EntityLook);
                     break;
                 case 0x2B:
-                    return std::shared_ptr<Entity>(new Entity);
+                    return std::shared_ptr<EntityMovement>(new EntityMovement);
                     break;
                 case 0x2C:
                     return std::shared_ptr<VehicleMoveClientbound>(new VehicleMoveClientbound);
@@ -983,7 +983,7 @@ namespace ProtocolCraft
                     return std::shared_ptr<EntityLook>(new EntityLook);
                     break;
 				case 0x2C:
-					return std::shared_ptr<Entity>(new Entity);
+					return std::shared_ptr<EntityMovement>(new EntityMovement);
 					break;
                 case 0x2D:
                     return std::shared_ptr<VehicleMoveClientbound>(new VehicleMoveClientbound);
@@ -1260,7 +1260,7 @@ namespace ProtocolCraft
                     return std::shared_ptr<EntityLook>(new EntityLook);
                     break;
                 case 0x2B:
-                    return std::shared_ptr<Entity>(new Entity);
+                    return std::shared_ptr<EntityMovement>(new EntityMovement);
                     break;
                 case 0x2C:
                     return std::shared_ptr<VehicleMoveClientbound>(new VehicleMoveClientbound);
@@ -1534,7 +1534,7 @@ namespace ProtocolCraft
                     return std::shared_ptr<EntityLook>(new EntityLook);
                     break;
                 case 0x2A:
-                    return std::shared_ptr<Entity>(new Entity);
+                    return std::shared_ptr<EntityMovement>(new EntityMovement);
                     break;
                 case 0x2B:
                     return std::shared_ptr<VehicleMoveClientbound>(new VehicleMoveClientbound);

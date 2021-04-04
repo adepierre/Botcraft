@@ -2,6 +2,9 @@ project(botcraft)
 
 set(botcraft_PUBLIC_HDR 
     include/botcraft/Game/AABB.hpp
+    include/botcraft/Game/Entities/Entity.hpp
+    include/botcraft/Game/Entities/EntityManager.hpp
+    include/botcraft/Game/Entities/Player.hpp
     include/botcraft/Game/AssetsManager.hpp
     include/botcraft/Game/BaseClient.hpp
     include/botcraft/Game/World/Biome.hpp
@@ -11,7 +14,6 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Enums.hpp
     include/botcraft/Game/InterfaceClient.hpp
     include/botcraft/Game/Model.hpp
-    include/botcraft/Game/Player.hpp
     include/botcraft/Game/World/Section.hpp
     include/botcraft/Game/Vector3.hpp
     include/botcraft/Game/World/World.hpp
@@ -40,13 +42,15 @@ set(botcraft_SRC
     src/Game/AABB.cpp
     src/Game/AssetsManager.cpp
     src/Game/BaseClient.cpp
+    src/Game/Entities/Entity.cpp
+    src/Game/Entities/EntityManager.cpp
+    src/Game/Entities/Player.cpp
     src/Game/World/Biome.cpp
     src/Game/World/Block.cpp
     src/Game/World/Blockstate.cpp
     src/Game/World/Chunk.cpp
     src/Game/InterfaceClient.cpp
     src/Game/Model.cpp
-    src/Game/Player.cpp
     src/Game/World/World.cpp
     src/Game/Inventory/Window.cpp
     src/Game/Inventory/InventoryManager.cpp

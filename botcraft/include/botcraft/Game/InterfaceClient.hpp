@@ -1,6 +1,7 @@
 #pragma once
 
 #include "botcraft/Game/BaseClient.hpp"
+#include "botcraft/Game/Vector3.hpp"
 
 namespace Botcraft
 {

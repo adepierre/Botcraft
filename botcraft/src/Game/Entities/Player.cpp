@@ -1,4 +1,4 @@
-#include "botcraft/Game/Player.hpp"
+#include "botcraft/Game/Entities/Player.hpp"
 
 #define PI 3.14159265359
 
@@ -10,9 +10,6 @@ namespace Botcraft
     {
         position = Vector3<double>(0.0, 1000.0, 0.0);
 
-        yaw = 0.0f;
-        pitch = 0.0f;
-
         frontVector = Vector3<double>(0.0, 0.0, 1.0);
         rightVector = Vector3<double>(1.0, 0.0, 0.0);
 
@@ -20,10 +17,7 @@ namespace Botcraft
         is_flying = false;
         is_running = false;
 
-        speed = Vector3<double>(0.0, 0.0, 0.0);
         on_ground = true;
-
-        eid = 0;
 
         is_invulnerable = false;
         health = 0.0f;
@@ -36,11 +30,6 @@ namespace Botcraft
     std::mutex& Player::GetMutex()
     {
         return player_mutex;
-    }
-
-    const Vector3<double>& Player::GetPosition() const
-    {
-        return position;
     }
 
     const Vector3<double>& Player::GetFrontVector() const
@@ -63,21 +52,6 @@ namespace Botcraft
         return AABB(Vector3<double>(position.x, position.y + boxSize.y, position.z), boxSize);
     }
 
-    const float Player::GetYaw() const
-    {
-        return yaw;
-    }
-
-    const float Player::GetPitch() const
-    {
-        return pitch;
-    }
-
-    const Vector3<double> &Player::GetSpeed() const
-    {
-        return speed;
-    }
-
     const float Player::GetFlyingSpeed() const
     {
         return flying_speed;
@@ -93,19 +67,11 @@ namespace Botcraft
         return is_running;
     }
 
-    const int Player::GetEID() const
-    {
-        return eid;
-    }
-
-    const bool Player::GetOnGround() const
-    {
-        return on_ground;
-    }
     const bool Player::GetIsInvulnerable() const
     {
         return is_invulnerable;
     }
+
     const float Player::GetHealth() const
     {
         return health;
@@ -126,6 +92,12 @@ namespace Botcraft
         return has_moved;
     }
 
+    void Player::SetPosition(const Vector3<double>& pos)
+    {
+        has_moved = position != pos;
+        position = pos;
+    }
+
     void Player::SetX(const double x)
     {
         has_moved = position.x != x;
@@ -142,12 +114,6 @@ namespace Botcraft
     {
         has_moved = position.z != z;
         position.z = z;
-    }
-
-    void Player::SetPosition(const Vector3<double> &pos)
-    {
-        has_moved = position != pos;
-        position = pos;
     }
 
     void Player::SetYaw(const float yaw_)
@@ -170,26 +136,6 @@ namespace Botcraft
         }
     }
 
-    void Player::SetSpeed(const Vector3<double> &speed_)
-    {
-        speed = speed_;
-    }
-
-    void Player::SetSpeedX(const double speed_x)
-    {
-        speed.x = speed_x;
-    }
-
-    void Player::SetSpeedY(const double speed_y)
-    {
-        speed.y = speed_y;
-    }
-
-    void Player::SetSpeedZ(const double speed_z)
-    {
-        speed.z = speed_z;
-    }
-
     void Player::SetFlyingSpeed(const float s)
     {
         flying_speed = s;
@@ -203,16 +149,6 @@ namespace Botcraft
     void Player::SetIsRunning(const bool b)
     {
         is_running = b;
-    }
-
-    void Player::SetEID(const int eid_)
-    {
-        eid = eid_;
-    }
-
-    void Player::SetOnGround(const bool on_ground_)
-    {
-        on_ground = on_ground_;
     }
 
     void Player::SetIsInvulnerable(const bool b)

@@ -9,7 +9,6 @@
 #include "protocolCraft/Handler.hpp"
 #include "protocolCraft/Message.hpp"
 #include "protocolCraft/AllMessages.hpp"
-#include "botcraft/Game/Player.hpp"
 #include "botcraft/Game/Enums.hpp"
 
 namespace Botcraft
@@ -17,6 +16,7 @@ namespace Botcraft
     class World;
     class InventoryManager;
     class NetworkManager;
+    class EntityManager;
 
 #if USE_GUI
     namespace Renderer
@@ -54,13 +54,8 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ConfirmTransactionClientbound &msg) override;
         virtual void Handle(ProtocolCraft::DisconnectPlay &msg) override;
         virtual void Handle(ProtocolCraft::JoinGame &msg) override;
-        virtual void Handle(ProtocolCraft::Entity &msg) override;
-        virtual void Handle(ProtocolCraft::EntityRelativeMove &msg) override;
-        virtual void Handle(ProtocolCraft::EntityLookAndRelativeMove &msg) override;
-        virtual void Handle(ProtocolCraft::EntityLook &msg) override;
         virtual void Handle(ProtocolCraft::PlayerPositionAndLookClientbound &msg) override;
         virtual void Handle(ProtocolCraft::UpdateHealth &msg) override;
-        virtual void Handle(ProtocolCraft::EntityTeleport &msg) override;
         virtual void Handle(ProtocolCraft::PlayerAbilitiesClientbound &msg) override;
         virtual void Handle(ProtocolCraft::Respawn &msg) override;
 
@@ -68,21 +63,19 @@ namespace Botcraft
         // If in afk only mode, the chunks will NOT
         // be stored in memory and physics will NOT
         // be calculated
-        // Use it only to afk at a specific spot
+        // Use it only to afk at a specific spot with
+        // very low CPU/RAM usage
         bool afk_only;
 
-        // If true, opens a window to display the view
-        // from the bot. Only one renderer can be active
-        // at the same time
-#if USE_GUI
-        bool use_renderer;
-#endif
-
         std::shared_ptr<World> world;
-        std::shared_ptr<Player> player;
+        std::shared_ptr<EntityManager> entity_manager;
         std::shared_ptr<InventoryManager> inventory_manager;
         std::shared_ptr<NetworkManager> network_manager;
 #if USE_GUI
+        // If true, opens a window to display the view
+        // from the bot. Only one renderer can be active
+        // at the same time
+        bool use_renderer;
         std::shared_ptr<Renderer::RenderingManager> rendering_manager;
 #endif
 

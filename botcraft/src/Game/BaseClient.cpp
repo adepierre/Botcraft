@@ -1,6 +1,8 @@
 #include <functional>
 
 #include "botcraft/Game/AssetsManager.hpp"
+#include "botcraft/Game/Entities/EntityManager.hpp"
+#include "botcraft/Game/Entities/Player.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/World/Block.hpp"
@@ -28,9 +30,9 @@ namespace Botcraft
         difficulty_locked = true;
 #endif
 
-        player = nullptr;
         world = nullptr;
         inventory_manager = nullptr;
+        entity_manager = nullptr;
 
 #if USE_GUI
         use_renderer = use_renderer_;
@@ -81,72 +83,76 @@ namespace Botcraft
             // End of the current tick
             auto end = std::chrono::system_clock::now() + std::chrono::milliseconds(50);
 
-            if (player && player->GetPosition().y < 1000.0)
+            if (entity_manager)
             {
-                if (afk_only)
+                std::shared_ptr<Player> player = entity_manager->GetPlayer();
+                if (player && player->GetPosition().y < 1000.0)
                 {
-                    has_moved = false;
-                }
-                else
-                {
-                    std::lock_guard<std::mutex> player_guard(player->GetMutex());
-                    //Check that we did not go through a block
-                    Physics();
-
-                    if (player->GetHasMoved() ||
-                        std::abs(player->GetSpeed().x) > 1e-3 ||
-                        std::abs(player->GetSpeed().y) > 1e-3 ||
-                        std::abs(player->GetSpeed().z) > 1e-3)
-                    {
-                        has_moved = true;
-                        // Reset the player move state until next tick
-                        player->SetHasMoved(false);
-                    }
-                    else
+                    if (afk_only)
                     {
                         has_moved = false;
                     }
-
-                    //Avoid forever falling if position is <= 0.0
-                    if (player->GetPosition().y <= 0.0)
-                    {
-                        player->SetY(0.0);
-                        player->SetSpeedY(0.0);
-                        player->SetOnGround(true);
-                    }
-
-                    // Reset the speed until next frame
-                    // Update the gravity value if needed
-                    player->SetSpeedX(0.0);
-                    player->SetSpeedZ(0.0);
-                    if (player->GetOnGround())
-                    {
-                        player->SetSpeedY(0.0);
-                    }
                     else
                     {
-                        player->SetSpeedY((player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
+                        std::lock_guard<std::mutex> player_guard(player->GetMutex());
+                        //Check that we did not go through a block
+                        Physics();
+
+                        if (player->GetHasMoved() ||
+                            std::abs(player->GetSpeed().x) > 1e-3 ||
+                            std::abs(player->GetSpeed().y) > 1e-3 ||
+                            std::abs(player->GetSpeed().z) > 1e-3)
+                        {
+                            has_moved = true;
+                            // Reset the player move state until next tick
+                            player->SetHasMoved(false);
+                        }
+                        else
+                        {
+                            has_moved = false;
+                        }
+
+                        //Avoid forever falling if position is <= 0.0
+                        if (player->GetPosition().y <= 0.0)
+                        {
+                            player->SetY(0.0);
+                            player->SetSpeedY(0.0);
+                            player->SetOnGround(true);
+                        }
+
+                        // Reset the speed until next frame
+                        // Update the gravity value if needed
+                        player->SetSpeedX(0.0);
+                        player->SetSpeedZ(0.0);
+                        if (player->GetOnGround())
+                        {
+                            player->SetSpeedY(0.0);
+                        }
+                        else
+                        {
+                            player->SetSpeedY((player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
+                        }
                     }
-                }
 
 #if USE_GUI
-                if (use_renderer && has_moved)
-                {
-                    rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
-                }
+                    if (rendering_manager && has_moved)
+                    {
+                        rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                    }
 #endif
-                msg_position->SetX(player->GetPosition().x);
-                msg_position->SetFeetY(player->GetPosition().y);
-                msg_position->SetZ(player->GetPosition().z);
-                msg_position->SetYaw(player->GetYaw());
-                msg_position->SetPitch(player->GetPitch());
-                msg_position->SetOnGround(player->GetOnGround());
+                    msg_position->SetX(player->GetPosition().x);
+                    msg_position->SetFeetY(player->GetPosition().y);
+                    msg_position->SetZ(player->GetPosition().z);
+                    msg_position->SetYaw(player->GetYaw());
+                    msg_position->SetPitch(player->GetPitch());
+                    msg_position->SetOnGround(player->GetOnGround());
 
-                if (network_manager && 
-                    (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_send).count() >= 1000))
-                {
-                    network_manager->Send(msg_position);
-                    last_send = std::chrono::system_clock::now();
+                    if (network_manager &&
+                        (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_send).count() >= 1000))
+                    {
+                        network_manager->Send(msg_position);
+                        last_send = std::chrono::system_clock::now();
+                    }
                 }
             }
             std::this_thread::sleep_until(end);
@@ -155,6 +161,13 @@ namespace Botcraft
 
     void BaseClient::Physics()
     {
+        if (!entity_manager)
+        {
+            return;
+        }
+
+        std::shared_ptr<Player> player = entity_manager->GetPlayer();
+
         //If the player did not move we assume it does not collide
         if (!player->GetHasMoved() &&
             abs(player->GetSpeed().x) < 1e-3 && 
@@ -294,7 +307,7 @@ namespace Botcraft
             world.reset();
         }
         inventory_manager.reset();
-        player.reset();
+        entity_manager.reset();
     }
 
     void BaseClient::SetSharedWorld(const std::shared_ptr<World> world_)
@@ -318,10 +331,6 @@ namespace Botcraft
 
     void BaseClient::Handle(LoginSuccess &msg)
     {
-        if (!player)
-        {
-            player = std::shared_ptr<Player>(new Player);
-        }
         if (!world)
         {
             world = std::shared_ptr<World>(new World(false));
@@ -338,6 +347,14 @@ namespace Botcraft
                 network_manager->AddHandler(inventory_manager.get());
             }
         }
+        if (!entity_manager)
+        {
+            entity_manager = std::shared_ptr<EntityManager>(new EntityManager);
+            if (!afk_only)
+            {
+                network_manager->AddHandler(entity_manager.get());
+            }
+        }
 
 #if USE_GUI
         if (use_renderer)
@@ -347,6 +364,7 @@ namespace Botcraft
             {
                 network_manager->AddHandler(rendering_manager.get());
             }
+            entity_manager->SetRenderingManager(rendering_manager);
         }
 #endif
         
@@ -388,9 +406,6 @@ namespace Botcraft
 
     void BaseClient::Handle(JoinGame &msg)
     {
-        player->GetMutex().lock();
-        player->SetEID(msg.GetEntityId());
-        player->GetMutex().unlock();
         game_mode = (GameMode)(msg.GetGamemode() & 0x03);
 #if PROTOCOL_VERSION > 737
         is_hardcore = msg.GetIsHardcore();
@@ -403,113 +418,19 @@ namespace Botcraft
 #endif
     }
 
-    void BaseClient::Handle(Entity &msg)
+    void BaseClient::Handle(ProtocolCraft::PlayerPositionAndLookClientbound& msg)
     {
-        std::cout << "New entity created with ID: " << msg.GetEntityId() << std::endl;
-        //TODO add the entity to the world
-    }
-
-    void BaseClient::Handle(EntityRelativeMove &msg)
-    {
-        std::lock_guard<std::mutex> player_guard(player->GetMutex());
-        if (msg.GetEntityId() == player->GetEID())
-        {
-            player->SetX((msg.GetDeltaX() / 128.0f + player->GetPosition().x * 32.0f) / 32.0f);
-            player->SetY((msg.GetDeltaY() / 128.0f + player->GetPosition().y * 32.0f) / 32.0f);
-            player->SetZ((msg.GetDeltaZ() / 128.0f + player->GetPosition().z * 32.0f) / 32.0f);
-            player->SetOnGround(msg.GetOnGround());
-
-#ifdef USE_GUI
-            if (use_renderer)
-            {
-                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
-            }
-#endif // USE_GUI
-        }
-        else
-        {
-            //TODO Change entity's position in the world
-        }
-    }
-
-    void BaseClient::Handle(EntityLookAndRelativeMove &msg)
-    {
-        std::lock_guard<std::mutex> player_guard(player->GetMutex());
-        if (msg.GetEntityId() == player->GetEID())
-        {
-            player->SetX((msg.GetDeltaX() / 128.0f + player->GetPosition().x * 32.0f) / 32.0f);
-            player->SetY((msg.GetDeltaY() / 128.0f + player->GetPosition().y * 32.0f) / 32.0f);
-            player->SetZ((msg.GetDeltaZ() / 128.0f + player->GetPosition().z * 32.0f) / 32.0f);
-            player->SetYaw(360.0f * msg.GetYaw() / 256.0f);
-            player->SetPitch(360.0f * msg.GetPitch() / 256.0f);
-            player->SetOnGround(msg.GetOnGround());
-
-#ifdef USE_GUI
-            if (use_renderer)
-            {
-                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
-            }
-#endif // USE_GUI
-        }
-        else
-        {
-            //TODO Change entity's position and rotation in the world
-        }
-    }
-
-    void BaseClient::Handle(EntityLook &msg)
-    {
-        std::lock_guard<std::mutex> player_guard(player->GetMutex());
-        if (msg.GetEntityId() == player->GetEID())
-        {
-            player->SetYaw(360.0f * msg.GetYaw() / 256.0f);
-            player->SetPitch(360.0f * msg.GetPitch() / 256.0f);
-            player->SetOnGround(msg.GetOnGround());
-
-#ifdef USE_GUI
-            if (use_renderer)
-            {
-                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
-            }
-#endif // USE_GUI
-        }
-        else
-        {
-            //TODO Change entity's rotation in the world
-        }
-    }
-
-    void BaseClient::Handle(PlayerPositionAndLookClientbound &msg)
-    {
-        std::lock_guard<std::mutex> player_guard(player->GetMutex());
-        (msg.GetFlags() & 0x01) ? player->SetX(player->GetPosition().x + msg.GetX()) : player->SetX(msg.GetX());
-        (msg.GetFlags() & 0x02) ? player->SetY(player->GetPosition().y + msg.GetY()) : player->SetY(msg.GetY());
-        (msg.GetFlags() & 0x04) ? player->SetZ(player->GetPosition().z + msg.GetZ()) : player->SetZ(msg.GetZ());
-        (msg.GetFlags() & 0x08) ? player->SetYaw(player->GetYaw() + msg.GetYaw()) : player->SetYaw(msg.GetYaw());
-        (msg.GetFlags() & 0x10) ? player->SetPitch(player->GetPitch() + msg.GetPitch()) : player->SetPitch(msg.GetPitch());
-
+        // Confirmations have to be sent from here
+        // because EntityManager does not receive messages
+        // in case of afk_only mode
         std::shared_ptr<TeleportConfirm> confirm_msg(new TeleportConfirm);
         confirm_msg->SetTeleportId(msg.GetTeleportId());
 
         network_manager->Send(confirm_msg);
-
-#ifdef USE_GUI
-        if (use_renderer)
-        {
-            rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
-        }
-#endif // USE_GUI
     }
 
     void BaseClient::Handle(UpdateHealth &msg)
     {
-        {
-            std::lock_guard<std::mutex> player_lock(player->GetMutex());
-            player->SetHealth(msg.GetHealth());
-            player->SetFood(msg.GetFood());
-            player->SetFoodSaturation(msg.GetFoodSaturation());
-        }
-
         if (msg.GetHealth() <= 0.0f && auto_respawn)
         {
             std::shared_ptr<ClientStatus> status_message(new ClientStatus);
@@ -518,44 +439,10 @@ namespace Botcraft
         }
     }
 
-    void BaseClient::Handle(EntityTeleport &msg)
-    {
-        std::lock_guard<std::mutex> player_guard(player->GetMutex());
-        if (msg.GetEntityId() == player->GetEID())
-        {
-            player->SetX(msg.GetX());
-            player->SetY(msg.GetY());
-            player->SetZ(msg.GetZ());
-            player->SetYaw(360.0f * msg.GetYaw() / 256.0f);
-            player->SetPitch(360.0f * msg.GetPitch() / 256.0f);
-            player->SetOnGround(msg.GetOnGround());
-
-#ifdef USE_GUI
-            if (use_renderer)
-            {
-                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
-            }
-#endif // USE_GUI
-        }
-        else
-        {
-            //TODO Change entity's position and rotation in the world
-        }
-    }
-
     void BaseClient::Handle(PlayerAbilitiesClientbound &msg)
     {
-        {
-            std::lock_guard<std::mutex> player_guard(player->GetMutex());
-            player->SetIsInvulnerable(msg.GetFlags() & 0x01);
-            player->SetIsFlying(msg.GetFlags() & 0x02);
-            player->SetFlyingSpeed(msg.GetFlyingSpeed());
-        }
         allow_flying = msg.GetFlags() & 0x04;
         creative_mode = msg.GetFlags() & 0x08;
-
-        //TODO do something with the field of view modifier
-
 
         std::shared_ptr<ClientSettings> settings_msg(new ClientSettings);
         settings_msg->SetLocale("fr_FR");

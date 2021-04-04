@@ -3,6 +3,8 @@
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
+#include "botcraft/Game/Entities/EntityManager.hpp"
+#include "botcraft/Game/Entities/Player.hpp"
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 
@@ -89,6 +91,7 @@ namespace Botcraft
         std::shared_ptr<Blockstate> blockstate;
         Position block_position;
         Position block_normal;
+        std::shared_ptr<Player> player = entity_manager->GetPlayer();
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
             blockstate = world->Raycast(player->GetPosition() + Vector3<double>(0.0, 1.65, 0.0), player->GetFrontVector(), 6.5f, block_position, block_normal);
@@ -247,6 +250,7 @@ namespace Botcraft
             return false;
         }
         
+        std::shared_ptr<Player> player = entity_manager->GetPlayer();
         Position current_position;
         do
         {
@@ -334,11 +338,12 @@ namespace Botcraft
             || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play
             || !inventory_manager
             || !inventory_manager->GetPlayerInventory()
-            || !player)
+            || !entity_manager)
         {
             return false;
         }
 
+        std::shared_ptr<Player> player = entity_manager->GetPlayer();
         const Vector3<double> dist(std::floor(player->GetPosition().x) - location.x, std::floor(player->GetPosition().y) - location.y, std::floor(player->GetPosition().z) - location.z);
         double distance = std::sqrt(dist.dot(dist));
         if (distance > 5.0f)
@@ -493,11 +498,12 @@ namespace Botcraft
     {
         if (!network_manager
             || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play
-            || !player)
+            || !entity_manager)
         {
             return false;
         }
 
+        std::shared_ptr<Player> player = entity_manager->GetPlayer();
         const Vector3<double> dist(std::floor(player->GetPosition().x) - location.x, std::floor(player->GetPosition().y) - location.y, std::floor(player->GetPosition().z) - location.z);
         double distance = std::sqrt(dist.dot(dist));
         if (distance > 5.0f)

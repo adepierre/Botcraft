@@ -1,10 +1,15 @@
 #include <botcraft/Game/AssetsManager.hpp>
 #include <botcraft/Version.hpp>
+#include <botcraft/Game/Entities/EntityManager.hpp>
+#include <botcraft/Game/Entities/Player.hpp>
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Chunk.hpp>
-#include <botcraft/Renderer/RenderingManager.hpp>
 #include <botcraft/Network/NetworkManager.hpp>
 #include <protocolCraft/enums.hpp>
+
+#if USE_GUI
+#include <botcraft/Renderer/RenderingManager.hpp>
+#endif
 
 #include "UserControlledClient.hpp"
 
@@ -21,7 +26,7 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : In
     {
         network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(ConnectionState::Play));
         world = std::shared_ptr<World>(new World(false));
-        player = std::shared_ptr<Player>(new Player);
+        entity_manager = std::shared_ptr<EntityManager>(new EntityManager);
 
         should_be_closed = false;
 
@@ -37,7 +42,7 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : In
 #endif
 
         // Launch the thread for the position
-        player->SetPosition(Vector3<double>(0.0, 0.0, 0.0));
+        entity_manager->GetPlayer()->SetPosition(Vector3<double>(0.0, 0.0, 0.0));
         m_thread_physics = std::thread(&UserControlledClient::RunSyncPos, this);
         std::cout << "Client created!" << std::endl;
 
@@ -267,12 +272,13 @@ void UserControlledClient::CreateTestWorld()
     }
 #endif
     
-    player->SetPosition(Vector3<double>(0.5, 1.0, 0.5));
+    entity_manager->GetPlayer()->SetPosition(Vector3<double>(0.5, 1.0, 0.5));
 }
 
 #ifdef USE_GUI
 void UserControlledClient::MouseCallback(const double &xoffset, const double &yoffset)
 {
+    std::shared_ptr<Player> player = entity_manager->GetPlayer();
     float pitch = player->GetPitch() - yoffset * mouse_sensitivity;
 
     if (pitch > 89.0f)
@@ -291,6 +297,7 @@ void UserControlledClient::MouseCallback(const double &xoffset, const double &yo
 
 void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer::KEY_CODE::NUMBER_OF_KEYS> &is_key_pressed, const double &delta_time)
 {
+    std::shared_ptr<Player> player = entity_manager->GetPlayer();
     bool pos_has_changed = false;
     if (is_key_pressed[(int)Renderer::KEY_CODE::ESC])
     {
