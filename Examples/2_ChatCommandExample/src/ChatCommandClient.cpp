@@ -4,7 +4,7 @@
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Block.hpp>
 #include <botcraft/Game/Entities/EntityManager.hpp>
-#include <botcraft/Game/Entities/Player.hpp>
+#include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/Network/NetworkManager.hpp>
 
 #include "ChatCommandClient.hpp"
@@ -84,7 +84,7 @@ void ChatCommandClient::Handle(ChatMessageClientbound &msg)
     else if (splitted[1] == "check_perimeter")
     {
         float radius = 128.0f;
-        Position pos = Position(entity_manager->GetPlayer()->GetPosition().x, entity_manager->GetPlayer()->GetPosition().y, entity_manager->GetPlayer()->GetPosition().z);
+        Position pos = Position(entity_manager->GetLocalPlayer()->GetPosition().x, entity_manager->GetLocalPlayer()->GetPosition().y, entity_manager->GetLocalPlayer()->GetPosition().z);
         bool check_lighting = true;
 
         if (splitted.size() == 3)

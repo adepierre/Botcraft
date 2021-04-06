@@ -1,6 +1,7 @@
 #pragma once
 
 #include "botcraft/Game/Vector3.hpp"
+#include "botcraft/Game/AABB.hpp"
 
 namespace Botcraft
 {
@@ -15,6 +16,7 @@ namespace Botcraft
 		const float GetPitch() const;
 		const Vector3<double>& GetSpeed() const;
 		const bool GetOnGround() const;
+		virtual const AABB GetCollider() const;
 
 
 		void SetEID(const int eid_);

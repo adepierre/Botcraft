@@ -1,12 +1,10 @@
-#include "botcraft/Game/Entities/Player.hpp"
+#include "botcraft/Game/Entities/LocalPlayer.hpp"
 
 #define PI 3.14159265359
 
 namespace Botcraft
 {
-    const Vector3<double> Player::boxSize = Vector3<double>(0.3, 0.9, 0.3);
-
-    Player::Player()
+    LocalPlayer::LocalPlayer()
     {
         position = Vector3<double>(0.0, 1000.0, 0.0);
 
@@ -17,8 +15,6 @@ namespace Botcraft
         is_flying = false;
         is_running = false;
 
-        on_ground = true;
-
         is_invulnerable = false;
         health = 0.0f;
         food = 20;
@@ -27,96 +23,96 @@ namespace Botcraft
         has_moved = true;
     }
 
-    std::mutex& Player::GetMutex()
+    std::mutex& LocalPlayer::GetMutex()
     {
         return player_mutex;
     }
 
-    const Vector3<double>& Player::GetFrontVector() const
+    const Vector3<double>& LocalPlayer::GetFrontVector() const
     {
         return frontVector;
     }
 
-    const Vector3<double>& Player::GetXZVector() const
+    const Vector3<double>& LocalPlayer::GetXZVector() const
     {
         return xzVector;
     }
 
-    const Vector3<double>& Player::GetRightVector() const
+    const Vector3<double>& LocalPlayer::GetRightVector() const
     {
         return rightVector;
     }
 
-    const AABB Player::GetCollider() const
+    const AABB LocalPlayer::GetCollider() const
     {
-        return AABB(Vector3<double>(position.x, position.y + boxSize.y, position.z), boxSize);
+        return AABB(Vector3<double>(position.x, position.y + 0.9, position.z), Vector3<double>(0.3, 0.9, 0.3));
     }
 
-    const float Player::GetFlyingSpeed() const
+    const float LocalPlayer::GetFlyingSpeed() const
     {
         return flying_speed;
     }
 
-    const bool Player::GetIsFlying() const
+    const bool LocalPlayer::GetIsFlying() const
     {
         return is_flying;
     }
 
-    const bool Player::GetIsRunning() const
+    const bool LocalPlayer::GetIsRunning() const
     {
         return is_running;
     }
 
-    const bool Player::GetIsInvulnerable() const
+    const bool LocalPlayer::GetIsInvulnerable() const
     {
         return is_invulnerable;
     }
 
-    const float Player::GetHealth() const
+    const float LocalPlayer::GetHealth() const
     {
         return health;
     }
 
-    const int Player::GetFood() const
+    const int LocalPlayer::GetFood() const
     {
         return food;
     }
 
-    const float Player::GetFoodSaturation() const
+    const float LocalPlayer::GetFoodSaturation() const
     {
         return food_saturation;
     }
 
-    const bool Player::GetHasMoved() const
+    const bool LocalPlayer::GetHasMoved() const
     {
         return has_moved;
     }
 
-    void Player::SetPosition(const Vector3<double>& pos)
+    void LocalPlayer::SetPosition(const Vector3<double>& pos)
     {
         has_moved = position != pos;
         position = pos;
     }
 
-    void Player::SetX(const double x)
+    void LocalPlayer::SetX(const double x)
     {
         has_moved = position.x != x;
         position.x = x;
     }
 
-    void Player::SetY(const double y)
+    void LocalPlayer::SetY(const double y)
     {
         has_moved = position.y != y;
         position.y = y;
     }
 
-    void Player::SetZ(const double z)
+    void LocalPlayer::SetZ(const double z)
     {
         has_moved = position.z != z;
         position.z = z;
     }
 
-    void Player::SetYaw(const float yaw_)
+    void LocalPlayer::SetYaw(const float yaw_)
     {
         if (yaw != yaw_)
         {
@@ -126,7 +122,7 @@ namespace Botcraft
         }
     }
 
-    void Player::SetPitch(const float pitch_)
+    void LocalPlayer::SetPitch(const float pitch_)
     {
         if (pitch != pitch_)
         {
@@ -136,47 +132,47 @@ namespace Botcraft
         }
     }
 
-    void Player::SetFlyingSpeed(const float s)
+    void LocalPlayer::SetFlyingSpeed(const float s)
     {
         flying_speed = s;
     }
 
-    void Player::SetIsFlying(const bool b)
+    void LocalPlayer::SetIsFlying(const bool b)
     {
         is_flying = b;
     }
 
-    void Player::SetIsRunning(const bool b)
+    void LocalPlayer::SetIsRunning(const bool b)
     {
         is_running = b;
     }
 
-    void Player::SetIsInvulnerable(const bool b)
+    void LocalPlayer::SetIsInvulnerable(const bool b)
     {
         is_invulnerable = b;
     }
 
-    void Player::SetHealth(const float health_)
+    void LocalPlayer::SetHealth(const float health_)
     {
         health = health_;
     }
 
-    void Player::SetFood(const int food_)
+    void LocalPlayer::SetFood(const int food_)
     {
         food = food_;
     }
 
-    void Player::SetFoodSaturation(const float food_saturation_)
+    void LocalPlayer::SetFoodSaturation(const float food_saturation_)
     {
         food_saturation = food_saturation_;
     }
 
-    void Player::SetHasMoved(const bool has_moved_)
+    void LocalPlayer::SetHasMoved(const bool has_moved_)
     {
         has_moved = has_moved_;
     }
 
-    void Player::LookAt(const Vector3<double>& pos, const bool set_pitch)
+    void LocalPlayer::LookAt(const Vector3<double>& pos, const bool set_pitch)
     {
         Vector3<double> direction = (pos - position);
         direction.Normalize();
@@ -199,7 +195,7 @@ namespace Botcraft
         }
     }
 
-    void Player::UpdateVectors()
+    void LocalPlayer::UpdateVectors()
     {
         const double rad_yaw = yaw * PI / 180.0;
         const double rad_pitch = pitch * PI / 180.0;

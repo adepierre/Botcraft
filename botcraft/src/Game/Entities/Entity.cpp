@@ -9,6 +9,8 @@ namespace Botcraft
         yaw = 0.0f;
         pitch = 0.0f;
         speed = Vector3<double>(0.0, 0.0, 0.0);
+
+        on_ground = true;
     }
 
     const int Entity::GetEID() const
@@ -39,6 +41,11 @@ namespace Botcraft
     const bool Entity::GetOnGround() const
     {
         return on_ground;
+    }
+
+    const AABB Entity::GetCollider() const
+    {
+        return AABB(Vector3<double>(position.x, position.y + 0.25, position.z), Vector3<double>(0.25, 0.25, 0.25));
     }
 
 

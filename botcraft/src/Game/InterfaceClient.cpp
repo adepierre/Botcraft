@@ -4,7 +4,7 @@
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
-#include "botcraft/Game/Entities/Player.hpp"
+#include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 
@@ -91,10 +91,10 @@ namespace Botcraft
         std::shared_ptr<Blockstate> blockstate;
         Position block_position;
         Position block_normal;
-        std::shared_ptr<Player> player = entity_manager->GetPlayer();
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            blockstate = world->Raycast(player->GetPosition() + Vector3<double>(0.0, 1.65, 0.0), player->GetFrontVector(), 6.5f, block_position, block_normal);
+            blockstate = world->Raycast(local_player->GetPosition() + Vector3<double>(0.0, 1.65, 0.0), local_player->GetFrontVector(), 6.5f, block_position, block_normal);
         
             if (!blockstate ||
                 blockstate->IsFluid() ||
@@ -105,9 +105,9 @@ namespace Botcraft
                 return;
             }
 
-            const double distance_x = player->GetPosition().x - block_position.x - 0.5;
-            const double distance_y = player->GetPosition().y + 1.5 - block_position.y - 0.5;
-            const double distance_z = player->GetPosition().z - block_position.z - 0.5;
+            const double distance_x = local_player->GetPosition().x - block_position.x - 0.5;
+            const double distance_y = local_player->GetPosition().y + 1.5 - block_position.y - 0.5;
+            const double distance_z = local_player->GetPosition().z - block_position.z - 0.5;
 
             if (std::sqrt(distance_x * distance_x + distance_y * distance_y + distance_z * distance_z) > 6.0)
             {
@@ -189,7 +189,7 @@ namespace Botcraft
                 Position current_normal;
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                    current_blockstate = world->Raycast(player->GetPosition() + Vector3<double>(0.0, 1.65, 0.0), player->GetFrontVector(), 6.5f, current_position, current_normal);
+                    current_blockstate = world->Raycast(local_player->GetPosition() + Vector3<double>(0.0, 1.65, 0.0), local_player->GetFrontVector(), 6.5f, current_position, current_normal);
                 }
 
                 // The block has changed or the player looks at another block
@@ -250,18 +250,18 @@ namespace Botcraft
             return false;
         }
         
-        std::shared_ptr<Player> player = entity_manager->GetPlayer();
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
         Position current_position;
         do
         {
             // Wait until we are on the ground
-            while (!player->GetOnGround())
+            while (!local_player->GetOnGround())
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
 
             // Get the position
-            current_position = Position(std::floor(player->GetPosition().x), std::floor(player->GetPosition().y), std::floor(player->GetPosition().z));
+            current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
 
             std::vector<Position> path;
             pathfinding_state = PathFindingState::Searching;
@@ -301,19 +301,19 @@ namespace Botcraft
                 }
 
                 // Wait until we are on the ground
-                while (!player->GetOnGround())
+                while (!local_player->GetOnGround())
                 {
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
 
                 {
-                    std::lock_guard<std::mutex> player_lock(player->GetMutex());
+                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                     const Vector3<double> temp_dest(path[i].x + 0.5, path[i].y, path[i].z + 0.5);
-                    player->LookAt(temp_dest);
-                    player->SetPosition(temp_dest);
+                    local_player->LookAt(temp_dest);
+                    local_player->SetPosition(temp_dest);
 
                     // Get the position
-                    current_position = Position(std::floor(player->GetPosition().x), std::floor(player->GetPosition().y), std::floor(player->GetPosition().z));
+                    current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000 / speed)));
             }
@@ -343,8 +343,8 @@ namespace Botcraft
             return false;
         }
 
-        std::shared_ptr<Player> player = entity_manager->GetPlayer();
-        const Vector3<double> dist(std::floor(player->GetPosition().x) - location.x, std::floor(player->GetPosition().y) - location.y, std::floor(player->GetPosition().z) - location.z);
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+        const Vector3<double> dist(std::floor(local_player->GetPosition().x) - location.x, std::floor(local_player->GetPosition().y) - location.y, std::floor(local_player->GetPosition().z) - location.z);
         double distance = std::sqrt(dist.dot(dist));
         if (distance > 5.0f)
         {
@@ -408,8 +408,8 @@ namespace Botcraft
 #endif
         {
             network_manager->Send(place_block_msg);
-            std::lock_guard<std::mutex> lock(player->GetMutex());
-            player->LookAt(Vector3<double>(location) + Vector3<double>(0.5, 0.5, 0.5), true);
+            std::lock_guard<std::mutex> lock(local_player->GetMutex());
+            local_player->LookAt(Vector3<double>(location) + Vector3<double>(0.5, 0.5, 0.5), true);
             return true;
         }
 
@@ -488,8 +488,8 @@ namespace Botcraft
 
         // Place the block
         network_manager->Send(place_block_msg);
-        std::lock_guard<std::mutex> lock(player->GetMutex());
-        player->LookAt(Vector3<double>(location) + Vector3<double>(0.5, 0.5, 0.5), true);
+        std::lock_guard<std::mutex> lock(local_player->GetMutex());
+        local_player->LookAt(Vector3<double>(location) + Vector3<double>(0.5, 0.5, 0.5), true);
 
         return true;
     }
@@ -503,8 +503,8 @@ namespace Botcraft
             return false;
         }
 
-        std::shared_ptr<Player> player = entity_manager->GetPlayer();
-        const Vector3<double> dist(std::floor(player->GetPosition().x) - location.x, std::floor(player->GetPosition().y) - location.y, std::floor(player->GetPosition().z) - location.z);
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+        const Vector3<double> dist(std::floor(local_player->GetPosition().x) - location.x, std::floor(local_player->GetPosition().y) - location.y, std::floor(local_player->GetPosition().z) - location.z);
         double distance = std::sqrt(dist.dot(dist));
         if (distance > 5.0f)
         {

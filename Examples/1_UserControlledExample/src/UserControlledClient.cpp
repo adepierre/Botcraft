@@ -1,7 +1,7 @@
 #include <botcraft/Game/AssetsManager.hpp>
 #include <botcraft/Version.hpp>
 #include <botcraft/Game/Entities/EntityManager.hpp>
-#include <botcraft/Game/Entities/Player.hpp>
+#include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Chunk.hpp>
 #include <botcraft/Network/NetworkManager.hpp>
@@ -42,7 +42,7 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : In
 #endif
 
         // Launch the thread for the position
-        entity_manager->GetPlayer()->SetPosition(Vector3<double>(0.0, 0.0, 0.0));
+        entity_manager->GetLocalPlayer()->SetPosition(Vector3<double>(0.0, 0.0, 0.0));
         m_thread_physics = std::thread(&UserControlledClient::RunSyncPos, this);
         std::cout << "Client created!" << std::endl;
 
@@ -272,14 +272,14 @@ void UserControlledClient::CreateTestWorld()
     }
 #endif
     
-    entity_manager->GetPlayer()->SetPosition(Vector3<double>(0.5, 1.0, 0.5));
+    entity_manager->GetLocalPlayer()->SetPosition(Vector3<double>(0.5, 1.0, 0.5));
 }
 
 #ifdef USE_GUI
 void UserControlledClient::MouseCallback(const double &xoffset, const double &yoffset)
 {
-    std::shared_ptr<Player> player = entity_manager->GetPlayer();
-    float pitch = player->GetPitch() - yoffset * mouse_sensitivity;
+    std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+    float pitch = local_player->GetPitch() - yoffset * mouse_sensitivity;
 
     if (pitch > 89.0f)
     {
@@ -289,15 +289,15 @@ void UserControlledClient::MouseCallback(const double &xoffset, const double &yo
     {
         pitch = -89.0f;
     }
-    player->SetPitch(pitch);
-    player->SetYaw(player->GetYaw() + xoffset * mouse_sensitivity);
+    local_player->SetPitch(pitch);
+    local_player->SetYaw(local_player->GetYaw() + xoffset * mouse_sensitivity);
 
-    rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+    rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
 }
 
 void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer::KEY_CODE::NUMBER_OF_KEYS> &is_key_pressed, const double &delta_time)
 {
-    std::shared_ptr<Player> player = entity_manager->GetPlayer();
+    std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
     bool pos_has_changed = false;
     if (is_key_pressed[(int)Renderer::KEY_CODE::ESC])
     {
@@ -306,9 +306,9 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::SPACE])
     {
-        if (player->GetOnGround())
+        if (local_player->GetOnGround())
         {
-            player->SetSpeedY(0.4196141); // Not sure about this. I tried to calculate it in order to get a 1.25 block height jump (reached in 6 ticks)
+            local_player->SetSpeedY(0.4196141); // Not sure about this. I tried to calculate it in order to get a 1.25 block height jump (reached in 6 ticks)
         }
     }
 
@@ -322,43 +322,43 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
         StopDigging();
     }
 
-    player->SetIsRunning(is_key_pressed[(int)Renderer::KEY_CODE::SHIFT]);
+    local_player->SetIsRunning(is_key_pressed[(int)Renderer::KEY_CODE::SHIFT]);
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::FORWARD])
     {
-        player->SetSpeedX(player->GetSpeed().x + player->GetXZVector().x * (player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
-        player->SetSpeedZ(player->GetSpeed().z + player->GetXZVector().z * (player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
+        local_player->SetSpeedX(local_player->GetSpeed().x + local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
+        local_player->SetSpeedZ(local_player->GetSpeed().z + local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::BACKWARD])
     {
-        player->SetSpeedX(player->GetSpeed().x - player->GetXZVector().x * (player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
-        player->SetSpeedZ(player->GetSpeed().z - player->GetXZVector().z * (player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
+        local_player->SetSpeedX(local_player->GetSpeed().x - local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
+        local_player->SetSpeedZ(local_player->GetSpeed().z - local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::RIGHT])
     {
-        player->SetSpeedX(player->GetSpeed().x + player->GetRightVector().x * (player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
-        player->SetSpeedZ(player->GetSpeed().z + player->GetRightVector().z * (player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
+        local_player->SetSpeedX(local_player->GetSpeed().x + local_player->GetRightVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
+        local_player->SetSpeedZ(local_player->GetSpeed().z + local_player->GetRightVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::LEFT])
     {
-        player->SetSpeedX(player->GetSpeed().x - player->GetRightVector().x * (player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
-        player->SetSpeedZ(player->GetSpeed().z - player->GetRightVector().z * (player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
+        local_player->SetSpeedX(local_player->GetSpeed().x - local_player->GetRightVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
+        local_player->SetSpeedZ(local_player->GetSpeed().z - local_player->GetRightVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
     if (pos_has_changed)
     {
-        rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+        rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
     }
 }
 #endif

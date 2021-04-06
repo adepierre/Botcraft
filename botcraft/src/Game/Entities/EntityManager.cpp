@@ -1,6 +1,6 @@
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/Entity.hpp"
-#include "botcraft/Game/Entities/Player.hpp"
+#include "botcraft/Game/Entities/LocalPlayer.hpp"
 
 #if USE_GUI
 #include "botcraft/Renderer/RenderingManager.hpp"
@@ -10,12 +10,12 @@ namespace Botcraft
 {
     EntityManager::EntityManager()
     {
-        player = std::shared_ptr<Player>(new Player);
+        local_player = std::shared_ptr<LocalPlayer>(new LocalPlayer);
     }
 
-    std::shared_ptr<Player> EntityManager::GetPlayer()
+    std::shared_ptr<LocalPlayer> EntityManager::GetLocalPlayer()
     {
-        return player;
+        return local_player;
     }
 
 #if USE_GUI
@@ -27,11 +27,11 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::JoinGame& msg)
     {
-        player = std::shared_ptr<Player>(new Player);
-        player->GetMutex().lock();
-        player->SetEID(msg.GetEntityId());
-        player->GetMutex().unlock();
-        entities[msg.GetEntityId()] = player;
+        local_player = std::shared_ptr<LocalPlayer>(new LocalPlayer);
+        local_player->GetMutex().lock();
+        local_player->SetEID(msg.GetEntityId());
+        local_player->GetMutex().unlock();
+        entities[msg.GetEntityId()] = local_player;
     }
     
     void EntityManager::Handle(ProtocolCraft::EntityMovement& msg)
@@ -49,9 +49,9 @@ namespace Botcraft
     {
         // Player position is also used by physics thread, so we need
         // to lock it
-        if (msg.GetEntityId() == player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEID())
         {
-            player->GetMutex().lock();
+            local_player->GetMutex().lock();
         }
         
         auto it = entities.find(msg.GetEntityId());
@@ -63,15 +63,15 @@ namespace Botcraft
             it->second->SetOnGround(msg.GetOnGround());
         }
         
-        if (msg.GetEntityId() == player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEID())
         {
 #ifdef USE_GUI
             if (rendering_manager)
             {
-                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
             }
 #endif // USE_GUI
-            player->GetMutex().unlock();
+            local_player->GetMutex().unlock();
         }
     }
 
@@ -79,9 +79,9 @@ namespace Botcraft
     {
         // Player position is also used by physics thread, so we need
         // to lock it
-        if (msg.GetEntityId() == player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEID())
         {
-            player->GetMutex().lock();
+            local_player->GetMutex().lock();
         }
 
         auto it = entities.find(msg.GetEntityId());
@@ -95,15 +95,15 @@ namespace Botcraft
             it->second->SetOnGround(msg.GetOnGround());
         }
 
-        if (msg.GetEntityId() == player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEID())
         {
 #ifdef USE_GUI
             if (rendering_manager)
             {
-                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
             }
 #endif // USE_GUI
-            player->GetMutex().unlock();
+            local_player->GetMutex().unlock();
         }
     }
 
@@ -111,9 +111,9 @@ namespace Botcraft
     {
         // Player position is also used by physics thread, so we need
         // to lock it
-        if (msg.GetEntityId() == player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEID())
         {
-            player->GetMutex().lock();
+            local_player->GetMutex().lock();
         }
 
         auto it = entities.find(msg.GetEntityId());
@@ -124,48 +124,76 @@ namespace Botcraft
             it->second->SetOnGround(msg.GetOnGround());
         }
 
-        if (msg.GetEntityId() == player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEID())
         {
 #ifdef USE_GUI
             if (rendering_manager)
             {
-                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
             }
 #endif // USE_GUI
-            player->GetMutex().unlock();
+            local_player->GetMutex().unlock();
         }
     }
 
     void EntityManager::Handle(ProtocolCraft::PlayerPositionAndLookClientbound& msg)
     {
-        std::lock_guard<std::mutex> player_guard(player->GetMutex());
-        (msg.GetFlags() & 0x01) ? player->SetX(player->GetPosition().x + msg.GetX()) : player->SetX(msg.GetX());
-        (msg.GetFlags() & 0x02) ? player->SetY(player->GetPosition().y + msg.GetY()) : player->SetY(msg.GetY());
-        (msg.GetFlags() & 0x04) ? player->SetZ(player->GetPosition().z + msg.GetZ()) : player->SetZ(msg.GetZ());
-        (msg.GetFlags() & 0x08) ? player->SetYaw(player->GetYaw() + msg.GetYaw()) : player->SetYaw(msg.GetYaw());
-        (msg.GetFlags() & 0x10) ? player->SetPitch(player->GetPitch() + msg.GetPitch()) : player->SetPitch(msg.GetPitch());
+        std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
+        (msg.GetFlags() & 0x01) ? local_player->SetX(local_player->GetPosition().x + msg.GetX()) : local_player->SetX(msg.GetX());
+        (msg.GetFlags() & 0x02) ? local_player->SetY(local_player->GetPosition().y + msg.GetY()) : local_player->SetY(msg.GetY());
+        (msg.GetFlags() & 0x04) ? local_player->SetZ(local_player->GetPosition().z + msg.GetZ()) : local_player->SetZ(msg.GetZ());
+        (msg.GetFlags() & 0x08) ? local_player->SetYaw(local_player->GetYaw() + msg.GetYaw()) : local_player->SetYaw(msg.GetYaw());
+        (msg.GetFlags() & 0x10) ? local_player->SetPitch(local_player->GetPitch() + msg.GetPitch()) : local_player->SetPitch(msg.GetPitch());
 
 #ifdef USE_GUI
         if (rendering_manager)
         {
-            rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+            rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
         }
 #endif // USE_GUI
     }
 
+    void EntityManager::Handle(ProtocolCraft::SpawnObject& msg)
+    {
+        // TODO create the real entity type
+        std::shared_ptr<Entity> entity = std::shared_ptr<Entity>(new Entity);
+        entity->SetEID(msg.GetEntityId());
+        entity->SetX(msg.GetX());
+        entity->SetY(msg.GetY());
+        entity->SetZ(msg.GetZ());
+        entity->SetYaw(360.0f * msg.GetYaw() / 256.0f);
+        entity->SetPitch(360.0f * msg.GetPitch() / 256.0f);
+
+        entities[msg.GetEntityId()] = entity;
+    }
+
+    void EntityManager::Handle(ProtocolCraft::SpawnPlayer& msg)
+    {
+        // TODO, create an actual player entity
+        std::shared_ptr<Entity> entity = std::shared_ptr<Entity>(new Entity);
+        entity->SetEID(msg.GetEntityId());
+        entity->SetX(msg.GetX());
+        entity->SetY(msg.GetY());
+        entity->SetZ(msg.GetZ()); 
+        entity->SetYaw(360.0f * msg.GetYaw() / 256.0f);
+        entity->SetPitch(360.0f * msg.GetPitch() / 256.0f);
+
+        entities[msg.GetEntityId()] = entity;
+    }
+
     void EntityManager::Handle(ProtocolCraft::UpdateHealth& msg)
     {
-        std::lock_guard<std::mutex> player_lock(player->GetMutex());
-        player->SetHealth(msg.GetHealth());
-        player->SetFood(msg.GetFood());
-        player->SetFoodSaturation(msg.GetFoodSaturation());
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+        local_player->SetHealth(msg.GetHealth());
+        local_player->SetFood(msg.GetFood());
+        local_player->SetFoodSaturation(msg.GetFoodSaturation());
     }
     
     void EntityManager::Handle(ProtocolCraft::EntityTeleport& msg)
     {
-        if (msg.GetEntityId() == player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEID())
         {
-            player->GetMutex().lock();
+            local_player->GetMutex().lock();
         }
 
         auto it = entities.find(msg.GetEntityId());
@@ -179,24 +207,24 @@ namespace Botcraft
             it->second->SetOnGround(msg.GetOnGround());
         }
 
-        if (msg.GetEntityId() == player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEID())
         {
 #ifdef USE_GUI
             if (rendering_manager)
             {
-                rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62f, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
             }
 #endif // USE_GUI
-            player->GetMutex().unlock();
+            local_player->GetMutex().unlock();
         }
     }
     
     void EntityManager::Handle(ProtocolCraft::PlayerAbilitiesClientbound& msg)
     {
-        std::lock_guard<std::mutex> player_guard(player->GetMutex());
-        player->SetIsInvulnerable(msg.GetFlags() & 0x01);
-        player->SetIsFlying(msg.GetFlags() & 0x02);
-        player->SetFlyingSpeed(msg.GetFlyingSpeed());
+        std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
+        local_player->SetIsInvulnerable(msg.GetFlags() & 0x01);
+        local_player->SetIsFlying(msg.GetFlags() & 0x02);
+        local_player->SetFlyingSpeed(msg.GetFlyingSpeed());
 
         //TODO do something with the field of view modifier
     }

@@ -8,20 +8,17 @@
 
 namespace Botcraft 
 {
-    class Player : public Entity
+    class LocalPlayer : public Entity
     {
     public:
-        Player();
+        LocalPlayer();
 
         std::mutex& GetMutex();
-
-        //Half size of the collider
-        static const Vector3<double> boxSize;
 
         const Vector3<double>& GetFrontVector() const;
         const Vector3<double>& GetXZVector() const;
         const Vector3<double>& GetRightVector() const;
-        const AABB GetCollider() const;
+        virtual const AABB GetCollider() const override;
         const float GetFlyingSpeed() const;
         const bool GetIsFlying() const;
         const bool GetIsRunning() const;

@@ -4,7 +4,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/AABB.hpp
     include/botcraft/Game/Entities/Entity.hpp
     include/botcraft/Game/Entities/EntityManager.hpp
-    include/botcraft/Game/Entities/Player.hpp
+    include/botcraft/Game/Entities/LocalPlayer.hpp
     include/botcraft/Game/AssetsManager.hpp
     include/botcraft/Game/BaseClient.hpp
     include/botcraft/Game/World/Biome.hpp
@@ -44,7 +44,7 @@ set(botcraft_SRC
     src/Game/BaseClient.cpp
     src/Game/Entities/Entity.cpp
     src/Game/Entities/EntityManager.cpp
-    src/Game/Entities/Player.cpp
+    src/Game/Entities/LocalPlayer.cpp
     src/Game/World/Biome.cpp
     src/Game/World/Block.cpp
     src/Game/World/Blockstate.cpp

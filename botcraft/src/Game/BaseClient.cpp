@@ -2,7 +2,7 @@
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
-#include "botcraft/Game/Entities/Player.hpp"
+#include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/World/Block.hpp"
@@ -85,8 +85,8 @@ namespace Botcraft
 
             if (entity_manager)
             {
-                std::shared_ptr<Player> player = entity_manager->GetPlayer();
-                if (player && player->GetPosition().y < 1000.0)
+                std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+                if (local_player && local_player->GetPosition().y < 1000.0)
                 {
                     if (afk_only)
                     {
@@ -94,18 +94,18 @@ namespace Botcraft
                     }
                     else
                     {
-                        std::lock_guard<std::mutex> player_guard(player->GetMutex());
+                        std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
                         //Check that we did not go through a block
                         Physics();
 
-                        if (player->GetHasMoved() ||
-                            std::abs(player->GetSpeed().x) > 1e-3 ||
-                            std::abs(player->GetSpeed().y) > 1e-3 ||
-                            std::abs(player->GetSpeed().z) > 1e-3)
+                        if (local_player->GetHasMoved() ||
+                            std::abs(local_player->GetSpeed().x) > 1e-3 ||
+                            std::abs(local_player->GetSpeed().y) > 1e-3 ||
+                            std::abs(local_player->GetSpeed().z) > 1e-3)
                         {
                             has_moved = true;
                             // Reset the player move state until next tick
-                            player->SetHasMoved(false);
+                            local_player->SetHasMoved(false);
                         }
                         else
                         {
@@ -113,39 +113,39 @@ namespace Botcraft
                         }
 
                         //Avoid forever falling if position is <= 0.0
-                        if (player->GetPosition().y <= 0.0)
+                        if (local_player->GetPosition().y <= 0.0)
                         {
-                            player->SetY(0.0);
-                            player->SetSpeedY(0.0);
-                            player->SetOnGround(true);
+                            local_player->SetY(0.0);
+                            local_player->SetSpeedY(0.0);
+                            local_player->SetOnGround(true);
                         }
 
                         // Reset the speed until next frame
                         // Update the gravity value if needed
-                        player->SetSpeedX(0.0);
-                        player->SetSpeedZ(0.0);
-                        if (player->GetOnGround())
+                        local_player->SetSpeedX(0.0);
+                        local_player->SetSpeedZ(0.0);
+                        if (local_player->GetOnGround())
                         {
-                            player->SetSpeedY(0.0);
+                            local_player->SetSpeedY(0.0);
                         }
                         else
                         {
-                            player->SetSpeedY((player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
+                            local_player->SetSpeedY((local_player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
                         }
                     }
 
 #if USE_GUI
                     if (rendering_manager && has_moved)
                     {
-                        rendering_manager->SetPosOrientation(player->GetPosition().x, player->GetPosition().y + 1.62, player->GetPosition().z, player->GetYaw(), player->GetPitch());
+                        rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
                     }
 #endif
-                    msg_position->SetX(player->GetPosition().x);
-                    msg_position->SetFeetY(player->GetPosition().y);
-                    msg_position->SetZ(player->GetPosition().z);
-                    msg_position->SetYaw(player->GetYaw());
-                    msg_position->SetPitch(player->GetPitch());
-                    msg_position->SetOnGround(player->GetOnGround());
+                    msg_position->SetX(local_player->GetPosition().x);
+                    msg_position->SetFeetY(local_player->GetPosition().y);
+                    msg_position->SetZ(local_player->GetPosition().z);
+                    msg_position->SetYaw(local_player->GetYaw());
+                    msg_position->SetPitch(local_player->GetPitch());
+                    msg_position->SetOnGround(local_player->GetOnGround());
 
                     if (network_manager &&
                         (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_send).count() >= 1000))
@@ -166,13 +166,13 @@ namespace Botcraft
             return;
         }
 
-        std::shared_ptr<Player> player = entity_manager->GetPlayer();
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
         //If the player did not move we assume it does not collide
-        if (!player->GetHasMoved() &&
-            abs(player->GetSpeed().x) < 1e-3 && 
-            abs(player->GetSpeed().y) < 1e-3 && 
-            abs(player->GetSpeed().z) < 1e-3)
+        if (!local_player->GetHasMoved() &&
+            abs(local_player->GetSpeed().x) < 1e-3 && 
+            abs(local_player->GetSpeed().y) < 1e-3 && 
+            abs(local_player->GetSpeed().z) < 1e-3)
         {
             return;
         }
@@ -181,8 +181,8 @@ namespace Botcraft
         
         for (int i = 0; i < 3; ++i)
         {
-            min_player_collider[i] = std::min(player->GetCollider().GetMin()[i], player->GetCollider().GetMin()[i] + player->GetSpeed()[i]);
-            max_player_collider[i] = std::max(player->GetCollider().GetMax()[i], player->GetCollider().GetMax()[i] + player->GetSpeed()[i]);
+            min_player_collider[i] = std::min(local_player->GetCollider().GetMin()[i], local_player->GetCollider().GetMin()[i] + local_player->GetSpeed()[i]);
+            max_player_collider[i] = std::max(local_player->GetCollider().GetMax()[i], local_player->GetCollider().GetMax()[i] + local_player->GetSpeed()[i]);
         }
 
         AABB broadphase_collider = AABB((min_player_collider + max_player_collider) / 2.0, (max_player_collider - min_player_collider) / 2.0);
@@ -228,15 +228,15 @@ namespace Botcraft
                         }
 
                         Vector3<double> normal;
-                        const double speed_fraction = player->GetCollider().SweptCollide(player->GetSpeed(), block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z), normal);
+                        const double speed_fraction = local_player->GetCollider().SweptCollide(local_player->GetSpeed(), block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z), normal);
 
                         if (speed_fraction < 1.0)
                         {
-                            const Vector3<double> remaining_speed = player->GetSpeed() * (1.0 - speed_fraction);
+                            const Vector3<double> remaining_speed = local_player->GetSpeed() * (1.0 - speed_fraction);
 
                             // We remove epsilon to be sure we do not go
                             // through the face due to numerical imprecision
-                            player->SetSpeed(player->GetSpeed() * (speed_fraction - 1e-6) + // Base speed truncated
+                            local_player->SetSpeed(local_player->GetSpeed() * (speed_fraction - 1e-6) + // Base speed truncated
                                 (remaining_speed - normal * remaining_speed.dot(normal))); // Remaining speed projected on the plane
                         }
 
@@ -253,11 +253,11 @@ namespace Botcraft
                 }
             }
         }
-        player->SetPosition(player->GetPosition() + player->GetSpeed());
-        player->SetOnGround(has_hit_down);
+        local_player->SetPosition(local_player->GetPosition() + local_player->GetSpeed());
+        local_player->SetOnGround(has_hit_down);
         if (has_hit_up)
         {
-            player->SetSpeedY(0.0);
+            local_player->SetSpeedY(0.0);
         }
     }
 
