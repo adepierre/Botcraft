@@ -23,6 +23,21 @@ namespace Botcraft
         return position;
     }
 
+    const double Entity::GetX() const
+    {
+        return position.x;
+    }
+
+    const double Entity::GetY() const
+    {
+        return position.y;
+    }
+
+    const double Entity::GetZ() const
+    {
+        return position.z;
+    }
+
     const float Entity::GetYaw() const
     {
         return yaw;

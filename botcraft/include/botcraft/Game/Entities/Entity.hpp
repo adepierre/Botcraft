@@ -12,6 +12,9 @@ namespace Botcraft
 
 		const int GetEID() const;
 		const Vector3<double>& GetPosition() const;
+		const double GetX() const;
+		const double GetY() const;
+		const double GetZ() const;
 		const float GetYaw() const;
 		const float GetPitch() const;
 		const Vector3<double>& GetSpeed() const;

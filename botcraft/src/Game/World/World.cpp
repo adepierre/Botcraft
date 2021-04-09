@@ -515,7 +515,7 @@ namespace Botcraft
         if (cached && cached_x == chunk_x && cached_z == chunk_z)
         {
             return cached->GetBlockEntityData(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH));
-    }
+        }
         else
         {
             auto it = terrain.find({ chunk_x, chunk_z });
