@@ -3,6 +3,6 @@
 /lib/
 /install/
 /Assets/*/minecraft/
-/Assets/*/server/
+/Assets/*/server*/
 /Assets/*/client.jar
 /scripts/
