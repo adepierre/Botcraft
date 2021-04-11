@@ -33,11 +33,11 @@ namespace Botcraft
         // TODO: make this in a cleaner way?
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        std::shared_ptr<ProtocolCraft::Handshake> handshake_msg(new ProtocolCraft::Handshake);
+        std::shared_ptr<ProtocolCraft::ServerboundClientIntentionPacket> handshake_msg(new ProtocolCraft::ServerboundClientIntentionPacket);
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
-        handshake_msg->SetServerAddress(com->GetIp());
-        handshake_msg->SetServerPort(com->GetPort());
-        handshake_msg->SetNextState((int)ProtocolCraft::ConnectionState::Login);
+        handshake_msg->SetHostName(com->GetIp());
+        handshake_msg->SetPort(com->GetPort());
+        handshake_msg->SetIntention((int)ProtocolCraft::ConnectionState::Login);
         Send(handshake_msg);
 
         state = ProtocolCraft::ConnectionState::Login;
@@ -68,8 +68,8 @@ namespace Botcraft
             name = login;
         }
 
-        std::shared_ptr<ProtocolCraft::LoginStart> loginstart_msg(new ProtocolCraft::LoginStart);
-        loginstart_msg->SetName_(name);
+        std::shared_ptr<ProtocolCraft::ServerboundHelloPacket> loginstart_msg(new ProtocolCraft::ServerboundHelloPacket);
+        loginstart_msg->SetGameProfile(name);
         Send(loginstart_msg);
     }
 
@@ -239,17 +239,17 @@ namespace Botcraft
 
     }
 
-    void NetworkManager::Handle(ProtocolCraft::SetCompression& msg)
+    void NetworkManager::Handle(ProtocolCraft::ClientboundLoginCompressionPacket& msg)
     {
-        compression = msg.GetThreshold();
+        compression = msg.GetCompressionThreshold();
     }
 
-    void NetworkManager::Handle(ProtocolCraft::LoginSuccess& msg)
+    void NetworkManager::Handle(ProtocolCraft::ClientboundGameProfilePacket& msg)
     {
         state = ProtocolCraft::ConnectionState::Play;
     }
 
-    void NetworkManager::Handle(ProtocolCraft::EncryptionRequest& msg)
+    void NetworkManager::Handle(ProtocolCraft::ClientboundHelloPacket& msg)
     {
         if (authentifier == nullptr)
         {
@@ -264,16 +264,14 @@ namespace Botcraft
         std::vector<unsigned char> encrypted_shared_secret;
         std::vector<unsigned char> raw_shared_secret;
 
-        encrypter->Init(msg.GetPublicKey(), msg.GetVerifyToken(),
+        encrypter->Init(msg.GetPublicKey(), msg.GetNonce(),
             raw_shared_secret, encrypted_token, encrypted_shared_secret);
 
         authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());
 
-        std::shared_ptr<ProtocolCraft::EncryptionResponse> response_msg(new ProtocolCraft::EncryptionResponse);
-        response_msg->SetSharedSecretLength(encrypted_shared_secret.size());
-        response_msg->SetSharedSecret(encrypted_shared_secret);
-        response_msg->SetVerifyTokenLength(encrypted_token.size());
-        response_msg->SetVerifyToken(encrypted_token);
+        std::shared_ptr<ProtocolCraft::ServerboundKeyPacket> response_msg(new ProtocolCraft::ServerboundKeyPacket);
+        response_msg->SetKeyBytes(encrypted_shared_secret);
+        response_msg->SetNonce(encrypted_token);
 
         Send(response_msg);
 
@@ -284,10 +282,10 @@ namespace Botcraft
 #endif
     }
 
-    void NetworkManager::Handle(ProtocolCraft::KeepAliveClientbound& msg)
+    void NetworkManager::Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg)
     {
-        std::shared_ptr<ProtocolCraft::KeepAliveServerbound> keep_alive_msg(new ProtocolCraft::KeepAliveServerbound);
-        keep_alive_msg->SetKeepAliveId(msg.GetKeepAliveId());
+        std::shared_ptr<ProtocolCraft::ServerboundKeepAlivePacket> keep_alive_msg(new ProtocolCraft::ServerboundKeepAlivePacket);
+        keep_alive_msg->SetId_(msg.GetId_());
         Send(keep_alive_msg);
     }
 }

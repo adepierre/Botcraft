@@ -363,7 +363,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
 }
 #endif
 
-void UserControlledClient::Handle(LoginSuccess &msg)
+void UserControlledClient::Handle(ClientboundGameProfilePacket &msg)
 {
     Botcraft::BaseClient::Handle(msg);
 

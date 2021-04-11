@@ -2,6 +2,13 @@
 
 namespace Botcraft
 {
+    enum class ChatMode
+    {
+        Enabled,
+        CommandsOnly,
+        Hidden
+    };
+
 #if PROTOCOL_VERSION < 719
     enum class Dimension
     {
@@ -12,15 +19,6 @@ namespace Botcraft
     };
 #endif
 
-    enum class GameMode
-    {
-        None = -1,
-        Survival,
-        Creative,
-        Adventure,
-        Spectator
-    };
-
     enum class Difficulty
     {
         None = -1,
@@ -30,11 +28,28 @@ namespace Botcraft
         Hard
     };
 
-    enum class ChatMode
+    enum class SoundSource
     {
-        Enabled,
-        CommandsOnly,
-        Hidden
+        Null = -1,
+        Master = 0,
+        Music,
+        Records,
+        Weather,
+        Blocks,
+        Hostile,
+        Neutral,
+        Players,
+        Ambient,
+        Voice
+    };
+
+    enum class GameType
+    {
+        None = -1,
+        Survival,
+        Creative,
+        Adventure,
+        Spectator
     };
 
     enum class Hand

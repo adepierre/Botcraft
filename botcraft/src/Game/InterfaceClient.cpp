@@ -48,7 +48,7 @@ namespace Botcraft
     {
         if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
-            std::shared_ptr<ChatMessageServerbound> chat_message(new ChatMessageServerbound);
+            std::shared_ptr<ServerboundChatPacket> chat_message(new ServerboundChatPacket);
             chat_message->SetMessage(msg);
             network_manager->Send(chat_message);
         }
@@ -58,8 +58,8 @@ namespace Botcraft
     {
         if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
-            std::shared_ptr<ClientStatus> status_message(new ClientStatus);
-            status_message->SetActionID(0);
+            std::shared_ptr<ServerboundClientCommandPacket> status_message(new ServerboundClientCommandPacket);
+            status_message->SetAction(0);
             network_manager->Send(status_message);
         }
     }
@@ -117,9 +117,9 @@ namespace Botcraft
             }
         }
 
-        std::shared_ptr<PlayerDigging> msg_digging(new PlayerDigging);
-        msg_digging->SetStatus((int)PlayerDiggingStatus::StartDigging);
-        msg_digging->SetLocation(block_position.ToNetworkPosition());
+        std::shared_ptr<ServerboundPlayerActionPacket> msg_digging(new ServerboundPlayerActionPacket);
+        msg_digging->SetAction((int)PlayerDiggingStatus::StartDigging);
+        msg_digging->SetPos(block_position.ToNetworkPosition());
         
         // TODO : maybe one magic and clever math formula can be used for this
         PlayerDiggingFace face;
@@ -147,16 +147,16 @@ namespace Botcraft
         {
             face = PlayerDiggingFace::South;
         }
-        msg_digging->SetFace((int)face);
+        msg_digging->SetDirection((int)face);
 
         network_manager->Send(msg_digging);
         
         if (creative_mode)
         {
-            std::shared_ptr<PlayerDigging> end_digging(new PlayerDigging);
-            end_digging->SetLocation(block_position.ToNetworkPosition());
-            end_digging->SetStatus((int)PlayerDiggingStatus::FinishDigging);
-            end_digging->SetFace((int)face);
+            std::shared_ptr<ServerboundPlayerActionPacket> end_digging(new ServerboundPlayerActionPacket);
+            end_digging->SetPos(block_position.ToNetworkPosition());
+            end_digging->SetAction((int)PlayerDiggingStatus::FinishDigging);
+            end_digging->SetDirection((int)face);
 
             network_manager->Send(msg_digging);
             digging_state = DiggingState::Waiting;
@@ -172,10 +172,10 @@ namespace Botcraft
             {
                 if (digging_state == DiggingState::Stop)
                 {
-                    std::shared_ptr<PlayerDigging> stop_digging(new PlayerDigging);
-                    stop_digging->SetLocation(block_position.ToNetworkPosition());
-                    stop_digging->SetStatus((int)PlayerDiggingStatus::CancelDigging);
-                    stop_digging->SetFace((int)face);
+                    std::shared_ptr<ServerboundPlayerActionPacket> stop_digging(new ServerboundPlayerActionPacket);
+                    stop_digging->SetPos(block_position.ToNetworkPosition());
+                    stop_digging->SetAction((int)PlayerDiggingStatus::CancelDigging);
+                    stop_digging->SetDirection((int)face);
 
                     network_manager->Send(stop_digging);
 
@@ -196,10 +196,10 @@ namespace Botcraft
                 if (blockstate != current_blockstate ||
                     block_position != current_position)
                 {
-                    std::shared_ptr<PlayerDigging> stop_digging(new PlayerDigging);
-                    stop_digging->SetLocation(block_position.ToNetworkPosition());
-                    stop_digging->SetStatus((int)PlayerDiggingStatus::CancelDigging);
-                    stop_digging->SetFace((int)face);
+                    std::shared_ptr<ServerboundPlayerActionPacket> stop_digging(new ServerboundPlayerActionPacket);
+                    stop_digging->SetPos(block_position.ToNetworkPosition());
+                    stop_digging->SetAction((int)PlayerDiggingStatus::CancelDigging);
+                    stop_digging->SetDirection((int)face);
 
                     network_manager->Send(stop_digging);
 
@@ -212,10 +212,10 @@ namespace Botcraft
             }
 
             // If we are here it means the digging is supposed to be finished
-            std::shared_ptr<PlayerDigging> stop_digging(new PlayerDigging);
-            stop_digging->SetLocation(block_position.ToNetworkPosition());
-            stop_digging->SetStatus((int)PlayerDiggingStatus::FinishDigging);
-            stop_digging->SetFace((int)face);
+            std::shared_ptr<ServerboundPlayerActionPacket> stop_digging(new ServerboundPlayerActionPacket);
+            stop_digging->SetPos(block_position.ToNetworkPosition());
+            stop_digging->SetAction((int)PlayerDiggingStatus::FinishDigging);
+            stop_digging->SetDirection((int)face);
 
             network_manager->Send(stop_digging);
 
@@ -352,9 +352,9 @@ namespace Botcraft
             return false;
         }
 
-        std::shared_ptr<PlayerBlockPlacement> place_block_msg(new PlayerBlockPlacement);
+        std::shared_ptr<ServerboundUseItemOnPacket> place_block_msg(new ServerboundUseItemOnPacket);
         place_block_msg->SetLocation(location.ToNetworkPosition());
-        place_block_msg->SetFace((int)placed_face);
+        place_block_msg->SetDirection((int)placed_face);
         switch (placed_face)
         {
         case PlayerDiggingFace::Bottom:
@@ -391,7 +391,7 @@ namespace Botcraft
             break;
         }
 #if PROTOCOL_VERSION > 452
-        place_block_msg->SetInsideBlock(false);
+        place_block_msg->SetInside(false);
 #endif
 
         // Left click case
@@ -442,26 +442,26 @@ namespace Botcraft
         // We need to swap the currently selected slot in the
         // hotbar with the one with the correct item
 
-        std::shared_ptr<ClickWindow> click_window_msg(new ClickWindow);
+        std::shared_ptr<ServerboundContainerClickPacket> click_window_msg(new ServerboundContainerClickPacket);
 
         // Click on the desired item
-        click_window_msg->SetWindowId(Window::PLAYER_INVENTORY_INDEX);
-        click_window_msg->SetSlot(inventory_correct_slot_index);
-        click_window_msg->SetButton(0); // Left click to select the stack
-        click_window_msg->SetMode(0); // Regular click
-        click_window_msg->SetClickedItem(inventory_slots.at(inventory_correct_slot_index));
+        click_window_msg->SetContainerId(Window::PLAYER_INVENTORY_INDEX);
+        click_window_msg->SetSlotNum(inventory_correct_slot_index);
+        click_window_msg->SetButtonNum(0); // Left click to select the stack
+        click_window_msg->SetClickType(0); // Regular click
+        click_window_msg->SetItemStack(inventory_slots.at(inventory_correct_slot_index));
 
         SendInventoryTransaction(click_window_msg);
 
         // Click in the hotbar
-        click_window_msg->SetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
-        click_window_msg->SetClickedItem(inventory_manager->GetHotbarSelected());
+        click_window_msg->SetSlotNum(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
+        click_window_msg->SetItemStack(inventory_manager->GetHotbarSelected());
 
         SendInventoryTransaction(click_window_msg);
 
         // Click back on the slot where the desired item was
-        click_window_msg->SetSlot(inventory_correct_slot_index);
-        click_window_msg->SetClickedItem(inventory_slots.at(inventory_correct_slot_index));
+        click_window_msg->SetSlotNum(inventory_correct_slot_index);
+        click_window_msg->SetItemStack(inventory_slots.at(inventory_correct_slot_index));
 
         SendInventoryTransaction(click_window_msg);
 
@@ -512,9 +512,9 @@ namespace Botcraft
             return false;
         }
 
-        std::shared_ptr<PlayerBlockPlacement> place_block_msg(new PlayerBlockPlacement);
+        std::shared_ptr<ServerboundUseItemOnPacket> place_block_msg(new ServerboundUseItemOnPacket);
         place_block_msg->SetLocation(location.ToNetworkPosition());
-        place_block_msg->SetFace((int)interact_face);
+        place_block_msg->SetDirection((int)interact_face);
         switch (interact_face)
         {
         case PlayerDiggingFace::Bottom:
@@ -551,14 +551,14 @@ namespace Botcraft
             break;
         }
 #if PROTOCOL_VERSION > 452
-        place_block_msg->SetInsideBlock(false);
+        place_block_msg->SetInside(false);
 #endif
         place_block_msg->SetHand((int)Hand::Left);
         network_manager->Send(place_block_msg);
 
         if (animation)
         {
-            std::shared_ptr<AnimationServerbound> animation_msg(new AnimationServerbound);
+            std::shared_ptr<ServerboundSwingPacket> animation_msg(new ServerboundSwingPacket);
             animation_msg->SetHand((int)Hand::Left);
             network_manager->Send(animation_msg);
         }
@@ -566,7 +566,7 @@ namespace Botcraft
         return true;
     }
 
-    void InterfaceClient::Handle(UpdateHealth &msg)
+    void InterfaceClient::Handle(ClientboundSetHealthPacket& msg)
     {
         BaseClient::Handle(msg);
 
@@ -578,11 +578,11 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 493
-    void InterfaceClient::Handle(AcknowledgePlayerDigging &msg)
+    void InterfaceClient::Handle(ClientboundBlockBreakAckPacket &msg)
     {
         BaseClient::Handle(msg);
 
-        if (digging_state == DiggingState::Digging && !msg.GetSuccessful())
+        if (digging_state == DiggingState::Digging && !msg.GetAllGood())
         {
             StopDigging();
         }

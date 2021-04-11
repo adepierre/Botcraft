@@ -4,7 +4,6 @@
 #include <map>
 #include <mutex>
 #include "protocolCraft/Types/Slot.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/ClickWindow.hpp"
 #include "protocolCraft/Handler.hpp"
 
 namespace Botcraft
@@ -25,7 +24,7 @@ namespace Botcraft
         const short GetIndexHotbarSelected() const;
         const ProtocolCraft::Slot& GetHotbarSelected() const;
         const ProtocolCraft::Slot& GetCursor() const;
-        void AddPendingTransaction(const std::shared_ptr<ProtocolCraft::ClickWindow> transaction);
+        void AddPendingTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
 
     private:
         void SetHotbarSelected(const short index);
@@ -38,11 +37,11 @@ namespace Botcraft
     private:
 
         virtual void Handle(ProtocolCraft::Message& msg) override;
-        virtual void Handle(ProtocolCraft::SetSlot& msg) override;
-        virtual void Handle(ProtocolCraft::WindowItems& msg) override;
-        virtual void Handle(ProtocolCraft::OpenWindow& msg) override;
-        virtual void Handle(ProtocolCraft::HeldItemChangeClientbound& msg) override;
-        virtual void Handle(ProtocolCraft::ConfirmTransactionClientbound& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
 
     private:
         std::mutex inventory_manager_mutex;
@@ -50,8 +49,8 @@ namespace Botcraft
         short index_hotbar_selected;
         ProtocolCraft::Slot cursor;
 
-        // Vector storing all the transacations that have neither been accepted
+        // Vector storing all the transactions that have neither been accepted
         // nor refused by the server yet
-        std::vector<ProtocolCraft::ClickWindow> pending_transactions;
+        std::vector<ProtocolCraft::ServerboundContainerClickPacket> pending_transactions;
     };
 } // Botcraft

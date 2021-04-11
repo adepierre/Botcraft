@@ -27,20 +27,17 @@ namespace Botcraft
 #endif
 
     protected:
-        virtual void Handle(ProtocolCraft::JoinGame& msg) override;
-        virtual void Handle(ProtocolCraft::PlayerPositionAndLookClientbound& msg) override;
-        virtual void Handle(ProtocolCraft::SpawnObject& msg) override;
-        virtual void Handle(ProtocolCraft::SpawnPlayer& msg) override;
-
-
-
-        virtual void Handle(ProtocolCraft::UpdateHealth& msg) override;
-        virtual void Handle(ProtocolCraft::EntityTeleport& msg) override;
-        virtual void Handle(ProtocolCraft::PlayerAbilitiesClientbound& msg) override;
-        virtual void Handle(ProtocolCraft::EntityMovement& msg) override;
-        virtual void Handle(ProtocolCraft::EntityRelativeMove& msg) override;
-        virtual void Handle(ProtocolCraft::EntityLookAndRelativeMove& msg) override;
-        virtual void Handle(ProtocolCraft::EntityLook& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundAddMobPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg) override;
 
 
     private:

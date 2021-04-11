@@ -23,7 +23,7 @@ namespace Botcraft
     BaseClient::BaseClient(const bool use_renderer_, const bool afk_only_)
     {
         afk_only = afk_only_;
-        game_mode = GameMode::None;
+        game_mode = GameType::None;
         difficulty = Difficulty::None;
         is_hardcore = false;
 #if PROTOCOL_VERSION > 463
@@ -75,7 +75,7 @@ namespace Botcraft
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
         auto last_send = std::chrono::system_clock::now();
-        std::shared_ptr<PlayerPositionAndLookServerbound> msg_position(new PlayerPositionAndLookServerbound);
+        std::shared_ptr<ServerboundMovePlayerPacketPosRot> msg_position(new ServerboundMovePlayerPacketPosRot);
         bool has_moved = false;
 
         while (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
@@ -141,10 +141,10 @@ namespace Botcraft
                     }
 #endif
                     msg_position->SetX(local_player->GetPosition().x);
-                    msg_position->SetFeetY(local_player->GetPosition().y);
+                    msg_position->SetY(local_player->GetPosition().y);
                     msg_position->SetZ(local_player->GetPosition().z);
-                    msg_position->SetYaw(local_player->GetYaw());
-                    msg_position->SetPitch(local_player->GetPitch());
+                    msg_position->SetYRot(local_player->GetYaw());
+                    msg_position->SetXRot(local_player->GetPitch());
                     msg_position->SetOnGround(local_player->GetOnGround());
 
                     if (network_manager &&
@@ -261,19 +261,19 @@ namespace Botcraft
         }
     }
 
-    void BaseClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ClickWindow> transaction)
+    void BaseClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
     {
         if (!transaction)
         {
             return;
         }
-        std::shared_ptr<Window> window = inventory_manager->GetWindow(transaction->GetWindowId());
+        std::shared_ptr<Window> window = inventory_manager->GetWindow(transaction->GetContainerId());
         if (!window)
         {
             std::cerr << "Warning, trying to set a transaction for an unknown window" << std::endl;
         }
         const int transaction_id = window->GetNextTransactionId();
-        transaction->SetActionNumber(transaction_id);
+        transaction->SetUid(transaction_id);
         window->SetNextTransactionId(transaction_id + 1);
         inventory_manager->AddPendingTransaction(transaction);
         network_manager->Send(transaction);
@@ -281,7 +281,7 @@ namespace Botcraft
 
     void BaseClient::Disconnect()
     {
-        game_mode = GameMode::None;
+        game_mode = GameType::None;
         difficulty = Difficulty::None;
 #if PROTOCOL_VERSION > 463
         difficulty_locked = true;
@@ -320,7 +320,7 @@ namespace Botcraft
 
     }
 
-    void BaseClient::Handle(DisconnectLogin &msg)
+    void BaseClient::Handle(ClientboundLoginDisconnectPacket &msg)
     {
         std::cout << "Disconnect during login with reason: " << 
             msg.GetReason().GetText() << std::endl;
@@ -329,7 +329,7 @@ namespace Botcraft
         should_be_closed = true;
     }
 
-    void BaseClient::Handle(LoginSuccess &msg)
+    void BaseClient::Handle(ClientboundGameProfilePacket &msg)
     {
         if (!world)
         {
@@ -372,30 +372,30 @@ namespace Botcraft
         m_thread_physics = std::thread(&BaseClient::RunSyncPos, this);
     }
 
-    void BaseClient::Handle(ServerDifficulty &msg)
+    void BaseClient::Handle(ClientboundChangeDifficultyPacket &msg)
     {
         difficulty = (Difficulty)msg.GetDifficulty();
 #if PROTOCOL_VERSION > 463
-        difficulty_locked = msg.GetDifficultyLocked();
+        difficulty_locked = msg.GetLocked();
 #endif
     }
 
-    void BaseClient::Handle(ConfirmTransactionClientbound &msg)
+    void BaseClient::Handle(ClientboundContainerAckPacket &msg)
     {
         // If the transaction was not accepted, we must apologize
         // else it's processed in InventoryManager
         if (!msg.GetAccepted())
         {
-            std::shared_ptr<ConfirmTransactionServerbound> apologize_msg(new ConfirmTransactionServerbound);
-            apologize_msg->SetWindowId(msg.GetWindowId());
-            apologize_msg->SetActionNumber(msg.GetActionNumber());
+            std::shared_ptr<ServerboundContainerAckPacket> apologize_msg(new ServerboundContainerAckPacket);
+            apologize_msg->SetContainerId(msg.GetContainerId());
+            apologize_msg->SetUid(msg.GetUid());
             apologize_msg->SetAccepted(msg.GetAccepted());
 
             network_manager->Send(apologize_msg);
         }
     }
 
-    void BaseClient::Handle(DisconnectPlay &msg)
+    void BaseClient::Handle(ClientboundDisconnectPacket &msg)
     {
         std::cout << "Disconnect during playing with reason: " << 
             msg.GetReason().GetRawText() << std::endl;
@@ -404,13 +404,13 @@ namespace Botcraft
         should_be_closed = true;
     }
 
-    void BaseClient::Handle(JoinGame &msg)
+    void BaseClient::Handle(ClientboundLoginPacket &msg)
     {
-        game_mode = (GameMode)(msg.GetGamemode() & 0x03);
+        game_mode = (GameType)(msg.GetGameType() & 0x03);
 #if PROTOCOL_VERSION > 737
-        is_hardcore = msg.GetIsHardcore();
+        is_hardcore = msg.GetHardcore();
 #else
-        is_hardcore = msg.GetGamemode() & 0x08;
+        is_hardcore = msg.GetGameType() & 0x08;
 #endif
 
 #if PROTOCOL_VERSION < 464
@@ -418,48 +418,48 @@ namespace Botcraft
 #endif
     }
 
-    void BaseClient::Handle(ProtocolCraft::PlayerPositionAndLookClientbound& msg)
+    void BaseClient::Handle(ClientboundPlayerPositionPacket& msg)
     {
         // Confirmations have to be sent from here
         // because EntityManager does not receive messages
         // in case of afk_only mode
-        std::shared_ptr<TeleportConfirm> confirm_msg(new TeleportConfirm);
-        confirm_msg->SetTeleportId(msg.GetTeleportId());
+        std::shared_ptr<ServerboundAcceptTeleportationPacket> confirm_msg(new ServerboundAcceptTeleportationPacket);
+        confirm_msg->SetId_(msg.GetId_());
 
         network_manager->Send(confirm_msg);
     }
 
-    void BaseClient::Handle(UpdateHealth &msg)
+    void BaseClient::Handle(ClientboundSetHealthPacket &msg)
     {
         if (msg.GetHealth() <= 0.0f && auto_respawn)
         {
-            std::shared_ptr<ClientStatus> status_message(new ClientStatus);
-            status_message->SetActionID(0);
+            std::shared_ptr<ServerboundClientCommandPacket> status_message(new ServerboundClientCommandPacket);
+            status_message->SetAction(0);
             network_manager->Send(status_message);
         }
     }
 
-    void BaseClient::Handle(PlayerAbilitiesClientbound &msg)
+    void BaseClient::Handle(ClientboundPlayerAbilitiesPacket &msg)
     {
         allow_flying = msg.GetFlags() & 0x04;
         creative_mode = msg.GetFlags() & 0x08;
 
-        std::shared_ptr<ClientSettings> settings_msg(new ClientSettings);
-        settings_msg->SetLocale("fr_FR");
+        std::shared_ptr<ServerboundClientInformationPacket> settings_msg(new ServerboundClientInformationPacket);
+        settings_msg->SetLanguage("fr_FR");
         settings_msg->SetViewDistance(10);
-        settings_msg->SetChatMode((int)ChatMode::Enabled);
+        settings_msg->SetChatVisibility((int)ChatMode::Enabled);
         settings_msg->SetChatColors(true);
-        settings_msg->SetDisplayedSkinParts(0xFF);
+        settings_msg->SetModelCustomisation(0xFF);
         settings_msg->SetMainHand((int)Hand::Right);
 
         network_manager->Send(settings_msg);
     }
 
-    void BaseClient::Handle(Respawn &msg)
+    void BaseClient::Handle(ClientboundRespawnPacket &msg)
     {
 #if PROTOCOL_VERSION < 464
         difficulty = (Difficulty)msg.GetDifficulty();
 #endif
-        game_mode = (GameMode)msg.GetGamemode();
+        game_mode = (GameType)msg.GetPlayerGameType();
     }
 } //Botcraft

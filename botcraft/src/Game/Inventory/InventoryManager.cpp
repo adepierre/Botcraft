@@ -98,7 +98,7 @@ namespace Botcraft
         return cursor;
     }
 
-    void InventoryManager::AddPendingTransaction(const std::shared_ptr<ClickWindow> transaction)
+    void InventoryManager::AddPendingTransaction(const std::shared_ptr<ServerboundContainerClickPacket> transaction)
     {
         if (!transaction)
         {
@@ -117,50 +117,51 @@ namespace Botcraft
 
     }
 
-    void InventoryManager::Handle(ProtocolCraft::SetSlot& msg)
+    void InventoryManager::Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg)
     {
         std::lock_guard<std::mutex> inventories_locker(inventory_manager_mutex);
 
-        if (msg.GetWindowId() == -1 && msg.GetSlot() == -1)
+        if (msg.GetContainerId() == -1 && msg.GetSlot() == -1)
         {
-            SetCursor(msg.GetSlotData());
+            SetCursor(msg.GetItemStack());
         }
-        else if (msg.GetWindowId() == -2)
+        else if (msg.GetContainerId() == -2)
         {
-            SetSlot(Window::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetSlotData());
+            SetSlot(Window::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetItemStack());
         }
-        else if (msg.GetWindowId() >= 0)
+        else if (msg.GetContainerId() >= 0)
         {
-            SetSlot(msg.GetWindowId(), msg.GetSlot(), msg.GetSlotData());
+            SetSlot(msg.GetContainerId(), msg.GetSlot(), msg.GetItemStack());
         }
         else
         {
-            std::cerr << "Warning, unknown window called in SetSlot: " << msg.GetWindowId() << ", " << msg.GetSlot() << std::endl;
+            std::cerr << "Warning, unknown window called in SetSlot: " << msg.GetContainerId() << ", " << msg.GetSlot() << std::endl;
         }
     }
 
-    void InventoryManager::Handle(ProtocolCraft::WindowItems& msg)
+    void InventoryManager::Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        for (int i = 0; i < msg.GetCount(); ++i)
+        int count = msg.GetSlotData().size();
+        for (int i = 0; i < count; ++i)
         {
-            SetSlot(msg.GetWindowId(), i, msg.GetSlotData()[i]);
+            SetSlot(msg.GetContainerId(), i, msg.GetSlotData()[i]);
         }
     }
 
-    void InventoryManager::Handle(ProtocolCraft::OpenWindow& msg)
+    void InventoryManager::Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        AddInventory(msg.GetWindowId());
+        AddInventory(msg.GetContainerId());
     }
 
-    void InventoryManager::Handle(ProtocolCraft::HeldItemChangeClientbound& msg)
+    void InventoryManager::Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
         SetHotbarSelected(msg.GetSlot());
     }
 
-    void InventoryManager::Handle(ProtocolCraft::ConfirmTransactionClientbound& msg)
+    void InventoryManager::Handle(ProtocolCraft::ClientboundContainerAckPacket& msg)
     {
         // BaseClient is in charge of the apologize in this case
         if (!msg.GetAccepted())
@@ -172,8 +173,8 @@ namespace Botcraft
 
         for (auto it = pending_transactions.begin(); it != pending_transactions.end(); ++it)
         {
-            if (it->GetWindowId() == msg.GetWindowId()
-                && it->GetActionNumber() == msg.GetActionNumber())
+            if (it->GetContainerId() == msg.GetContainerId()
+                && it->GetUid() == msg.GetUid())
             {
                 transaction = it;
                 break;
@@ -188,7 +189,7 @@ namespace Botcraft
         }
 
         // Check the window exists
-        std::shared_ptr<Window> window = GetWindow(transaction->GetWindowId());
+        std::shared_ptr<Window> window = GetWindow(transaction->GetContainerId());
         if (!window)
         {
             std::cerr << "Warning, server accepted a transaction for an unknown window" << std::endl;
@@ -198,14 +199,14 @@ namespace Botcraft
 
 
         // Process the transaction
-        switch (transaction->GetMode())
+        switch (transaction->GetClickType())
         {
         case 0:
             // "Left click"
-            if (transaction->GetButton() == 0)
+            if (transaction->GetButtonNum() == 0)
             {
-                const Slot& switched_slot = window->GetSlot(transaction->GetSlot());
-                window->SetSlot(transaction->GetSlot(), cursor);
+                const Slot& switched_slot = window->GetSlot(transaction->GetSlotNum());
+                window->SetSlot(transaction->GetSlotNum(), cursor);
                 cursor = switched_slot;
             }
             break;

@@ -10,7 +10,7 @@ public:
     ~MapCreatorBot();
 
 protected:
-    virtual void Handle(ProtocolCraft::ChatMessageClientbound &msg) override;
+    virtual void Handle(ProtocolCraft::ClientboundChatPacket &msg) override;
 
 private:
     void CreateMap();

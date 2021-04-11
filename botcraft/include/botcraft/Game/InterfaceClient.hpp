@@ -65,10 +65,10 @@ namespace Botcraft
 
     protected:
         // Example of overriding the processing of an incoming packet
-        virtual void Handle(ProtocolCraft::UpdateHealth &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket&msg) override;
 
 #if PROTOCOL_VERSION > 493
-        virtual void Handle(ProtocolCraft::AcknowledgePlayerDigging &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundBlockBreakAckPacket &msg) override;
 #endif
 
 

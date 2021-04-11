@@ -12,6 +12,7 @@ namespace Botcraft
         rightVector = Vector3<double>(1.0, 0.0, 0.0);
 
         flying_speed = 1.0f;
+        walking_speed = 1.0f;
         is_flying = false;
         is_running = false;
 
@@ -51,6 +52,11 @@ namespace Botcraft
     const float LocalPlayer::GetFlyingSpeed() const
     {
         return flying_speed;
+    }
+
+    const float LocalPlayer::GetWalkingSpeed() const
+    {
+        return walking_speed;
     }
 
     const bool LocalPlayer::GetIsFlying() const
@@ -132,9 +138,14 @@ namespace Botcraft
         }
     }
 
-    void LocalPlayer::SetFlyingSpeed(const float s)
+    void LocalPlayer::SetFlyingSpeed(const float flying_speed_)
     {
-        flying_speed = s;
+        flying_speed = flying_speed_;
+    }
+
+    void LocalPlayer::SetWalkingSpeed(const float walking_speed_)
+    {
+        walking_speed = walking_speed_;
     }
 
     void LocalPlayer::SetIsFlying(const bool b)

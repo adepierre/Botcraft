@@ -16,7 +16,7 @@ protected:
     void MouseCallback(const double &xoffset, const double &yoffset);
     void KeyBoardCallback(const std::array<bool, (int)Botcraft::Renderer::KEY_CODE::NUMBER_OF_KEYS> &is_key_pressed, const double &delta_time);
 #endif    
-    virtual void Handle(ProtocolCraft::LoginSuccess &msg) override;
+    virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket &msg) override;
 
     void CreateTestWorld();
 

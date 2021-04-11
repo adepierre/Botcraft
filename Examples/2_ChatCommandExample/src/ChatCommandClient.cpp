@@ -34,12 +34,12 @@ ChatCommandClient::~ChatCommandClient()
     
 }
 
-void ChatCommandClient::Handle(ChatMessageClientbound &msg)
+void ChatCommandClient::Handle(ClientboundChatPacket &msg)
 {
     BaseClient::Handle(msg);
     
     // Split the message 
-    std::istringstream ss{ msg.GetJsonData().GetText() };
+    std::istringstream ss{ msg.GetMessage().GetText() };
     const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
 
     if (splitted.size() < 2 || splitted[0] != network_manager->GetMyName())

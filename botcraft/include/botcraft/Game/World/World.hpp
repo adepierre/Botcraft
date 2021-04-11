@@ -39,8 +39,7 @@ namespace Botcraft
 
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const int primary_bit_mask, const bool ground_up_continuous);
-        bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
-            const int number_block_entities);
+        bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT>& block_entities);
 
         // Update the neighbour blocks of this chunk and the
         // one in the specified direction, if direction is 0,0,0
@@ -111,16 +110,16 @@ namespace Botcraft
         std::shared_ptr<Chunk> GetChunk(const int x, const int z);
 
     protected:
-        virtual void Handle(ProtocolCraft::JoinGame& msg) override;
-        virtual void Handle(ProtocolCraft::Respawn& msg) override;
-        virtual void Handle(ProtocolCraft::BlockChange& msg) override;
-        virtual void Handle(ProtocolCraft::MultiBlockChange& msg) override;
-        virtual void Handle(ProtocolCraft::UnloadChunk& msg) override;
-        virtual void Handle(ProtocolCraft::ChunkData& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg) override;
 #if PROTOCOL_VERSION > 404
-        virtual void Handle(ProtocolCraft::UpdateLight& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLightUpdatePacket& msg) override;
 #endif
-        virtual void Handle(ProtocolCraft::UpdateBlockEntity& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundBlockEntityDataPacket& msg) override;
 
     private:
         int cached_x;
