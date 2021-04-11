@@ -279,33 +279,22 @@ namespace Botcraft
 #endif
     }
 
-    void Chunk::LoadChunkBlockEntitiesData(const std::vector<unsigned char>& data, const int number_block_entities)
+    void Chunk::LoadChunkBlockEntitiesData(const std::vector<NBT>& block_entities)
     {
         // Block entities data
         block_entities_data.clear();
 
-        if (number_block_entities == 0)
+        for (int i = 0; i < block_entities.size(); ++i)
         {
-            return;
-        }
-
-        auto iter_entities = data.begin();
-        size_t length_entitites_data = data.size();
-
-        for (int i = 0; i < number_block_entities; ++i)
-        {
-            std::shared_ptr<NBT> current_nbt = std::shared_ptr<NBT>(new NBT);
-            current_nbt->Read(iter_entities, length_entitites_data);
-
-            if (current_nbt->HasData())
+            if (block_entities[i].HasData())
             {
-                std::shared_ptr<TagInt> tag_x = std::dynamic_pointer_cast<TagInt>(current_nbt->GetTag("x"));
-                std::shared_ptr<TagInt> tag_y = std::dynamic_pointer_cast<TagInt>(current_nbt->GetTag("y"));
-                std::shared_ptr<TagInt> tag_z = std::dynamic_pointer_cast<TagInt>(current_nbt->GetTag("z"));
+                std::shared_ptr<TagInt> tag_x = std::dynamic_pointer_cast<TagInt>(block_entities[i].GetTag("x"));
+                std::shared_ptr<TagInt> tag_y = std::dynamic_pointer_cast<TagInt>(block_entities[i].GetTag("y"));
+                std::shared_ptr<TagInt> tag_z = std::dynamic_pointer_cast<TagInt>(block_entities[i].GetTag("z"));
 
                 if (tag_x && tag_y && tag_z)
                 {
-                    block_entities_data[Position(tag_x->GetValue(), tag_y->GetValue(), tag_z->GetValue())] = current_nbt;
+                    block_entities_data[Position(tag_x->GetValue(), tag_y->GetValue(), tag_z->GetValue())] = std::shared_ptr<NBT>(new NBT(block_entities[i]));
                 }
             }
         }

@@ -12,230 +12,230 @@ namespace ProtocolCraft
 
     // Explicit instantiation for each message class
     // Handshaking serverbound
-    template class BaseMessage<Handshake>;
+    template class BaseMessage<ServerboundClientIntentionPacket>;
 
 
     // Login serverbound
-    template class BaseMessage<LoginStart>;
-    template class BaseMessage<EncryptionResponse>;
+    template class BaseMessage<ServerboundHelloPacket>;
+    template class BaseMessage<ServerboundKeyPacket>;
 
     // Login clientbound
-    template class BaseMessage<DisconnectLogin>;
-    template class BaseMessage<EncryptionRequest>;
-    template class BaseMessage<LoginSuccess>;
-    template class BaseMessage<SetCompression>;
+    template class BaseMessage<ClientboundLoginDisconnectPacket>;
+    template class BaseMessage<ClientboundHelloPacket>;
+    template class BaseMessage<ClientboundGameProfilePacket>;
+    template class BaseMessage<ClientboundLoginCompressionPacket>;
 
     // Status serverbound
-    template class BaseMessage<Request>;
-    template class BaseMessage<Ping>;
+    template class BaseMessage<ServerboundStatusRequestPacket>;
+    template class BaseMessage<ServerboundPingRequestPacket>;
 
     // Status clientbound
-    template class BaseMessage<Response>;
-    template class BaseMessage<Pong>;
+    template class BaseMessage<ClientboundStatusResponsePacket>;
+    template class BaseMessage<ClientboundPongResponsePacket>;
 
 
     // Play serverbound
-    template class BaseMessage<AdvancementTab>;
-    template class BaseMessage<AnimationServerbound>;
-    template class BaseMessage<ChatMessageServerbound>;
-    template class BaseMessage<ClickWindow>;
+    template class BaseMessage<ServerboundSeenAdvancementsPacket>;
+    template class BaseMessage<ServerboundSwingPacket>;
+    template class BaseMessage<ServerboundChatPacket>;
+    template class BaseMessage<ServerboundContainerClickPacket>;
 #if PROTOCOL_VERSION > 476
-    template class BaseMessage<ClickWindowButton>;
+    template class BaseMessage<ServerboundContainerButtonClickPacket>;
 #endif
-    template class BaseMessage<ClientSettings>;
-    template class BaseMessage<ClientStatus>;
-    template class BaseMessage<CloseWindowServerbound>;
-    template class BaseMessage<ConfirmTransactionServerbound>;
-    template class BaseMessage<CraftRecipeRequest>;
-    template class BaseMessage<CreativeInventoryAction>;
+    template class BaseMessage<ServerboundClientInformationPacket>;
+    template class BaseMessage<ServerboundClientCommandPacket>;
+    template class BaseMessage<ServerboundContainerClosePacket>;
+    template class BaseMessage<ServerboundContainerAckPacket>;
+    template class BaseMessage<ServerboundPlaceRecipePacket>;
+    template class BaseMessage<ServerboundSetCreativeModeSlotPacket>;
 #if PROTOCOL_VERSION > 385
-    template class BaseMessage<EditBook>;
+    template class BaseMessage<ServerboundEditBookPacket>;
 #endif
 #if PROTOCOL_VERSION < 476
-    template class BaseMessage<EnchantItem>;
+    template class BaseMessage<ServerboundEnchantItemPacket>;
 #endif
-    template class BaseMessage<EntityAction>;
+    template class BaseMessage<ServerboundPlayerCommandPacket>;
 #if PROTOCOL_VERSION > 711
-    template class BaseMessage<GenerateStructure>;
+    template class BaseMessage<ServerboundJigsawGeneratePacket>;
 #endif
-    template class BaseMessage<HeldItemChangeServerbound>;
-    template class BaseMessage<InteractEntity>;
-    template class BaseMessage<KeepAliveServerbound>;
+    template class BaseMessage<ServerboundSetCarriedItemPacket>;
+    template class BaseMessage<ServerboundInteractPacket>;
+    template class BaseMessage<ServerboundKeepAlivePacket>;
 #if PROTOCOL_VERSION > 463
-    template class BaseMessage<LockDifficulty>;
+    template class BaseMessage<ServerboundLockDifficultyPacket>;
 #endif
 #if PROTOCOL_VERSION > 385
-    template class BaseMessage<NameItem>;
-    template class BaseMessage<PickItem>;
+    template class BaseMessage<ServerboundRenameItemPacket>;
+    template class BaseMessage<ServerboundPickItemPacket>;
 #endif
-    template class BaseMessage<PlayerAbilitiesServerbound>;
-    template class BaseMessage<PlayerBlockPlacement>;
-    template class BaseMessage<PlayerDigging>;
-    template class BaseMessage<PlayerLook>;
-    template class BaseMessage<PlayerMovement>;
-    template class BaseMessage<PlayerPosition>;
-    template class BaseMessage<PlayerPositionAndLookServerbound>;
-    template class BaseMessage<PluginMessageServerbound>;
+    template class BaseMessage<ServerboundPlayerAbilitiesPacket>;
+    template class BaseMessage<ServerboundUseItemOnPacket>;
+    template class BaseMessage<ServerboundPlayerActionPacket>;
+    template class BaseMessage<ServerboundMovePlayerPacketRot>;
+    template class BaseMessage<ServerboundMovePlayerPacket>;
+    template class BaseMessage<ServerboundMovePlayerPacketPos>;
+    template class BaseMessage<ServerboundMovePlayerPacketPosRot>;
+    template class BaseMessage<ServerboundCustomPayloadPacket>;
 #if PROTOCOL_VERSION > 388
-    template class BaseMessage<QueryBlockNBT>;
-    template class BaseMessage<QueryEntityNBT>;
+    template class BaseMessage<ServerboundBlockEntityTagQuery>;
+    template class BaseMessage<ServerboundEntityTagQuery>;
 #endif
 #if PROTOCOL_VERSION < 736
-    template class BaseMessage<RecipeBookData>;
+    template class BaseMessage<ServerboundRecipeBookUpdatePacket>;
 #else
-    template class BaseMessage<SetDisplayedRecipe>;
-    template class BaseMessage<SetRecipeBookState>;
+    template class BaseMessage<ServerboundRecipeBookSeenRecipePacket>;
+    template class BaseMessage<ServerboundRecipeBookChangeSettingsPacket>;
 #endif
-    template class BaseMessage<ResourcePackStatus>;
+    template class BaseMessage<ServerboundResourcePackPacket>;
 #if PROTOCOL_VERSION > 385
-    template class BaseMessage<SelectTrade>;
-    template class BaseMessage<SetBeaconEffect>;
+    template class BaseMessage<ServerboundSelectTradePacket>;
+    template class BaseMessage<ServerboundSetBeaconPacket>;
 #endif
 #if PROTOCOL_VERSION > 463
-    template class BaseMessage<SetDifficulty>;
+    template class BaseMessage<ServerboundChangeDifficultyPacket>;
 #endif
-    template class BaseMessage<Spectate>;
-    template class BaseMessage<SteerBoat>;
-    template class BaseMessage<SteerVehicle>;
-    template class BaseMessage<TabCompleteServerbound>;
-    template class BaseMessage<TeleportConfirm>;
+    template class BaseMessage<ServerboundTeleportToEntityPacket>;
+    template class BaseMessage<ServerboundPaddleBoatPacket>;
+    template class BaseMessage<ServerboundPlayerInputPacket>;
+    template class BaseMessage<ServerboundCommandSuggestionPacket>;
+    template class BaseMessage<ServerboundAcceptTeleportationPacket>;
 #if PROTOCOL_VERSION > 385
-    template class BaseMessage<UpdateCommandBlock>;
-    template class BaseMessage<UpdateCommandBlockMinecart>;
+    template class BaseMessage<ServerboundSetCommandBlockPacket>;
+    template class BaseMessage<ServerboundSetCommandMinecartPacket>;
 #endif
 #if PROTOCOL_VERSION > 471
-    template class BaseMessage<UpdateJigsawBlock>;
+    template class BaseMessage<ServerboundSetJigsawBlockPacket>;
 #endif
-    template class BaseMessage<UpdateSign>;
+    template class BaseMessage<ServerboundSignUpdatePacket>;
 #if PROTOCOL_VERSION > 385
-    template class BaseMessage<UpdateStructureBlock>;
+    template class BaseMessage<ServerboundSetStructureBlockPacket>;
 #endif
-    template class BaseMessage<UseItem>;
-    template class BaseMessage<VehicleMoveServerbound>;
+    template class BaseMessage<ServerboundUseItemPacket>;
+    template class BaseMessage<ServerboundMoveVehiclePacket>;
 
     // Play clientbound
-    template class BaseMessage<Advancements>;
-    template class BaseMessage<AttachEntity>;
-    template class BaseMessage<BlockAction>;
-    template class BaseMessage<BlockBreakAnimation>;
-    template class BaseMessage<BlockChange>;
-    template class BaseMessage<BossBar>;
-    template class BaseMessage<Camera>;
-    template class BaseMessage<CloseWindowClientbound>;
-    template class BaseMessage<CollectItem>;
-    template class BaseMessage<CombatEvent>;
-    template class BaseMessage<DestroyEntities>;
+    template class BaseMessage<ClientboundUpdateAdvancementsPacket>;
+    template class BaseMessage<ClientboundSetEntityLinkPacket>;
+    template class BaseMessage<ClientboundBlockEventPacket>;
+    template class BaseMessage<ClientboundBlockDestructionPacket>;
+    template class BaseMessage<ClientboundBlockUpdatePacket>;
+    template class BaseMessage<ClientboundBossEventPacket>;
+    template class BaseMessage<ClientboundSetCameraPacket>;
+    template class BaseMessage<ClientboundContainerClosePacket>;
+    template class BaseMessage<ClientboundTakeItemEntityPacket>;
+    template class BaseMessage<ClientboundPlayerCombatPacket>;
+    template class BaseMessage<ClientboundRemoveEntitiesPacket>;
 #if PROTOCOL_VERSION > 345
-    template class BaseMessage<DeclareCommands>;
+    template class BaseMessage<ClientboundCommandsPacket>;
 #endif
 #if PROTOCOL_VERSION > 347
-    template class BaseMessage<DeclareRecipes>;
+    template class BaseMessage<ClientboundUpdateRecipesPacket>;
 #endif
 #if PROTOCOL_VERSION > 351
-    template class BaseMessage<FacePlayer>;
+    template class BaseMessage<ClientboundPlayerLookAtPacket>;
 #endif
-    template class BaseMessage<ServerDifficulty>;
-    template class BaseMessage<MapData>;
-    template class BaseMessage<MultiBlockChange>;
-    template class BaseMessage<ConfirmTransactionClientbound>;
-    template class BaseMessage<ChangeGameState>;
-    template class BaseMessage<CraftRecipeResponse>;
-    template class BaseMessage<DisconnectPlay>;
-    template class BaseMessage<DisplayScoreboard>;
-    template class BaseMessage<UnloadChunk>;
-    template class BaseMessage<KeepAliveClientbound>;
-    template class BaseMessage<NamedSoundEffect>;
+    template class BaseMessage<ClientboundChangeDifficultyPacket>;
+    template class BaseMessage<ClientboundMapItemDataPacket>;
+    template class BaseMessage<ClientboundSectionBlocksUpdatePacket>;
+    template class BaseMessage<ClientboundContainerAckPacket>;
+    template class BaseMessage<ClientboundGameEventPacket>;
+    template class BaseMessage<ClientboundPlaceGhostRecipePacket>;
+    template class BaseMessage<ClientboundDisconnectPacket>;
+    template class BaseMessage<ClientboundSetDisplayObjectivePacket>;
+    template class BaseMessage<ClientboundForgetLevelChunkPacket>;
+    template class BaseMessage<ClientboundKeepAlivePacket>;
+    template class BaseMessage<ClientboundCustomSoundPacket>;
 #if PROTOCOL_VERSION > 388
-    template class BaseMessage<NBTQueryResponse>;
+    template class BaseMessage<ClientboundTagQueryPacket>;
 #endif
-    template class BaseMessage<OpenSignEditor>;
+    template class BaseMessage<ClientboundOpenSignEditorPacket>;
 #if PROTOCOL_VERSION > 451
-    template class BaseMessage<OpenHorseWindow>;
+    template class BaseMessage<ClientboundHorseScreenOpenPacket>;
 #endif
 #if PROTOCOL_VERSION > 450
-    template class BaseMessage<OpenBook>;
+    template class BaseMessage<ClientboundOpenBookPacket>;
 #endif
-    template class BaseMessage<ChunkData>;
-    template class BaseMessage<JoinGame>;
-    template class BaseMessage<Effect>;
-    template class BaseMessage<Entity>;
-    template class BaseMessage<EntityAnimationClientbound>;
-    template class BaseMessage<EntityEquipment>;
-    template class BaseMessage<EntityEffect>;
-    template class BaseMessage<EntityHeadLook>;
-    template class BaseMessage<EntityRelativeMove>;
-    template class BaseMessage<EntityLookAndRelativeMove>;
-    template class BaseMessage<EntityLook>;
-    template class BaseMessage<EntityMetadata>;
-    template class BaseMessage<EntityProperties>;
+    template class BaseMessage<ClientboundLevelChunkPacket>;
+    template class BaseMessage<ClientboundLoginPacket>;
+    template class BaseMessage<ClientboundLevelEventPacket>;
+    template class BaseMessage<ClientboundMoveEntityPacket>;
+    template class BaseMessage<ClientboundAnimatePacket>;
+    template class BaseMessage<ClientboundSetEquipmentPacket>;
+    template class BaseMessage<ClientboundUpdateMobEffectPacket>;
+    template class BaseMessage<ClientboundRotateHeadPacket>;
+    template class BaseMessage<ClientboundMoveEntityPacketPos>;
+    template class BaseMessage<ClientboundMoveEntityPacketPosRot>;
+    template class BaseMessage<ClientboundMoveEntityPacketRot>;
+    template class BaseMessage<ClientboundSetEntityDataPacket>;
+    template class BaseMessage<ClientboundUpdateAttributesPacket>;
 #if PROTOCOL_VERSION > 450
-    template class BaseMessage<EntitySoundEffect>;
+    template class BaseMessage<ClientboundSoundEntityPacket>;
 #endif
-    template class BaseMessage<EntityStatus>;
-    template class BaseMessage<EntityVelocity>;
-    template class BaseMessage<Explosion>;
-    template class BaseMessage<Particle>;
-    template class BaseMessage<PlayerPositionAndLookClientbound>;
-    template class BaseMessage<UpdateHealth>;
-    template class BaseMessage<EntityTeleport>;
-    template class BaseMessage<PlayerAbilitiesClientbound>;
-    template class BaseMessage<TimeUpdate>;
-    template class BaseMessage<ChatMessageClientbound>;
-    template class BaseMessage<Respawn>;
+    template class BaseMessage<ClientboundEntityEventPacket>;
+    template class BaseMessage<ClientboundSetEntityMotionPacket>;
+    template class BaseMessage<ClientboundExplodePacket>;
+    template class BaseMessage<ClientboundLevelParticlesPacket>;
+    template class BaseMessage<ClientboundPlayerPositionPacket>;
+    template class BaseMessage<ClientboundSetHealthPacket>;
+    template class BaseMessage<ClientboundTeleportEntityPacket>;
+    template class BaseMessage<ClientboundPlayerAbilitiesPacket>;
+    template class BaseMessage<ClientboundSetTimePacket>;
+    template class BaseMessage<ClientboundChatPacket>;
+    template class BaseMessage<ClientboundRespawnPacket>;
 #if PROTOCOL_VERSION > 404
-    template class BaseMessage<UpdateLight>;
+    template class BaseMessage<ClientboundLightUpdatePacket>;
 #endif
 #if PROTOCOL_VERSION > 493
-    template class BaseMessage<AcknowledgePlayerDigging>;
+    template class BaseMessage<ClientboundBlockBreakAckPacket>;
 #endif
-    template class BaseMessage<UpdateBlockEntity>;
-    template class BaseMessage<PlayerInfo>;
-    template class BaseMessage<PlayerListHeaderAndFooter>;
-    template class BaseMessage<PluginMessageClientbound>;
-    template class BaseMessage<RemoveEntityEffect>;
-    template class BaseMessage<RessourcePackSend>;
-    template class BaseMessage<ScoreboardObjective>;
-    template class BaseMessage<SelectAdvancementTab>;
-    template class BaseMessage<SetExperience>;
-    template class BaseMessage<SetSlot>;
-    template class BaseMessage<SetCooldown>;
-    template class BaseMessage<SetPassengers>;
-    template class BaseMessage<SoundEffect>;
-    template class BaseMessage<SpawnExperienceOrb>;
+    template class BaseMessage<ClientboundBlockEntityDataPacket>;
+    template class BaseMessage<ClientboundPlayerInfoPacket>;
+    template class BaseMessage<ClientboundTabListPacket>;
+    template class BaseMessage<ClientboundCustomPayloadPacket>;
+    template class BaseMessage<ClientboundRemoveMobEffectPacket>;
+    template class BaseMessage<ClientboundResourcePackPacket>;
+    template class BaseMessage<ClientboundSetObjectivePacket>;
+    template class BaseMessage<ClientboundSelectAdvancementsTabPacket>;
+    template class BaseMessage<ClientboundSetExperiencePacket>;
+    template class BaseMessage<ClientboundContainerSetSlotPacket>;
+    template class BaseMessage<ClientboundCooldownPacket>;
+    template class BaseMessage<ClientboundSetPassengersPacket>;
+    template class BaseMessage<ClientboundSoundPacket>;
+    template class BaseMessage<ClientboundAddExperienceOrbPacket>;
 #if PROTOCOL_VERSION < 721
-    template class BaseMessage<SpawnGlobalEntity>;
+    template class BaseMessage<ClientboundAddGlobalEntityPacket>;
 #endif
-    template class BaseMessage<SpawnMob>;
-    template class BaseMessage<SpawnObject>;
-    template class BaseMessage<SpawnPainting>;
-    template class BaseMessage<SpawnPlayer>;
-    template class BaseMessage<SpawnPosition>;
-    template class BaseMessage<Statistics>;
+    template class BaseMessage<ClientboundAddMobPacket>;
+    template class BaseMessage<ClientboundAddEntityPacket>;
+    template class BaseMessage<ClientboundAddPaintingPacket>;
+    template class BaseMessage<ClientboundAddPlayerPacket>;
+    template class BaseMessage<ClientboundSetDefaultSpawnPositionPacket>;
+    template class BaseMessage<ClientboundAwardStatsPacket>;
 #if PROTOCOL_VERSION > 342
-    template class BaseMessage<StopSound>;
+    template class BaseMessage<ClientboundStopSoundPacket>;
 #endif
 #if PROTOCOL_VERSION > 348
-    template class BaseMessage<Tags>;
+    template class BaseMessage<ClientboundUpdateTagsPacket>;
 #endif
-    template class BaseMessage<TabCompleteClientbound>;
-    template class BaseMessage<Teams>;
-    template class BaseMessage<Title>;
+    template class BaseMessage<ClientboundCommandSuggestionsPacket>;
+    template class BaseMessage<ClientboundSetPlayerTeamPacket>;
+    template class BaseMessage<ClientboundSetTitlesPacket>;
 #if PROTOCOL_VERSION < 461
-    template class BaseMessage<UseBed>;
+    template class BaseMessage<ClientboundUseBedPacket>;
 #endif
 #if PROTOCOL_VERSION > 451
-    template class BaseMessage<TradeList>;
+    template class BaseMessage<ClientboundMerchantOffersPacket>;
 #endif
-    template class BaseMessage<UnlockRecipes>;
-    template class BaseMessage<UpdateScore>;
+    template class BaseMessage<ClientboundRecipePacket>;
+    template class BaseMessage<ClientboundSetScorePacket>;
 #if PROTOCOL_VERSION > 471
-    template class BaseMessage<UpdateViewPosition>;
-    template class BaseMessage<UpdateViewDistance>;
+    template class BaseMessage<ClientboundSetChunkCacheCenterPacket>;
+    template class BaseMessage<ClientboundSetChunkCacheRadiusPacket>;
 #endif
-    template class BaseMessage<VehicleMoveClientbound>;
-    template class BaseMessage<WindowItems>;
-    template class BaseMessage<WindowProperty>;
-    template class BaseMessage<OpenWindow>;
-    template class BaseMessage<HeldItemChangeClientbound>;
-    template class BaseMessage<WorldBorder>;
+    template class BaseMessage<ClientboundMoveVehiclePacket>;
+    template class BaseMessage<ClientboundContainerSetContentPacket>;
+    template class BaseMessage<ClientboundContainerSetDataPacket>;
+    template class BaseMessage<ClientboundOpenScreenPacket>;
+    template class BaseMessage<ClientboundSetCarriedItemPacket>;
+    template class BaseMessage<ClientboundSetBorderPacket>;
 }

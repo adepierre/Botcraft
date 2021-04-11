@@ -3,219 +3,219 @@
 #include <tuple>
 
 // Handshaking serverbound
-#include "protocolCraft/Messages/Handshaking/Serverbound/Handshake.hpp"
+#include "protocolCraft/Messages/Handshaking/Serverbound/ServerboundClientIntentionPacket.hpp"
 
 
 // Login serverbound
-#include "protocolCraft/Messages/Login/Serverbound/LoginStart.hpp"
-#include "protocolCraft/Messages/Login/Serverbound/EncryptionResponse.hpp"
+#include "protocolCraft/Messages/Login/Serverbound/ServerboundHelloPacket.hpp"
+#include "protocolCraft/Messages/Login/Serverbound/ServerboundKeyPacket.hpp"
 
 // Login clientbound
-#include "protocolCraft/Messages/Login/Clientbound/DisconnectLogin.hpp"
-#include "protocolCraft/Messages/Login/Clientbound/EncryptionRequest.hpp"
-#include "protocolCraft/Messages/Login/Clientbound/LoginSuccess.hpp"
-#include "protocolCraft/Messages/Login/Clientbound/SetCompression.hpp"
+#include "protocolCraft/Messages/Login/Clientbound/ClientboundLoginDisconnectPacket.hpp"
+#include "protocolCraft/Messages/Login/Clientbound/ClientboundHelloPacket.hpp"
+#include "protocolCraft/Messages/Login/Clientbound/ClientboundGameProfilePacket.hpp"
+#include "protocolCraft/Messages/Login/Clientbound/ClientboundLoginCompressionPacket.hpp"
 
 //Status Serverbound
-#include "protocolCraft/Messages/Status/Serverbound/Ping.hpp"
-#include "protocolCraft/Messages/Status/Serverbound/Request.hpp"
+#include "protocolCraft/Messages/Status/Serverbound/ServerboundPingRequestPacket.hpp"
+#include "protocolCraft/Messages/Status/Serverbound/ServerboundStatusRequestPacket.hpp"
 
 // Status Clientbound
-#include "protocolCraft/Messages/Status/Clientbound/Pong.hpp"
-#include "protocolCraft/Messages/Status/Clientbound/Response.hpp"
+#include "protocolCraft/Messages/Status/Clientbound/ClientboundPongResponsePacket.hpp"
+#include "protocolCraft/Messages/Status/Clientbound/ClientboundStatusResponsePacket.hpp"
 
 // Play serverbound
-#include "protocolCraft/Messages/Play/Serverbound/ChatMessageServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/ClientStatus.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PlayerPositionAndLookServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/ConfirmTransactionServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/KeepAliveServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/ClientSettings.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/TeleportConfirm.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PlayerDigging.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/TabCompleteServerbound.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundChatPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundClientCommandPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketPosRot.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerAckPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundKeepAlivePacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundClientInformationPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundAcceptTeleportationPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerActionPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundCommandSuggestionPacket.hpp"
 #if PROTOCOL_VERSION < 476
-#include "protocolCraft/Messages/Play/Serverbound/EnchantItem.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundEnchantItemPacket.hpp"
 #endif
-#include "protocolCraft/Messages/Play/Serverbound/ClickWindow.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/CloseWindowServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PluginMessageServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/InteractEntity.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PlayerMovement.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PlayerPosition.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PlayerLook.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/VehicleMoveServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/SteerBoat.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/CraftRecipeRequest.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PlayerAbilitiesServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/EntityAction.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/SteerVehicle.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerClickPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerClosePacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundCustomPayloadPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundInteractPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketPos.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketRot.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundMoveVehiclePacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPaddleBoatPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPlaceRecipePacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerAbilitiesPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerCommandPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerInputPacket.hpp"
 #if PROTOCOL_VERSION < 737
-#include "protocolCraft/Messages/Play/Serverbound/RecipeBookData.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookUpdatePacket.hpp"
 #else
-#include "protocolCraft/Messages/Play/Serverbound/SetDisplayedRecipe.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/SetRecipeBookState.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp"
 #endif
 
-#include "protocolCraft/Messages/Play/Serverbound/ResourcePackStatus.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/AdvancementTab.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/HeldItemChangeServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/CreativeInventoryAction.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/UpdateSign.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/AnimationServerbound.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/Spectate.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PlayerBlockPlacement.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/UseItem.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundResourcePackPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSeenAdvancementsPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSetCarriedItemPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSetCreativeModeSlotPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSignUpdatePacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSwingPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundTeleportToEntityPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundUseItemOnPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundUseItemPacket.hpp"
 #if PROTOCOL_VERSION > 388
-#include "protocolCraft/Messages/Play/Serverbound/QueryBlockNBT.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/QueryEntityNBT.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundBlockEntityTagQuery.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundEntityTagQuery.hpp"
 #endif
 #if PROTOCOL_VERSION > 385
-#include "protocolCraft/Messages/Play/Serverbound/EditBook.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/PickItem.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/NameItem.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/SelectTrade.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/SetBeaconEffect.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/UpdateCommandBlock.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/UpdateCommandBlockMinecart.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/UpdateStructureBlock.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundEditBookPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPickItemPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundRenameItemPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSelectTradePacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSetBeaconPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSetCommandBlockPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSetCommandMinecartPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSetStructureBlockPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 463
-#include "protocolCraft/Messages/Play/Serverbound/SetDifficulty.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/LockDifficulty.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundChangeDifficultyPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundLockDifficultyPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 476
-#include "protocolCraft/Messages/Play/Serverbound/ClickWindowButton.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerButtonClickPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 471
-#include "protocolCraft/Messages/Play/Serverbound/UpdateJigsawBlock.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSetJigsawBlockPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 711
-#include "protocolCraft/Messages/Play/Serverbound/GenerateStructure.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundJigsawGeneratePacket.hpp"
 #endif
 
 // Play clientbound
-#include "protocolCraft/Messages/Play/Clientbound/BlockChange.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/ChatMessageClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/ServerDifficulty.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/MultiBlockChange.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/ConfirmTransactionClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/DisconnectPlay.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/UnloadChunk.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/KeepAliveClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/ChunkData.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/JoinGame.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Entity.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityRelativeMove.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityLookAndRelativeMove.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityLook.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/PlayerPositionAndLookClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/UpdateHealth.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityTeleport.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/PlayerAbilitiesClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/TimeUpdate.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Respawn.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockUpdatePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundChatPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundChangeDifficultyPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSectionBlocksUpdatePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundContainerAckPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundDisconnectPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundForgetLevelChunkPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundKeepAlivePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundLoginPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketPos.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketPosRot.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketRot.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerPositionPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetHealthPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundTeleportEntityPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerAbilitiesPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetTimePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRespawnPacket.hpp"
 #if PROTOCOL_VERSION > 404
-#include "protocolCraft/Messages/Play/Clientbound/UpdateLight.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundLightUpdatePacket.hpp"
 #endif
-#include "protocolCraft/Messages/Play/Clientbound/UpdateBlockEntity.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/PlayerInfo.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockEntityDataPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoPacket.hpp"
 #if PROTOCOL_VERSION > 493
-#include "protocolCraft/Messages/Play/Clientbound/AcknowledgePlayerDigging.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockBreakAckPacket.hpp"
 #endif
-#include "protocolCraft/Messages/Play/Clientbound/SetSlot.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/WindowItems.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/OpenWindow.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/HeldItemChangeClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SpawnObject.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SpawnExperienceOrb.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetSlotPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetContentPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundOpenScreenPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetCarriedItemPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAddEntityPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAddExperienceOrbPacket.hpp"
 #if PROTOCOL_VERSION < 721
-#include "protocolCraft/Messages/Play/Clientbound/SpawnGlobalEntity.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAddGlobalEntityPacket.hpp"
 #endif
-#include "protocolCraft/Messages/Play/Clientbound/SpawnMob.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SpawnPainting.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SpawnPlayer.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityAnimationClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Statistics.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/BlockBreakAnimation.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/BlockAction.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/BossBar.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/TabCompleteClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/CloseWindowClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/WindowProperty.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SetCooldown.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/PluginMessageClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/NamedSoundEffect.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityStatus.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Explosion.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/ChangeGameState.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Effect.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Particle.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/MapData.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/VehicleMoveClientbound.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/OpenSignEditor.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/CraftRecipeResponse.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/CombatEvent.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAddMobPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAddPaintingPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAddPlayerPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAnimatePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAwardStatsPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockDestructionPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockEventPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundBossEventPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundCommandSuggestionsPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundContainerClosePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetDataPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundCooldownPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundCustomPayloadPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundCustomSoundPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundEntityEventPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundExplodePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundGameEventPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundLevelEventPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundLevelParticlesPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundMapItemDataPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveVehiclePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundOpenSignEditorPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlaceGhostRecipePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatPacket.hpp"
 #if PROTOCOL_VERSION < 461
-#include "protocolCraft/Messages/Play/Clientbound/UseBed.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundUseBedPacket.hpp"
 #endif
-#include "protocolCraft/Messages/Play/Clientbound/UnlockRecipes.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/DestroyEntities.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/RemoveEntityEffect.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/RessourcePackSend.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityHeadLook.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SelectAdvancementTab.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/WorldBorder.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Camera.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/DisplayScoreboard.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityMetadata.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/AttachEntity.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityVelocity.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityEquipment.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SetExperience.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/ScoreboardObjective.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SetPassengers.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Teams.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/UpdateScore.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SpawnPosition.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Title.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/SoundEffect.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/PlayerListHeaderAndFooter.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/CollectItem.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/Advancements.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityProperties.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/EntityEffect.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRecipePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntitiesPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveMobEffectPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundResourcePackPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRotateHeadPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSelectAdvancementsTabPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetCameraPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetDisplayObjectivePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetEntityDataPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetEntityLinkPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetEntityMotionPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetEquipmentPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetExperiencePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetObjectivePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetPassengersPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetPlayerTeamPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetScorePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetDefaultSpawnPositionPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetTitlesPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSoundPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundTabListPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundTakeItemEntityPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundUpdateAdvancementsPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundUpdateAttributesPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundUpdateMobEffectPacket.hpp"
 #if PROTOCOL_VERSION > 344
-#include "protocolCraft/Messages/Play/Clientbound/DeclareCommands.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundCommandsPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 388
-#include "protocolCraft/Messages/Play/Clientbound/NBTQueryResponse.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundTagQueryPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 351
-#include "protocolCraft/Messages/Play/Clientbound/FacePlayer.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerLookAtPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 342
-#include "protocolCraft/Messages/Play/Clientbound/StopSound.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundStopSoundPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 347
-#include "protocolCraft/Messages/Play/Clientbound/DeclareRecipes.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundUpdateRecipesPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 348
-#include "protocolCraft/Messages/Play/Clientbound/Tags.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundUpdateTagsPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 451
-#include "protocolCraft/Messages/Play/Clientbound/OpenHorseWindow.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/TradeList.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundHorseScreenOpenPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundMerchantOffersPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 450
-#include "protocolCraft/Messages/Play/Clientbound/OpenBook.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundOpenBookPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 471
-#include "protocolCraft/Messages/Play/Clientbound/UpdateViewPosition.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/UpdateViewDistance.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetChunkCacheCenterPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetChunkCacheRadiusPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 440
-#include "protocolCraft/Messages/Play/Clientbound/EntitySoundEffect.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSoundEntityPacket.hpp"
 #endif
 
 
@@ -223,231 +223,231 @@ namespace ProtocolCraft
 {
     using AllMessages = std::tuple <
         // Handshaking serverbound
-        Handshake,
+        ServerboundClientIntentionPacket,
 
 
         // Login serverbound
-        LoginStart,
-        EncryptionResponse,
+        ServerboundHelloPacket,
+        ServerboundKeyPacket,
 
         // Login clientbound
-        DisconnectLogin,
-        EncryptionRequest,
-        LoginSuccess,
-        SetCompression,
+        ClientboundLoginDisconnectPacket,
+        ClientboundHelloPacket,
+        ClientboundGameProfilePacket,
+        ClientboundLoginCompressionPacket,
 
         // Status serverbound
-        Request,
-        Ping,
+        ServerboundStatusRequestPacket,
+        ServerboundPingRequestPacket,
 
         // Status clientbound
-        Response,
-        Pong,
+        ClientboundStatusResponsePacket,
+        ClientboundPongResponsePacket,
 
 
         // Play serverbound
-        AdvancementTab,
-        AnimationServerbound,
-        ChatMessageServerbound,
-        ClickWindow,
+        ServerboundSeenAdvancementsPacket,
+        ServerboundSwingPacket,
+        ServerboundChatPacket,
+        ServerboundContainerClickPacket,
 #if PROTOCOL_VERSION > 476
-        ClickWindowButton,
+        ServerboundContainerButtonClickPacket,
 #endif
-        ClientSettings,
-        ClientStatus,
-        CloseWindowServerbound,
-        ConfirmTransactionServerbound,
-        CraftRecipeRequest,
-        CreativeInventoryAction,
+        ServerboundClientInformationPacket,
+        ServerboundClientCommandPacket,
+        ServerboundContainerClosePacket,
+        ServerboundContainerAckPacket,
+        ServerboundPlaceRecipePacket,
+        ServerboundSetCreativeModeSlotPacket,
 #if PROTOCOL_VERSION > 385
-        EditBook,
+        ServerboundEditBookPacket,
 #endif
 #if PROTOCOL_VERSION < 476
-        EnchantItem,
+        ServerboundEnchantItemPacket,
 #endif
-        EntityAction,
+        ServerboundPlayerCommandPacket,
 #if PROTOCOL_VERSION > 711
-        GenerateStructure,
+        ServerboundJigsawGeneratePacket,
 #endif
-        HeldItemChangeServerbound,
-        InteractEntity,
-        KeepAliveServerbound,
+        ServerboundSetCarriedItemPacket,
+        ServerboundInteractPacket,
+        ServerboundKeepAlivePacket,
 #if PROTOCOL_VERSION > 463
-        LockDifficulty,  
+        ServerboundLockDifficultyPacket,  
 #endif
 #if PROTOCOL_VERSION > 385
-        NameItem,
-        PickItem,
+        ServerboundRenameItemPacket,
+        ServerboundPickItemPacket,
 #endif
-        PlayerAbilitiesServerbound,
-        PlayerBlockPlacement,
-        PlayerDigging,
-        PlayerLook,
-        PlayerMovement,
-        PlayerPosition,
-        PlayerPositionAndLookServerbound,
-        PluginMessageServerbound,
+        ServerboundPlayerAbilitiesPacket,
+        ServerboundUseItemOnPacket,
+        ServerboundPlayerActionPacket,
+        ServerboundMovePlayerPacketRot,
+        ServerboundMovePlayerPacket,
+        ServerboundMovePlayerPacketPos,
+        ServerboundMovePlayerPacketPosRot,
+        ServerboundCustomPayloadPacket,
 #if PROTOCOL_VERSION > 388
-        QueryBlockNBT,
-        QueryEntityNBT,
+        ServerboundBlockEntityTagQuery,
+        ServerboundEntityTagQuery,
 #endif
 #if PROTOCOL_VERSION < 736
-        RecipeBookData,
+        ServerboundRecipeBookUpdatePacket,
 #else
-        SetDisplayedRecipe,
-        SetRecipeBookState,
+        ServerboundRecipeBookSeenRecipePacket,
+        ServerboundRecipeBookChangeSettingsPacket,
 #endif
-        ResourcePackStatus,
+        ServerboundResourcePackPacket,
 #if PROTOCOL_VERSION > 385
-        SelectTrade,
-        SetBeaconEffect,
+        ServerboundSelectTradePacket,
+        ServerboundSetBeaconPacket,
 #endif
 #if PROTOCOL_VERSION > 463
-        SetDifficulty,
+        ServerboundChangeDifficultyPacket,
 #endif
-        Spectate,
-        SteerBoat,
-        SteerVehicle,
-        TabCompleteServerbound,
-        TeleportConfirm,
+        ServerboundTeleportToEntityPacket,
+        ServerboundPaddleBoatPacket,
+        ServerboundPlayerInputPacket,
+        ServerboundCommandSuggestionPacket,
+        ServerboundAcceptTeleportationPacket,
 #if PROTOCOL_VERSION > 385
-        UpdateCommandBlock,
-        UpdateCommandBlockMinecart,
+        ServerboundSetCommandBlockPacket,
+        ServerboundSetCommandMinecartPacket,
 #endif
 #if PROTOCOL_VERSION > 471
-        UpdateJigsawBlock,
+        ServerboundSetJigsawBlockPacket,
 #endif
-        UpdateSign,
+        ServerboundSignUpdatePacket,
 #if PROTOCOL_VERSION > 385
-        UpdateStructureBlock,
+        ServerboundSetStructureBlockPacket,
 #endif
-        UseItem,
-        VehicleMoveServerbound,
+        ServerboundUseItemPacket,
+        ServerboundMoveVehiclePacket,
 
         // Play clientbound
-        Advancements,
-        AttachEntity,
-        BlockAction,
-        BlockBreakAnimation,
-        BlockChange,
-        BossBar,
-        Camera,
-        CloseWindowClientbound,
-        CollectItem,
-        CombatEvent,
-        DestroyEntities,
+        ClientboundUpdateAdvancementsPacket,
+        ClientboundSetEntityLinkPacket,
+        ClientboundBlockEventPacket,
+        ClientboundBlockDestructionPacket,
+        ClientboundBlockUpdatePacket,
+        ClientboundBossEventPacket,
+        ClientboundSetCameraPacket,
+        ClientboundContainerClosePacket,
+        ClientboundTakeItemEntityPacket,
+        ClientboundPlayerCombatPacket,
+        ClientboundRemoveEntitiesPacket,
 #if PROTOCOL_VERSION > 345
-        DeclareCommands,
+        ClientboundCommandsPacket,
 #endif
 #if PROTOCOL_VERSION > 347
-        DeclareRecipes,
+        ClientboundUpdateRecipesPacket,
 #endif
 #if PROTOCOL_VERSION > 351
-        FacePlayer,
+        ClientboundPlayerLookAtPacket,
 #endif
-        ServerDifficulty,
-        MapData,
-        MultiBlockChange,
-        ConfirmTransactionClientbound,
-        ChangeGameState,
-        CraftRecipeResponse,
-        DisconnectPlay,
-        DisplayScoreboard,
-        UnloadChunk,
-        KeepAliveClientbound,
-        NamedSoundEffect,
+        ClientboundChangeDifficultyPacket,
+        ClientboundMapItemDataPacket,
+        ClientboundSectionBlocksUpdatePacket,
+        ClientboundContainerAckPacket,
+        ClientboundGameEventPacket,
+        ClientboundPlaceGhostRecipePacket,
+        ClientboundDisconnectPacket,
+        ClientboundSetDisplayObjectivePacket,
+        ClientboundForgetLevelChunkPacket,
+        ClientboundKeepAlivePacket,
+        ClientboundCustomSoundPacket,
 #if PROTOCOL_VERSION > 388
-        NBTQueryResponse,
+        ClientboundTagQueryPacket,
 #endif
-        OpenSignEditor,
+        ClientboundOpenSignEditorPacket,
 #if PROTOCOL_VERSION > 451
-        OpenHorseWindow,
+        ClientboundHorseScreenOpenPacket,
 #endif
 #if PROTOCOL_VERSION > 450
-        OpenBook,
+        ClientboundOpenBookPacket,
 #endif
-        ChunkData,
-        JoinGame,
-        Effect,
-        Entity,
-        EntityAnimationClientbound,
-        EntityEquipment,
-        EntityEffect,
-        EntityHeadLook,
-        EntityRelativeMove,
-        EntityLookAndRelativeMove,
-        EntityLook,
-        EntityMetadata,
-        EntityProperties,
+        ClientboundLevelChunkPacket,
+        ClientboundLoginPacket,
+        ClientboundLevelEventPacket,
+        ClientboundMoveEntityPacket,
+        ClientboundAnimatePacket,
+        ClientboundSetEquipmentPacket,
+        ClientboundUpdateMobEffectPacket,
+        ClientboundRotateHeadPacket,
+        ClientboundMoveEntityPacketPos,
+        ClientboundMoveEntityPacketPosRot,
+        ClientboundMoveEntityPacketRot,
+        ClientboundSetEntityDataPacket,
+        ClientboundUpdateAttributesPacket,
 #if PROTOCOL_VERSION > 450
-        EntitySoundEffect,
+        ClientboundSoundEntityPacket,
 #endif
-        EntityStatus,
-        EntityVelocity,
-        Explosion,
-        Particle,
-        PlayerPositionAndLookClientbound,
-        UpdateHealth,
-        EntityTeleport,
-        PlayerAbilitiesClientbound,
-        TimeUpdate,
-        ChatMessageClientbound,
-        Respawn,
+        ClientboundEntityEventPacket,
+        ClientboundSetEntityMotionPacket,
+        ClientboundExplodePacket,
+        ClientboundLevelParticlesPacket,
+        ClientboundPlayerPositionPacket,
+        ClientboundSetHealthPacket,
+        ClientboundTeleportEntityPacket,
+        ClientboundPlayerAbilitiesPacket,
+        ClientboundSetTimePacket,
+        ClientboundChatPacket,
+        ClientboundRespawnPacket,
 #if PROTOCOL_VERSION > 404
-        UpdateLight,
+        ClientboundLightUpdatePacket,
 #endif
 #if PROTOCOL_VERSION > 493
-        AcknowledgePlayerDigging,
+        ClientboundBlockBreakAckPacket,
 #endif
-        UpdateBlockEntity,
-        PlayerInfo,
-        PlayerListHeaderAndFooter,
-        PluginMessageClientbound,
-        RemoveEntityEffect,
-        RessourcePackSend,
-        ScoreboardObjective,
-        SelectAdvancementTab,
-        SetExperience,
-        SetSlot,
-        SetCooldown,
-        SetPassengers,
-        SoundEffect,
-        SpawnExperienceOrb,
+        ClientboundBlockEntityDataPacket,
+        ClientboundPlayerInfoPacket,
+        ClientboundTabListPacket,
+        ClientboundCustomPayloadPacket,
+        ClientboundRemoveMobEffectPacket,
+        ClientboundResourcePackPacket,
+        ClientboundSetObjectivePacket,
+        ClientboundSelectAdvancementsTabPacket,
+        ClientboundSetExperiencePacket,
+        ClientboundContainerSetSlotPacket,
+        ClientboundCooldownPacket,
+        ClientboundSetPassengersPacket,
+        ClientboundSoundPacket,
+        ClientboundAddExperienceOrbPacket,
 #if PROTOCOL_VERSION < 721
-        SpawnGlobalEntity,
+        ClientboundAddGlobalEntityPacket,
 #endif
-        SpawnMob,
-        SpawnObject,
-        SpawnPainting,
-        SpawnPlayer,
-        SpawnPosition,
-        Statistics,
+        ClientboundAddMobPacket,
+        ClientboundAddEntityPacket,
+        ClientboundAddPaintingPacket,
+        ClientboundAddPlayerPacket,
+        ClientboundSetDefaultSpawnPositionPacket,
+        ClientboundAwardStatsPacket,
 #if PROTOCOL_VERSION > 342
-        StopSound,
+        ClientboundStopSoundPacket,
 #endif
 #if PROTOCOL_VERSION > 348
-        Tags,
+        ClientboundUpdateTagsPacket,
 #endif
-        TabCompleteClientbound,
-        Teams,
-        Title,
+        ClientboundCommandSuggestionsPacket,
+        ClientboundSetPlayerTeamPacket,
+        ClientboundSetTitlesPacket,
 #if PROTOCOL_VERSION < 461
-        UseBed,
+        ClientboundUseBedPacket,
 #endif
 #if PROTOCOL_VERSION > 451
-        TradeList,
+        ClientboundMerchantOffersPacket,
 #endif
-        UnlockRecipes,
-        UpdateScore,
+        ClientboundRecipePacket,
+        ClientboundSetScorePacket,
 #if PROTOCOL_VERSION > 471
-        UpdateViewPosition,
-        UpdateViewDistance,
+        ClientboundSetChunkCacheCenterPacket,
+        ClientboundSetChunkCacheRadiusPacket,
 #endif
-        VehicleMoveClientbound,
-        WindowItems,
-        WindowProperty,
-        OpenWindow,
-        HeldItemChangeClientbound,
-        WorldBorder
+        ClientboundMoveVehiclePacket,
+        ClientboundContainerSetContentPacket,
+        ClientboundContainerSetDataPacket,
+        ClientboundOpenScreenPacket,
+        ClientboundSetCarriedItemPacket,
+        ClientboundSetBorderPacket
     > ;
 } //ProtocolCraft

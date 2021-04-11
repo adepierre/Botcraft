@@ -35,10 +35,10 @@ namespace Botcraft
 
 
 		virtual void Handle(ProtocolCraft::Message& msg) override;
-		virtual void Handle(ProtocolCraft::SetCompression& msg) override;
-		virtual void Handle(ProtocolCraft::LoginSuccess& msg) override;
-		virtual void Handle(ProtocolCraft::EncryptionRequest& msg) override;
-		virtual void Handle(ProtocolCraft::KeepAliveClientbound& msg) override;
+		virtual void Handle(ProtocolCraft::ClientboundLoginCompressionPacket& msg) override;
+		virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
+		virtual void Handle(ProtocolCraft::ClientboundHelloPacket& msg) override;
+		virtual void Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg) override;
 
 	private:
 		std::vector<ProtocolCraft::Handler*> subscribed;

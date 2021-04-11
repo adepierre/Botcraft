@@ -40,7 +40,7 @@ namespace Botcraft
 #endif
 
         void LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous);
-        void LoadChunkBlockEntitiesData(const std::vector<unsigned char>& data, const int number_block_entities);
+        void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::NBT>& block_entities);
 
         const Block *GetBlock(const Position &pos) const;
 #if PROTOCOL_VERSION < 347

@@ -44,25 +44,25 @@ namespace Botcraft
         void Physics();
         // Set the right transaction id, add it to the inventory manager,
         // update the next transaction id and send it to the server
-        void SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ClickWindow> transaction);
+        void SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
 
     protected:
         virtual void Handle(ProtocolCraft::Message &msg) override;
-        virtual void Handle(ProtocolCraft::DisconnectLogin &msg) override;
-        virtual void Handle(ProtocolCraft::LoginSuccess &msg) override;
-        virtual void Handle(ProtocolCraft::ServerDifficulty &msg) override;
-        virtual void Handle(ProtocolCraft::ConfirmTransactionClientbound &msg) override;
-        virtual void Handle(ProtocolCraft::DisconnectPlay &msg) override;
-        virtual void Handle(ProtocolCraft::JoinGame &msg) override;
-        virtual void Handle(ProtocolCraft::Entity &msg) override;
-        virtual void Handle(ProtocolCraft::EntityRelativeMove &msg) override;
-        virtual void Handle(ProtocolCraft::EntityLookAndRelativeMove &msg) override;
-        virtual void Handle(ProtocolCraft::EntityLook &msg) override;
-        virtual void Handle(ProtocolCraft::PlayerPositionAndLookClientbound &msg) override;
-        virtual void Handle(ProtocolCraft::UpdateHealth &msg) override;
-        virtual void Handle(ProtocolCraft::EntityTeleport &msg) override;
-        virtual void Handle(ProtocolCraft::PlayerAbilitiesClientbound &msg) override;
-        virtual void Handle(ProtocolCraft::Respawn &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundDisconnectPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPos &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketRot &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundTeleportEntityPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket &msg) override;
 
     protected:
         // If in afk only mode, the chunks will NOT
@@ -89,7 +89,7 @@ namespace Botcraft
         bool auto_respawn;
 
         //ProtocolCraft::ConnectionState state;
-        GameMode game_mode;
+        GameType game_mode;
 
         Difficulty difficulty;
 #if PROTOCOL_VERSION > 463

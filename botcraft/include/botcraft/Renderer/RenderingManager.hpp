@@ -78,12 +78,12 @@ namespace Botcraft
             void WaitForRenderingUpdate();
 
             virtual void Handle(ProtocolCraft::Message& msg) override;
-            virtual void Handle(ProtocolCraft::BlockChange& msg) override;
-            virtual void Handle(ProtocolCraft::MultiBlockChange& msg) override;
-            virtual void Handle(ProtocolCraft::UnloadChunk& msg) override;
-            virtual void Handle(ProtocolCraft::ChunkData& msg) override;
-            virtual void Handle(ProtocolCraft::TimeUpdate& msg) override;
-            virtual void Handle(ProtocolCraft::Respawn& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundSetTimePacket& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
 
         private:
             // Initialize all the stuff

@@ -575,37 +575,37 @@ namespace Botcraft
 
         }
 
-        void RenderingManager::Handle(ProtocolCraft::BlockChange& msg)
+        void RenderingManager::Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg)
         {
-            Position chunk_coords = Botcraft::Chunk::BlockCoordsToChunkCoords(msg.GetLocation());
+            Position chunk_coords = Botcraft::Chunk::BlockCoordsToChunkCoords(msg.GetPos());
             AddChunkToUpdate(chunk_coords.x, chunk_coords.z);
         }
 
-        void RenderingManager::Handle(ProtocolCraft::MultiBlockChange& msg)
+        void RenderingManager::Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg)
         {
 #if PROTOCOL_VERSION < 737
             AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
 #else
-            AddChunkToUpdate(msg.GetChunkSectionCoordinate() >> 42, msg.GetChunkSectionCoordinate() << 22 >> 42);
+            AddChunkToUpdate(msg.GetSectionPos() >> 42, msg.GetSectionPos() << 22 >> 42);
 #endif
         }
 
-        void RenderingManager::Handle(ProtocolCraft::UnloadChunk& msg)
+        void RenderingManager::Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg)
         {
-            AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
+            AddChunkToUpdate(msg.GetX(), msg.GetZ());
         }
 
-        void RenderingManager::Handle(ProtocolCraft::ChunkData& msg)
+        void RenderingManager::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
         {
-            AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
+            AddChunkToUpdate(msg.GetX(), msg.GetZ());
         }
 
-        void RenderingManager::Handle(ProtocolCraft::TimeUpdate& msg)
+        void RenderingManager::Handle(ProtocolCraft::ClientboundSetTimePacket& msg)
         {
-            day_time = ((msg.GetTimeOfDay() + 6000) % 24000) / 24000.0f;
+            day_time = ((msg.GetDayTime() + 6000) % 24000) / 24000.0f;
         }
 
-        void RenderingManager::Handle(ProtocolCraft::Respawn& msg)
+        void RenderingManager::Handle(ProtocolCraft::ClientboundRespawnPacket& msg)
         {
             world_renderer->ClearFaces();
         }
