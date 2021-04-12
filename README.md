@@ -47,6 +47,12 @@ Optional dependencies (needed only if you want to build the OpenGL renderer)
 
 The code is cross-platform and is automatically built on both Windows with Visual 2019 and Linux at each push. It should also work on reasonably older versions of Visual Studio and macOS as well.
 
+### ProtocolCraft
+
+ProtocolCraft is a sublibrary of the botcraft repository. It is a full implementation of the minecraft protocol for all supported versions. It used to be based on the protocol description on the [Wiki](https://wiki.vg/Protocol). However, as it seems to no longer be up to date, I transitioned it to be based on the [official source code mapping](https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a) provided by Mojang.
+
+Transitionning from one protocol description to the other was a breaking change, as all the packets and many variable names were changed. But this should be easier to maintain and update in the future, as it is now directly based on the game source code, instead of a third-party documentation.
+
 ## Building and Installation
 
 To build the library for the latest version of the game with both encryption and compression support and without OpenGL rendering:
