@@ -13,6 +13,13 @@ protected:
     virtual void Handle(ProtocolCraft::ClientboundChatPacket &msg) override;
 
 private:
+    // Get the positions of all chests in a 2*max_search_dist blocks
+    // cube centered around the player
+    // max_search_dist: max distance to search, in each direction
+    // returns: a vector with all the found positions
+    const std::vector<Botcraft::Position> GetAllChestsAround(const Botcraft::Position& max_search_dist) const;
+
+
     void CreateMap();
 
 private:

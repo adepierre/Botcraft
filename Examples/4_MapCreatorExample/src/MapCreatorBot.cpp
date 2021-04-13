@@ -52,30 +52,51 @@ void MapCreatorBot::Handle(ClientboundChatPacket &msg)
     }
 }
 
-void MapCreatorBot::CreateMap()
+const std::vector<Position> MapCreatorBot::GetAllChestsAround(const Position& max_search_dist) const
 {
+    std::vector<Position> output;
+
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+
+    local_player->GetMutex().lock();
     const Position player_position(local_player->GetX(), local_player->GetY(), local_player->GetZ());
+    local_player->GetMutex().unlock();
+
     Position checked_position;
     {
         std::lock_guard<std::mutex> world_guard(world->GetMutex());
         const Block* block;
-        for (int x = -256; x < 256; ++x)
+        for (int x = -max_search_dist.x; x < max_search_dist.x; ++x)
         {
             checked_position.x = player_position.x + x;
-            for (int y = 0; y < 256; ++y)
+            for (int y = -max_search_dist.y; y < max_search_dist.y; ++y)
             {
                 checked_position.y = player_position.y + y;
-                for (int z = -256; z < 256; ++z)
+                for (int z = -max_search_dist.z; z < max_search_dist.z; ++z)
                 {
                     checked_position.z = player_position.z + z;
                     block = world->GetBlock(checked_position);
                     if (block && block->GetBlockstate()->GetName() == "minecraft:chest")
                     {
-                        std::cout << "Chest found in " << checked_position << std::endl;
+                        output.push_back(checked_position);
                     }
                 }
             }
         }
     }
+
+    return output;
+}
+
+void MapCreatorBot::CreateMap()
+{
+    std::vector<Position> chests = GetAllChestsAround(Position(128, 50, 128));
+    for (int i = 0; i < chests.size(); ++i)
+    {
+        if (GoTo(chests[i], true))
+        {
+            break;
+        }
+    }
+
 }

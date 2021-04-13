@@ -54,8 +54,8 @@ namespace Botcraft
 
     enum class Hand
     {
-        Left,
-        Right
+        Right,
+        Left
     };
 
     enum class TintType

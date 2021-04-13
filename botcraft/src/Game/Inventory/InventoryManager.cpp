@@ -9,6 +9,7 @@ namespace Botcraft
     {
         index_hotbar_selected = 0;
         cursor = Slot();
+        inventories[Window::PLAYER_INVENTORY_INDEX] = std::shared_ptr<Window>(new Window(-1));
     }
 
     std::mutex& InventoryManager::GetMutex()
@@ -22,8 +23,7 @@ namespace Botcraft
 
         if (it == inventories.end())
         {
-            inventories[window_id] = std::shared_ptr<Window>(new Window);
-            inventories[window_id]->SetSlot(index, slot);
+            std::cerr << "Warning, trying to add item in an unknown window with id: " << window_id << std::endl;
         }
         else
         {
@@ -78,14 +78,26 @@ namespace Botcraft
         return inventory->GetSlot(Window::INVENTORY_HOTBAR_START + index_hotbar_selected);
     }
 
+    const ProtocolCraft::Slot& InventoryManager::GetOffHand() const
+    {
+        const std::shared_ptr<Window> inventory = GetPlayerInventory();
+
+        if (!inventory)
+        {
+            return Window::EMPTY_SLOT;
+        }
+
+        return inventory->GetSlot(Window::INVENTORY_OFFHAND_INDEX);
+    }
+
     void InventoryManager::EraseInventory(const short window_id)
     {
         inventories.erase(window_id);
     }
 
-    void InventoryManager::AddInventory(const short window_id)
+    void InventoryManager::AddInventory(const short window_id, const char window_type)
     {
-        inventories[window_id] = std::shared_ptr<Window>(new Window);
+        inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
     }
 
     void InventoryManager::SetHotbarSelected(const short index)
@@ -119,7 +131,7 @@ namespace Botcraft
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg)
     {
-        std::lock_guard<std::mutex> inventories_locker(inventory_manager_mutex);
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
 
         if (msg.GetContainerId() == -1 && msg.GetSlot() == -1)
         {
@@ -152,7 +164,7 @@ namespace Botcraft
     void InventoryManager::Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        AddInventory(msg.GetContainerId());
+        AddInventory(msg.GetContainerId(), msg.GetType());
     }
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg)

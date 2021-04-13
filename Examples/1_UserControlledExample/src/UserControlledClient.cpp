@@ -308,7 +308,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
     {
         if (local_player->GetOnGround())
         {
-            local_player->SetSpeedY(0.4196141); // Not sure about this. I tried to calculate it in order to get a 1.25 block height jump (reached in 6 ticks)
+            Jump();
         }
     }
 

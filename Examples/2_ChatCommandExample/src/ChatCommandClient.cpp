@@ -74,7 +74,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         }
 
         // Launch the command on a new thread
-        std::thread t(&ChatCommandClient::GoTo, this, target_position, speed);
+        std::thread t(&ChatCommandClient::GoTo, this, target_position, false, speed);
         t.detach();
     }
     else if (splitted[1] == "stop")

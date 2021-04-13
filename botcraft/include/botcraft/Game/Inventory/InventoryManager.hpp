@@ -23,6 +23,7 @@ namespace Botcraft
         std::shared_ptr<Window> GetPlayerInventory();
         const short GetIndexHotbarSelected() const;
         const ProtocolCraft::Slot& GetHotbarSelected() const;
+        const ProtocolCraft::Slot& GetOffHand() const;
         const ProtocolCraft::Slot& GetCursor() const;
         void AddPendingTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
 
@@ -31,7 +32,7 @@ namespace Botcraft
         void SetCursor(const ProtocolCraft::Slot& c);
 
         void EraseInventory(const short window_id);
-        void AddInventory(const short window_id);
+        void AddInventory(const short window_id, const char window_type);
         void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
 
     private:

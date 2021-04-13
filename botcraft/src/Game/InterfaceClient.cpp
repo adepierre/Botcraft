@@ -236,7 +236,7 @@ namespace Botcraft
         auto_respawn = b;
     }
 
-    const bool InterfaceClient::GoTo(const Position &goal, const float speed)
+    const bool InterfaceClient::GoTo(const Position &goal, const bool in_range, const float speed)
     {
         if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
         {
@@ -245,8 +245,8 @@ namespace Botcraft
 
         if (pathfinding_state != PathFindingState::Waiting)
         {
-            const std::string answer = "I am asked to go to " + std::to_string(goal.x) + " " + std::to_string(goal.y) + " " + std::to_string(goal.z) + " but I'm affraid I can't do that";
-            std::cout << answer << std::endl;
+            std::cout << "I am asked to go to " << goal.x << " " << goal.y << " "
+                << goal.z << " but I'm affraid I can't do that" << std::endl;
             return false;
         }
         
@@ -286,9 +286,17 @@ namespace Botcraft
 
             if (path.size() == 0 || path[path.size() - 1] == current_position)
             {
-                std::cout << "Warning, path finding cannot find a better position than " << current_position << ". Staying there." << std::endl;
                 pathfinding_state = PathFindingState::Waiting;
-                return false;
+                if (!in_range)
+                {
+                    std::cout << "Warning, path finding cannot find a better position than " << current_position << ". Staying there." << std::endl;
+                    return false;
+                }
+                else
+                {
+                    Position dist = goal - current_position;
+                    return dist.dot(dist) <= 16.0f;
+                }
             }
 
             pathfinding_state = PathFindingState::Moving;
@@ -306,16 +314,55 @@ namespace Botcraft
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
 
-                {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    const Vector3<double> temp_dest(path[i].x + 0.5, path[i].y, path[i].z + 0.5);
-                    local_player->LookAt(temp_dest);
-                    local_player->SetPosition(temp_dest);
+                auto start = std::chrono::system_clock::now();
+                const Vector3<double> initial_position(current_position.x + 0.5, current_position.y, current_position.z + 0.5);
+                const Vector3<double> motion_vector(path[i].x - current_position.x, path[i].y + 0.001 - current_position.y, path[i].z - current_position.z);
+                local_player->LookAt(initial_position + motion_vector);
 
-                    // Get the position
-                    current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
+                // If we have to jump to climb on the next position
+                if (path[i].y > current_position.y)
+                {
+                    Jump();
+
+                    while (local_player->GetY() < path[i].y)
+                    {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                    }
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000 / speed)));
+
+                while (true)
+                {
+                    auto now = std::chrono::system_clock::now();
+                    long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+                    // If we are over the time due to travel one block at the given speed
+                    if (time_count > 1000 / speed)
+                    {
+                        {
+                            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                            local_player->SetX((initial_position + motion_vector).x);
+                            local_player->SetZ((initial_position + motion_vector).z);
+                        }
+                        // If we have to go down, wait for gravity to do its work
+                        while (local_player->GetY() > path[i].y + 0.01)
+                        {
+                            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                        }
+                        // Update current position
+                        current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
+                        break;
+                    }
+                    // Otherwise just move partially toward the goal
+                    else
+                    {
+                        Vector3<double> pos = initial_position + motion_vector * time_count / 1000.0 * speed;
+                        {
+                            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                            pos.y = local_player->GetPosition().y + 0.0001;
+                            local_player->SetPosition(pos);
+                        }
+                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
             }
 
         } while (!(current_position == goal));
@@ -394,97 +441,14 @@ namespace Botcraft
         place_block_msg->SetInside(false);
 #endif
 
-        // Left click case
-        place_block_msg->SetHand((int)Hand::Left);
+        // Left click case, main hand
+        place_block_msg->SetHand((int)Hand::Right);
 
-        // We need to check the inventory
-        // If the currently selected item is the right one, just go for it
-        const Slot& current_selected = inventory_manager->GetHotbarSelected();
-        if (!current_selected.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-            && AssetsManager::getInstance().Items().at(current_selected.GetBlockID()).at(current_selected.GetItemDamage())->GetName() == item)
-#else
-            && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item)
-#endif
+        if (!SetItemInHand(item, Hand::Right))
         {
-            network_manager->Send(place_block_msg);
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            local_player->LookAt(Vector3<double>(location) + Vector3<double>(0.5, 0.5, 0.5), true);
-            return true;
-        }
-
-        // Otherwise we need to find a slot with the given item
-        short inventory_correct_slot_index = -1;
-        const std::map<short, Slot>& inventory_slots = inventory_manager->GetPlayerInventory()->GetSlots();
-
-        for (auto it = inventory_slots.begin(); it != inventory_slots.end(); ++it)
-        {
-            if (it->first >= Window::INVENTORY_STORAGE_START
-                && it->first < Window::INVENTORY_OFFHAND_INDEX
-                && !it->second.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-                && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item)
-#else
-                && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item)
-#endif
-            {
-                inventory_correct_slot_index = it->first;
-                break;
-            }
-        }
-
-        if (inventory_correct_slot_index == -1)
-        {
-            std::cout << "I am asked to place a " << item << " at " << location << " but I'm affraid I don't have that kind of item in my inventory." << std::endl;
+            std::cout << "Error, can't place block if I don't have it in my inventory" << std::endl;
             return false;
         }
-
-        // We need to swap the currently selected slot in the
-        // hotbar with the one with the correct item
-
-        std::shared_ptr<ServerboundContainerClickPacket> click_window_msg(new ServerboundContainerClickPacket);
-
-        // Click on the desired item
-        click_window_msg->SetContainerId(Window::PLAYER_INVENTORY_INDEX);
-        click_window_msg->SetSlotNum(inventory_correct_slot_index);
-        click_window_msg->SetButtonNum(0); // Left click to select the stack
-        click_window_msg->SetClickType(0); // Regular click
-        click_window_msg->SetItemStack(inventory_slots.at(inventory_correct_slot_index));
-
-        SendInventoryTransaction(click_window_msg);
-
-        // Click in the hotbar
-        click_window_msg->SetSlotNum(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
-        click_window_msg->SetItemStack(inventory_manager->GetHotbarSelected());
-
-        SendInventoryTransaction(click_window_msg);
-
-        // Click back on the slot where the desired item was
-        click_window_msg->SetSlotNum(inventory_correct_slot_index);
-        click_window_msg->SetItemStack(inventory_slots.at(inventory_correct_slot_index));
-
-        SendInventoryTransaction(click_window_msg);
-
-        // Wait for the server confirmation so
-        // the hotbar selected slot is the item we need
-        auto start = std::chrono::system_clock::now();
-        while (
-#if PROTOCOL_VERSION < 347
-            AssetsManager::getInstance().Items().at(inventory_manager->GetHotbarSelected().GetBlockID()).at(inventory_manager->GetHotbarSelected().GetItemDamage())->GetName() != item)
-#else
-            AssetsManager::getInstance().Items().at(inventory_manager->GetHotbarSelected().GetItemID())->GetName() != item)
-#endif
-        {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
-            {
-                std::cerr << "Something went wrong trying to swap inventory slots for block placing (Timeout)." << std::endl;
-                return false;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-
-        // Small delay to be sure the server set our new hotbar item as the current item
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         // Place the block
         network_manager->Send(place_block_msg);
@@ -553,13 +517,13 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 452
         place_block_msg->SetInside(false);
 #endif
-        place_block_msg->SetHand((int)Hand::Left);
+        place_block_msg->SetHand((int)Hand::Right);
         network_manager->Send(place_block_msg);
 
         if (animation)
         {
             std::shared_ptr<ServerboundSwingPacket> animation_msg(new ServerboundSwingPacket);
-            animation_msg->SetHand((int)Hand::Left);
+            animation_msg->SetHand((int)Hand::Right);
             network_manager->Send(animation_msg);
         }
 
@@ -849,5 +813,133 @@ namespace Botcraft
             output_deque.push_front(it_end_path->first);
         }
         return std::vector<Position>(output_deque.begin(), output_deque.end());
+    }
+
+    const bool InterfaceClient::SetItemInHand(const std::string& item_name, const Hand hand)
+    {
+        // We need to check the inventory
+        // If the currently selected item is the right one, just go for it
+        const Slot& current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
+        if (!current_selected.IsEmptySlot()
+#if PROTOCOL_VERSION < 347
+            && AssetsManager::getInstance().Items().at(current_selected.GetBlockID()).at(current_selected.GetItemDamage())->GetName() == item_name)
+#else
+            && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item_name)
+#endif
+        {
+            return true;
+        }
+
+        // Otherwise we need to find a slot with the given item
+        short inventory_correct_slot_index = -1;
+        const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
+        for (auto it = slots.begin(); it != slots.end(); ++it)
+        {
+            if (it->first >= Window::INVENTORY_STORAGE_START
+                && it->first < Window::INVENTORY_OFFHAND_INDEX
+                && !it->second.IsEmptySlot()
+#if PROTOCOL_VERSION < 347
+                && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item_name)
+#else
+                && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name)
+#endif
+            {
+                inventory_correct_slot_index = it->first;
+                break;
+            }
+        }
+
+        // If there is no stack with the given item in the inventory
+        if (inventory_correct_slot_index == -1)
+        {
+            return false;
+        }
+
+        // We need to swap the currently held item
+        // with the desired one
+        std::shared_ptr<ServerboundContainerClickPacket> click_window_msg(new ServerboundContainerClickPacket);
+
+        // Click on the desired item
+        click_window_msg->SetContainerId(Window::PLAYER_INVENTORY_INDEX);
+        click_window_msg->SetSlotNum(inventory_correct_slot_index);
+        click_window_msg->SetButtonNum(0); // Left click to select the stack
+        click_window_msg->SetClickType(0); // Regular click
+        click_window_msg->SetItemStack(slots.at(inventory_correct_slot_index));
+
+        SendInventoryTransaction(click_window_msg);
+
+        // Click in the destination
+        click_window_msg->SetSlotNum(hand == Hand::Left ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()));
+        click_window_msg->SetItemStack(hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected());
+
+        SendInventoryTransaction(click_window_msg);
+
+        // Click back on the slot where the desired item was
+        click_window_msg->SetSlotNum(inventory_correct_slot_index);
+        click_window_msg->SetItemStack(slots.at(inventory_correct_slot_index));
+
+        SendInventoryTransaction(click_window_msg);
+
+        // Wait for the server confirmation so
+        // the hold item is the one we need
+        auto start = std::chrono::system_clock::now();
+        while (
+#if PROTOCOL_VERSION < 347
+            AssetsManager::getInstance().Items().at(inventory_manager->GetHotbarSelected().GetBlockID()).at(inventory_manager->GetHotbarSelected().GetItemDamage())->GetName() != item_name)
+#else
+            AssetsManager::getInstance().Items().at(inventory_manager->GetHotbarSelected().GetItemID())->GetName() != item_name)
+#endif
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            {
+                std::cerr << "Something went wrong trying to swap inventory slots (Timeout)." << std::endl;
+                return false;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+
+        // Small delay to be sure the server set our new hotbar item as the current item
+        // TODO : why doesn't the server registers it before the client has the confirmation?
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        return true;
+    }
+
+    const bool InterfaceClient::Eat(const std::string& food_name, const bool wait_confirmation)
+    {
+        if (!SetItemInHand(food_name, Hand::Left))
+        {
+            return false;
+        }
+
+        const char current_stack_size = inventory_manager->GetOffHand().GetItemCount();
+        std::shared_ptr<ServerboundUseItemPacket> use_item_msg(new ServerboundUseItemPacket);
+        use_item_msg->SetHand((int)Hand::Left);
+        network_manager->Send(use_item_msg);
+
+        if (!wait_confirmation)
+        {
+            return true;
+        }
+
+        auto start = std::chrono::system_clock::now();
+        while (inventory_manager->GetOffHand().GetItemCount() == current_stack_size)
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            {
+                std::cerr << "Something went wrong trying to eat (Timeout)." << std::endl;
+                return false;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+
+        return true;
+    }
+
+    void InterfaceClient::Jump()
+    {
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+        local_player->SetSpeedY(0.4196141); // Not sure about this. I tried to calculate it in order to get a 1.25 block height jump (reached in 6 ticks)
     }
 }

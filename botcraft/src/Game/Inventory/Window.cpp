@@ -15,9 +15,10 @@ namespace Botcraft
 
     const Slot Window::EMPTY_SLOT = Slot();
 
-    Window::Window()
+    Window::Window(const int type_)
     {
         next_transaction_id = 1;
+        type = type_;
     }
 
     const Slot& Window::GetSlot(const short index) const

@@ -19,7 +19,7 @@ namespace Botcraft
 
         static const ProtocolCraft::Slot EMPTY_SLOT;
 
-        Window();
+        Window(const int type_ = -1);
 
         const ProtocolCraft::Slot& GetSlot(const short index) const;
         const std::map<short, ProtocolCraft::Slot>& GetSlots() const;
@@ -29,6 +29,8 @@ namespace Botcraft
 
     private:
         std::map<short, ProtocolCraft::Slot> slots;
+        // Types are detailed in registries, see https://wiki.vg/Inventory
+        int type;
         // TODO, need mutex to make this thread-safe?
         int next_transaction_id;
     };
