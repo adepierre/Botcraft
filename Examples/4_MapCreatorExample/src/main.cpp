@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        MapCreatorBot client("", true, false);
+        MapCreatorBot client("batman.nbt", Botcraft::Position(0,0,0), false);
         client.SetAutoRespawn(true);
 
         if (!launcher_accounts_file.empty())
