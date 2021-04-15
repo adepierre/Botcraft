@@ -320,19 +320,44 @@ namespace Botcraft
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
 
+                current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
+
                 auto start = std::chrono::system_clock::now();
                 const Vector3<double> initial_position(current_position.x + 0.5, current_position.y, current_position.z + 0.5);
                 const Vector3<double> motion_vector(path[i].x - current_position.x, path[i].y + 0.001 - current_position.y, path[i].z - current_position.z);
                 local_player->LookAt(initial_position + motion_vector);
+
+                // This indicates that we got stucked and
+                // are in fact not where we think we are
+                // Replanning the path is a good idea
+                if (std::abs(motion_vector.x) > 1.0 || std::abs(motion_vector.z) > 1.0)
+                {
+                    std::cout << "Recalculating path..." << std::endl;
+                    break;
+                }
 
                 // If we have to jump to climb on the next position
                 if (path[i].y > current_position.y)
                 {
                     Jump();
 
+                    auto now = std::chrono::system_clock::now();
+                    bool has_timeout = false;
                     while (local_player->GetY() < path[i].y)
                     {
+                        // This indicates that a jump we wanted to make is not possible anymore
+                        // recalculating the path
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - now).count() >= 3000)
+                        {
+                            has_timeout = true;
+                            break;
+                        }
                         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                    }
+                    if (has_timeout)
+                    {
+                        std::cout << "Recalculating path..." << std::endl;
+                        break;
                     }
                 }
 
@@ -348,13 +373,9 @@ namespace Botcraft
                             local_player->SetX((initial_position + motion_vector).x);
                             local_player->SetZ((initial_position + motion_vector).z);
                         }
-                        // If we have to go down, wait for gravity to do its work
-                        while (local_player->GetY() > path[i].y + 0.01)
-                        {
-                            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                        }
+
                         // Update current position
-                        current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
+                        current_position = path[i];
                         break;
                     }
                     // Otherwise just move partially toward the goal
@@ -370,7 +391,6 @@ namespace Botcraft
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
             }
-
         } while (current_position != goal);
 
         pathfinding_state = PathFindingState::Waiting;
