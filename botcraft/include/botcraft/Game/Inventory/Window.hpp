@@ -2,6 +2,7 @@
 
 #include <map>
 #include "protocolCraft/Types/Slot.hpp"
+#include "botcraft/Game/Enums.hpp"
 
 namespace Botcraft
 {
@@ -19,18 +20,18 @@ namespace Botcraft
 
         static const ProtocolCraft::Slot EMPTY_SLOT;
 
-        Window(const int type_ = -1);
+        Window(const InventoryType type_ = InventoryType::Default);
 
         const ProtocolCraft::Slot& GetSlot(const short index) const;
         const std::map<short, ProtocolCraft::Slot>& GetSlots() const;
+        const InventoryType GetType() const;
         void SetSlot(const short index, const ProtocolCraft::Slot& slot);
         const int GetNextTransactionId() const;
         void SetNextTransactionId(const int n);
 
     private:
         std::map<short, ProtocolCraft::Slot> slots;
-        // Types are detailed in registries, see https://wiki.vg/Inventory
-        int type;
+        InventoryType type;
         // TODO, need mutex to make this thread-safe?
         int next_transaction_id;
     };

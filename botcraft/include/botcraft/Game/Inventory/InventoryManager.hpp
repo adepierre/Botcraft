@@ -6,6 +6,8 @@
 #include "protocolCraft/Types/Slot.hpp"
 #include "protocolCraft/Handler.hpp"
 
+#include "botcraft/Game/Enums.hpp"
+
 namespace Botcraft
 {
     class Window;
@@ -18,6 +20,7 @@ namespace Botcraft
         std::mutex& GetMutex();
 
         const std::shared_ptr<Window> GetWindow(const short window_id) const;
+        const short GetFirstOpenedWindowId() const;
         const std::shared_ptr<Window> GetPlayerInventory() const;
         std::shared_ptr<Window> GetWindow(const short window_id);
         std::shared_ptr<Window> GetPlayerInventory();
@@ -26,13 +29,13 @@ namespace Botcraft
         const ProtocolCraft::Slot& GetOffHand() const;
         const ProtocolCraft::Slot& GetCursor() const;
         void AddPendingTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
+        void EraseInventory(const short window_id);
 
     private:
         void SetHotbarSelected(const short index);
         void SetCursor(const ProtocolCraft::Slot& c);
 
-        void EraseInventory(const short window_id);
-        void AddInventory(const short window_id, const char window_type);
+        void AddInventory(const short window_id, const InventoryType window_type);
         void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
 
     private:

@@ -63,7 +63,12 @@ namespace Botcraft
         // location: position of the block, the player must be < 5 blocks away
         // placed_face: face on wich the player wants to click
         // animation: whether or not to send the animation to the server (vanilla client does)
-        const bool InteractBlock(const Position& location, const PlayerDiggingFace interact_face, const bool animation = false);
+        const bool InteractWithBlock(const Position& location, const PlayerDiggingFace interact_face, const bool animation = false);
+
+        // Set an item in the given hand, returns true if successfully done, false otherwise
+        // item_name: name of the item to find in the inventory
+        // hand: in which hand should the item be placed
+        const bool SetItemInHand(const std::string& item_name, const Hand hand);
 
     protected:
         // Example of overriding the processing of an incoming packet
@@ -78,16 +83,21 @@ namespace Botcraft
         // Find a path between two positions
         const std::vector<Position> FindPath(const Position &start, const Position &end);
 
-        // Set an item in the given hand, returns true if successfully done, false otherwise
-        // item_name: name of the item to find in the inventory
-        // hand: in which hand should the item be placed
-        const bool SetItemInHand(const std::string& item_name, const Hand hand);
+        // Swap two slots in a given container
+        const bool SwapItemsInContainer(const short container_id, const short first_slot, const short second_slot);
 
         // Search for specified food item in the inventory and
         // eat it if found.
         // food_name: name of the item to eat, not checked to be actual food
         // wait_confirmation: if true, waits for the eaten stack to be reduced by 1
         const bool Eat(const std::string& food_name, const bool wait_confirmation = false);
+
+        // Open container at a given position
+        // pos: position of the chest/barrel/shulker thing
+        const bool OpenContainer(const Position& pos);
+
+        // Close an opened container
+        const bool CloseContainer(const short container_id);
 
         // Add some speed on Y
         void Jump();

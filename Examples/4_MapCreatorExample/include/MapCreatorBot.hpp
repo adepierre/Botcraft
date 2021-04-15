@@ -3,6 +3,8 @@
 #include <botcraft/Game/Vector3.hpp>
 #include <botcraft/Game/InterfaceClient.hpp>
 
+#include <random>
+
 class MapCreatorBot : public Botcraft::InterfaceClient
 {
 public:
@@ -19,9 +21,15 @@ private:
     // returns: a vector with all the found positions
     const std::vector<Botcraft::Position> GetAllChestsAround(const Botcraft::Position& max_search_dist) const;
 
+    const bool OpenChest(const Botcraft::Position& pos);
+    const bool GetSomeFood(const std::string& item_name);
+
 
     void CreateMap();
 
 private:
     std::string map_file;
+
+    std::mt19937 random_engine;
+
 };

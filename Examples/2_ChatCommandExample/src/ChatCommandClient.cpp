@@ -158,7 +158,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
             return;
         }
 
-        InteractBlock(pos, PlayerDiggingFace::Top, true);
+        InteractWithBlock(pos, PlayerDiggingFace::Top, true);
     }
     else
     {

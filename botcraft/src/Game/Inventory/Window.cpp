@@ -15,7 +15,7 @@ namespace Botcraft
 
     const Slot Window::EMPTY_SLOT = Slot();
 
-    Window::Window(const int type_)
+    Window::Window(const InventoryType type_)
     {
         next_transaction_id = 1;
         type = type_;
@@ -34,6 +34,11 @@ namespace Botcraft
     const std::map<short, Slot>& Window::GetSlots() const
     {
         return slots;
+    }
+
+    const InventoryType Window::GetType() const
+    {
+        return type;
     }
 
     void Window::SetSlot(const short index, const ProtocolCraft::Slot& slot)

@@ -275,6 +275,12 @@ namespace Botcraft
             }
             else
             {
+                Position dist = goal - current_position;
+                if (in_range && dist.dot(dist) <= 16.0f)
+                {
+                    pathfinding_state = PathFindingState::Waiting;
+                    return true;
+                }
                 path = FindPath(current_position, goal);
             }
 
@@ -365,7 +371,7 @@ namespace Botcraft
                 }
             }
 
-        } while (!(current_position == goal));
+        } while (current_position != goal);
 
         pathfinding_state = PathFindingState::Waiting;
         return true;
@@ -458,7 +464,7 @@ namespace Botcraft
         return true;
     }
 
-    const bool InterfaceClient::InteractBlock(const Position& location, const PlayerDiggingFace interact_face, const bool animation)
+    const bool InterfaceClient::InteractWithBlock(const Position& location, const PlayerDiggingFace interact_face, const bool animation)
     {
         if (!network_manager
             || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play
@@ -815,80 +821,61 @@ namespace Botcraft
         return std::vector<Position>(output_deque.begin(), output_deque.end());
     }
 
-    const bool InterfaceClient::SetItemInHand(const std::string& item_name, const Hand hand)
+    const bool InterfaceClient::SwapItemsInContainer(const short container_id, const short first_slot, const short second_slot)
     {
-        // We need to check the inventory
-        // If the currently selected item is the right one, just go for it
-        const Slot& current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
-        if (!current_selected.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-            && AssetsManager::getInstance().Items().at(current_selected.GetBlockID()).at(current_selected.GetItemDamage())->GetName() == item_name)
-#else
-            && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item_name)
-#endif
-        {
-            return true;
-        }
-
-        // Otherwise we need to find a slot with the given item
-        short inventory_correct_slot_index = -1;
-        const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
-        for (auto it = slots.begin(); it != slots.end(); ++it)
-        {
-            if (it->first >= Window::INVENTORY_STORAGE_START
-                && it->first < Window::INVENTORY_OFFHAND_INDEX
-                && !it->second.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-                && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item_name)
-#else
-                && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name)
-#endif
-            {
-                inventory_correct_slot_index = it->first;
-                break;
-            }
-        }
-
-        // If there is no stack with the given item in the inventory
-        if (inventory_correct_slot_index == -1)
+        Slot initial_second_slot_copy; 
+        std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
+        if (!container)
         {
             return false;
         }
 
-        // We need to swap the currently held item
-        // with the desired one
-        std::shared_ptr<ServerboundContainerClickPacket> click_window_msg(new ServerboundContainerClickPacket);
+        {
+            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
 
-        // Click on the desired item
-        click_window_msg->SetContainerId(Window::PLAYER_INVENTORY_INDEX);
-        click_window_msg->SetSlotNum(inventory_correct_slot_index);
-        click_window_msg->SetButtonNum(0); // Left click to select the stack
-        click_window_msg->SetClickType(0); // Regular click
-        click_window_msg->SetItemStack(slots.at(inventory_correct_slot_index));
+            
 
-        SendInventoryTransaction(click_window_msg);
+            const std::map<short, Slot>& slots = container->GetSlots();
 
-        // Click in the destination
-        click_window_msg->SetSlotNum(hand == Hand::Left ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()));
-        click_window_msg->SetItemStack(hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected());
+            initial_second_slot_copy = slots.at(second_slot);
 
-        SendInventoryTransaction(click_window_msg);
+            // We need to swap the currently held item
+            // with the desired one
+            std::shared_ptr<ServerboundContainerClickPacket> click_window_msg(new ServerboundContainerClickPacket);
 
-        // Click back on the slot where the desired item was
-        click_window_msg->SetSlotNum(inventory_correct_slot_index);
-        click_window_msg->SetItemStack(slots.at(inventory_correct_slot_index));
+            // Click on the desired item
+            click_window_msg->SetContainerId(container_id);
+            click_window_msg->SetSlotNum(first_slot);
+            click_window_msg->SetButtonNum(0); // Left click to select the stack
+            click_window_msg->SetClickType(0); // Regular click
+            click_window_msg->SetItemStack(slots.at(first_slot));
 
-        SendInventoryTransaction(click_window_msg);
+            SendInventoryTransaction(click_window_msg);
+
+            // Click in the destination
+            click_window_msg->SetSlotNum(second_slot);
+            click_window_msg->SetItemStack(slots.at(second_slot));
+
+            SendInventoryTransaction(click_window_msg);
+
+            // Click back on the slot where the desired item was
+            click_window_msg->SetSlotNum(first_slot);
+            click_window_msg->SetItemStack(slots.at(first_slot));
+
+            SendInventoryTransaction(click_window_msg);
+        }
 
         // Wait for the server confirmation so
         // the hold item is the one we need
         auto start = std::chrono::system_clock::now();
         while (
 #if PROTOCOL_VERSION < 347
-            AssetsManager::getInstance().Items().at(inventory_manager->GetHotbarSelected().GetBlockID()).at(inventory_manager->GetHotbarSelected().GetItemDamage())->GetName() != item_name)
+            container->GetSlot(first_slot).GetBlockID() != initial_second_slot_copy.GetBlockID() ||
+            container->GetSlot(first_slot).GetItemDamage() != initial_second_slot_copy.GetItemDamage() ||
 #else
-            AssetsManager::getInstance().Items().at(inventory_manager->GetHotbarSelected().GetItemID())->GetName() != item_name)
+            container->GetSlot(first_slot).GetItemID() != initial_second_slot_copy.GetItemID() ||
 #endif
+            container->GetSlot(first_slot).GetItemCount() != initial_second_slot_copy.GetItemCount())
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
@@ -902,6 +889,60 @@ namespace Botcraft
         // TODO : why doesn't the server registers it before the client has the confirmation?
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+        return true;
+    }
+
+    const bool InterfaceClient::SetItemInHand(const std::string& item_name, const Hand hand)
+    {
+        short inventory_correct_slot_index = -1;
+        short inventory_destination_slot_index = -1;
+        {
+            std::lock_guard<std::mutex>(inventory_manager->GetMutex());
+
+            inventory_destination_slot_index = hand == Hand::Left ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
+            
+            // We need to check the inventory
+            // If the currently selected item is the right one, just go for it
+            const Slot& current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
+            if (!current_selected.IsEmptySlot()
+#if PROTOCOL_VERSION < 347
+                && AssetsManager::getInstance().Items().at(current_selected.GetBlockID()).at(current_selected.GetItemDamage())->GetName() == item_name)
+#else
+                && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item_name)
+#endif
+            {
+                return true;
+            }
+
+            // Otherwise we need to find a slot with the given item
+            const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
+            for (auto it = slots.begin(); it != slots.end(); ++it)
+            {
+                if (it->first >= Window::INVENTORY_STORAGE_START
+                    && it->first < Window::INVENTORY_OFFHAND_INDEX
+                    && !it->second.IsEmptySlot()
+#if PROTOCOL_VERSION < 347
+                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item_name)
+#else
+                    && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name)
+#endif
+                {
+                    inventory_correct_slot_index = it->first;
+                    break;
+                }
+            }
+
+            // If there is no stack with the given item in the inventory
+            if (inventory_correct_slot_index == -1)
+            {
+                return false;
+            }
+        }
+
+        if (!SwapItemsInContainer(Window::PLAYER_INVENTORY_INDEX, inventory_correct_slot_index, inventory_destination_slot_index))
+        {
+            return false;
+        }
         return true;
     }
 
@@ -932,6 +973,50 @@ namespace Botcraft
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+
+        return true;
+    }
+
+    const bool InterfaceClient::OpenContainer(const Position& pos)
+    {
+        // Can't reach the container
+        if (!GoTo(pos, true))
+        {
+            return false;
+        }
+
+        // Open the container
+        if (!InteractWithBlock(pos, PlayerDiggingFace::Top))
+        {
+            return false;
+        }
+
+        // Wait for a window to be opened
+        auto start = std::chrono::system_clock::now();
+        while(inventory_manager->GetFirstOpenedWindowId() == -1)
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            {
+                std::cerr << "Something went wrong trying to open container (Timeout)." << std::endl;
+                return false;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+
+        return true;
+    }
+
+    const bool InterfaceClient::CloseContainer(const short container_id)
+    {
+        std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
+
+        std::shared_ptr<ServerboundContainerClosePacket> close_container_msg = std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
+        close_container_msg->SetContainerId(container_id);
+        network_manager->Send(close_container_msg);
+
+        // There is no confirmation from the server, so we
+        // can simply close the window here
+        inventory_manager->EraseInventory(container_id);
 
         return true;
     }

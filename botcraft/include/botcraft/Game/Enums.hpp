@@ -54,8 +54,10 @@ namespace Botcraft
 
     enum class Hand
     {
-        Right,
-        Left
+        Right = 0,
+        Main = 0,
+        Left = 1,
+        Off = 1
     };
 
     enum class TintType
@@ -97,5 +99,35 @@ namespace Botcraft
         South,      // +Z
         West,       // -X
         East        // +X
+    };
+
+    // Types are detailed in registries, see https://wiki.vg/Inventory
+    enum class InventoryType
+    {
+        Default = -1,
+        Generic9x1 = 0,
+        Generic9x2,
+        Generic9x3,
+        Generic9x4,
+        Generic9x5,
+        Generic9x6,
+        Generic3x3,
+        Anvil,
+        Beacon,
+        BlastFurnace,
+        BrewingStand,
+        Crafting,
+        Enchantment,
+        Furnace,
+        Grindstone,
+        Hopper,
+        Lectern,
+        Loom,
+        Merchant,
+        ShulkerBox,
+        Smithing,
+        Smoker,
+        CartographyTable,
+        StoneCutter
     };
 } // Botcraft

@@ -9,7 +9,7 @@ namespace Botcraft
     {
         index_hotbar_selected = 0;
         cursor = Slot();
-        inventories[Window::PLAYER_INVENTORY_INDEX] = std::shared_ptr<Window>(new Window(-1));
+        inventories[Window::PLAYER_INVENTORY_INDEX] = std::shared_ptr<Window>(new Window(InventoryType::Default));
     }
 
     std::mutex& InventoryManager::GetMutex()
@@ -61,6 +61,20 @@ namespace Botcraft
         return it->second;
     }
 
+    const short InventoryManager::GetFirstOpenedWindowId() const
+    {
+        for (auto it = inventories.begin(); it != inventories.end(); ++it)
+        {
+            if (it->first != Window::PLAYER_INVENTORY_INDEX &&
+                it->second->GetSlots().size() > 0)
+            {
+                return it->first;
+            }
+        }
+
+        return -1;
+    }
+
     const std::shared_ptr<Window> InventoryManager::GetPlayerInventory() const
     {
         return GetWindow(Window::PLAYER_INVENTORY_INDEX);
@@ -95,7 +109,7 @@ namespace Botcraft
         inventories.erase(window_id);
     }
 
-    void InventoryManager::AddInventory(const short window_id, const char window_type)
+    void InventoryManager::AddInventory(const short window_id, const InventoryType window_type)
     {
         inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
     }
@@ -164,7 +178,7 @@ namespace Botcraft
     void InventoryManager::Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        AddInventory(msg.GetContainerId(), msg.GetType());
+        AddInventory(msg.GetContainerId(), (InventoryType)msg.GetType());
     }
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg)
