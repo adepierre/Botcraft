@@ -216,7 +216,7 @@ namespace Botcraft
                 if (inventory_open)
                 {
                     ImGui::SetNextWindowPos(ImVec2(current_window_width, current_window_height), 0, ImVec2(1.0f, 1.0f));
-                    ImGui::SetNextWindowSize(ImVec2(275, 450));
+                    ImGui::SetNextWindowSize(ImVec2(300, 450));
                     ImGui::Begin("Inventory");
                     if (inventory_manager && inventory_manager->GetPlayerInventory())
                     {

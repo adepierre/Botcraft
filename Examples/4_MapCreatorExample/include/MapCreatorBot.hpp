@@ -18,7 +18,7 @@ protected:
     virtual void Handle(ProtocolCraft::ClientboundChatPacket &msg) override;
 
 private:
-    void LoadNBTFile(const std::string& path);
+    void LoadNBTFile(const std::string& path, const Botcraft::Position& offset_);
 
     // Get the positions of all chests in a 2*max_search_dist blocks
     // cube centered around the player
@@ -29,14 +29,16 @@ private:
     const bool GetSomeFood(const std::string& item_name);
     const bool GetSomeBlocks(const std::string& food_name);
     const std::set<std::string> GetBlocksAvailableInInventory() const;
+    const bool FindNextPositionToPlaceBlock(const std::set<std::string>& available, Botcraft::Position& out_pos, std::string& out_item, Botcraft::PlayerDiggingFace& out_face);
 
 
     void CreateMap();
 
 private:
-    std::vector<std::vector<std::vector<int> > > target;
-    std::map<int, std::string> palette;
-    Botcraft::Position offset;
+    std::vector<std::vector<std::vector<short> > > target;
+    std::map<short, std::string> palette;
+    Botcraft::Position start;
+    Botcraft::Position end;
 
     std::mt19937 random_engine;
 

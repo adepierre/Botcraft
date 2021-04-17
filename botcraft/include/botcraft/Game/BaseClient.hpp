@@ -44,7 +44,8 @@ namespace Botcraft
         void Physics();
         // Set the right transaction id, add it to the inventory manager,
         // update the next transaction id and send it to the server
-        void SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
+        // return the id of the transaction
+        const int SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
 
     protected:
         virtual void Handle(ProtocolCraft::Message &msg) override;

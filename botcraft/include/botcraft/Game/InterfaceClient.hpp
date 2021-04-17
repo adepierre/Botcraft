@@ -48,16 +48,20 @@ namespace Botcraft
         // goal is the target position of the feets of the player
         // in_range: if true, the pathfinding is considered successful if
         // the final position is less than 4 blocks from the target
+        // min_end_dist: the minimal distance we want to be to the target on 
+        // the X/Z plane at the end (useful if you want to place a block at 
+        // the given location, you don't want to be inside this block)
         // speed is on block/s on the (X, Z) plane
-        // Returns true of the position was reached, false otherwise
-        const bool GoTo(const Position &goal, const bool in_range, const float speed = 4.317f);
+        // Returns true if the position was reached, false otherwise
+        const bool GoTo(const Position &goal, const bool in_range, const int min_end_dist = 0, const float speed = 4.317f);
         void StopPathFinding();
 
         // Place a given block at a given location
         // item: name of the item to place, fails if not present in the inventory
         // location: position of the placed block, the player must be < 5 blocks away
         // placed_face: face on wich placing the block
-        const bool PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face);
+        // wait_confirmation: if true, wait for the world to update at this location
+        const bool PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face, const bool wait_confirmation);
         
         // Interact (right click) with the block at the given location
         // location: position of the block, the player must be < 5 blocks away
@@ -81,7 +85,10 @@ namespace Botcraft
 
     protected:
         // Find a path between two positions
-        const std::vector<Position> FindPath(const Position &start, const Position &end);
+        // the path must finish at least min_end_dist blocks away
+        // from the real end on the X/Z plane (set min_end_dist to
+        // 0 to finish exactly on end)
+        const std::vector<Position> FindPath(const Position &start, const Position &end, const int min_end_dist);
 
         // Swap two slots in a given container
         const bool SwapItemsInContainer(const short container_id, const short first_slot, const short second_slot);

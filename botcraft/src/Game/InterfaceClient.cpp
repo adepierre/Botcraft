@@ -236,7 +236,7 @@ namespace Botcraft
         auto_respawn = b;
     }
 
-    const bool InterfaceClient::GoTo(const Position &goal, const bool in_range, const float speed)
+    const bool InterfaceClient::GoTo(const Position &goal, const bool in_range, const int min_end_dist, const float speed)
     {
         if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
         {
@@ -271,17 +271,17 @@ namespace Botcraft
                 std::cout << "Current goal position is either air or not loaded, trying to get closer to load the chunk" << std::endl;
                 Vector3<double> goal_direction(goal.x - current_position.x, goal.y - current_position.y, goal.z - current_position.z);
                 goal_direction.Normalize();
-                path = FindPath(current_position, current_position + Position(goal_direction.x * 32, goal_direction.y * 32, goal_direction.z * 32));
+                path = FindPath(current_position, current_position + Position(goal_direction.x * 32, goal_direction.y * 32, goal_direction.z * 32), 0);
             }
             else
             {
-                Position dist = goal - current_position;
-                if (in_range && dist.dot(dist) <= 16.0f)
+                Position diff = goal - current_position;
+                if (in_range && diff.dot(diff) <= 16.0f && std::abs(diff.x) + std::abs(diff.z) >= min_end_dist)
                 {
                     pathfinding_state = PathFindingState::Waiting;
                     return true;
                 }
-                path = FindPath(current_position, goal);
+                path = FindPath(current_position, goal, min_end_dist);
             }
 
             if (pathfinding_state == PathFindingState::Stop)
@@ -300,8 +300,8 @@ namespace Botcraft
                 }
                 else
                 {
-                    Position dist = goal - current_position;
-                    return dist.dot(dist) <= 16.0f;
+                    Position diff = goal - current_position;
+                    return diff.dot(diff) <= 16.0f;
                 }
             }
 
@@ -405,7 +405,7 @@ namespace Botcraft
         }
     }
 
-    const bool InterfaceClient::PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face)
+    const bool InterfaceClient::PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face, const bool wait_confirmation)
     {
         if (!network_manager
             || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play
@@ -416,13 +416,20 @@ namespace Botcraft
             return false;
         }
 
-        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
-        const Vector3<double> dist(std::floor(local_player->GetPosition().x) - location.x, std::floor(local_player->GetPosition().y) - location.y, std::floor(local_player->GetPosition().z) - location.z);
-        double distance = std::sqrt(dist.dot(dist));
-        if (distance > 5.0f)
+        if (!GoTo(location, true, 1))
         {
-            std::cout << "I am asked to place a " << item << " at " << location << " but I'm affraid that's out of my range (" << distance << "m)." << std::endl;
             return false;
+        }
+
+        {
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
+            const Block* block = world->GetBlock(location);
+
+            if (block && !block->GetBlockstate()->IsAir())
+            {
+                std::cout << "Can't place a block in " << location << ", it's not free real estate." << std::endl;
+                return false;
+            }
         }
 
         std::shared_ptr<ServerboundUseItemOnPacket> place_block_msg(new ServerboundUseItemOnPacket);
@@ -475,11 +482,54 @@ namespace Botcraft
             std::cout << "Error, can't place block if I don't have it in my inventory" << std::endl;
             return false;
         }
+        int num_item_in_hand;
+        {
+            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
+            num_item_in_hand = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()).GetItemCount();
+        }
 
         // Place the block
         network_manager->Send(place_block_msg);
-        std::lock_guard<std::mutex> lock(local_player->GetMutex());
-        local_player->LookAt(Vector3<double>(location) + Vector3<double>(0.5, 0.5, 0.5), true);
+        
+        if (!wait_confirmation)
+        {
+            return true;
+        }
+
+        bool is_block_ok = false;
+        bool is_slot_ok = false;
+        auto start = std::chrono::system_clock::now();
+        while (!is_block_ok || !is_slot_ok)
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            {
+                std::cerr << "Something went wrong waiting block placement confirmation (Timeout)." << std::endl;
+                return false;
+            }
+            if (!is_block_ok)
+            {
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                const Block* block = world->GetBlock(location);
+
+                if (block && block->GetBlockstate()->GetName() == item)
+                {
+                    is_block_ok = true;
+                }
+            }
+            if (!is_slot_ok)
+            {
+                std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
+                int new_num_item_in_hand = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()).GetItemCount();
+                is_slot_ok = new_num_item_in_hand == num_item_in_hand - 1;
+            }
+
+            if (is_block_ok && is_slot_ok)
+            {
+                return true;
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
 
         return true;
     }
@@ -584,7 +634,7 @@ namespace Botcraft
         return std::abs(a.x - b.x) + std::abs(a.y - b.y) + std::abs(a.z - b.z);
     }
 
-    const std::vector<Position> InterfaceClient::FindPath(const Position &start, const Position &end)
+    const std::vector<Position> InterfaceClient::FindPath(const Position &start, const Position &end, const int min_end_dist)
     {
         const std::vector<Position> neighbour_offsets({ Position(1, 0, 0), Position(-1, 0, 0), Position(0, 0, 1), Position(0, 0, -1) });
         std::priority_queue<PathNode, std::vector<PathNode>, std::greater<PathNode> > nodes_to_explore;
@@ -604,7 +654,9 @@ namespace Botcraft
             PathNode current_node = nodes_to_explore.top();
             nodes_to_explore.pop();
 
-            if (current_node.pos == end || count_visit > 10000)
+            if (count_visit > 10000 || 
+                (std::abs(end.x - start.x) + std::abs(end.z - start.z) >= min_end_dist && current_node.pos == end) ||
+                (std::abs(end.x - start.x) + std::abs(end.z - start.z) < min_end_dist) && (std::abs(end.x - current_node.pos.x) + std::abs(end.z - current_node.pos.z) >= min_end_dist))
             {
                 break;
             }
@@ -812,28 +864,26 @@ namespace Botcraft
             } // neighbour loop
         }
 
-        auto it_end_path = came_from.find(end);
+        auto it_end_path = came_from.begin();
 
-        // This means the search stops without finding a path,
-        // return path to the closest node found
-        if (it_end_path == came_from.end())
+        // We search for the closest node
+        // respecting the min_end_dist criterion
+        float best_float_dist = std::numeric_limits<float>::max();
+        for (auto it = came_from.begin(); it != came_from.end(); ++it)
         {
-            float best_float_dist = std::numeric_limits<float>::max();
-
-            for (auto it = came_from.begin(); it != came_from.end(); ++it)
+            const Position diff = it->first - end;
+            const float distXZ = std::abs(diff.x) + std::abs(diff.z);
+            const float d = std::abs(diff.y) + distXZ;
+            if (d < best_float_dist && distXZ >= min_end_dist)
             {
-                const float d = Heuristic(it->first, end);
-                if (d < best_float_dist)
-                {
-                    best_float_dist = d;
-                    it_end_path = it;
-                }
+                best_float_dist = d;
+                it_end_path = it;
             }
         }
 
         std::deque<Position> output_deque;
         output_deque.push_front(it_end_path->first);
-        while (!(it_end_path->second == start))
+        while (it_end_path->second != start)
         {
             it_end_path = came_from.find(it_end_path->second);
             output_deque.push_front(it_end_path->first);
@@ -843,71 +893,96 @@ namespace Botcraft
 
     const bool InterfaceClient::SwapItemsInContainer(const short container_id, const short first_slot, const short second_slot)
     {
-        Slot initial_second_slot_copy; 
         std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
         if (!container)
         {
             return false;
         }
 
+        Slot copied_slot;
+        std::shared_ptr<ServerboundContainerClickPacket> click_window_msg;
+        int transaction_id;
+        //Click on the first slot, transferring the slot on the cursor
         {
             std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
+            copied_slot = container->GetSlots().at(first_slot);
 
-            
+            click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
 
-            const std::map<short, Slot>& slots = container->GetSlots();
-
-            initial_second_slot_copy = slots.at(second_slot);
-
-            // We need to swap the currently held item
-            // with the desired one
-            std::shared_ptr<ServerboundContainerClickPacket> click_window_msg(new ServerboundContainerClickPacket);
-
-            // Click on the desired item
             click_window_msg->SetContainerId(container_id);
             click_window_msg->SetSlotNum(first_slot);
             click_window_msg->SetButtonNum(0); // Left click to select the stack
             click_window_msg->SetClickType(0); // Regular click
-            click_window_msg->SetItemStack(slots.at(first_slot));
-
-            SendInventoryTransaction(click_window_msg);
-
-            // Click in the destination
-            click_window_msg->SetSlotNum(second_slot);
-            click_window_msg->SetItemStack(slots.at(second_slot));
-
-            SendInventoryTransaction(click_window_msg);
-
-            // Click back on the slot where the desired item was
-            click_window_msg->SetSlotNum(first_slot);
-            click_window_msg->SetItemStack(slots.at(first_slot));
-
-            SendInventoryTransaction(click_window_msg);
+            click_window_msg->SetItemStack(copied_slot);
         }
 
-        // Wait for the server confirmation so
-        // the hold item is the one we need
+        transaction_id = SendInventoryTransaction(click_window_msg);
+
+        // Wait for the click confirmation
         auto start = std::chrono::system_clock::now();
-        while (
-#if PROTOCOL_VERSION < 347
-            container->GetSlot(first_slot).GetBlockID() != initial_second_slot_copy.GetBlockID() ||
-            container->GetSlot(first_slot).GetItemDamage() != initial_second_slot_copy.GetItemDamage() ||
-#else
-            container->GetSlot(first_slot).GetItemID() != initial_second_slot_copy.GetItemID() ||
-#endif
-            container->GetSlot(first_slot).GetItemCount() != initial_second_slot_copy.GetItemCount())
+        while (!inventory_manager->IsTransactionAccepted(container_id, transaction_id))
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to swap inventory slots (Timeout)." << std::endl;
+                std::cerr << "Something went wrong trying to select first slot during swap inventory (Timeout)." << std::endl;
                 return false;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
-        // Small delay to be sure the server set our new hotbar item as the current item
-        // TODO : why doesn't the server registers it before the client has the confirmation?
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        //Click on the second slot, transferring the cursor on the slot
+        {
+            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
+            copied_slot = container->GetSlots().at(second_slot);
+
+            click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
+
+            click_window_msg->SetContainerId(container_id);
+            click_window_msg->SetSlotNum(second_slot);
+            click_window_msg->SetButtonNum(0); // Left click to select the stack
+            click_window_msg->SetClickType(0); // Regular click
+            click_window_msg->SetItemStack(copied_slot);
+        }
+
+        transaction_id = SendInventoryTransaction(click_window_msg);
+
+        start = std::chrono::system_clock::now();
+        while (!inventory_manager->IsTransactionAccepted(container_id, transaction_id))
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            {
+                std::cerr << "Something went wrong trying to select second slot during swap inventory (Timeout)." << std::endl;
+                return false;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+            
+        //Click once again on the first slot, transferring the cursor on the slot
+        {
+            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
+            copied_slot = container->GetSlots().at(first_slot);
+
+            click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
+
+            click_window_msg->SetContainerId(container_id);
+            click_window_msg->SetSlotNum(first_slot);
+            click_window_msg->SetButtonNum(0); // Left click to select the stack
+            click_window_msg->SetClickType(0); // Regular click
+            click_window_msg->SetItemStack(copied_slot);
+        }
+
+        transaction_id = SendInventoryTransaction(click_window_msg);
+
+        start = std::chrono::system_clock::now();
+        while (!inventory_manager->IsTransactionAccepted(container_id, transaction_id))
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            {
+                std::cerr << "Something went wrong trying to select third slot during swap inventory (Timeout)." << std::endl;
+                return false;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
 
         return true;
     }

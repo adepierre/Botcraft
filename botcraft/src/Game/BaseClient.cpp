@@ -261,12 +261,9 @@ namespace Botcraft
         }
     }
 
-    void BaseClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
+    const int BaseClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
     {
-        if (!transaction)
-        {
-            return;
-        }
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
         std::shared_ptr<Window> window = inventory_manager->GetWindow(transaction->GetContainerId());
         if (!window)
         {
@@ -277,6 +274,8 @@ namespace Botcraft
         window->SetNextTransactionId(transaction_id + 1);
         inventory_manager->AddPendingTransaction(transaction);
         network_manager->Send(transaction);
+
+        return transaction_id;
     }
 
     void BaseClient::Disconnect()

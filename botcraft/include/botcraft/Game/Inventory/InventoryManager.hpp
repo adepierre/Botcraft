@@ -30,6 +30,7 @@ namespace Botcraft
         const ProtocolCraft::Slot& GetCursor() const;
         void AddPendingTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
         void EraseInventory(const short window_id);
+        const bool IsTransactionAccepted(const short window_id, const int transaction_id);
 
     private:
         void SetHotbarSelected(const short index);

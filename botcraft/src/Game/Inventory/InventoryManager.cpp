@@ -109,6 +109,22 @@ namespace Botcraft
         inventories.erase(window_id);
     }
 
+    const bool InventoryManager::IsTransactionAccepted(const short window_id, const int transaction_id)
+    {
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+        auto transaction = pending_transactions.end();
+
+        for (auto it = pending_transactions.begin(); it != pending_transactions.end(); ++it)
+        {
+            if (it->GetContainerId() == window_id
+                && it->GetUid() == transaction_id)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     void InventoryManager::AddInventory(const short window_id, const InventoryType window_type)
     {
         inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
@@ -195,6 +211,7 @@ namespace Botcraft
             return;
         }
 
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
         auto transaction = pending_transactions.end();
 
         for (auto it = pending_transactions.begin(); it != pending_transactions.end(); ++it)
@@ -218,7 +235,8 @@ namespace Botcraft
         std::shared_ptr<Window> window = GetWindow(transaction->GetContainerId());
         if (!window)
         {
-            std::cerr << "Warning, server accepted a transaction for an unknown window" << std::endl;
+            std::cerr << "Warning, server accepted a transaction for an unknown window\n";
+            std::cerr << msg.Serialize().serialize(false) << std::endl;
             pending_transactions.erase(transaction);
             return;
         }
@@ -231,7 +249,7 @@ namespace Botcraft
             // "Left click"
             if (transaction->GetButtonNum() == 0)
             {
-                const Slot& switched_slot = window->GetSlot(transaction->GetSlotNum());
+                const Slot switched_slot = window->GetSlot(transaction->GetSlotNum());
                 window->SetSlot(transaction->GetSlotNum(), cursor);
                 cursor = switched_slot;
             }
