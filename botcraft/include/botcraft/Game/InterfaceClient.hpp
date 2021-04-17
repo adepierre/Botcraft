@@ -88,7 +88,8 @@ namespace Botcraft
         // the path must finish at least min_end_dist blocks away
         // from the real end on the X/Z plane (set min_end_dist to
         // 0 to finish exactly on end)
-        const std::vector<Position> FindPath(const Position &start, const Position &end, const int min_end_dist);
+        // if can_jump, can go through 1 wide gaps
+        const std::vector<Position> FindPath(const Position &start, const Position &end, const int min_end_dist, const bool can_jump);
 
         // Swap two slots in a given container
         const bool SwapItemsInContainer(const short container_id, const short first_slot, const short second_slot);

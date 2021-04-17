@@ -12,6 +12,7 @@
 
 #include <queue>
 #include <unordered_map>
+#include <array>
 
 using namespace ProtocolCraft;
 
@@ -271,7 +272,7 @@ namespace Botcraft
                 std::cout << "Current goal position is either air or not loaded, trying to get closer to load the chunk" << std::endl;
                 Vector3<double> goal_direction(goal.x - current_position.x, goal.y - current_position.y, goal.z - current_position.z);
                 goal_direction.Normalize();
-                path = FindPath(current_position, current_position + Position(goal_direction.x * 32, goal_direction.y * 32, goal_direction.z * 32), 0);
+                path = FindPath(current_position, current_position + Position(goal_direction.x * 32, goal_direction.y * 32, goal_direction.z * 32), 0, true);
             }
             else
             {
@@ -281,7 +282,7 @@ namespace Botcraft
                     pathfinding_state = PathFindingState::Waiting;
                     return true;
                 }
-                path = FindPath(current_position, goal, min_end_dist);
+                path = FindPath(current_position, goal, min_end_dist, true);
             }
 
             if (pathfinding_state == PathFindingState::Stop)
@@ -322,7 +323,6 @@ namespace Botcraft
 
                 current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
 
-                auto start = std::chrono::system_clock::now();
                 const Vector3<double> initial_position(current_position.x + 0.5, current_position.y, current_position.z + 0.5);
                 const Vector3<double> motion_vector(path[i].x - current_position.x, path[i].y + 0.001 - current_position.y, path[i].z - current_position.z);
                 local_player->LookAt(initial_position + motion_vector);
@@ -330,43 +330,48 @@ namespace Botcraft
                 // This indicates that we got stucked and
                 // are in fact not where we think we are
                 // Replanning the path is a good idea
-                if (std::abs(motion_vector.x) > 1.0 || std::abs(motion_vector.z) > 1.0)
+                if (std::abs(motion_vector.x) > 2.0 || std::abs(motion_vector.z) > 2.0)
                 {
-                    std::cout << "Recalculating path..." << std::endl;
                     break;
                 }
 
-                // If we have to jump to climb on the next position
-                if (path[i].y > current_position.y)
+                // If we have to jump to get to the next position
+                if (path[i].y > current_position.y ||
+                    std::abs(motion_vector.x) > 1.0 ||
+                    std::abs(motion_vector.z) > 1.0)
                 {
                     Jump();
 
-                    auto now = std::chrono::system_clock::now();
-                    bool has_timeout = false;
-                    while (local_player->GetY() < path[i].y)
+                    if (std::abs(motion_vector.x) <= 1.0 &&
+                        std::abs(motion_vector.z) <= 1.0)
                     {
-                        // This indicates that a jump we wanted to make is not possible anymore
-                        // recalculating the path
-                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - now).count() >= 3000)
+                        auto now = std::chrono::system_clock::now();
+                        bool has_timeout = false;
+                        while (local_player->GetY() - current_position.y < 1.0f)
                         {
-                            has_timeout = true;
+                            // This indicates that a jump we wanted to make is not possible anymore
+                            // recalculating the path
+                            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - now).count() >= 3000)
+                            {
+                                has_timeout = true;
+                                break;
+                            }
+                            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                        }
+                        if (has_timeout)
+                        {
                             break;
                         }
-                        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                    }
-                    if (has_timeout)
-                    {
-                        std::cout << "Recalculating path..." << std::endl;
-                        break;
                     }
                 }
 
+                auto start = std::chrono::system_clock::now();
+                const double motion_norm = std::sqrt(motion_vector.dot(motion_vector));
                 while (true)
                 {
-                    auto now = std::chrono::system_clock::now();
-                    long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+                    long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
                     // If we are over the time due to travel one block at the given speed
-                    if (time_count > 1000 / speed)
+                    if (time_count > 1000 * motion_norm / speed)
                     {
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
@@ -381,7 +386,7 @@ namespace Botcraft
                     // Otherwise just move partially toward the goal
                     else
                     {
-                        Vector3<double> pos = initial_position + motion_vector * time_count / 1000.0 * speed;
+                        Vector3<double> pos = initial_position + motion_vector * time_count / (1000.0 * motion_norm) * speed;
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                             pos.y = local_player->GetPosition().y + 0.0001;
@@ -634,7 +639,7 @@ namespace Botcraft
         return std::abs(a.x - b.x) + std::abs(a.y - b.y) + std::abs(a.z - b.z);
     }
 
-    const std::vector<Position> InterfaceClient::FindPath(const Position &start, const Position &end, const int min_end_dist)
+    const std::vector<Position> InterfaceClient::FindPath(const Position &start, const Position &end, const int min_end_dist, const bool can_jump)
     {
         const std::vector<Position> neighbour_offsets({ Position(1, 0, 0), Position(-1, 0, 0), Position(0, 0, 1), Position(0, 0, -1) });
         std::priority_queue<PathNode, std::vector<PathNode>, std::greater<PathNode> > nodes_to_explore;
@@ -665,200 +670,244 @@ namespace Botcraft
             // and add it to the search list if it is
             for (int i = 0; i < neighbour_offsets.size(); ++i)
             {
-                Position next_location = current_node.pos + neighbour_offsets[i];
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
-
-                // We want a solid block to walk on it
-                // with two non solid blocks on top of it to walk through
-                // we do not want to fall more than two blocks
-                // ?  ?
-                // x  ?
-                // x  ?
-                //--- ?
-                //    ?
-                //    ?
-                const Block *block1 = world->GetBlock(next_location + Position(0, 1, 0));
-                if (block1 && block1->GetBlockstate()->IsSolid())
+                const Position next_location = current_node.pos + neighbour_offsets[i];
+                const Position next_next_location = next_location + neighbour_offsets[i];
+                // Get the state around the player in the given location
+                // True = solid, False = go through
+                std::array<bool, 13> surroundings = { false, false, false, false, false, false,
+                    false, false, false, false, false, false, false };
+                // 0  1  7
+                // x  2  8
+                // x  3  9
+                //--- 4  10
+                //    5  11
+                //    6  12
                 {
-                    // ?  ?
-                    // x  o
-                    // x  ?
-                    //--- ?
-                    //    ?
-                    //    ?
-                    // This case means we cannot go in this direction
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                    const Block* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
+                    surroundings[0] = block && block->GetBlockstate()->IsSolid();
+
+                    block = world->GetBlock(next_location + Position(0, 2, 0));
+                    surroundings[1] = block && block->GetBlockstate()->IsSolid();
+                    block = world->GetBlock(next_location + Position(0, 1, 0));
+                    surroundings[2] = block && block->GetBlockstate()->IsSolid();
+                    block = world->GetBlock(next_location);
+                    surroundings[3] = block && block->GetBlockstate()->IsSolid();
+                    block = world->GetBlock(next_location + Position(0, -1, 0));
+                    surroundings[4] = block && block->GetBlockstate()->IsSolid();
+                    block = world->GetBlock(next_location + Position(0, -2, 0));
+                    surroundings[5] = block && block->GetBlockstate()->IsSolid();
+                    block = world->GetBlock(next_location + Position(0, -3, 0));
+                    surroundings[6] = block && block->GetBlockstate()->IsSolid();
+
+                    if (can_jump)
+                    {
+                        block = world->GetBlock(next_next_location + Position(0, 2, 0));
+                        surroundings[7] = block && block->GetBlockstate()->IsSolid();
+                        block = world->GetBlock(next_next_location + Position(0, 1, 0));
+                        surroundings[8] = block && block->GetBlockstate()->IsSolid();
+                        block = world->GetBlock(next_next_location);
+                        surroundings[9] = block && block->GetBlockstate()->IsSolid();
+                        block = world->GetBlock(next_next_location + Position(0, -1, 0));
+                        surroundings[10] = block && block->GetBlockstate()->IsSolid();
+                        block = world->GetBlock(next_next_location + Position(0, -2, 0));
+                        surroundings[11] = block && block->GetBlockstate()->IsSolid();
+                        block = world->GetBlock(next_next_location + Position(0, -3, 0));
+                        surroundings[12] = block && block->GetBlockstate()->IsSolid();
+                    }
+                }
+
+                // We can check all cases that could allow the bot to pass
+                //       ?
+                // x     ?
+                // x  o  ?
+                //--- ?  ?
+                //    ?  ?
+                //    ?  ?
+                if (!surroundings[0] && !surroundings[1]
+                    && !surroundings[2] && surroundings[3])
+                {
+                    const float new_cost = cost[current_node.pos] + 2.0f;
+                    const Position new_pos = next_location + Position(0, 1, 0);
+                    auto it = cost.find(new_pos);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + Heuristic(new_pos, end)));
+                        came_from[new_pos] = current_node.pos;
+                    }
+                }
+
+                // ?  ?  ?
+                // x     ?
+                // x     ?
+                //--- o  ?
+                //    ?  ?
+                //    ?  ?
+                if (!surroundings[2] && !surroundings[3]
+                    && surroundings[4])
+                {
+                    const float new_cost = cost[current_node.pos] + 1.0f;
+                    auto it = cost.find(next_location);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[next_location] = new_cost;
+                        nodes_to_explore.emplace(PathNode(next_location, new_cost + Heuristic(next_location, end)));
+                        came_from[next_location] = current_node.pos;
+                    }
+                }
+
+                // ?  ?  ?
+                // x     ? 
+                // x     ?
+                //---    ?
+                //    o  ?
+                //    ?  ?
+                if (!surroundings[2] && !surroundings[3]
+                    && !surroundings[4] && surroundings[5])
+                {
+                    const float new_cost = cost[current_node.pos] + 2.0f;
+                    const Position new_pos = next_location + Position(0, -1, 0);
+                    auto it = cost.find(new_pos);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + Heuristic(new_pos, end)));
+                        came_from[new_pos] = current_node.pos;
+                    }
+                }
+
+                // ?  ?  ?
+                // x     ?
+                // x     ?
+                //---    ?
+                //       ?
+                //    o  ?
+                if (!surroundings[2] && !surroundings[3]
+                    && !surroundings[4] && !surroundings[5]
+                    && surroundings[6])
+                {
+                    const float new_cost = cost[current_node.pos] + 3.0f;
+                    const Position new_pos = next_location + Position(0, -2, 0);
+                    auto it = cost.find(new_pos);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + Heuristic(new_pos, end)));
+                        came_from[new_pos] = current_node.pos;
+                    }
+                }
+
+                if (!can_jump)
+                {
                     continue;
                 }
-                else
-                {
-                    const Block *block0 = world->GetBlock(next_location);
-                    if (block0 && block0->GetBlockstate()->IsSolid())
-                    {
-                        // ?  ?
-                        // x  
-                        // x  o
-                        //--- ?
-                        //    ?
-                        //    ?
-                        const Block *block2 = world->GetBlock(next_location + Position(0, 2, 0));
-                        if (!block2 || !block2->GetBlockstate()->IsSolid())
-                        {
-                            // ?  
-                            // x   
-                            // x  o
-                            //--- ?
-                            //    ?
-                            //    ?
-                            const Block *block3 = world->GetBlock(current_node.pos + Position(0, 2, 0));
-                            if (!block3 || !block3->GetBlockstate()->IsSolid())
-                            {
-                                //    
-                                // x   
-                                // x  o
-                                //--- ?
-                                //    ?
-                                //    ?
-                                float new_cost = cost[current_node.pos] + 2.0f;
-                                if (cost.find(next_location + Position(0, 1, 0)) == cost.end() ||
-                                    new_cost < cost[next_location + Position(0, 1, 0)])
-                                {
-                                    cost[next_location + Position(0, 1, 0)] = new_cost;
-                                    nodes_to_explore.emplace(PathNode(next_location + Position(0, 1, 0), new_cost + Heuristic(next_location + Position(0, 1, 0), end)));
-                                    came_from[next_location + Position(0, 1, 0)] = current_node.pos;
-                                    continue;
-                                }
-                                // If this neighbour is already known with a better path
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                // o  
-                                // x   
-                                // x  o
-                                //--- ?
-                                //    ?
-                                //    ?
-                                continue;
-                            }
-                        }
-                        // This case means we cannot go in this direction
-                        else
-                        {
-                            // ?  o
-                            // x   
-                            // x  o
-                            //--- ?
-                            //    ?
-                            //    ?
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        const Block *blockm1 = world->GetBlock(next_location + Position(0, -1, 0));
-                        if (blockm1 && blockm1->GetBlockstate()->IsSolid() || next_location.y == 0)
-                        {
-                            // ?  ?
-                            // x  
-                            // x  
-                            //--- o
-                            //    ?
-                            //    ?
-                            float new_cost = cost[current_node.pos] + 1.0f;
-                            if (cost.find(next_location) == cost.end() ||
-                                new_cost < cost[next_location])
-                            {
-                                cost[next_location] = new_cost;
-                                nodes_to_explore.emplace(PathNode(next_location, new_cost + Heuristic(next_location, end)));
-                                came_from[next_location] = current_node.pos;
-                                continue;
-                            }
-                            // If this neighbour is already known with a better path
-                            else
-                            {
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            // ?  ?
-                            // x   
-                            // x   
-                            //---  
-                            //    ?
-                            //    ?
-                            const Block *blockm2 = world->GetBlock(next_location + Position(0, -2, 0));
-                            if (blockm2 && blockm2->GetBlockstate()->IsSolid() || next_location.y == 1)
-                            {
-                                // ?  ?
-                                // x   
-                                // x   
-                                //---  
-                                //    o
-                                //    ?
-                                float new_cost = cost[current_node.pos] + 2.0f;
-                                if (cost.find(next_location + Position(0, -1, 0)) == cost.end() ||
-                                    new_cost < cost[next_location + Position(0, -1, 0)])
-                                {
-                                    cost[next_location + Position(0, -1, 0)] = new_cost;
-                                    nodes_to_explore.emplace(PathNode(next_location + Position(0, -1, 0), new_cost + Heuristic(next_location + Position(0, -1, 0), end)));
-                                    came_from[next_location + Position(0, -1, 0)] = current_node.pos;
-                                    continue;
-                                }
-                                // If this neighbour is already known with a better path
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                // ?  ?
-                                // x   
-                                // x   
-                                //---  
-                                //    
-                                //    ?
-                                const Block *blockm3 = world->GetBlock(next_location + Position(0, -3, 0));
-                                if (blockm3 && blockm3->GetBlockstate()->IsSolid() || next_location.y == 2)
-                                {
-                                    // ?  ?
-                                    // x   
-                                    // x   
-                                    //---  
-                                    //    
-                                    //    o
-                                    float new_cost = cost[current_node.pos] + 3.0f;
-                                    if (cost.find(next_location + Position(0, -2, 0)) == cost.end() ||
-                                        new_cost < cost[next_location + Position(0, -2, 0)])
-                                    {
-                                        cost[next_location + Position(0, -2, 0)] = new_cost;
-                                        nodes_to_explore.emplace(PathNode(next_location + Position(0, -2, 0), new_cost + Heuristic(next_location + Position(0, -2, 0), end)));
-                                        came_from[next_location + Position(0, -2, 0)] = current_node.pos;
-                                        continue;
-                                    }
-                                    // If this neighbour is already known with a better path
-                                    else
-                                    {
-                                        continue;
-                                    }
-                                }
-                                else
-                                {
-                                    // ?  ?
-                                    // x   
-                                    // x   
-                                    //---  
-                                    //    
-                                    //     
-                                    continue;
-                                }
-                            }
 
-                        }
+                //        
+                // x      
+                // x     o
+                //---    ?
+                //    ?  ?
+                //    ?  ?
+                if (!surroundings[0] && !surroundings[1]
+                    && !surroundings[2] && !surroundings[3]
+                    && !surroundings[4] && !surroundings[7]
+                    && !surroundings[8] && surroundings[9])
+                {
+                    const float new_cost = cost[current_node.pos] + 3.0f;
+                    const Position new_pos = next_next_location + Position(0, 1, 0);
+                    auto it = cost.find(new_pos);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + Heuristic(new_pos, end)));
+                        came_from[new_pos] = current_node.pos;
+                    }
+                }
+
+                //        
+                // x      
+                // x      
+                //---    o
+                //       ?
+                //    ?  ?
+                if (!surroundings[0] && !surroundings[1]
+                    && !surroundings[2] && !surroundings[3]
+                    && !surroundings[4] && !surroundings[5]
+                    && !surroundings[7] && !surroundings[8] 
+                    && !surroundings[9] && surroundings[10])
+                {
+                    const float new_cost = cost[current_node.pos] + 3.0f;
+                    auto it = cost.find(next_next_location);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[next_next_location] = new_cost;
+                        nodes_to_explore.emplace(PathNode(next_next_location, new_cost + Heuristic(next_next_location, end)));
+                        came_from[next_next_location] = current_node.pos;
+                    }
+                }
+
+                //        
+                // x      
+                // x      
+                //---     
+                //       o
+                //    ?  ?
+                if (!surroundings[0] && !surroundings[1]
+                    && !surroundings[2] && !surroundings[3]
+                    && !surroundings[4] && !surroundings[5]
+                    && !surroundings[7] && !surroundings[8]
+                    && !surroundings[9] && !surroundings[10]
+                    && surroundings[11])
+                {
+                    const float new_cost = cost[current_node.pos] + 4.0f;
+                    const Position new_pos = next_next_location + Position(0, -1, 0);
+                    auto it = cost.find(new_pos);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + Heuristic(new_pos, end)));
+                        came_from[new_pos] = current_node.pos;
+                    }
+                }
+
+                //        
+                // x      
+                // x      
+                //---     
+                //        
+                //    ?  o
+                if (!surroundings[0] && !surroundings[1]
+                    && !surroundings[2] && !surroundings[3]
+                    && !surroundings[4] && !surroundings[5]
+                    && !surroundings[7] && !surroundings[8] 
+                    && !surroundings[9] && !surroundings[10]
+                    && !surroundings[11] && surroundings[12])
+                {
+                    const float new_cost = cost[current_node.pos] + 5.0f;
+                    const Position new_pos = next_next_location + Position(0, -2, 0);
+                    auto it = cost.find(new_pos);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + Heuristic(new_pos, end)));
+                        came_from[new_pos] = current_node.pos;
                     }
                 }
             } // neighbour loop
