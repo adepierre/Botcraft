@@ -11,14 +11,14 @@
 class MapCreatorBot : public Botcraft::InterfaceClient
 {
 public:
-    MapCreatorBot(const std::string& map_file_, const Botcraft::Position& offset_, const bool use_renderer_);
+    MapCreatorBot(const bool use_renderer_);
     ~MapCreatorBot();
 
+    void LoadNBTFile(const std::string& path, const Botcraft::Position& offset_, const std::string& temp_block);
 protected:
     virtual void Handle(ProtocolCraft::ClientboundChatPacket &msg) override;
 
 private:
-    void LoadNBTFile(const std::string& path, const Botcraft::Position& offset_);
 
     // Get the positions of all chests in a 2*max_search_dist blocks
     // cube centered around the player

@@ -21,10 +21,8 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-MapCreatorBot::MapCreatorBot(const std::string& map_file_, const Position& offset_, const bool use_renderer_) : InterfaceClient(use_renderer_, false)
+MapCreatorBot::MapCreatorBot(const bool use_renderer_) : InterfaceClient(use_renderer_, false)
 {
-    LoadNBTFile(map_file_, offset_);
-
     random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 }
 
@@ -63,7 +61,7 @@ void MapCreatorBot::Handle(ClientboundChatPacket &msg)
     }
 }
 
-void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_)
+void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_, const std::string& temp_block)
 {
     std::ifstream infile(path, std::ios_base::binary);
     infile.unsetf(std::ios::skipws);
@@ -87,6 +85,7 @@ void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_
     loaded_file.Read(it, length);
 
     palette.clear();
+    short id_temp_block = -1;
     std::map<short, int> num_blocks_used;
 
     std::shared_ptr<TagList> palette_tag = std::dynamic_pointer_cast<TagList>(loaded_file.GetTag("palette"));
@@ -97,6 +96,10 @@ void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_
         const std::string& block_name = std::dynamic_pointer_cast<TagString>(compound->GetValues().at("Name"))->GetValue();
         palette[i] = block_name;
         num_blocks_used[i] = 0;
+        if (block_name == temp_block)
+        {
+            id_temp_block = i;
+        }
     }
     
     Position min(std::numeric_limits<int>().max(), std::numeric_limits<int>().max(), std::numeric_limits<int>().max());
@@ -136,7 +139,7 @@ void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_
         }
     }
 
-    const Position size = max - min + Position(1, 1, 1);
+    Position size = max - min + Position(1, 1, 1);
     start = offset_;
     end = offset_ + size - Position(1, 1, 1);
 
@@ -157,10 +160,63 @@ void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_
         num_blocks_used[state] += 1;
     }
 
+    if (id_temp_block == -1)
+    {
+        std::cerr << "Warning, can't find the given temp block " << temp_block << " in the palette" << std::endl;
+    }
+    else
+    {    
+        int removed_layers = 0;
+        // Check the bottom Y layers, if only
+        // air or temp block, the layer can be removed
+        while (true)
+        {
+            bool is_removable = true;
+            int num_temp_block = 0;
+            for (int x = 0; x < size.x; ++x)
+            {
+                for (int z = 0; z < size.z; z++)
+                {
+                    if (target[x][0][z] == id_temp_block)
+                    {
+                        num_temp_block += 1;
+                    }
+
+                    if (target[x][0][z] != -1 &&
+                        target[x][0][z] != id_temp_block)
+                    {
+                        is_removable = false;
+                        break;
+                    }
+                    if (!is_removable)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (!is_removable)
+            {
+                break;
+            }
+
+            for (int x = 0; x < size.x; ++x)
+            {
+                target[x].erase(target[x].begin());
+            }
+            num_blocks_used[id_temp_block] -= num_temp_block;
+            removed_layers++;
+            size.y -= 1;
+            end.y -= 1;
+        }
+
+        std::cout << "Removed the bottom " << removed_layers << " layer" << (removed_layers > 1 ? "s" : "") << std::endl;
+    }
+
     std::cout << "Block needed:" << std::endl;
     for (auto it = num_blocks_used.begin(); it != num_blocks_used.end(); ++it)
     {
-        std::cout << "\t" << palette[it->first] << "\t" << it->second << std::endl;
+        std::cout << "\t" << palette[it->first] << "\t\t" << it->second << std::endl;
     }
 }
 
