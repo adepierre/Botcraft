@@ -142,7 +142,7 @@ namespace ProtocolCraft
             for (int i = 0; i < data_size; ++i)
             {
                 long long int data = ReadVarLong(iter, length);
-                positions[i] = data & 0xFFl;
+                positions[i] = data & 0xFFFl;
                 states[i] = data >> 12;
             }
 #endif

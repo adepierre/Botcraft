@@ -191,7 +191,7 @@ namespace Botcraft
         int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
         int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
 
-        if (!cached || cached_x != chunk_x || !cached_z == chunk_z)
+        if (!cached || cached_x != chunk_x || cached_z != chunk_z)
         {
             auto it = terrain.find({ chunk_x, chunk_z });
 
