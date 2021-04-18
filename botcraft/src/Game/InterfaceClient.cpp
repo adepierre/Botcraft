@@ -366,12 +366,12 @@ namespace Botcraft
                 }
 
                 auto start = std::chrono::system_clock::now();
-                const double motion_norm = std::sqrt(motion_vector.dot(motion_vector));
+                const double motion_norm_xz = std::abs(motion_vector.x) + std::abs(motion_vector.z);
                 while (true)
                 {
                     long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
                     // If we are over the time due to travel one block at the given speed
-                    if (time_count > 1000 * motion_norm / speed)
+                    if (time_count > 1000 * motion_norm_xz / speed)
                     {
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
@@ -386,7 +386,7 @@ namespace Botcraft
                     // Otherwise just move partially toward the goal
                     else
                     {
-                        Vector3<double> pos = initial_position + motion_vector * time_count / (1000.0 * motion_norm) * speed;
+                        Vector3<double> pos = initial_position + motion_vector * time_count / (1000.0 * motion_norm_xz) * speed;
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                             pos.y = local_player->GetPosition().y + 0.0001;

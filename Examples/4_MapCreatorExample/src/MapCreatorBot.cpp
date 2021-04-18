@@ -38,22 +38,20 @@ void MapCreatorBot::Handle(ClientboundChatPacket &msg)
     // Split the message 
     std::istringstream ss{ msg.GetMessage().GetText() };
     const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
-
-    if (splitted.size() < 2 || splitted[0] != network_manager->GetMyName())
+    
+    if (splitted.size() > 0 && splitted[0] == "start")
     {
-        return;
-    }
-
-    if (splitted[1] == "start")
-    {
-        if (splitted.size() < 2)
-        {
-            Say("Usage: [BotName] [start]");
-            return;
-        }
-
         std::thread map_creation_thread(&MapCreatorBot::CreateMap, this);
         map_creation_thread.detach();
+    }
+    else if (splitted.size() > 1 
+        && splitted[0] == network_manager->GetMyName()
+        && splitted[1] == "check")
+    {
+        const bool details = splitted.size() > 2 && splitted[2] == "details";
+
+        std::thread check_thread(&MapCreatorBot::CheckCompletion, this, true, true, details);
+        check_thread.detach();
     }
     else
     {
@@ -61,7 +59,7 @@ void MapCreatorBot::Handle(ClientboundChatPacket &msg)
     }
 }
 
-void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_, const std::string& temp_block)
+void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_, const std::string& temp_block, const bool display_need)
 {
     std::ifstream infile(path, std::ios_base::binary);
     infile.unsetf(std::ios::skipws);
@@ -210,13 +208,19 @@ void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_
             end.y -= 1;
         }
 
-        std::cout << "Removed the bottom " << removed_layers << " layer" << (removed_layers > 1 ? "s" : "") << std::endl;
+        if (display_need)
+        {
+            std::cout << "Removed the bottom " << removed_layers << " layer" << (removed_layers > 1 ? "s" : "") << std::endl;
+        }
     }
 
-    std::cout << "Block needed:" << std::endl;
-    for (auto it = num_blocks_used.begin(); it != num_blocks_used.end(); ++it)
+    if (display_need)
     {
-        std::cout << "\t" << palette[it->first] << "\t\t" << it->second << std::endl;
+        std::cout << "Block needed:" << std::endl;
+        for (auto it = num_blocks_used.begin(); it != num_blocks_used.end(); ++it)
+        {
+            std::cout << "\t" << palette[it->first] << "\t\t" << it->second << std::endl;
+        }
     }
 }
 
@@ -350,7 +354,7 @@ const bool MapCreatorBot::GetSomeFood(const std::string& item_name)
     return true;
 }
 
-const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
+const bool MapCreatorBot::SwapChestsInventory(const std::string& food_name, const bool take)
 {
     std::vector<Position> chests = GetAllChestsAround(Position(200, 100, 200));
     std::shuffle(chests.begin(), chests.end(), random_engine);
@@ -360,7 +364,7 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
     for (int i = 0; i < chests.size(); ++i)
     {
         int inventory_empty_slots = 0;
-        int filled_slots = 0;
+        int swap_slots = 0;
         // Count the number of empty slots in the player inventory
         {
             std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
@@ -384,8 +388,8 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
 
         while(true)
         {
-            short container_src_slot_index = -1;
-            short container_dst_slot_index = -1;
+            std::vector<short> slots_src;
+            std::vector<short> slots_dst;
             {
                 std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
                 container_id = inventory_manager->GetFirstOpenedWindowId();
@@ -399,11 +403,15 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
 
                 const std::map<short, Slot>& slots = container->GetSlots();
 
-                // Find a non-empty slot to pickup
+                slots_src.reserve(slots.size());
+                slots_dst.reserve(slots.size());
+
                 for (auto it = slots.begin(); it != slots.end(); ++it)
                 {
+                    // If take, chest is src
                     if (it->first >= 0
                         && it->first < first_player_index
+                        && take
                         && !it->second.IsEmptySlot()
 #if PROTOCOL_VERSION < 347
                         && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second..GetItemDamage())->GetName() != food_name
@@ -412,30 +420,50 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
 #endif
                         )
                     {
-                        container_src_slot_index = it->first;
-                        break;
+                        slots_src.push_back(it->first);
                     }
-                }
-
-                // Find an empty inventory slot to get the items
-                for (auto it = slots.begin(); it != slots.end(); ++it)
-                {
-                    if (it->first >= first_player_index
+                    // If take, player is dst
+                    else if (it->first >= first_player_index
+                            && take
+                            && it->second.IsEmptySlot())
+                    {
+                        slots_dst.push_back(it->first);
+                    }
+                    // If !take, chest is dst
+                    else if (it->first >= 0
+                        && it->first < first_player_index
+                        && !take
                         && it->second.IsEmptySlot())
                     {
-                        container_dst_slot_index = it->first;
-                        break;
+                        slots_dst.push_back(it->first);
+                    }
+                    // If !take, player is src
+                    else if (it->first >= first_player_index
+                        && !take
+                        && !it->second.IsEmptySlot()
+#if PROTOCOL_VERSION < 347
+                        && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second..GetItemDamage())->GetName() != food_name
+#else
+                        && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() != food_name
+#endif
+                        )
+                    {
+                        slots_src.push_back(it->first);
                     }
                 }
             }
 
-            if (container_src_slot_index != -1 &&
-                container_dst_slot_index != -1)
+            if (slots_src.size() > 0 &&
+                slots_dst.size() > 0)
             {
-                // Try to take the items and set them in the first free slot
-                if (SwapItemsInContainer(container_id, container_src_slot_index, container_dst_slot_index))
+                // Select a random slot in both src and dst
+                int dst_index = slots_dst.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, slots_dst.size() - 1)(random_engine);
+                int src_index = slots_src.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, slots_src.size() - 1)(random_engine);
+
+                // Try to swap the items
+                if (SwapItemsInContainer(container_id, slots_src[src_index], slots_dst[dst_index]))
                 {
-                    filled_slots++;
+                    swap_slots++;
                 }
             }
             // This means either the chest is empty
@@ -450,8 +478,7 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
 
         // Wait until player inventory is updated after the container is closed
         auto start = std::chrono::system_clock::now();
-        int inventory_empty_slots_after = 0;
-        while (inventory_empty_slots_after != inventory_empty_slots - filled_slots)
+        while (true)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
@@ -459,7 +486,7 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
                 return false;
             }
 
-            inventory_empty_slots_after = 0;
+            int inventory_empty_slots_after = 0;
             {
                 std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
                 const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
@@ -473,13 +500,19 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
                     }
                 }
             }
+
+            if ((take && inventory_empty_slots_after == inventory_empty_slots - swap_slots) ||
+                (!take && inventory_empty_slots_after == inventory_empty_slots + swap_slots))
+            {
+                break;
+            }
         
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
-        // We filled up the inventory, no need to check
-        // other chests for more items
-        if (inventory_empty_slots - filled_slots == 0)
+        // The inventory is filled/empty, no need to check other chests
+        if ((take && inventory_empty_slots - swap_slots == 0) ||
+            (!take && inventory_empty_slots == swap_slots))
         {
             break;
         }
@@ -665,8 +698,117 @@ const bool MapCreatorBot::FindNextPositionToPlaceBlock(const std::set<std::strin
     return false;
 }
 
+const bool MapCreatorBot::CheckCompletion(const bool full, const bool print_errors, const bool print_details) const
+{
+    Position world_pos;
+    Position target_pos;
+
+    int additional_blocks = 0;
+    int wrong_blocks = 0;
+    int missing_blocks = 0;
+
+    for (int x = start.x; x <= end.x; ++x)
+    {
+        world_pos.x = x;
+        target_pos.x = x - start.x;
+        for (int y = start.y; y <= end.y; ++y)
+        {
+            world_pos.y = y;
+            target_pos.y = y - start.y;
+            for (int z = start.z; z <= end.z; ++z)
+            {
+                world_pos.z = z;
+                target_pos.z = z - start.z;
+
+                const short target_id = target[target_pos.x][target_pos.y][target_pos.z];
+                std::shared_ptr<Blockstate> blockstate;
+                {
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                    const Block* block = world->GetBlock(world_pos);
+
+                    if (!block)
+                    {
+                        if (target_id != -1)
+                        {
+                            if (!full)
+                            {
+                                return false;
+                            }
+                            missing_blocks++;
+                            if (print_details)
+                            {
+                                std::cout << "Missing " << palette.at(target_id) << " in " << world_pos << std::endl;
+                            }
+                        }
+                        continue;
+                    }
+                    blockstate = block->GetBlockstate();
+                }
+
+                if (target_id == -1)
+                {
+                    if (!blockstate->IsAir())
+                    {
+                        if (!full)
+                        {
+                            return false;
+                        }
+                        additional_blocks++;
+                        if (print_details)
+                        {
+                            std::cout << "Additional " << blockstate->GetName() << " in " << world_pos << std::endl;
+                        }
+                    }
+                }
+                else
+                {
+                    if (blockstate->IsAir())
+                    {
+                        if (!full)
+                        {
+                            return false;
+                        }
+                        missing_blocks++;
+                        if (print_details)
+                        {
+                            std::cout << "Missing " << palette.at(target_id) << " in " << world_pos << std::endl;
+                        }
+                    }
+                    else
+                    {
+                        const std::string& target_name = palette.at(target_id);
+                        if (blockstate->GetName() != target_name)
+                        {
+                            if (!full)
+                            {
+                                return false;
+                            }
+                            wrong_blocks++;
+                            if (print_details)
+                            {
+                                std::cout << "Wrong " << blockstate->GetName() << " instead of " << target_name << " in " << world_pos << std::endl;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (print_errors)
+    {
+        std::cout << "Wrong blocks: " << wrong_blocks << std::endl;
+        std::cout << "Missing blocks: " << missing_blocks << std::endl;
+        std::cout << "Additional blocks: " << additional_blocks << std::endl;
+    }
+
+    return missing_blocks + additional_blocks + wrong_blocks == 0;
+}
+
 void MapCreatorBot::CreateMap()
 {
+    GoTo(Position(8, 6, 60), false, 0);
+    return;
     const std::string food_name = "minecraft:golden_carrot"; // Yeah hardcoding is bad, don't do this at home
 
     int block_placing_fail = 0;
@@ -705,7 +847,7 @@ void MapCreatorBot::CreateMap()
         // with many blocks
         if (blocks_in_inventory.empty())
         {
-            if (!GetSomeBlocks(food_name))
+            if (!SwapChestsInventory(food_name, true))
             {
                 std::cerr << "Warning, error trying to get blocks from chests" << std::endl;
             }
@@ -726,12 +868,15 @@ void MapCreatorBot::CreateMap()
         PlayerDiggingFace face_to_place;
         if (!FindNextPositionToPlaceBlock(blocks_in_inventory, block_to_place, item_to_place, face_to_place))
         {
+            if (CheckCompletion(false, false, false))
+            {
+                std::cout << "Done!" << std::endl;
+                break;
+            }
             // If no block in the inventory fits
-            // Remove all the blocks in the inventory into
+            // Put all the blocks in the inventory into
             // chests
-            std::cerr << "No more suitable locations, give up" << std::endl;
-            break;
-            //EmptyInventoryInChests();
+            SwapChestsInventory(food_name, false);
         }
         else
         {
@@ -740,9 +885,12 @@ void MapCreatorBot::CreateMap()
                 block_placing_fail++;
                 if (block_placing_fail > 5)
                 {
-                    std::cerr << "No more suitable locations where I can go, give up" << std::endl;
-                    break;
-                    //EmptyInventoryInChests();
+                    block_placing_fail = 0;
+                    SwapChestsInventory(food_name, false);
+                }
+                else
+                {
+                    std::this_thread::sleep_for(std::chrono::seconds(3));
                 }
             }
             else

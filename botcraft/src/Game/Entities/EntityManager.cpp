@@ -228,7 +228,6 @@ namespace Botcraft
         auto it = entities.find(msg.GetEntityId());
         if (it == entities.end())
         {
-            std::cerr << "Warning, an unknown player entity is now in view" << std::endl;
             entity = std::shared_ptr<Player>(new Player);
             entities[msg.GetEntityId()] = entity;
         }

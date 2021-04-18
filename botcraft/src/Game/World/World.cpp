@@ -827,7 +827,6 @@ namespace Botcraft
 
     void World::Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg)
     {
-        std::lock_guard<std::mutex> world_guard(world_mutex);
 #if PROTOCOL_VERSION < 739
         for (int i = 0; i < msg.GetRecordCount(); ++i)
         {
@@ -853,17 +852,20 @@ namespace Botcraft
 #endif
             Position cube_pos(x_pos, y_pos, z_pos);
 
+            {
+                std::lock_guard<std::mutex> world_guard(world_mutex);
 #if PROTOCOL_VERSION < 347
-            unsigned int id;
-            unsigned char metadata;
-            Blockstate::IdToIdMetadata(msg.GetRecords()[i].GetBlockId(), id, metadata);
+                unsigned int id;
+                unsigned char metadata;
+                Blockstate::IdToIdMetadata(msg.GetRecords()[i].GetBlockId(), id, metadata);
 
-            SetBlock(cube_pos, id, metadata);
+                SetBlock(cube_pos, id, metadata);
 #elif PROTOCOL_VERSION < 739
-            SetBlock(cube_pos, msg.GetRecords()[i].GetBlockId());
+                SetBlock(cube_pos, msg.GetRecords()[i].GetBlockId());
 #else
-            SetBlock(cube_pos, block_id);
+                SetBlock(cube_pos, block_id);
 #endif
+            }
         }
     }
 

@@ -227,12 +227,6 @@ namespace Botcraft
         }
         it_container->second[msg.GetUid()] = msg.GetAccepted() ? TransactionState::Accepted : TransactionState::Refused;
 
-        // BaseClient is in charge of the apologize in this case
-        if (!msg.GetAccepted())
-        {
-            return;
-        }
-
         auto container_transactions = pending_transactions.find(msg.GetContainerId());
 
         if (container_transactions == pending_transactions.end())
@@ -250,23 +244,26 @@ namespace Botcraft
             return;
         }
 
-        // Get the container
-        std::shared_ptr<Window> window = GetWindow(transaction->second->GetContainerId());
-
-        // Process the transaction
-        switch (transaction->second->GetClickType())
+        if (msg.GetAccepted())
         {
-        case 0:
-            // "Left click"
-            if (transaction->second->GetButtonNum() == 0)
+            // Get the container
+            std::shared_ptr<Window> window = GetWindow(transaction->second->GetContainerId());
+
+            // Process the transaction
+            switch (transaction->second->GetClickType())
             {
-                const Slot switched_slot = window->GetSlot(transaction->second->GetSlotNum());
-                window->SetSlot(transaction->second->GetSlotNum(), cursor);
-                cursor = switched_slot;
+            case 0:
+                // "Left click"
+                if (transaction->second->GetButtonNum() == 0)
+                {
+                    const Slot switched_slot = window->GetSlot(transaction->second->GetSlotNum());
+                    window->SetSlot(transaction->second->GetSlotNum(), cursor);
+                    cursor = switched_slot;
+                }
+                break;
+            default:
+                break;
             }
-            break;
-        default:
-            break;
         }
 
         // Remove the transaction from the waiting state

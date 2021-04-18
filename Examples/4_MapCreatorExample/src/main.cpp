@@ -9,9 +9,8 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--login\t\tMojang account login for connection, default: BCMapCreatorBot\n"
-        << "\t--password\tMojang account password for connection, empty for servers in offline mode, default: empty\n"
-        << "\t--jsonaccount\tPath to a json file from the official minecraft launcher, can be used for people with a Microsoft account, default: empty"
+        << "\t--botname\t\tName of the bot, default: BCBuilderBot\n"
+        << "\t--n\tNumber of parallel bot to start, default: 1"
         << std::endl;
 }
 
@@ -20,9 +19,8 @@ int main(int argc, char* argv[])
     try
     {
         std::string address = "127.0.0.1:25565";
-        std::string login = "BCMapCreatorBot";
-        std::string password = "";
-        std::string launcher_accounts_file = "";
+        std::string botname = "BCBuilderBot";
+        int num_bot = 1;
 
         if (argc == 1)
         {
@@ -50,65 +48,58 @@ int main(int argc, char* argv[])
                     return 1;
                 }
             }
-            else if (arg == "--login")
+            else if (arg == "--botname")
             {
                 if (i + 1 < argc)
                 {
-                    login = argv[++i];
+                    botname = argv[++i];
                 }
                 else
                 {
-                    std::cerr << "--login requires an argument" << std::endl;
+                    std::cerr << "--botname requires an argument" << std::endl;
                     return 1;
                 }
             }
-            else if (arg == "--password")
+            else if (arg == "--n")
             {
                 if (i + 1 < argc)
                 {
-                    password = argv[++i];
+                    num_bot = std::stoi(argv[++i]);
                 }
                 else
                 {
-                    std::cerr << "--password requires an argument" << std::endl;
-                    return 1;
-                }
-            }
-            else if (arg == "--jsonaccount")
-            {
-                if (i + 1 < argc)
-                {
-                    launcher_accounts_file = argv[++i];
-                }
-                else
-                {
-                    std::cerr << "--jsonaccount requires an argument" << std::endl;
+                    std::cerr << "--n requires an argument" << std::endl;
                     return 1;
                 }
             }
         }
-
-        MapCreatorBot client(false);
-        client.SetAutoRespawn(true);
-        client.LoadNBTFile("batman_small.nbt", Botcraft::Position(-64, 1, 63), "minecraft:slime_block");
-
-        if (!launcher_accounts_file.empty())
+        std::vector<std::shared_ptr<MapCreatorBot> > clients;
+        for (int i = 0; i < num_bot; ++i)
         {
-            std::cout << "Starting connection process using launcher accounts file" << std::endl;
-            client.Connect(address, launcher_accounts_file);
-        }
-        else
-        {
-            std::cout << "Starting connection process using login and password" << std::endl;
-            client.Connect(address, login, password);
+            clients.push_back(std::shared_ptr<MapCreatorBot>(new MapCreatorBot(false)));
+            clients[clients.size() - 1]->SetAutoRespawn(true);
+            clients[clients.size() - 1]->LoadNBTFile("batman_small.nbt", Botcraft::Position(-64, 1, 63), "minecraft:slime_block", i == 0);
+            clients[clients.size() - 1]->Connect(address, botname + "_" + std::to_string(i), "");
         }
 
-        while (!client.GetShouldBeClosed())
+        while (true)
         {
+            for (int i = clients.size() - 1; i > -1; i--)
+            {
+                if (clients[i]->GetShouldBeClosed())
+                {
+                    clients[i]->Disconnect();
+                    clients.erase(clients.begin() + i);
+                }
+            }
+
+            if (clients.size() == 0)
+            {
+                break;
+            }
+
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
-
-        client.Disconnect();
 
         return 0;
     }
