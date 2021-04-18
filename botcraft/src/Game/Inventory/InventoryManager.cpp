@@ -107,27 +107,37 @@ namespace Botcraft
     void InventoryManager::EraseInventory(const short window_id)
     {
         inventories.erase(window_id);
+        pending_transactions.erase(window_id);
+        transaction_states.erase(window_id);
     }
 
-    const bool InventoryManager::IsTransactionAccepted(const short window_id, const int transaction_id)
+    const TransactionState InventoryManager::GetTransactionState(const short window_id, const int transaction_id)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        auto transaction = pending_transactions.end();
+        auto it = transaction_states.find(window_id);
 
-        for (auto it = pending_transactions.begin(); it != pending_transactions.end(); ++it)
+        if (it == transaction_states.end())
         {
-            if (it->GetContainerId() == window_id
-                && it->GetUid() == transaction_id)
-            {
-                return false;
-            }
+            std::cerr << "Error, asking state of a transaction for a closed window" << std::endl;
+            return TransactionState::Refused;
         }
-        return true;
+
+        auto it2 = it->second.find(transaction_id);
+
+        if (it2 == it->second.end())
+        {
+            std::cerr << "Error, asking state of an unknown transaction" << std::endl;
+            return TransactionState::Refused;
+        }
+
+        return it2->second;
     }
 
     void InventoryManager::AddInventory(const short window_id, const InventoryType window_type)
     {
         inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
+        pending_transactions[window_id] = std::map<short, std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> >();
+        transaction_states[window_id] = std::map<short, TransactionState>();
     }
 
     void InventoryManager::SetHotbarSelected(const short index)
@@ -146,7 +156,8 @@ namespace Botcraft
         {
             return;
         }
-        pending_transactions.push_back(*transaction);
+        pending_transactions[transaction->GetContainerId()].insert(std::make_pair(transaction->GetUid(), transaction));
+        transaction_states[transaction->GetContainerId()].insert(std::make_pair(transaction->GetUid(), TransactionState::Waiting));
     }
 
     void InventoryManager::SetCursor(const Slot& c)
@@ -205,52 +216,52 @@ namespace Botcraft
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundContainerAckPacket& msg)
     {
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+
+        // Update the new state of the transaction
+        auto it_container = transaction_states.find(msg.GetContainerId());
+        if (it_container == transaction_states.end())
+        {
+            transaction_states[msg.GetContainerId()] = std::map<short, TransactionState>();
+            it_container = transaction_states.find(msg.GetContainerId());
+        }
+        it_container->second[msg.GetUid()] = msg.GetAccepted() ? TransactionState::Accepted : TransactionState::Refused;
+
         // BaseClient is in charge of the apologize in this case
         if (!msg.GetAccepted())
         {
             return;
         }
 
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        auto transaction = pending_transactions.end();
+        auto container_transactions = pending_transactions.find(msg.GetContainerId());
 
-        for (auto it = pending_transactions.begin(); it != pending_transactions.end(); ++it)
+        if (container_transactions == pending_transactions.end())
         {
-            if (it->GetContainerId() == msg.GetContainerId()
-                && it->GetUid() == msg.GetUid())
-            {
-                transaction = it;
-                break;
-            }
+            std::cerr << "Warning, the server accepted a transaction for an unknown container" << std::endl;
+            return;
         }
+
+        auto transaction = container_transactions->second.find(msg.GetUid());
 
         // Get the corresponding transaction
-        if (transaction == pending_transactions.end())
+        if (transaction == container_transactions->second.end())
         {
-            std::cerr << "Warning, server accepted an unknown transaction" << std::endl;
+            std::cerr << "Warning, server accepted an unknown transaction Uid" << std::endl;
             return;
         }
 
-        // Check the window exists
-        std::shared_ptr<Window> window = GetWindow(transaction->GetContainerId());
-        if (!window)
-        {
-            std::cerr << "Warning, server accepted a transaction for an unknown window\n";
-            std::cerr << msg.Serialize().serialize(false) << std::endl;
-            pending_transactions.erase(transaction);
-            return;
-        }
-
+        // Get the container
+        std::shared_ptr<Window> window = GetWindow(transaction->second->GetContainerId());
 
         // Process the transaction
-        switch (transaction->GetClickType())
+        switch (transaction->second->GetClickType())
         {
         case 0:
             // "Left click"
-            if (transaction->GetButtonNum() == 0)
+            if (transaction->second->GetButtonNum() == 0)
             {
-                const Slot switched_slot = window->GetSlot(transaction->GetSlotNum());
-                window->SetSlot(transaction->GetSlotNum(), cursor);
+                const Slot switched_slot = window->GetSlot(transaction->second->GetSlotNum());
+                window->SetSlot(transaction->second->GetSlotNum(), cursor);
                 cursor = switched_slot;
             }
             break;
@@ -258,7 +269,8 @@ namespace Botcraft
             break;
         }
 
-        pending_transactions.erase(transaction);
+        // Remove the transaction from the waiting state
+        container_transactions->second.erase(transaction);
     }
 
 

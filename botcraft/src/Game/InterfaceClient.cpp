@@ -951,7 +951,7 @@ namespace Botcraft
         Slot copied_slot;
         std::shared_ptr<ServerboundContainerClickPacket> click_window_msg;
         int transaction_id;
-        //Click on the first slot, transferring the slot on the cursor
+        //Click on the first slot, transferring the slot to the cursor
         {
             std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
             copied_slot = container->GetSlots().at(first_slot);
@@ -969,17 +969,28 @@ namespace Botcraft
 
         // Wait for the click confirmation
         auto start = std::chrono::system_clock::now();
-        while (!inventory_manager->IsTransactionAccepted(container_id, transaction_id))
+        while (true)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
                 std::cerr << "Something went wrong trying to select first slot during swap inventory (Timeout)." << std::endl;
                 return false;
             }
+            TransactionState transaction_state = inventory_manager->GetTransactionState(container_id, transaction_id);
+            if (transaction_state == TransactionState::Accepted)
+            {
+                break;
+            }
+            // The transaction has been refused by the server, don't bother with other clicks
+            else if (transaction_state == TransactionState::Refused)
+            {
+                return false;
+            }
+
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
-        //Click on the second slot, transferring the cursor on the slot
+        //Click on the second slot, transferring the cursor to the slot
         {
             std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
             copied_slot = container->GetSlots().at(second_slot);
@@ -996,17 +1007,29 @@ namespace Botcraft
         transaction_id = SendInventoryTransaction(click_window_msg);
 
         start = std::chrono::system_clock::now();
-        while (!inventory_manager->IsTransactionAccepted(container_id, transaction_id))
+        while (true)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
                 std::cerr << "Something went wrong trying to select second slot during swap inventory (Timeout)." << std::endl;
                 return false;
             }
+            
+            TransactionState transaction_state = inventory_manager->GetTransactionState(container_id, transaction_id);
+            if (transaction_state == TransactionState::Accepted)
+            {
+                break;
+            }
+            // The transaction has been refused by the server, don't bother with other clicks
+            else if (transaction_state == TransactionState::Refused)
+            {
+                return false;
+            }
+
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
             
-        //Click once again on the first slot, transferring the cursor on the slot
+        //Click once again on the first slot, transferring the cursor to the slot
         {
             std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
             copied_slot = container->GetSlots().at(first_slot);
@@ -1023,13 +1046,25 @@ namespace Botcraft
         transaction_id = SendInventoryTransaction(click_window_msg);
 
         start = std::chrono::system_clock::now();
-        while (!inventory_manager->IsTransactionAccepted(container_id, transaction_id))
+        while (true)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
                 std::cerr << "Something went wrong trying to select third slot during swap inventory (Timeout)." << std::endl;
                 return false;
             }
+
+            TransactionState transaction_state = inventory_manager->GetTransactionState(container_id, transaction_id);
+            if (transaction_state == TransactionState::Accepted)
+            {
+                break;
+            }
+            // The transaction has been refused by the server, don't bother with other clicks
+            else if (transaction_state == TransactionState::Refused)
+            {
+                return false;
+            }
+
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 

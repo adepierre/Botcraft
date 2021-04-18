@@ -10,6 +10,13 @@
 
 namespace Botcraft
 {
+    enum class TransactionState
+    {
+        Waiting,
+        Accepted,
+        Refused
+    };
+
     class Window;
 
     class InventoryManager : public ProtocolCraft::Handler
@@ -30,7 +37,7 @@ namespace Botcraft
         const ProtocolCraft::Slot& GetCursor() const;
         void AddPendingTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
         void EraseInventory(const short window_id);
-        const bool IsTransactionAccepted(const short window_id, const int transaction_id);
+        const TransactionState GetTransactionState(const short window_id, const int transaction_id);
 
     private:
         void SetHotbarSelected(const short index);
@@ -54,8 +61,10 @@ namespace Botcraft
         short index_hotbar_selected;
         ProtocolCraft::Slot cursor;
 
-        // Vector storing all the transactions that have neither been accepted
+        // Storing all the transactions that have neither been accepted
         // nor refused by the server yet
-        std::vector<ProtocolCraft::ServerboundContainerClickPacket> pending_transactions;
+        std::map<short, std::map<short, std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> > > pending_transactions;
+        // Storing the old transactions (accepted/refused) for all opened windows
+        std::map<short, std::map<short, TransactionState> > transaction_states;
     };
 } // Botcraft
