@@ -1,6 +1,7 @@
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/Entity.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
+#include "botcraft/Game/Entities/Player.hpp"
 
 #if USE_GUI
 #include "botcraft/Renderer/RenderingManager.hpp"
@@ -18,6 +19,11 @@ namespace Botcraft
         return local_player;
     }
 
+    const std::unordered_map<int, std::shared_ptr<Entity>>& EntityManager::GetEntities() const
+    {
+        return entities;
+    }
+
 #if USE_GUI
     void EntityManager::SetRenderingManager(std::shared_ptr<Renderer::RenderingManager> rendering_manager_)
     {
@@ -25,8 +31,14 @@ namespace Botcraft
     }
 #endif
 
+    std::mutex& EntityManager::GetMutex()
+    {
+        return entity_manager_mutex;
+    }
+
     void EntityManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
     {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         local_player = std::shared_ptr<LocalPlayer>(new LocalPlayer);
         local_player->GetMutex().lock();
         local_player->SetEID(msg.GetPlayerId());
@@ -36,6 +48,7 @@ namespace Botcraft
     
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg)
     {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         auto it = entities.find(msg.GetEntityId());
         if (it == entities.end())
         {
@@ -47,6 +60,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg)
     {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         // Player position is also used by physics thread, so we need
         // to lock it
         if (msg.GetEntityId() == local_player->GetEID())
@@ -77,6 +91,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& msg)
     {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         // Player position is also used by physics thread, so we need
         // to lock it
         if (msg.GetEntityId() == local_player->GetEID())
@@ -109,6 +124,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg)
     {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         // Player position is also used by physics thread, so we need
         // to lock it
         if (msg.GetEntityId() == local_player->GetEID())
@@ -153,10 +169,46 @@ namespace Botcraft
 #endif // USE_GUI
     }
 
+    void EntityManager::Handle(ProtocolCraft::ClientboundAddEntityPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        // TODO create the real entity type
+        std::shared_ptr<Entity> entity;
+        
+        if (msg.GetType() == 106)
+        {
+            entity = std::shared_ptr<Player>(new Player);
+        }
+        else
+        {
+            entity = std::shared_ptr<Entity>(new Entity);
+        }
+        
+        entity->SetEID(msg.GetId_());
+        entity->SetX(msg.GetX());
+        entity->SetY(msg.GetY());
+        entity->SetZ(msg.GetZ());
+        entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
+        entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
+
+        entities[msg.GetId_()] = entity;
+    }
+
     void EntityManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
     {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         // TODO create the real entity type
-        std::shared_ptr<Entity> entity = std::shared_ptr<Entity>(new Entity);
+        std::shared_ptr<Entity> entity;
+
+        if (msg.GetType() == 106)
+        {
+            entity = std::shared_ptr<Player>(new Player);
+        }
+        else
+        {
+            entity = std::shared_ptr<Entity>(new Entity);
+        }
+        
         entity->SetEID(msg.GetId_());
         entity->SetX(msg.GetX());
         entity->SetY(msg.GetY());
@@ -169,16 +221,28 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg)
     {
-        // TODO, create an actual player entity
-        std::shared_ptr<Entity> entity = std::shared_ptr<Entity>(new Entity);
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+
+        std::shared_ptr<Entity> entity;
+
+        auto it = entities.find(msg.GetEntityId());
+        if (it == entities.end())
+        {
+            std::cerr << "Warning, an unknown player entity is now in view" << std::endl;
+            entity = std::shared_ptr<Player>(new Player);
+            entities[msg.GetEntityId()] = entity;
+        }
+        else
+        {
+            entity = it->second;
+        }
+
         entity->SetEID(msg.GetEntityId());
         entity->SetX(msg.GetX());
         entity->SetY(msg.GetY());
-        entity->SetZ(msg.GetZ()); 
+        entity->SetZ(msg.GetZ());
         entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
-
-        entities[msg.GetEntityId()] = entity;
     }
 
     void EntityManager::Handle(ProtocolCraft::ClientboundSetHealthPacket& msg)
@@ -191,6 +255,7 @@ namespace Botcraft
     
     void EntityManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg)
     {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         if (msg.GetId_() == local_player->GetEID())
         {
             local_player->GetMutex().lock();
@@ -221,10 +286,20 @@ namespace Botcraft
     
     void EntityManager::Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg)
     {
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->SetIsInvulnerable(msg.GetFlags() & 0x01);
         local_player->SetIsFlying(msg.GetFlags() & 0x02);
         local_player->SetFlyingSpeed(msg.GetFlyingSpeed());
 
         //TODO do something with the walking speed
+    }
+
+    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        for (int i = 0; i < msg.GetEntityIds().size(); ++i)
+        {
+            entities.erase(msg.GetEntityIds()[i]);
+        }
     }
 }

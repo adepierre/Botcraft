@@ -2,6 +2,7 @@
 
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/AABB.hpp"
+#include "botcraft/Game/Enums.hpp"
 
 namespace Botcraft
 {
@@ -20,6 +21,7 @@ namespace Botcraft
 		const Vector3<double>& GetSpeed() const;
 		const bool GetOnGround() const;
 		virtual const AABB GetCollider() const;
+		virtual const EntityType GetType() const;
 
 
 		void SetEID(const int eid_);

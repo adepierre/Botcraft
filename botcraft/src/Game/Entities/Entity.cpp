@@ -63,6 +63,11 @@ namespace Botcraft
         return AABB(Vector3<double>(position.x, position.y + 0.25, position.z), Vector3<double>(0.25, 0.25, 0.25));
     }
 
+    const EntityType Entity::GetType() const
+    {
+        return EntityType::Entity;
+    }
+
 
     void Entity::SetEID(const int eid_)
     {

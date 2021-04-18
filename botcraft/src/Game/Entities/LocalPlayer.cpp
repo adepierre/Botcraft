@@ -94,6 +94,11 @@ namespace Botcraft
         return has_moved;
     }
 
+    const EntityType LocalPlayer::GetType() const
+    {
+        return EntityType::LocalPlayer;
+    }
+
     void LocalPlayer::SetPosition(const Vector3<double>& pos)
     {
         has_moved = position != pos;

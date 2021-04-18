@@ -28,6 +28,7 @@ namespace Botcraft
         const int GetFood() const;
         const float GetFoodSaturation() const;
         const bool GetHasMoved() const;
+        virtual const EntityType GetType() const override;
 
         virtual void SetPosition(const Vector3<double>& pos) override;
         virtual void SetX(const double x) override;

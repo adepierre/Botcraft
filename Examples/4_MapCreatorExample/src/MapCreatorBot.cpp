@@ -432,13 +432,8 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
             if (container_src_slot_index != -1 &&
                 container_dst_slot_index != -1)
             {
-                // Take the items and set them in the first free slot
-                if (!SwapItemsInContainer(container_id, container_src_slot_index, container_dst_slot_index))
-                {
-                    CloseContainer(container_id);
-                    return false;
-                }
-                else
+                // Try to take the items and set them in the first free slot
+                if (SwapItemsInContainer(container_id, container_src_slot_index, container_dst_slot_index))
                 {
                     filled_slots++;
                 }
@@ -465,17 +460,20 @@ const bool MapCreatorBot::GetSomeBlocks(const std::string& food_name)
             }
 
             inventory_empty_slots_after = 0;
-            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-            const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
-            for (auto it = slots.begin(); it != slots.end(); ++it)
             {
-                if (it->first >= 9/*Window::INVENTORY_STORAGE_START*/ &&
-                    it->first < 45 /*Window::INVENTORY_OFFHAND_INDEX*/ &&
-                    it->second.IsEmptySlot())
+                std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
+                const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
+                for (auto it = slots.begin(); it != slots.end(); ++it)
                 {
-                    inventory_empty_slots_after++;
+                    if (it->first >= 9/*Window::INVENTORY_STORAGE_START*/ &&
+                        it->first < 45 /*Window::INVENTORY_OFFHAND_INDEX*/ &&
+                        it->second.IsEmptySlot())
+                    {
+                        inventory_empty_slots_after++;
+                    }
                 }
             }
+        
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
@@ -528,6 +526,10 @@ const bool MapCreatorBot::FindNextPositionToPlaceBlock(const std::set<std::strin
 
     to_explore.insert(start_pos);
 
+    std::vector<Position> pos_candidates;
+    std::vector<std::string> item_candidates;
+    std::vector<PlayerDiggingFace> face_candidates;
+
     while (!to_explore.empty())
     {
         // For each candidate, check if
@@ -572,13 +574,65 @@ const bool MapCreatorBot::FindNextPositionToPlaceBlock(const std::set<std::strin
 
                     if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
                     {
-                        out_pos = pos;
-                        out_item = target_name;
-                        out_face = (PlayerDiggingFace)i;
-                        return true;
+                        pos_candidates.push_back(pos);
+                        item_candidates.push_back(target_name);
+                        face_candidates.push_back((PlayerDiggingFace)i);
+                        break;
                     }
                 }
             }
+        }
+
+        // If we have at least one candidate
+        if (pos_candidates.size() > 0)
+        {
+            // Get the position of all other players
+            std::vector<Vector3<double> > other_player_pos;
+            {
+                std::lock_guard<std::mutex> entity_manager_lock(entity_manager->GetMutex());
+                for (auto it = entity_manager->GetEntities().begin(); it != entity_manager->GetEntities().end(); ++it)
+                {
+                    if (it->second->GetType() == EntityType::Player)
+                    {
+                        other_player_pos.push_back(it->second->GetPosition());
+                    }
+                }
+            }
+
+            // Get all the candidates that are as far as possible from all 
+            // the other players
+            std::vector<int> max_dist_indices;
+            double max_dist = 0.0;
+            for (int i = 0; i < pos_candidates.size(); ++i)
+            {
+                double dist = 0.0;
+                for (int j = 0; j < other_player_pos.size(); ++j)
+                {
+                    dist += std::abs(pos_candidates[i].x - other_player_pos[j].x) +
+                        std::abs(pos_candidates[i].y - other_player_pos[j].y) +
+                        std::abs(pos_candidates[i].z - other_player_pos[j].z);
+
+                    if (dist > max_dist)
+                    {
+                        max_dist_indices.clear();
+                        max_dist = dist;
+                    }
+                    
+                    if (dist == max_dist)
+                    {
+                        max_dist_indices.push_back(i);
+                    }
+                }
+            }
+
+            // Select one randomly if multiple possibilities
+            int selected_index = max_dist_indices.size() == 1 ? 0 : max_dist_indices[std::uniform_int_distribution<int>(0, max_dist_indices.size() - 1)(random_engine)];
+            
+            out_pos = pos_candidates[selected_index];
+            out_item = item_candidates[selected_index];
+            out_face = face_candidates[selected_index];
+
+            return true;
         }
 
         explored.insert(to_explore.begin(), to_explore.end());
@@ -614,9 +668,6 @@ const bool MapCreatorBot::FindNextPositionToPlaceBlock(const std::set<std::strin
 void MapCreatorBot::CreateMap()
 {
     const std::string food_name = "minecraft:golden_carrot"; // Yeah hardcoding is bad, don't do this at home
-
-    std::cout << "Food: " << entity_manager->GetLocalPlayer()->GetFood() << std::endl;
-    return;
 
     int block_placing_fail = 0;
     while (true)

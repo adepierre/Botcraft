@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 
         MapCreatorBot client(false);
         client.SetAutoRespawn(true);
-        client.LoadNBTFile("batman_small.nbt", Botcraft::Position(-64, 1, 64), "minecraft:slime_block");
+        client.LoadNBTFile("batman_small.nbt", Botcraft::Position(-64, 1, 63), "minecraft:slime_block");
 
         if (!launcher_accounts_file.empty())
         {

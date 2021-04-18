@@ -130,4 +130,11 @@ namespace Botcraft
         CartographyTable,
         StoneCutter
     };
+
+    enum class EntityType
+    {
+        Entity = 0,
+        Player,
+        LocalPlayer
+    };
 } // Botcraft
