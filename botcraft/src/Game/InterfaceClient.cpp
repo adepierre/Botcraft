@@ -315,39 +315,24 @@ namespace Botcraft
                     return false;
                 }
 
-                // Wait until we are on the ground
-                while (!local_player->GetOnGround())
-                {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                }
-
-                current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
-
-                const Vector3<double> initial_position(current_position.x + 0.5, current_position.y, current_position.z + 0.5);
-                const Vector3<double> motion_vector(path[i].x - current_position.x, path[i].y + 0.001 - current_position.y, path[i].z - current_position.z);
-                local_player->LookAt(initial_position + motion_vector);
-
-                // This indicates that we got stucked and
-                // are in fact not where we think we are
-                // Replanning the path is a good idea
-                if (std::abs(motion_vector.x) > 2.0 || std::abs(motion_vector.z) > 2.0)
-                {
-                    break;
-                }
+                const Vector3<double> initial_position = local_player->GetPosition();
+                const Vector3<double> target_position(path[i].x + 0.5, path[i].y, path[i].z + 0.5);
+                const Vector3<double> motion_vector = target_position - initial_position;
+                local_player->LookAt(target_position);
 
                 // If we have to jump to get to the next position
                 if (path[i].y > current_position.y ||
-                    std::abs(motion_vector.x) > 1.0 ||
-                    std::abs(motion_vector.z) > 1.0)
+                    std::abs(motion_vector.x) > 1.9 ||
+                    std::abs(motion_vector.z) > 1.9)
                 {
                     Jump();
 
-                    if (std::abs(motion_vector.x) <= 1.0 &&
-                        std::abs(motion_vector.z) <= 1.0)
+                    if (std::abs(motion_vector.x) < 1.9 &&
+                        std::abs(motion_vector.z) < 1.9)
                     {
                         auto now = std::chrono::system_clock::now();
                         bool has_timeout = false;
-                        while (local_player->GetY() - current_position.y < 1.0f)
+                        while (local_player->GetY() - initial_position.y < 1.0f)
                         {
                             // This indicates that a jump we wanted to make is not possible anymore
                             // recalculating the path
@@ -366,34 +351,72 @@ namespace Botcraft
                 }
 
                 auto start = std::chrono::system_clock::now();
+                auto previous_step = start;
                 const double motion_norm_xz = std::abs(motion_vector.x) + std::abs(motion_vector.z);
                 while (true)
                 {
-                    long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
+                    auto now = std::chrono::system_clock::now();
+                    long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
                     // If we are over the time due to travel one block at the given speed
                     if (time_count > 1000 * motion_norm_xz / speed)
                     {
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                            local_player->SetX((initial_position + motion_vector).x);
-                            local_player->SetZ((initial_position + motion_vector).z);
+                            local_player->SetSpeedX(target_position.x - local_player->GetX());
+                            local_player->SetSpeedZ(target_position.z - local_player->GetZ());
                         }
-
-                        // Update current position
-                        current_position = path[i];
                         break;
                     }
                     // Otherwise just move partially toward the goal
                     else
                     {
-                        Vector3<double> pos = initial_position + motion_vector * time_count / (1000.0 * motion_norm_xz) * speed;
+                        long long int delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count();
+                        Vector3<double> delta_v = motion_vector * delta_t / (1000.0 * motion_norm_xz) * speed;
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                            pos.y = local_player->GetPosition().y + 0.0001;
-                            local_player->SetPosition(pos);
+                            local_player->SetSpeedX(local_player->GetSpeed().x + delta_v.x);
+                            local_player->SetSpeedZ(local_player->GetSpeed().z + delta_v.z);
+                        }
+                        previous_step = now;
+                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
+
+                // Wait for the confirmation that we arrived at the destination
+                start = std::chrono::system_clock::now();
+                bool has_timeout = false;
+                while (true)
+                {
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
+                    {
+                        has_timeout = true;
+                        break;
+                    }
+
+                    {
+                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                        const Vector3<double> diff = local_player->GetPosition() - target_position;
+                        if (std::abs(diff.x) + std::abs(diff.z) < 1e-2)
+                        {
+                            break;
                         }
                     }
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
+
+                // Wait until we are on the ground
+                while (!local_player->GetOnGround())
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
+
+                current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
+
+                if (has_timeout)
+                {
+                    // Something went wrong during the movement,
+                    // replanning the path is safer
+                    break;
                 }
             }
         } while (current_position != goal);

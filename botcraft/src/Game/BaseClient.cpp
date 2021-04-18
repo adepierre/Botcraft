@@ -113,6 +113,7 @@ namespace Botcraft
                         }
 
                         //Avoid forever falling if position is <= 0.0
+                        // TODO : not good with world extension
                         if (local_player->GetPosition().y <= 0.0)
                         {
                             local_player->SetY(0.0);
