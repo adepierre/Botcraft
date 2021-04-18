@@ -322,13 +322,13 @@ namespace Botcraft
 
                 // If we have to jump to get to the next position
                 if (path[i].y > current_position.y ||
-                    std::abs(motion_vector.x) > 1.9 ||
-                    std::abs(motion_vector.z) > 1.9)
+                    std::abs(motion_vector.x) > 1.5 ||
+                    std::abs(motion_vector.z) > 1.5)
                 {
                     Jump();
 
-                    if (std::abs(motion_vector.x) < 1.9 &&
-                        std::abs(motion_vector.z) < 1.9)
+                    if (std::abs(motion_vector.x) < 1.5 &&
+                        std::abs(motion_vector.z) < 1.5)
                     {
                         auto now = std::chrono::system_clock::now();
                         bool has_timeout = false;
@@ -357,12 +357,13 @@ namespace Botcraft
                 {
                     auto now = std::chrono::system_clock::now();
                     long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-                    // If we are over the time due to travel one block at the given speed
+                    // If we are over the time we have at speed to travel one block
                     if (time_count > 1000 * motion_norm_xz / speed)
                     {
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                             local_player->SetSpeedX(target_position.x - local_player->GetX());
+                            local_player->SetY(local_player->GetY() + 0.001);
                             local_player->SetSpeedZ(target_position.z - local_player->GetZ());
                         }
                         break;
@@ -375,6 +376,7 @@ namespace Botcraft
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                             local_player->SetSpeedX(local_player->GetSpeed().x + delta_v.x);
+                            local_player->SetY(local_player->GetY() + 0.001);
                             local_player->SetSpeedZ(local_player->GetSpeed().z + delta_v.z);
                         }
                         previous_step = now;
@@ -455,8 +457,20 @@ namespace Botcraft
 
             if (block && !block->GetBlockstate()->IsAir())
             {
-                std::cout << "Can't place a block in " << location << ", it's not free real estate." << std::endl;
                 return false;
+            }
+        }
+
+        {
+            const AABB this_box_collider = AABB(Vector3<double>(location.x + 0.5, location.y + 0.5, location.z + 0.5), Vector3<double>(0.5, 0.5, 0.5));
+            std::lock_guard<std::mutex> entity_manager_guard(entity_manager->GetMutex());
+            const std::unordered_map<int, std::shared_ptr<Entity> >& entities = entity_manager->GetEntities();
+            for (auto it = entities.begin(); it != entities.end(); ++it)
+            {
+                if (this_box_collider.Collide(it->second->GetCollider()))
+                {
+                    return false;
+                }
             }
         }
 

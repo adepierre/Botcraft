@@ -14,5 +14,6 @@ namespace Botcraft
         Player();
 
         virtual const EntityType GetType() const override;
+        virtual const AABB GetCollider() const override;
     };
 } // Botcraft

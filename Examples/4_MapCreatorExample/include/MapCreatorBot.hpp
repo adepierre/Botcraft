@@ -20,11 +20,9 @@ protected:
 
 private:
 
-    // Get the positions of all chests in a 2*max_search_dist blocks
-    // cube centered around the player
-    // max_search_dist: max distance to search, in each direction
+    // Get the positions of all loaded chests
     // returns: a vector with all the found positions
-    const std::vector<Botcraft::Position> GetAllChestsAround(const Botcraft::Position& max_search_dist) const;
+    const std::vector<Botcraft::Position> GetAllChestsAround() const;
 
     const bool GetSomeFood(const std::string& item_name);
     const bool SwapChestsInventory(const std::string& food_name, const bool take);

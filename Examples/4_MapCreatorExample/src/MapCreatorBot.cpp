@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include <botcraft/Game/World/World.hpp>
+#include <botcraft/Game/World/Chunk.hpp>
 #include <botcraft/Game/World/Block.hpp>
 #include <botcraft/Game/Entities/EntityManager.hpp>
 #include <botcraft/Game/Inventory/InventoryManager.hpp>
@@ -224,33 +225,36 @@ void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_
     }
 }
 
-const std::vector<Position> MapCreatorBot::GetAllChestsAround(const Position& max_search_dist) const
+const std::vector<Position> MapCreatorBot::GetAllChestsAround() const
 {
     std::vector<Position> output;
 
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
-
-    local_player->GetMutex().lock();
     const Position player_position(local_player->GetX(), local_player->GetY(), local_player->GetZ());
-    local_player->GetMutex().unlock();
+
 
     Position checked_position;
     {
         std::lock_guard<std::mutex> world_guard(world->GetMutex());
         const Block* block;
-        for (int x = -max_search_dist.x; x < max_search_dist.x; ++x)
+        const std::map<std::pair<int, int>, std::shared_ptr<Chunk> >& all_chunks = world->GetAllChunks();
+
+        for (auto it = all_chunks.begin(); it != all_chunks.end(); ++it)
         {
-            checked_position.x = player_position.x + x;
-            for (int y = -max_search_dist.y; y < max_search_dist.y; ++y)
+            for (int x = 0; x < CHUNK_WIDTH; ++x)
             {
-                checked_position.y = player_position.y + y;
-                for (int z = -max_search_dist.z; z < max_search_dist.z; ++z)
+                checked_position.x = it->first.first * CHUNK_WIDTH + x;
+                for (int y = 0; y < CHUNK_HEIGHT; ++y)
                 {
-                    checked_position.z = player_position.z + z;
-                    block = world->GetBlock(checked_position);
-                    if (block && block->GetBlockstate()->GetName() == "minecraft:chest")
+                    checked_position.y = y;
+                    for (int z = 0; z < CHUNK_WIDTH; ++z)
                     {
-                        output.push_back(checked_position);
+                        checked_position.z = it->first.second * CHUNK_WIDTH + z;
+                        block = world->GetBlock(checked_position);
+                        if (block && block->GetBlockstate()->GetName() == "minecraft:chest")
+                        {
+                            output.push_back(checked_position);
+                        }
                     }
                 }
             }
@@ -262,21 +266,24 @@ const std::vector<Position> MapCreatorBot::GetAllChestsAround(const Position& ma
 
 const bool MapCreatorBot::GetSomeFood(const std::string& item_name)
 {
-    std::vector<Position> chests = GetAllChestsAround(Position(200, 100, 200));
+    std::vector<Position> chests = GetAllChestsAround();
     std::shuffle(chests.begin(), chests.end(), random_engine);
 
-    short container_src_slot_index = -1;
-    short container_dst_slot_index = -1;
     short container_id;
 
     for (int i = 0; i < chests.size(); ++i)
     {
-            // If we can't open this chest for a reason
-            if (!OpenContainer(chests[i]))
-            {
-                continue;
-            }
+        // If we can't open this chest for a reason
+        if (!OpenContainer(chests[i]))
+        {
+            continue;
+        }
 
+        bool has_taken = false;
+        short player_dst = -1;
+        while (true)
+        {
+            std::vector<short> slots_src;
             {
                 std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
                 container_id = inventory_manager->GetFirstOpenedWindowId();
@@ -287,68 +294,75 @@ const bool MapCreatorBot::GetSomeFood(const std::string& item_name)
                 const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
 
                 const short first_player_index = ((int)container->GetType() + 1) * 9;
-
-                // We will put the food in the first slot of the hotbar
-                container_dst_slot_index = first_player_index + 27;
+                player_dst = first_player_index + 9 * 3;
 
                 const std::map<short, Slot>& slots = container->GetSlots();
+
+                slots_src.reserve(slots.size());
+
                 for (auto it = slots.begin(); it != slots.end(); ++it)
                 {
+                    // Chest is src
                     if (it->first >= 0
                         && it->first < first_player_index
                         && !it->second.IsEmptySlot()
 #if PROTOCOL_VERSION < 347
-                        && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item_name)
+                        && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second..GetItemDamage())->GetName() == item_name
 #else
-                        && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name)
+                        && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name
 #endif
+                        )
                     {
-                        container_src_slot_index = it->first;
-                        break;
+                        slots_src.push_back(it->first);
                     }
                 }
             }
 
-            // If we found the given item in the inventory
-            if (container_src_slot_index != -1)
+            if (slots_src.size() > 0)
+            {
+                // Select a random slot in both src and dst
+                int src_index = slots_src.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, slots_src.size() - 1)(random_engine);
+
+                // Try to swap the items
+                if (SwapItemsInContainer(container_id, slots_src[src_index], player_dst))
+                {
+                    has_taken = true;
+                    break;
+                }
+            }
+            // This means the chest doesn't have any food
+            else
             {
                 break;
             }
+        }
 
-            CloseContainer(container_id);
-    }
-
-    if (container_src_slot_index == -1)
-    {
-        return false;
-    }
-
-    // Take the food and set it in the first hotbar slot
-    if (!SwapItemsInContainer(container_id, container_src_slot_index, container_dst_slot_index))
-    {
         CloseContainer(container_id);
 
-        return false;
-    }
-
-    CloseContainer(container_id);
-
-    // Wait until player inventory is updated after the container is closed
-    auto start = std::chrono::system_clock::now();
-    std::shared_ptr<Window> container = nullptr;
-    while (
-#if PROTOCOL_VERSION < 347
-        AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetBlockID()).at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemDamage())->GetName() != item_name
-#else
-        AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemID())->GetName() != item_name
-#endif
-        )
-    {
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+        if (!has_taken)
         {
-            std::cerr << "Something went wrong trying to get food from chest (Timeout)." << std::endl;
-            return false;
+            continue;
         }
+
+        // Wait until player inventory is updated after the container is closed
+        auto start = std::chrono::system_clock::now();
+        while (
+#if PROTOCOL_VERSION < 347
+            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetBlockID()).at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemDamage())->GetName() != item_name
+#else
+            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemID())->GetName() != item_name
+#endif
+            )
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            {
+                std::cerr << "Something went wrong trying to get food from chest (Timeout)." << std::endl;
+                return false;
+            }
+        }
+
+        // No need to continue loooking in the other chests
+        break;
     }
 
     return true;
@@ -356,7 +370,7 @@ const bool MapCreatorBot::GetSomeFood(const std::string& item_name)
 
 const bool MapCreatorBot::SwapChestsInventory(const std::string& food_name, const bool take)
 {
-    std::vector<Position> chests = GetAllChestsAround(Position(200, 100, 200));
+    std::vector<Position> chests = GetAllChestsAround();
     std::shuffle(chests.begin(), chests.end(), random_engine);
 
     short container_id;
@@ -807,8 +821,6 @@ const bool MapCreatorBot::CheckCompletion(const bool full, const bool print_erro
 
 void MapCreatorBot::CreateMap()
 {
-    GoTo(Position(8, 6, 60), false, 0);
-    return;
     const std::string food_name = "minecraft:golden_carrot"; // Yeah hardcoding is bad, don't do this at home
 
     int block_placing_fail = 0;
