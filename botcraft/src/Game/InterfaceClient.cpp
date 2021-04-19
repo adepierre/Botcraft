@@ -75,7 +75,7 @@ namespace Botcraft
         return digging_state;
     }
 
-    void InterfaceClient::Dig()
+    void InterfaceClient::DigPointedBlock()
     {
         if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
         {
@@ -166,10 +166,10 @@ namespace Botcraft
         {
             auto start = std::chrono::system_clock::now();
 
-            // We assume we are using the right tool with no bonus/malus
+            // We assume we are using bare hands with no bonus/malus
             // TODO : check tool used and bonus/malus
             while (blockstate->GetHardness() == -2.0f ||
-                std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() / 1000.0f < 1.5f * blockstate->GetHardness())
+                std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() / 1000.0f < 5.0f * blockstate->GetHardness())
             {
                 if (digging_state == DiggingState::Stop)
                 {
@@ -222,6 +222,85 @@ namespace Botcraft
 
             digging_state = DiggingState::Waiting;
         }
+    }
+
+    const bool InterfaceClient::DigAt(const Botcraft::Position& location, const PlayerDiggingFace face)
+    {
+        if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
+        {
+            return false;
+        }
+
+        if (!GoTo(location, true, 0))
+        {
+            return false;
+        }
+
+        std::shared_ptr<Blockstate> blockstate;
+        {
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
+            const Block* block = world->GetBlock(location);
+
+            if (!block || block->GetBlockstate()->IsAir())
+            {
+                return true;
+            }
+            blockstate = block->GetBlockstate();
+        }
+
+        if (blockstate->IsFluid() ||
+            blockstate->GetHardness() == -1.0f)
+        {
+            return false;
+        }
+
+        std::shared_ptr<ServerboundPlayerActionPacket> msg_digging(new ServerboundPlayerActionPacket);
+        msg_digging->SetAction((int)PlayerDiggingStatus::StartDigging);
+        msg_digging->SetPos(location.ToNetworkPosition());
+        msg_digging->SetDirection((int)face);
+        network_manager->Send(msg_digging);
+
+        const long long int expected_mining_time = 1000.0f * (creative_mode ? 0.0f : 5.0f * blockstate->GetHardness());
+
+        if (expected_mining_time > 60000)
+        {
+            std::cout << "Starting an expected " << expected_mining_time / 1000.0f << " seconds long mining at " << location << ". A little help?" << std::endl;
+        }
+
+        auto start = std::chrono::system_clock::now();
+        bool finished_sent = false;
+        while (true)
+        {
+            long long int elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
+            if (elapsed > 5000 + expected_mining_time)
+            {
+                std::cerr << "Something went wrong waiting block breaking confirmation (Timeout)." << std::endl;
+                return false;
+            }
+            if (elapsed >= expected_mining_time
+                && !finished_sent)
+            {
+                std::shared_ptr<ServerboundPlayerActionPacket> msg_finish(new ServerboundPlayerActionPacket);
+                msg_finish->SetAction((int)PlayerDiggingStatus::FinishDigging);
+                msg_finish->SetPos(location.ToNetworkPosition());
+                msg_finish->SetDirection((int)face);
+                network_manager->Send(msg_finish);
+
+                finished_sent = true;
+            }
+            {
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                const Block* block = world->GetBlock(location);
+
+                if (!block || block->GetBlockstate()->IsAir())
+                {
+                    return true;
+                }
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+
+        return true;
     }
 
     void InterfaceClient::StopDigging()

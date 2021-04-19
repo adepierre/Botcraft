@@ -39,7 +39,8 @@ namespace Botcraft
 
         const DiggingState GetDiggingState() const;
         // Try to dig the currently pointed block
-        void Dig();
+        void DigPointedBlock();
+        const bool DigAt(const Botcraft::Position& location, const PlayerDiggingFace face);
         void StopDigging();
 
         void SetAutoRespawn(const bool b);
@@ -58,7 +59,7 @@ namespace Botcraft
 
         // Place a given block at a given location
         // item: name of the item to place, fails if not present in the inventory
-        // location: position of the placed block, the player must be < 5 blocks away
+        // location: position of the placed block
         // placed_face: face on wich placing the block
         // wait_confirmation: if true, wait for the world to update at this location
         const bool PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face, const bool wait_confirmation);

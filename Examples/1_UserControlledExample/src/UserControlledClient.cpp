@@ -314,7 +314,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::MOUSE_LEFT] && GetDiggingState() == DiggingState::Waiting)
     {
-        std::thread thread_digging(&InterfaceClient::Dig, this);
+        std::thread thread_digging(&InterfaceClient::DigPointedBlock, this);
         thread_digging.detach();
     }
     else if (!is_key_pressed[(int)Renderer::KEY_CODE::MOUSE_LEFT] && GetDiggingState() == DiggingState::Digging)
