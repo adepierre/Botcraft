@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+#include <botcraft/Game/World/World.hpp>
+
 #include "MapCreatorBot.hpp"
 
 void ShowHelp(const char* argv0)
@@ -10,7 +12,8 @@ void ShowHelp(const char* argv0)
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
         << "\t--botname\t\tName of the bot, default: BCBuilderBot\n"
-        << "\t--n\tNumber of parallel bot to start, default: 1\n"
+        << "\t--numbot\tNumber of parallel bot to start, default: 5\n"
+        << "\t--numworld\tNumber of parallel world to use, less worlds saves RAM, but slows the bots down, default: 1\n"
         << "\t--nbt\tnbt filename to load, default: empty\n"
         << "\t--offset\t3 ints, offset for the first block, default: 0 0 0\n"
         << "\t--tempblock\tname of the scafholding block, default: minecraft:slime_block\n"
@@ -23,9 +26,10 @@ int main(int argc, char* argv[])
     {
         std::string address = "127.0.0.1:25565";
         std::string botname = "BCBuilderBot";
-        int num_bot = 10;
+        int num_bot = 5;
+        int num_world = 1;
         std::string nbt_file = "";
-        Botcraft::Position offset(0, 0, 0);//Botcraft::Position(-64, 1, 63)
+        Botcraft::Position offset(0, 0, 0);
         std::string temp_block = "minecraft:slime_block";
 
         if (argc == 1)
@@ -66,7 +70,7 @@ int main(int argc, char* argv[])
                     return 1;
                 }
             }
-            else if (arg == "--n")
+            else if (arg == "--numbot")
             {
                 if (i + 1 < argc)
                 {
@@ -74,7 +78,19 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--n requires an argument" << std::endl;
+                    std::cerr << "--numbot requires an argument" << std::endl;
+                    return 1;
+                }
+            }
+            else if (arg == "--numworld")
+            {
+                if (i + 1 < argc)
+                {
+                    num_world = std::stoi(argv[++i]);
+                }
+                else
+                {
+                    std::cerr << "--numworld requires an argument" << std::endl;
                     return 1;
                 }
             }
@@ -118,19 +134,24 @@ int main(int argc, char* argv[])
                 }
             }
         }
-        std::vector<std::shared_ptr<MapCreatorBot> > clients;
-        clients.reserve(num_bot);
+        std::vector<std::shared_ptr<Botcraft::World> > shared_worlds(num_world);
+        for (int i = 0; i < num_world; i++)
+        {
+            shared_worlds[i] = std::shared_ptr<Botcraft::World>(new Botcraft::World(true));
+        }
+        std::vector<std::shared_ptr<MapCreatorBot> > clients(num_bot);
         for (int i = 0; i < num_bot; ++i)
         {
-            clients.push_back(std::shared_ptr<MapCreatorBot>(new MapCreatorBot(false)));
-            clients[clients.size() - 1]->SetAutoRespawn(true);
-            clients[clients.size() - 1]->LoadNBTFile(nbt_file, offset, temp_block, i == 0);
-            clients[clients.size() - 1]->Connect(address, botname + "_" + std::to_string(i), "");
+            clients[i] = std::shared_ptr<MapCreatorBot>(new MapCreatorBot(false));
+            clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
+            clients[i]->SetAutoRespawn(true);
+            clients[i]->LoadNBTFile(nbt_file, offset, temp_block, i == 0);
+            clients[i]->Connect(address, botname + "_" + std::to_string(i), "");
         }
 
         while (true)
         {
-            for (int i = clients.size() - 1; i > -1; i--)
+            for (int i = 0; i < clients.size(); ++i)
             {
                 if (clients[i]->GetShouldBeClosed())
                 {
@@ -143,11 +164,6 @@ int main(int argc, char* argv[])
 
                     std::cout << botname + "_" + std::to_string(i) << " has been stopped. You should restart it" << std::endl;
                 }
-            }
-
-            if (clients.size() == 0)
-            {
-                break;
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(100));

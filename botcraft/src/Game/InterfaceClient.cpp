@@ -346,7 +346,13 @@ namespace Botcraft
             std::vector<Position> path;
             pathfinding_state = PathFindingState::Searching;
 
-            if (!world->GetBlock(goal))
+            bool is_goal_loaded;
+            {
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                is_goal_loaded = world->GetBlock(goal);
+            }
+
+            if (!is_goal_loaded)
             {
                 std::cout << "Current goal position is either air or not loaded, trying to get closer to load the chunk" << std::endl;
                 Vector3<double> goal_direction(goal.x - current_position.x, goal.y - current_position.y, goal.z - current_position.z);
@@ -800,13 +806,19 @@ namespace Botcraft
                 //    6  12
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                    const Block* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
+                    // Start with 2 because if 2 is true, no pathfinding is possible
+                    const Block* block = world->GetBlock(next_location + Position(0, 1, 0));
+                    surroundings[2] = block && block->GetBlockstate()->IsSolid();
+                    if (surroundings[2])
+                    {
+                        continue;
+                    }
+
+                    block = world->GetBlock(current_node.pos + Position(0, 2, 0));
                     surroundings[0] = block && block->GetBlockstate()->IsSolid();
 
                     block = world->GetBlock(next_location + Position(0, 2, 0));
                     surroundings[1] = block && block->GetBlockstate()->IsSolid();
-                    block = world->GetBlock(next_location + Position(0, 1, 0));
-                    surroundings[2] = block && block->GetBlockstate()->IsSolid();
                     block = world->GetBlock(next_location);
                     surroundings[3] = block && block->GetBlockstate()->IsSolid();
                     block = world->GetBlock(next_location + Position(0, -1, 0));

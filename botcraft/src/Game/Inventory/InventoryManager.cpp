@@ -158,6 +158,19 @@ namespace Botcraft
         }
         pending_transactions[transaction->GetContainerId()].insert(std::make_pair(transaction->GetUid(), transaction));
         transaction_states[transaction->GetContainerId()].insert(std::make_pair(transaction->GetUid(), TransactionState::Waiting));
+
+        // Clean oldest transaction to avoid infinite growing map
+        for (auto it = transaction_states[transaction->GetContainerId()].begin(); it != transaction_states[transaction->GetContainerId()].end(); )
+        {
+            if (std::abs(it->first - transaction->GetUid()) > 25)
+            {
+                it = transaction_states[transaction->GetContainerId()].erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
     }
 
     void InventoryManager::SetCursor(const Slot& c)

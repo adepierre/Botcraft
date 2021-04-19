@@ -334,26 +334,16 @@ namespace Botcraft
         if (!world)
         {
             world = std::shared_ptr<World>(new World(false));
-            if (!afk_only)
-            {
-                network_manager->AddHandler(world.get());
-            }
         }
-        if (!inventory_manager)
+
+        inventory_manager = std::shared_ptr<InventoryManager>(new InventoryManager);
+        entity_manager = std::shared_ptr<EntityManager>(new EntityManager);
+
+        if (!afk_only)
         {
-            inventory_manager = std::shared_ptr<InventoryManager>(new InventoryManager);
-            if (!afk_only)
-            {
-                network_manager->AddHandler(inventory_manager.get());
-            }
-        }
-        if (!entity_manager)
-        {
-            entity_manager = std::shared_ptr<EntityManager>(new EntityManager);
-            if (!afk_only)
-            {
-                network_manager->AddHandler(entity_manager.get());
-            }
+            network_manager->AddHandler(world.get());
+            network_manager->AddHandler(inventory_manager.get());
+            network_manager->AddHandler(entity_manager.get());
         }
 
 #if USE_GUI

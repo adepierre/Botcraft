@@ -857,13 +857,13 @@ void MapCreatorBot::CreateMap()
             {
                 if (!GetSomeFood(food_name))
                 {
-                    std::cerr << "Error, can't find food anywhere" << std::endl;
+                    std::cout << "[" << network_manager->GetMyName() << "]: Can't find food anywhere" << std::endl;
                     break;
                 }
 
                 if (!SetItemInHand(food_name, Hand::Left))
                 {
-                    std::cerr << "Error, can't set food in my off-hand" << std::endl;
+                    std::cout << "[" << network_manager->GetMyName() << "]: Can't set food in my off-hand" << std::endl;
                     break;
                 }
             }
@@ -872,7 +872,7 @@ void MapCreatorBot::CreateMap()
             if (entity_manager->GetLocalPlayer()->GetFood() < 20.0f &&
                 !Eat(food_name, true))
             {
-                std::cerr << "Error, can't eat!" << std::endl;
+                std::cout << "[" << network_manager->GetMyName() << "]: Can't eat!" << std::endl;
                 break;
             }
 
@@ -890,7 +890,7 @@ void MapCreatorBot::CreateMap()
 
                 if (blocks_in_inventory.empty())
                 {
-                    std::cout << "No more block in chests, I will stop here. You can restart me by saying start in the chat." << std::endl;
+                    std::cout << "[" << network_manager->GetMyName() <<  "]: No more block in chests, I will stop here. You can restart me by saying start in the chat." << std::endl;
                     break;
                 }
             }
@@ -945,6 +945,7 @@ void MapCreatorBot::CreateMap()
     }
     catch (const std::exception&)
     {
+        started = false;
         should_be_closed = true;
         return;
     }
