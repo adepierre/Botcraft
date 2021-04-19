@@ -14,7 +14,7 @@ public:
     MapCreatorBot(const bool use_renderer_);
     ~MapCreatorBot();
 
-    void LoadNBTFile(const std::string& path, const Botcraft::Position& offset_, const std::string& temp_block, const bool display_neeed);
+    const bool LoadNBTFile(const std::string& path, const Botcraft::Position& offset_, const std::string& temp_block, const bool display_neeed);
 protected:
     virtual void Handle(ProtocolCraft::ClientboundChatPacket &msg) override;
 
@@ -39,5 +39,7 @@ private:
     Botcraft::Position end;
 
     std::mt19937 random_engine;
+
+    bool started;
 
 };

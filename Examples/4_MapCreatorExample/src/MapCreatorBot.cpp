@@ -25,6 +25,7 @@ using namespace ProtocolCraft;
 MapCreatorBot::MapCreatorBot(const bool use_renderer_) : InterfaceClient(use_renderer_, false)
 {
     random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+    started = false;
 }
 
 MapCreatorBot::~MapCreatorBot()
@@ -60,7 +61,7 @@ void MapCreatorBot::Handle(ClientboundChatPacket &msg)
     }
 }
 
-void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_, const std::string& temp_block, const bool display_need)
+const bool MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_, const std::string& temp_block, const bool display_need)
 {
     std::ifstream infile(path, std::ios_base::binary);
     infile.unsetf(std::ios::skipws);
@@ -81,7 +82,15 @@ void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_
     std::vector<unsigned char>::const_iterator it = file_content.begin();
 
     NBT loaded_file;
-    loaded_file.Read(it, length);
+    try
+    {
+        loaded_file.Read(it, length);
+    }
+    catch (const std::exception&)
+    {
+        std::cout << "Error loading NBT file. Make sure the file is uncompressed (you can change the extension to .zip and simply unzip it)" << std::endl;
+        return false;
+    }
 
     palette.clear();
     short id_temp_block = -1;
@@ -223,6 +232,8 @@ void MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_
             std::cout << "\t" << palette[it->first] << "\t\t" << it->second << std::endl;
         }
     }
+
+    return true;
 }
 
 const std::vector<Position> MapCreatorBot::GetAllChestsAround() const
@@ -827,99 +838,114 @@ const bool MapCreatorBot::CheckCompletion(const bool full, const bool print_erro
 
 void MapCreatorBot::CreateMap()
 {
-    const std::string food_name = "minecraft:golden_carrot"; // Yeah hardcoding is bad, don't do this at home
-
-    int task_fail = 0;
-    while (true)
+    if (started)
     {
-        // Check if we have food,
-        // and if not, go get some in a chest
-        if (!SetItemInHand(food_name, Hand::Left))
+        return;
+    }
+
+    try
+    {
+        started = true;
+        const std::string food_name = "minecraft:golden_carrot"; // Yeah hardcoding is bad, don't do this at home
+
+        int task_fail = 0;
+        while (true)
         {
-            if (!GetSomeFood(food_name))
-            {
-                std::cerr << "Error, can't find food anywhere" << std::endl;
-                break;
-            }
-            
+            // Check if we have food,
+            // and if not, go get some in a chest
             if (!SetItemInHand(food_name, Hand::Left))
             {
-                std::cerr << "Error, can't set food in my off-hand" << std::endl;
+                if (!GetSomeFood(food_name))
+                {
+                    std::cerr << "Error, can't find food anywhere" << std::endl;
+                    break;
+                }
+
+                if (!SetItemInHand(food_name, Hand::Left))
+                {
+                    std::cerr << "Error, can't set food in my off-hand" << std::endl;
+                    break;
+                }
+            }
+
+            // Check if food is not at max, if yes, eat
+            if (entity_manager->GetLocalPlayer()->GetFood() < 20.0f &&
+                !Eat(food_name, true))
+            {
+                std::cerr << "Error, can't eat!" << std::endl;
                 break;
             }
-        }
 
-        // Check if food is not at max, if yes, eat
-        if (entity_manager->GetLocalPlayer()->GetFood() < 20.0f &&
-            !Eat(food_name, true))
-        {
-            std::cerr << "Error, can't eat!" << std::endl;
-            break;
-        }
+            // List all blocks available in
+            // the inventory
+            std::set<std::string> blocks_in_inventory = GetBlocksAvailableInInventory();
 
-        // List all blocks available in
-        // the inventory
-        std::set<std::string> blocks_in_inventory = GetBlocksAvailableInInventory();
-
-        // If empty, go fill the inventory
-        // with many blocks
-        if (blocks_in_inventory.empty())
-        {
-            SwapChestsInventory(food_name, true);
-            
-            blocks_in_inventory = GetBlocksAvailableInInventory();
-
+            // If empty, go fill the inventory
+            // with many blocks
             if (blocks_in_inventory.empty())
             {
-                std::cout << "No more block in chests, I will stop here" << std::endl;
-                break;
-            }
-        }
+                SwapChestsInventory(food_name, true);
 
-        // search for a task to perform
-        Position block_position;
-        std::string item;
-        PlayerDiggingFace face;
-        if (!FindNextTask(blocks_in_inventory, block_position, item, face))
-        {
-            if (CheckCompletion(false, false, false))
-            {
-                std::cout << "Done!" << std::endl;
-                break;
+                blocks_in_inventory = GetBlocksAvailableInInventory();
+
+                if (blocks_in_inventory.empty())
+                {
+                    std::cout << "No more block in chests, I will stop here. You can restart me by saying start in the chat." << std::endl;
+                    break;
+                }
             }
-            // If no block in the inventory fits
-            // Put all the blocks in the inventory into
-            // chests
-            SwapChestsInventory(food_name, false);
-        }
-        else
-        {
-            bool action_success;
-            if (item.empty())
+
+            // search for a task to perform
+            Position block_position;
+            std::string item;
+            PlayerDiggingFace face;
+            if (!FindNextTask(blocks_in_inventory, block_position, item, face))
             {
-                action_success = DigAt(block_position, face);
+                if (CheckCompletion(false, false, false))
+                {
+                    std::cout << "Done!" << std::endl;
+                    break;
+                }
+                // If no block in the inventory fits
+                // Put all the blocks in the inventory into
+                // chests
+                SwapChestsInventory(food_name, false);
             }
             else
             {
-                action_success = PlaceBlock(item, block_position, face, true);
-            }
-            if (!action_success)
-            {
-                task_fail++;
-                if (task_fail > 5)
+                bool action_success;
+                if (item.empty())
                 {
-                    task_fail = 0;
-                    SwapChestsInventory(food_name, false);
+                    action_success = DigAt(block_position, face);
                 }
                 else
                 {
-                    std::this_thread::sleep_for(std::chrono::seconds(3));
+                    action_success = PlaceBlock(item, block_position, face, true);
+                }
+                if (!action_success)
+                {
+                    task_fail++;
+                    if (task_fail > 5)
+                    {
+                        task_fail = 0;
+                        SwapChestsInventory(food_name, false);
+                    }
+                    else
+                    {
+                        std::this_thread::sleep_for(std::chrono::seconds(3));
+                    }
+                }
+                else
+                {
+                    task_fail = 0;
                 }
             }
-            else
-            {
-                task_fail = 0;
-            }
         }
+        started = false;
+    }
+    catch (const std::exception&)
+    {
+        should_be_closed = true;
+        return;
     }
 }
