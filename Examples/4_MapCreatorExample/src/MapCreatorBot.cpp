@@ -556,7 +556,7 @@ const std::set<std::string> MapCreatorBot::GetBlocksAvailableInInventory() const
     return blocks_in_inventory;
 }
 
-const bool MapCreatorBot::FindNextPositionToPlaceBlock(const std::set<std::string>& available, Position& out_pos, std::string& out_item, PlayerDiggingFace& out_face)
+const bool MapCreatorBot::FindNextTask(const std::set<std::string>& available, Position& out_pos, std::string& out_item, PlayerDiggingFace& out_face)
 {
     Position start_pos;
 
@@ -582,47 +582,68 @@ const bool MapCreatorBot::FindNextPositionToPlaceBlock(const std::set<std::strin
         // For each candidate, check if
         // 1) the target is not air
         // 2) we have the correct block in the inventory
-        // 3) it does not already match the desired build
+        // 3) it is currently a free space
         // 4) it has a block under or next to it so we can put the new block
+
+        // OR
+
+        // 1) the placed block is not air
+        // 2) it does not match the desired build
+        // 3) it has a free block under or next to it so we can dig it
+        
         for (auto it = to_explore.begin(); it != to_explore.end(); ++it)
         {
             const Position pos = *it;
             
             const int target_palette = target[pos.x - start.x][pos.y - start.y][pos.z - start.z];
             const std::string& target_name = palette[target_palette];
-                
-            if (target_palette == -1)
-            {
-                continue;
-            }
-
-            if (available.find(target_name) == available.end())
-            {
-                continue;
-            }
-
+            std::shared_ptr<Blockstate> blockstate;
             {
                 std::lock_guard<std::mutex> world_guard(world->GetMutex());
                 const Block* block = world->GetBlock(pos);
 
                 if (!block)
                 {
-                    continue;
+                    blockstate = AssetsManager::getInstance().Blockstates().at(0);
                 }
-
-                if (block->GetBlockstate()->GetName() == target_name)
+                else
                 {
-                    continue;
+                    blockstate = block->GetBlockstate();
                 }
+            }
 
+            // Empty space requiring block placement
+            if (target_palette != -1
+                && blockstate->IsAir()
+                && available.find(target_name) != available.end())
+            {
                 for (int i = 0; i < neighbour_offsets.size(); ++i)
                 {
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
                     const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[i]);
 
                     if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
                     {
                         pos_candidates.push_back(pos);
                         item_candidates.push_back(target_name);
+                        face_candidates.push_back((PlayerDiggingFace)i);
+                        break;
+                    }
+                }
+            }
+            // Wrong block requiring digging
+            else if ((target_palette != -1 && !blockstate->IsAir() && target_name != blockstate->GetName())
+                || (target_palette == -1 && !blockstate->IsAir()))
+            {
+                for (int i = 0; i < neighbour_offsets.size(); ++i)
+                {
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                    const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[i]);
+
+                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
+                    {
+                        pos_candidates.push_back(pos);
+                        item_candidates.push_back("");
                         face_candidates.push_back((PlayerDiggingFace)i);
                         break;
                     }
@@ -823,7 +844,7 @@ void MapCreatorBot::CreateMap()
 {
     const std::string food_name = "minecraft:golden_carrot"; // Yeah hardcoding is bad, don't do this at home
 
-    int block_placing_fail = 0;
+    int task_fail = 0;
     while (true)
     {
         // Check if we have food,
@@ -873,12 +894,11 @@ void MapCreatorBot::CreateMap()
             }
         }
 
-        // search for a block to place
-        // and present in the inventory
-        Position block_to_place;
-        std::string item_to_place;
-        PlayerDiggingFace face_to_place;
-        if (!FindNextPositionToPlaceBlock(blocks_in_inventory, block_to_place, item_to_place, face_to_place))
+        // search for a task to perform
+        Position block_position;
+        std::string item;
+        PlayerDiggingFace face;
+        if (!FindNextTask(blocks_in_inventory, block_position, item, face))
         {
             if (CheckCompletion(false, false, false))
             {
@@ -892,12 +912,21 @@ void MapCreatorBot::CreateMap()
         }
         else
         {
-            if (!PlaceBlock(item_to_place, block_to_place, face_to_place, true))
+            bool action_success;
+            if (item.empty())
             {
-                block_placing_fail++;
-                if (block_placing_fail > 5)
+                action_success = DigAt(block_position, face);
+            }
+            else
+            {
+                action_success = PlaceBlock(item, block_position, face, true);
+            }
+            if (!action_success)
+            {
+                task_fail++;
+                if (task_fail > 5)
                 {
-                    block_placing_fail = 0;
+                    task_fail = 0;
                     SwapChestsInventory(food_name, false);
                 }
                 else
@@ -907,7 +936,7 @@ void MapCreatorBot::CreateMap()
             }
             else
             {
-                block_placing_fail = 0;
+                task_fail = 0;
             }
         }
     }

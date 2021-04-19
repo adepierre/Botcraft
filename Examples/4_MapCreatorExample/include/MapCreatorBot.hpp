@@ -27,7 +27,7 @@ private:
     const bool GetSomeFood(const std::string& item_name);
     const bool SwapChestsInventory(const std::string& food_name, const bool take);
     const std::set<std::string> GetBlocksAvailableInInventory() const;
-    const bool FindNextPositionToPlaceBlock(const std::set<std::string>& available, Botcraft::Position& out_pos, std::string& out_item, Botcraft::PlayerDiggingFace& out_face);
+    const bool FindNextTask(const std::set<std::string>& available, Botcraft::Position& out_pos, std::string& out_item, Botcraft::PlayerDiggingFace& out_face);
     const bool CheckCompletion(const bool full, const bool print_errors, const bool print_details) const;
 
     void CreateMap();
