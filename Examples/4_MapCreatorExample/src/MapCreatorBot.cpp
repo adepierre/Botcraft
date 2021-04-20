@@ -43,8 +43,7 @@ void MapCreatorBot::Handle(ClientboundChatPacket &msg)
     
     if (splitted.size() > 0 && splitted[0] == "start")
     {
-        std::thread map_creation_thread(&MapCreatorBot::CreateMap, this);
-        map_creation_thread.detach();
+        LaunchMapCreation();
     }
     else if (splitted.size() > 1 
         && splitted[0] == network_manager->GetMyName()
@@ -234,6 +233,12 @@ const bool MapCreatorBot::LoadNBTFile(const std::string& path, const Position& o
     }
 
     return true;
+}
+
+void MapCreatorBot::LaunchMapCreation()
+{
+    std::thread map_creation_thread(&MapCreatorBot::CreateMap, this);
+    map_creation_thread.detach();
 }
 
 const std::vector<Position> MapCreatorBot::GetAllChestsAround() const
@@ -943,8 +948,9 @@ void MapCreatorBot::CreateMap()
         }
         started = false;
     }
-    catch (const std::exception&)
+    catch (...)
     {
+        std::cout << "Catched" << std::endl;
         started = false;
         should_be_closed = true;
         return;

@@ -349,12 +349,12 @@ namespace Botcraft
             bool is_goal_loaded;
             {
                 std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                is_goal_loaded = world->GetBlock(goal);
+                is_goal_loaded = world->IsLoaded(goal);
             }
 
             if (!is_goal_loaded)
             {
-                std::cout << "Current goal position is either air or not loaded, trying to get closer to load the chunk" << std::endl;
+                std::cout << "[" << network_manager->GetMyName() << "] Current goal position " << goal << " is either air or not loaded, trying to get closer to load the chunk" << std::endl;
                 Vector3<double> goal_direction(goal.x - current_position.x, goal.y - current_position.y, goal.z - current_position.z);
                 goal_direction.Normalize();
                 path = FindPath(current_position, current_position + Position(goal_direction.x * 32, goal_direction.y * 32, goal_direction.z * 32), 0, true);
@@ -630,7 +630,7 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong waiting block placement confirmation (Timeout)." << std::endl;
+                std::cerr << "[" << network_manager->GetMyName() << "] Something went wrong waiting block placement confirmation at " << location << " (Timeout)." << std::endl;
                 return false;
             }
             if (!is_block_ok)

@@ -15,6 +15,8 @@ public:
     ~MapCreatorBot();
 
     const bool LoadNBTFile(const std::string& path, const Botcraft::Position& offset_, const std::string& temp_block, const bool display_neeed);
+    void LaunchMapCreation();
+
 protected:
     virtual void Handle(ProtocolCraft::ClientboundChatPacket &msg) override;
 

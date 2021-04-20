@@ -32,6 +32,8 @@ int main(int argc, char* argv[])
         Botcraft::Position offset(0, 0, 0);
         std::string temp_block = "minecraft:slime_block";
 
+        std::vector<std::string> base_names = { "BotAuFeu", "Botager", "Botiron", "BotEnTouche", "BotDeVin", "BotAuxRoses", "BotronMinet", "Botmobile", "Botman", "Botentiel" };
+
         if (argc == 1)
         {
             std::cout << "No command arguments. Using default options.\n";
@@ -139,15 +141,19 @@ int main(int argc, char* argv[])
         {
             shared_worlds[i] = std::shared_ptr<Botcraft::World>(new Botcraft::World(true));
         }
+        std::vector<std::string> names(num_bot);
         std::vector<std::shared_ptr<MapCreatorBot> > clients(num_bot);
         for (int i = 0; i < num_bot; ++i)
         {
+            names[i] = base_names[i] + (i < base_names.size() ? "" : ("_" + std::to_string(i / base_names.size())));
             clients[i] = std::shared_ptr<MapCreatorBot>(new MapCreatorBot(false));
             clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
             clients[i]->SetAutoRespawn(true);
             clients[i]->LoadNBTFile(nbt_file, offset, temp_block, i == 0);
-            clients[i]->Connect(address, botname + "_" + std::to_string(i), "");
+            clients[i]->Connect(address, names[i], "");
         }
+
+        std::map<int, std::chrono::system_clock::time_point> restart_time;
 
         while (true)
         {
@@ -160,9 +166,26 @@ int main(int argc, char* argv[])
                     clients[i] = std::shared_ptr<MapCreatorBot>(new MapCreatorBot(false));
                     clients[i]->SetAutoRespawn(true);
                     clients[i]->LoadNBTFile(nbt_file, offset, temp_block, i == 0);
-                    clients[i]->Connect(address, botname + "_" + std::to_string(i), "");
+                    clients[i]->Connect(address, names[i], "");
 
-                    std::cout << botname + "_" + std::to_string(i) << " has been stopped. You should restart it" << std::endl;
+                    // Restart client[i] in 10 seconds
+                    std::cout << names[i] << " has been stopped. Scheduling a restart in 10 seconds..." << std::endl;
+                    restart_time[i] = std::chrono::system_clock::now() + std::chrono::seconds(10);
+                }
+            }
+
+            auto now = std::chrono::system_clock::now();
+            for (auto it = restart_time.begin(); it != restart_time.end(); )
+            {
+                if (now > it->second)
+                {
+                    std::cout << "Restarting " << names[it->first] << "..." << std::endl;
+                    clients[it->first]->LaunchMapCreation();
+                    restart_time.erase(it++);
+                }
+                else
+                {
+                    ++it;
                 }
             }
 

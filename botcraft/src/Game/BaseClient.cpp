@@ -169,14 +169,17 @@ namespace Botcraft
 
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
+        
+
         //If the player did not move we assume it does not collide
-        if (!local_player->GetHasMoved() &&
+        /*if (!local_player->GetHasMoved() &&
             abs(local_player->GetSpeed().x) < 1e-3 && 
             abs(local_player->GetSpeed().y) < 1e-3 && 
             abs(local_player->GetSpeed().z) < 1e-3)
         {
+            // We could return if we were sure that we have a block under our feet
             return;
-        }
+        }*/
 
         Vector3<double> min_player_collider, max_player_collider;
         

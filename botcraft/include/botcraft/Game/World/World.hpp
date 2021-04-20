@@ -55,6 +55,7 @@ namespace Botcraft
 #endif
         //Get the block at a given position
         const Block* GetBlock(const Position& pos);
+        const bool IsLoaded(const Position& pos) const;
 
         bool SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT& data);
         // Get the block entity data at a given position

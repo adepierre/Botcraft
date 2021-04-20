@@ -509,6 +509,14 @@ namespace Botcraft
         return cached->GetBlock(Position((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH));
     }
 
+    const bool World::IsLoaded(const Position& pos) const
+    {
+        const int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
+        const int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+
+        return terrain.find({ chunk_x, chunk_z }) != terrain.end();
+    }
+
     std::shared_ptr<ProtocolCraft::NBT> World::GetBlockEntityData(const Position &pos)
     {
         int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
