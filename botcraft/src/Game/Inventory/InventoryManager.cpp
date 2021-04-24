@@ -218,7 +218,31 @@ namespace Botcraft
     void InventoryManager::Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+#if PROTOCOL_VERSION < 452
+        InventoryType type = InventoryType::Default;
+        if (msg.GetType() == "minecraft:chest")
+        {
+            switch (msg.GetNumberOfSlots())
+            {
+            case 62:
+                type = InventoryType::Generic9x3;
+                break;
+            case 89:
+                type = InventoryType::Generic9x6;
+                break;
+            default:
+                std::cerr << "Warning, not implemented chest type: " << msg.GetType() << std::endl;
+                break;
+            }
+        }
+        else
+        {
+            std::cerr << "Warning, not implemented container type: " << msg.GetType() << std::endl;
+        }
+        AddInventory(msg.GetContainerId(), type);
+#else
         AddInventory(msg.GetContainerId(), (InventoryType)msg.GetType());
+#endif
     }
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg)

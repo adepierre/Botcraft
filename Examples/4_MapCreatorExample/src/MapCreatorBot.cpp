@@ -375,7 +375,7 @@ const bool MapCreatorBot::GetSomeFood(const std::string& item_name)
                         && it->first < first_player_index
                         && !it->second.IsEmptySlot()
 #if PROTOCOL_VERSION < 347
-                        && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second..GetItemDamage())->GetName() == item_name
+                        && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item_name
 #else
                         && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name
 #endif
@@ -487,7 +487,7 @@ const bool MapCreatorBot::SwapChestsInventory(const std::string& food_name, cons
                     && take
                     && !it->second.IsEmptySlot()
 #if PROTOCOL_VERSION < 347
-                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second..GetItemDamage())->GetName() != food_name
+                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() != food_name
 #else
                     && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() != food_name
 #endif
@@ -515,7 +515,7 @@ const bool MapCreatorBot::SwapChestsInventory(const std::string& food_name, cons
                     && !take
                     && !it->second.IsEmptySlot()
 #if PROTOCOL_VERSION < 347
-                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second..GetItemDamage())->GetName() != food_name
+                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() != food_name
 #else
                     && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() != food_name
 #endif
@@ -657,7 +657,11 @@ const bool MapCreatorBot::FindNextTask(const std::set<std::string>& available, P
 
                 if (!block)
                 {
+#if PROTOCOL_VERSION < 347
+                    blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0);
+#else
                     blockstate = AssetsManager::getInstance().Blockstates().at(0);
+#endif
                 }
                 else
                 {

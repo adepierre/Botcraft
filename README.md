@@ -25,8 +25,8 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 Example of pathfinding. Right of the screen is the integrated renderer
 ![](gifs/video.gif)
 
-Example of block placing and inventory managing. Right of the screen is the integrated renderer
-![](gifs/beacon.gif)
+More complex example with 10 survival bots collaborating on a pixel art build. They are all in survival, so they have to pick the right blocks in the chests, eat food and obviously can't fly. There is no global supervision, and they can't communicate with each other. Better quality video in [this reddit post](https://www.reddit.com/r/Minecraft/comments/mwzm26/my_survival_bot_project_applied_to_map_pixelart/).
+![](gifs/mapart.gif)
 
 ## Dependencies
 
@@ -49,9 +49,9 @@ The code is cross-platform and is automatically built on both Windows with Visua
 
 ### ProtocolCraft
 
-ProtocolCraft is a sublibrary of the botcraft repository. It is a full implementation of the minecraft protocol for all supported versions. It used to be based on the protocol description on the [Wiki](https://wiki.vg/Protocol). However, as it seems to no longer be up to date, I transitioned it to be based on the [official source code mapping](https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a) provided by Mojang.
+ProtocolCraft is a sublibrary of the botcraft repository. It is a full implementation of the minecraft protocol for all supported versions. It used to be based on the protocol description on the [Wiki](https://wiki.vg/Protocol). However, as it seems to no longer be up to date after 1.16.5, I transitioned it to be based on the [official source code mapping](https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a) provided by Mojang.
 
-Transitionning from one protocol description to the other was a breaking change, as all the packets and many variable names were changed. But this should be easier to maintain and update in the future, as it is now directly based on the game source code, instead of a third-party documentation.
+Transitionning from one protocol description to the other was a breaking change, as all the packets and many variable names were changed. But this should be easier to maintain and update in the future, as it is now directly based on the official game source code, instead of a third-party documentation.
 
 ## Building and Installation
 
@@ -93,6 +93,7 @@ Examples can be found in the [Examples](Examples/) folder:
   - placing a block
   - interacting with a block (lever, button ...)
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Simple example to stay at the same position. Physics is not processed, chunks are not saved in memory to save RAM.
+- [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share the internal representation of the world to save some RAM, at the cost of slowing down if too many share the same. Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous versions.
 
 ## Connection
 

@@ -55,7 +55,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
             return;
         }
         Position target_position;
-        float speed = 4.0f;
+        float speed = 4.317f;
         try
         {
             target_position = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
@@ -74,7 +74,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         }
 
         // Launch the command on a new thread
-        std::thread t(&ChatCommandClient::GoTo, this, target_position, false, speed);
+        std::thread t(&ChatCommandClient::GoTo, this, target_position, false, 0, speed);
         t.detach();
     }
     else if (splitted[1] == "stop")
@@ -135,7 +135,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
             return;
         }
 
-        PlaceBlock(item, pos, PlayerDiggingFace::Top);
+        PlaceBlock(item, pos, PlayerDiggingFace::Top, false);
     }
     else if (splitted[1] == "interact")
     {

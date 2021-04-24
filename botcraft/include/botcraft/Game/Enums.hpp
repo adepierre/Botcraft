@@ -1,4 +1,5 @@
 #pragma once
+#include <unordered_map>
 
 namespace Botcraft
 {
@@ -102,6 +103,7 @@ namespace Botcraft
     };
 
     // Types are detailed in registries, see https://wiki.vg/Inventory
+
     enum class InventoryType
     {
         Default = -1,
