@@ -14,7 +14,7 @@ public:
     MapCreatorBot(const bool use_renderer_);
     ~MapCreatorBot();
 
-    const bool LoadNBTFile(const std::string& path, const Botcraft::Position& offset_, const std::string& temp_block, const bool display_neeed);
+    const bool LoadNBTFile(const std::string& path, const Botcraft::Position& offset_, const std::string& temp_block, const bool print_info);
     void LaunchMapCreation();
 
 protected:
@@ -39,6 +39,7 @@ private:
     std::map<short, std::string> palette;
     Botcraft::Position start;
     Botcraft::Position end;
+    Botcraft::Position size;
 
     std::mt19937 random_engine;
 

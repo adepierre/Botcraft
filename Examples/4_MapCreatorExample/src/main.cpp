@@ -11,7 +11,6 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--botname\t\tName of the bot, default: BCBuilderBot\n"
         << "\t--numbot\tNumber of parallel bot to start, default: 5\n"
         << "\t--numworld\tNumber of parallel world to use, less worlds saves RAM, but slows the bots down, default: 1\n"
         << "\t--nbt\tnbt filename to load, default: empty\n"
@@ -25,8 +24,7 @@ int main(int argc, char* argv[])
     try
     {
         std::string address = "127.0.0.1:25565";
-        std::string botname = "BCBuilderBot";
-        int num_bot = 5;
+        int num_bot = 10;
         int num_world = 1;
         std::string nbt_file = "";
         Botcraft::Position offset(0, 0, 0);
@@ -57,18 +55,6 @@ int main(int argc, char* argv[])
                 else
                 {
                     std::cerr << "--address requires an argument" << std::endl;
-                    return 1;
-                }
-            }
-            else if (arg == "--botname")
-            {
-                if (i + 1 < argc)
-                {
-                    botname = argv[++i];
-                }
-                else
-                {
-                    std::cerr << "--botname requires an argument" << std::endl;
                     return 1;
                 }
             }

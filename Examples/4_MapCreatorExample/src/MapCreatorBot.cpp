@@ -60,7 +60,7 @@ void MapCreatorBot::Handle(ClientboundChatPacket &msg)
     }
 }
 
-const bool MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_, const std::string& temp_block, const bool display_need)
+const bool MapCreatorBot::LoadNBTFile(const std::string& path, const Position& offset_, const std::string& temp_block, const bool print_info)
 {
     std::ifstream infile(path, std::ios_base::binary);
     infile.unsetf(std::ios::skipws);
@@ -146,7 +146,7 @@ const bool MapCreatorBot::LoadNBTFile(const std::string& path, const Position& o
         }
     }
 
-    Position size = max - min + Position(1, 1, 1);
+    size = max - min + Position(1, 1, 1);
     start = offset_;
     end = offset_ + size - Position(1, 1, 1);
 
@@ -217,18 +217,70 @@ const bool MapCreatorBot::LoadNBTFile(const std::string& path, const Position& o
             end.y -= 1;
         }
 
-        if (display_need)
+        if (print_info)
         {
             std::cout << "Removed the bottom " << removed_layers << " layer" << (removed_layers > 1 ? "s" : "") << std::endl;
         }
     }
 
-    if (display_need)
+    if (print_info)
     {
+        std::cout << "Total size: " << size << std::endl;
+
         std::cout << "Block needed:" << std::endl;
         for (auto it = num_blocks_used.begin(); it != num_blocks_used.end(); ++it)
         {
             std::cout << "\t" << palette[it->first] << "\t\t" << it->second << std::endl;
+        }
+
+        // Check if some block can't be placed (flying blocks)
+        std::cout << "Flying blocks, you might have to place them yourself: " << std::endl;
+
+        Position target_pos;
+
+        const std::vector<Position> neighbour_offsets({ Position(0, 1, 0), Position(0, -1, 0),
+            Position(0, 0, 1), Position(0, 0, -1),
+            Position(1, 0, 0), Position(-1, 0, 0) });
+
+        for (int x = 0; x < size.x; ++x)
+        {
+            target_pos.x = x;
+            // If this block is on the floor, it's ok
+            for (int y = 1; y < size.y; ++y)
+            {
+                target_pos.y = y;
+
+                for (int z = 0; z < size.z; ++z)
+                {
+                    target_pos.z = z;
+
+                    const short target_id = target[target_pos.x][target_pos.y][target_pos.z];
+
+                    if (target_id != -1)
+                    {
+                        // Check all target neighbours
+                        bool has_neighbour = false;
+                        for (int i = 0; i < neighbour_offsets.size(); ++i)
+                        {
+                            const Position neighbour_pos = target_pos + neighbour_offsets[i];
+
+                            if (neighbour_pos.x >= 0 && neighbour_pos.x < size.x &&
+                                neighbour_pos.y >= 0 && neighbour_pos.y < size.y &&
+                                neighbour_pos.z >= 0 && neighbour_pos.z < size.z &&
+                                target[neighbour_pos.x][neighbour_pos.y][neighbour_pos.z] != -1)
+                            {
+                                has_neighbour = true;
+                                break;
+                            }
+                        }
+
+                        if (!has_neighbour)
+                        {
+                            std::cout << start + target_pos << "\t" << palette[target_id] << std::endl;
+                        }
+                    }
+                }
+            }
         }
     }
 
