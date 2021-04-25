@@ -94,9 +94,17 @@ namespace Botcraft
                     }
                     else
                     {
+                        bool is_in_fluid = false;
                         std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
+                        {
+                            std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
+                            const Block* block_ptr = world->GetBlock(Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ())));
+
+                            is_in_fluid = block_ptr && block_ptr->GetBlockstate()->IsFluid();
+                        }
+
                         //Check that we did not go through a block
-                        Physics();
+                        Physics(is_in_fluid);
 
                         if (local_player->GetHasMoved() ||
                             std::abs(local_player->GetSpeed().x) > 1e-3 ||
@@ -160,7 +168,7 @@ namespace Botcraft
         }
     }
 
-    void BaseClient::Physics()
+    void BaseClient::Physics(const bool is_in_fluid)
     {
         if (!entity_manager)
         {
@@ -168,8 +176,6 @@ namespace Botcraft
         }
 
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
-
-        
 
         //If the player did not move we assume it does not collide
         /*if (!local_player->GetHasMoved() &&
@@ -181,8 +187,9 @@ namespace Botcraft
             return;
         }*/
 
+        // Player mutex is already locked by calling function
+        Position player_position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetX()));
         Vector3<double> min_player_collider, max_player_collider;
-        
         for (int i = 0; i < 3; ++i)
         {
             min_player_collider[i] = std::min(local_player->GetCollider().GetMin()[i], local_player->GetCollider().GetMin()[i] + local_player->GetSpeed()[i]);
@@ -217,7 +224,15 @@ namespace Botcraft
                         block = *block_ptr;
                     }
 
-                    if (!block.GetBlockstate()->IsSolid())
+                    if (!is_in_fluid && !block.GetBlockstate()->IsSolid())
+                    {
+                        continue;
+                    }
+                    
+                    if (is_in_fluid &&
+                        !block.GetBlockstate()->IsSolid() &&
+                        (!block.GetBlockstate()->IsFluid() ||
+                            cube_pos.y >= player_position.y))
                     {
                         continue;
                     }

@@ -59,7 +59,7 @@
     {
         "name": "minecraft:flowing_water",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "fluid",
         "texture": "blocks/water_flow",
         "tintType": "water",
@@ -68,7 +68,7 @@
     {
         "name": "minecraft:water",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "fluid",
         "texture": "blocks/water_still",
         "tintType": "water",
@@ -77,7 +77,7 @@
     {
         "name": "minecraft:flowing_lava",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "fluid",
         "texture": "blocks/lava_flow",
         "hardness": 100
@@ -85,7 +85,7 @@
     {
         "name": "minecraft:lava",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "fluid",
         "texture": "blocks/lava_still",
         "hardness": 100

@@ -186,7 +186,7 @@
         "hardness": 100,
         "name": "minecraft:water",
         "render": "fluid",
-        "solid": true,
+        "solid": false,
         "texture": "block/water_still",
         "tintType": "water",
         "transparent": true
@@ -195,7 +195,7 @@
         "hardness": 100,
         "name": "minecraft:lava",
         "render": "fluid",
-        "solid": true,
+        "solid": false,
         "texture": "block/lava_still",
         "transparent": true
     },

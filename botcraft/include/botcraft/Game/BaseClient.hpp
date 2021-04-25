@@ -41,7 +41,7 @@ namespace Botcraft
 
     protected:
         void RunSyncPos();
-        void Physics();
+        void Physics(const bool is_in_fluid);
         // Set the right transaction id, add it to the inventory manager,
         // update the next transaction id and send it to the server
         // return the id of the transaction
