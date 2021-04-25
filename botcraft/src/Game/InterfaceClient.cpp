@@ -804,31 +804,37 @@ namespace Botcraft
                 //--- 4  10
                 //    5  11
                 //    6  12
+                bool is_in_fluid;
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                    // Start with 2 because if 2 is true, no pathfinding is possible
-                    const Block* block = world->GetBlock(next_location + Position(0, 1, 0));
-                    surroundings[2] = block && block->GetBlockstate()->IsSolid();
+
+                    const Block* block = world->GetBlock(current_node.pos);
+                    is_in_fluid = block && block->GetBlockstate()->IsFluid();
+
+                    // Start with 2 because if 2 is solid, no pathfinding is possible
+                    block = world->GetBlock(next_location + Position(0, 1, 0));
+                    surroundings[2] = block && (block->GetBlockstate()->IsSolid() || (is_in_fluid && block->GetBlockstate()->IsFluid()));
                     if (surroundings[2])
                     {
                         continue;
                     }
 
                     block = world->GetBlock(current_node.pos + Position(0, 2, 0));
-                    surroundings[0] = block && block->GetBlockstate()->IsSolid();
+                    surroundings[0] = block && (block->GetBlockstate()->IsSolid() || (is_in_fluid && block->GetBlockstate()->IsFluid()));
 
                     block = world->GetBlock(next_location + Position(0, 2, 0));
-                    surroundings[1] = block && block->GetBlockstate()->IsSolid();
+                    surroundings[1] = block && (block->GetBlockstate()->IsSolid() || (is_in_fluid && block->GetBlockstate()->IsFluid()));
                     block = world->GetBlock(next_location);
-                    surroundings[3] = block && block->GetBlockstate()->IsSolid();
+                    surroundings[3] = block && (block->GetBlockstate()->IsSolid() || (is_in_fluid && block->GetBlockstate()->IsFluid()));
                     block = world->GetBlock(next_location + Position(0, -1, 0));
-                    surroundings[4] = block && block->GetBlockstate()->IsSolid();
+                    surroundings[4] = block && (block->GetBlockstate()->IsSolid() || (is_in_fluid && block->GetBlockstate()->IsFluid()));
                     block = world->GetBlock(next_location + Position(0, -2, 0));
-                    surroundings[5] = block && block->GetBlockstate()->IsSolid();
+                    surroundings[5] = block && (block->GetBlockstate()->IsSolid() || (is_in_fluid && block->GetBlockstate()->IsFluid()));
                     block = world->GetBlock(next_location + Position(0, -3, 0));
-                    surroundings[6] = block && block->GetBlockstate()->IsSolid();
+                    surroundings[6] = block && (block->GetBlockstate()->IsSolid() || (is_in_fluid && block->GetBlockstate()->IsFluid()));
 
-                    if (can_jump)
+                    // You can't make large jumps if your feet are in fluid
+                    if (can_jump && !is_in_fluid)
                     {
                         block = world->GetBlock(next_next_location + Position(0, 2, 0));
                         surroundings[7] = block && block->GetBlockstate()->IsSolid();
@@ -934,7 +940,7 @@ namespace Botcraft
                     }
                 }
 
-                if (!can_jump)
+                if (!can_jump || is_in_fluid)
                 {
                     continue;
                 }

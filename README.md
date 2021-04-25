@@ -108,7 +108,7 @@ If the access token present in the launcher file is too old, it will be automati
 It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to activate a farm with almost 0% usage of CPU/GPU. The next step is to add some functionalities like entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
 
 There are also some minor improvements to existing features that have to be done:
-- Improve water/lava/ladder physics (the player can walk on fluids and can't climb the ladders)
+- Improve scafholding/ladder physics (the player can't climb the ladders)
 - Improve pathfinding with real colliders (the pathfinding considers every solid block as box of size 1 but the collisions are computed with the real shapes which lead to bad situations, for example with fences)
 
 ## License
