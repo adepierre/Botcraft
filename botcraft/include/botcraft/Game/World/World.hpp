@@ -7,15 +7,18 @@
 
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/Enums.hpp"
+#include "botcraft/Game/World/Chunk.hpp"
 
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Handler.hpp"
 
 namespace Botcraft
 {
-    class Chunk;
     class Block;
     class Blockstate;
+
+    static const int WORLD_START_Y = 0;
+    static const int WORLD_END_Y = WORLD_START_Y + CHUNK_HEIGHT;
 
     class World : public ProtocolCraft::Handler
     {
