@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     try
     {
         std::string address = "127.0.0.1:25565";
-        int num_bot = 10;
+        int num_bot = 5;
         int num_world = 1;
         std::string nbt_file = "";
         Botcraft::Position offset(0, 0, 0);
