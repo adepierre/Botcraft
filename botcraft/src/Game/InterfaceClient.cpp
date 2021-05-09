@@ -450,6 +450,12 @@ namespace Botcraft
                             local_player->SetSpeedX(target_position.x - local_player->GetX());
                             local_player->SetY(local_player->GetY() + 0.001);
                             local_player->SetSpeedZ(target_position.z - local_player->GetZ());
+
+                            // If the target motion requires going down
+                            if (motion_vector.y < 0)
+                            {
+                                local_player->SetOnGround(false);
+                            }
                         }
                         break;
                     }
@@ -937,6 +943,51 @@ namespace Botcraft
                         cost[new_pos] = new_cost;
                         nodes_to_explore.emplace(PathNode(new_pos, new_cost + Heuristic(new_pos, end)));
                         came_from[new_pos] = current_node.pos;
+                    }
+                }
+
+                // ?  ?  ?
+                // x     ?
+                // x     ?
+                //---    ?
+                //       ?
+                //       ?
+                // Special case here, we can drop down
+                // if there is some water at the bottom
+                if (!surroundings[2] && !surroundings[3]
+                    && !surroundings[4] && !surroundings[5]
+                    && !surroundings[6])
+                {
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+
+                    const Block* block;
+
+                    for (int y = -4; next_location.y + y >= WORLD_START_Y; --y)
+                    {
+                        block = world->GetBlock(next_location + Position(0, y, 0));
+
+                        if (block && block->GetBlockstate()->IsSolid())
+                        {
+                            break;
+                        }
+
+                        if (block && block->GetBlockstate()->IsFluid() 
+                            && block->GetBlockstate()->GetName() == "minecraft:water")
+                        {
+                            const float new_cost = cost[current_node.pos] + std::abs(y);
+                            const Position new_pos = next_location + Position(0, y + 1, 0);
+                            auto it = cost.find(new_pos);
+                            // If we don't already know this node with a better path, add it
+                            if (it == cost.end() ||
+                                new_cost < it->second)
+                            {
+                                cost[new_pos] = new_cost;
+                                nodes_to_explore.emplace(PathNode(new_pos, new_cost + Heuristic(new_pos, end)));
+                                came_from[new_pos] = current_node.pos;
+                            }
+
+                            break;
+                        }
                     }
                 }
 
