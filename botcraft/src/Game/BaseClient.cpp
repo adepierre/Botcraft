@@ -149,16 +149,16 @@ namespace Botcraft
                         rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
                     }
 #endif
-                    msg_position->SetX(local_player->GetPosition().x);
-                    msg_position->SetY(local_player->GetPosition().y);
-                    msg_position->SetZ(local_player->GetPosition().z);
-                    msg_position->SetYRot(local_player->GetYaw());
-                    msg_position->SetXRot(local_player->GetPitch());
-                    msg_position->SetOnGround(local_player->GetOnGround());
-
                     if (network_manager &&
                         (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_send).count() >= 1000))
                     {
+                        msg_position->SetX(local_player->GetPosition().x);
+                        msg_position->SetY(local_player->GetPosition().y);
+                        msg_position->SetZ(local_player->GetPosition().z);
+                        msg_position->SetYRot(local_player->GetYaw());
+                        msg_position->SetXRot(local_player->GetPitch());
+                        msg_position->SetOnGround(local_player->GetOnGround());
+
                         network_manager->Send(msg_position);
                         last_send = std::chrono::system_clock::now();
                     }
