@@ -51,6 +51,16 @@ namespace ProtocolCraft
             type = ReadString(iter, length);
 #else
             type = ReadString(iter, length);
+
+            // Make sure there is a namespace in
+            // the type by adding the default
+            // one when not present
+            // (for compatibility with viaversion)
+            // TODO : add this check for all identifiers
+            if (type.find(":") == std::string::npos)
+            {
+                type = "minecraft:" + type;
+            }
             recipe_id = ReadString(iter, length);
 #endif
             data = RecipeTypeData::CreateRecipeTypeData(type);
