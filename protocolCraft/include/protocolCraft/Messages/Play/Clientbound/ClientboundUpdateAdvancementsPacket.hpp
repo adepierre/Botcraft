@@ -5,6 +5,7 @@
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Advancement.hpp"
 #include "protocolCraft/Types/AdvancementProgress.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -85,20 +86,22 @@ namespace ProtocolCraft
             added.clear();
             for (int i = 0; i < added_size; ++i)
             {
-                const Identifier key = ReadString(iter, length);
+                Identifier key;
+                key.Read(iter, length);
                 added[key].Read(iter, length);
             }
             const int removed_size = ReadVarInt(iter, length);
             removed = std::vector<Identifier>(removed_size);
             for (int i = 0; i < removed_size; ++i)
             {
-                removed[i] = ReadString(iter, length);
+                removed[i].Read(iter, length);
             }
             const int progress_size = ReadVarInt(iter, length);
             progress.clear();
             for (int i = 0; i < progress_size; ++i)
             {
-                const Identifier key = ReadString(iter, length);
+                Identifier key;
+                key.Read(iter, length);
                 progress[key].Read(iter, length);
             }
         }
@@ -109,18 +112,18 @@ namespace ProtocolCraft
             WriteVarInt(added.size(), container);
             for (auto it = added.begin(); it != added.end(); it++)
             {
-                WriteString(it->first, container);
+                it->first.Write(container);
                 it->second.Write(container);
             }
             WriteVarInt(removed.size(), container);
             for (int i = 0; i < removed.size(); ++i)
             {
-                WriteString(removed[i], container);
+                removed[i].Write(container);
             }
             WriteVarInt(progress.size(), container);
             for (auto it = progress.begin(); it != progress.end(); it++)
             {
-                WriteString(it->first, container);
+                it->first.Write(container);
                 it->second.Write(container);
             }
         }
@@ -137,7 +140,7 @@ namespace ProtocolCraft
             {
                 picojson::value value2(picojson::object_type, false);
                 picojson::object& object2 = value2.get<picojson::object>();
-                object2["key"] = picojson::value(it->first);
+                object2["key"] = it->first.Serialize();
                 object2["value"] = it->second.Serialize();
                 array.push_back(value2);
             }
@@ -145,7 +148,7 @@ namespace ProtocolCraft
             array = object["removed"].get<picojson::array>();
             for (int i = 0; i < removed.size(); ++i)
             {
-                array.push_back(picojson::value(removed[i]));
+                array.push_back(removed[i].Serialize());
             } 
             object["progress"] = picojson::value(picojson::array_type, false);
             array = object["progress"].get<picojson::array>();
@@ -153,7 +156,7 @@ namespace ProtocolCraft
             {
                 picojson::value value2(picojson::object_type, false);
                 picojson::object& object2 = value2.get<picojson::object>();
-                object2["key"] = picojson::value(it->first);
+                object2["key"] = it->first.Serialize();
                 object2["value"] = it->second.Serialize();
                 array.push_back(value2);
             }

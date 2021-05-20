@@ -3,6 +3,7 @@
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Chat.hpp"
 #include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -101,7 +102,7 @@ namespace ProtocolCraft
             flags = ReadData<int>(iter, length);
             if (flags & 0x01)
             {
-                background_texture = ReadString(iter, length);
+                background_texture.Read(iter, length);
             }
             x_coord = ReadData<float>(iter, length);
             y_coord = ReadData<float>(iter, length);
@@ -116,7 +117,7 @@ namespace ProtocolCraft
             WriteData<int>(flags, container);
             if (flags & 0x01)
             {
-                WriteString(background_texture, container);
+                background_texture.Write(container);
             }
             WriteData<float>(x_coord, container);
             WriteData<float>(y_coord, container);
@@ -134,7 +135,7 @@ namespace ProtocolCraft
             object["flags"] = picojson::value((double)flags);
             if (flags & 0x01)
             {
-                object["background_texture"] = picojson::value(background_texture);
+                object["background_texture"] = background_texture.Serialize();
             }
             object["x_coord"] = picojson::value((double)x_coord);
             object["y_coord"] = picojson::value((double)y_coord);

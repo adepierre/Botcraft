@@ -13,56 +13,43 @@
 
 namespace ProtocolCraft
 {
-    std::shared_ptr<RecipeTypeData> RecipeTypeData::CreateRecipeTypeData(const std::string& recipe_type)
+    std::shared_ptr<RecipeTypeData> RecipeTypeData::CreateRecipeTypeData(const Identifier& recipe_type)
     {
-#if PROTOCOL_VERSION < 453
-        if (recipe_type == "crafting_shapeless")
+        if (recipe_type.GetFull() == "minecraft:crafting_shapeless")
         {
             return std::shared_ptr<RecipeTypeDataShapeless>(new RecipeTypeDataShapeless);
         }
-        else if (recipe_type == "crafting_shaped")
+        else if (recipe_type.GetFull() == "minecraft:crafting_shaped")
         {
             return std::shared_ptr<RecipeTypeDataShaped>(new RecipeTypeDataShaped);
         }
-        else if (recipe_type == "smelting")
+        else if (recipe_type.GetFull() == "minecraft:smelting")
         {
             return std::shared_ptr<RecipeTypeDataSmelting>(new RecipeTypeDataSmelting);
         }
-#else
-        if (recipe_type == "minecraft:crafting_shapeless")
-        {
-            return std::shared_ptr<RecipeTypeDataShapeless>(new RecipeTypeDataShapeless);
-        }
-        else if (recipe_type == "minecraft:crafting_shaped")
-        {
-            return std::shared_ptr<RecipeTypeDataShaped>(new RecipeTypeDataShaped);
-        }
-        else if (recipe_type == "minecraft:smelting")
-        {
-            return std::shared_ptr<RecipeTypeDataSmelting>(new RecipeTypeDataSmelting);
-        }
-        else if (recipe_type == "minecraft:blasting")
+#if PROTOCOL_VERSION > 452
+        else if (recipe_type.GetFull() == "minecraft:blasting")
         {
             return std::shared_ptr<RecipeTypeDataBlasting>(new RecipeTypeDataBlasting);
         }
-        else if (recipe_type == "minecraft:smoking")
+        else if (recipe_type.GetFull() == "minecraft:smoking")
         {
             return std::shared_ptr<RecipeTypeDataSmoking>(new RecipeTypeDataSmoking);
         }
-        else if (recipe_type == "minecraft:campfire_cooking")
+        else if (recipe_type.GetFull() == "minecraft:campfire_cooking")
         {
             return std::shared_ptr<RecipeTypeDataCampfireCooking>(new RecipeTypeDataCampfireCooking);
         }
-        else if (recipe_type == "minecraft:stonecutting")
+        else if (recipe_type.GetFull() == "minecraft:stonecutting")
         {
             return std::shared_ptr<RecipeTypeDataStoneCutting>(new RecipeTypeDataStoneCutting);
         }
+#endif
 #if PROTOCOL_VERSION > 732
-        else if (recipe_type == "minecraft:smithing")
+        else if (recipe_type.GetFull() == "minecraft:smithing")
         {
             return std::shared_ptr<RecipeTypeDataSmithing>(new RecipeTypeDataSmithing);
         }
-#endif
 #endif
         else
         {

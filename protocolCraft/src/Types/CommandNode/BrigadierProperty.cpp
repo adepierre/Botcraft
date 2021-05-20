@@ -12,33 +12,33 @@
 
 namespace ProtocolCraft
 {
-    std::shared_ptr<BrigadierProperty> BrigadierProperty::CreateProperties(const std::string& parser_identifier)
+    std::shared_ptr<BrigadierProperty> BrigadierProperty::CreateProperties(const Identifier& parser_identifier)
     {
-        if (parser_identifier == "brigadier:double")
+        if (parser_identifier.GetFull() == "brigadier:double")
         {
             return std::shared_ptr<BrigadierPropertyDouble>(new BrigadierPropertyDouble);
         }
-        else if (parser_identifier == "brigadier:float")
+        else if (parser_identifier.GetFull() == "brigadier:float")
         {
             return std::shared_ptr<BrigadierPropertyFloat>(new BrigadierPropertyFloat);
         }
-        else if (parser_identifier == "brigadier:integer")
+        else if (parser_identifier.GetFull() == "brigadier:integer")
         {
             return std::shared_ptr<BrigadierPropertyInteger>(new BrigadierPropertyInteger);
         }
-        else if (parser_identifier == "brigadier:string")
+        else if (parser_identifier.GetFull() == "brigadier:string")
         {
             return std::shared_ptr<BrigadierPropertyString>(new BrigadierPropertyString);
         }
-        else if (parser_identifier == "minecraft:entity")
+        else if (parser_identifier.GetFull() == "minecraft:entity")
         {
             return std::shared_ptr<BrigadierPropertyEntity>(new BrigadierPropertyEntity);
         }
-        else if (parser_identifier == "minecraft:score_holder")
+        else if (parser_identifier.GetFull() == "minecraft:score_holder")
         {
             return std::shared_ptr<BrigadierPropertyScoreHolder>(new BrigadierPropertyScoreHolder);
         }
-        else if (parser_identifier == "minecraft:range")
+        else if (parser_identifier.GetFull() == "minecraft:range")
         {
             return std::shared_ptr<BrigadierPropertyRange>(new BrigadierPropertyRange);
         }

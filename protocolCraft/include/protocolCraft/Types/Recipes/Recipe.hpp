@@ -2,10 +2,10 @@
 
 #if PROTOCOL_VERSION > 347
 #include <memory>
-#include <string>
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -17,7 +17,7 @@ namespace ProtocolCraft
             recipe_id = recipe_id_;
         }
 
-        void SetType(const std::string& type_)
+        void SetType(const Identifier& type_)
         {
             type = type_;
         }
@@ -33,7 +33,7 @@ namespace ProtocolCraft
             return recipe_id;
         }
         
-        const std::string& GetType() const
+        const Identifier& GetType() const
         {
             return type;
         }
@@ -47,21 +47,11 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 453
-            recipe_id = ReadString(iter, length);
-            type = ReadString(iter, length);
+            recipe_id.Read(iter, length);
+            type.Read(iter, length);
 #else
-            type = ReadString(iter, length);
-
-            // Make sure there is a namespace in
-            // the type by adding the default
-            // one when not present
-            // (for compatibility with viaversion)
-            // TODO : add this check for all identifiers
-            if (type.find(":") == std::string::npos)
-            {
-                type = "minecraft:" + type;
-            }
-            recipe_id = ReadString(iter, length);
+            type.Read(iter, length);
+            recipe_id.Read(iter, length);
 #endif
             data = RecipeTypeData::CreateRecipeTypeData(type);
             data->Read(iter, length);
@@ -70,11 +60,11 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 453
-            WriteString(recipe_id, container);
-            WriteString(type, container);
+            recipe_id.Write(container);
+            type.Write(container);
 #else
-            WriteString(type, container);
-            WriteString(recipe_id, container);
+            type.Write(container);
+            recipe_id.Write(container);
 #endif
             data->Write(container);
         }
@@ -84,8 +74,8 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["recipe_id"] = picojson::value(recipe_id);
-            object["type"] = picojson::value(type);
+            object["recipe_id"] = recipe_id.Serialize();
+            object["type"] = type.Serialize();
             object["data"] = data->Serialize();
 
             return value;
@@ -93,7 +83,7 @@ namespace ProtocolCraft
 
     private:
         Identifier recipe_id;
-        std::string type;
+        Identifier type;
         std::shared_ptr<RecipeTypeData> data;
     };
 }

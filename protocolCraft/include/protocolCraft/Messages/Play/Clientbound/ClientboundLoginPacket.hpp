@@ -1,6 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -274,13 +275,13 @@ namespace ProtocolCraft
             levels = std::vector<Identifier>(levels_size);
             for (int i = 0; i < levels_size; ++i)
             {
-                levels[i] = ReadString(iter, length);
+                levels[i].Read(iter, length);
             }
             registry_holder.Read(iter, length);
 #if PROTOCOL_VERSION > 747
             dimension_type.Read(iter, length);
 #endif
-            dimension = ReadString(iter, length);
+            dimension.Read(iter, length);
 #else
             dimension = ReadData<int>(iter, length);
 #endif
@@ -323,13 +324,13 @@ namespace ProtocolCraft
             WriteVarInt(levels.size(), container);
             for (int i = 0; i < levels.size(); ++i)
             {
-                WriteString(levels[i], container);
+                levels[i].Write(container);
             }
             registry_holder.Write(container);
 #if PROTOCOL_VERSION > 747
             dimension_type.Write(container);
 #endif
-            WriteString(dimension, container);
+            dimension.Write(container);
 #else
             WriteData<int>(dimension, container);
 #endif
@@ -376,14 +377,14 @@ namespace ProtocolCraft
             picojson::array& array = object["levels"].get<picojson::array>();
             for (int i = 0; i < levels.size(); ++i)
             {
-                array.push_back(picojson::value(levels[i]));
+                array.push_back(levels[i].Serialize());
             }
             object["registry_holder"] = registry_holder.Serialize();
 
 #if PROTOCOL_VERSION > 747
             object["dimension_type"] = dimension_type.Serialize();
 #endif
-            object["dimension"] = picojson::value(dimension);
+            object["dimension"] = dimension.Serialize();
 #else
             object["dimension"] = picojson::value((double)dimension);
 #endif

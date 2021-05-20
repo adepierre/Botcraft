@@ -3,6 +3,7 @@
 #if PROTOCOL_VERSION > 348
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft 
 {
@@ -43,7 +44,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            tag_name = ReadString(iter, length);
+            tag_name.Read(iter, length);
             count = ReadVarInt(iter, length);
             entries = std::vector<int>(count);
             for (int i = 0; i < count; ++i)
@@ -54,7 +55,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(tag_name, container);
+            tag_name.Write(container);
             WriteVarInt(count, container);
             for (int i = 0; i < count; ++i)
             {
@@ -67,7 +68,7 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["tag_name"] = picojson::value(tag_name);
+            object["tag_name"] = tag_name.Serialize();
             object["count"] = picojson::value((double)count);
             object["entries"] = picojson::value(picojson::array_type, false);
             picojson::array& array = object["entries"].get<picojson::array>();

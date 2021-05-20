@@ -2,6 +2,7 @@
 
 #if PROTOCOL_VERSION > 736
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -36,12 +37,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            recipe = ReadString(iter, length);
+            recipe.Read(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(recipe, container);
+            recipe.Write(container);
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -49,7 +50,7 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["recipe"] = picojson::value(recipe);
+            object["recipe"] = recipe.Serialize();
 
             return value;
         }

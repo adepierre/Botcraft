@@ -12,7 +12,6 @@ namespace ProtocolCraft
 
     using Angle = unsigned char;
     using UUID = std::string;
-    using Identifier = std::string;
 
     int ReadVarInt(ReadIterator &iter, size_t &length);
     void WriteVarInt(const int my_int, WriteContainer &container);

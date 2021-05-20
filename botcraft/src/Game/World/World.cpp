@@ -804,7 +804,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 719
         current_dimension = (Dimension)msg.GetDimension();
 #else
-        current_dimension = msg.GetDimension();
+        current_dimension = msg.GetDimension().GetName();
 #endif
     }
 
@@ -816,7 +816,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 719
         current_dimension = (Dimension)msg.GetDimension();
 #else
-        current_dimension = msg.GetDimension();
+        current_dimension = msg.GetDimension().GetName();
 #endif
     }
 

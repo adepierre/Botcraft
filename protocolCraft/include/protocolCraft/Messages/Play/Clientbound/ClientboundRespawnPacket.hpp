@@ -2,6 +2,7 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/enums.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -169,7 +170,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 747
             dimension_type.Read(iter, length);
 #endif
-            dimension = ReadString(iter, length);
+            dimension.Read(iter, length);
 #else
             dimension = ReadData<int>(iter, length);
 #endif
@@ -196,7 +197,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 747
             dimension_type.Write(container);
 #endif
-            WriteString(dimension, container);
+            dimension.Write(container);
 #else
             WriteData<int>((int)dimension, container);
 #endif
@@ -226,7 +227,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 747
             object["dimension_type"] = dimension_type.Serialize();
 #endif
-            object["dimension"] = picojson::value(dimension);
+            object["dimension"] = dimension.Serialize();
 #else
             object["dimension"] = picojson::value((double)dimension);
 #endif

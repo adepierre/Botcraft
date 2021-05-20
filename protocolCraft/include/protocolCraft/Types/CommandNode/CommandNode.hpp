@@ -5,6 +5,7 @@
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierProperty.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 
 namespace ProtocolCraft 
@@ -114,13 +115,13 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
-                parser = ReadString(iter, length);
+                parser.Read(iter, length);
                 properties = BrigadierProperty::CreateProperties(parser);
                 properties->Read(iter, length);
             }
             if (flags & 0x10)
             {
-                suggestions_type = ReadString(iter, length);
+                suggestions_type.Read(iter, length);
             }
         }
 
@@ -143,12 +144,12 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
-                WriteString(parser, container);
+                parser.Write(container);
                 properties->Write(container);
             }
             if (flags & 0x10)
             {
-                WriteString(suggestions_type, container);
+                suggestions_type.Write(container);
             }
         }
 
@@ -177,12 +178,12 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
-                object["parser"] = picojson::value(parser);
+                object["parser"] = parser.Serialize();
                 object["properties"] = properties->Serialize();
             }
             if (flags & 0x10)
             {
-                object["suggestions_type"] = picojson::value(suggestions_type);
+                object["suggestions_type"] = suggestions_type.Serialize();
             }
 
             return value;

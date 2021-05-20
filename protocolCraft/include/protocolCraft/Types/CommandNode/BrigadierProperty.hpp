@@ -5,6 +5,7 @@
 #include <string>
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -12,7 +13,7 @@ namespace ProtocolCraft
     {
     public:
         
-        static std::shared_ptr<BrigadierProperty> CreateProperties(const std::string& parser_identifier);
+        static std::shared_ptr<BrigadierProperty> CreateProperties(const Identifier& parser_identifier);
     };
 }
 #endif

@@ -2,6 +2,7 @@
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/AdvancementDisplay.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -96,7 +97,7 @@ namespace ProtocolCraft
             has_parent = ReadData<bool>(iter, length);
             if (has_parent)
             {
-                parent_id = ReadString(iter, length);
+                parent_id.Read(iter, length);
             }
             has_display = ReadData<bool>(iter, length);
             if (has_display)
@@ -107,7 +108,7 @@ namespace ProtocolCraft
             criteria = std::vector<Identifier>(number_of_criteria);
             for (int i = 0; i < number_of_criteria; ++i)
             {
-                criteria[i] = ReadString(iter, length);
+                criteria[i].Read(iter, length);
             }
             array_length = ReadVarInt(iter, length);
             requirements = std::vector<std::vector<std::string> >(array_length);
@@ -127,7 +128,7 @@ namespace ProtocolCraft
             WriteData<bool>(has_parent, container);
             if (has_parent)
             {
-                WriteString(parent_id, container);
+                parent_id.Write(container);
             }
             WriteData<bool>(has_display, container);
             if (has_display)
@@ -137,7 +138,7 @@ namespace ProtocolCraft
             WriteVarInt(number_of_criteria, container);
             for (int i = 0; i < number_of_criteria; ++i)
             {
-                WriteString(criteria[i], container);
+                criteria[i].Write(container);
             }
             WriteVarInt(array_length, container);
             for (int i = 0; i < array_length; ++i)
@@ -158,7 +159,7 @@ namespace ProtocolCraft
             object["has_parent"] = picojson::value(has_parent);
             if (has_parent)
             {
-                object["parent_id"] = picojson::value(parent_id);
+                object["parent_id"] = parent_id.Serialize();
             }
             object["has_display"] = picojson::value(has_display);
             if (has_display)
@@ -171,7 +172,7 @@ namespace ProtocolCraft
             picojson::array& array = object["criteria"].get<picojson::array>();
             for (int i = 0; i < number_of_criteria; ++i)
             {
-                array.push_back(picojson::value(criteria[i]));
+                array.push_back(criteria[i].Serialize());
             }
 
             object["array_length"] = picojson::value((double)array_length);

@@ -183,6 +183,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/CriterionProgress.hpp
     include/protocolCraft/Types/EntityModifierData.hpp
     include/protocolCraft/Types/EntityProperty.hpp
+    include/protocolCraft/Types/Identifier.hpp
     include/protocolCraft/Types/MapDecoration.hpp
     include/protocolCraft/Types/NetworkPosition.hpp
     include/protocolCraft/Types/PlayerProperty.hpp

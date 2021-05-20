@@ -4,6 +4,7 @@
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/CriterionProgress.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -38,7 +39,8 @@ namespace ProtocolCraft
             criteria.clear();
             for (int i = 0; i < size; ++i)
             {
-                const Identifier identifier = ReadString(iter, length);
+                Identifier identifier;
+                identifier.Read(iter, length);
                 criteria[identifier].Read(iter, length);
             }
         }
@@ -48,7 +50,7 @@ namespace ProtocolCraft
             WriteVarInt(size, container);
             for (auto it = criteria.begin(); it != criteria.end(); it++)
             {
-                WriteString(it->first, container);
+                it->first.Write(container);
                 it->second.Write(container);
             }
         }
@@ -67,7 +69,7 @@ namespace ProtocolCraft
             {
                 picojson::value value2(picojson::object_type, false);
                 picojson::object& object2 = value2.get<picojson::object>();
-                object2["criterion_identifier"] = picojson::value(it->first);
+                object2["criterion_identifier"] = it->first.Serialize();
                 object2["criterion_progress"] = it->second.Serialize();
                 array.push_back(value2);
             }

@@ -2,6 +2,7 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Recipes/RecipeBookSettings.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -111,7 +112,7 @@ namespace ProtocolCraft
             for (int i = 0; i < recipes_size; ++i)
             {
 #if PROTOCOL_VERSION > 348
-                recipes[i] = ReadString(iter, length);
+                recipes[i].Read(iter, length);
 #else
                 recipes[i] = ReadVarInt(iter, length);
 #endif
@@ -127,7 +128,7 @@ namespace ProtocolCraft
                 for (int i = 0; i < to_highlight_size; ++i)
                 {
 #if PROTOCOL_VERSION > 348
-                    to_highlight[i] = ReadString(iter, length);
+                    to_highlight[i].Read(iter, length);
 #else
                     to_highlight[i] = ReadVarInt(iter, length);
 #endif
@@ -143,7 +144,7 @@ namespace ProtocolCraft
             for (int i = 0; i < recipes.size(); ++i)
             {
 #if PROTOCOL_VERSION > 348
-                WriteString(recipes[i], container);
+                recipes[i].Write(container);
 #else
                 WriteVarInt(recipes[i], container);
 #endif
@@ -154,7 +155,7 @@ namespace ProtocolCraft
                 for (int i = 0; i < to_highlight.size(); ++i)
                 {
 #if PROTOCOL_VERSION > 348
-                    WriteString(to_highlight[i], container);
+                    to_highlight[i].Write(container);
 #else
                     WriteVarInt(to_highlight[i], container);
 #endif
@@ -175,7 +176,7 @@ namespace ProtocolCraft
             for (int i = 0; i < recipes.size(); ++i)
             {
 #if PROTOCOL_VERSION > 348
-                array_recipes.push_back(picojson::value(recipes[i]));
+                array_recipes.push_back(recipes[i].Serialize());
 #else
                 array_recipes.push_back(picojson::value((double)recipes[i]));
 #endif
@@ -189,7 +190,7 @@ namespace ProtocolCraft
                 for (int i = 0; i < to_highlight.size(); ++i)
                 {
 #if PROTOCOL_VERSION > 348
-                    array_to_highlight.push_back(picojson::value(to_highlight[i]));
+                    array_to_highlight.push_back(to_highlight[i].Serialize());
 #else
                     array_to_highlight.push_back(picojson::value((double)to_highlight[i]));
 #endif

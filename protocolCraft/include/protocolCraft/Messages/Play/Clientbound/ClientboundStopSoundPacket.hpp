@@ -2,6 +2,7 @@
 
 #if PROTOCOL_VERSION > 342
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -62,20 +63,20 @@ namespace ProtocolCraft
             }
             if (flags & 0x02)
             {
-                name_ = ReadString(iter, length);
+                name_.Read(iter, length);
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<char>(((!name_.empty()) << 1) | (source != -1), container);
+            WriteData<char>(((!name_.GetName().empty()) << 1) | (source != -1), container);
             if (source != -1)
             {
                 WriteVarInt((int)source, container);
             }
-            if (!name_.empty())
+            if (!name_.GetName().empty())
             {
-                WriteString(name_, container);
+                name_.Write(container);
             }
         }
 
@@ -89,9 +90,9 @@ namespace ProtocolCraft
             {
                 object["source"] = picojson::value((double)source);
             }
-            if (!name_.empty())
+            if (!name_.GetName().empty())
             {
-                object["name_"] = picojson::value(name_);
+                object["name_"] = name_.Serialize();
             }
 
             return value;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -68,7 +69,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 348
             recipe = ReadVarInt(iter, length);
 #else
-            recipe = ReadString(iter, length);
+            recipe.Read(iter, length);
 #endif
         }
 
@@ -78,7 +79,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 348
             WriteVarInt(recipe, container);
 #else
-            WriteString(recipe, container);
+            recipe.Write(container);
 #endif
         }
 
@@ -91,7 +92,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 348
             object["recipe"] = picojson::value((double)recipe);
 #else
-            object["recipe"] = picojson::value(recipe);
+            object["recipe"] = recipe.Serialize();
 #endif
 
             return value;

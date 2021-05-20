@@ -2,9 +2,9 @@
 
 #if PROTOCOL_VERSION > 347
 #include <memory>
-#include <string>
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -12,7 +12,7 @@ namespace ProtocolCraft
     {
     public:
         
-        static std::shared_ptr<RecipeTypeData> CreateRecipeTypeData(const std::string& recipe_type);
+        static std::shared_ptr<RecipeTypeData> CreateRecipeTypeData(const Identifier& recipe_type);
     };
 }
 #endif

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -59,7 +60,7 @@ namespace ProtocolCraft
             action = ReadVarInt(iter, length);
             if (action == 0)
             {
-                tab = ReadString(iter, length);
+                tab.Read(iter, length);
             }
         }
 
@@ -68,7 +69,7 @@ namespace ProtocolCraft
             WriteVarInt(action, container);
             if (action == 0)
             {
-                WriteString(tab, container);
+                tab.Write(container);
             }
         }
 
@@ -80,7 +81,7 @@ namespace ProtocolCraft
             object["action"] = picojson::value((double)action);
             if (action == 0)
             {
-                object["tab"] = picojson::value(tab);
+                object["tab"] = tab.Serialize();
             }
 
             return value;

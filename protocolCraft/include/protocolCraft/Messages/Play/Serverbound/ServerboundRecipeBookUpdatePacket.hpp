@@ -2,6 +2,7 @@
 
 #if PROTOCOL_VERSION < 737
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -154,7 +155,7 @@ namespace ProtocolCraft
             {
             case 0:
 #if PROTOCOL_VERSION > 375
-                recipe = ReadString(iter, length);
+                recipe.Read(iter, length);
 #else
                 recipe = ReadVarInt(iter, length);
 #endif
@@ -185,7 +186,7 @@ namespace ProtocolCraft
             {
             case 0:
 #if PROTOCOL_VERSION > 375
-                WriteString(recipe, container);
+                recipe.Write(container);
 #else
                 WriteVarInt(recipe, container);
 #endif
@@ -219,7 +220,7 @@ namespace ProtocolCraft
             {
             case 0:
 #if PROTOCOL_VERSION > 375
-                object["recipe"] = picojson::value(recipe);
+                object["recipe"] = recipe.Serialize();
 #else
                 object["recipe"] = picojson::value((double)recipe);
 #endif

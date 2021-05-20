@@ -5,6 +5,7 @@
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/EntityModifierData.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -69,7 +70,11 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
+#if PROTOCOL_VERSION > 709
+            key.Read(iter, length);
+#else
             key = ReadString(iter, length);
+#endif
             value = ReadData<double>(iter, length);
             number_of_modifiers = ReadVarInt(iter, length);
             modifiers = std::vector<EntityModifierData>(number_of_modifiers);
@@ -81,7 +86,11 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
+#if PROTOCOL_VERSION > 709
+            key.Write(container);
+#else
             WriteString(key, container);
+#endif
             WriteData<double>(value, container);
             WriteVarInt(number_of_modifiers, container);
             for (int i = 0; i < number_of_modifiers; ++i)
@@ -95,7 +104,11 @@ namespace ProtocolCraft
             picojson::value val(picojson::object_type, false);
             picojson::object& object = val.get<picojson::object>();
 
+#if PROTOCOL_VERSION > 709
+            object["key"] = key.Serialize();
+#else
             object["key"] = picojson::value(key);
+#endif
             object["value"] = picojson::value((double)value);
             object["number_of_modifiers"] = picojson::value((double)number_of_modifiers);
 

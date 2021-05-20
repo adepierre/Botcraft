@@ -3,6 +3,7 @@
 #if PROTOCOL_VERSION > 471
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
@@ -123,12 +124,12 @@ namespace ProtocolCraft
         {
             pos.Read(iter, length);
 #if PROTOCOL_VERSION > 708
-            name_ = ReadString(iter, length);
-            target = ReadString(iter, length);
-            pool = ReadString(iter, length);
+            name_.Read(iter, length);
+            target.Read(iter, length);
+            pool.Read(iter, length);
 #else
-            attachment_type = ReadString(iter, length);
-            target_pool = ReadString(iter, length);
+            attachment_type.Read(iter, length);
+            target_pool.Read(iter, length);
 #endif
             final_state = ReadString(iter, length);
 #if PROTOCOL_VERSION > 708
@@ -140,12 +141,12 @@ namespace ProtocolCraft
         {
             pos.Write(container);
 #if PROTOCOL_VERSION > 708
-            WriteString(name_, container);
-            WriteString(target, container);
-            WriteString(pool, container);
+            name_.Write(container);
+            target.Write(container);
+            pool.Write(container);
 #else
-            WriteString(attachment_type, container);
-            WriteString(target_pool, container);
+            attachment_type.Write(container);
+            target_pool.Write(container);
 #endif
             WriteString(final_state, container);
 #if PROTOCOL_VERSION > 708
@@ -160,12 +161,12 @@ namespace ProtocolCraft
 
             object["pos"] = pos.Serialize();
 #if PROTOCOL_VERSION > 708
-            object["name_"] = picojson::value(name_);
-            object["target"] = picojson::value(target);
-            object["pool"] = picojson::value(pool);
+            object["name_"] = name_.Serialize();
+            object["target"] = target.Serialize();
+            object["pool"] = pool.Serialize();
 #else
-            object["attachment_type"] = picojson::value(attachment_type);
-            object["target_pool"] = picojson::value(target_pool);
+            object["attachment_type"] = attachment_type.Serialize();
+            object["target_pool"] = target_pool.Serialize();
 #endif
             object["final_state"] = picojson::value(final_state);
 #if PROTOCOL_VERSION > 708
