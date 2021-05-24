@@ -40,6 +40,11 @@ namespace ProtocolCraft
             return "Recipe";
         }
 
+        virtual ~ClientboundRecipePacket() override
+        {
+
+        }
+
         void SetState(const RecipeState state_)
         {
             state = state_;

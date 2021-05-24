@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Set Default Spawn Position";
         }
 
+        virtual ~ClientboundSetDefaultSpawnPositionPacket() override
+        {
+
+        }
+
         void SetLocation(const NetworkPosition& location_)
         {
             location = location_;

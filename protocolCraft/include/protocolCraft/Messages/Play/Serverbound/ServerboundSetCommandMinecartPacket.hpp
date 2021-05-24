@@ -30,6 +30,11 @@ namespace ProtocolCraft
             return "Set Command Minecart";
         }
 
+        virtual ~ServerboundSetCommandMinecartPacket() override
+        {
+
+        }
+
         void SetEntity(const int entity_)
         {
             entity = entity_;

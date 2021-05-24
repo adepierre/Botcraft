@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Update Recipes";
         }
 
+        virtual ~ClientboundUpdateRecipesPacket() override
+        {
+
+        }
+
 
         void SetRecipes(const std::vector<Recipe>& recipes_)
         {

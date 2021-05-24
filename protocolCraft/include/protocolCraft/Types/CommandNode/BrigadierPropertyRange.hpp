@@ -7,7 +7,12 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyRange : public BrigadierProperty
     {
-    public:        
+    public:
+        virtual ~BrigadierPropertyRange()
+        {
+
+        }
+
         void SetDecimals(const double decimals_)
         {
             decimals = decimals_;

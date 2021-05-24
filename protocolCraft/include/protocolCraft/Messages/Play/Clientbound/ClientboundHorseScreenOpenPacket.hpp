@@ -28,6 +28,11 @@ namespace ProtocolCraft
             return "Horse Screen Open";
         }
 
+        virtual ~ClientboundHorseScreenOpenPacket() override
+        {
+
+        }
+
         void SetContainerId(const char container_id_)
         {
             container_id = container_id_;

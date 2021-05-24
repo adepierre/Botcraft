@@ -10,6 +10,11 @@ namespace ProtocolCraft
     class RecipeTypeDataSmoking : public RecipeTypeData
     {
     public:
+        virtual ~RecipeTypeDataSmoking() override
+        {
+
+        }
+
         void SetGroup(const std::string& group_)
         {
             group = group_;

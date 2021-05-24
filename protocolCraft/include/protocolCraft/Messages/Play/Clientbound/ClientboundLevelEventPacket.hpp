@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Level Event";
         }
 
+        virtual ~ClientboundLevelEventPacket() override
+        {
+
+        }
+
         void SetType(const int type_)
         {
             type = type_;

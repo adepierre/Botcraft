@@ -28,7 +28,7 @@ namespace ProtocolCraft
     {
     public:
         Tag();
-        ~Tag();
+        virtual ~Tag() = 0;
 
         static std::shared_ptr<Tag> CreateTag(const TagType type);
         static const std::string TagTypeToString(const TagType type);

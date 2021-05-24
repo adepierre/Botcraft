@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Add Painting";
         }
 
+        virtual ~ClientboundAddPaintingPacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

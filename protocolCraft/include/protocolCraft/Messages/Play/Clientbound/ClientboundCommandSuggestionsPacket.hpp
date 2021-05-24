@@ -35,6 +35,11 @@ namespace ProtocolCraft
             return "Command Suggestions";
         }
 
+        virtual ~ClientboundCommandSuggestionsPacket() override
+        {
+
+        }
+
 #if PROTOCOL_VERSION > 356
         void SetId_(const int id__)
         {

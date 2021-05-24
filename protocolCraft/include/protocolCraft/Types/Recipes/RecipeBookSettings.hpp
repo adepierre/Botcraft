@@ -7,6 +7,11 @@ namespace ProtocolCraft
     class RecipeBookSettings : public NetworkType
     {
     public:
+        virtual ~RecipeBookSettings() override
+        {
+
+        }
+
         void SetIsGuiOpen(const bool is_gui_open_)
         {
             is_gui_open = is_gui_open_;

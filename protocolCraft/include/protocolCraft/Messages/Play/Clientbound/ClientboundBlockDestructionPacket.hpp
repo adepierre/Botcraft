@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Block Break Animation";
         }
 
+        virtual ~ClientboundBlockDestructionPacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

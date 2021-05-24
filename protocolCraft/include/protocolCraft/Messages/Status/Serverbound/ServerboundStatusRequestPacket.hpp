@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Status Request";
         }
 
+        virtual ~ServerboundStatusRequestPacket() override
+        {
+
+        }
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {

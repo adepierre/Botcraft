@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Player Abilities";
         }
 
+        virtual ~ServerboundPlayerAbilitiesPacket() override
+        {
+
+        }
+
         void SetFlags(const char flags_)
         {
             flags = flags_;

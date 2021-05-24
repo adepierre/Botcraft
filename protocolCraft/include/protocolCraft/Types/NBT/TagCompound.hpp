@@ -11,7 +11,7 @@ namespace ProtocolCraft
     {
     public:
         TagCompound();
-        ~TagCompound();
+        virtual ~TagCompound();
 
         const std::map<std::string, std::shared_ptr<Tag> >& GetValues() const;
         void SetValues(const std::map<std::string, std::shared_ptr<Tag> > &v);

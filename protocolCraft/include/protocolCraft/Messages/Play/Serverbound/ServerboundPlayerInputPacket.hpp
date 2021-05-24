@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Player Input";
         }
 
+        virtual ~ServerboundPlayerInputPacket() override
+        {
+
+        }
+
         void SetXxa(const float xxa_)
         {
             xxa = xxa_;

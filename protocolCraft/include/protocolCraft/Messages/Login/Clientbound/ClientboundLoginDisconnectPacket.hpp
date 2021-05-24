@@ -18,6 +18,11 @@ namespace ProtocolCraft
             return "Login Disconnect";
         }
 
+        virtual ~ClientboundLoginDisconnectPacket() override
+        {
+
+        }
+
         void SetReason(const Chat& reason_)
         {
             reason = reason_;

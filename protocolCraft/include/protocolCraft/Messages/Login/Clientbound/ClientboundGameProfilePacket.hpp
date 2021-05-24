@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Game Profile";
         }
 
+        virtual ~ClientboundGameProfilePacket() override
+        {
+
+        }
+
 #if PROTOCOL_VERSION > 706
         void SetUUID(const UUID& uuid_)
         {

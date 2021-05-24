@@ -22,6 +22,11 @@ namespace ProtocolCraft
             return "Recipe Book Change Settings";
         }
 
+        virtual ~ServerboundRecipeBookChangeSettingsPacket() override
+        {
+
+        }
+
         void SetBookType(const int book_type_)
         {
             book_type = book_type_;

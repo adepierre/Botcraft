@@ -11,6 +11,11 @@ namespace ProtocolCraft
     class Message : public NetworkType
     {
     public:
+        virtual ~Message()
+        {
+
+        }
+
         virtual void Write(WriteContainer &container) const override
         {
             WriteVarInt(GetId(), container);

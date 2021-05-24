@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Animate";
         }
 
+        virtual ~ClientboundAnimatePacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

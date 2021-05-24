@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Forget Level Chunk";
         }
 
+        virtual ~ClientboundForgetLevelChunkPacket() override
+        {
+
+        }
+
         void SetX(const int x_)
         {
             x = x_;

@@ -41,6 +41,11 @@ namespace ProtocolCraft
             return "Set Border";
         }
 
+        virtual ~ClientboundSetBorderPacket() override
+        {
+
+        }
+
         void SetAction(const SetBorderType action_)
         {
             action = action_;

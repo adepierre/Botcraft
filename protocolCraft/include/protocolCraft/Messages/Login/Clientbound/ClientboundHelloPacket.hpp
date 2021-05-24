@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Hello";
         }
 
+        virtual ~ClientboundHelloPacket() override
+        {
+
+        }
+
         void SetServerID(const std::string& server_id_)
         {
             server_ID = server_id_;

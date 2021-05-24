@@ -11,6 +11,7 @@ namespace ProtocolCraft
     class RecipeTypeData : public NetworkType
     {
     public:
+        virtual ~RecipeTypeData() override;
         
         static std::shared_ptr<RecipeTypeData> CreateRecipeTypeData(const Identifier& recipe_type);
     };

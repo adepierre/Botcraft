@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Map Item Data";
         }
 
+        virtual ~ClientboundMapItemDataPacket() override
+        {
+
+        }
+
         void SetMapId(const int map_id_)
         {
             map_id = map_id_;

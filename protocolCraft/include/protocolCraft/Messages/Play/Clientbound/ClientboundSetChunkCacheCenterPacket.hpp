@@ -28,6 +28,11 @@ namespace ProtocolCraft
             return "Set Chunk Cache Center";
         }
 
+        virtual ~ClientboundSetChunkCacheCenterPacket() override
+        {
+
+        }
+
         void SetX(const int x_)
         {
             x = x_;

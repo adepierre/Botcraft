@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Commands";
         }
 
+        virtual ~ClientboundCommandsPacket() override
+        {
+
+        }
+
         void SetNodes(const std::vector<CommandNode>& nodes_)
         {
             nodes = nodes_;

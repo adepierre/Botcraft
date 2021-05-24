@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Client Information";
         }
 
+        virtual ~ServerboundClientInformationPacket() override
+        {
+
+        }
+
         void SetLanguage(const std::string &language_)
         {
             language = language_;

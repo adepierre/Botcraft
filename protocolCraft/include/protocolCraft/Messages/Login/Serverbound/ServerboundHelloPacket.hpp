@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Hello";
         }
 
+        virtual ~ServerboundHelloPacket() override
+        {
+
+        }
+
         void SetGameProfile(const std::string &n)
         {
             game_profile = n;

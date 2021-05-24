@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Command Block";
         }
 
+        virtual ~ServerboundSetCommandBlockPacket() override
+        {
+
+        }
+
         void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;

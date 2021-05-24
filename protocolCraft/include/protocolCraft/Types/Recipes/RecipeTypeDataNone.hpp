@@ -8,6 +8,11 @@ namespace ProtocolCraft
     class RecipeTypeDataNone : public RecipeTypeData
     {
     public:
+        virtual ~RecipeTypeDataNone() override
+        {
+
+        }
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override

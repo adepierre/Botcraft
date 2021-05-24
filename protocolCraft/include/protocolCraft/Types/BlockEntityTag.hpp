@@ -10,6 +10,11 @@ namespace ProtocolCraft
     class BlockEntityTag : public NetworkType
     {
     public:
+        virtual ~BlockEntityTag() override
+        {
+
+        }
+
         void SetTagName(const Identifier& tag_name_)
         {
             tag_name = tag_name_;

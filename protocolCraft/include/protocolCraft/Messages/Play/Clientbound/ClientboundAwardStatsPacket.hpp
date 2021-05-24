@@ -33,6 +33,11 @@ namespace ProtocolCraft
             return "Award Stats";
         }
 
+        virtual ~ClientboundAwardStatsPacket() override
+        {
+
+        }
+
 #if PROTOCOL_VERSION < 346
         void SetStats(const std::map<std::string, int>& stats_)
         {

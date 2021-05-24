@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Move Vehicle";
         }
 
+        virtual ~ClientboundMoveVehiclePacket() override
+        {
+
+        }
+
         void SetX(const double x_)
         {
             x = x_;

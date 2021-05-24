@@ -11,6 +11,11 @@ namespace ProtocolCraft
     class AdvancementProgress : public NetworkType
     {
     public:
+        virtual ~AdvancementProgress() override
+        {
+
+        }
+
         void SetSize(const int size_)
         {
             size = size_;

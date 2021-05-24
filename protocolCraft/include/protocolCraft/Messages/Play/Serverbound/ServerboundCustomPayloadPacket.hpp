@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Custom Payload";
         }
 
+        virtual ~ServerboundCustomPayloadPacket() override
+        {
+
+        }
+
         void SetIdentifier(const std::string& identifier_)
         {
             identifier = identifier_;

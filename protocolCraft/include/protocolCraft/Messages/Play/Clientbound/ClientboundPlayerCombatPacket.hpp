@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Player Combat";
         }
 
+        virtual ~ClientboundPlayerCombatPacket() override
+        {
+
+        }
+
         void SetEvent(const int event_)
         {
             event = event_;

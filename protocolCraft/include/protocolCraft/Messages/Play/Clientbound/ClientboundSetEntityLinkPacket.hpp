@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Entity Link";
         }
 
+        virtual ~ClientboundSetEntityLinkPacket() override
+        {
+
+        }
+
         void SetSourceId(const int source_id_)
         {
             source_id = source_id_;

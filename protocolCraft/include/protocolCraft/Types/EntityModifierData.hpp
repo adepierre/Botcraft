@@ -6,7 +6,12 @@ namespace ProtocolCraft
 {
     class EntityModifierData : public NetworkType
     {
-    public:        
+    public:
+        virtual ~EntityModifierData() override
+        {
+
+        }
+
         void SetUuid(const UUID& uuid_)
         {
             uuid = uuid_;

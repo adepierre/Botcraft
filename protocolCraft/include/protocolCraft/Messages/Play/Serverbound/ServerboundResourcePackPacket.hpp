@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Resource Pack";
         }
 
+        virtual ~ServerboundResourcePackPacket() override
+        {
+
+        }
+
         void SetAction(const int action_)
         {
             action = action_;

@@ -10,6 +10,11 @@ namespace ProtocolCraft
     class Trade : public NetworkType
     {
     public:
+        virtual ~Trade() override
+        {
+
+        }
+
         void SetInputItem1(const Slot& input_item_1_)
         {
             input_item_1 = input_item_1_;

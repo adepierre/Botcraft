@@ -11,6 +11,11 @@ namespace ProtocolCraft
     class NetworkType
     {
     public:
+        virtual ~NetworkType()
+        {
+
+        }
+
         virtual void Read(ReadIterator &iter, size_t &length)
         {
             return ReadImpl(iter, length);

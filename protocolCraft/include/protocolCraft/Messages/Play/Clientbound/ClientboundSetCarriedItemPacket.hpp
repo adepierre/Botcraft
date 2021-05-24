@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Carried Item";
         }
 
+        virtual ~ClientboundSetCarriedItemPacket() override
+        {
+
+        }
+
         void SetSlot(const char slot_)
         {
             slot = slot_;

@@ -42,6 +42,11 @@ namespace ProtocolCraft
             return "Set Titles";
         }
 
+        virtual ~ClientboundSetTitlesPacket() override
+        {
+
+        }
+
         void SetType(const SetTitlesType type_)
         {
             type = type_;

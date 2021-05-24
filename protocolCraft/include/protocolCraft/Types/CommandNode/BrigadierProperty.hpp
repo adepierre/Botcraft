@@ -12,7 +12,8 @@ namespace ProtocolCraft
     class BrigadierProperty : public NetworkType
     {
     public:
-        
+        virtual ~BrigadierProperty() override;
+
         static std::shared_ptr<BrigadierProperty> CreateProperties(const Identifier& parser_identifier);
     };
 }

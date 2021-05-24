@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Add Entity";
         }
 
+        virtual ~ClientboundAddEntityPacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

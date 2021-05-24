@@ -35,6 +35,11 @@ namespace ProtocolCraft
             return "Section Blocks Update";
         }
 
+        virtual ~ClientboundSectionBlocksUpdatePacket() override
+        {
+
+        }
+
 #if PROTOCOL_VERSION < 739
         void SetChunkX(const int chunk_x_)
         {

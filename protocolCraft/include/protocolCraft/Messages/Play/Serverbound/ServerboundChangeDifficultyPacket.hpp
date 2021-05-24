@@ -28,6 +28,11 @@ namespace ProtocolCraft
             return "Change Difficulty";
         }
 
+        virtual ~ServerboundChangeDifficultyPacket() override
+        {
+
+        }
+
         void SetDifficulty(const char difficulty_)
         {
             difficulty = difficulty_;

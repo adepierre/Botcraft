@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Open Screen";
         }
 
+        virtual ~ClientboundOpenScreenPacket() override
+        {
+
+        }
+
 #if PROTOCOL_VERSION < 452
         void SetContainerId(const unsigned char container_id_)
         {

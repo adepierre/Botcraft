@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Remove Entities";
         }
 
+        virtual ~ClientboundRemoveEntitiesPacket() override
+        {
+
+        }
+
 
         void SetEntityIds(const std::vector<int>& entity_ids_)
         {

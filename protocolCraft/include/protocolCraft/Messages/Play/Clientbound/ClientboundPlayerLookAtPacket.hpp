@@ -30,6 +30,11 @@ namespace ProtocolCraft
             return "Face Player";
         }
 
+        virtual ~ClientboundPlayerLookAtPacket() override
+        {
+
+        }
+
         void SetX(const double x_)
         {
             x = x_;

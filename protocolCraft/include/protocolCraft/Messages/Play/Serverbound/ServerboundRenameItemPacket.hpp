@@ -30,6 +30,11 @@ namespace ProtocolCraft
             return "Rename Item";
         }
 
+        virtual ~ServerboundRenameItemPacket() override
+        {
+
+        }
+
         void SetName_(const std::string& name__)
         {
             name_ = name__;

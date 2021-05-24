@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagString();
-        ~TagString();
+        virtual ~TagString();
 
         const std::string& GetValue() const;
         void SetValue(const std::string &v);

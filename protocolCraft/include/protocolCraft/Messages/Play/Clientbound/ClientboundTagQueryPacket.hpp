@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Tag Query";
         }
 
+        virtual ~ClientboundTagQueryPacket() override
+        {
+
+        }
+
         void SetTransactionId(const int transaction_id_)
         {
             transaction_id = transaction_id_;

@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Structure Block";
         }
 
+        virtual ~ServerboundSetStructureBlockPacket() override
+        {
+
+        }
+
         void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;

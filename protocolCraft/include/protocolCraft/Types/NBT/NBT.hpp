@@ -10,7 +10,7 @@ namespace ProtocolCraft
     public:
         NBT();
         NBT(const NBT& nbt);
-        ~NBT();
+        virtual ~NBT() override;
 
         const TagCompound& GetRoot() const;
         const std::shared_ptr<Tag> GetTag(const std::string &s) const;

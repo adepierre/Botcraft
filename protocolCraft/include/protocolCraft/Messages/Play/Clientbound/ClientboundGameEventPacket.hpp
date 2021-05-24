@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Game Event";
         }
 
+        virtual ~ClientboundGameEventPacket() override
+        {
+
+        }
+
         void SetType(const unsigned char type_)
         {
             type = type_;

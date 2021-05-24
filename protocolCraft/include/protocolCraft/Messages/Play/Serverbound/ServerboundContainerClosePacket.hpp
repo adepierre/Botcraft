@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Container Close";
         }
 
+        virtual ~ServerboundContainerClosePacket() override
+        {
+
+        }
+
         void SetContainerId(const unsigned char container_id_)
         {
             container_id = container_id_;

@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Swing";
         }
 
+        virtual ~ServerboundSwingPacket() override
+        {
+
+        }
+
         void SetHand(const int hand_)
         {
             hand = hand_;

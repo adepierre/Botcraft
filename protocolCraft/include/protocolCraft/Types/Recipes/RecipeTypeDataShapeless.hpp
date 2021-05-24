@@ -10,6 +10,11 @@ namespace ProtocolCraft
     class RecipeTypeDataShapeless : public RecipeTypeData
     {
     public:
+        virtual ~RecipeTypeDataShapeless() override
+        {
+
+        }
+
         void SetGroup(const std::string& group_)
         {
             group = group_;

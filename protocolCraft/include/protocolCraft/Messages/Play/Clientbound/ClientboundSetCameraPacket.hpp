@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Camera";
         }
 
+        virtual ~ClientboundSetCameraPacket() override
+        {
+
+        }
+
         void SetCameraId(const int camera_id_)
         {
             camera_id = camera_id_;

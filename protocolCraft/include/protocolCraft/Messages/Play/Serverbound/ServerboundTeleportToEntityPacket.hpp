@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Teleport To Entity";
         }
 
+        virtual ~ServerboundTeleportToEntityPacket() override
+        {
+
+        }
+
         void SetUuid(const UUID& uuid_)
         {
             uuid = uuid_;

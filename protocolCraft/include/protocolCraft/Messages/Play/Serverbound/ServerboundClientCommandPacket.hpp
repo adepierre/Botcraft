@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Client Command";
         }
 
+        virtual ~ServerboundClientCommandPacket() override
+        {
+
+        }
+
         void SetAction(const int action_)
         {
             action = action_;

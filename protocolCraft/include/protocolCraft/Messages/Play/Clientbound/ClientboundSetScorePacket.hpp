@@ -37,6 +37,11 @@ namespace ProtocolCraft
             return "Set Score";
         }
 
+        virtual ~ClientboundSetScorePacket() override
+        {
+
+        }
+
         void SetOwner(const std::string& owner_)
         {
             owner = owner_;

@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagInt();
-        ~TagInt();
+        virtual ~TagInt();
 
         const int GetValue() const;
         void SetValue(const int v);

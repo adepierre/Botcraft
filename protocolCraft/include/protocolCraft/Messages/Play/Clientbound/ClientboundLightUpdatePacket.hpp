@@ -28,6 +28,11 @@ namespace ProtocolCraft
             return "Light Update";
         }
 
+        virtual ~ClientboundLightUpdatePacket() override
+        {
+
+        }
+
         void SetX(const int x_)
         {
             x = x_;

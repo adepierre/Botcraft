@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Tab List";
         }
 
+        virtual ~ClientboundTabListPacket() override
+        {
+
+        }
+
         void SetHeader(const Chat& header_)
         {
             header = header_;

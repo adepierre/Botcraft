@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Entity Motion";
         }
 
+        virtual ~ClientboundSetEntityMotionPacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

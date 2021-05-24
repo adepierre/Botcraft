@@ -28,6 +28,11 @@ namespace ProtocolCraft
             return "Set Chunk Cache Radius";
         }
 
+        virtual ~ClientboundSetChunkCacheRadiusPacket() override
+        {
+
+        }
+
         void SetRadius(const int radius_)
         {
             radius = radius_;

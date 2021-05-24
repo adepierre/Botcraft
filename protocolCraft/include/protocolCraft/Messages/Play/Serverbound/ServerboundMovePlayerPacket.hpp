@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Move Player";
         }
 
+        virtual ~ServerboundMovePlayerPacket() override
+        {
+
+        }
+
         void SetOnGround(const bool on_ground_)
         {
             on_ground = on_ground_;

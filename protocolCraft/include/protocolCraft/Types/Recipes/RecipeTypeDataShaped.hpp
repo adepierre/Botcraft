@@ -10,6 +10,11 @@ namespace ProtocolCraft
     class RecipeTypeDataShaped : public RecipeTypeData
     {
     public:
+        virtual ~RecipeTypeDataShaped() override
+        {
+
+        }
+
         void SetWidth(const int width_)
         {
             width = width_;

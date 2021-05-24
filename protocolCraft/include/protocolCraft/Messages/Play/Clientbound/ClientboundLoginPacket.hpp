@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Login";
         }
 
+        virtual ~ClientboundLoginPacket() override
+        {
+
+        }
+
         void SetPlayerId(const int player_id_)
         {
             player_id = player_id_;

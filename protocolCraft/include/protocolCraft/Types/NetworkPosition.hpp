@@ -9,6 +9,11 @@ namespace ProtocolCraft
     class NetworkPosition : public NetworkType
     {
     public:
+        virtual ~NetworkPosition() override
+        {
+
+        }
+
         void SetX(const int x_)
         {
             x = x_;

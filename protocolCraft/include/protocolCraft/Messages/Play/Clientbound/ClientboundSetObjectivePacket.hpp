@@ -35,6 +35,11 @@ namespace ProtocolCraft
             return "Set Objective";
         }
 
+        virtual ~ClientboundSetObjectivePacket() override
+        {
+
+        }
+
         void SetObjectiveName(const std::string& objective_name_)
         {
             objective_name = objective_name_;

@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Stop Sound";
         }
 
+        virtual ~ClientboundStopSoundPacket() override
+        {
+
+        }
+
         void SetSource(const int source_)
         {
             source = source_;

@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Open Signe Editor";
         }
 
+        virtual ~ClientboundOpenSignEditorPacket() override
+        {
+
+        }
+
         void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;

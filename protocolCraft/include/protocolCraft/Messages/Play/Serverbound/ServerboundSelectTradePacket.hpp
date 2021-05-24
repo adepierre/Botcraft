@@ -30,6 +30,11 @@ namespace ProtocolCraft
             return "Select Trade";
         }
 
+        virtual ~ServerboundSelectTradePacket() override
+        {
+
+        }
+
         void SetItem(const int item_)
         {
             item = item_;

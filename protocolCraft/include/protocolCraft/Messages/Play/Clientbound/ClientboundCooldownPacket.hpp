@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Cooldown";
         }
 
+        virtual ~ClientboundCooldownPacket() override
+        {
+
+        }
+
         void SetItem(const int item_)
         {
             item = item_;

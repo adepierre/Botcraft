@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Move Player Rot";
         }
 
+        virtual ~ServerboundMovePlayerPacketRot() override
+        {
+
+        }
+
         void SetYRot(const float yRot_)
         {
             yRot = yRot_;

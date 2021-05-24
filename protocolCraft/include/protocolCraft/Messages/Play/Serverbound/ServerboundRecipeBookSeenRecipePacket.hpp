@@ -23,6 +23,11 @@ namespace ProtocolCraft
             return "Recipe Book Seen Recipe";
         }
 
+        virtual ~ServerboundRecipeBookSeenRecipePacket() override
+        {
+
+        }
+
         void SetRecipe(const Identifier& recipe_)
         {
             recipe = recipe_;

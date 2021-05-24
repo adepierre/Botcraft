@@ -29,7 +29,12 @@ namespace ProtocolCraft
 
         virtual const std::string GetName() const override
         {
-            return "Display Scoreboard";
+            return "Set Display Objective";
+        }
+
+        virtual ~ClientboundSetDisplayObjectivePacket() override
+        {
+
         }
 
         void SetSlot(const char slot_)

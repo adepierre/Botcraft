@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Client Intention";
         }
 
+        virtual ~ServerboundClientIntentionPacket() override
+        {
+
+        }
+
         void SetProtocolVersion(const int p)
         {
             protocol_version = p;

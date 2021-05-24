@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Ressource Pack";
         }
 
+        virtual ~ClientboundResourcePackPacket() override
+        {
+
+        }
+
         void SetUrl(const std::string& url_)
         {
             url = url_;

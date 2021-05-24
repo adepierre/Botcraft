@@ -29,6 +29,11 @@ namespace ProtocolCraft
             return "Open Book";
         }
 
+        virtual ~ClientboundOpenBookPacket() override
+        {
+
+        }
+
         void SetHand(const int hand_)
         {
             hand = hand_;

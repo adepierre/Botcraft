@@ -10,6 +10,10 @@ namespace ProtocolCraft
     class MapDecoration : public NetworkType
     {
     public:
+        virtual ~MapDecoration() override
+        {
+
+        }
 
 #if PROTOCOL_VERSION < 373
         const char GetRotAndType() const

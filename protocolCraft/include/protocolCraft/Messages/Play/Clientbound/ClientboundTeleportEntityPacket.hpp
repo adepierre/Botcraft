@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Teleport Entity";
         }
 
+        virtual ~ClientboundTeleportEntityPacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

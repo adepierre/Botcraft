@@ -24,6 +24,11 @@ namespace ProtocolCraft
         {
             return "Jigsaw Generate";
         }
+
+        virtual ~ServerboundJigsawGeneratePacket() override
+        {
+
+        }
         
         void SetPos(const NetworkPosition& pos_)
         {

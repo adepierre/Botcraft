@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Set Creative Mode Slot";
         }
 
+        virtual ~ServerboundSetCreativeModeSlotPacket() override
+        {
+
+        }
+
         void SetSlotNum(const short slot_num_)
         {
             slot_num = slot_num_;

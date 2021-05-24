@@ -12,6 +12,11 @@ namespace ProtocolCraft
     class EntityProperty : public NetworkType
     {
     public:
+        virtual ~EntityProperty() override
+        {
+
+        }
+
 #if PROTOCOL_VERSION > 709
         void SetKey(const Identifier& key_)
         {

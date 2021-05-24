@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Place Recipe";
         }
 
+        virtual ~ServerboundPlaceRecipePacket() override
+        {
+
+        }
+
         void SetContainerId(const char container_id_)
         {
             container_id = container_id_;

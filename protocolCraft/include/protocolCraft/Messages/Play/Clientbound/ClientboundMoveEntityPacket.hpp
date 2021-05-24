@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Move Entity";
         }
 
+        virtual ~ClientboundMoveEntityPacket() override
+        {
+
+        }
+
         void SetEntityId(const int entity_id_)
         {
             entity_id = entity_id_;

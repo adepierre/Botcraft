@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagShort();
-        ~TagShort();
+        virtual ~TagShort();
 
         const short GetValue() const;
         void SetValue(const short v);

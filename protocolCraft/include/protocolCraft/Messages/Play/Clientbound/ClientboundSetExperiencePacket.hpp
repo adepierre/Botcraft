@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Experience";
         }
 
+        virtual ~ClientboundSetExperiencePacket() override
+        {
+
+        }
+
         void SetExperienceProgress(const float experience_progress_)
         {
             experience_progress = experience_progress_;

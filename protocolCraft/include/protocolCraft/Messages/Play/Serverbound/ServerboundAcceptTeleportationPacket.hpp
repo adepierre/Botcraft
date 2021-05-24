@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Accept Teleportation";
         }
 
+        virtual ~ServerboundAcceptTeleportationPacket() override
+        {
+
+        }
+
         void SetId_(const int i)
         {
             id_ = i;

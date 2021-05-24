@@ -8,6 +8,11 @@ namespace ProtocolCraft
     class BrigadierPropertyInteger : public BrigadierProperty
     {
     public:
+        virtual ~BrigadierPropertyInteger()
+        {
+
+        }
+
         void SetFlags(const char flags_)
         {
             flags = flags_;

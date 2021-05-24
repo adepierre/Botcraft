@@ -10,6 +10,11 @@ namespace ProtocolCraft
     class Record : public NetworkType
     {
     public:
+        virtual ~Record() override
+        {
+
+        }
+
         void SetHorizontalPosition(const unsigned char h)
         {
             horizontal_position = h;

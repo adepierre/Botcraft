@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Block Entity Tag Query";
         }
 
+        virtual ~ServerboundBlockEntityTagQuery() override
+        {
+
+        }
+
         void SetTransactionId(const int transaction_id_)
         {
             transaction_id = transaction_id_;

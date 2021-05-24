@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Disconnect";
         }
 
+        virtual ~ClientboundDisconnectPacket() override
+        {
+
+        }
+
         void SetReason(const Chat& reason_)
         {
             reason = reason_;

@@ -26,7 +26,12 @@ namespace ProtocolCraft
 
         virtual const std::string GetName() const override
         {
-            return "Acknowledge Player Digging";
+            return "Block Break Ack";
+        }
+
+        virtual ~ClientboundBlockBreakAckPacket() override
+        {
+
         }
 
         void SetPos(const NetworkPosition& pos_)

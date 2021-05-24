@@ -46,6 +46,11 @@ namespace ProtocolCraft
             return "Player Info";
         }
 
+        virtual ~ClientboundPlayerInfoPacket() override
+        {
+
+        }
+
         void SetAction(const PlayerInfoAction action_)
         {
             action = action_;

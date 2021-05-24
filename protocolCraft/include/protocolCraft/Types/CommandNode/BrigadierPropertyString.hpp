@@ -7,7 +7,12 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyString : public BrigadierProperty
     {
-    public:        
+    public:
+        virtual ~BrigadierPropertyString()
+        {
+
+        }
+
         void SetReadType(const int read_type_)
         {
             read_type = read_type_;

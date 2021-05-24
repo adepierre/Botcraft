@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Ping Request";
         }
 
+        virtual ~ServerboundPingRequestPacket() override
+        {
+
+        }
+
         void SetTime(const long long int time_)
         {
             time = time_;

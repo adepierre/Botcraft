@@ -29,6 +29,11 @@ namespace ProtocolCraft
             return "Sound Entity";
         }
 
+        virtual ~ClientboundSoundEntityPacket() override
+        {
+
+        }
+
         void SetSound(const int sound_)
         {
             sound = sound_;

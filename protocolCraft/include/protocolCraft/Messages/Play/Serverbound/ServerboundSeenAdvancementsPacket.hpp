@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Seen Advancement";
         }
 
+        virtual ~ServerboundSeenAdvancementsPacket() override
+        {
+
+        }
+
         void SetAction(const int action_)
         {
             action = action_;

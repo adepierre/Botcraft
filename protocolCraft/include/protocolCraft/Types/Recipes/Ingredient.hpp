@@ -9,6 +9,11 @@ namespace ProtocolCraft
     class Ingredient : public NetworkType
     {
     public:
+        virtual ~Ingredient() override
+        {
+
+        }
+
         void SetCount(const int count_)
         {
             count = count_;

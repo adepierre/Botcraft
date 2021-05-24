@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Player Command";
         }
 
+        virtual ~ServerboundPlayerCommandPacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

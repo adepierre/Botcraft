@@ -9,6 +9,10 @@ namespace ProtocolCraft
     class Advancement : public NetworkType
     {
     public:
+        virtual ~Advancement() override
+        {
+
+        }
 
         void SetHasParent(const bool has_parent_)
         {

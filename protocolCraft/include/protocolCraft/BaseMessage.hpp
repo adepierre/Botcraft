@@ -9,6 +9,8 @@ namespace ProtocolCraft
     template<typename TDerived>
     class BaseMessage : public Message
     {
+    public:
+        virtual ~BaseMessage() override {};
     protected:
         virtual void DispatchImpl(Handler* handler) override;
     };

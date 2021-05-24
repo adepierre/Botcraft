@@ -12,6 +12,11 @@
 
 namespace ProtocolCraft
 {
+    BrigadierProperty::~BrigadierProperty()
+    {
+
+    }
+
     std::shared_ptr<BrigadierProperty> BrigadierProperty::CreateProperties(const Identifier& parser_identifier)
     {
         if (parser_identifier.GetFull() == "brigadier:double")

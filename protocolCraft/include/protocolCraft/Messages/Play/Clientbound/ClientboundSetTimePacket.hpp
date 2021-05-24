@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Time Update";
         }
 
+        virtual ~ClientboundSetTimePacket() override
+        {
+
+        }
+
         void SetGameTime(const long long int game_time_)
         {
             game_time = game_time_;

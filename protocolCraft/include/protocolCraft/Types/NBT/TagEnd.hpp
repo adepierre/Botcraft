@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagEnd();
-        ~TagEnd();
+        virtual ~TagEnd();
 
         virtual const TagType GetType() const override;
 

@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Status Response";
         }
 
+        virtual ~ClientboundStatusResponsePacket() override
+        {
+
+        }
+
         void SetStatus(const std::string& status_)
         {
             status = status_;

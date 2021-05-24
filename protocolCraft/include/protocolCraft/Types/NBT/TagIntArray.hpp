@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagIntArray();
-        ~TagIntArray();
+        virtual ~TagIntArray();
 
         const std::vector<int>& GetValues() const;
         void SetValues(const std::vector<int> &v);

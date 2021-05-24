@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Pong Response";
         }
 
+        virtual ~ClientboundPongResponsePacket() override
+        {
+
+        }
+
         void SetTime(const long long int time_)
         {
             time = time_;

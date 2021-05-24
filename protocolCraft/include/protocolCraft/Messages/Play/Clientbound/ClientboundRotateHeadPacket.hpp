@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Rotate Head";
         }
 
+        virtual ~ClientboundRotateHeadPacket() override
+        {
+
+        }
+
         void SetEntityId(const int entity_id_)
         {
             entity_id = entity_id_;

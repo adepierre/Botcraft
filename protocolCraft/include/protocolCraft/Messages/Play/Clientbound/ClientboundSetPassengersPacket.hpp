@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Passengers";
         }
 
+        virtual ~ClientboundSetPassengersPacket() override
+        {
+
+        }
+
         void SetVehicle(const int vehicle_)
         {
             vehicle = vehicle_;

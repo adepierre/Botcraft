@@ -10,6 +10,10 @@ namespace ProtocolCraft
     class RecipeTypeDataSmithing : public RecipeTypeData
     {
     public:
+        virtual ~RecipeTypeDataSmithing() override
+        {
+
+        }
 
         void SetBase(const Ingredient& base_)
         {

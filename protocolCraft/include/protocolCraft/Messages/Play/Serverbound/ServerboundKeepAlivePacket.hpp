@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Keep Alive";
         }
 
+        virtual ~ServerboundKeepAlivePacket() override
+        {
+
+        }
+
         void SetId_(const long long int l)
         {
             id_ = l;

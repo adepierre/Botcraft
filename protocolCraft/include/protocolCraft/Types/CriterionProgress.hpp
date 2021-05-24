@@ -6,7 +6,12 @@ namespace ProtocolCraft
 {
     class CriterionProgress : public NetworkType
     {
-    public:        
+    public:
+        virtual ~CriterionProgress() override
+        {
+
+        }
+
         void SetAchieved(const bool achieved_)
         {
             achieved = achieved_;

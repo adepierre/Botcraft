@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Level Particles";
         }
 
+        virtual ~ClientboundLevelParticlesPacket() override
+        {
+
+        }
+
         void SetParticleType(const int particle_type_)
         {
             particle_type = particle_type_;

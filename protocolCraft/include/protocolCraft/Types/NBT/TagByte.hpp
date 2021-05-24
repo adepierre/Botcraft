@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagByte();
-        ~TagByte();
+        virtual ~TagByte();
 
         const char GetValue() const;
         void SetValue(const char v);

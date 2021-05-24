@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Boss Event";
         }
 
+        virtual ~ClientboundBossEventPacket() override
+        {
+
+        }
+
         void SetId_(const UUID& id__)
         {
             id_ = id__;

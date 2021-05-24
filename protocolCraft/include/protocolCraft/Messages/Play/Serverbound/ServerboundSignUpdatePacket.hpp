@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Sign Update";
         }
 
+        virtual ~ServerboundSignUpdatePacket() override
+        {
+
+        }
+
         void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;

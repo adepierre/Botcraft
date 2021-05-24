@@ -33,6 +33,11 @@ namespace ProtocolCraft
             return "Respawn";
         }
 
+        virtual ~ClientboundRespawnPacket() override
+        {
+
+        }
+
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747
         void SetDimensionType(const NBT& dimension_type_)

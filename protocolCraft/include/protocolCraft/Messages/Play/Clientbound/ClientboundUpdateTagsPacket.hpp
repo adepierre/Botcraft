@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Update Tags";
         }
 
+        virtual ~ClientboundUpdateTagsPacket() override
+        {
+
+        }
+
         void SetBlockTags(const std::vector<BlockEntityTag>& block_tags_)
         {
             block_tags = block_tags_;

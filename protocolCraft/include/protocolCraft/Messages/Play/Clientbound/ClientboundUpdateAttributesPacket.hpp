@@ -34,6 +34,11 @@ namespace ProtocolCraft
             return "Entity Properties";
         }
 
+        virtual ~ClientboundUpdateAttributesPacket() override
+        {
+
+        }
+
         void SetEntityId(const int entity_id_)
         {
             entity_id = entity_id_;

@@ -30,6 +30,11 @@ namespace ProtocolCraft
             return "Set Jigsaw Block";
         }
 
+        virtual ~ServerboundSetJigsawBlockPacket() override
+        {
+
+        }
+
         void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;

@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Use Item On";
         }
 
+        virtual ~ServerboundUseItemOnPacket() override
+        {
+
+        }
+
         void SetHand(const int hand_)
         {
             hand = hand_;

@@ -36,6 +36,11 @@ namespace ProtocolCraft
             return "Update Advancements";
         }
 
+        virtual ~ClientboundUpdateAdvancementsPacket() override
+        {
+
+        }
+
         void SetReset(const bool reset_)
         {
             reset = reset_;

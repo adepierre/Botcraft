@@ -12,6 +12,10 @@ namespace ProtocolCraft
     class PlayerUpdate : public NetworkType
     {
     public:
+        virtual ~PlayerUpdate() override
+        {
+
+        }
 
         void SetName(const std::string& s)
         {

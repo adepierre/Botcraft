@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagLong();
-        ~TagLong();
+        virtual ~TagLong();
 
         const long long int GetValue() const;
         void SetValue(const long long int v);

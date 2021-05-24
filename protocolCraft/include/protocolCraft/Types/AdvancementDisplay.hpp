@@ -10,6 +10,10 @@ namespace ProtocolCraft
     class AdvancementDisplay : public NetworkType
     {
     public:
+        virtual ~AdvancementDisplay() override
+        {
+
+        }
 
         void SetTitle(const Chat& title_)
         {

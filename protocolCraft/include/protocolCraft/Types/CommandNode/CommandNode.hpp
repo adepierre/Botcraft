@@ -13,6 +13,11 @@ namespace ProtocolCraft
     class CommandNode : public NetworkType
     {
     public:
+        virtual ~CommandNode()
+        {
+
+        }
+
         void SetFlags(const char flags_)
         {
             flags = flags_;

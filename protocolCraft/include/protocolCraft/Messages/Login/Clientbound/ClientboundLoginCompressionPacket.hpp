@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Login Compression";
         }
 
+        virtual ~ClientboundLoginCompressionPacket() override
+        {
+
+        }
+
         void SetCompressionThreshold(const int compression_threshold_)
         {
             compression_threshold = compression_threshold_;

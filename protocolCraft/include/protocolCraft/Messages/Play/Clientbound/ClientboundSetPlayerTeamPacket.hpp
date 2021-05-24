@@ -34,6 +34,11 @@ namespace ProtocolCraft
             return "Set Player Team";
         }
 
+        virtual ~ClientboundSetPlayerTeamPacket() override
+        {
+
+        }
+
         void SetName_(const std::string& name__)
         {
             name_ = name__;

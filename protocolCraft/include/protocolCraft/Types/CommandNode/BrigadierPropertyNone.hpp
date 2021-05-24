@@ -8,6 +8,11 @@ namespace ProtocolCraft
     class BrigadierPropertyNone : public BrigadierProperty
     {
     public:
+        virtual ~BrigadierPropertyNone()
+        {
+
+        }
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override

@@ -10,6 +10,11 @@ namespace ProtocolCraft
     class RecipeTypeDataBlasting : public RecipeTypeData
     {
     public:
+        virtual ~RecipeTypeDataBlasting() override
+        {
+
+        }
+
         void SetGroup(const std::string& group_)
         {
             group = group_;

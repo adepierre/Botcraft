@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Chat";
         }
 
+        virtual ~ServerboundChatPacket() override
+        {
+
+        }
+
         void SetMessage(const std::string &s)
         {
             message = s;

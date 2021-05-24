@@ -28,6 +28,11 @@ namespace ProtocolCraft
             return "Lock Difficulty";
         }
 
+        virtual ~ServerboundLockDifficultyPacket() override
+        {
+
+        }
+
         void SetLocked(const bool locked_)
         {
             locked = locked_;

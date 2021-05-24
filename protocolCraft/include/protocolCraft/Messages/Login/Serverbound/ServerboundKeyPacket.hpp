@@ -17,6 +17,11 @@ namespace ProtocolCraft
             return "Key";
         }
 
+        virtual ~ServerboundKeyPacket() override
+        {
+
+        }
+
         void SetKeyBytes(const std::vector<unsigned char> &key_bytes_)
         {
             key_bytes = key_bytes_;

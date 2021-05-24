@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Custom Sound";
         }
 
+        virtual ~ClientboundCustomSoundPacket() override
+        {
+
+        }
+
         void SetName_(const std::string& name__)
         {
             name_ = name__;

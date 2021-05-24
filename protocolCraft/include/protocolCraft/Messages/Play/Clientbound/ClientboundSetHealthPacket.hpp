@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Set Health";
         }
 
+        virtual ~ClientboundSetHealthPacket() override
+        {
+
+        }
+
         void SetHealth(const float health_)
         {
             health = health_;

@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Container Click";
         }
 
+        virtual ~ServerboundContainerClickPacket() override
+        {
+
+        }
+
         void SetContainerId(const unsigned char container_id_)
         {
             container_id = container_id_;

@@ -13,6 +13,11 @@
 
 namespace ProtocolCraft
 {
+    RecipeTypeData::~RecipeTypeData()
+    {
+
+    }
+
     std::shared_ptr<RecipeTypeData> RecipeTypeData::CreateRecipeTypeData(const Identifier& recipe_type)
     {
         if (recipe_type.GetFull() == "minecraft:crafting_shapeless")

@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagList();
-        ~TagList();
+        virtual ~TagList();
 
         const std::vector<std::shared_ptr<Tag> >& GetValues() const;
         void SetValues(const std::vector<std::shared_ptr<Tag> > &v);

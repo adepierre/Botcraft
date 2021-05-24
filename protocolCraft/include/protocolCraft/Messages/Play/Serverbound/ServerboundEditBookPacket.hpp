@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Edit Book";
         }
 
+        virtual ~ServerboundEditBookPacket() override
+        {
+
+        }
+
         void SetBook(const Slot& book_)
         {
             book = book_;

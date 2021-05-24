@@ -10,6 +10,11 @@ namespace ProtocolCraft
     class RecipeTypeDataStoneCutting : public RecipeTypeData
     {
     public:
+        virtual ~RecipeTypeDataStoneCutting() override
+        {
+
+        }
+
         void SetGroup(const std::string& group_)
         {
             group = group_;

@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Paddle Boat";
         }
 
+        virtual ~ServerboundPaddleBoatPacket() override
+        {
+
+        }
+
         void SetLeft(const bool left_)
         {
             left = left_;

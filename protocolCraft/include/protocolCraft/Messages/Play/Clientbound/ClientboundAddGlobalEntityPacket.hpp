@@ -28,6 +28,11 @@ namespace ProtocolCraft
             return "Add Global Entity";
         }
 
+        virtual ~ClientboundAddGlobalEntityPacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

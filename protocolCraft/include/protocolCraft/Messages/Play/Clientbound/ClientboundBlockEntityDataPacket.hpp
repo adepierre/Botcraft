@@ -33,6 +33,11 @@ namespace ProtocolCraft
             return "Block Entity Data";
         }
 
+        virtual ~ClientboundBlockEntityDataPacket() override
+        {
+
+        }
+
         void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;

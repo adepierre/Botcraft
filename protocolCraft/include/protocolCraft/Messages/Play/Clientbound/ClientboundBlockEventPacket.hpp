@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Block Event";
         }
 
+        virtual ~ClientboundBlockEventPacket() override
+        {
+
+        }
+
         void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;

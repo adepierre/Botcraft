@@ -29,7 +29,12 @@ namespace ProtocolCraft
 
         virtual const std::string GetName() const override
         {
-            return "Tab-Complete (serverbound)";
+            return "Command Suggestion";
+        }
+
+        virtual ~ServerboundCommandSuggestionPacket() override
+        {
+
         }
 
 #if PROTOCOL_VERSION > 344

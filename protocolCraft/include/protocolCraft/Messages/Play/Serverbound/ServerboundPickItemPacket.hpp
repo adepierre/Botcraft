@@ -30,6 +30,11 @@ namespace ProtocolCraft
             return "Pick Item";
         }
 
+        virtual ~ServerboundPickItemPacket() override
+        {
+
+        }
+
         void SetSlot(const int slot_)
         {
             slot = slot_;

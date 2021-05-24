@@ -29,6 +29,11 @@ namespace ProtocolCraft
             return "Merchant Offers";
         }
 
+        virtual ~ClientboundMerchantOffersPacket() override
+        {
+
+        }
+
         void SetContainerId(const int container_id_)
         {
             container_id = container_id_;

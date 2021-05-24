@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagDouble();
-        ~TagDouble();
+        virtual ~TagDouble();
 
         const double GetValue() const;
         void SetValue(const double v);

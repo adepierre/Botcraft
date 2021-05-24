@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Select Advancement Tab";
         }
 
+        virtual ~ClientboundSelectAdvancementsTabPacket() override
+        {
+
+        }
+
         void SetTab(const std::string& tab_)
         {
             tab = tab_;

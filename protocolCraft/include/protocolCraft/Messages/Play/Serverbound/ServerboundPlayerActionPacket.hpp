@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Player Action";
         }
 
+        virtual ~ServerboundPlayerActionPacket() override
+        {
+
+        }
+
 
         void SetPos(const NetworkPosition &pos_)
         {

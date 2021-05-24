@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Recipe Book Update";
         }
 
+        virtual ~ServerboundRecipeBookUpdatePacket() override
+        {
+
+        }
+
         void SetPurpose(const int purpose_)
         {
             purpose = purpose_;

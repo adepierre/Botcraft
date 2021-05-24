@@ -30,6 +30,11 @@ namespace ProtocolCraft
             return "Set Beacon";
         }
 
+        virtual ~ServerboundSetBeaconPacket() override
+        {
+
+        }
+
         void SetPrimary(const int primary_)
         {
             primary = primary_;

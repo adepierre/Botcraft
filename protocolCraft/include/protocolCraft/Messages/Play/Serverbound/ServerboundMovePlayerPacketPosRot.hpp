@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Move Player PosRot";
         }
 
+        virtual ~ServerboundMovePlayerPacketPosRot() override
+        {
+
+        }
+
         void SetX(const double d)
         {
             x = d;

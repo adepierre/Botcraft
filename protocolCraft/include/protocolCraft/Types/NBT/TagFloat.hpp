@@ -10,7 +10,7 @@ namespace ProtocolCraft
     {
     public:
         TagFloat();
-        ~TagFloat();
+        virtual ~TagFloat();
 
         const float GetValue() const;
         void SetValue(const float v);

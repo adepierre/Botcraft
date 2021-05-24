@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Player Position";
         }
 
+        virtual ~ClientboundPlayerPositionPacket() override
+        {
+
+        }
+
         void SetX(const double x_)
         {
             x = x_;

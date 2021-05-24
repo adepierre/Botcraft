@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Block Update";
         }
 
+        virtual ~ClientboundBlockUpdatePacket() override
+        {
+
+        }
+
         void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;

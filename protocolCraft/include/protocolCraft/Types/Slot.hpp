@@ -22,6 +22,11 @@ namespace ProtocolCraft
             item_count = 0;
         }
 
+        virtual ~Slot() override
+        {
+
+        }
+
         const bool IsEmptySlot() const
         {
 #if PROTOCOL_VERSION < 350

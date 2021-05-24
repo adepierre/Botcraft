@@ -31,6 +31,11 @@ namespace ProtocolCraft
             return "Add Experience Orb";
         }
 
+        virtual ~ClientboundAddExperienceOrbPacket() override
+        {
+
+        }
+
         void SetId_(const int id__)
         {
             id_ = id__;

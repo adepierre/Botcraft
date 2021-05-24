@@ -9,6 +9,11 @@ namespace ProtocolCraft
     class Chat : public NetworkType
     {
     public:
+        virtual ~Chat() override
+        {
+
+        }
+
         void SetText(const std::string &s)
         {
             text = s;

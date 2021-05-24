@@ -28,7 +28,12 @@ namespace ProtocolCraft
 
         virtual const std::string GetName() const override
         {
-            return "Collect Item";
+            return "Take Item Entity";
+        }
+
+        virtual ~ClientboundTakeItemEntityPacket() override
+        {
+
         }
 
         void SetItemId(const int item_id_)

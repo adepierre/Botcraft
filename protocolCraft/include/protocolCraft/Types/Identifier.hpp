@@ -14,6 +14,11 @@ namespace ProtocolCraft
         {
 
         }
+
+        virtual ~Identifier() override
+        {
+
+        }
         
         const bool operator <(const Identifier& rhs) const
         {

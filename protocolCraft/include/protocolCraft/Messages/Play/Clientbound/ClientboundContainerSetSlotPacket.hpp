@@ -34,6 +34,11 @@ namespace ProtocolCraft
             return "Container Set Slot";
         }
 
+        virtual ~ClientboundContainerSetSlotPacket() override
+        {
+
+        }
+
         void SetContainerId(const char container_id_)
         {
             container_id = container_id_;

@@ -32,6 +32,11 @@ namespace ProtocolCraft
             return "Explode";
         }
 
+        virtual ~ClientboundExplodePacket() override
+        {
+
+        }
+
         void SetX(const float x_)
         {
             x = x_;

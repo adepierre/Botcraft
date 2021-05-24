@@ -12,6 +12,11 @@ namespace ProtocolCraft
     class Recipe : public NetworkType
     {
     public:
+        virtual ~Recipe() override
+        {
+
+        }
+
         void SetRecipeId(const Identifier& recipe_id_)
         {
             recipe_id = recipe_id_;

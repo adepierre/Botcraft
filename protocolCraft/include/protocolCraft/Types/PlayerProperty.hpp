@@ -9,6 +9,11 @@ namespace ProtocolCraft
     class PlayerProperty : public NetworkType
     {
     public:
+        virtual ~PlayerProperty() override
+        {
+
+        }
+
         const std::string& GetName() const
         {
             return name;
