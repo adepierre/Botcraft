@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_wall_sign",
+	"textures": {
+		"all": "entity/signs/acacia"
+	},
+	"textures_base_size": {
+		"entity/signs/acacia": [64, 32]
+	}
+}

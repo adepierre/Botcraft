@@ -1,0 +1,6350 @@
+[
+    {
+        "hardness": -1,
+        "name": "minecraft:air",
+        "render": "none",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:stone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:granite",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_granite",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:diorite",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_diorite",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:andesite",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_andesite",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:grass_block",
+        "render": "block",
+        "solid": true,
+        "tintType": "grass",
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:dirt",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:coarse_dirt",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:podzol",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cobblestone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:oak_planks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:spruce_planks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:birch_planks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:jungle_planks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:acacia_planks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:dark_oak_planks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:oak_sapling",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:spruce_sapling",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:birch_sapling",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:jungle_sapling",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:acacia_sapling",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dark_oak_sapling",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:bedrock",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 100,
+        "name": "minecraft:water",
+        "render": "fluid",
+        "solid": false,
+        "texture": "block/water_still",
+        "tintType": "water",
+        "transparent": true
+    },
+    {
+        "hardness": 100,
+        "name": "minecraft:lava",
+        "render": "fluid",
+        "solid": false,
+        "texture": "block/lava_still",
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:sand",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:red_sand",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:gravel",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:gold_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:iron_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:coal_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:nether_gold_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:oak_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:spruce_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:birch_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:jungle_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:acacia_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:dark_oak_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_spruce_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_birch_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_jungle_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_acacia_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_dark_oak_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_oak_log",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:oak_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:spruce_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:birch_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:jungle_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:acacia_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:dark_oak_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_oak_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_spruce_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_birch_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_jungle_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_acacia_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_dark_oak_wood",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:oak_leaves",
+        "render": "block",
+        "solid": true,
+        "tintType": "leaves",
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:spruce_leaves",
+        "render": "block",
+        "solid": true,
+        "tintType": "leaves",
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:birch_leaves",
+        "render": "block",
+        "solid": true,
+        "tintType": "leaves",
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:jungle_leaves",
+        "render": "block",
+        "solid": true,
+        "tintType": "leaves",
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:acacia_leaves",
+        "render": "block",
+        "solid": true,
+        "tintType": "leaves",
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:dark_oak_leaves",
+        "render": "block",
+        "solid": true,
+        "tintType": "leaves",
+        "transparent": true
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:sponge",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:wet_sponge",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:lapis_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:lapis_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:dispenser",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:sandstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:chiseled_sandstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:cut_sandstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:note_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:white_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:orange_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:magenta_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:light_blue_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:yellow_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:lime_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:pink_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:gray_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:light_gray_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:cyan_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:purple_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:blue_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:brown_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:green_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:red_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:black_bed",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.7,
+        "name": "minecraft:powered_rail",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.7,
+        "name": "minecraft:detector_rail",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:sticky_piston",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 4,
+        "name": "minecraft:cobweb",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:grass",
+        "render": "block",
+        "solid": false,
+        "tintType": "grass",
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:fern",
+        "render": "block",
+        "solid": false,
+        "tintType": "grass",
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_bush",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:seagrass",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:tall_seagrass",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:piston",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": -1,
+        "name": "minecraft:piston_head",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:white_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:orange_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:magenta_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:light_blue_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:yellow_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:lime_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:pink_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:gray_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:light_gray_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:cyan_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:purple_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:blue_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:brown_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:green_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:red_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:black_wool",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": -1,
+        "name": "minecraft:moving_piston",
+        "render": "none",
+        "solid": false,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dandelion",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:poppy",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:blue_orchid",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:allium",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:azure_bluet",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:red_tulip",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:orange_tulip",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:white_tulip",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:pink_tulip",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:oxeye_daisy",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:cornflower",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:wither_rose",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:lily_of_the_valley",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:brown_mushroom",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:red_mushroom",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:gold_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:iron_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:tnt",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:bookshelf",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:mossy_cobblestone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 50,
+        "name": "minecraft:obsidian",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:torch",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:wall_torch",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": -1,
+        "name": "minecraft:fire",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": -1,
+        "name": "minecraft:soul_fire",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:spawner",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:oak_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:chest",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:redstone_wire",
+        "render": "block",
+        "solid": false,
+        "tintType": "redstone",
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:diamond_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:diamond_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:crafting_table",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:wheat",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:farmland",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:furnace",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:oak_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:spruce_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:birch_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:acacia_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:jungle_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:dark_oak_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:oak_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.4,
+        "name": "minecraft:ladder",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.7,
+        "name": "minecraft:rail",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cobblestone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:oak_wall_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:spruce_wall_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:birch_wall_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:acacia_wall_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:jungle_wall_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:dark_oak_wall_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:lever",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:stone_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:iron_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:oak_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:spruce_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:birch_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:jungle_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:acacia_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:dark_oak_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:redstone_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:redstone_torch",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:redstone_wall_torch",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:stone_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:snow",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:ice",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:snow_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.4,
+        "name": "minecraft:cactus",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:clay",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:sugar_cane",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:jukebox",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:oak_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:oak_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:pumpkin",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.4,
+        "name": "minecraft:netherrack",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:soul_sand",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:soul_soil",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:basalt",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:polished_basalt",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:soul_torch",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:soul_wall_torch",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:glowstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:nether_portal",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:carved_pumpkin",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:jack_o_lantern",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:repeater",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:white_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:orange_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:magenta_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:light_blue_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:yellow_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:lime_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:pink_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:gray_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:light_gray_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:cyan_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:purple_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:blue_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:brown_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:green_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:red_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:black_stained_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:oak_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:spruce_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:birch_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:jungle_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:acacia_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:dark_oak_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:infested_stone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:infested_cobblestone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:infested_stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:infested_mossy_stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:infested_cracked_stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:infested_chiseled_stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:mossy_stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:cracked_stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:chiseled_stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:brown_mushroom_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:red_mushroom_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:mushroom_stem",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:iron_bars",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:chain",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:melon",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:attached_pumpkin_stem",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:attached_melon_stem",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:pumpkin_stem",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:melon_stem",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:vine",
+        "render": "block",
+        "solid": true,
+        "tintType": "leaves",
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:oak_fence_gate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:stone_brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:mycelium",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:lily_pad",
+        "render": "block",
+        "solid": true,
+        "tintType": "grass",
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:nether_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:nether_brick_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:nether_brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:nether_wart",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:enchanting_table",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:brewing_stand",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cauldron",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:end_portal",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:end_portal_frame",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:end_stone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:dragon_egg",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:redstone_lamp",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:cocoa",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:sandstone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:emerald_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 22.5,
+        "name": "minecraft:ender_chest",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:tripwire_hook",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:tripwire",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:emerald_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:spruce_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:birch_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:jungle_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:command_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:beacon",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cobblestone_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:mossy_cobblestone_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:flower_pot",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_oak_sapling",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_spruce_sapling",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_birch_sapling",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_jungle_sapling",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_acacia_sapling",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_dark_oak_sapling",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_fern",
+        "render": "block",
+        "solid": true,
+        "tintType": "grass",
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_dandelion",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_poppy",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_blue_orchid",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_allium",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_azure_bluet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_red_tulip",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_orange_tulip",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_white_tulip",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_pink_tulip",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_oxeye_daisy",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_cornflower",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_lily_of_the_valley",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_wither_rose",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_red_mushroom",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_brown_mushroom",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_dead_bush",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_cactus",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:carrots",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potatoes",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:oak_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:spruce_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:birch_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:jungle_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:acacia_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:dark_oak_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:skeleton_wall_skull",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:skeleton_skull",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:wither_skeleton_wall_skull",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:wither_skeleton_skull",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:zombie_wall_head",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:zombie_head",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:player_wall_head",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:player_head",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:creeper_wall_head",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:creeper_head",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:dragon_wall_head",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:dragon_head",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:anvil",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:chipped_anvil",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:damaged_anvil",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:trapped_chest",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:light_weighted_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:heavy_weighted_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:comparator",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:daylight_detector",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:redstone_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:nether_quartz_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:hopper",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:quartz_block",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:chiseled_quartz_block",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:quartz_pillar",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:quartz_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.7,
+        "name": "minecraft:activator_rail",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:dropper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:white_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:orange_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:magenta_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:light_blue_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:yellow_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:lime_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:pink_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:gray_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:light_gray_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:cyan_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:purple_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:blue_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:brown_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:green_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:red_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:black_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:white_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:orange_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:magenta_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:light_blue_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:yellow_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:lime_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:pink_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:gray_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:light_gray_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:cyan_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:purple_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:blue_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:brown_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:green_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:red_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:black_stained_glass_pane",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:acacia_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:dark_oak_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:slime_block",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:barrier",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:iron_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:prismarine",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:prismarine_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dark_prismarine",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:prismarine_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:prismarine_brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dark_prismarine_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:prismarine_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:prismarine_brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dark_prismarine_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:sea_lantern",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:hay_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:white_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:orange_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:magenta_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:light_blue_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:yellow_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:lime_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:pink_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:gray_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:light_gray_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:cyan_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:purple_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:blue_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:brown_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:green_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:red_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:black_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:coal_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:packed_ice",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:sunflower",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:lilac",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:rose_bush",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:peony",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:tall_grass",
+        "render": "block",
+        "solid": false,
+        "tintType": "grass",
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:large_fern",
+        "render": "block",
+        "solid": false,
+        "tintType": "grass",
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:white_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:orange_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:magenta_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:light_blue_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:yellow_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:lime_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:pink_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:gray_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:light_gray_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:cyan_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:purple_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:blue_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:brown_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:green_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:red_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:black_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:white_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:orange_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:magenta_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:light_blue_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:yellow_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:lime_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:pink_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:gray_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:light_gray_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:cyan_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:purple_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:blue_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:brown_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:green_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:red_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:black_wall_banner",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:red_sandstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:chiseled_red_sandstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:cut_red_sandstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:red_sandstone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:oak_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:spruce_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:birch_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:jungle_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:acacia_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:dark_oak_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_stone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:sandstone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cut_sandstone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:petrified_oak_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cobblestone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stone_brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:nether_brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:quartz_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:red_sandstone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cut_red_sandstone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:purpur_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_stone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_sandstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_quartz",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_red_sandstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:spruce_fence_gate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:birch_fence_gate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:jungle_fence_gate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:acacia_fence_gate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:dark_oak_fence_gate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:spruce_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:birch_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:jungle_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:acacia_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:dark_oak_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:spruce_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:birch_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:jungle_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:acacia_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:dark_oak_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:end_rod",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.4,
+        "name": "minecraft:chorus_plant",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.4,
+        "name": "minecraft:chorus_flower",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:purpur_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:purpur_pillar",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:purpur_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:end_stone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:beetroots",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:end_gateway",
+        "render": "other",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:repeating_command_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:chain_command_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:frosted_ice",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:magma_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:nether_wart_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:red_nether_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:bone_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": -1,
+        "name": "minecraft:structure_void",
+        "render": "none",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:observer",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:white_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:orange_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:magenta_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:light_blue_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:yellow_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:lime_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:pink_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:gray_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:light_gray_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cyan_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:purple_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:blue_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:brown_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:green_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:red_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:black_shulker_box",
+        "render": "other",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:white_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:orange_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:magenta_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:light_blue_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:yellow_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:lime_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:pink_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:gray_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:light_gray_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:cyan_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:purple_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:blue_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:brown_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:green_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:red_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.4,
+        "name": "minecraft:black_glazed_terracotta",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:white_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:orange_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:magenta_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:light_blue_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:yellow_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:lime_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:pink_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:gray_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:light_gray_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:cyan_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:purple_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:blue_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:brown_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:green_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:red_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.8,
+        "name": "minecraft:black_concrete",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:white_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:orange_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:magenta_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:light_blue_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:yellow_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:lime_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:pink_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:gray_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:light_gray_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:cyan_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:purple_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:blue_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:brown_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:green_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:red_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:black_concrete_powder",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:kelp",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:kelp_plant",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:dried_kelp_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:turtle_egg",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dead_tube_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dead_brain_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dead_bubble_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dead_fire_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dead_horn_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:tube_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:brain_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:bubble_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:fire_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:horn_coral_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_tube_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_brain_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_bubble_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_fire_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_horn_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:tube_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:brain_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:bubble_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:fire_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:horn_coral",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_tube_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_brain_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_bubble_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_fire_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_horn_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:tube_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:brain_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:bubble_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:fire_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:horn_coral_wall_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_tube_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_brain_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_bubble_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_fire_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:dead_horn_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:tube_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:brain_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:bubble_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:fire_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:horn_coral_fan",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:sea_pickle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.8,
+        "name": "minecraft:blue_ice",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:conduit",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:bamboo_sapling",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:bamboo",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_bamboo",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": -1,
+        "name": "minecraft:void_air",
+        "render": "none",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": -1,
+        "name": "minecraft:cave_air",
+        "render": "none",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": -1,
+        "name": "minecraft:bubble_column",
+        "render": "none",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_granite_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_red_sandstone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:mossy_stone_brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_diorite_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:mossy_cobblestone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:end_stone_brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:stone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_sandstone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_quartz_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:granite_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:andesite_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:red_nether_brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_andesite_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:diorite_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_granite_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_red_sandstone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:mossy_stone_brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_diorite_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:mossy_cobblestone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:end_stone_brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_sandstone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:smooth_quartz_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:granite_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:andesite_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:red_nether_brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_andesite_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:diorite_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:brick_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:prismarine_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:red_sandstone_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:mossy_stone_brick_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:granite_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:stone_brick_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:nether_brick_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:andesite_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:red_nether_brick_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:sandstone_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:end_stone_brick_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:diorite_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:scaffolding",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:loom",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:barrel",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:smoker",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:blast_furnace",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:cartography_table",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:fletching_table",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:grindstone",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:lectern",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.5,
+        "name": "minecraft:smithing_table",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:stonecutter",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 5,
+        "name": "minecraft:bell",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:lantern",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:soul_lantern",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:campfire",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:soul_campfire",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:sweet_berry_bush",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:warped_stem",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:stripped_warped_stem",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:warped_hyphae",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_warped_hyphae",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:warped_nylium",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:warped_fungus",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:warped_wart_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:warped_roots",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:nether_sprouts",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:crimson_stem",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:stripped_crimson_stem",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:crimson_hyphae",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:stripped_crimson_hyphae",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:crimson_nylium",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:crimson_fungus",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:shroomlight",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:weeping_vines",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:weeping_vines_plant",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:twisting_vines",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:twisting_vines_plant",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:crimson_roots",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:crimson_planks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:warped_planks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:crimson_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:warped_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:crimson_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:warped_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:crimson_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:warped_fence",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:crimson_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:warped_trapdoor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:crimson_fence_gate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:warped_fence_gate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:crimson_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:warped_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:crimson_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:warped_button",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:crimson_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3,
+        "name": "minecraft:warped_door",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:crimson_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:warped_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:crimson_wall_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1,
+        "name": "minecraft:warped_wall_sign",
+        "render": "other",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:structure_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:jigsaw",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:composter",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:target",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:bee_nest",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:beehive",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:honey_block",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.6,
+        "name": "minecraft:honeycomb_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 50,
+        "name": "minecraft:netherite_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 30,
+        "name": "minecraft:ancient_debris",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 50,
+        "name": "minecraft:crying_obsidian",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 50,
+        "name": "minecraft:respawn_anchor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_crimson_fungus",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_warped_fungus",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_crimson_roots",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_warped_roots",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:lodestone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:blackstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:blackstone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:blackstone_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:blackstone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:polished_blackstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_blackstone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:cracked_polished_blackstone_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:chiseled_polished_blackstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:polished_blackstone_brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:polished_blackstone_brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:polished_blackstone_brick_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:gilded_blackstone",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:polished_blackstone_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:polished_blackstone_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:polished_blackstone_pressure_plate",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:polished_blackstone_button",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:polished_blackstone_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:chiseled_nether_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 2,
+        "name": "minecraft:cracked_nether_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.8,
+        "name": "minecraft:quartz_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    {
+        "hardness": 4.5,
+        "name": "minecraft:deepslate_gold_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 4.5,
+        "name": "minecraft:deepslate_iron_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 4.5,
+        "name": "minecraft:deepslate_coal_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:azalea_leaves",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:flowering_azalea_leaves",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 4.5,
+        "name": "minecraft:deepslate_lapis_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 4.5,
+        "name": "minecraft:deepslate_diamond_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 4.5,
+        "name": "minecraft:deepslate_redstone_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:glow_lichen",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 2.0,
+        "name": "minecraft:water_cauldron",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.0,
+        "name": "minecraft:lava_cauldron",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 2.0,
+        "name": "minecraft:powder_snow_cauldron",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 4.5,
+        "name": "minecraft:deepslate_emerald_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": -2,
+        "name": "minecraft:light",
+        "render": "other",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.65,
+        "name": "minecraft:dirt_path",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:white_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:orange_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:magenta_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:light_blue_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:yellow_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:lime_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:pink_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:gray_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:light_gray_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:cyan_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:purple_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:blue_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:brown_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:green_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:red_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:black_candle",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:white_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:orange_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:magenta_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:light_blue_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:yellow_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:lime_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:pink_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:gray_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:light_gray_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:cyan_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:purple_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:blue_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:brown_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:green_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:red_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:black_candle_cake",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:amethyst_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:budding_amethyst",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:amethyst_cluster",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:large_amethyst_bud",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:medium_amethyst_bud",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:small_amethyst_bud",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:tuff",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.75,
+        "name": "minecraft:calcite",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.3,
+        "name": "minecraft:tinted_glass",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.25,
+        "name": "minecraft:powder_snow",
+        "render": "block",
+        "solid": false,
+        "transparent": false
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:sculk_sensor",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:oxidized_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:weathered_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:exposed_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:copper_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:copper_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 4.5,
+        "name": "minecraft:deepslate_copper_ore",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:oxidized_cut_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:weathered_cut_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:exposed_cut_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:cut_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:oxidized_cut_copper_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:weathered_cut_copper_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:exposed_cut_copper_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:cut_copper_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:oxidized_cut_copper_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:weathered_cut_copper_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:exposed_cut_copper_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:cut_copper_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_copper_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_weathered_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_exposed_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_oxidized_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_oxidized_cut_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_weathered_cut_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_exposed_cut_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_cut_copper",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_oxidized_cut_copper_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_weathered_cut_copper_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_exposed_cut_copper_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_cut_copper_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_oxidized_cut_copper_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_weathered_cut_copper_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_exposed_cut_copper_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:waxed_cut_copper_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:lightning_rod",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:pointed_dripstone",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 1.5,
+        "name": "minecraft:dripstone_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.2,
+        "name": "minecraft:cave_vines",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:cave_vines_plant",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:spore_blossom",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:azalea",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:flowering_azalea",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:moss_carpet",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:moss_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:big_dripleaf",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:big_dripleaf_stem",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:small_dripleaf",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.1,
+        "name": "minecraft:hanging_roots",
+        "render": "block",
+        "solid": false,
+        "transparent": true
+    },
+    {
+        "hardness": 0.5,
+        "name": "minecraft:rooted_dirt",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.0,
+        "name": "minecraft:deepslate",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:cobbled_deepslate",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:cobbled_deepslate_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:cobbled_deepslate_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:cobbled_deepslate_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:polished_deepslate",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:polished_deepslate_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:polished_deepslate_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:polished_deepslate_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:deepslate_tiles",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:deepslate_tile_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:deepslate_tile_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:deepslate_tile_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:deepslate_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:deepslate_brick_stairs",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:deepslate_brick_slab",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:deepslate_brick_wall",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:chiseled_deepslate",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:cracked_deepslate_bricks",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:cracked_deepslate_tiles",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 3.5,
+        "name": "minecraft:infested_deepslate",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 1.25,
+        "name": "minecraft:smooth_basalt",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 5.0,
+        "name": "minecraft:raw_iron_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 5.0,
+        "name": "minecraft:raw_copper_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 5.0,
+        "name": "minecraft:raw_gold_block",
+        "render": "block",
+        "solid": true,
+        "transparent": false
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_azalea_bush",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    },
+    {
+        "hardness": 0.0,
+        "name": "minecraft:potted_flowering_azalea_bush",
+        "render": "block",
+        "solid": true,
+        "transparent": true
+    }
+]

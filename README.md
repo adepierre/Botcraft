@@ -11,7 +11,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 - Connection to minecraft server (both offline mode and online connection with Mojang account, Microsoft accounts are supported using a json file created by the official launcher)
 - Automatic refresh of the token when required
 - DNS name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.16.5 supported
+- All official releases from 1.12.2 to 1.17 supported
 - Compression
 - Physics and collisions
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...)
@@ -93,7 +93,7 @@ Examples can be found in the [Examples](Examples/) folder:
   - placing a block
   - interacting with a block (lever, button ...)
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Simple example to stay at the same position. Physics is not processed, chunks are not saved in memory to save RAM.
-- [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same. Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous versions.
+- [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same. Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
 
 ## Connection
 
