@@ -125,6 +125,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundContainerButtonClickPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundClientInformationPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundClientCommandPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundContainerAckPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundContainerClosePacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPlaceRecipePacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSetCreativeModeSlotPacket.hpp

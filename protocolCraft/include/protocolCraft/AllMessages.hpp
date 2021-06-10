@@ -28,7 +28,9 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundClientCommandPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketPosRot.hpp"
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerAckPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundKeepAlivePacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundClientInformationPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundAcceptTeleportationPacket.hpp"
@@ -41,7 +43,9 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerClosePacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundCustomPayloadPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundInteractPacket.hpp"
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketPos.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketRot.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMoveVehiclePacket.hpp"
@@ -99,13 +103,17 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundChatPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundChangeDifficultyPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSectionBlocksUpdatePacket.hpp"
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundContainerAckPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundDisconnectPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundForgetLevelChunkPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundKeepAlivePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundLoginPacket.hpp"
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketPos.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketPosRot.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketRot.hpp"
@@ -155,17 +163,23 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveVehiclePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundOpenSignEditorPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlaceGhostRecipePacket.hpp"
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatPacket.hpp"
+#endif
 #if PROTOCOL_VERSION < 461
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundUseBedPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRecipePacket.hpp"
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntitiesPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveMobEffectPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundResourcePackPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRotateHeadPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSelectAdvancementsTabPacket.hpp"
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetCameraPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetDisplayObjectivePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetEntityDataPacket.hpp"
@@ -178,7 +192,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetPlayerTeamPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetScorePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetDefaultSpawnPositionPacket.hpp"
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetTitlesPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSoundPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTabListPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTakeItemEntityPacket.hpp"
@@ -256,7 +272,9 @@ namespace ProtocolCraft
         ServerboundClientInformationPacket,
         ServerboundClientCommandPacket,
         ServerboundContainerClosePacket,
+#if PROTOCOL_VERSION < 755
         ServerboundContainerAckPacket,
+#endif
         ServerboundPlaceRecipePacket,
         ServerboundSetCreativeModeSlotPacket,
 #if PROTOCOL_VERSION > 385
@@ -283,7 +301,9 @@ namespace ProtocolCraft
         ServerboundUseItemOnPacket,
         ServerboundPlayerActionPacket,
         ServerboundMovePlayerPacketRot,
+#if PROTOCOL_VERSION < 755
         ServerboundMovePlayerPacket,
+#endif
         ServerboundMovePlayerPacketPos,
         ServerboundMovePlayerPacketPosRot,
         ServerboundCustomPayloadPacket,
@@ -334,8 +354,10 @@ namespace ProtocolCraft
         ClientboundSetCameraPacket,
         ClientboundContainerClosePacket,
         ClientboundTakeItemEntityPacket,
+#if PROTOCOL_VERSION < 755
         ClientboundPlayerCombatPacket,
         ClientboundRemoveEntitiesPacket,
+#endif
 #if PROTOCOL_VERSION > 345
         ClientboundCommandsPacket,
 #endif
@@ -348,7 +370,9 @@ namespace ProtocolCraft
         ClientboundChangeDifficultyPacket,
         ClientboundMapItemDataPacket,
         ClientboundSectionBlocksUpdatePacket,
+#if PROTOCOL_VERSION < 755
         ClientboundContainerAckPacket,
+#endif
         ClientboundGameEventPacket,
         ClientboundPlaceGhostRecipePacket,
         ClientboundDisconnectPacket,
@@ -368,8 +392,10 @@ namespace ProtocolCraft
 #endif
         ClientboundLevelChunkPacket,
         ClientboundLoginPacket,
-        ClientboundLevelEventPacket,
+        ClientboundLevelEventPacket, 
+#if PROTOCOL_VERSION < 755
         ClientboundMoveEntityPacket,
+#endif
         ClientboundAnimatePacket,
         ClientboundSetEquipmentPacket,
         ClientboundUpdateMobEffectPacket,
@@ -430,7 +456,9 @@ namespace ProtocolCraft
 #endif
         ClientboundCommandSuggestionsPacket,
         ClientboundSetPlayerTeamPacket,
+#if PROTOCOL_VERSION < 755
         ClientboundSetTitlesPacket,
+#endif
 #if PROTOCOL_VERSION < 461
         ClientboundUseBedPacket,
 #endif
@@ -448,6 +476,8 @@ namespace ProtocolCraft
         ClientboundContainerSetDataPacket,
         ClientboundOpenScreenPacket,
         ClientboundSetCarriedItemPacket,
-        ClientboundSetBorderPacket
+#if PROTOCOL_VERSION < 755
+        ClientboundSetBorderPacket,
+#endif
     > ;
 } //ProtocolCraft

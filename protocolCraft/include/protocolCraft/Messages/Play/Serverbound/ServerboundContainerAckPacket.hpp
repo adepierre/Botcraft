@@ -1,5 +1,6 @@
 #pragma once
 
+#if PROTOCOL_VERSION < 755
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -94,3 +95,4 @@ namespace ProtocolCraft
         bool accepted;
     };
 } //ProtocolCraft
+#endif
