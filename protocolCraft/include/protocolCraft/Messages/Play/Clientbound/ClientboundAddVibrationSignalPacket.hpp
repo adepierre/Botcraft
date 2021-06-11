@@ -2,7 +2,7 @@
 
 #if PROTOCOL_VERSION > 754
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/VibrationPath.hpp"
+#include "protocolCraft/Types/Vibrations/VibrationPath.hpp"
 
 namespace ProtocolCraft
 {

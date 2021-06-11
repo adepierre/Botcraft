@@ -45,7 +45,9 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundClientInformationPacket>;
     template class BaseMessage<ServerboundClientCommandPacket>;
     template class BaseMessage<ServerboundContainerClosePacket>;
+#if PROTOCOL_VERSION > 755
     template class BaseMessage<ServerboundContainerAckPacket>;
+#endif
     template class BaseMessage<ServerboundPlaceRecipePacket>;
     template class BaseMessage<ServerboundSetCreativeModeSlotPacket>;
 #if PROTOCOL_VERSION > 385
@@ -72,7 +74,12 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundUseItemOnPacket>;
     template class BaseMessage<ServerboundPlayerActionPacket>;
     template class BaseMessage<ServerboundMovePlayerPacketRot>;
+#if PROTOCOL_VERSION > 754
+    template class BaseMessage<ServerboundMovePlayerPacketStatusOnly>;
+#endif
+#if PROTOCOL_VERSION < 755
     template class BaseMessage<ServerboundMovePlayerPacket>;
+#endif
     template class BaseMessage<ServerboundMovePlayerPacketPos>;
     template class BaseMessage<ServerboundMovePlayerPacketPosRot>;
     template class BaseMessage<ServerboundCustomPayloadPacket>;
@@ -97,6 +104,9 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundTeleportToEntityPacket>;
     template class BaseMessage<ServerboundPaddleBoatPacket>;
     template class BaseMessage<ServerboundPlayerInputPacket>;
+#if PROTOCOL_VERSION > 754
+    template class BaseMessage<ServerboundPongPacket>;
+#endif
     template class BaseMessage<ServerboundCommandSuggestionPacket>;
     template class BaseMessage<ServerboundAcceptTeleportationPacket>;
 #if PROTOCOL_VERSION > 385
@@ -123,8 +133,10 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundSetCameraPacket>;
     template class BaseMessage<ClientboundContainerClosePacket>;
     template class BaseMessage<ClientboundTakeItemEntityPacket>;
+#if PROTOCOL_VERSION < 755
     template class BaseMessage<ClientboundPlayerCombatPacket>;
     template class BaseMessage<ClientboundRemoveEntitiesPacket>;
+#endif
 #if PROTOCOL_VERSION > 345
     template class BaseMessage<ClientboundCommandsPacket>;
 #endif
@@ -137,7 +149,9 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundChangeDifficultyPacket>;
     template class BaseMessage<ClientboundMapItemDataPacket>;
     template class BaseMessage<ClientboundSectionBlocksUpdatePacket>;
+#if PROTOCOL_VERSION < 755
     template class BaseMessage<ClientboundContainerAckPacket>;
+#endif
     template class BaseMessage<ClientboundGameEventPacket>;
     template class BaseMessage<ClientboundPlaceGhostRecipePacket>;
     template class BaseMessage<ClientboundDisconnectPacket>;
@@ -158,7 +172,9 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundLevelChunkPacket>;
     template class BaseMessage<ClientboundLoginPacket>;
     template class BaseMessage<ClientboundLevelEventPacket>;
+#if PROTOCOL_VERSION < 755
     template class BaseMessage<ClientboundMoveEntityPacket>;
+#endif
     template class BaseMessage<ClientboundAnimatePacket>;
     template class BaseMessage<ClientboundSetEquipmentPacket>;
     template class BaseMessage<ClientboundUpdateMobEffectPacket>;
@@ -219,7 +235,9 @@ namespace ProtocolCraft
 #endif
     template class BaseMessage<ClientboundCommandSuggestionsPacket>;
     template class BaseMessage<ClientboundSetPlayerTeamPacket>;
+#if PROTOCOL_VERSION < 755
     template class BaseMessage<ClientboundSetTitlesPacket>;
+#endif
 #if PROTOCOL_VERSION < 461
     template class BaseMessage<ClientboundUseBedPacket>;
 #endif
@@ -237,5 +255,26 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundContainerSetDataPacket>;
     template class BaseMessage<ClientboundOpenScreenPacket>;
     template class BaseMessage<ClientboundSetCarriedItemPacket>;
+#if PROTOCOL_VERSION < 755
     template class BaseMessage<ClientboundSetBorderPacket>;
+#endif
+#if PROTOCOL_VERSION > 754
+    template class BaseMessage<ClientboundAddVibrationSignalPacket>;
+    template class BaseMessage<ClientboundClearTitlesPacket>;
+    template class BaseMessage<ClientboundInitializeBorderPacket>;
+    template class BaseMessage<ClientboundPingPacket>;
+    template class BaseMessage<ClientboundPlayerCombatEndPacket>;
+    template class BaseMessage<ClientboundPlayerCombatEnterPacket>;
+    template class BaseMessage<ClientboundPlayerCombatKillPacket>;
+    template class BaseMessage<ClientboundRemoveEntityPacket>;
+    template class BaseMessage<ClientboundSetActionBarTextPacket>;
+    template class BaseMessage<ClientboundSetBorderCenterPacket>;
+    template class BaseMessage<ClientboundSetBorderLerpSizePacket>;
+    template class BaseMessage<ClientboundSetBorderSizePacket>;
+    template class BaseMessage<ClientboundSetBorderWarningDelayPacket>;
+    template class BaseMessage<ClientboundSetBorderWarningDistancePacket>;
+    template class BaseMessage<ClientboundSetSubtitleTextPacket>;
+    template class BaseMessage<ClientboundSetTitleTextPacket>;
+    template class BaseMessage<ClientboundSetTitlesAnimationPacket>;
+#endif
 }
