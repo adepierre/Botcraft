@@ -1,0 +1,97 @@
+#pragma once
+
+#if PROTOCOL_VERSION > 754
+#include "protocolCraft/BaseMessage.hpp"
+
+namespace ProtocolCraft
+{
+    class ClientboundSetBorderLerpSizePacket : public BaseMessage<ClientboundSetBorderLerpSizePacket>
+    {
+    public:
+        virtual const int GetId() const override
+        {
+#if PROTOCOL_VERSION == 755 // 1.17
+            return 0x43;
+#else
+#error "Protocol version not implemented"
+#endif
+        }
+
+        virtual const std::string GetName() const override
+        {
+            return "Set Border Lerp Size";
+        }
+
+        virtual ~ClientboundSetBorderLerpSizePacket() override
+        {
+
+        }
+
+
+        void SetOldSize(const double old_size_)
+        {
+            old_size = old_size_;
+        }
+
+        void SetNewSize(const double new_size_)
+        {
+            new_size = new_size_;
+        }
+
+        void SetLerpTime(const long long int lerp_time_)
+        {
+            lerp_time = lerp_time_;
+        }
+
+
+        const double GetOldSize() const
+        {
+            return old_size;
+        }
+
+        const double GetNewSize() const
+        {
+            return new_size;
+        }
+
+        const long long int GetLerpTime() const
+        {
+            return lerp_time;
+        }
+
+
+    protected:
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+        {
+            old_size = ReadData<double>(iter, length);
+            new_size = ReadData<double>(iter, length);
+            lerp_time = ReadVarLong(iter, length);
+        }
+
+        virtual void WriteImpl(WriteContainer& container) const override
+        {
+            WriteData<double>(old_size, container);
+            WriteData<double>(new_size, container);
+            WriteVarLong(lerp_time, container);
+        }
+
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["old_size"] = picojson::value(old_size);
+            object["new_size"] = picojson::value(new_size);
+            object["lerp_time"] = picojson::value((double)lerp_time);
+
+            return value;
+        }
+
+    private:
+        double old_size;
+        double new_size;
+        long long int lerp_time;
+
+    };
+} //ProtocolCraft
+#endif

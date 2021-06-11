@@ -117,6 +117,23 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetContentPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetDataPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundAddVibrationSignalPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundClearTitlesPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundInitializeBorderPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundPingPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatEndPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatEnterPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatKillPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntityPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetActionBarTextPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderCenterPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderLerpSizePacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderSizePacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderWarningDelayPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderWarningDistancePacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetSubtitleTextPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetTitleTextPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetTitlesAnimationPacket.hpp
     
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSeenAdvancementsPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSwingPacket.hpp
@@ -168,6 +185,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSetStructureBlockPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundUseItemPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundMoveVehiclePacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundPongPacket.hpp
     
     
     include/protocolCraft/Messages/Status/Clientbound/ClientboundPongResponsePacket.hpp
@@ -206,6 +225,21 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/CommandNode/BrigadierPropertyScoreHolder.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyString.hpp
     
+    include/protocolCraft/Types/NBT/NBT.hpp
+    include/protocolCraft/Types/NBT/Tag.hpp
+    include/protocolCraft/Types/NBT/TagEnd.hpp
+    include/protocolCraft/Types/NBT/TagByte.hpp
+    include/protocolCraft/Types/NBT/TagShort.hpp
+    include/protocolCraft/Types/NBT/TagInt.hpp
+    include/protocolCraft/Types/NBT/TagLong.hpp
+    include/protocolCraft/Types/NBT/TagFloat.hpp
+    include/protocolCraft/Types/NBT/TagDouble.hpp
+    include/protocolCraft/Types/NBT/TagByteArray.hpp
+    include/protocolCraft/Types/NBT/TagString.hpp
+    include/protocolCraft/Types/NBT/TagList.hpp
+    include/protocolCraft/Types/NBT/TagCompound.hpp
+    include/protocolCraft/Types/NBT/TagIntArray.hpp
+    include/protocolCraft/Types/NBT/TagLongArray.hpp    
         
     include/protocolCraft/Types/Recipes/Recipe.hpp
     include/protocolCraft/Types/Recipes/RecipeBookSettings.hpp
@@ -221,22 +255,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp
     include/protocolCraft/Types/Recipes/Ingredient.hpp
     
-    
-    include/protocolCraft/Types/NBT/NBT.hpp
-    include/protocolCraft/Types/NBT/Tag.hpp
-    include/protocolCraft/Types/NBT/TagEnd.hpp
-    include/protocolCraft/Types/NBT/TagByte.hpp
-    include/protocolCraft/Types/NBT/TagShort.hpp
-    include/protocolCraft/Types/NBT/TagInt.hpp
-    include/protocolCraft/Types/NBT/TagLong.hpp
-    include/protocolCraft/Types/NBT/TagFloat.hpp
-    include/protocolCraft/Types/NBT/TagDouble.hpp
-    include/protocolCraft/Types/NBT/TagByteArray.hpp
-    include/protocolCraft/Types/NBT/TagString.hpp
-    include/protocolCraft/Types/NBT/TagList.hpp
-    include/protocolCraft/Types/NBT/TagCompound.hpp
-    include/protocolCraft/Types/NBT/TagIntArray.hpp
-    include/protocolCraft/Types/NBT/TagLongArray.hpp
+    include/protocolCraft/Types/Vibrations/BlockPositionSource.hpp
+    include/protocolCraft/Types/Vibrations/EntityPositionSource.hpp
+    include/protocolCraft/Types/Vibrations/PositionSource.hpp
+    include/protocolCraft/Types/Vibrations/VibrationPath.hpp
 )
 
 set(protocolCraft_SRC 
@@ -260,6 +282,7 @@ set(protocolCraft_SRC
     src/Types/NBT/TagLongArray.cpp
     src/Types/CommandNode/BrigadierProperty.cpp
     src/Types/Recipes/RecipeTypeData.cpp
+    src/Types/Vibrations/PositionSource.cpp
 )
 
 # To have a nice files structure in Visual Studio

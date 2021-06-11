@@ -97,6 +97,10 @@
 #if PROTOCOL_VERSION > 711
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundJigsawGeneratePacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 754
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPongPacket.hpp"
+#endif
 
 // Play clientbound
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockUpdatePacket.hpp"
@@ -233,6 +237,25 @@
 #if PROTOCOL_VERSION > 440
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSoundEntityPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 754
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundAddVibrationSignalPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundClearTitlesPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundInitializeBorderPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPingPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatEndPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatEnterPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatKillPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntityPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetActionBarTextPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderCenterPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderLerpSizePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderSizePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderWarningDelayPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderWarningDistancePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetSubtitleTextPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetTitleTextPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetTitlesAnimationPacket.hpp"
+#endif
 
 
 namespace ProtocolCraft
@@ -343,6 +366,10 @@ namespace ProtocolCraft
 #endif
         ServerboundUseItemPacket,
         ServerboundMoveVehiclePacket,
+#if PROTOCOL_VERSION > 754
+        ServerboundMovePlayerPacketStatusOnly,
+        ServerboundPongPacket,
+#endif
 
         // Play clientbound
         ClientboundUpdateAdvancementsPacket,
@@ -478,6 +505,25 @@ namespace ProtocolCraft
         ClientboundSetCarriedItemPacket,
 #if PROTOCOL_VERSION < 755
         ClientboundSetBorderPacket,
+#endif
+#if PROTOCOL_VERSION > 754
+        ClientboundAddVibrationSignalPacket,
+        ClientboundClearTitlesPacket,
+        ClientboundInitializeBorderPacket,
+        ClientboundPingPacket,
+        ClientboundPlayerCombatEndPacket,
+        ClientboundPlayerCombatEnterPacket,
+        ClientboundPlayerCombatKillPacket,
+        ClientboundRemoveEntityPacket,
+        ClientboundSetActionBarTextPacket,
+        ClientboundSetBorderCenterPacket,
+        ClientboundSetBorderLerpSizePacket,
+        ClientboundSetBorderSizePacket,
+        ClientboundSetBorderWarningDelayPacket,
+        ClientboundSetBorderWarningDistancePacket,
+        ClientboundSetSubtitleTextPacket,
+        ClientboundSetTitleTextPacket,
+        ClientboundSetTitlesAnimationPacket
 #endif
     > ;
 } //ProtocolCraft

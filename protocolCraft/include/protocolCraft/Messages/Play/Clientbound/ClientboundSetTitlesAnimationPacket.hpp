@@ -1,0 +1,97 @@
+#pragma once
+
+#if PROTOCOL_VERSION > 754
+#include "protocolCraft/BaseMessage.hpp"
+
+namespace ProtocolCraft
+{
+    class ClientboundSetTitlesAnimationPacket : public BaseMessage<ClientboundSetTitlesAnimationPacket>
+    {
+    public:
+        virtual const int GetId() const override
+        {
+#if PROTOCOL_VERSION == 755 // 1.17
+            return 0x5A;
+#else
+#error "Protocol version not implemented"
+#endif
+        }
+
+        virtual const std::string GetName() const override
+        {
+            return "Set Titles Animation";
+        }
+
+        virtual ~ClientboundSetTitlesAnimationPacket() override
+        {
+
+        }
+
+
+        void SetFadeIn(const int fade_in_)
+        {
+            fade_in = fade_in_;
+        }
+
+        void SetStay(const int stay_)
+        {
+            stay= stay_;
+        }
+
+        void SetFadeOut(const int fade_out_)
+        {
+            fade_out= fade_out_;
+        }
+
+
+        const int GetFadeIn() const
+        {
+            return fade_in;
+        }
+
+        const int GetStay() const
+        {
+            return stay;
+        }
+
+        const int GetFadeOut() const
+        {
+            return fade_out;
+        }
+
+
+    protected:
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+        {
+            fade_in = ReadData<int>(iter, length);
+            stay = ReadData<int>(iter, length);
+            fade_out = ReadData<int>(iter, length);
+        }
+
+        virtual void WriteImpl(WriteContainer& container) const override
+        {
+            WriteData<int>(fade_in, container);
+            WriteData<int>(stay, container);
+            WriteData<int>(fade_out, container);
+        }
+
+        virtual const picojson::value SerializeImpl() const override
+        {
+            picojson::value value(picojson::object_type, false);
+            picojson::object& object = value.get<picojson::object>();
+
+            object["fade_in"] = picojson::value((double)fade_in);
+            object["stay"] = picojson::value((double)stay);
+            object["fade_out"] = picojson::value((double)fade_out);
+
+            return value;
+        }
+
+    private:
+        int fade_in;
+        int stay;
+        int fade_out;
+
+    };
+} //ProtocolCraft
+#endif
