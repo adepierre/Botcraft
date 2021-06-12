@@ -49,10 +49,12 @@ namespace ProtocolCraft
             scale = scale_;
         }
 
+#if PROTOCOL_VERSION < 755
         void SetTrackingPosition(const bool tracking_position_)
         {
             tracking_position = tracking_position_;
         }
+#endif
 
 #if PROTOCOL_VERSION > 451
         void SetLocked(const bool locked_)
@@ -102,10 +104,12 @@ namespace ProtocolCraft
             return scale;
         }
 
+#if PROTOCOL_VERSION < 755
         const bool GetTrackingPosition() const
         {
             return tracking_position;
         }
+#endif
 
 #if PROTOCOL_VERSION > 451
         const bool GetLocked() const
@@ -150,16 +154,26 @@ namespace ProtocolCraft
         {
             map_id = ReadVarInt(iter, length);
             scale = ReadData<char>(iter, length);
+#if PROTOCOL_VERSION < 755
             tracking_position = ReadData<bool>(iter, length);
+#endif
 #if PROTOCOL_VERSION > 451
             locked = ReadData<bool>(iter, length);
 #endif
-            int decorations_count = ReadVarInt(iter, length);
-            decorations = std::vector<MapDecoration>(decorations_count);
-            for (int i = 0; i < decorations_count; ++i)
+#if PROTOCOL_VERSION > 754
+            const bool has_decorations = ReadData<bool>(iter, length);
+            if (has_decorations)
             {
-                decorations[i].Read(iter, length);
+#endif
+                int decorations_count = ReadVarInt(iter, length);
+                decorations = std::vector<MapDecoration>(decorations_count);
+                for (int i = 0; i < decorations_count; ++i)
+                {
+                    decorations[i].Read(iter, length);
+                }
+#if PROTOCOL_VERSION > 754
             }
+#endif
 
             width = ReadData<char>(iter, length);
             if (width > 0)
@@ -176,15 +190,25 @@ namespace ProtocolCraft
         {
             WriteVarInt(map_id, container);
             WriteData<char>(scale, container);
+#if PROTOCOL_VERSION < 755
             WriteData<bool>(tracking_position, container);
+#endif
 #if PROTOCOL_VERSION > 451
             WriteData<bool>(locked, container);
 #endif
-            WriteVarInt(decorations.size(), container);
-            for (int i = 0; i < decorations.size(); ++i)
+#if PROTOCOL_VERSION > 754
+            WriteData<bool>(decorations.size() > 0, container);
+            if (decorations.size() > 0)
             {
-                decorations[i].Write(container);
+#endif
+                WriteVarInt(decorations.size(), container);
+                for (int i = 0; i < decorations.size(); ++i)
+                {
+                    decorations[i].Write(container);
+                }
+#if PROTOCOL_VERSION > 754
             }
+#endif
 
             WriteData<char>(width, container);
             if (width > 0)
@@ -204,7 +228,9 @@ namespace ProtocolCraft
 
             object["map_id"] = picojson::value((double)map_id);
             object["scale"] = picojson::value((double)scale);
+#if PROTOCOL_VERSION < 755
             object["tracking_position"] = picojson::value((double)tracking_position);
+#endif
 #if PROTOCOL_VERSION > 451
             object["locked"] = picojson::value((double)locked);
 #endif
@@ -229,7 +255,9 @@ namespace ProtocolCraft
     private:
         int map_id;
         char scale;
+#if PROTOCOL_VERSION < 755
         bool tracking_position;
+#endif
 #if PROTOCOL_VERSION > 451
         bool locked;
 #endif

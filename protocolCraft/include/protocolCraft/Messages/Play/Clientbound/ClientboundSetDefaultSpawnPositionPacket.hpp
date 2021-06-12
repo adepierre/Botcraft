@@ -44,22 +44,42 @@ namespace ProtocolCraft
             location = location_;
         }
 
+#if PROTOCOL_VERSION > 754
+        void SetAngle(const float angle_)
+        {
+            angle = angle_;
+        }
+#endif
+
 
         const NetworkPosition& GetLocation() const
         {
             return location;
         }
 
+#if PROTOCOL_VERSION > 754
+        const float GetAngle() const
+        {
+            return angle;
+        }
+#endif
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             location.Read(iter, length);
+#if PROTOCOL_VERSION > 754
+            angle = ReadData<float>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
            location.Write(container);
+#if PROTOCOL_VERSION > 754
+           WriteData<float>(angle, container);
+#endif
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -68,12 +88,18 @@ namespace ProtocolCraft
             picojson::object& object = value.get<picojson::object>();
 
             object["location"] = location.Serialize();
+#if PROTOCOL_VERSION > 754
+            object["angle"] = picojson::value((double)angle);
+#endif
 
             return value;
         }
 
     private:
         NetworkPosition location;
+#if PROTOCOL_VERSION > 754
+        float angle;
+#endif
 
     };
 } //ProtocolCraft

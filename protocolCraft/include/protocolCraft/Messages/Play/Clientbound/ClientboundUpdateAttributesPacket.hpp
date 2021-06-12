@@ -67,7 +67,12 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             entity_id = ReadVarInt(iter, length);
+
+#if PROTOCOL_VERSION < 755
             const int attributes_size = ReadData<int>(iter, length);
+#else
+            const int attributes_size = ReadVarInt(iter, length);
+#endif
             attributes = std::vector<EntityProperty>(attributes_size);
             for (int i = 0; i < attributes_size; ++i)
             {
@@ -78,7 +83,11 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteVarInt(entity_id, container);
+#if PROTOCOL_VERSION < 755
             WriteData<int>(attributes.size(), container);
+#else
+            WriteVarInt(attributes.size(), container);
+#endif
             for (int i = 0; i < attributes.size(); ++i)
             {
                 attributes[i].Write(container);

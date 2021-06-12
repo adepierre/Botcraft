@@ -1,6 +1,9 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION > 754
+#include "protocolCraft/Types/Chat.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -48,6 +51,18 @@ namespace ProtocolCraft
             hash = hash_;
         }
 
+#if PROTOCOL_VERSION > 754
+        void SetRequired(const bool required_)
+        {
+            required = required_;
+        }
+
+        void SetPrompt(const Chat& prompt_)
+        {
+            prompt = prompt_;
+        }
+#endif
+
 
         const std::string& GetUrl() const
         {
@@ -59,18 +74,49 @@ namespace ProtocolCraft
             return hash;
         }
 
+#if PROTOCOL_VERSION > 754
+        const bool GetRequired() const
+        {
+            return required;
+        }
+
+        const Chat& GetPrompt() const
+        {
+            return prompt;
+        }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             url = ReadString(iter, length);
             hash = ReadString(iter, length);
+#if PROTOCOL_VERSION > 754
+            required = ReadData<bool>(iter, length);
+            const bool has_prompt = ReadData<bool>(iter, length);
+            if (has_prompt)
+            {
+                prompt.Read(iter, length);
+            }
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteString(url, container);
             WriteString(hash, container);
+#if PROTOCOL_VERSION > 754
+            WriteData<bool>(required, container);
+            if (prompt.GetRawText().empty())
+            {
+                WriteData<bool>(false, container);
+            }
+            else
+            {
+                WriteData<bool>(true, container);
+                prompt.Write(container);
+            }
+#endif
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -80,6 +126,10 @@ namespace ProtocolCraft
 
             object["url"] = picojson::value(url);
             object["hash"] = picojson::value(hash);
+#if PROTOCOL_VERSION > 754
+            object["required"] = picojson::value(required);
+            object["prompt"] = prompt.Serialize();
+#endif
 
             return value;
         }
@@ -87,6 +137,10 @@ namespace ProtocolCraft
     private:
         std::string url;
         std::string hash;
+#if PROTOCOL_VERSION > 754
+        bool required;
+        Chat prompt;
+#endif
 
     };
 } //ProtocolCraft

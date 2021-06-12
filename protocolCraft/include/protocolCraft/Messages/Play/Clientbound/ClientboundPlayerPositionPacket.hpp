@@ -73,6 +73,14 @@ namespace ProtocolCraft
             id_ = id__;
         }
 
+#if PROTOCOL_VERSION > 754
+        void SetDismountVehicle(const bool dismount_vehicle_)
+        {
+            dismount_vehicle = dismount_vehicle_;
+        }
+#endif
+
+
         const double GetX() const
         {
             return x;
@@ -108,6 +116,13 @@ namespace ProtocolCraft
             return id_;
         }
 
+#if PROTOCOL_VERSION > 754
+        const bool GetDismountVehicle() const
+        {
+            return dismount_vehicle;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
@@ -118,6 +133,9 @@ namespace ProtocolCraft
             xRot = ReadData<float>(iter, length);
             relative_arguments = ReadData<char>(iter, length);
             id_ = ReadVarInt(iter, length);
+#if PROTOCOL_VERSION > 754
+            dismount_vehicle = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -129,6 +147,9 @@ namespace ProtocolCraft
             WriteData<float>(xRot, container);
             WriteData<char>(relative_arguments, container);
             WriteVarInt(id_, container);
+#if PROTOCOL_VERSION > 754
+            WriteData<bool>(dismount_vehicle, container);
+#endif
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -143,6 +164,9 @@ namespace ProtocolCraft
             object["xRot"] = picojson::value((double)xRot);
             object["relative_arguments"] = picojson::value((double)relative_arguments);
             object["id_"] = picojson::value((double)id_);
+#if PROTOCOL_VERSION > 754
+            object["dismount_vehicle"] = picojson::value(dismount_vehicle);
+#endif
 
             return value;
         }
@@ -155,5 +179,8 @@ namespace ProtocolCraft
         float xRot;
         char relative_arguments;
         int id_;
+#if PROTOCOL_VERSION > 754
+        bool dismount_vehicle;
+#endif
     };
 }

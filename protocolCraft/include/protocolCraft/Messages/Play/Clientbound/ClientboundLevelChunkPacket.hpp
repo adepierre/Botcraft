@@ -57,7 +57,11 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 755
         void SetAvailableSections(const int available_sections_)
+#else
+        void SetAvailableSections(const std::vector<unsigned long long int>& available_sections_)
+#endif
         {
             available_sections = available_sections_;
         }
@@ -86,10 +90,12 @@ namespace ProtocolCraft
             block_entities_tags = block_entities_tags_;
         }
 
+#if PROTOCOL_VERSION < 755
         void SetFullChunk(const bool full_chunk_)
         {
             full_chunk = full_chunk_;
         }
+#endif
 
 
         const int GetX() const
@@ -109,7 +115,11 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 755
         const int GetAvailableSections() const
+#else
+        const std::vector<unsigned long long int>& GetAvailableSections() const
+#endif
         {
             return available_sections;
         }
@@ -138,10 +148,12 @@ namespace ProtocolCraft
             return block_entities_tags;
         }
 
+#if PROTOCOL_VERSION < 755
         const bool GetFullChunk() const
         {
             return full_chunk;
         }
+#endif
 
     protected:
 
@@ -149,17 +161,30 @@ namespace ProtocolCraft
         {
             x = ReadData<int>(iter, length);
             z = ReadData<int>(iter, length);
+#if PROTOCOL_VERSION < 755
             full_chunk = ReadData<bool>(iter, length);
+#endif
 #if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
             ignore_old_data = ReadData<bool>(iter, length);
 #endif
+#if PROTOCOL_VERSION < 755
             available_sections = ReadVarInt(iter, length);
+#else
+            const int available_sections_size = ReadVarInt(iter, length);
+            available_sections = std::vector<unsigned long long int>(available_sections_size);
+            for (int i = 0; i < available_sections_size; ++i)
+            {
+                available_sections[i] = ReadData<unsigned long long int>(iter, length);
+            }
+#endif
 #if PROTOCOL_VERSION > 442
             heightmaps.Read(iter, length);
 #endif
 #if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION < 755
 			if (full_chunk)
 			{
+#endif
 #if PROTOCOL_VERSION > 738
                 const int biomes_size = ReadVarInt(iter, length);
                 biomes = std::vector<int>(biomes_size);
@@ -170,7 +195,9 @@ namespace ProtocolCraft
 #else
                 biomes = ReadArrayData<int>(iter, length, 1024);
 #endif
+#if PROTOCOL_VERSION < 755
 			}
+#endif
 #endif
             const int buffer_size = ReadVarInt(iter, length);
             buffer = ReadByteArray(iter, length, buffer_size);
@@ -186,17 +213,29 @@ namespace ProtocolCraft
         {
             WriteData<int>(x, container);
             WriteData<int>(z, container);
+#if PROTOCOL_VERSION < 755
             WriteData<bool>(full_chunk, container);
+#endif
 #if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
             WriteData<bool>(ignore_old_data, container);
 #endif
+#if PROTOCOL_VERSION < 755
             WriteVarInt(available_sections, container);
+#else
+            WriteVarInt(available_sections.size(), container);
+            for (int i = 0; i < available_sections.size(); ++i)
+            {
+                WriteData<unsigned long long int>(available_sections[i], container);
+            }
+#endif
 #if PROTOCOL_VERSION > 442
             heightmaps.Write(container);
 #endif
 #if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION < 755
             if (full_chunk)
             {
+#endif
 #if PROTOCOL_VERSION > 738
                 WriteVarInt(biomes.size(), container);
                 for (int i = 0; i < biomes.size(); ++i)
@@ -206,7 +245,9 @@ namespace ProtocolCraft
 #else
                 WriteArrayData(biomes, container);
 #endif
+#if PROTOCOL_VERSION < 755
             }
+#endif
 #endif
             WriteVarInt(buffer.size(), container);
             WriteByteArray(buffer, container);
@@ -227,7 +268,16 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
             object["ignore_old_data"] = picojson::value(ignore_old_data);
 #endif
+#if PROTOCOL_VERSION < 755
             object["available_sections"] = picojson::value((double)available_sections);
+#else
+            object["available_sections"] = picojson::value(picojson::array_type, false);
+            picojson::array& array_available_sections = object["available_sections"].get<picojson::array>();
+            for (int i = 0; i < available_sections.size(); ++i)
+            {
+                array_available_sections.push_back(picojson::value((double)available_sections[i]));
+            }
+#endif
 #if PROTOCOL_VERSION > 442
             object["heightmaps"] = heightmaps.Serialize();
 #endif
@@ -244,7 +294,9 @@ namespace ProtocolCraft
                 array_block_entities_tags.push_back(block_entities_tags[i].Serialize());
             }
 
+#if PROTOCOL_VERSION < 755
             object["full_chunk"] = picojson::value(full_chunk);
+#endif
 
             return value;
         }
@@ -255,7 +307,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
         bool ignore_old_data;
 #endif
+#if PROTOCOL_VERSION < 755
         int available_sections;
+#else
+        std::vector<unsigned long long int> available_sections;
+#endif
 #if PROTOCOL_VERSION > 442
         NBT heightmaps;
 #endif
@@ -264,6 +320,8 @@ namespace ProtocolCraft
 #endif
         std::vector<unsigned char> buffer;
         std::vector<NBT> block_entities_tags;
+#if PROTOCOL_VERSION < 755
         bool full_chunk;
+#endif
     };
 } //ProtocolCraft

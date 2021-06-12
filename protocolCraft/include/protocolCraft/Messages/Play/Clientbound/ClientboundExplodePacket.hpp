@@ -128,7 +128,11 @@ namespace ProtocolCraft
             y = ReadData<float>(iter, length);
             z = ReadData<float>(iter, length);
             power = ReadData<float>(iter, length);
+#if PROTOCOL_VERSION < 755
             const int to_blow_size = ReadData<int>(iter, length);
+#else
+            const int to_blow_size = ReadVarInt(iter, length);
+#endif
             to_blow = std::vector<NetworkPosition>(to_blow_size);
             for (int i = 0; i < to_blow_size; ++i)
             {
@@ -147,7 +151,11 @@ namespace ProtocolCraft
             WriteData<float>(y, container);
             WriteData<float>(z, container);
             WriteData<float>(power, container);
+#if PROTOCOL_VERSION < 755
             WriteData<int>(to_blow.size(), container);
+#else
+            WriteVarInt(to_blow.size(), container);
+#endif
             for (int i = 0; i < to_blow.size(); ++i)
             {
                 WriteData<char>(to_blow[i].GetX(), container);

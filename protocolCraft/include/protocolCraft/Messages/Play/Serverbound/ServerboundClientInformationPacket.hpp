@@ -68,6 +68,14 @@ namespace ProtocolCraft
             main_hand = main_hand_;
         }
 
+#if PROTOCOL_VERSION > 754
+        void SetTextFilteringEnabled(const int text_filtering_enabled_)
+        {
+            text_filtering_enabled = text_filtering_enabled_;
+        }
+#endif
+
+
         const std::string& GetLanguage() const
         {
             return language;
@@ -98,6 +106,13 @@ namespace ProtocolCraft
             return main_hand;
         }
 
+#if PROTOCOL_VERSION > 754
+        const int GetTextFilteringEnabled() const
+        {
+            return text_filtering_enabled;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
@@ -107,6 +122,9 @@ namespace ProtocolCraft
             chat_colors = ReadData<bool>(iter, length);
             model_customisation = ReadData<unsigned char>(iter, length);
             main_hand = ReadVarInt(iter, length);
+#if PROTOCOL_VERSION > 754
+            text_filtering_enabled = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -117,6 +135,9 @@ namespace ProtocolCraft
             WriteData<bool>(chat_colors, container);
             WriteData<unsigned char>(model_customisation, container);
             WriteVarInt(main_hand, container);
+#if PROTOCOL_VERSION > 754
+            WriteData<bool>(text_filtering_enabled, container);
+#endif
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -130,6 +151,9 @@ namespace ProtocolCraft
             object["chat_colors"] = picojson::value(chat_colors);
             object["model_customisation"] = picojson::value((double)model_customisation);
             object["main_hand"] = picojson::value((double)main_hand);
+#if PROTOCOL_VERSION > 754
+            object["text_filtering_enabled"] = picojson::value(text_filtering_enabled);
+#endif
 
             return value;
         }
@@ -141,5 +165,8 @@ namespace ProtocolCraft
         bool chat_colors;
         unsigned char model_customisation;
         int main_hand;
+#if PROTOCOL_VERSION > 754
+        bool text_filtering_enabled;
+#endif
     };
 } //ProtocolCraft
