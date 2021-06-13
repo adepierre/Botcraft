@@ -60,4 +60,45 @@ namespace Botcraft
     }
 #endif
 
+    const short Window::GetFirstPlayerInventorySlot() const
+    {
+        switch (type)
+        {
+        case InventoryType::Beacon:
+        case InventoryType::Lectern:
+            return 1;
+        case InventoryType::Enchantment:
+        case InventoryType::StoneCutter:
+            return 2;
+        case InventoryType::Furnace:
+        case InventoryType::Smoker:
+        case InventoryType::BlastFurnace:
+        case InventoryType::Merchant:
+        case InventoryType::Anvil:
+        case InventoryType::CartographyTable:
+        case InventoryType::Grindstone:
+        case InventoryType::Smithing:
+            return 3;
+        case InventoryType::Loom:
+            return 4;
+        case InventoryType::Hopper:
+        case InventoryType::BrewingStand:
+            return 5;
+        case InventoryType::Default:
+        case InventoryType::Generic3x3:
+            return 9;
+        case InventoryType::Crafting:
+            return 10;
+        case InventoryType::ShulkerBox:
+            return 27;
+        case InventoryType::Generic9x1:
+        case InventoryType::Generic9x2:
+        case InventoryType::Generic9x3:
+        case InventoryType::Generic9x5:
+        case InventoryType::Generic9x4:
+        case InventoryType::Generic9x6:
+            return ((int)(type) + 1) * 9;
+        }
+    }
+
 } //Botcraft

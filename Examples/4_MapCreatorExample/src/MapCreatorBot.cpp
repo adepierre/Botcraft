@@ -361,7 +361,7 @@ const bool MapCreatorBot::GetSomeFood(const std::string& item_name)
                 }
                 const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
 
-                const short first_player_index = ((int)container->GetType() + 1) * 9;
+                const short first_player_index = container->GetFirstPlayerInventorySlot();
                 player_dst = first_player_index + 9 * 3;
 
                 const std::map<short, Slot>& slots = container->GetSlots();

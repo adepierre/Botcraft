@@ -348,7 +348,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 755
             if ((light_mask >> i) & 1)
 #else
-            if ((light_mask[i / 64] >> (i % 64)) & 1)
+            if ((light_mask.size() > i / 64) && (light_mask[i / 64] >> (i % 64)) & 1)
 #endif
             {
                 if (i > 0 && i < num_sections - 1)
@@ -386,7 +386,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 755
             else if ((empty_light_mask >> i) & 1)
 #else
-            else if ((empty_light_mask[i / 64] >> (i % 64)) & 1)
+            else if ((empty_light_mask.size() > i / 64) && (empty_light_mask[i / 64] >> (i % 64)) & 1)
 #endif
             {
                 if (i > 0 && i < num_sections - 1)
@@ -985,9 +985,9 @@ namespace Botcraft
     {
         std::lock_guard<std::mutex> world_guard(world_mutex);
         UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-            msg.GetSkyYMask(), msg.GetEmptySkyYMask(), msg.GetSkyLightArrays(), true);
+            msg.GetSkyYMask(), msg.GetEmptySkyYMask(), msg.GetSkyUpdates(), true);
         UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-            msg.GetBlockYMask(), msg.GetEmptyBlockYMask(), msg.GetBlockLightArrays(), false);
+            msg.GetBlockYMask(), msg.GetEmptyBlockYMask(), msg.GetBlockUpdates(), false);
     }
 #endif
 

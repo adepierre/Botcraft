@@ -1,0 +1,19 @@
+{
+	"textures": {
+		"all": "item/light"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "down" },
+                "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "up" },
+                "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "south" },
+                "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "west" },
+                "north":  { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "north" },
+                "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "east" }
+			}
+		}
+	]
+}

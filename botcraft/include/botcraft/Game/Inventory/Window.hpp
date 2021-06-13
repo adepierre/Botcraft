@@ -30,6 +30,7 @@ namespace Botcraft
         const int GetNextTransactionId() const;
         void SetNextTransactionId(const int n);
 #endif
+        const short GetFirstPlayerInventorySlot() const;
 
     private:
         std::map<short, ProtocolCraft::Slot> slots;

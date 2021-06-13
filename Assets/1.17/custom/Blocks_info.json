@@ -5357,44 +5357,7 @@
         "render": "block",
         "solid": true,
         "transparent": false
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    },
     {
         "hardness": 4.5,
         "name": "minecraft:deepslate_gold_ore",

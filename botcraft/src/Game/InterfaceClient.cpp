@@ -1390,8 +1390,6 @@ namespace Botcraft
 
     const bool InterfaceClient::CloseContainer(const short container_id)
     {
-        std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-
         std::shared_ptr<ServerboundContainerClosePacket> close_container_msg = std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
         close_container_msg->SetContainerId(container_id);
         network_manager->Send(close_container_msg);

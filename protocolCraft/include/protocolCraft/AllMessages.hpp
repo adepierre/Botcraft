@@ -502,7 +502,6 @@ namespace ProtocolCraft
         ClientboundContainerSetContentPacket,
         ClientboundContainerSetDataPacket,
         ClientboundOpenScreenPacket,
-        ClientboundSetCarriedItemPacket,
 #if PROTOCOL_VERSION < 755
         ClientboundSetBorderPacket,
 #endif
@@ -523,7 +522,8 @@ namespace ProtocolCraft
         ClientboundSetBorderWarningDistancePacket,
         ClientboundSetSubtitleTextPacket,
         ClientboundSetTitleTextPacket,
-        ClientboundSetTitlesAnimationPacket
+        ClientboundSetTitlesAnimationPacket,
 #endif
+        ClientboundSetCarriedItemPacket
     > ;
 } //ProtocolCraft

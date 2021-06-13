@@ -44,12 +44,16 @@ namespace Botcraft
 #endif
         const std::map<short, ProtocolCraft::Slot> ApplyTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
 
+
     private:
         void SetHotbarSelected(const short index);
         void SetCursor(const ProtocolCraft::Slot& c);
 
         void AddInventory(const short window_id, const InventoryType window_type);
         void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
+#if PROTOCOL_VERSION > 754
+        void SynchronizeContainerPlayerInventory(const short window_id);
+#endif
 
     private:
 

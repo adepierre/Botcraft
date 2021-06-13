@@ -45,7 +45,7 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundClientInformationPacket>;
     template class BaseMessage<ServerboundClientCommandPacket>;
     template class BaseMessage<ServerboundContainerClosePacket>;
-#if PROTOCOL_VERSION > 755
+#if PROTOCOL_VERSION < 755
     template class BaseMessage<ServerboundContainerAckPacket>;
 #endif
     template class BaseMessage<ServerboundPlaceRecipePacket>;

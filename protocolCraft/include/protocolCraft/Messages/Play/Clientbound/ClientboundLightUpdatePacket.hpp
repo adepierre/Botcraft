@@ -87,14 +87,14 @@ namespace ProtocolCraft
         }
 #endif
 
-        void SetSkyLightArrays(std::vector<std::vector<char> >& sky_light_arrays_)
+        void SetSkyUpdates(std::vector<std::vector<char> >& sky_updates_)
         {
-            sky_light_arrays = sky_light_arrays_;
+            sky_updates = sky_updates_;
         }
 
-        void SetBlockLightArrays(std::vector<std::vector<char> >& block_light_arrays_)
+        void SetBlockUpdates(std::vector<std::vector<char> >& block_updates_)
         {
-            block_light_arrays = block_light_arrays_;
+            block_updates = block_updates_;
         }
 
 #if PROTOCOL_VERSION > 722
@@ -158,14 +158,14 @@ namespace ProtocolCraft
 
 #endif
 
-        const std::vector<std::vector<char> >& GetSkyLightArrays() const
+        const std::vector<std::vector<char> >& GetSkyUpdates() const
         {
-            return sky_light_arrays;
+            return sky_updates;
         }
 
-        const std::vector<std::vector<char> >& GetBlockLightArrays() const
+        const std::vector<std::vector<char> >& GetBlockUpdates() const
         {
-            return block_light_arrays;
+            return block_updates;
         }
 
 #if PROTOCOL_VERSION > 722
@@ -216,40 +216,40 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION < 755
-            sky_light_arrays.clear();
+            sky_updates.clear();
             for (int i = 0; i < 18; ++i)
             {
                 if ((sky_Y_mask >> i) & 1)
                 {
                     const int array_length = ReadVarInt(iter, length); // Should be 2048
-                    sky_light_arrays.push_back(ReadArrayData<char>(iter, length, array_length));
+                    sky_updates.push_back(ReadArrayData<char>(iter, length, array_length));
                 }
             }
 
-            block_light_arrays.clear();
+            block_updates.clear();
             for (int i = 0; i < 18; ++i)
             {
                 if ((block_Y_mask >> i) & 1)
                 {
                     const int array_length = ReadVarInt(iter, length); // Should be 2048
-                    block_light_arrays.push_back(ReadArrayData<char>(iter, length, array_length));
+                    block_updates.push_back(ReadArrayData<char>(iter, length, array_length));
                 }
             }
 #else
-            const int sky_light_arrays_size = ReadVarInt(iter, length);
-            sky_light_arrays = std::vector<std::vector<char> >(sky_light_arrays_size);
-            for (int i = 0; i < sky_light_arrays_size; ++i)
+            const int sky_updates_size = ReadVarInt(iter, length);
+            sky_updates = std::vector<std::vector<char> >(sky_updates_size);
+            for (int i = 0; i < sky_updates_size; ++i)
             {
                 const int array_length = ReadVarInt(iter, length); // Should be 2048
-                sky_light_arrays[i] = ReadArrayData<char>(iter, length, 2048);
+                sky_updates[i] = ReadArrayData<char>(iter, length, 2048);
             }
 
-            const int block_light_arrays_size = ReadVarInt(iter, length);
-            block_light_arrays = std::vector<std::vector<char> >(block_light_arrays_size);
-            for (int i = 0; i < block_light_arrays_size; ++i)
+            const int block_updates_size = ReadVarInt(iter, length);
+            block_updates = std::vector<std::vector<char> >(block_updates_size);
+            for (int i = 0; i < block_updates_size; ++i)
             {
                 const int array_length = ReadVarInt(iter, length); // Should be 2048
-                block_light_arrays[i] = ReadArrayData<char>(iter, length, 2048);
+                block_updates[i] = ReadArrayData<char>(iter, length, 2048);
             }
 #endif
         }
@@ -290,21 +290,21 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 754
-            WriteVarInt(sky_light_arrays.size(), container);
+            WriteVarInt(sky_updates.size(), container);
 #endif
-            for (int i = 0; i < sky_light_arrays.size(); ++i)
+            for (int i = 0; i < sky_updates.size(); ++i)
             {
-                WriteVarInt(sky_light_arrays[i].size(), container);
-                WriteArrayData(sky_light_arrays[i], container);
+                WriteVarInt(sky_updates[i].size(), container);
+                WriteArrayData(sky_updates[i], container);
             }
 
 #if PROTOCOL_VERSION > 754
-            WriteVarInt(block_light_arrays.size(), container);
+            WriteVarInt(block_updates.size(), container);
 #endif
-            for (int i = 0; i < block_light_arrays.size(); ++i)
+            for (int i = 0; i < block_updates.size(); ++i)
             {
-                WriteVarInt(block_light_arrays[i].size(), container);
-                WriteArrayData(block_light_arrays[i], container);
+                WriteVarInt(block_updates[i].size(), container);
+                WriteArrayData(block_updates[i], container);
             }
         }
 
@@ -330,24 +330,24 @@ namespace ProtocolCraft
             object["empty_block_Y_mask"] = picojson::value("Vector of " + std::to_string(empty_block_Y_mask.size()) + " unsigned long long int");
 #endif
 
-            object["sky_light_arrays"] = picojson::value(picojson::array_type, false);
+            object["sky_updates"] = picojson::value(picojson::array_type, false);
 
-            picojson::array& array1 = object["sky_light_arrays"].get<picojson::array>();
-            array1.reserve(sky_light_arrays.size());
+            picojson::array& array1 = object["sky_updates"].get<picojson::array>();
+            array1.reserve(sky_updates.size());
 
-            for (int i = 0; i < sky_light_arrays.size(); ++i)
+            for (int i = 0; i < sky_updates.size(); ++i)
             {
-                array1.push_back(picojson::value("Vector of " + std::to_string(sky_light_arrays[i].size()) + " char"));
+                array1.push_back(picojson::value("Vector of " + std::to_string(sky_updates[i].size()) + " char"));
             }
 
-            object["block_light_arrays"] = picojson::value(picojson::array_type, false);
+            object["block_updates"] = picojson::value(picojson::array_type, false);
 
-            picojson::array& array2 = object["block_light_arrays"].get<picojson::array>();
-            array2.reserve(block_light_arrays.size());
+            picojson::array& array2 = object["block_updates"].get<picojson::array>();
+            array2.reserve(block_updates.size());
 
-            for (int i = 0; i < block_light_arrays.size(); ++i)
+            for (int i = 0; i < block_updates.size(); ++i)
             {
-                array2.push_back(picojson::value("Vector of " + std::to_string(block_light_arrays[i].size()) + " char"));
+                array2.push_back(picojson::value("Vector of " + std::to_string(block_updates[i].size()) + " char"));
             }
 
             return value;
@@ -367,8 +367,8 @@ namespace ProtocolCraft
         std::vector<unsigned long long int> empty_sky_Y_mask;
         std::vector<unsigned long long int> empty_block_Y_mask;
 #endif
-        std::vector<std::vector<char> > sky_light_arrays;
-        std::vector<std::vector<char> > block_light_arrays;
+        std::vector<std::vector<char> > sky_updates;
+        std::vector<std::vector<char> > block_updates;
 #if PROTOCOL_VERSION > 722
         bool trust_edges;
 #endif

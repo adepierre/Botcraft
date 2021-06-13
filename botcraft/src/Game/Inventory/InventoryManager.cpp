@@ -106,11 +106,16 @@ namespace Botcraft
 
     void InventoryManager::EraseInventory(const short window_id)
     {
-        inventories.erase(window_id);
+        std::lock_guard<std::mutex> inventory_lock(inventory_manager_mutex);
 #if PROTOCOL_VERSION < 755
         pending_transactions.erase(window_id);
         transaction_states.erase(window_id);
+#else
+        // In versions > 1.17 we have to synchronize the player inventory
+        // when a container is closed, as the server does not send info
+        SynchronizeContainerPlayerInventory(window_id);
 #endif
+        inventories.erase(window_id);
     }
 
 #if PROTOCOL_VERSION < 755
@@ -156,6 +161,30 @@ namespace Botcraft
             {
                 ++it;
             }
+        }
+    }
+#else
+    void InventoryManager::SynchronizeContainerPlayerInventory(const short window_id)
+    {
+        if (window_id == Window::PLAYER_INVENTORY_INDEX)
+        {
+            return;
+        }
+
+        auto it = inventories.find(window_id);
+
+        if (it == inventories.end())
+        {
+            std::cerr << "Warning, trying to synchronize inventory with a non existing container" << std::endl;
+            return;
+        }
+
+        short player_inventory_first_slot = it->second->GetFirstPlayerInventorySlot();
+        std::shared_ptr<Window> player_inventory = GetPlayerInventory();
+        
+        for (int i = 0; i < 36; ++i)
+        {
+            player_inventory->SetSlot(Window::INVENTORY_STORAGE_START + i, it->second->GetSlot(player_inventory_first_slot + i));
         }
     }
 #endif
