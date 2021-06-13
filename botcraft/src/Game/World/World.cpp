@@ -323,7 +323,7 @@ namespace Botcraft
         const std::vector<std::vector<char>>& data, const bool sky)
 #else
     void World::UpdateChunkLight(const int x, const int z, const std::string& dim, 
-        const std::vector<unsigned long long int>& light_mask, const const std::vector<unsigned long long int>& empty_light_mask,
+        const std::vector<unsigned long long int>& light_mask, const std::vector<unsigned long long int>& empty_light_mask,
         const std::vector<std::vector<char>>& data, const bool sky)
 #endif
     {
