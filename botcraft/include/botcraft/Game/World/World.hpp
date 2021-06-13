@@ -40,9 +40,20 @@ namespace Botcraft
         void ResetChunkModificationState(const int x, const int z);
 #endif
 
+#if PROTOCOL_VERSION < 552
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const int primary_bit_mask, const bool ground_up_continuous);
+#elif PROTOCOL_VERSION < 755
+        bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
+            const int primary_bit_mask);
+#else
+        bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
+            const std::vector<unsigned long long int>& primary_bit_mask);
+#endif
         bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT>& block_entities);
+#if PROTOCOL_VERSION > 551
+        bool LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes);
+#endif
 
         // Update the neighbour blocks of this chunk and the
         // one in the specified direction, if direction is 0,0,0
@@ -82,8 +93,12 @@ namespace Botcraft
         bool SetBlockLight(const Position &pos, const unsigned char blocklight);
 #if PROTOCOL_VERSION > 404 && PROTOCOL_VERSION < 719
         void UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
-#elif PROTOCOL_VERSION > 718
+#elif PROTOCOL_VERSION > 718 && PROTOCOL_VERSION < 755
         void UpdateChunkLight(const int x, const int z, const std::string& dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
+#elif PROTOCOL_VERSION > 754
+        void UpdateChunkLight(const int x, const int z, const std::string& dim, 
+            const std::vector<unsigned long long int>& light_mask, const std::vector<unsigned long long int>& empty_light_mask, 
+            const std::vector<std::vector<char> >& data, const bool sky);
 #endif
         const unsigned char GetSkyLight(const Position& pos);
         const unsigned char GetBlockLight(const Position& pos);

@@ -52,7 +52,9 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket &msg) override;
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket &msg) override;
         virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket &msg) override;
+#if PROTOCOL_VERSION < 755
         virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket &msg) override;
+#endif
         virtual void Handle(ProtocolCraft::ClientboundDisconnectPacket &msg) override;
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket &msg) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket &msg) override;

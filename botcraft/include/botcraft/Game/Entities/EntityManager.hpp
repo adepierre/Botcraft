@@ -39,11 +39,17 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg) override;
+#if PROTOCOL_VERSION < 755
         virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg) override;
+#endif
         virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg) override;
+#if PROTOCOL_VERSION < 755
         virtual void Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg) override;
+#else
+        virtual void Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg) override;
+#endif
 
 
     private:

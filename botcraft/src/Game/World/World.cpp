@@ -99,12 +99,22 @@ namespace Botcraft
 
 #endif
 
+#if PROTOCOL_VERSION < 552
     bool World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous)
+#elif PROTOCOL_VERSION < 755
+    bool World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data, const int primary_bit_mask)
+#else
+    bool World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data, const std::vector<unsigned long long int>& primary_bit_mask)
+#endif
     {
         std::shared_ptr<Chunk> chunk = GetChunk(x, z);
         if (chunk)
         {
+#if PROTOCOL_VERSION < 552
             chunk->LoadChunkData(data, primary_bit_mask, ground_up_continuous);
+#else
+            chunk->LoadChunkData(data, primary_bit_mask);
+#endif
             UpdateChunk(x, z);
             return true;
         }
@@ -122,6 +132,20 @@ namespace Botcraft
         }
         return false;
     }
+
+#if PROTOCOL_VERSION > 551
+    bool World::LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes)
+    {
+        std::shared_ptr<Chunk> chunk = GetChunk(x, z);
+        if (chunk)
+        {
+            chunk->SetBiomes(biomes);
+            UpdateChunk(x, z);
+            return true;
+        }
+        return false;
+    }
+#endif
 
 #if PROTOCOL_VERSION < 347
     bool World::SetBlock(const Position &pos, const unsigned int id, unsigned char metadata, const int model_id)
@@ -294,8 +318,12 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 719
     void World::UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask,
         const std::vector<std::vector<char>>& data, const bool sky)
-#else
+#elif PROTOCOL_VERSION < 755
     void World::UpdateChunkLight(const int x, const int z, const std::string& dim, const int light_mask, const int empty_light_mask,
+        const std::vector<std::vector<char>>& data, const bool sky)
+#else
+    void World::UpdateChunkLight(const int x, const int z, const std::string& dim, 
+        const std::vector<unsigned long long int>& light_mask, const const std::vector<unsigned long long int>& empty_light_mask,
         const std::vector<std::vector<char>>& data, const bool sky)
 #endif
     {
@@ -310,14 +338,20 @@ namespace Botcraft
         int counter_arrays = 0;
         Position pos1, pos2;
 
-        for (int i = 0; i < 18; ++i)
+        const int num_sections = CHUNK_HEIGHT / 16 + 2;
+
+        for (int i = 0; i < num_sections; ++i)
         {
             const int section_Y = i - 1;
 
             // Sky light
+#if PROTOCOL_VERSION < 755
             if ((light_mask >> i) & 1)
+#else
+            if ((light_mask[i / 64] >> (i % 64)) & 1)
+#endif
             {
-                if (i > 0 && i < 17)
+                if (i > 0 && i < num_sections - 1)
                 {
                     for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
                     {
@@ -349,9 +383,13 @@ namespace Botcraft
                 }
                 counter_arrays++;
             }
+#if PROTOCOL_VERSION < 755
             else if ((empty_light_mask >> i) & 1)
+#else
+            else if ((empty_light_mask[i / 64] >> (i % 64)) & 1)
+#endif
             {
-                if (i > 0 && i < 17)
+                if (i > 0 && i < num_sections - 1)
                 {
                     for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
                     {
@@ -895,8 +933,10 @@ namespace Botcraft
             chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
         }
 
+#if PROTOCOL_VERSION < 755
         if (msg.GetFullChunk())
         {
+#endif
             bool success = true;
 
             if (chunk_dim != current_dimension)
@@ -916,11 +956,25 @@ namespace Botcraft
                     << std::endl;
                 return;
             }
+#if PROTOCOL_VERSION < 755
         }
+#endif
 
         { // lock guard scope
             std::lock_guard<std::mutex> world_guard(world_mutex);
+#if PROTOCOL_VERSION < 552
             LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBuffer(), msg.GetAvailableSections(), msg.GetFullChunk());
+#else
+            LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBuffer(), msg.GetAvailableSections());
+#if PROTOCOL_VERSION < 755
+            if (msg.GetFullChunk())
+            {
+                LoadBiomesInChunk(msg.GetX(), msg.GetZ(), msg.GetBiomes());
+            }
+#else
+            LoadBiomesInChunk(msg.GetX(), msg.GetZ(), msg.GetBiomes());
+#endif
+#endif
             LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBlockEntitiesTags());
         }
 

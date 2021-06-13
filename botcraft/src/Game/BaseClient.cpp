@@ -283,6 +283,7 @@ namespace Botcraft
     const int BaseClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
+#if PROTOCOL_VERSION < 755
         std::shared_ptr<Window> window = inventory_manager->GetWindow(transaction->GetContainerId());
         if (!window)
         {
@@ -292,9 +293,15 @@ namespace Botcraft
         transaction->SetUid(transaction_id);
         window->SetNextTransactionId(transaction_id + 1);
         inventory_manager->AddPendingTransaction(transaction);
-        network_manager->Send(transaction);
 
+        network_manager->Send(transaction);
         return transaction_id;
+#else
+        const std::map<short, Slot> changed_slots = inventory_manager->ApplyTransaction(transaction);
+        transaction->SetChangedSlots(changed_slots);
+        network_manager->Send(transaction);
+        return 1;
+#endif
     }
 
     void BaseClient::Disconnect()
@@ -388,6 +395,7 @@ namespace Botcraft
 #endif
     }
 
+#if PROTOCOL_VERSION < 755
     void BaseClient::Handle(ClientboundContainerAckPacket &msg)
     {
         // If the transaction was not accepted, we must apologize
@@ -402,6 +410,7 @@ namespace Botcraft
             network_manager->Send(apologize_msg);
         }
     }
+#endif
 
     void BaseClient::Handle(ClientboundDisconnectPacket &msg)
     {

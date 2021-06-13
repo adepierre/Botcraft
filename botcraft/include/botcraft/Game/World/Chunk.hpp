@@ -39,7 +39,13 @@ namespace Botcraft
         void SetModifiedSinceLastRender(const bool b);
 #endif
 
+#if PROTOCOL_VERSION < 552
         void LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous);
+#elif PROTOCOL_VERSION < 755
+        void LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask);
+#else
+        void LoadChunkData(const std::vector<unsigned char>& data, const std::vector<unsigned long long int>& primary_bit_mask);
+#endif
         void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::NBT>& block_entities);
 
         const Block *GetBlock(const Position &pos) const;

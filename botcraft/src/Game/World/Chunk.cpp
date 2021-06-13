@@ -89,7 +89,13 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION < 552
     void Chunk::LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous)
+#elif PROTOCOL_VERSION < 755
+    void Chunk::LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask)
+#else
+    void Chunk::LoadChunkData(const std::vector<unsigned char>& data, const std::vector<unsigned long long int>& primary_bit_mask)
+#endif
     {
         std::vector<unsigned char>::const_iterator iter = data.begin();
         size_t length = data.size();
@@ -103,7 +109,11 @@ namespace Botcraft
         //The chunck sections
         for (int sectionY = 0; sectionY < CHUNK_HEIGHT / SECTION_HEIGHT; ++sectionY)
         {
+#if PROTOCOL_VERSION < 755
             if (!(primary_bit_mask & (1 << sectionY)))
+#else
+            if (!(primary_bit_mask[sectionY / 64] & (1 << (sectionY % 64))))
+#endif
             {
                 continue;
             }
@@ -255,9 +265,7 @@ namespace Botcraft
 #endif
         }
 
-#if PROTOCOL_VERSION > 551
-        SetBiomes(biomes);
-#else
+#if PROTOCOL_VERSION < 552
         //The biomes
         if (ground_up_continuous)
         {

@@ -238,32 +238,18 @@ namespace ProtocolCraft
 #else
             const int sky_light_arrays_size = ReadVarInt(iter, length);
             sky_light_arrays = std::vector<std::vector<char> >(sky_light_arrays_size);
-            int sky_light_arrays_index = 0;
-            int sky_Y_mask_index = 0;
-            while(sky_light_arrays_index < sky_light_arrays_size)
+            for (int i = 0; i < sky_light_arrays_size; ++i)
             {
-                if ((sky_Y_mask[sky_Y_mask_index / 64] >> (sky_Y_mask_index % 64)) & 1)
-                {
-                    const int array_length = ReadVarInt(iter, length); // Should be 2048
-                    sky_light_arrays[sky_light_arrays_index] = ReadArrayData<char>(iter, length, array_length);
-                    sky_light_arrays_index++;
-                }
-                sky_Y_mask_index++;
+                const int array_length = ReadVarInt(iter, length); // Should be 2048
+                sky_light_arrays[i] = ReadArrayData<char>(iter, length, 2048);
             }
 
             const int block_light_arrays_size = ReadVarInt(iter, length);
             block_light_arrays = std::vector<std::vector<char> >(block_light_arrays_size);
-            int block_light_arrays_index = 0;
-            int block_Y_mask_index = 0;
-            while (block_light_arrays_index < block_light_arrays_size)
+            for (int i = 0; i < block_light_arrays_size; ++i)
             {
-                if ((sky_Y_mask[block_Y_mask_index / 64] >> (block_Y_mask_index % 64)) & 1)
-                {
-                    const int array_length = ReadVarInt(iter, length); // Should be 2048
-                    block_light_arrays[block_light_arrays_index] = ReadArrayData<char>(iter, length, array_length);
-                    block_light_arrays_index++;
-                }
-                block_Y_mask_index++;
+                const int array_length = ReadVarInt(iter, length); // Should be 2048
+                block_light_arrays[i] = ReadArrayData<char>(iter, length, 2048);
             }
 #endif
         }

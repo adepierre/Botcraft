@@ -46,6 +46,7 @@ namespace Botcraft
         entities[msg.GetPlayerId()] = local_player;
     }
     
+#if PROTOCOL_VERSION < 755
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
@@ -57,6 +58,7 @@ namespace Botcraft
             entities[msg.GetEntityId()] = entity;
         }
     }
+#endif
 
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg)
     {
@@ -293,6 +295,7 @@ namespace Botcraft
         //TODO do something with the walking speed
     }
 
+#if PROTOCOL_VERSION < 755
     void EntityManager::Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
@@ -301,4 +304,11 @@ namespace Botcraft
             entities.erase(msg.GetEntityIds()[i]);
         }
     }
+#else
+    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        entities.erase(msg.GetEntityId());
+    }
+#endif
 }

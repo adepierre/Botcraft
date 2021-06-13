@@ -107,10 +107,13 @@ namespace Botcraft
     void InventoryManager::EraseInventory(const short window_id)
     {
         inventories.erase(window_id);
+#if PROTOCOL_VERSION < 755
         pending_transactions.erase(window_id);
         transaction_states.erase(window_id);
+#endif
     }
 
+#if PROTOCOL_VERSION < 755
     const TransactionState InventoryManager::GetTransactionState(const short window_id, const int transaction_id)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
@@ -131,23 +134,6 @@ namespace Botcraft
         }
 
         return it2->second;
-    }
-
-    void InventoryManager::AddInventory(const short window_id, const InventoryType window_type)
-    {
-        inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
-        pending_transactions[window_id] = std::map<short, std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> >();
-        transaction_states[window_id] = std::map<short, TransactionState>();
-    }
-
-    void InventoryManager::SetHotbarSelected(const short index)
-    {
-        index_hotbar_selected = index;
-    }
-
-    const Slot& InventoryManager::GetCursor() const
-    {
-        return cursor;
     }
 
     void InventoryManager::AddPendingTransaction(const std::shared_ptr<ServerboundContainerClickPacket> transaction)
@@ -172,10 +158,59 @@ namespace Botcraft
             }
         }
     }
+#endif
+
+    void InventoryManager::AddInventory(const short window_id, const InventoryType window_type)
+    {
+        inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
+#if PROTOCOL_VERSION < 755
+        pending_transactions[window_id] = std::map<short, std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> >();
+        transaction_states[window_id] = std::map<short, TransactionState>();
+#endif
+    }
+
+    void InventoryManager::SetHotbarSelected(const short index)
+    {
+        index_hotbar_selected = index;
+    }
+
+    const Slot& InventoryManager::GetCursor() const
+    {
+        return cursor;
+    }
 
     void InventoryManager::SetCursor(const Slot& c)
     {
         cursor = c;
+    }
+
+    const std::map<short, Slot> InventoryManager::ApplyTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
+    {
+        // Get the container
+        std::shared_ptr<Window> window = GetWindow(transaction->GetContainerId());
+
+        std::map<short, Slot> modified_slots;
+
+        // Process the transaction
+        switch (transaction->GetClickType())
+        {
+        case 0:
+            // "Left click"
+            if (transaction->GetButtonNum() == 0)
+            {
+                const Slot switched_slot = window->GetSlot(transaction->GetSlotNum());
+                window->SetSlot(transaction->GetSlotNum(), cursor);
+                modified_slots[transaction->GetSlotNum()] = cursor;
+                cursor = switched_slot;
+            }
+            break;
+        default:
+            std::cerr << "Transaction type '" << transaction->GetClickType()
+                << "' not implemented." << std::endl;
+            break;
+        }
+
+        return modified_slots;
     }
 
     void InventoryManager::Handle(ProtocolCraft::Message& msg)
@@ -251,6 +286,7 @@ namespace Botcraft
         SetHotbarSelected(msg.GetSlot());
     }
 
+#if PROTOCOL_VERSION < 755
     void InventoryManager::Handle(ProtocolCraft::ClientboundContainerAckPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
@@ -283,29 +319,12 @@ namespace Botcraft
 
         if (msg.GetAccepted())
         {
-            // Get the container
-            std::shared_ptr<Window> window = GetWindow(transaction->second->GetContainerId());
-
-            // Process the transaction
-            switch (transaction->second->GetClickType())
-            {
-            case 0:
-                // "Left click"
-                if (transaction->second->GetButtonNum() == 0)
-                {
-                    const Slot switched_slot = window->GetSlot(transaction->second->GetSlotNum());
-                    window->SetSlot(transaction->second->GetSlotNum(), cursor);
-                    cursor = switched_slot;
-                }
-                break;
-            default:
-                break;
-            }
+            ApplyTransaction(transaction->second);
         }
 
         // Remove the transaction from the waiting state
         container_transactions->second.erase(transaction);
     }
-
+#endif
 
 } //Botcraft

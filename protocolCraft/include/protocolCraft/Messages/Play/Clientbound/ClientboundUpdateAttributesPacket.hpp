@@ -33,7 +33,7 @@ namespace ProtocolCraft
 
         virtual const std::string GetName() const override
         {
-            return "Entity Properties";
+            return "Update Attributes";
         }
 
         virtual ~ClientboundUpdateAttributesPacket() override

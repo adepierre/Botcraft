@@ -26,13 +26,18 @@ namespace Botcraft
         const std::map<short, ProtocolCraft::Slot>& GetSlots() const;
         const InventoryType GetType() const;
         void SetSlot(const short index, const ProtocolCraft::Slot& slot);
+#if PROTOCOL_VERSION < 755
         const int GetNextTransactionId() const;
         void SetNextTransactionId(const int n);
+#endif
 
     private:
         std::map<short, ProtocolCraft::Slot> slots;
         InventoryType type;
+
+#if PROTOCOL_VERSION < 755
         // TODO, need mutex to make this thread-safe?
         int next_transaction_id;
+#endif
     };
 } // Botcraft

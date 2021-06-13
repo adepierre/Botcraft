@@ -558,6 +558,8 @@ namespace Botcraft
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2056) / 9) % 16));
 #elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 || PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753  || PROTOCOL_VERSION == 754 // 1.16.X
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2058) / 9) % 16));
+#elif PROTOCOL_VERSION == 755 // 1.17
+                    texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2114) / 9) % 16));
 #else
                     #error "Protocol version not implemented"
 #endif

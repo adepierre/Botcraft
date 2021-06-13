@@ -1140,19 +1140,24 @@ namespace Botcraft
         {
             std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
             copied_slot = container->GetSlots().at(first_slot);
-
-            click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-
-            click_window_msg->SetContainerId(container_id);
-            click_window_msg->SetSlotNum(first_slot);
-            click_window_msg->SetButtonNum(0); // Left click to select the stack
-            click_window_msg->SetClickType(0); // Regular click
-            click_window_msg->SetItemStack(copied_slot);
         }
+
+        click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
+
+        click_window_msg->SetContainerId(container_id);
+        click_window_msg->SetSlotNum(first_slot);
+        click_window_msg->SetButtonNum(0); // Left click to select the stack
+        click_window_msg->SetClickType(0); // Regular click
+#if PROTOCOL_VERSION < 755
+        click_window_msg->SetItemStack(copied_slot);
+#else
+        click_window_msg->SetCarriedItem(copied_slot);
+#endif
 
         transaction_id = SendInventoryTransaction(click_window_msg);
 
-        // Wait for the click confirmation
+        // Wait for the click confirmation (versions < 1.17)
+#if PROTOCOL_VERSION < 755
         auto start = std::chrono::system_clock::now();
         while (true)
         {
@@ -1174,23 +1179,29 @@ namespace Botcraft
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+#endif
 
         //Click on the second slot, transferring the cursor to the slot
         {
             std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
             copied_slot = container->GetSlots().at(second_slot);
-
-            click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-
-            click_window_msg->SetContainerId(container_id);
-            click_window_msg->SetSlotNum(second_slot);
-            click_window_msg->SetButtonNum(0); // Left click to select the stack
-            click_window_msg->SetClickType(0); // Regular click
-            click_window_msg->SetItemStack(copied_slot);
         }
+        click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
+
+        click_window_msg->SetContainerId(container_id);
+        click_window_msg->SetSlotNum(second_slot);
+        click_window_msg->SetButtonNum(0); // Left click to select the stack
+        click_window_msg->SetClickType(0); // Regular click
+#if PROTOCOL_VERSION < 755
+        click_window_msg->SetItemStack(copied_slot);
+#else
+        click_window_msg->SetCarriedItem(copied_slot);
+#endif
 
         transaction_id = SendInventoryTransaction(click_window_msg);
 
+        // Wait for confirmation in version < 1.17
+#if PROTOCOL_VERSION < 755
         start = std::chrono::system_clock::now();
         while (true)
         {
@@ -1213,23 +1224,29 @@ namespace Botcraft
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+#endif
             
         //Click once again on the first slot, transferring the cursor to the slot
         {
             std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
             copied_slot = container->GetSlots().at(first_slot);
-
-            click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-
-            click_window_msg->SetContainerId(container_id);
-            click_window_msg->SetSlotNum(first_slot);
-            click_window_msg->SetButtonNum(0); // Left click to select the stack
-            click_window_msg->SetClickType(0); // Regular click
-            click_window_msg->SetItemStack(copied_slot);
         }
+        click_window_msg = std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
+
+        click_window_msg->SetContainerId(container_id);
+        click_window_msg->SetSlotNum(first_slot);
+        click_window_msg->SetButtonNum(0); // Left click to select the stack
+        click_window_msg->SetClickType(0); // Regular click
+#if PROTOCOL_VERSION < 755
+        click_window_msg->SetItemStack(copied_slot);
+#else
+        click_window_msg->SetCarriedItem(copied_slot);
+#endif
 
         transaction_id = SendInventoryTransaction(click_window_msg);
-
+        
+        // Wait for confirmation in version < 1.17
+#if PROTOCOL_VERSION < 755
         start = std::chrono::system_clock::now();
         while (true)
         {
@@ -1252,6 +1269,7 @@ namespace Botcraft
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+#endif
 
         return true;
     }
