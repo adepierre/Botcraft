@@ -30,20 +30,21 @@ More complex example with 10 survival bots collaborating on a pixel art build. T
 
 ## Dependencies
 
-All the libraries are included either directly or as submodules and are built locally automatically (if not already found on your system) so you don't have to install anything manually.
+All the libraries are included either directly(\*) or as submodules(†) and are built locally automatically by cmake (if not already found on your system) so you don't have to download/compile/install anything manually.
 
-- [asio](https://think-async.com/Asio/)
-- [picoJson](https://github.com/kazuho/picojson)
-- [zlib](https://github.com/madler/zlib) (optional, used only if compression is enabled on your server)
-- [openssl](https://www.openssl.org/) (optional, used only if your server is in online mode)
+- [asio](https://think-async.com/Asio/)† for low-level TCP
+- [picoJson](https://github.com/kazuho/picojson)\* for JSON support
 
-Optional dependencies (needed only if you want to build the OpenGL renderer)
-- [stb_image](https://github.com/nothings/stb)
-- [glad](https://glad.dav1d.de/)
-- [glfw](https://github.com/glfw/glfw)
-- [glm](https://github.com/g-truc/glm)
-- [imgui](https://github.com/ocornut/imgui)
-- [rectpack2D](https://github.com/TeamHypersomnia/rectpack2D)
+Optional dependencies (can be disabled with cmake options)
+- [beehive](https://github.com/crust/beehive)\* for behaviour trees AI system
+- [glad](https://glad.dav1d.de/)\* for OpenGL stuff
+- [glfw](https://github.com/glfw/glfw)† for OpenGL window creation
+- [glm](https://github.com/g-truc/glm)† for math stuff
+- [imgui](https://github.com/ocornut/imgui)† for additional UI display
+- [openssl](https://www.openssl.org/)† for encryption
+- [rectpack2D](https://github.com/TeamHypersomnia/rectpack2D)† for texture packing
+- [stb_image](https://github.com/nothings/stb)\* for texture loading
+- [zlib](https://github.com/madler/zlib)† for compression
 
 The code is cross-platform and is automatically built on both Windows with Visual 2019 and Linux at each push. It should also work on reasonably older versions of Visual Studio and macOS as well.
 
@@ -78,6 +79,7 @@ There are several cmake options you can modify:
 - BOTCRAFT_INSTALL_ASSETS [ON/OFF] Copy all the needed assets to the installation folder along with the library and executable
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
 - BOTCRAFT_ENCRYPTION [ON/OFF] Add encryption ability, must be ON to connect to a server in online mode
+- BOTCRAFT_AI [ON/OFF] If OFF, only build core Botcraft functionalities, if ON, also add some more advanced AI capabilities
 - BOTCRAFT_USE_OPENGL_GUI [ON/OFF] If ON, botcraft will be compiled with the OpenGL GUI enabled
 - BOTCRAFT_USE_IMGUI [ON/OFF] If ON, additional information will be displayed on the GUI (need BOTCRAFT_USE_OPENGL_GUI to be ON)
 

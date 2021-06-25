@@ -1,4 +1,4 @@
-#include "botcraft/Game/InterfaceClient.hpp"
+#include "botcraft/AI/InterfaceClient.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
@@ -43,31 +43,6 @@ namespace Botcraft
     InterfaceClient::~InterfaceClient()
     {
 
-    }
-
-    void InterfaceClient::Say(const std::string &msg)
-    {
-        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
-        {
-            std::shared_ptr<ServerboundChatPacket> chat_message(new ServerboundChatPacket);
-            chat_message->SetMessage(msg);
-            network_manager->Send(chat_message);
-        }
-    }
-
-    void InterfaceClient::Respawn()
-    {
-        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
-        {
-            std::shared_ptr<ServerboundClientCommandPacket> status_message(new ServerboundClientCommandPacket);
-            status_message->SetAction(0);
-            network_manager->Send(status_message);
-        }
-    }
-
-    const bool InterfaceClient::GetShouldBeClosed() const
-    {
-        return should_be_closed;
     }
 
     const DiggingState InterfaceClient::GetDiggingState() const
@@ -309,11 +284,6 @@ namespace Botcraft
         {
             digging_state = DiggingState::Stop;
         }
-    }
-
-    void InterfaceClient::SetAutoRespawn(const bool b)
-    {
-        auto_respawn = b;
     }
 
     const bool InterfaceClient::GoTo(const Position &goal, const bool in_range, const int min_end_dist, const float speed)

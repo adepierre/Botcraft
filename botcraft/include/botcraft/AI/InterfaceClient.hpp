@@ -29,13 +29,9 @@ namespace Botcraft
         InterfaceClient(const bool use_renderer_, const bool afk_only_ = false);
         ~InterfaceClient();
 
-        // Send a message in the chat
-        void Say(const std::string &msg);
 
-        // Ask to respawn when dead (use it if auto_respawn is false)
-        void Respawn();
 
-        const bool GetShouldBeClosed() const;
+
 
         const DiggingState GetDiggingState() const;
         // Try to dig the currently pointed block
@@ -43,7 +39,6 @@ namespace Botcraft
         const bool DigAt(const Botcraft::Position& location, const PlayerDiggingFace face);
         void StopDigging();
 
-        void SetAutoRespawn(const bool b);
 
         // Go to a position
         // goal is the target position of the feets of the player

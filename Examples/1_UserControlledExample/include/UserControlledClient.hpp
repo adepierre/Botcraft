@@ -1,6 +1,6 @@
 #pragma once
 
-#include "botcraft/Game/InterfaceClient.hpp"
+#include "botcraft/AI/InterfaceClient.hpp"
 
 #include "botcraft/Renderer/RenderingManager.hpp"
 

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "botcraft/Game/InterfaceClient.hpp"
+#include "botcraft/Game/BaseClient.hpp"
 
 void ShowHelp(const char* argv0)
 {
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        Botcraft::InterfaceClient client(true, false);
+        Botcraft::BaseClient client(true, false);
         client.SetAutoRespawn(true);
 
         if (!launcher_accounts_file.empty())

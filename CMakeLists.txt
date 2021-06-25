@@ -5,12 +5,17 @@ project(Botcraft)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+# All building options
+
 option(BOTCRAFT_USE_OPENGL_GUI "Activate if you want to use OpenGL renderer" OFF)
 if(BOTCRAFT_USE_OPENGL_GUI)
     option(BOTCRAFT_USE_IMGUI "Activate if you want to use display information on screen with ImGui" OFF)
 endif()
 option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" ON)
 option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
+option(BOTCRAFT_AI "Activate if you want to connect to a server in online mode" ON)
+option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
+option(BOTCRAFT_INSTALL_ASSETS "Set to copy used assets to installation folder" ON)
 
 # Version selection stuffs
 set(GAME_VERSION "latest" CACHE STRING "Each version of the game uses a specific protocol. Make sure this matches the version of your server.")
@@ -40,9 +45,6 @@ if(NOT EXISTS ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft)
     file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/temp)
 endif()
 
-option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
-option(BOTCRAFT_INSTALL_ASSETS "Set to copy used assets to installation folder" ON)
-
 set(ASSET_DIR ../Assets/${GAME_VERSION})
 
 # Add Asio
@@ -50,6 +52,11 @@ include(${CMAKE_SOURCE_DIR}/cmake/asio.cmake)
 
 # Add picoJson
 include(${CMAKE_SOURCE_DIR}/cmake/picoJson.cmake)
+
+# Add beehive
+if(BOTCRAFT_AI)
+    include(${CMAKE_SOURCE_DIR}/cmake/beehive.cmake)
+endif(BOTCRAFT_AI)
 
 # Add ZLIB
 if(BOTCRAFT_COMPRESSION)

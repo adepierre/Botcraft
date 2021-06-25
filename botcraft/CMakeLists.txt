@@ -13,7 +13,6 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/World/Blockstate.hpp
     include/botcraft/Game/World/Chunk.hpp
     include/botcraft/Game/Enums.hpp
-    include/botcraft/Game/InterfaceClient.hpp
     include/botcraft/Game/Model.hpp
     include/botcraft/Game/World/Section.hpp
     include/botcraft/Game/Vector3.hpp
@@ -51,7 +50,6 @@ set(botcraft_SRC
     src/Game/World/Block.cpp
     src/Game/World/Blockstate.cpp
     src/Game/World/Chunk.cpp
-    src/Game/InterfaceClient.cpp
     src/Game/Model.cpp
     src/Game/World/World.cpp
     src/Game/Inventory/Window.cpp
@@ -64,6 +62,16 @@ set(botcraft_SRC
     src/Network/TCP_Com.cpp
     src/Utilities/StringUtilities.cpp
 )
+
+if(BOTCRAFT_AI)
+    list(APPEND botcraft_PUBLIC_HDR
+            include/botcraft/AI/InterfaceClient.hpp
+        )
+        
+    list(APPEND botcraft_SRC
+            src/AI/InterfaceClient.cpp
+        )    
+endif(BOTCRAFT_AI)
 
 if(BOTCRAFT_USE_OPENGL_GUI)
     list(APPEND botcraft_PUBLIC_HDR
@@ -170,6 +178,14 @@ target_include_directories(botcraft
         $<BUILD_INTERFACE:${PICOJSON_INCLUDE_DIR}>
 )
 
+# Add beehive
+if(BOTCRAFT_AI)
+    target_include_directories(botcraft
+        PUBLIC
+            $<BUILD_INTERFACE:${BEEHIVE_INCLUDE_DIR}>
+        )
+endif(BOTCRAFT_AI)
+
 # Add Asio
 target_link_libraries(botcraft PRIVATE asio)
 target_compile_definitions(botcraft PRIVATE ASIO_STANDALONE)
@@ -239,6 +255,12 @@ install(
 # Copy picoJson
 install(DIRECTORY ${PICOJSON_INCLUDE_DIR}
     DESTINATION ${CMAKE_INSTALL_PREFIX})
+    
+# Copy beehive
+if(BOTCRAFT_AI)
+    install(DIRECTORY ${BEEHIVE_INCLUDE_DIR}
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+endif(BOTCRAFT_AI)
 
 export(EXPORT botcraft-targets
     FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-targets.cmake

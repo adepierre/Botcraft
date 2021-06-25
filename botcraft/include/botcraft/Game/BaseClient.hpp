@@ -39,6 +39,16 @@ namespace Botcraft
 
         void SetSharedWorld(const std::shared_ptr<World> world_);
 
+        const bool GetShouldBeClosed() const;
+
+
+        // Send a message in the chat
+        void Say(const std::string& msg);
+        // Ask to respawn when dead (use it if auto_respawn is false)
+        void Respawn();
+        void SetAutoRespawn(const bool b);
+
+
     protected:
         void RunSyncPos();
         void Physics(const bool is_in_fluid);

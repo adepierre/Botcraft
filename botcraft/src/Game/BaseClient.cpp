@@ -340,6 +340,36 @@ namespace Botcraft
         world = world_;
     }
 
+    void BaseClient::Say(const std::string& msg)
+    {
+        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
+        {
+            std::shared_ptr<ServerboundChatPacket> chat_message(new ServerboundChatPacket);
+            chat_message->SetMessage(msg);
+            network_manager->Send(chat_message);
+        }
+    }
+
+    void BaseClient::Respawn()
+    {
+        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
+        {
+            std::shared_ptr<ServerboundClientCommandPacket> status_message(new ServerboundClientCommandPacket);
+            status_message->SetAction(0);
+            network_manager->Send(status_message);
+        }
+    }
+
+    const bool BaseClient::GetShouldBeClosed() const
+    {
+        return should_be_closed;
+    }
+
+    void BaseClient::SetAutoRespawn(const bool b)
+    {
+        auto_respawn = b;
+    }
+
     void BaseClient::Handle(Message &msg)
     {
 
