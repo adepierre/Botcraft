@@ -15,6 +15,13 @@ namespace Botcraft
         Moving,
         Stop
     };
+	
+    enum class KillAuraState
+    {
+        Waiting,
+        Killing,
+        Stop
+    };
 
     enum class DiggingState
     {
@@ -56,6 +63,9 @@ namespace Botcraft
         // Returns true if the position was reached, false otherwise
         const bool GoTo(const Position &goal, const bool in_range, const int min_end_dist = 0, const float speed = 4.317f);
         void StopPathFinding();
+		
+		const void KillAuraBlock(const Position pos, const int delay);
+		void StopKillAura();
 
         // Place a given block at a given location
         // item: name of the item to place, fails if not present in the inventory
@@ -113,6 +123,8 @@ namespace Botcraft
     
     private:
         PathFindingState pathfinding_state;
+		
+		KillAuraState killaura_state;
 
         DiggingState digging_state;
     };

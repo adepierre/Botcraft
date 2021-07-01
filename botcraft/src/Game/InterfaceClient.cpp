@@ -315,6 +315,49 @@ namespace Botcraft
     {
         auto_respawn = b;
     }
+	
+	const void InterfaceClient::KillAuraBlock(const Position pos, const int delay)
+	{
+		if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
+        {
+            return;
+        }
+		if (killaura_state == KillAuraState::Killing)
+		{
+			std::cout << "Launching multiple threads of killaura is not a geed practice" << std::endl;
+		}
+		
+		std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+		auto ent = entity_manager->GetEntities();
+		
+		while (killaura_state != KillAuraState::Stop)
+		{
+			std::cout << "Checking entities" << std::endl;
+			for(auto& ee : ent) {
+				int id = ee.first;
+				std::shared_ptr<Entity> e = ee.second;
+				std::cout << e->GetEID() << " \tX: " << e->GetX() << " Y: " << e->GetY() << " Z: " << e->GetZ() << std::endl;
+				if(std::floor(e->GetX()) == pos.x && std::floor(e->GetY()) == pos.y && std::floor(e->GetZ()) == pos.z) {
+					std::shared_ptr<ServerboundInteractPacket> attack(new ServerboundInteractPacket);
+					attack->SetEntityId(e->GetEID());
+					attack->SetAction(1);
+					attack->SetUsingSecondaryAction(false);
+					network_manager->Send(attack);
+					std::cout << "Attacked entity " << e->GetEID() << std::endl;
+					continue;
+				}
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+		}
+	}
+
+    void InterfaceClient::StopKillAura()
+    {
+        if (killaura_state != KillAuraState::Waiting)
+        {
+            killaura_state = KillAuraState::Stop;
+        }
+    }
 
     const bool InterfaceClient::GoTo(const Position &goal, const bool in_range, const int min_end_dist, const float speed)
     {
