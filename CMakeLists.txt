@@ -13,7 +13,6 @@ if(BOTCRAFT_USE_OPENGL_GUI)
 endif()
 option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" ON)
 option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
-option(BOTCRAFT_AI "Activate if you want to connect to a server in online mode" ON)
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
 option(BOTCRAFT_INSTALL_ASSETS "Set to copy used assets to installation folder" ON)
 
@@ -52,11 +51,6 @@ include(${CMAKE_SOURCE_DIR}/cmake/asio.cmake)
 
 # Add picoJson
 include(${CMAKE_SOURCE_DIR}/cmake/picoJson.cmake)
-
-# Add beehive
-if(BOTCRAFT_AI)
-    include(${CMAKE_SOURCE_DIR}/cmake/beehive.cmake)
-endif(BOTCRAFT_AI)
 
 # Add ZLIB
 if(BOTCRAFT_COMPRESSION)

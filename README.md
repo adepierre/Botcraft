@@ -36,7 +36,6 @@ All the libraries are included either directly(\*) or as submodules(†) and are
 - [picoJson](https://github.com/kazuho/picojson)\* for JSON support
 
 Optional dependencies (can be disabled with cmake options)
-- [beehive](https://github.com/crust/beehive)\* for behaviour trees AI system
 - [glad](https://glad.dav1d.de/)\* for OpenGL stuff
 - [glfw](https://github.com/glfw/glfw)† for OpenGL window creation
 - [glm](https://github.com/g-truc/glm)† for math stuff

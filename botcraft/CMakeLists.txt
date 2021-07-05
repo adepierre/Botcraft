@@ -1,6 +1,8 @@
 project(botcraft)
 
-set(botcraft_PUBLIC_HDR 
+set(botcraft_PUBLIC_HDR
+    include/botcraft/AI/BehaviourTree.hpp
+    include/botcraft/AI/InterfaceClient.hpp
     include/botcraft/Game/AABB.hpp
     include/botcraft/Game/Entities/Entity.hpp
     include/botcraft/Game/Entities/EntityManager.hpp
@@ -38,7 +40,8 @@ set(botcraft_PRIVATE_HDR
     private_include/botcraft/Utilities/StringUtilities.hpp
 )
 
-set(botcraft_SRC 
+set(botcraft_SRC
+    src/AI/InterfaceClient.cpp
     src/Game/AABB.cpp
     src/Game/AssetsManager.cpp
     src/Game/BaseClient.cpp
@@ -62,16 +65,6 @@ set(botcraft_SRC
     src/Network/TCP_Com.cpp
     src/Utilities/StringUtilities.cpp
 )
-
-if(BOTCRAFT_AI)
-    list(APPEND botcraft_PUBLIC_HDR
-            include/botcraft/AI/InterfaceClient.hpp
-        )
-        
-    list(APPEND botcraft_SRC
-            src/AI/InterfaceClient.cpp
-        )    
-endif(BOTCRAFT_AI)
 
 if(BOTCRAFT_USE_OPENGL_GUI)
     list(APPEND botcraft_PUBLIC_HDR
@@ -178,14 +171,6 @@ target_include_directories(botcraft
         $<BUILD_INTERFACE:${PICOJSON_INCLUDE_DIR}>
 )
 
-# Add beehive
-if(BOTCRAFT_AI)
-    target_include_directories(botcraft
-        PUBLIC
-            $<BUILD_INTERFACE:${BEEHIVE_INCLUDE_DIR}>
-        )
-endif(BOTCRAFT_AI)
-
 # Add Asio
 target_link_libraries(botcraft PRIVATE asio)
 target_compile_definitions(botcraft PRIVATE ASIO_STANDALONE)
@@ -255,12 +240,6 @@ install(
 # Copy picoJson
 install(DIRECTORY ${PICOJSON_INCLUDE_DIR}
     DESTINATION ${CMAKE_INSTALL_PREFIX})
-    
-# Copy beehive
-if(BOTCRAFT_AI)
-    install(DIRECTORY ${BEEHIVE_INCLUDE_DIR}
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
-endif(BOTCRAFT_AI)
 
 export(EXPORT botcraft-targets
     FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-targets.cmake
