@@ -25,7 +25,7 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : In
     if (!online)
     {
         network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(ConnectionState::Play));
-        world = std::shared_ptr<World>(new World(false));
+        world = std::shared_ptr<World>(new World(false, false));
         entity_manager = std::shared_ptr<EntityManager>(new EntityManager);
 
         should_be_closed = false;

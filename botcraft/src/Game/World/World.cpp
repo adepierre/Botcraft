@@ -2,6 +2,7 @@
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/Enums.hpp"
+#include "botcraft/Utilities/AsyncHandler.hpp"
 
 #include "protocolCraft/Types/NBT/NBT.hpp"
 
@@ -10,7 +11,7 @@
 
 namespace Botcraft
 {
-    World::World(const bool is_shared_)
+    World::World(const bool is_shared_, const bool async_handler_)
     {
         is_shared = is_shared_;
 
@@ -19,6 +20,19 @@ namespace Botcraft
 #else
         current_dimension = "";
 #endif
+        if (async_handler_)
+        {
+            async_handler = std::unique_ptr<AsyncHandler>(new AsyncHandler(this));
+        }
+        else
+        {
+            async_handler = nullptr;
+        }
+    }
+
+    World::~World()
+    {
+
     }
 
     std::mutex& World::GetMutex()
@@ -29,6 +43,18 @@ namespace Botcraft
     const bool World::IsShared() const
     {
         return is_shared;
+    }
+
+    ProtocolCraft::Handler* World::GetAsyncHandler()
+    {
+        if (async_handler != nullptr)
+        {
+            return async_handler.get();
+        }
+        else
+        {
+            return this;
+        }
     }
 
 #if PROTOCOL_VERSION < 719
@@ -714,128 +740,6 @@ namespace Botcraft
 
         return cached;
     }
-    
-    std::shared_ptr<Blockstate> World::Raycast(const Vector3<double> &origin, const Vector3<double> &direction,
-        const float max_radius, Position &out_pos, Position &out_normal)
-    {
-        // Inspired from https://gist.github.com/dogfuntom/cc881c8fc86ad43d55d8
-        // Searching along origin + t * direction line
-
-        // Position of the current cube examined
-        out_pos = Position(std::floor(origin.x), std::floor(origin.y), std::floor(origin.z));
-
-        // Increment on each axis
-        Vector3<double> step((0.0 < direction.x) - (direction.x < 0.0), (0.0 < direction.y) - (direction.y < 0.0), (0.0 < direction.z) - (direction.z < 0.0));
-
-        // tMax is the t-value to cross a cube boundary
-        // for each axis. The axis with the least tMax
-        // value is the one the ray crosses in first
-        // tDelta is the increment of t for each step
-        Vector3<double> tMax, tDelta;
-
-        for (int i = 0; i < 3; ++i)
-        {
-            bool isInteger = std::round(origin[i]) == origin[i];
-            if (direction[i] < 0 && isInteger)
-            {
-                tMax[i] = 0.0;
-            }
-            else
-            {
-                if (direction[i] > 0)
-                {
-                    tMax[i] = ((origin[i] == 0.0f) ? 1.0f : std::ceil(origin[i]) - origin[i]) / std::abs(direction[i]);
-                }
-                else if (direction[i] < 0)
-                {
-                    tMax[i] = (origin[i] - std::floor(origin[i])) / std::abs(direction[i]);
-                }
-                else
-                {
-                    tMax[i] = std::numeric_limits<double>::max();
-                }
-            }
-
-            if (direction[i] == 0)
-            {
-                tDelta[i] = std::numeric_limits<double>::max();
-            }
-            else
-            {
-                tDelta[i] = step[i] / direction[i];
-            }
-        }
-
-        if (direction.x == 0 && direction.y == 0 && direction.z == 0)
-        {
-            throw(std::runtime_error("Raycasting with null direction"));
-        }
-
-        const float radius = max_radius / std::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
-
-        while (true)
-        {
-            const Block* block = GetBlock(out_pos);
-
-            if (block)
-            {
-                std::shared_ptr<Blockstate> blockstate = block->GetBlockstate();
-                if (!block->GetBlockstate()->IsAir())
-                {
-                    const auto &cubes = blockstate->GetModel(block->GetModelId()).GetColliders();
-                    for (int i = 0; i < cubes.size(); ++i)
-                    {
-                        const AABB current_cube = cubes[i] + out_pos;
-                        if (current_cube.Intersect(origin, direction))
-                        {
-                            return blockstate;
-                        }
-                    }
-                }
-            }
-
-            // select the direction in which the next face is
-            // the closest
-            if (tMax.x < tMax.y && tMax.x < tMax.z)
-            {
-                if (tMax.x > radius)
-                {
-                    return nullptr;
-                }
-
-                out_pos.x += step.x;
-                tMax.x += tDelta.x;
-                out_normal.x = -step.x;
-                out_normal.y = 0;
-                out_normal.z = 0;
-            }
-            else if (tMax.y < tMax.x && tMax.y < tMax.z)
-            {
-                if (tMax.y > radius)
-                {
-                    return nullptr;
-                }
-                out_pos.y += step.y;
-                tMax.y += tDelta.y;
-                out_normal[0] = 0;
-                out_normal[1] = -step.y;
-                out_normal[2] = 0;
-            }
-            else // tMax.z < tMax.x && tMax.z < tMax.y
-            {
-                if (tMax.z > radius)
-                {
-                    return nullptr;
-                }
-
-                out_pos.z += step.z;
-                tMax.z += tDelta.z;
-                out_normal.x = 0;
-                out_normal.x = 0;
-                out_normal.x = -step.z;
-            }
-        }
-    }
 
     void World::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
     {
@@ -977,7 +881,128 @@ namespace Botcraft
 #endif
             LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBlockEntitiesTags());
         }
+    }
 
+    std::shared_ptr<Blockstate> World::Raycast(const Vector3<double> &origin, const Vector3<double> &direction,
+        const float max_radius, Position & out_pos, Position & out_normal)
+    {
+        // Inspired from https://gist.github.com/dogfuntom/cc881c8fc86ad43d55d8
+        // Searching along origin + t * direction line
+
+        // Position of the current cube examined
+        out_pos = Position(std::floor(origin.x), std::floor(origin.y), std::floor(origin.z));
+
+        // Increment on each axis
+        Vector3<double> step((0.0 < direction.x) - (direction.x < 0.0), (0.0 < direction.y) - (direction.y < 0.0), (0.0 < direction.z) - (direction.z < 0.0));
+
+        // tMax is the t-value to cross a cube boundary
+        // for each axis. The axis with the least tMax
+        // value is the one the ray crosses in first
+        // tDelta is the increment of t for each step
+        Vector3<double> tMax, tDelta;
+
+        for (int i = 0; i < 3; ++i)
+        {
+            bool isInteger = std::round(origin[i]) == origin[i];
+            if (direction[i] < 0 && isInteger)
+            {
+                tMax[i] = 0.0;
+            }
+            else
+            {
+                if (direction[i] > 0)
+                {
+                    tMax[i] = ((origin[i] == 0.0f) ? 1.0f : std::ceil(origin[i]) - origin[i]) / std::abs(direction[i]);
+                }
+                else if (direction[i] < 0)
+                {
+                    tMax[i] = (origin[i] - std::floor(origin[i])) / std::abs(direction[i]);
+                }
+                else
+                {
+                    tMax[i] = std::numeric_limits<double>::max();
+                }
+            }
+
+            if (direction[i] == 0)
+            {
+                tDelta[i] = std::numeric_limits<double>::max();
+            }
+            else
+            {
+                tDelta[i] = step[i] / direction[i];
+            }
+        }
+
+        if (direction.x == 0 && direction.y == 0 && direction.z == 0)
+        {
+            throw(std::runtime_error("Raycasting with null direction"));
+        }
+
+        const float radius = max_radius / std::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+
+        while (true)
+        {
+            const Block* block = GetBlock(out_pos);
+
+            if (block)
+            {
+                std::shared_ptr<Blockstate> blockstate = block->GetBlockstate();
+                if (!block->GetBlockstate()->IsAir())
+                {
+                    const auto& cubes = blockstate->GetModel(block->GetModelId()).GetColliders();
+                    for (int i = 0; i < cubes.size(); ++i)
+                    {
+                        const AABB current_cube = cubes[i] + out_pos;
+                        if (current_cube.Intersect(origin, direction))
+                        {
+                            return blockstate;
+                        }
+                    }
+                }
+            }
+
+            // select the direction in which the next face is
+            // the closest
+            if (tMax.x < tMax.y && tMax.x < tMax.z)
+            {
+                if (tMax.x > radius)
+                {
+                    return nullptr;
+                }
+
+                out_pos.x += step.x;
+                tMax.x += tDelta.x;
+                out_normal.x = -step.x;
+                out_normal.y = 0;
+                out_normal.z = 0;
+            }
+            else if (tMax.y < tMax.x && tMax.y < tMax.z)
+            {
+                if (tMax.y > radius)
+                {
+                    return nullptr;
+                }
+                out_pos.y += step.y;
+                tMax.y += tDelta.y;
+                out_normal[0] = 0;
+                out_normal[1] = -step.y;
+                out_normal[2] = 0;
+            }
+            else // tMax.z < tMax.x && tMax.z < tMax.y
+            {
+                if (tMax.z > radius)
+                {
+                    return nullptr;
+                }
+
+                out_pos.z += step.z;
+                tMax.z += tDelta.z;
+                out_normal.x = 0;
+                out_normal.x = 0;
+                out_normal.x = -step.z;
+            }
+        }
     }
 
 #if PROTOCOL_VERSION > 404

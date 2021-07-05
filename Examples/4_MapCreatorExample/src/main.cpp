@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
         std::vector<std::shared_ptr<Botcraft::World> > shared_worlds(num_world);
         for (int i = 0; i < num_world; i++)
         {
-            shared_worlds[i] = std::shared_ptr<Botcraft::World>(new Botcraft::World(true));
+            shared_worlds[i] = std::shared_ptr<Botcraft::World>(new Botcraft::World(true, false));
         }
         std::vector<std::string> names(num_bot);
         std::vector<std::shared_ptr<MapCreatorBot> > clients(num_bot);

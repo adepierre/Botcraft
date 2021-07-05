@@ -23,6 +23,8 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Inventory/Item.hpp
     
     include/botcraft/Network/NetworkManager.hpp
+    
+    include/botcraft/Utilities/AsyncHandler.hpp
 )
 
 set(botcraft_PRIVATE_HDR
@@ -63,6 +65,7 @@ set(botcraft_SRC
     src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
     src/Utilities/StringUtilities.cpp
+    src/Utilities/AsyncHandler.cpp
 )
 
 if(BOTCRAFT_USE_OPENGL_GUI)

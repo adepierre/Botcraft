@@ -4,6 +4,7 @@
 #include <array>
 #include <memory>
 #include <mutex>
+#include <queue>
 
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/Enums.hpp"
@@ -16,6 +17,7 @@ namespace Botcraft
 {
     class Block;
     class Blockstate;
+    class AsyncHandler;
 
     static const int WORLD_START_Y = 0;
     static const int WORLD_END_Y = WORLD_START_Y + CHUNK_HEIGHT;
@@ -23,10 +25,24 @@ namespace Botcraft
     class World : public ProtocolCraft::Handler
     {
     public:
-        World(const bool is_shared_);
+        // if is_shared_ is true, this world
+        // can be shared by multiple bot instance, saving memory
+        // when they are in the same area, but slowing things down
+        // if too many share the same instance
+        //
+        // if async_handler_ is true, all packets will be copied
+        // and processed on another specific thread instead of
+        // directly on the main network processing thread
+        // This adds a **lot** of copy but can prevent some timeouts
+        // when CPU is too slow to cope with all chunk data sent
+        // when loading a dimension
+        World(const bool is_shared_, const bool async_handler_ = false);
+        ~World();
 
         std::mutex& GetMutex();
         const bool IsShared() const;
+
+        ProtocolCraft::Handler* GetAsyncHandler();
 
 #if PROTOCOL_VERSION < 719
         bool AddChunk(const int x, const int z, const Dimension dim);
@@ -154,5 +170,6 @@ namespace Botcraft
 #else
         std::string current_dimension;
 #endif
+        std::unique_ptr<AsyncHandler> async_handler;
     };
 } // Botcraft
