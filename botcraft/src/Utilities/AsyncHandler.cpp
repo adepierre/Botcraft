@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "botcraft/Utilities/AsyncHandler.hpp"
 
 namespace Botcraft
@@ -6,7 +8,7 @@ namespace Botcraft
     {
         if (handler == nullptr)
         {
-            throw(std::exception("Trying to assign a nullptr to AsyncHandler"));
+            throw(std::runtime_error("Trying to assign a nullptr to AsyncHandler"));
             return;
         }
         main_handler = handler;
