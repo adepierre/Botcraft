@@ -1,0 +1,20 @@
+{
+	"textures": {
+		"all": "#all"
+	},
+	"elements": [   
+		{
+			"__comment": "Sign",
+			"from": [0, 4, 0],
+			"to": [2, 12, 16],
+			"faces": {
+				"down":  { "uv": [ 2, 0, 26, 2 ], "texture": "#all" },
+                "up":    { "uv": [ 26, 0, 50, 2 ], "texture": "#all" },
+                "south": { "uv": [ 0, 2, 2, 14 ], "texture": "#all" },
+                "west":  { "uv": [ 28, 2, 52, 14 ], "texture": "#all", "cullface": "west" },
+                "north": { "uv": [ 26, 2, 28, 14 ], "texture": "#all" },
+                "east":  { "uv": [ 2, 2, 26, 14 ], "texture": "#all" }
+			}
+		}
+	]
+}
