@@ -24,7 +24,7 @@ namespace ProtocolCraft
             return 0x16;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x15;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x16;
 #else
             #error "Protocol version not implemented"
@@ -56,6 +56,13 @@ namespace ProtocolCraft
             item_stack = item_stack_;
         }
 
+#if PROTOCOL_VERSION > 755
+        void SetStateId(const int state_id_)
+        {
+            state_id = state_id_;
+        }
+#endif
+
         const char GetContainerId() const
         {
             return container_id;
@@ -71,10 +78,20 @@ namespace ProtocolCraft
             return item_stack;
         }
 
+#if PROTOCOL_VERSION > 755
+        const int GetStateId() const
+        {
+            return state_id;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             container_id = ReadData<char>(iter, length);
+#if PROTOCOL_VERSION > 755
+            state_id = ReadVarInt(iter, length);
+#endif
             slot = ReadData<short>(iter, length);
             item_stack.Read(iter, length);
         }
@@ -82,6 +99,9 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<char>(container_id, container);
+#if PROTOCOL_VERSION > 755
+            WriteVarInt(state_id, container);
+#endif
             WriteData<short>(slot, container);
             item_stack.Write(container);
         }
@@ -94,6 +114,9 @@ namespace ProtocolCraft
             object["container_id"] = picojson::value((double)container_id);
             object["slot"] = picojson::value((double)slot);
             object["item_stack"] = item_stack.Serialize();
+#if PROTOCOL_VERSION > 755
+            object["state_id"] = picojson::value((double)state_id);
+#endif
 
             return value;
         }
@@ -102,6 +125,9 @@ namespace ProtocolCraft
         char container_id;
         short slot;
         Slot item_stack;
+#if PROTOCOL_VERSION > 755
+        int state_id;
+#endif
 
     };
 } //ProtocolCraft

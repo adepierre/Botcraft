@@ -174,7 +174,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundUseBedPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRecipePacket.hpp"
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION == 755
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntityPacket.hpp"
+#else
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntitiesPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveMobEffectPacket.hpp"
@@ -245,7 +247,6 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatEndPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatEnterPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatKillPacket.hpp"
-#include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntityPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetActionBarTextPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderCenterPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderLerpSizePacket.hpp"
@@ -383,7 +384,11 @@ namespace ProtocolCraft
         ClientboundTakeItemEntityPacket,
 #if PROTOCOL_VERSION < 755
         ClientboundPlayerCombatPacket,
-        ClientboundRemoveEntitiesPacket,
+#endif
+#if PROTOCOL_VERSION == 755
+    ClientboundRemoveEntityPacket,
+#else
+    ClientboundRemoveEntitiesPacket,
 #endif
 #if PROTOCOL_VERSION > 345
         ClientboundCommandsPacket,
@@ -513,7 +518,6 @@ namespace ProtocolCraft
         ClientboundPlayerCombatEndPacket,
         ClientboundPlayerCombatEnterPacket,
         ClientboundPlayerCombatKillPacket,
-        ClientboundRemoveEntityPacket,
         ClientboundSetActionBarTextPacket,
         ClientboundSetBorderCenterPacket,
         ClientboundSetBorderLerpSizePacket,

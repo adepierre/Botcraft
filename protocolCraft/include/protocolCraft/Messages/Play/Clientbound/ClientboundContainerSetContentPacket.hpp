@@ -22,7 +22,7 @@ namespace ProtocolCraft
             return 0x14;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x13;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x14;
 #else
             #error "Protocol version not implemented"
@@ -49,6 +49,18 @@ namespace ProtocolCraft
             items = items_;
         }
 
+#if PROTOCOL_VERSION > 755
+        void SetCarriedItem(const Slot& carried_item_)
+        {
+            carried_item = carried_item_;
+        }
+
+        void SetStateId(const int state_id_)
+        {
+            state_id = state_id_;
+        }
+#endif
+
         const unsigned char GetContainerId() const
         {
             return container_id;
@@ -59,26 +71,59 @@ namespace ProtocolCraft
             return items;
         }
 
+#if PROTOCOL_VERSION > 755
+        const Slot& GetCarriedItem() const
+        {
+            return carried_item;
+        }
+
+        const int GetStateId() const
+        {
+            return state_id;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             container_id = ReadData<unsigned char>(iter, length);
+#if PROTOCOL_VERSION < 756
             short count = ReadData<short>(iter, length);
             items = std::vector<Slot>(count);
             for (int i = 0; i < count; ++i)
             {
                 items[i].Read(iter, length);
             }
+#else
+            state_id = ReadVarInt(iter, length);
+            int count = ReadVarInt(iter, length);
+            items = std::vector<Slot>(count);
+            for (int i = 0; i < count; ++i)
+            {
+                items[i].Read(iter, length);
+            }
+            carried_item.Read(iter, length);
+#endif            
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<unsigned char>(container_id, container);
+#if PROTOCOL_VERSION < 756
             WriteData<short>(items.size(), container);
             for (int i = 0; i < items.size(); ++i)
             {
                 items[i].Write(container);
             }
+#else
+            WriteVarInt(state_id, container);
+            WriteVarInt(items.size(), container);
+            for (int i = 0; i < items.size(); ++i)
+            {
+                items[i].Write(container);
+            }
+            carried_item.Write(container);
+#endif
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -97,11 +142,20 @@ namespace ProtocolCraft
                 array.push_back(items[i].Serialize());
             }
 
+#if PROTOCOL_VERSION > 755
+            object["state_id"] = picojson::value((double)state_id);
+            object["carried_item"] = carried_item.Serialize();
+#endif
+
             return value;
         }
 
     private:
         unsigned char container_id;
         std::vector<Slot> items;
+#if PROTOCOL_VERSION > 755
+        Slot carried_item;
+        int state_id;
+#endif
     };
 } //ProtocolCraft
