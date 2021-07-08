@@ -68,22 +68,22 @@ namespace ProtocolCraft
             decorations = decorations_;
         }
 
-        void SetStartX(const char start_x_)
+        void SetStartX(const unsigned char start_x_)
         {
             start_x = start_x_;
         }
 
-        void SetStartZ(const char start_z_)
+        void SetStartZ(const unsigned char start_z_)
         {
             start_z = start_z_;
         }
 
-        void SetWidth(const char width_)
+        void SetWidth(const unsigned char width_)
         {
             width = width_;
         }
 
-        void SetHeight(const char height_)
+        void SetHeight(const unsigned char height_)
         {
             height = height_;
         }
@@ -123,22 +123,22 @@ namespace ProtocolCraft
             return decorations;
         }
 
-        const char GetStartX() const
+        const unsigned char GetStartX() const
         {
             return start_x;
         }
 
-        const char GetStartZ() const
+        const unsigned char GetStartZ() const
         {
             return start_z;
         }
 
-        const char GetWidth() const
+        const unsigned char GetWidth() const
         {
             return width;
         }
 
-        const char GetHeight() const
+        const unsigned char GetHeight() const
         {
             return height;
         }
@@ -175,12 +175,12 @@ namespace ProtocolCraft
             }
 #endif
 
-            width = ReadData<char>(iter, length);
+            width = ReadData<unsigned char>(iter, length);
             if (width > 0)
             {
-                height = ReadData<char>(iter, length);
-                start_x = ReadData<char>(iter, length);
-                start_z = ReadData<char>(iter, length);
+                height = ReadData<unsigned char>(iter, length);
+                start_x = ReadData<unsigned char>(iter, length);
+                start_z = ReadData<unsigned char>(iter, length);
                 int map_colors_size = ReadVarInt(iter, length);
                 map_colors = ReadByteArray(iter, length, map_colors_size);
             }
@@ -210,12 +210,12 @@ namespace ProtocolCraft
             }
 #endif
 
-            WriteData<char>(width, container);
+            WriteData<unsigned char>(width, container);
             if (width > 0)
             {
-                WriteData<char>(height, container);
-                WriteData<char>(start_x, container);
-                WriteData<char>(start_z, container);
+                WriteData<unsigned char>(height, container);
+                WriteData<unsigned char>(start_x, container);
+                WriteData<unsigned char>(start_z, container);
                 WriteVarInt(map_colors.size(), container);
                 WriteByteArray(map_colors, container);
             }
@@ -262,10 +262,10 @@ namespace ProtocolCraft
         bool locked;
 #endif
         std::vector<MapDecoration> decorations;
-        char start_x;
-        char start_z;
-        char width;
-        char height;
+        unsigned char start_x;
+        unsigned char start_z;
+        unsigned char width;
+        unsigned char height;
         std::vector<unsigned char> map_colors;
     };
 } //ProtocolCraft

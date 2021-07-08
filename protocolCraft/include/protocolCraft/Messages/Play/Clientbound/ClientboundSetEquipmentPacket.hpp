@@ -105,7 +105,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 730
             for (int i = 0; i < slots.size(); ++i)
             {
-                WriteData<unsigned char>(i == slots.size() - 1 ? slots[i].first | (1 << 7) : slots[i].first, container);
+                WriteData<unsigned char>(i != slots.size() - 1 ? slots[i].first | (1 << 7) : slots[i].first, container);
                 slots[i].second.Write(container);
             }
 #else

@@ -55,7 +55,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteString(text, container);
+            WriteString(raw_text, container);
         }
 
         const std::string ParseChat(const std::string &json);

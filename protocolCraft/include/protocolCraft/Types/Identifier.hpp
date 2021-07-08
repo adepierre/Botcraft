@@ -67,7 +67,7 @@ namespace ProtocolCraft
 
             if (split == std::string::npos)
             {
-                namespace_ = "minecraft";
+                namespace_ = "";
                 name = str;
             }
             else
@@ -81,7 +81,7 @@ namespace ProtocolCraft
         {
             if (namespace_.empty())
             {
-                WriteString("minecraft:" + name, container);
+                WriteString(name, container);
             }
             else
             {

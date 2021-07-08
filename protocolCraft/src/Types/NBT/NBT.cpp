@@ -55,6 +55,9 @@ namespace ProtocolCraft
     {
         if (has_data)
         {
+            WriteData<char>((char)TagType::Compound, container);
+            WriteData<unsigned short>(root_name.size(), container);
+            WriteRawString(root_name, container);
             root_tag.Write(container);
         }
         else
