@@ -51,7 +51,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
     {
         if (splitted.size() < 5)
         {
-            Say("Usage: [BotName] [goto] [x] [y] [z]");
+            Say("Usage: goto <x> <y> <z>");
             return;
         }
         Position target_position;
@@ -113,11 +113,25 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
     {
         should_be_closed = true;
     }
+    else if (splitted[1] == "say")
+    {
+		if (splitted.size() < 3)
+		{
+            Say("Usage: say <message>");
+            return;
+		}
+		std::string saymsg = "";
+		for (auto it = splitted.begin()+2; it != splitted.end(); it++)
+		{
+			saymsg += *it + " ";
+		}
+		Say(saymsg);
+    }
     else if (splitted[1] == "place_block")
     {
         if (splitted.size() < 6)
         {
-            Say("Usage: [BotName] [place_block] [item] [x] [y] [z]");
+            Say("Usage: place_block <item> <x> <y> <z>");
             return;
         }
         const std::string item = splitted[2];
@@ -141,7 +155,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
     {
         if (splitted.size() < 5)
         {
-            Say("Usage: [BotName] [interact] [x] [y] [z]");
+            Say("Usage: interact <x> <y> <z>");
             return;
         }
         Position pos;
@@ -159,6 +173,49 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         }
 
         InteractWithBlock(pos, PlayerDiggingFace::Top, true);
+    }
+    else if (splitted[1] == "killaura")
+    {
+		if (splitted.size() < 3)
+		{
+            Say("Usage: killaura <action> [...]");
+            return;
+		}
+		if (splitted[2] == "block")
+		{
+			if (splitted.size() < 6)
+	        {
+	            Say("Usage: killaura block <x> <y> <z>");
+	            return;
+	        }
+	        Position pos;
+	        try
+	        {
+	            pos = Position(std::stoi(splitted[3]), std::stoi(splitted[4]), std::stoi(splitted[5]));
+	        }
+	        catch (const std::invalid_argument& e)
+	        {
+	            return;
+	        }
+	        catch (const std::out_of_range& e)
+	        {
+	            return;
+	        }
+
+	        // Launch the command on a new thread
+	        std::thread t(&ChatCommandClient::KillAuraBlock, this, pos, 3000);
+	        t.detach();
+		}
+		else if (splitted[2] == "stop")
+		{
+			StopKillAura();
+			std::cout << "KillAura stopped." << std::endl;
+		}
+		else
+		{
+			Say("Available killaura actions: block, stop");
+			return;
+		}
     }
     else
     {
