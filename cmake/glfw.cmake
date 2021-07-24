@@ -8,16 +8,16 @@ if(NOT TARGET glfw)
 	
 	message(STATUS "Can't find GLFW, cloning and building it from sources")
 	
-    file(GLOB RESULT ${CMAKE_SOURCE_DIR}/3rdparty/glfw/include)
+    file(GLOB RESULT ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glfw/include)
     list(LENGTH RESULT RES_LEN)
     message(STATUS ${RES_LEN})
     if(RES_LEN EQUAL 0)
         message(STATUS "Glfw not found, cloning it...")
-        execute_process(COMMAND git submodule update --init -- 3rdparty/glfw WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+        execute_process(COMMAND git submodule update --init -- 3rdparty/glfw WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
     
-	set(GLFW_SRC_PATH ${CMAKE_SOURCE_DIR}/3rdparty/glfw)
-	set(GLFW_BUILD_PATH ${CMAKE_BINARY_DIR}/3rdparty/glfw)
+	set(GLFW_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glfw)
+	set(GLFW_BUILD_PATH ${CMAKE_CURRENT_BINARY_DIR}/3rdparty/glfw)
 	
 	file(MAKE_DIRECTORY ${GLFW_BUILD_PATH})
 	execute_process(

@@ -8,8 +8,8 @@ if(NOT TARGET glad)
 	
 	message(STATUS "Can't find glad, building it from sources")
 	
-	set(GLAD_SRC_PATH ${CMAKE_SOURCE_DIR}/3rdparty/glad)
-	set(GLAD_BUILD_PATH ${CMAKE_BINARY_DIR}/3rdparty/glad)
+	set(GLAD_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glad)
+	set(GLAD_BUILD_PATH ${CMAKE_CURRENT_BINARY_DIR}/3rdparty/glad)
 	
 	file(MAKE_DIRECTORY ${GLAD_BUILD_PATH})
 

@@ -365,7 +365,7 @@ install(EXPORT protocolCraft-targets
 
 # Copy picoJson
 install(DIRECTORY ${PICOJSON_INCLUDE_DIR}
-    DESTINATION ${CMAKE_INSTALL_PREFIX})
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 export(EXPORT protocolCraft-targets
     FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-targets.cmake

@@ -241,52 +241,52 @@ install(
 
 # Copy picoJson
 install(DIRECTORY ${PICOJSON_INCLUDE_DIR}
-    DESTINATION ${CMAKE_INSTALL_PREFIX})
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 export(EXPORT botcraft-targets
     FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-targets.cmake
 )
 
 if(BOTCRAFT_INSTALL_ASSETS)
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/custom
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/Assets/${GAME_VERSION}
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/custom
+        DESTINATION Assets/${GAME_VERSION}
     )
     
     # Check for assets, copy only needed files to install folder
-    if(EXISTS ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft)
-        if(EXISTS ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/blockstates)
-            install(DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/blockstates
-                DESTINATION ${CMAKE_INSTALL_PREFIX}/Assets/${GAME_VERSION}/minecraft
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft)
+        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/blockstates)
+            install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/blockstates
+                DESTINATION Assets/${GAME_VERSION}/minecraft
             )
         else()
-            message(WARNING "Can't find assets folder ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/blockstates")
+            message(WARNING "Can't find assets folder ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/blockstates")
         endif()
-        if(EXISTS ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/models/block)
-            install(DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/models/block
-                DESTINATION ${CMAKE_INSTALL_PREFIX}/Assets/${GAME_VERSION}/minecraft/models
+        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block)
+            install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block
+                DESTINATION Assets/${GAME_VERSION}/minecraft/models
             )
         else()
-            message(WARNING "Can't find assets folder ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/models/block")
+            message(WARNING "Can't find assets folder ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block")
         endif()
-        if(EXISTS ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/models/block)
-            install(DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/models/block
-                DESTINATION ${CMAKE_INSTALL_PREFIX}/Assets/${GAME_VERSION}/minecraft/models
+        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block)
+            install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block
+                DESTINATION Assets/${GAME_VERSION}/minecraft/models
             )
         else()
-            message(WARNING "Can't find assets folder ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/models/block")
+            message(WARNING "Can't find assets folder ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block")
         endif()
         
         if(BOTCRAFT_USE_OPENGL_GUI)
-            if(EXISTS ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/blocks)
-                install(DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/blocks
-                    DESTINATION ${CMAKE_INSTALL_PREFIX}/Assets/${GAME_VERSION}/minecraft/textures
+            if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/blocks)
+                install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/blocks
+                    DESTINATION Assets/${GAME_VERSION}/minecraft/textures
                 )
-            elseif(EXISTS ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/block)
-                install(DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/block
-                    DESTINATION ${CMAKE_INSTALL_PREFIX}/Assets/${GAME_VERSION}/minecraft/textures
+            elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/block)
+                install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/block
+                    DESTINATION Assets/${GAME_VERSION}/minecraft/textures
                 )
             else()
-                message(WARNING "Can't find assets folder ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/blocks or ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/block")
+                message(WARNING "Can't find assets folder ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/blocks or ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/block")
             endif()
         endif()
     else()

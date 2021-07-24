@@ -28,16 +28,16 @@ message(STATUS "Selected game version: " ${GAME_VERSION} " || Protocol: " ${PROT
 
 # Check if the minecraft assets folder already exists
 # If not, download the client and extract the assets
-if(NOT EXISTS ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft)
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft)
     list(GET ClientURLs ${game_version_index} VERSION_CLIENTURL)
     message(STATUS "Downloading assets for version " ${GAME_VERSION} " from " ${VERSION_CLIENTURL} "...")
-    file(DOWNLOAD ${VERSION_CLIENTURL} ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/client.jar)
+    file(DOWNLOAD ${VERSION_CLIENTURL} ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/client.jar)
     message(STATUS "Extracting assets...")
-    file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/)
-    execute_process(COMMAND "cmake" "-E" "tar" "xfz" "${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/client.jar" WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/)
-    file(COPY ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/assets/minecraft/ DESTINATION ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/)
+    execute_process(COMMAND "cmake" "-E" "tar" "xfz" "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/client.jar" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/assets/minecraft/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/)
     message(STATUS "Removing temp folder")
-    file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/Assets/${GAME_VERSION}/temp)
+    file(REMOVE_RECURSE ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/temp)
 endif()
 
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
@@ -46,19 +46,19 @@ option(BOTCRAFT_INSTALL_ASSETS "Set to copy used assets to installation folder" 
 set(ASSET_DIR ../Assets/${GAME_VERSION})
 
 # Add Asio
-include(${CMAKE_SOURCE_DIR}/cmake/asio.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/asio.cmake)
 
 # Add picoJson
-include(${CMAKE_SOURCE_DIR}/cmake/picoJson.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/picoJson.cmake)
 
 # Add ZLIB
 if(BOTCRAFT_COMPRESSION)
-    include(${CMAKE_SOURCE_DIR}/cmake/zlib.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib.cmake)
 endif(BOTCRAFT_COMPRESSION)
 
 # Add OpenSSL
 if(BOTCRAFT_ENCRYPTION)
-    include(${CMAKE_SOURCE_DIR}/cmake/openssl.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/openssl.cmake)
 endif(BOTCRAFT_ENCRYPTION)
 
 if(BOTCRAFT_USE_OPENGL_GUI)
@@ -66,23 +66,23 @@ if(BOTCRAFT_USE_OPENGL_GUI)
     find_package(OpenGL REQUIRED)
     
     # Add glad
-    include(${CMAKE_SOURCE_DIR}/cmake/glad.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glad.cmake)
     
     #Add GLFW
-    include(${CMAKE_SOURCE_DIR}/cmake/glfw.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glfw.cmake)
     
     # Add GLM
-    include(${CMAKE_SOURCE_DIR}/cmake/glm.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glm.cmake)
     
     # Add stb_image
-    include(${CMAKE_SOURCE_DIR}/cmake/stb_image.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/stb_image.cmake)
     
     # Add rectpack2D
-    include(${CMAKE_SOURCE_DIR}/cmake/rectpack2D.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/rectpack2D.cmake)
     
     if(BOTCRAFT_USE_IMGUI)
         # Add Dear Imgui
-        include(${CMAKE_SOURCE_DIR}/cmake/imgui.cmake)
+        include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/imgui.cmake)
     endif()
 endif()
 
