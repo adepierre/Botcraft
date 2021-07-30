@@ -1683,7 +1683,7 @@ namespace ProtocolCraft
                 case 0x5B:
                     return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
                     break;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
                 case 0x00:
                     return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
                     break;
@@ -1859,7 +1859,11 @@ namespace ProtocolCraft
                     return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
                     break;
                 case 0x3A:
+#if PROTOCOL_VERSION < 756
                     return std::shared_ptr<ClientboundRemoveEntityPacket>(new ClientboundRemoveEntityPacket);
+#else
+                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
+#endif
                     break;
                 case 0x3B:
                     return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
@@ -2855,7 +2859,7 @@ namespace ProtocolCraft
                 case 0x2F:
                     return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
                     break;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
                 case 0x00:
                     return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
                     break;

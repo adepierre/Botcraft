@@ -78,7 +78,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 709
             key.Read(iter, length);
 #else
-            key = ReadString(iter, length);
+            key = ReadData<std::string>(iter, length);
 #endif
             value = ReadData<double>(iter, length);
             number_of_modifiers = ReadVarInt(iter, length);
@@ -94,7 +94,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 709
             key.Write(container);
 #else
-            WriteString(key, container);
+            WriteData<std::string>(key, container);
 #endif
             WriteData<double>(value, container);
             WriteVarInt(number_of_modifiers, container);

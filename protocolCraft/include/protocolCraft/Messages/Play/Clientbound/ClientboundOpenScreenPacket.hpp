@@ -22,7 +22,7 @@ namespace ProtocolCraft
             return 0x2E;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x2D;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x2E;
 #else
             #error "Protocol version not implemented"
@@ -122,7 +122,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 452
             container_id = ReadData<unsigned char>(iter, length);
-            type = ReadString(iter, length);
+            type = ReadData<std::string>(iter, length);
             title.Read(iter, length);
             number_of_slots = ReadData<unsigned char>(iter, length);
             if (type == "EntityHorse")
@@ -140,7 +140,7 @@ namespace ProtocolCraft
         {            
 #if PROTOCOL_VERSION < 452
             WriteData<unsigned char>(container_id, container);
-            WriteString(type, container);
+            WriteData<std::string>(type, container);
             title.Write(container);
             WriteData<unsigned char>(number_of_slots, container);
             if (type == "EntityHorse")

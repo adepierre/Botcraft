@@ -23,7 +23,7 @@ namespace ProtocolCraft
             return 0x06;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x06;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x07;
 #else
 #error "Protocol version not implemented"
@@ -74,7 +74,7 @@ namespace ProtocolCraft
             for (int i = 0; i < count; ++i)
             {
 #if PROTOCOL_VERSION < 346
-                std::string name = ReadString(iter, length);
+                std::string name = ReadData<std::string>(iter, length);
                 int value = ReadVarInt(iter, length);
                 stats[name] = value;
 #else
@@ -93,7 +93,7 @@ namespace ProtocolCraft
             for (auto it = stats.begin(); it != stats.end(); ++it)
             {
 #if PROTOCOL_VERSION < 346
-                WriteString(it->first, container);
+                WriteData<std::string>(it->first, container);
 #else
                 WriteVarInt(it->first.first, container);
                 WriteVarInt(it->first.second, container);

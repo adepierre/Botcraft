@@ -94,52 +94,62 @@ namespace Botcraft
                     }
                     else
                     {
+                        bool is_loaded = false;
                         bool is_in_fluid = false;
                         std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
                         {
                             std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
-                            const Block* block_ptr = world->GetBlock(Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ())));
+                            const Position player_position = Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ()));
+                            
+                            is_loaded = world->IsLoaded(player_position);
 
-                            is_in_fluid = block_ptr && block_ptr->GetBlockstate()->IsFluid();
+                            if (is_loaded)
+                            {
+                                const Block* block_ptr = world->GetBlock(player_position);
+                                is_in_fluid = block_ptr && block_ptr->GetBlockstate()->IsFluid();
+                            }
                         }
 
-                        //Check that we did not go through a block
-                        Physics(is_in_fluid);
+                        if (is_loaded)
+                        {
+                            //Check that we did not go through a block
+                            Physics(is_in_fluid);
 
-                        if (local_player->GetHasMoved() ||
-                            std::abs(local_player->GetSpeed().x) > 1e-3 ||
-                            std::abs(local_player->GetSpeed().y) > 1e-3 ||
-                            std::abs(local_player->GetSpeed().z) > 1e-3)
-                        {
-                            has_moved = true;
-                            // Reset the player move state until next tick
-                            local_player->SetHasMoved(false);
-                        }
-                        else
-                        {
-                            has_moved = false;
-                        }
+                            if (local_player->GetHasMoved() ||
+                                std::abs(local_player->GetSpeed().x) > 1e-3 ||
+                                std::abs(local_player->GetSpeed().y) > 1e-3 ||
+                                std::abs(local_player->GetSpeed().z) > 1e-3)
+                            {
+                                has_moved = true;
+                                // Reset the player move state until next tick
+                                local_player->SetHasMoved(false);
+                            }
+                            else
+                            {
+                                has_moved = false;
+                            }
 
-                        //Avoid forever falling if position is <= 0.0
-                        // TODO : not good with world extension
-                        if (local_player->GetPosition().y <= 0.0)
-                        {
-                            local_player->SetY(0.0);
-                            local_player->SetSpeedY(0.0);
-                            local_player->SetOnGround(true);
-                        }
+                            //Avoid forever falling if position is <= 0.0
+                            // TODO : not good with world extension
+                            if (local_player->GetPosition().y <= 0.0)
+                            {
+                                local_player->SetY(0.0);
+                                local_player->SetSpeedY(0.0);
+                                local_player->SetOnGround(true);
+                            }
 
-                        // Reset the speed until next frame
-                        // Update the gravity value if needed
-                        local_player->SetSpeedX(0.0);
-                        local_player->SetSpeedZ(0.0);
-                        if (local_player->GetOnGround())
-                        {
-                            local_player->SetSpeedY(0.0);
-                        }
-                        else
-                        {
-                            local_player->SetSpeedY((local_player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
+                            // Reset the speed until next frame
+                            // Update the gravity value if needed
+                            local_player->SetSpeedX(0.0);
+                            local_player->SetSpeedZ(0.0);
+                            if (local_player->GetOnGround())
+                            {
+                                local_player->SetSpeedY(0.0);
+                            }
+                            else
+                            {
+                                local_player->SetSpeedY((local_player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
+                            }
                         }
                     }
 
@@ -388,7 +398,7 @@ namespace Botcraft
     {
         if (!world)
         {
-            world = std::shared_ptr<World>(new World(false));
+            world = std::shared_ptr<World>(new World(false, false));
         }
 
         inventory_manager = std::shared_ptr<InventoryManager>(new InventoryManager);
@@ -396,7 +406,7 @@ namespace Botcraft
 
         if (!afk_only)
         {
-            network_manager->AddHandler(world.get());
+            network_manager->AddHandler(world->GetAsyncHandler());
             network_manager->AddHandler(inventory_manager.get());
             network_manager->AddHandler(entity_manager.get());
         }

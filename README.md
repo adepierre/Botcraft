@@ -11,7 +11,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 - Connection to minecraft server (both offline mode and online connection with Mojang account, Microsoft accounts are supported using a json file created by the official launcher)
 - Automatic refresh of the token when required
 - DNS name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.17 supported
+- All official releases from 1.12.2 to 1.17.1 supported
 - Compression
 - Physics and collisions
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...)

@@ -25,7 +25,7 @@ namespace ProtocolCraft
             return 0x10;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x0F;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x11;
 #else
 #error "Protocol version not implemented"
@@ -115,7 +115,7 @@ namespace ProtocolCraft
 #endif
             for (int i = 0; i < count; ++i)
             {
-                suggestions[i] = ReadString(iter, length);
+                suggestions[i] = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 356
                 bool has_tooltip = ReadData<bool>(iter, length);
                 if (has_tooltip)
@@ -137,7 +137,7 @@ namespace ProtocolCraft
             WriteVarInt(suggestions.size(), container);
             for (int i = 0; i < suggestions.size(); ++i)
             {
-                WriteString(suggestions[i], container);
+                WriteData<std::string>(suggestions[i], container);
 #if PROTOCOL_VERSION > 356
                 bool has_tooltip = tooltips[i].GetText().empty();
                 WriteData<bool>(has_tooltip, container);

@@ -22,7 +22,7 @@ namespace ProtocolCraft
             return 0x25;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x24;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x26;
 #else
             #error "Protocol version not implemented"
@@ -304,7 +304,7 @@ namespace ProtocolCraft
             max_players = ReadVarInt(iter, length);
 #endif
 #if PROTOCOL_VERSION < 719
-            level_type = ReadString(iter, length);
+            level_type = ReadData<std::string>(iter, length);
 #endif
 #if PROTOCOL_VERSION >= 477
             chunk_radius = ReadVarInt(iter, length);
@@ -353,7 +353,7 @@ namespace ProtocolCraft
             WriteVarInt(max_players, container);
 #endif
 #if PROTOCOL_VERSION < 719
-            WriteString(level_type, container);
+            WriteData<std::string>(level_type, container);
 #endif
 #if PROTOCOL_VERSION >= 477
             WriteVarInt(chunk_radius, container);

@@ -25,7 +25,7 @@ namespace ProtocolCraft
             return 0x09;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x09;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x08;
 #else
             #error "Protocol version not implemented"
@@ -88,6 +88,12 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 755
+        void SetStateId(const int state_id_)
+        {
+            state_id = state_id_;
+        }
+#endif
 
         const unsigned char GetContainerId() const
         {
@@ -135,11 +141,21 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 755
+        const int GetStateId() const
+        {
+            return state_id;
+        }
+#endif
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             container_id = ReadData<unsigned char>(iter, length);
+#if PROTOCOL_VERSION > 755
+            state_id = ReadVarInt(iter, length);
+#endif
             slot_num = ReadData<short>(iter, length);
             button_num = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION < 755
@@ -164,6 +180,9 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<unsigned char>(container_id, container);
+#if PROTOCOL_VERSION > 755
+            WriteVarInt(state_id, container);
+#endif
             WriteData<short>(slot_num, container);
             WriteData<char>(button_num, container);
 #if PROTOCOL_VERSION < 755
@@ -191,6 +210,9 @@ namespace ProtocolCraft
             picojson::object& object = value.get<picojson::object>();
 
             object["container_id"] = picojson::value((double)container_id);
+#if PROTOCOL_VERSION > 755
+            object["state_id"] = picojson::value((double)state_id);
+#endif
             object["slot_num"] = picojson::value((double)slot_num);
             object["button_num"] = picojson::value((double)button_num);
 #if PROTOCOL_VERSION < 755
@@ -217,6 +239,9 @@ namespace ProtocolCraft
 
     private:
         unsigned char container_id;
+#if PROTOCOL_VERSION > 755
+        int state_id;
+#endif
         short slot_num;
         char button_num;
 #if PROTOCOL_VERSION < 755

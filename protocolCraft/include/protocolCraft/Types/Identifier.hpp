@@ -62,12 +62,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            const std::string str = ReadString(iter, length);
+            const std::string str = ReadData<std::string>(iter, length);
             const size_t split = str.find(':');
 
             if (split == std::string::npos)
             {
-                namespace_ = "minecraft";
+                namespace_ = "";
                 name = str;
             }
             else
@@ -81,11 +81,11 @@ namespace ProtocolCraft
         {
             if (namespace_.empty())
             {
-                WriteString("minecraft:" + name, container);
+                WriteData<std::string>(name, container);
             }
             else
             {
-                WriteString(namespace_ + ':' + name, container);
+                WriteData<std::string>(namespace_ + ':' + name, container);
             }
         }
 

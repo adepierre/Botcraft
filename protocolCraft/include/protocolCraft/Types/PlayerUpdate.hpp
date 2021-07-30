@@ -76,7 +76,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            name = ReadString(iter, length);
+            name = ReadData<std::string>(iter, length);
             const int number_of_properties = ReadVarInt(iter, length);
             properties = std::vector<PlayerProperty>(number_of_properties);
             for (int i = 0; i < number_of_properties; ++i)
@@ -94,7 +94,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(name, container);
+            WriteData<std::string>(name, container);
             WriteVarInt(properties.size(), container);
             for (int i = 0; i < properties.size(); ++i)
             {

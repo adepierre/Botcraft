@@ -66,7 +66,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             protocol_version = ReadVarInt(iter, length);
-            host_name = ReadString(iter, length);
+            host_name = ReadData<std::string>(iter, length);
             port = ReadData<unsigned short>(iter, length);
             intention = ReadVarInt(iter, length);
         }
@@ -74,7 +74,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteVarInt(protocol_version, container);
-            WriteString(host_name, container);
+            WriteData<std::string>(host_name, container);
             WriteData<unsigned short>(port, container);
             WriteVarInt(intention, container);
         }

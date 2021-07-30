@@ -19,8 +19,6 @@ namespace ProtocolCraft
     long long int ReadVarLong(ReadIterator &iter, size_t &length);
     void WriteVarLong(const long long int my_long, WriteContainer &container);
 
-    std::string ReadString(ReadIterator &iter, size_t &length);
-    void WriteString(const std::string &my_string, WriteContainer &container);
     std::string ReadRawString(ReadIterator &iter, size_t &length, const int size);
     void WriteRawString(const std::string &s, WriteContainer &container);
 
@@ -73,6 +71,26 @@ namespace ProtocolCraft
         }
     }
 
+    template<>
+    static std::string ReadData(ReadIterator& iter, size_t& length)
+    {
+        int size = ReadVarInt(iter, length);
+
+        if (length < size)
+        {
+            throw(std::runtime_error("Not enough input in ReadData<std::string>"));
+        }
+        else
+        {
+            std::string output = std::string(iter, iter + size);
+
+            iter += size;
+            length -= size;
+
+            return output;
+        }
+    }
+
     template<typename T>
     static void WriteData(const T &value, WriteContainer &container)
     {
@@ -98,6 +116,13 @@ namespace ProtocolCraft
         memcpy(output.data(), &big_endian_var, sizeof(T));
 
         container.insert(container.end(), output.begin(), output.end());
+    }
+
+    template<>
+    static void WriteData(const std::string& value, WriteContainer& container)
+    {
+        WriteVarInt(value.size(), container);
+        container.insert(container.end(), value.begin(), value.end());
     }
 
     template<typename T>

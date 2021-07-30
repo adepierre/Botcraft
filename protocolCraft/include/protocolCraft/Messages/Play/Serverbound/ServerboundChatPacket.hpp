@@ -21,7 +21,7 @@ namespace ProtocolCraft
             return 0x03;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x03;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x03;
 #else
             #error "Protocol version not implemented"
@@ -51,12 +51,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            message = ReadString(iter, length);
+            message = ReadData<std::string>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteString(message, container);
+            WriteData<std::string>(message, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

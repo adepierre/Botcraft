@@ -135,6 +135,10 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundTakeItemEntityPacket>;
 #if PROTOCOL_VERSION < 755
     template class BaseMessage<ClientboundPlayerCombatPacket>;
+#endif
+#if PROTOCOL_VERSION == 755
+    template class BaseMessage<ClientboundRemoveEntityPacket>;
+#else
     template class BaseMessage<ClientboundRemoveEntitiesPacket>;
 #endif
 #if PROTOCOL_VERSION > 345
@@ -266,7 +270,6 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundPlayerCombatEndPacket>;
     template class BaseMessage<ClientboundPlayerCombatEnterPacket>;
     template class BaseMessage<ClientboundPlayerCombatKillPacket>;
-    template class BaseMessage<ClientboundRemoveEntityPacket>;
     template class BaseMessage<ClientboundSetActionBarTextPacket>;
     template class BaseMessage<ClientboundSetBorderCenterPacket>;
     template class BaseMessage<ClientboundSetBorderLerpSizePacket>;

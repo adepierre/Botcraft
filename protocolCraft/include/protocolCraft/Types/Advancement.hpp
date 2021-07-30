@@ -122,7 +122,7 @@ namespace ProtocolCraft
                 requirements[i] = std::vector<std::string>(array_length2);
                 for (int j = 0; j < array_length2; ++j)
                 {
-                    requirements[i][j] = ReadString(iter, length);
+                    requirements[i][j] = ReadData<std::string>(iter, length);
                 }
             }
         }
@@ -150,7 +150,7 @@ namespace ProtocolCraft
                 WriteVarInt(requirements[i].size(), container);
                 for (int j = 0; j < requirements[i].size(); ++j)
                 {
-                    WriteString(requirements[i][j], container);
+                    WriteData<std::string>(requirements[i][j], container);
                 }
             }
         }

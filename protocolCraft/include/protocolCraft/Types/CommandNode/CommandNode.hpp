@@ -116,7 +116,7 @@ namespace ProtocolCraft
             const char node_type = flags & 0x03;
             if (node_type == 1 || node_type == 2)
             {
-                name = ReadString(iter, length);
+                name = ReadData<std::string>(iter, length);
             }
             if (node_type == 2)
             {
@@ -145,7 +145,7 @@ namespace ProtocolCraft
             const char node_type = flags & 0x03;
             if (node_type == 1 || node_type == 2)
             {
-                WriteString(name, container);
+                WriteData<std::string>(name, container);
             }
             if (node_type == 2)
             {

@@ -55,7 +55,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            server_ID = ReadString(iter, length);
+            server_ID = ReadData<std::string>(iter, length);
             int public_key_length = ReadVarInt(iter, length);
             public_key = ReadByteArray(iter, length, public_key_length);
             int nonce_length = ReadVarInt(iter, length);
@@ -64,7 +64,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteString(server_ID, container);
+            WriteData<std::string>(server_ID, container);
             WriteVarInt(public_key.size(), container);
             WriteByteArray(public_key, container);
             WriteVarInt(nonce.size(), container);

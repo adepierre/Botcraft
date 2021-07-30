@@ -8,16 +8,16 @@ if(NOT TARGET ZLIB::ZLIB)
 	
 	message(STATUS "Can't find Zlib, cloning and building it from sources")
     
-    file(GLOB RESULT ${CMAKE_SOURCE_DIR}/3rdparty/zlib/examples)
+    file(GLOB RESULT ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/zlib/examples)
     list(LENGTH RESULT RES_LEN)
     message(STATUS ${RES_LEN})
     if(RES_LEN EQUAL 0)
         message(STATUS "Zlib not found, cloning it...")
-        execute_process(COMMAND git submodule update --init -- 3rdparty/zlib WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+        execute_process(COMMAND git submodule update --init -- 3rdparty/zlib WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
 	
-	set(ZLIB_SRC_PATH ${CMAKE_SOURCE_DIR}/3rdparty/zlib)
-	set(ZLIB_BUILD_PATH ${CMAKE_BINARY_DIR}/3rdparty/zlib)
+	set(ZLIB_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/zlib)
+	set(ZLIB_BUILD_PATH ${CMAKE_CURRENT_BINARY_DIR}/3rdparty/zlib)
 	
 	file(MAKE_DIRECTORY ${ZLIB_BUILD_PATH})
 

@@ -49,14 +49,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            group = ReadString(iter, length);
+            group = ReadData<std::string>(iter, length);
             ingredient.Read(iter, length);
             result.Read(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(group, container);
+            WriteData<std::string>(group, container);
             ingredient.Write(container);
             result.Write(container);
         }

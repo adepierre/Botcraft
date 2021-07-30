@@ -22,7 +22,7 @@ namespace ProtocolCraft
             return 0x2A;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x2B;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x2B;
 #else
             #error "Protocol version not implemented"
@@ -68,7 +68,7 @@ namespace ProtocolCraft
             lines = std::vector<std::string>(4);
             for (int i = 0; i < 4; ++i)
             {
-                lines[i] = ReadString(iter, length);
+                lines[i] = ReadData<std::string>(iter, length);
             }
         }
 
@@ -77,7 +77,7 @@ namespace ProtocolCraft
             pos.Write(container);
             for (int i = 0; i < 4; ++i)
             {
-                WriteString(lines[i], container);
+                WriteData<std::string>(lines[i], container);
             }
         }
 

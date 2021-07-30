@@ -27,7 +27,7 @@ namespace ProtocolCraft
             return 0x4D;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x4D;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x56;
 #else
 #error "Protocol version not implemented"
@@ -89,9 +89,9 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            owner = ReadString(iter, length);
+            owner = ReadData<std::string>(iter, length);
             method = (SetScoreMethod)ReadData<char>(iter, length);
-            objective_name = ReadString(iter, length);
+            objective_name = ReadData<std::string>(iter, length);
             if (method != SetScoreMethod::Remove)
             {
                 score = ReadVarInt(iter, length);
@@ -100,9 +100,9 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(owner, container);
+            WriteData<std::string>(owner, container);
             WriteData<char>((char)method, container);
-            WriteString(objective_name, container);
+            WriteData<std::string>(objective_name, container);
             if (method != SetScoreMethod::Remove)
             {
                 WriteVarInt(score, container);

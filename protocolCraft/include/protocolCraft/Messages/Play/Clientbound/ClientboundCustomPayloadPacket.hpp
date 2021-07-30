@@ -21,7 +21,7 @@ namespace ProtocolCraft
             return 0x18;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x17;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x18;
 #else
 #error "Protocol version not implemented"
@@ -63,13 +63,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            identifier = ReadString(iter, length);
+            identifier = ReadData<std::string>(iter, length);
             data = ReadByteArray(iter, length, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(identifier, container);
+            WriteData<std::string>(identifier, container);
             WriteByteArray(data, container);
         }
 

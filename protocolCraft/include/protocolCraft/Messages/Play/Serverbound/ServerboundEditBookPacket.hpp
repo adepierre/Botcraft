@@ -1,6 +1,12 @@
 #pragma once
 
 #if PROTOCOL_VERSION > 385
+
+#if PROTOCOL_VERSION > 755
+#include <vector>
+#include <string>
+#endif
+
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Slot.hpp"
 
@@ -21,7 +27,7 @@ namespace ProtocolCraft
             return 0x0C;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x0C;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x0B;
 #else
             #error "Protocol version not implemented"
@@ -38,6 +44,7 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION < 756
         void SetBook(const Slot& book_)
         {
             book = book_;
@@ -47,6 +54,17 @@ namespace ProtocolCraft
         {
             signing = signing_;
         }
+#else
+        void SetPages(const std::vector<std::string>& pages_)
+        {
+            pages = pages_;
+        }
+
+        void SetTitle(const std::string& title_)
+        {
+            title = title_;
+        }
+#endif
 
 #if PROTOCOL_VERSION > 393
         void SetSlot(const int slot_)
@@ -56,6 +74,7 @@ namespace ProtocolCraft
 #endif
 
 
+#if PROTOCOL_VERSION < 756
         const Slot& GetBook() const
         {
             return book;
@@ -65,6 +84,17 @@ namespace ProtocolCraft
         {
             return signing;
         }
+#else        
+        const std::vector<std::string>& GetPages() const
+        {
+            return pages;
+        }
+
+        const std::string& GetTitle() const
+        {
+            return title;
+        }
+#endif
 
 #if PROTOCOL_VERSION > 393
         const int GetSlot() const
@@ -77,19 +107,48 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 756
             book.Read(iter, length);
             signing = ReadData<bool>(iter, length);
+#endif
 #if PROTOCOL_VERSION > 393
             slot = ReadVarInt(iter, length);
+#endif
+#if PROTOCOL_VERSION > 755
+            int pages_size = ReadVarInt(iter, length);
+            pages = std::vector<std::string>(pages_size);
+            for (int i = 0; i < pages_size; ++i)
+            {
+                pages[i] = ReadData<std::string>(iter, length);
+            }
+            bool has_title = ReadData<bool>(iter, length);
+            if (has_title)
+            {
+                title = ReadData<std::string>(iter, length);
+            }
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 756
             book.Write(container);
             WriteData<bool>(signing, container);
+#endif
 #if PROTOCOL_VERSION > 393
             WriteVarInt(slot, container);
+#endif
+#if PROTOCOL_VERSION > 755
+            WriteVarInt(pages.size(), container);
+            for (int i = 0; i < pages.size(); ++i)
+            {
+                WriteData<std::string>(pages[i], container);
+            }
+            WriteData<bool>(!title.empty(), container);
+            if (!title.empty())
+            {
+                WriteData<std::string>(title, container);
+            }
 #endif
         }
 
@@ -98,18 +157,39 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
+#if PROTOCOL_VERSION < 756
             object["book"] = book.Serialize();
             object["signing"] = picojson::value(signing);
+#endif
 #if PROTOCOL_VERSION > 393
             object["slot"] = picojson::value((double)slot);
+#endif
+#if PROTOCOL_VERSION > 755
+            object["pages"] = picojson::value(picojson::array_type, false);
+            picojson::array& pages_object = object["changed_slots"].get<picojson::array>();
+
+            for (int i = 0; i < pages.size(); ++i)
+            {
+                pages_object.push_back(picojson::value(pages[i]));
+            }
+
+            if (!title.empty())
+            {
+                object["title"] = picojson::value(title);
+            }
 #endif
 
             return value;
         }
 
     private:
+#if PROTOCOL_VERSION < 756
         Slot book;
         bool signing;
+#else
+        std::vector<std::string> pages;
+        std::string title;
+#endif
 #if PROTOCOL_VERSION > 393
         int slot;
 #endif

@@ -1,13 +1,13 @@
 # Check if imgui folder is empty and clone submodule if needed
-file(GLOB RESULT ${CMAKE_SOURCE_DIR}/3rdparty/imgui/misc)
+file(GLOB RESULT ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/misc)
 list(LENGTH RESULT RES_LEN)
 if(RES_LEN EQUAL 0)
     message(STATUS "Imgui not found, cloning it...")
-    execute_process(COMMAND git submodule update --init -- 3rdparty/imgui WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    execute_process(COMMAND git submodule update --init -- 3rdparty/imgui WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 if(NOT TARGET imgui)
-    set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/3rdparty/imgui)
+    set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui)
 
     set(IMGUI_SOURCES 
         ${IMGUI_DIR}/imgui.cpp

@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION < 755 //1.17
+#if PROTOCOL_VERSION < 755 || PROTOCOL_VERSION > 755
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -22,6 +22,8 @@ namespace ProtocolCraft
             return 0x37;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x36;
+#elif PROTOCOL_VERSION == 756 // 1.17.1
+            return 0x3A;
 #else
             #error "Protocol version not implemented"
 #endif

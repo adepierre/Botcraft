@@ -24,7 +24,7 @@ namespace ProtocolCraft
             return 0x39;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x38;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x3C;
 #else
 #error "Protocol version not implemented"
@@ -89,8 +89,8 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            url = ReadString(iter, length);
-            hash = ReadString(iter, length);
+            url = ReadData<std::string>(iter, length);
+            hash = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 754
             required = ReadData<bool>(iter, length);
             const bool has_prompt = ReadData<bool>(iter, length);
@@ -103,8 +103,8 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(url, container);
-            WriteString(hash, container);
+            WriteData<std::string>(url, container);
+            WriteData<std::string>(hash, container);
 #if PROTOCOL_VERSION > 754
             WriteData<bool>(required, container);
             if (prompt.GetRawText().empty())

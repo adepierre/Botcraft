@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 756
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -10,7 +10,7 @@ namespace ProtocolCraft
     public:
         virtual const int GetId() const override
         {
-#if PROTOCOL_VERSION == 755 // 1.17
+#if PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x3A;
 #else
 #error "Protocol version not implemented"

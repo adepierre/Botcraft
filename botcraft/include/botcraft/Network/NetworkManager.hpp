@@ -4,7 +4,7 @@
 #include "protocolCraft/enums.hpp"
 
 #include <vector>
-#include <deque>
+#include <queue>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
@@ -49,7 +49,7 @@ namespace Botcraft
 
 		std::thread m_thread_process;//Thread running to process incoming packets without blocking com
 
-		std::deque<std::vector<unsigned char> > packets_to_process;
+		std::queue<std::vector<unsigned char> > packets_to_process;
 		std::mutex mutex_process;
 		std::condition_variable process_condition;
 		int compression;

@@ -72,7 +72,7 @@ namespace ProtocolCraft
             
             width = ReadVarInt(iter, length);
             height = ReadVarInt(iter, length);
-            group = ReadString(iter, length);
+            group = ReadData<std::string>(iter, length);
             ingredients = std::vector<Ingredient>(width * height);
             for (int i = 0; i < width * height; ++i)
             {
@@ -85,7 +85,7 @@ namespace ProtocolCraft
         {
             WriteVarInt(width, container);
             WriteVarInt(height, container);
-            WriteString(group, container);
+            WriteData<std::string>(group, container);
             for (int i = 0; i < width * height; ++i)
             {
                 ingredients[i].Write(container);

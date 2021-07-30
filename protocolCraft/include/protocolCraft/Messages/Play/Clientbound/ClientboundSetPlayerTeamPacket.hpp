@@ -24,7 +24,7 @@ namespace ProtocolCraft
             return 0x4C;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x4C;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x55;
 #else
 #error "Protocol version not implemented"
@@ -170,23 +170,23 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            name_ = ReadString(iter, length);
+            name_ = ReadData<std::string>(iter, length);
             method = ReadData<char>(iter, length);
             if (method == 0 || method == 2)
             {
 #if PROTOCOL_VERSION < 375
-                display_name = ReadString(iter, length);
-                player_prefix = ReadString(iter, length);
-                player_suffix = ReadString(iter, length);
+                display_name = ReadData<std::string>(iter, length);
+                player_prefix = ReadData<std::string>(iter, length);
+                player_suffix = ReadData<std::string>(iter, length);
                 options = ReadData<char>(iter, length);
-                nametag_visibility = ReadString(iter, length);
-                collision_rule = ReadString(iter, length);
+                nametag_visibility = ReadData<std::string>(iter, length);
+                collision_rule = ReadData<std::string>(iter, length);
                 color = ReadData<char>(iter, length);
 #else
                 display_name.Read(iter, length);
                 options = ReadData<char>(iter, length);
-                nametag_visibility = ReadString(iter, length);
-                collision_rule = ReadString(iter, length);
+                nametag_visibility = ReadData<std::string>(iter, length);
+                collision_rule = ReadData<std::string>(iter, length);
                 color = ReadVarInt(iter, length);
                 player_prefix.Read(iter, length);
                 player_suffix.Read(iter, length);
@@ -199,31 +199,31 @@ namespace ProtocolCraft
                 players = std::vector<std::string>(players_count);
                 for (int i = 0; i < players_count; ++i)
                 {
-                    players[i] = ReadString(iter, length);
+                    players[i] = ReadData<std::string>(iter, length);
                 }
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(name_, container);
+            WriteData<std::string>(name_, container);
             WriteData<char>(method, container);
 
             if (method == 0 || method == 2)
             {
 #if PROTOCOL_VERSION < 375
-                WriteString(display_name, container);
-                WriteString(player_prefix, container);
-                WriteString(player_suffix, container);
+                WriteData<std::string>(display_name, container);
+                WriteData<std::string>(player_prefix, container);
+                WriteData<std::string>(player_suffix, container);
                 WriteData<char>(options, container);
-                WriteString(nametag_visibility, container);
-                WriteString(collision_rule, container);
+                WriteData<std::string>(nametag_visibility, container);
+                WriteData<std::string>(collision_rule, container);
                 WriteData<char>(color, container);
 #else
                 display_name.Write(container);
                 WriteData<char>(options, container);
-                WriteString(nametag_visibility, container);
-                WriteString(collision_rule, container);
+                WriteData<std::string>(nametag_visibility, container);
+                WriteData<std::string>(collision_rule, container);
                 WriteVarInt(color, container);
                 player_prefix.Write(container);
                 player_suffix.Write(container);
@@ -235,7 +235,7 @@ namespace ProtocolCraft
                 WriteVarInt(players.size(), container);
                 for (int i = 0; i < players.size(); ++i)
                 {
-                    WriteString(players[i], container);
+                    WriteData<std::string>(players[i], container);
                 }
             }
         }

@@ -163,7 +163,7 @@ namespace Botcraft
                     if (!packets_to_process.empty())
                     {
                         packet = packets_to_process.front();
-                        packets_to_process.pop_front();
+                        packets_to_process.pop();
                     }
                 }
                 if (packet.size() > 0)
@@ -230,7 +230,7 @@ namespace Botcraft
     void NetworkManager::OnNewRawData(const std::vector<unsigned char>& packet)
     {
         std::unique_lock<std::mutex> lck(mutex_process);
-        packets_to_process.push_back(packet);
+        packets_to_process.push(packet);
         process_condition.notify_all();
     }
 

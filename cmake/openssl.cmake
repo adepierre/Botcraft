@@ -1,18 +1,18 @@
 # We first try to find OpenSSL in the system
 find_package(OpenSSL QUIET)
 
-set(OPENSSL_SRC_PATH ${CMAKE_SOURCE_DIR}/3rdparty/openssl)
-set(OPENSSL_BUILD_PATH ${CMAKE_BINARY_DIR}/3rdparty/openssl)
+set(OPENSSL_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/openssl)
+set(OPENSSL_BUILD_PATH ${CMAKE_CURRENT_BINARY_DIR}/3rdparty/openssl)
 
 # If not found, build from sources
 if (NOT OPENSSL_FOUND)
 
     message(STATUS "OpenSSL not found, cloning and building it from sources...")
     
-    file(GLOB RESULT ${CMAKE_SOURCE_DIR}/3rdparty/openssl/include)
+    file(GLOB RESULT ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/openssl/include)
     list(LENGTH RESULT RES_LEN)
     if(RES_LEN EQUAL 0)
-        execute_process(COMMAND git submodule update --init -- 3rdparty/openssl WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+        execute_process(COMMAND git submodule update --init -- 3rdparty/openssl WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
 	
 	file(MAKE_DIRECTORY ${OPENSSL_BUILD_PATH})

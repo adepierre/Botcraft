@@ -23,7 +23,7 @@ namespace ProtocolCraft
             return 0x3A;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x39;
-#elif PROTOCOL_VERSION == 755 // 1.17
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x3D;
 #else
 #error "Protocol version not implemented"
@@ -189,7 +189,7 @@ namespace ProtocolCraft
 #endif
             player_game_type = ReadData<unsigned char>(iter, length);
 #if PROTOCOL_VERSION < 730
-            level_type = ReadString(iter, length);
+            level_type = ReadData<std::string>(iter, length);
 #else
             previous_player_game_type = ReadData<unsigned char>(iter, length);
             is_debug = ReadData<bool>(iter, length);
@@ -216,7 +216,7 @@ namespace ProtocolCraft
 #endif
             WriteData<unsigned char>((unsigned char)player_game_type, container);
 #if PROTOCOL_VERSION < 730
-            WriteString(level_type, container);
+            WriteData<std::string>(level_type, container);
 #else
             WriteData<unsigned char>((unsigned char)previous_player_game_type, container);
             WriteData<bool>(is_debug, container);
