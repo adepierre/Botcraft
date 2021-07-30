@@ -116,7 +116,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            language = ReadString(iter, length);
+            language = ReadData<std::string>(iter, length);
             view_distance = ReadData<char>(iter, length);
             chat_visibility = ReadVarInt(iter, length);
             chat_colors = ReadData<bool>(iter, length);
@@ -129,7 +129,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteString(language, container);
+            WriteData<std::string>(language, container);
             WriteData<char>(view_distance, container);
             WriteVarInt(chat_visibility, container);
             WriteData<bool>(chat_colors, container);

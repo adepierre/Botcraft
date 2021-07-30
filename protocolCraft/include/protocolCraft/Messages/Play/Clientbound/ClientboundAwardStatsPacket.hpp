@@ -74,7 +74,7 @@ namespace ProtocolCraft
             for (int i = 0; i < count; ++i)
             {
 #if PROTOCOL_VERSION < 346
-                std::string name = ReadString(iter, length);
+                std::string name = ReadData<std::string>(iter, length);
                 int value = ReadVarInt(iter, length);
                 stats[name] = value;
 #else
@@ -93,7 +93,7 @@ namespace ProtocolCraft
             for (auto it = stats.begin(); it != stats.end(); ++it)
             {
 #if PROTOCOL_VERSION < 346
-                WriteString(it->first, container);
+                WriteData<std::string>(it->first, container);
 #else
                 WriteVarInt(it->first.first, container);
                 WriteVarInt(it->first.second, container);

@@ -60,7 +60,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 
-            group = ReadString(iter, length);
+            group = ReadData<std::string>(iter, length);
             ingredient_count = ReadVarInt(iter, length);
             ingredients = std::vector<Ingredient>(ingredient_count);
             for (int i = 0; i < ingredient_count; ++i)
@@ -72,7 +72,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(group, container);
+            WriteData<std::string>(group, container);
             WriteVarInt(ingredient_count, container);
             for (int i = 0; i < ingredient_count; ++i)
             {

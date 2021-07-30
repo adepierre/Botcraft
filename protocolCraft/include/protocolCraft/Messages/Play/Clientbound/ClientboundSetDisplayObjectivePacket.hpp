@@ -65,13 +65,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             slot = ReadData<char>(iter, length);
-            objective_name = ReadString(iter, length);
+            objective_name = ReadData<std::string>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<char>(slot, container);
-            WriteString(objective_name, container);
+            WriteData<std::string>(objective_name, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

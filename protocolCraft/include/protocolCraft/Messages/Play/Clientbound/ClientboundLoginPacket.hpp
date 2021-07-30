@@ -304,7 +304,7 @@ namespace ProtocolCraft
             max_players = ReadVarInt(iter, length);
 #endif
 #if PROTOCOL_VERSION < 719
-            level_type = ReadString(iter, length);
+            level_type = ReadData<std::string>(iter, length);
 #endif
 #if PROTOCOL_VERSION >= 477
             chunk_radius = ReadVarInt(iter, length);
@@ -353,7 +353,7 @@ namespace ProtocolCraft
             WriteVarInt(max_players, container);
 #endif
 #if PROTOCOL_VERSION < 719
-            WriteString(level_type, container);
+            WriteData<std::string>(level_type, container);
 #endif
 #if PROTOCOL_VERSION >= 477
             WriteVarInt(chunk_radius, container);

@@ -115,7 +115,7 @@ namespace ProtocolCraft
 #endif
             for (int i = 0; i < count; ++i)
             {
-                suggestions[i] = ReadString(iter, length);
+                suggestions[i] = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 356
                 bool has_tooltip = ReadData<bool>(iter, length);
                 if (has_tooltip)
@@ -137,7 +137,7 @@ namespace ProtocolCraft
             WriteVarInt(suggestions.size(), container);
             for (int i = 0; i < suggestions.size(); ++i)
             {
-                WriteString(suggestions[i], container);
+                WriteData<std::string>(suggestions[i], container);
 #if PROTOCOL_VERSION > 356
                 bool has_tooltip = tooltips[i].GetText().empty();
                 WriteData<bool>(has_tooltip, container);

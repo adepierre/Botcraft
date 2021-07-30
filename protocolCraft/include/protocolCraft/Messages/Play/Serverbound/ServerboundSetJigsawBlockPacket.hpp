@@ -138,9 +138,9 @@ namespace ProtocolCraft
             attachment_type.Read(iter, length);
             target_pool.Read(iter, length);
 #endif
-            final_state = ReadString(iter, length);
+            final_state = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 708
-            joint = ReadString(iter, length);
+            joint = ReadData<std::string>(iter, length);
 #endif
         }
 
@@ -155,9 +155,9 @@ namespace ProtocolCraft
             attachment_type.Write(container);
             target_pool.Write(container);
 #endif
-            WriteString(final_state, container);
+            WriteData<std::string>(final_state, container);
 #if PROTOCOL_VERSION > 708
-            WriteString(joint, container);
+            WriteData<std::string>(joint, container);
 #endif
         }
 

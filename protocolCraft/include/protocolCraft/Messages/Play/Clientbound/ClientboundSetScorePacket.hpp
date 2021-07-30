@@ -89,9 +89,9 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            owner = ReadString(iter, length);
+            owner = ReadData<std::string>(iter, length);
             method = (SetScoreMethod)ReadData<char>(iter, length);
-            objective_name = ReadString(iter, length);
+            objective_name = ReadData<std::string>(iter, length);
             if (method != SetScoreMethod::Remove)
             {
                 score = ReadVarInt(iter, length);
@@ -100,9 +100,9 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(owner, container);
+            WriteData<std::string>(owner, container);
             WriteData<char>((char)method, container);
-            WriteString(objective_name, container);
+            WriteData<std::string>(objective_name, container);
             if (method != SetScoreMethod::Remove)
             {
                 WriteVarInt(score, container);

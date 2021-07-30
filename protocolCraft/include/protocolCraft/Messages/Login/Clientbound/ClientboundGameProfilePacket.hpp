@@ -62,9 +62,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 706
             uuid = ReadUUID(iter, length);
 #else
-            uuid = ReadString(iter, length);
+            uuid = ReadData<std::string>(iter, length);
 #endif
-            username = ReadString(iter, length);
+            username = ReadData<std::string>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -72,9 +72,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 706
             WriteUUID(uuid, container);
 #else
-            WriteString(uuid, container);
+            WriteData<std::string>(uuid, container);
 #endif
-            WriteString(username, container);
+            WriteData<std::string>(username, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

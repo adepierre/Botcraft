@@ -119,12 +119,12 @@ namespace ProtocolCraft
             pages = std::vector<std::string>(pages_size);
             for (int i = 0; i < pages_size; ++i)
             {
-                pages[i] = ReadString(iter, length);
+                pages[i] = ReadData<std::string>(iter, length);
             }
             bool has_title = ReadData<bool>(iter, length);
             if (has_title)
             {
-                title = ReadString(iter, length);
+                title = ReadData<std::string>(iter, length);
             }
 #endif
         }
@@ -142,12 +142,12 @@ namespace ProtocolCraft
             WriteVarInt(pages.size(), container);
             for (int i = 0; i < pages.size(); ++i)
             {
-                WriteString(pages[i], container);
+                WriteData<std::string>(pages[i], container);
             }
             WriteData<bool>(!title.empty(), container);
             if (!title.empty())
             {
-                WriteString(title, container);
+                WriteData<std::string>(title, container);
             }
 #endif
         }

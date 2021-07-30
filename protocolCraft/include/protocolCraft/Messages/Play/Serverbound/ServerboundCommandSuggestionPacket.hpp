@@ -106,7 +106,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 344
             id_ = ReadVarInt(iter, length);
 #endif
-            command = ReadString(iter, length);
+            command = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION < 345
             assume_command = ReadData<bool>(iter, length);
             has_position = ReadData<bool>(iter, length); 
@@ -122,7 +122,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 344
             WriteVarInt(id_, container);
 #endif
-            WriteString(command, container);
+            WriteData<std::string>(command, container);
 #if PROTOCOL_VERSION < 345
             WriteData<bool>(assume_command, container);
             WriteData<bool>(has_position, container);

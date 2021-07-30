@@ -56,7 +56,7 @@ namespace ProtocolCraft
             const bool has_tab = ReadData<bool>(iter, length);
             if (has_tab)
             {
-                tab = ReadString(iter, length);
+                tab = ReadData<std::string>(iter, length);
             }
         }
 
@@ -65,7 +65,7 @@ namespace ProtocolCraft
             WriteData<bool>(!tab.empty(), container);
             if (!tab.empty())
             {
-                WriteString(tab, container);
+                WriteData<std::string>(tab, container);
             }
         }
 

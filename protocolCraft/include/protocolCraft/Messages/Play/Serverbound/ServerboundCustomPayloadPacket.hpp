@@ -63,13 +63,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            identifier = ReadString(iter, length);
+            identifier = ReadData<std::string>(iter, length);
             data = ReadByteArray(iter, length, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(identifier, container);
+            WriteData<std::string>(identifier, container);
             WriteByteArray(data, container);
         }
 

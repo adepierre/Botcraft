@@ -103,17 +103,17 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            objective_name = ReadString(iter, length);
+            objective_name = ReadData<std::string>(iter, length);
             method = ReadData<char>(iter, length);
             if (method == 0 || method == 2)
             {
 #if PROTOCOL_VERSION < 390
-                display_name = ReadString(iter, length);
+                display_name = ReadData<std::string>(iter, length);
 #else
                 display_name.Read(iter, length);
 #endif
 #if PROTOCOL_VERSION < 349
-                render_type = ReadString(iter, length);
+                render_type = ReadData<std::string>(iter, length);
 #else
                 render_type = ReadVarInt(iter, length);
 #endif
@@ -122,17 +122,17 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(objective_name, container);
+            WriteData<std::string>(objective_name, container);
             WriteData<char>(method, container);
             if (method == 0 || method == 2)
             {
 #if PROTOCOL_VERSION < 390
-                WriteString(display_name, container);
+                WriteData<std::string>(display_name, container);
 #else
                 display_name.Write(container);
 #endif
 #if PROTOCOL_VERSION < 349
-                WriteString(render_type, container);
+                WriteData<std::string>(render_type, container);
 #else
                 WriteVarInt(render_type, container);
 #endif

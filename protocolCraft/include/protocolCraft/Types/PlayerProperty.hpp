@@ -57,23 +57,23 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            name = ReadString(iter, length);
-            value = ReadString(iter, length);
+            name = ReadData<std::string>(iter, length);
+            value = ReadData<std::string>(iter, length);
             is_signed = ReadData<bool>(iter, length);
             if (is_signed)
             {
-                signature = ReadString(iter, length);
+                signature = ReadData<std::string>(iter, length);
             }
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteString(name, container);
-            WriteString(value, container);
+            WriteData<std::string>(name, container);
+            WriteData<std::string>(value, container);
             WriteData<bool>(is_signed, container);
             if (is_signed)
             {
-                WriteString(signature, container);
+                WriteData<std::string>(signature, container);
             }
         }
 

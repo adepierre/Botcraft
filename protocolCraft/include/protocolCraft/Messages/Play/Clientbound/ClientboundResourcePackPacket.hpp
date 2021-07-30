@@ -89,8 +89,8 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            url = ReadString(iter, length);
-            hash = ReadString(iter, length);
+            url = ReadData<std::string>(iter, length);
+            hash = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 754
             required = ReadData<bool>(iter, length);
             const bool has_prompt = ReadData<bool>(iter, length);
@@ -103,8 +103,8 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteString(url, container);
-            WriteString(hash, container);
+            WriteData<std::string>(url, container);
+            WriteData<std::string>(hash, container);
 #if PROTOCOL_VERSION > 754
             WriteData<bool>(required, container);
             if (prompt.GetRawText().empty())

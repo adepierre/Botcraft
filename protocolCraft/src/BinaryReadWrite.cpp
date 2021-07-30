@@ -100,31 +100,6 @@ namespace ProtocolCraft
         } while (value != 0);
     }
 
-    std::string ReadString(ReadIterator &iter, size_t &length)
-    {
-        int size = ReadVarInt(iter, length);
-
-        if (length < size)
-        {
-            throw(std::runtime_error("Not enough input in ReadString"));
-        }
-        else
-        {
-            std::string output = std::string(iter, iter + size);
-
-            iter += size;
-            length -= size;
-
-            return output;
-        }
-    }
-
-    void WriteString(const std::string &my_string, WriteContainer &container)
-    {
-        WriteVarInt(my_string.size(), container);
-        container.insert(container.end(), my_string.begin(), my_string.end());
-    }
-
     std::string ReadRawString(ReadIterator &iter, size_t &length, const int size)
     {
         if (length < size)

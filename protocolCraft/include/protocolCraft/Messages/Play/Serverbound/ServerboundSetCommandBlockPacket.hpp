@@ -84,7 +84,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             pos.Read(iter, length);
-            command = ReadString(iter, length);
+            command = ReadData<std::string>(iter, length);
             mode = ReadVarInt(iter, length);
             flags = ReadData<char>(iter, length);
         }
@@ -92,7 +92,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             pos.Write(container);
-            WriteString(command, container);
+            WriteData<std::string>(command, container);
             WriteVarInt(mode, container);
             WriteData<char>(flags, container);
         }

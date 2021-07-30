@@ -73,14 +73,14 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             entity = ReadVarInt(iter, length);
-            command = ReadString(iter, length);
+            command = ReadData<std::string>(iter, length);
             track_output = ReadData<bool>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteVarInt(entity, container);
-            WriteString(command, container);
+            WriteData<std::string>(command, container);
             WriteData<bool>(track_output, container);
         }
 

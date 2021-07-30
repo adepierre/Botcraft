@@ -68,7 +68,7 @@ namespace ProtocolCraft
             lines = std::vector<std::string>(4);
             for (int i = 0; i < 4; ++i)
             {
-                lines[i] = ReadString(iter, length);
+                lines[i] = ReadData<std::string>(iter, length);
             }
         }
 
@@ -77,7 +77,7 @@ namespace ProtocolCraft
             pos.Write(container);
             for (int i = 0; i < 4; ++i)
             {
-                WriteString(lines[i], container);
+                WriteData<std::string>(lines[i], container);
             }
         }
 

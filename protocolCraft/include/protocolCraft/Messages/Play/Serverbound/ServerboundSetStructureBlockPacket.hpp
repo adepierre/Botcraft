@@ -166,7 +166,7 @@ namespace ProtocolCraft
             pos.Read(iter, length);
             update_type = ReadVarInt(iter, length);
             mode = ReadVarInt(iter, length);
-            name_ = ReadString(iter, length);
+            name_ = ReadData<std::string>(iter, length);
             offset.SetX(ReadData<char>(iter, length));
             offset.SetY(ReadData<char>(iter, length));
             offset.SetZ(ReadData<char>(iter, length));
@@ -175,7 +175,7 @@ namespace ProtocolCraft
             size.SetZ(ReadData<char>(iter, length));
             mirror = ReadVarInt(iter, length);
             rotation = ReadVarInt(iter, length);
-            data = ReadString(iter, length);
+            data = ReadData<std::string>(iter, length);
             integrity = ReadData<float>(iter, length);
             seed = ReadVarLong(iter, length);
             flags = ReadData<char>(iter, length);
@@ -186,7 +186,7 @@ namespace ProtocolCraft
             pos.Write(container);
             WriteVarInt(update_type, container);
             WriteVarInt(mode, container);
-            WriteString(name_, container);
+            WriteData<std::string>(name_, container);
             WriteData<char>(offset.GetX(), container);
             WriteData<char>(offset.GetY(), container);
             WriteData<char>(offset.GetZ(), container);
@@ -195,7 +195,7 @@ namespace ProtocolCraft
             WriteData<char>(size.GetZ(), container);
             WriteVarInt(mirror, container);
             WriteVarInt(rotation, container);
-            WriteString(data, container);
+            WriteData<std::string>(data, container);
             WriteData<float>(integrity, container);
             WriteVarLong(seed, container);
             WriteData<char>(flags, container);
