@@ -66,7 +66,7 @@ namespace ProtocolCraft
             destination_type.Read(iter, length);
             destination = PositionSource::CreatePositionSource(destination_type);
             destination->Read(iter, length);
-            arrival_in_ticks = ReadVarInt(iter, length);
+            arrival_in_ticks = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -74,7 +74,7 @@ namespace ProtocolCraft
             origin.Write(container);
             destination_type.Write(container);
             destination->Write(container);
-            WriteVarInt(arrival_in_ticks, container);
+            WriteData<VarInt>(arrival_in_ticks, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

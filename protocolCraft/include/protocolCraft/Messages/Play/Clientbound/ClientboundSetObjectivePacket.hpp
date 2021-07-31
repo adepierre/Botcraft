@@ -115,7 +115,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 349
                 render_type = ReadData<std::string>(iter, length);
 #else
-                render_type = ReadVarInt(iter, length);
+                render_type = ReadData<VarInt>(iter, length);
 #endif
             }
         }
@@ -134,7 +134,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 349
                 WriteData<std::string>(render_type, container);
 #else
-                WriteVarInt(render_type, container);
+                WriteData<VarInt>(render_type, container);
 #endif
             }
         }

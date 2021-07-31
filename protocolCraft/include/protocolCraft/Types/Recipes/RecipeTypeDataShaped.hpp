@@ -70,8 +70,8 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             
-            width = ReadVarInt(iter, length);
-            height = ReadVarInt(iter, length);
+            width = ReadData<VarInt>(iter, length);
+            height = ReadData<VarInt>(iter, length);
             group = ReadData<std::string>(iter, length);
             ingredients = std::vector<Ingredient>(width * height);
             for (int i = 0; i < width * height; ++i)
@@ -83,8 +83,8 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(width, container);
-            WriteVarInt(height, container);
+            WriteData<VarInt>(width, container);
+            WriteData<VarInt>(height, container);
             WriteData<std::string>(group, container);
             for (int i = 0; i < width * height; ++i)
             {

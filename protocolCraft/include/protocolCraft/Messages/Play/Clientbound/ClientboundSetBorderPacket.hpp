@@ -142,7 +142,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            action = (SetBorderType)ReadVarInt(iter, length);
+            action = (SetBorderType)ReadData<VarInt>(iter, length);
             switch ((SetBorderType)action)
             {
             case SetBorderType::SetSize:
@@ -151,7 +151,7 @@ namespace ProtocolCraft
             case SetBorderType::LerpSize:
                 old_size = ReadData<double>(iter, length);
                 new_size = ReadData<double>(iter, length);
-                lerp_time = ReadVarLong(iter, length);
+                lerp_time = ReadData<VarLong>(iter, length);
                 break;
             case SetBorderType::SetCenter:
                 new_center_x = ReadData<double>(iter, length);
@@ -162,16 +162,16 @@ namespace ProtocolCraft
                 new_center_z = ReadData<double>(iter, length);
                 old_size = ReadData<double>(iter, length);
                 new_size = ReadData<double>(iter, length);
-                lerp_time = ReadVarLong(iter, length);
-                new_absolute_max_size = ReadVarInt(iter, length);
-                warning_time = ReadVarInt(iter, length);
-                warning_blocks = ReadVarInt(iter, length);
+                lerp_time = ReadData<VarLong>(iter, length);
+                new_absolute_max_size = ReadData<VarInt>(iter, length);
+                warning_time = ReadData<VarInt>(iter, length);
+                warning_blocks = ReadData<VarInt>(iter, length);
                 break;
             case SetBorderType::SetWarningTime:
-                warning_time = ReadVarInt(iter, length);
+                warning_time = ReadData<VarInt>(iter, length);
                 break;
             case SetBorderType::SetWarningBlocks:
-                warning_blocks = ReadVarInt(iter, length);
+                warning_blocks = ReadData<VarInt>(iter, length);
                 break;
             default:
                 break;
@@ -180,7 +180,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt((int)action, container);
+            WriteData<VarInt>((int)action, container);
             switch ((SetBorderType)action)
             {
             case SetBorderType::SetSize:
@@ -189,7 +189,7 @@ namespace ProtocolCraft
             case SetBorderType::LerpSize:
                 WriteData<double>(old_size, container);
                 WriteData<double>(new_size, container);
-                WriteVarLong(lerp_time, container);
+                WriteData<VarLong>(lerp_time, container);
                 break;
             case SetBorderType::SetCenter:
                 WriteData<double>(new_center_x, container);
@@ -200,16 +200,16 @@ namespace ProtocolCraft
                 WriteData<double>(new_center_z, container);
                 WriteData<double>(old_size, container);
                 WriteData<double>(new_size, container);
-                WriteVarLong(lerp_time, container);
-                WriteVarInt(new_absolute_max_size, container);
-                WriteVarInt(warning_time, container);
-                WriteVarInt(warning_blocks, container);
+                WriteData<VarLong>(lerp_time, container);
+                WriteData<VarInt>(new_absolute_max_size, container);
+                WriteData<VarInt>(warning_time, container);
+                WriteData<VarInt>(warning_blocks, container);
                 break;
             case SetBorderType::SetWarningTime:
-                WriteVarInt(warning_time, container);
+                WriteData<VarInt>(warning_time, container);
                 break;
             case SetBorderType::SetWarningBlocks:
-                WriteVarInt(warning_blocks, container);
+                WriteData<VarInt>(warning_blocks, container);
                 break;
             default:
                 break;

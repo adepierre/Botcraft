@@ -73,14 +73,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            action = ReadVarInt(iter, length);
+            action = ReadData<VarInt>(iter, length);
             pos.Read(iter, length);
             direction = ReadData<char>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteVarInt(action, container);
+            WriteData<VarInt>(action, container);
             pos.Write(container);
             WriteData<char>(direction, container);
         }

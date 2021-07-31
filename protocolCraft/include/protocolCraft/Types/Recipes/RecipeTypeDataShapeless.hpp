@@ -61,7 +61,7 @@ namespace ProtocolCraft
         {
 
             group = ReadData<std::string>(iter, length);
-            ingredient_count = ReadVarInt(iter, length);
+            ingredient_count = ReadData<VarInt>(iter, length);
             ingredients = std::vector<Ingredient>(ingredient_count);
             for (int i = 0; i < ingredient_count; ++i)
             {
@@ -73,7 +73,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(group, container);
-            WriteVarInt(ingredient_count, container);
+            WriteData<VarInt>(ingredient_count, container);
             for (int i = 0; i < ingredient_count; ++i)
             {
                 ingredients[i].Write(container);

@@ -278,7 +278,7 @@ namespace ProtocolCraft
             game_type = ReadData<unsigned char>(iter, length);
 #if PROTOCOL_VERSION > 718
             previous_game_type = ReadData<unsigned char>(iter, length);
-            int levels_size = ReadVarInt(iter, length);
+            int levels_size = ReadData<VarInt>(iter, length);
             levels = std::vector<Identifier>(levels_size);
             for (int i = 0; i < levels_size; ++i)
             {
@@ -301,13 +301,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 749
             max_players = ReadData<unsigned char>(iter, length);
 #else
-            max_players = ReadVarInt(iter, length);
+            max_players = ReadData<VarInt>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 719
             level_type = ReadData<std::string>(iter, length);
 #endif
 #if PROTOCOL_VERSION >= 477
-            chunk_radius = ReadVarInt(iter, length);
+            chunk_radius = ReadData<VarInt>(iter, length);
 #endif
             reduced_debug_info = ReadData<bool>(iter, length);
 #if PROTOCOL_VERSION > 565
@@ -328,7 +328,7 @@ namespace ProtocolCraft
             WriteData<unsigned char>(game_type, container);
 #if PROTOCOL_VERSION > 718
             WriteData<unsigned char>(previous_game_type, container);
-            WriteVarInt(levels.size(), container);
+            WriteData<VarInt>(levels.size(), container);
             for (int i = 0; i < levels.size(); ++i)
             {
                 levels[i].Write(container);
@@ -350,13 +350,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 749
             WriteData<unsigned char>(max_players, container);
 #else
-            WriteVarInt(max_players, container);
+            WriteData<VarInt>(max_players, container);
 #endif
 #if PROTOCOL_VERSION < 719
             WriteData<std::string>(level_type, container);
 #endif
 #if PROTOCOL_VERSION >= 477
-            WriteVarInt(chunk_radius, container);
+            WriteData<VarInt>(chunk_radius, container);
 #endif
             WriteData<bool>(reduced_debug_info, container);
 #if PROTOCOL_VERSION > 565

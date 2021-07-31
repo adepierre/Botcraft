@@ -168,9 +168,9 @@ namespace ProtocolCraft
             ignore_old_data = ReadData<bool>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 755
-            available_sections = ReadVarInt(iter, length);
+            available_sections = ReadData<VarInt>(iter, length);
 #else
-            const int available_sections_size = ReadVarInt(iter, length);
+            const int available_sections_size = ReadData<VarInt>(iter, length);
             available_sections = std::vector<unsigned long long int>(available_sections_size);
             for (int i = 0; i < available_sections_size; ++i)
             {
@@ -186,11 +186,11 @@ namespace ProtocolCraft
 			{
 #endif
 #if PROTOCOL_VERSION > 738
-                const int biomes_size = ReadVarInt(iter, length);
+                const int biomes_size = ReadData<VarInt>(iter, length);
                 biomes = std::vector<int>(biomes_size);
                 for (int i = 0; i < biomes_size; ++i)
                 {
-                    biomes[i] = ReadVarInt(iter, length);
+                    biomes[i] = ReadData<VarInt>(iter, length);
                 }
 #else
                 biomes = ReadArrayData<int>(iter, length, 1024);
@@ -199,9 +199,9 @@ namespace ProtocolCraft
 			}
 #endif
 #endif
-            const int buffer_size = ReadVarInt(iter, length);
+            const int buffer_size = ReadData<VarInt>(iter, length);
             buffer = ReadByteArray(iter, length, buffer_size);
-            const int num_block_entities_tags = ReadVarInt(iter, length);
+            const int num_block_entities_tags = ReadData<VarInt>(iter, length);
             block_entities_tags = std::vector<NBT>(num_block_entities_tags);
             for (int i = 0; i < num_block_entities_tags; ++i)
             {
@@ -220,9 +220,9 @@ namespace ProtocolCraft
             WriteData<bool>(ignore_old_data, container);
 #endif
 #if PROTOCOL_VERSION < 755
-            WriteVarInt(available_sections, container);
+            WriteData<VarInt>(available_sections, container);
 #else
-            WriteVarInt(available_sections.size(), container);
+            WriteData<VarInt>(available_sections.size(), container);
             for (int i = 0; i < available_sections.size(); ++i)
             {
                 WriteData<unsigned long long int>(available_sections[i], container);
@@ -237,10 +237,10 @@ namespace ProtocolCraft
             {
 #endif
 #if PROTOCOL_VERSION > 738
-                WriteVarInt(biomes.size(), container);
+                WriteData<VarInt>(biomes.size(), container);
                 for (int i = 0; i < biomes.size(); ++i)
                 {
-                    WriteVarInt(biomes[i], container);
+                    WriteData<VarInt>(biomes[i], container);
                 }
 #else
                 WriteArrayData(biomes, container);
@@ -249,9 +249,9 @@ namespace ProtocolCraft
             }
 #endif
 #endif
-            WriteVarInt(buffer.size(), container);
+            WriteData<VarInt>(buffer.size(), container);
             WriteByteArray(buffer, container);
-            WriteVarInt(block_entities_tags.size(), container);
+            WriteData<VarInt>(block_entities_tags.size(), container);
             for (int i = 0; i < block_entities_tags.size(); ++i)
             {
                 block_entities_tags[i].Write(container);

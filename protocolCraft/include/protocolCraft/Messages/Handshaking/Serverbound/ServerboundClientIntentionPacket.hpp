@@ -65,18 +65,18 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            protocol_version = ReadVarInt(iter, length);
+            protocol_version = ReadData<VarInt>(iter, length);
             host_name = ReadData<std::string>(iter, length);
             port = ReadData<unsigned short>(iter, length);
-            intention = ReadVarInt(iter, length);
+            intention = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteVarInt(protocol_version, container);
+            WriteData<VarInt>(protocol_version, container);
             WriteData<std::string>(host_name, container);
             WriteData<unsigned short>(port, container);
-            WriteVarInt(intention, container);
+            WriteData<VarInt>(intention, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

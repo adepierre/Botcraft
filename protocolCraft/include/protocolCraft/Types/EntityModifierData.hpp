@@ -46,14 +46,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            uuid = ReadUUID(iter, length);
+            uuid = ReadData<UUID>(iter, length);
             amount = ReadData<double>(iter, length);
             operation = ReadData<char>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteUUID(uuid, container);
+            WriteData<UUID>(uuid, container);
             WriteData<double>(amount, container);
             WriteData<char>(operation, container);
         }
@@ -63,7 +63,7 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["uuid"] = picojson::value(uuid);
+            object["uuid"] = picojson::value(std::string(uuid.begin(), uuid.end()));
             object["amount"] = picojson::value((double)amount);
             object["operation"] = picojson::value((double)operation);
 

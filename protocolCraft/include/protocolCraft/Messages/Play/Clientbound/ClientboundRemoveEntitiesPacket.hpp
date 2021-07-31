@@ -55,20 +55,20 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            const int entity_ids_size = ReadVarInt(iter, length);
+            const int entity_ids_size = ReadData<VarInt>(iter, length);
             entity_ids = std::vector<int>(entity_ids_size);
             for (int i = 0; i < entity_ids_size; ++i)
             {
-                entity_ids[i] = ReadVarInt(iter, length);
+                entity_ids[i] = ReadData<VarInt>(iter, length);
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(entity_ids.size(), container);
+            WriteData<VarInt>(entity_ids.size(), container);
             for (int i = 0; i < entity_ids.size(); ++i)
             {
-                WriteVarInt(entity_ids[i], container);
+                WriteData<VarInt>(entity_ids[i], container);
             }
         }
 

@@ -112,29 +112,29 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            from_anchor = ReadVarInt(iter, length);
+            from_anchor = ReadData<VarInt>(iter, length);
             x = ReadData<double>(iter, length);
             y = ReadData<double>(iter, length);
             z = ReadData<double>(iter, length);
             at_entity = ReadData<bool>(iter, length);
             if (at_entity)
             {
-                entity = ReadVarInt(iter, length);
-                to_anchor = ReadVarInt(iter, length);
+                entity = ReadData<VarInt>(iter, length);
+                to_anchor = ReadData<VarInt>(iter, length);
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(from_anchor, container);
+            WriteData<VarInt>(from_anchor, container);
             WriteData<double>(x, container);
             WriteData<double>(y, container);
             WriteData<double>(z, container);
             WriteData<bool>(at_entity, container);
             if (at_entity)
             {
-                WriteVarInt(entity, container);
-                WriteVarInt(to_anchor, container);
+                WriteData<VarInt>(entity, container);
+                WriteData<VarInt>(to_anchor, container);
             }
         }
 

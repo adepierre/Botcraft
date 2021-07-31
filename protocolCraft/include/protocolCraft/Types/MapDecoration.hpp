@@ -93,7 +93,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 373
             rot_and_type = ReadData<char>(iter, length);
 #else
-            type = ReadVarInt(iter, length);
+            type = ReadData<VarInt>(iter, length);
 #endif
             x = ReadData<char>(iter, length);
             z = ReadData<char>(iter, length);
@@ -116,7 +116,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 373
             WriteData<char>(rot_and_type, container);
 #else
-            WriteVarInt(type, container);
+            WriteData<VarInt>(type, container);
 #endif
             WriteData<char>(x, container);
             WriteData<char>(z, container);

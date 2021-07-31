@@ -40,7 +40,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteVarInt(time, container);
+            WriteData<VarInt>(time, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

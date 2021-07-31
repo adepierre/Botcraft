@@ -63,23 +63,23 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            const int nodes_size = ReadVarInt(iter, length);
+            const int nodes_size = ReadData<VarInt>(iter, length);
             nodes = std::vector<CommandNode>(nodes_size);
             for (int i = 0; i < nodes_size; ++i)
             {
                 nodes[i].Read(iter, length);
             }
-            root_index = ReadVarInt(iter, length);
+            root_index = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(nodes.size(), container);
+            WriteData<VarInt>(nodes.size(), container);
             for (int i = 0; i < nodes.size(); ++i)
             {
                 nodes[i].Write(container);
             }
-            WriteVarInt(root_index, container);
+            WriteData<VarInt>(root_index, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

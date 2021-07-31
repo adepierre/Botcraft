@@ -108,12 +108,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            id_ = ReadVarInt(iter, length);
-            uuid = ReadUUID(iter, length);
+            id_ = ReadData<VarInt>(iter, length);
+            uuid = ReadData<UUID>(iter, length);
 #if PROTOCOL_VERSION < 353
             title = ReadData<std::string>(iter, length);
 #else
-            motive = ReadVarInt(iter, length);
+            motive = ReadData<VarInt>(iter, length);
 #endif
             pos.Read(iter, length);
             direction = ReadData<char>(iter, length);
@@ -121,12 +121,12 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(id_, container);
-            WriteUUID(uuid, container);
+            WriteData<VarInt>(id_, container);
+            WriteData<UUID>(uuid, container);
 #if PROTOCOL_VERSION < 353
             WriteData<std::string>(title, container);
 #else
-            WriteVarInt(motive, container);
+            WriteData<VarInt>(motive, container);
 #endif
             pos.Write(container);
             WriteData<char>(direction, container);
@@ -138,7 +138,7 @@ namespace ProtocolCraft
             picojson::object& object = value.get<picojson::object>();
 
             object["id_"] = picojson::value((double)id_);
-            object["uuid"] = picojson::value(uuid);
+            object["uuid"] = picojson::value(std::string(uuid.begin(), uuid.end()));
 #if PROTOCOL_VERSION < 353
             object["title"] = picojson::value(title);
 #else

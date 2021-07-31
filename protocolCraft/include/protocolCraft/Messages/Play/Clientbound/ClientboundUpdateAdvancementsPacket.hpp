@@ -89,7 +89,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             reset = ReadData<bool>(iter, length);
-            const int added_size = ReadVarInt(iter, length);
+            const int added_size = ReadData<VarInt>(iter, length);
             added.clear();
             for (int i = 0; i < added_size; ++i)
             {
@@ -97,13 +97,13 @@ namespace ProtocolCraft
                 key.Read(iter, length);
                 added[key].Read(iter, length);
             }
-            const int removed_size = ReadVarInt(iter, length);
+            const int removed_size = ReadData<VarInt>(iter, length);
             removed = std::vector<Identifier>(removed_size);
             for (int i = 0; i < removed_size; ++i)
             {
                 removed[i].Read(iter, length);
             }
-            const int progress_size = ReadVarInt(iter, length);
+            const int progress_size = ReadData<VarInt>(iter, length);
             progress.clear();
             for (int i = 0; i < progress_size; ++i)
             {
@@ -116,18 +116,18 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<bool>(reset, container);
-            WriteVarInt(added.size(), container);
+            WriteData<VarInt>(added.size(), container);
             for (auto it = added.begin(); it != added.end(); it++)
             {
                 it->first.Write(container);
                 it->second.Write(container);
             }
-            WriteVarInt(removed.size(), container);
+            WriteData<VarInt>(removed.size(), container);
             for (int i = 0; i < removed.size(); ++i)
             {
                 removed[i].Write(container);
             }
-            WriteVarInt(progress.size(), container);
+            WriteData<VarInt>(progress.size(), container);
             for (auto it = progress.begin(); it != progress.end(); it++)
             {
                 it->first.Write(container);

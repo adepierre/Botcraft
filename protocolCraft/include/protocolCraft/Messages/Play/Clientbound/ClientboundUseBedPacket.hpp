@@ -55,13 +55,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadVarInt(iter, length);
+            entity_id = ReadData<VarInt>(iter, length);
             location.Read(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(entity_id, container);
+            WriteData<VarInt>(entity_id, container);
             location.Write(container);
         }
 

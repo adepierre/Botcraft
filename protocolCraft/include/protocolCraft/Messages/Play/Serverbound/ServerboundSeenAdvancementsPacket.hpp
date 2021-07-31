@@ -64,7 +64,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            action = ReadVarInt(iter, length);
+            action = ReadData<VarInt>(iter, length);
             if (action == 0)
             {
                 tab.Read(iter, length);
@@ -73,7 +73,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(action, container);
+            WriteData<VarInt>(action, container);
             if (action == 0)
             {
                 tab.Write(container);

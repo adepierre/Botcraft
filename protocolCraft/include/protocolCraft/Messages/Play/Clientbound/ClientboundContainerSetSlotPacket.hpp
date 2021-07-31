@@ -90,7 +90,7 @@ namespace ProtocolCraft
         {
             container_id = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION > 755
-            state_id = ReadVarInt(iter, length);
+            state_id = ReadData<VarInt>(iter, length);
 #endif
             slot = ReadData<short>(iter, length);
             item_stack.Read(iter, length);
@@ -100,7 +100,7 @@ namespace ProtocolCraft
         {
             WriteData<char>(container_id, container);
 #if PROTOCOL_VERSION > 755
-            WriteVarInt(state_id, container);
+            WriteData<VarInt>(state_id, container);
 #endif
             WriteData<short>(slot, container);
             item_stack.Write(container);

@@ -93,16 +93,16 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            event = ReadVarInt(iter, length);
+            event = ReadData<VarInt>(iter, length);
 
             if (event == 1)
             {
-                duration = ReadVarInt(iter, length);
+                duration = ReadData<VarInt>(iter, length);
                 killer_id = ReadData<int>(iter, length);
             }
             else if (event == 2)
             {
-                player_id = ReadVarInt(iter, length);
+                player_id = ReadData<VarInt>(iter, length);
                 killer_id = ReadData<int>(iter, length);
                 message.Read(iter, length);
             }
@@ -110,15 +110,15 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(event, container);
+            WriteData<VarInt>(event, container);
             if (event == 1)
             {
-                WriteVarInt(duration, container);
+                WriteData<VarInt>(duration, container);
                 WriteData<int>(killer_id, container);
             }
             else if (event == 2)
             {
-                WriteVarInt(player_id, container);
+                WriteData<VarInt>(player_id, container);
                 WriteData<int>(killer_id, container);
                 message.Write(container);
             }

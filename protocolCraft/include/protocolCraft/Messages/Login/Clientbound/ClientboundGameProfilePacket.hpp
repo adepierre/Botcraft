@@ -60,7 +60,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
 #if PROTOCOL_VERSION > 706
-            uuid = ReadUUID(iter, length);
+            uuid = ReadData<UUID>(iter, length);
 #else
             uuid = ReadData<std::string>(iter, length);
 #endif
@@ -70,7 +70,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
 #if PROTOCOL_VERSION > 706
-            WriteUUID(uuid, container);
+            WriteData<UUID>(uuid, container);
 #else
             WriteData<std::string>(uuid, container);
 #endif
@@ -82,7 +82,7 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["uuid"] = picojson::value(uuid);
+            object["uuid"] = picojson::value(std::string(uuid.begin(), uuid.end()));
             object["username"] = picojson::value(username);
 
             return value;

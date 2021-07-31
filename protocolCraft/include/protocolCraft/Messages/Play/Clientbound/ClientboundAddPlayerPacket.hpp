@@ -127,8 +127,8 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadVarInt(iter, length);
-            player_id = ReadUUID(iter, length);
+            entity_id = ReadData<VarInt>(iter, length);
+            player_id = ReadData<UUID>(iter, length);
             x = ReadData<double>(iter, length);
             y = ReadData<double>(iter, length);
             z = ReadData<double>(iter, length);
@@ -141,8 +141,8 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(entity_id, container);
-            WriteUUID(player_id, container);
+            WriteData<VarInt>(entity_id, container);
+            WriteData<UUID>(player_id, container);
             WriteData<double>(x, container);
             WriteData<double>(y, container);
             WriteData<double>(z, container);
@@ -159,7 +159,7 @@ namespace ProtocolCraft
             picojson::object& object = value.get<picojson::object>();
 
             object["entity_id"] = picojson::value((double)entity_id);
-            object["player_id"] = picojson::value(player_id);
+            object["player_id"] = picojson::value(std::string(player_id.begin(), player_id.end()));
             object["x"] = picojson::value(x);
             object["y"] = picojson::value(y);
             object["z"] = picojson::value(z);

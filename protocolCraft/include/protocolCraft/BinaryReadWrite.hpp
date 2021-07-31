@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 #include <string>
 #include <cstring>
 #include <algorithm>
@@ -11,19 +12,24 @@ namespace ProtocolCraft
     using WriteContainer = std::vector<unsigned char>;
 
     using Angle = unsigned char;
-    using UUID = std::string;
+    using UUID = std::array<unsigned char, 16>;
 
-    int ReadVarInt(ReadIterator &iter, size_t &length);
-    void WriteVarInt(const int my_int, WriteContainer &container);
+    template <class T>
+    class VarType
+    {
+    public:
+        VarType(const T& val) : value(val) {}
+        VarType() {}
+        operator T() const { return value; }
+    private:
+        int value;
+    };
 
-    long long int ReadVarLong(ReadIterator &iter, size_t &length);
-    void WriteVarLong(const long long int my_long, WriteContainer &container);
+    using VarInt = VarType<int>;
+    using VarLong = VarType<long long int>;
 
     std::string ReadRawString(ReadIterator &iter, size_t &length, const int size);
     void WriteRawString(const std::string &s, WriteContainer &container);
-
-    UUID ReadUUID(ReadIterator& iter, size_t& length);
-    void WriteUUID(const UUID& s, WriteContainer& container);
 
     std::vector<unsigned char> ReadByteArray(ReadIterator &iter, size_t &length, const size_t &desired_length);
     void WriteByteArray(const std::vector<unsigned char> &my_array, WriteContainer &container);
@@ -40,7 +46,7 @@ namespace ProtocolCraft
     }
 
     template<typename T>
-    static T ReadData(ReadIterator &iter, size_t &length)
+    T ReadData(ReadIterator &iter, size_t &length)
     {
         if (length < sizeof(T))
         {
@@ -72,27 +78,21 @@ namespace ProtocolCraft
     }
 
     template<>
-    static std::string ReadData(ReadIterator& iter, size_t& length)
-    {
-        int size = ReadVarInt(iter, length);
+    std::string ReadData(ReadIterator& iter, size_t& length);
 
-        if (length < size)
-        {
-            throw(std::runtime_error("Not enough input in ReadData<std::string>"));
-        }
-        else
-        {
-            std::string output = std::string(iter, iter + size);
+    template<>
+    VarInt ReadData(ReadIterator& iter, size_t& length);
 
-            iter += size;
-            length -= size;
+    template<>
+    VarLong ReadData(ReadIterator& iter, size_t& length);
 
-            return output;
-        }
-    }
+    // We could use base ReadData<T>, but sizeof(std::array<?, N>)
+    // is not guaranteed to be N
+    template<>
+    UUID ReadData(ReadIterator& iter, size_t& length);
 
     template<typename T>
-    static void WriteData(const T &value, WriteContainer &container)
+    void WriteData(const T &value, WriteContainer &container)
     {
         std::vector<unsigned char> output(sizeof(T));
 
@@ -119,14 +119,22 @@ namespace ProtocolCraft
     }
 
     template<>
-    static void WriteData(const std::string& value, WriteContainer& container)
-    {
-        WriteVarInt(value.size(), container);
-        container.insert(container.end(), value.begin(), value.end());
-    }
+    void WriteData(const std::string &value, WriteContainer& container);
+
+    template<>
+    void WriteData(const VarInt &value, WriteContainer &container);
+
+    template<>
+    void WriteData(const VarLong& value, WriteContainer& container);
+
+    // We could use base WriteData<T>, but sizeof(std::array<?, N>)
+    // is not guaranteed to be N
+    template<>
+    void WriteData(const UUID& value, WriteContainer& container);
+
 
     template<typename T>
-    static std::vector<T> ReadArrayData(ReadIterator &iter, size_t &length, const size_t size)
+    std::vector<T> ReadArrayData(ReadIterator &iter, size_t &length, const size_t size)
     {
         if (length < size * sizeof(T))
         {
@@ -157,7 +165,7 @@ namespace ProtocolCraft
     }
 
     template<typename T>
-    static void WriteArrayData(const std::vector<T> &values, WriteContainer &container)
+    void WriteArrayData(const std::vector<T> &values, WriteContainer &container)
     {
         std::vector<unsigned char> bytes(sizeof(T));
 

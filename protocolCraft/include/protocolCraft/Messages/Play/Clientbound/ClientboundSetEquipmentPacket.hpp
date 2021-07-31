@@ -77,7 +77,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadVarInt(iter, length);
+            entity_id = ReadData<VarInt>(iter, length);
 
 #if PROTOCOL_VERSION > 730
             bool has_value = true;
@@ -94,14 +94,14 @@ namespace ProtocolCraft
                 has_value = current_value & (1 << 7);
             }
 #else
-            slot.first = ReadVarInt(iter, length);
+            slot.first = ReadData<VarInt>(iter, length);
             slot.second.Read(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(entity_id, container);
+            WriteData<VarInt>(entity_id, container);
 #if PROTOCOL_VERSION > 730
             for (int i = 0; i < slots.size(); ++i)
             {
@@ -109,7 +109,7 @@ namespace ProtocolCraft
                 slots[i].second.Write(container);
             }
 #else
-            WriteVarInt(slot.first, container);
+            WriteData<VarInt>(slot.first, container);
             slot.second.Write(container);
 #endif
         }

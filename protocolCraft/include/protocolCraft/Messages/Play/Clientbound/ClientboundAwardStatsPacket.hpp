@@ -69,18 +69,18 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            int count = ReadVarInt(iter, length);
+            int count = ReadData<VarInt>(iter, length);
             stats.clear();
             for (int i = 0; i < count; ++i)
             {
 #if PROTOCOL_VERSION < 346
                 std::string name = ReadData<std::string>(iter, length);
-                int value = ReadVarInt(iter, length);
+                int value = ReadData<VarInt>(iter, length);
                 stats[name] = value;
 #else
-                int category_id = ReadVarInt(iter, length);
-                int stats_id = ReadVarInt(iter, length);
-                int value = ReadVarInt(iter, length);
+                int category_id = ReadData<VarInt>(iter, length);
+                int stats_id = ReadData<VarInt>(iter, length);
+                int value = ReadData<VarInt>(iter, length);
 
                 stats[std::make_pair(category_id, stats_id)] = value;
 #endif
@@ -89,16 +89,16 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(stats.size(), container);
+            WriteData<VarInt>(stats.size(), container);
             for (auto it = stats.begin(); it != stats.end(); ++it)
             {
 #if PROTOCOL_VERSION < 346
                 WriteData<std::string>(it->first, container);
 #else
-                WriteVarInt(it->first.first, container);
-                WriteVarInt(it->first.second, container);
+                WriteData<VarInt>(it->first.first, container);
+                WriteData<VarInt>(it->first.second, container);
 #endif
-                WriteVarInt(it->second, container);
+                WriteData<VarInt>(it->second, container);
             }
         }
 

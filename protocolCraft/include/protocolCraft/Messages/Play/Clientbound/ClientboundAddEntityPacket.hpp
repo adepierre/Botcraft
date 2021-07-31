@@ -161,12 +161,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            id_ = ReadVarInt(iter, length);
-            uuid = ReadUUID(iter, length);
+            id_ = ReadData<VarInt>(iter, length);
+            uuid = ReadData<UUID>(iter, length);
 #if PROTOCOL_VERSION < 458
             type = ReadData<char>(iter, length);
 #else
-            type = ReadVarInt(iter, length);
+            type = ReadData<VarInt>(iter, length);
 #endif
             x = ReadData<double>(iter, length);
             y = ReadData<double>(iter, length);
@@ -181,12 +181,12 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteVarInt(id_, container);
-            WriteUUID(uuid, container);
+            WriteData<VarInt>(id_, container);
+            WriteData<UUID>(uuid, container);
 #if PROTOCOL_VERSION < 458
             WriteData<char>(type, container);
 #else
-            WriteVarInt(type, container);
+            WriteData<VarInt>(type, container);
 #endif
             WriteData<double>(x, container);
             WriteData<double>(y, container);
@@ -205,7 +205,7 @@ namespace ProtocolCraft
             picojson::object& object = value.get<picojson::object>();
 
             object["id_"] = picojson::value((double)id_);
-            object["uuid"] = picojson::value(uuid);
+            object["uuid"] = picojson::value(std::string(uuid.begin(), uuid.end()));
             object["type"] = picojson::value((double)type);
             object["x"] = picojson::value((double)x);
             object["y"] = picojson::value((double)y);

@@ -54,7 +54,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            const int recipes_size = ReadVarInt(iter, length);
+            const int recipes_size = ReadData<VarInt>(iter, length);
             recipes = std::vector<Recipe>(recipes_size);
             for (int i = 0; i < recipes_size; ++i)
             {
@@ -64,7 +64,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(recipes.size(), container);
+            WriteData<VarInt>(recipes.size(), container);
             for (int i = 0; i < recipes.size(); ++i)
             {
                 recipes[i].Write(container);

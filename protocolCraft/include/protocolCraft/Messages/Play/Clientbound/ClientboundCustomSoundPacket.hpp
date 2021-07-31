@@ -114,7 +114,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             name_ = ReadData<std::string>(iter, length);
-            source = ReadVarInt(iter, length);
+            source = ReadData<VarInt>(iter, length);
             x = ReadData<int>(iter, length);
             y = ReadData<int>(iter, length);
             z = ReadData<int>(iter, length);
@@ -125,7 +125,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(name_, container);
-            WriteVarInt(source, container);
+            WriteData<VarInt>(source, container);
             WriteData<int>(x, container);
             WriteData<int>(y, container);
             WriteData<int>(z, container);

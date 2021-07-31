@@ -130,8 +130,8 @@ namespace ProtocolCraft
                 id_ = ReadData<int>(iter, length);
             }
 #else
-			container_id = ReadVarInt(iter, length);
-			type = ReadVarInt(iter, length);
+			container_id = ReadData<VarInt>(iter, length);
+			type = ReadData<VarInt>(iter, length);
 			title.Read(iter, length);
 #endif
         }
@@ -148,8 +148,8 @@ namespace ProtocolCraft
                 WriteData<int>(id_, container);
             }
 #else
-            WriteVarInt(container_id, container);
-            WriteVarInt(type, container);
+            WriteData<VarInt>(container_id, container);
+            WriteData<VarInt>(type, container);
             title.Write(container);
 #endif
         }

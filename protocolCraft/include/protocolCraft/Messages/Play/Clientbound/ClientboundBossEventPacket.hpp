@@ -114,15 +114,15 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            id_ = ReadUUID(iter, length);
-            operation = ReadVarInt(iter, length);
+            id_ = ReadData<UUID>(iter, length);
+            operation = ReadData<VarInt>(iter, length);
             switch (operation)
             {
             case 0:
                 name_.Read(iter, length);
                 pct = ReadData<float>(iter, length);
-                color = ReadVarInt(iter, length);
-                overlay = ReadVarInt(iter, length);
+                color = ReadData<VarInt>(iter, length);
+                overlay = ReadData<VarInt>(iter, length);
                 flags = ReadData<unsigned char>(iter, length);
                 break;
             case 1:
@@ -134,8 +134,8 @@ namespace ProtocolCraft
                 name_.Read(iter, length);
                 break;
             case 4:
-                color = ReadVarInt(iter, length);
-                overlay = ReadVarInt(iter, length);
+                color = ReadData<VarInt>(iter, length);
+                overlay = ReadData<VarInt>(iter, length);
                 break;
             case 5:
                 flags = ReadData<unsigned char>(iter, length);
@@ -147,15 +147,15 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteUUID(id_, container);
-            WriteVarInt((int)operation, container);
+            WriteData<UUID>(id_, container);
+            WriteData<VarInt>((int)operation, container);
             switch (operation)
             {
             case 0:
                 name_.Write(container);
                 WriteData<float>(pct, container);
-                WriteVarInt(color, container);
-                WriteVarInt(overlay, container);
+                WriteData<VarInt>(color, container);
+                WriteData<VarInt>(overlay, container);
                 WriteData<unsigned char>(flags, container);
                 break;
             case 1:
@@ -167,8 +167,8 @@ namespace ProtocolCraft
                 name_.Write(container);
                 break;
             case 4:
-                WriteVarInt(color, container);
-                WriteVarInt(overlay, container);
+                WriteData<VarInt>(color, container);
+                WriteData<VarInt>(overlay, container);
                 break;
             case 5:
                 WriteData<unsigned char>(flags, container);
@@ -183,7 +183,7 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["id_"] = picojson::value(id_);
+            object["id_"] = picojson::value(std::string(id_.begin(), id_.end()));
             object["operation"] = picojson::value((double)operation);
 
             switch (operation)

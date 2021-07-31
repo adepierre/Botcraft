@@ -119,12 +119,12 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION > 452
-            hand = ReadVarInt(iter, length);
+            hand = ReadData<VarInt>(iter, length);
 #endif
             location.Read(iter, length);
-            direction = ReadVarInt(iter, length);
+            direction = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION < 453
-            hand = ReadVarInt(iter, length);
+            hand = ReadData<VarInt>(iter, length);
 #endif
             cursor_position_x = ReadData<float>(iter, length);
             cursor_position_y = ReadData<float>(iter, length);
@@ -137,12 +137,12 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION > 452
-            WriteVarInt(hand, container);
+            WriteData<VarInt>(hand, container);
 #endif
             location.Write(container);
-            WriteVarInt(direction, container);
+            WriteData<VarInt>(direction, container);
 #if PROTOCOL_VERSION < 453
-            WriteVarInt(hand, container);
+            WriteData<VarInt>(hand, container);
 #endif
             WriteData<float>(cursor_position_x, container);
             WriteData<float>(cursor_position_y, container);

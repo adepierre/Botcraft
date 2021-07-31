@@ -93,19 +93,19 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadVarInt(iter, length);
+            entity_id = ReadData<VarInt>(iter, length);
             effect_id = ReadData<char>(iter, length);
             effect_amplifier = ReadData<char>(iter, length);
-            effect_duration_ticks = ReadVarInt(iter, length);
+            effect_duration_ticks = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(entity_id, container);
+            WriteData<VarInt>(entity_id, container);
             WriteData<char>(effect_id, container);
             WriteData<char>(effect_amplifier, container);
-            WriteVarInt(effect_duration_ticks, container);
+            WriteData<VarInt>(effect_duration_ticks, container);
             WriteData<char>(flags, container);
         }
 

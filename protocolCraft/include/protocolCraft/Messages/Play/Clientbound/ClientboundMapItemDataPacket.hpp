@@ -152,7 +152,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            map_id = ReadVarInt(iter, length);
+            map_id = ReadData<VarInt>(iter, length);
             scale = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION < 755
             tracking_position = ReadData<bool>(iter, length);
@@ -165,7 +165,7 @@ namespace ProtocolCraft
             if (has_decorations)
             {
 #endif
-                int decorations_count = ReadVarInt(iter, length);
+                int decorations_count = ReadData<VarInt>(iter, length);
                 decorations = std::vector<MapDecoration>(decorations_count);
                 for (int i = 0; i < decorations_count; ++i)
                 {
@@ -181,14 +181,14 @@ namespace ProtocolCraft
                 height = ReadData<unsigned char>(iter, length);
                 start_x = ReadData<unsigned char>(iter, length);
                 start_z = ReadData<unsigned char>(iter, length);
-                int map_colors_size = ReadVarInt(iter, length);
+                int map_colors_size = ReadData<VarInt>(iter, length);
                 map_colors = ReadByteArray(iter, length, map_colors_size);
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(map_id, container);
+            WriteData<VarInt>(map_id, container);
             WriteData<char>(scale, container);
 #if PROTOCOL_VERSION < 755
             WriteData<bool>(tracking_position, container);
@@ -201,7 +201,7 @@ namespace ProtocolCraft
             if (decorations.size() > 0)
             {
 #endif
-                WriteVarInt(decorations.size(), container);
+                WriteData<VarInt>(decorations.size(), container);
                 for (int i = 0; i < decorations.size(); ++i)
                 {
                     decorations[i].Write(container);
@@ -216,7 +216,7 @@ namespace ProtocolCraft
                 WriteData<unsigned char>(height, container);
                 WriteData<unsigned char>(start_x, container);
                 WriteData<unsigned char>(start_z, container);
-                WriteVarInt(map_colors.size(), container);
+                WriteData<VarInt>(map_colors.size(), container);
                 WriteByteArray(map_colors, container);
             }
         }

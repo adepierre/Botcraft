@@ -87,7 +87,7 @@ namespace ProtocolCraft
             pos.Read(iter, length);
             b0 = ReadData<unsigned char>(iter, length);
             b1 = ReadData<unsigned char>(iter, length);
-            block = ReadVarInt(iter, length);
+            block = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -95,7 +95,7 @@ namespace ProtocolCraft
             pos.Write(container);
             WriteData<unsigned char>(b0, container);
             WriteData<unsigned char>(b1, container);
-            WriteVarInt(block, container);
+            WriteData<VarInt>(block, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

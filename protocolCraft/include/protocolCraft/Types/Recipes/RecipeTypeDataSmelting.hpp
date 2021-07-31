@@ -73,7 +73,7 @@ namespace ProtocolCraft
             ingredient.Read(iter, length);
             result.Read(iter, length);
             experience = ReadData<float>(iter, length);
-            cooking_time = ReadVarInt(iter, length);
+            cooking_time = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -82,7 +82,7 @@ namespace ProtocolCraft
             ingredient.Write(container);
             result.Write(container);
             WriteData<float>(experience, container);
-            WriteVarInt(cooking_time, container);
+            WriteData<VarInt>(cooking_time, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

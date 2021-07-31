@@ -155,14 +155,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            purpose = ReadVarInt(iter, length);
+            purpose = ReadData<VarInt>(iter, length);
             switch (purpose)
             {
             case 0:
 #if PROTOCOL_VERSION > 375
                 recipe.Read(iter, length);
 #else
-                recipe = ReadVarInt(iter, length);
+                recipe = ReadData<VarInt>(iter, length);
 #endif
                 break;
             case 1:
@@ -186,14 +186,14 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(purpose, container);
+            WriteData<VarInt>(purpose, container);
             switch (purpose)
             {
             case 0:
 #if PROTOCOL_VERSION > 375
                 recipe.Write(container);
 #else
-                WriteVarInt(recipe, container);
+                WriteData<VarInt>(recipe, container);
 #endif
                 break;
             case 1:

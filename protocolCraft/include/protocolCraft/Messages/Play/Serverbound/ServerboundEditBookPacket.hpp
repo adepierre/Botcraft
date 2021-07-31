@@ -112,10 +112,10 @@ namespace ProtocolCraft
             signing = ReadData<bool>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 393
-            slot = ReadVarInt(iter, length);
+            slot = ReadData<VarInt>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 755
-            int pages_size = ReadVarInt(iter, length);
+            int pages_size = ReadData<VarInt>(iter, length);
             pages = std::vector<std::string>(pages_size);
             for (int i = 0; i < pages_size; ++i)
             {
@@ -136,10 +136,10 @@ namespace ProtocolCraft
             WriteData<bool>(signing, container);
 #endif
 #if PROTOCOL_VERSION > 393
-            WriteVarInt(slot, container);
+            WriteData<VarInt>(slot, container);
 #endif
 #if PROTOCOL_VERSION > 755
-            WriteVarInt(pages.size(), container);
+            WriteData<VarInt>(pages.size(), container);
             for (int i = 0; i < pages.size(); ++i)
             {
                 WriteData<std::string>(pages[i], container);

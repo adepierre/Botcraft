@@ -101,29 +101,29 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            container_id = ReadVarInt(iter, length);
+            container_id = ReadData<VarInt>(iter, length);
             int offers_size = ReadData<char>(iter, length);
             offers = std::vector<Trade>(offers_size);
             for (int i = 0; i < offers_size; ++i)
             {
                 offers[i].Read(iter, length);
             }
-            villager_level = ReadVarInt(iter, length);
-            villager_xp = ReadVarInt(iter, length);
+            villager_level = ReadData<VarInt>(iter, length);
+            villager_xp = ReadData<VarInt>(iter, length);
             show_progress = ReadData<bool>(iter, length);
             can_restock = ReadData<bool>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(container_id, container);
+            WriteData<VarInt>(container_id, container);
             WriteData<char>(offers.size() , container);
             for (int i = 0; i < offers.size(); ++i)
             {
                 offers[i].Write(container);
             }
-            WriteVarInt(villager_level, container);
-            WriteVarInt(villager_xp, container);
+            WriteData<VarInt>(villager_level, container);
+            WriteData<VarInt>(villager_xp, container);
             WriteData<bool>(show_progress, container);
             WriteData<bool>(can_restock, container);
         }

@@ -74,15 +74,15 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             experience_progress = ReadData<float>(iter, length);
-            experience_level = ReadVarInt(iter, length);
-            total_experience = ReadVarInt(iter, length);
+            experience_level = ReadData<VarInt>(iter, length);
+            total_experience = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<float>(experience_progress, container);
-            WriteVarInt(experience_level, container);
-            WriteVarInt(total_experience, container);
+            WriteData<VarInt>(experience_level, container);
+            WriteData<VarInt>(total_experience, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

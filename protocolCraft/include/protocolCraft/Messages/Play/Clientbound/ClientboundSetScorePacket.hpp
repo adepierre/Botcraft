@@ -94,7 +94,7 @@ namespace ProtocolCraft
             objective_name = ReadData<std::string>(iter, length);
             if (method != SetScoreMethod::Remove)
             {
-                score = ReadVarInt(iter, length);
+                score = ReadData<VarInt>(iter, length);
             }
         }
 
@@ -105,7 +105,7 @@ namespace ProtocolCraft
             WriteData<std::string>(objective_name, container);
             if (method != SetScoreMethod::Remove)
             {
-                WriteVarInt(score, container);
+                WriteData<VarInt>(score, container);
             }
         }
 

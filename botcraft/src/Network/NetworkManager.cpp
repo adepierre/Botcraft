@@ -125,7 +125,7 @@ namespace Botcraft
                 else
                 {
                     std::vector<unsigned char> compressed_msg;
-                    ProtocolCraft::WriteVarInt(msg_data.size(), compressed_msg);
+                    ProtocolCraft::WriteData<ProtocolCraft::VarInt>(msg_data.size(), compressed_msg);
                     std::vector<unsigned char> compressed_data = Compress(msg_data);
                     compressed_msg.insert(compressed_msg.end(), compressed_data.begin(), compressed_data.end());
                     com->SendPacket(compressed_msg);
@@ -177,7 +177,7 @@ namespace Botcraft
 #ifdef USE_COMPRESSION
                         size_t length = packet.size();
                         ProtocolCraft::ReadIterator iter = packet.begin();
-                        int data_length = ProtocolCraft::ReadVarInt(iter, length);
+                        int data_length = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length);
 
                         //Packet not compressed
                         if (data_length == 0)
@@ -213,7 +213,7 @@ namespace Botcraft
         std::vector<unsigned char>::const_iterator packet_iterator = packet.begin();
         size_t length = packet.size();
 
-        int packet_id = ProtocolCraft::ReadVarInt(packet_iterator, length);
+        int packet_id = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(packet_iterator, length);
 
         std::shared_ptr<ProtocolCraft::Message> msg = ProtocolCraft::MessageFactory::CreateMessageClientbound(packet_id, state);
 

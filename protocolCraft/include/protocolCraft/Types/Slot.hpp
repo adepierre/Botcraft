@@ -139,7 +139,7 @@ namespace ProtocolCraft
                 return;
             }
 
-            item_id = ReadVarInt(iter, length);
+            item_id = ReadData<VarInt>(iter, length);
             item_count = ReadData<char>(iter, length);
 #endif
             nbt.Read(iter, length);
@@ -168,7 +168,7 @@ namespace ProtocolCraft
             {
                 return;
             }
-            WriteVarInt(item_id, container);
+            WriteData<VarInt>(item_id, container);
             WriteData<char>(item_count, container);
 #endif
             nbt.Write(container);
