@@ -66,14 +66,14 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             pos.Read(iter, length);
-            levels = ReadVarInt(iter, length);
+            levels = ReadData<VarInt>(iter, length);
             keep_jigsaws = ReadData<bool>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             pos.Write(container);
-            WriteVarInt(levels, container);
+            WriteData<VarInt>(levels, container);
             WriteData<bool>(keep_jigsaws, container);
         }
 

@@ -50,21 +50,21 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             tag_name.Read(iter, length);
-            count = ReadVarInt(iter, length);
+            count = ReadData<VarInt>(iter, length);
             entries = std::vector<int>(count);
             for (int i = 0; i < count; ++i)
             {
-                entries[i] = ReadVarInt(iter, length);
+                entries[i] = ReadData<VarInt>(iter, length);
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             tag_name.Write(container);
-            WriteVarInt(count, container);
+            WriteData<VarInt>(count, container);
             for (int i = 0; i < count; ++i)
             {
-                WriteVarInt(entries[i], container);
+                WriteData<VarInt>(entries[i], container);
             }
         }
 

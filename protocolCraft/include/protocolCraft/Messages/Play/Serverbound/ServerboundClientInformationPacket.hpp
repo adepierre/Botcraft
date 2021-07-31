@@ -118,10 +118,10 @@ namespace ProtocolCraft
         {
             language = ReadData<std::string>(iter, length);
             view_distance = ReadData<char>(iter, length);
-            chat_visibility = ReadVarInt(iter, length);
+            chat_visibility = ReadData<VarInt>(iter, length);
             chat_colors = ReadData<bool>(iter, length);
             model_customisation = ReadData<unsigned char>(iter, length);
-            main_hand = ReadVarInt(iter, length);
+            main_hand = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 754
             text_filtering_enabled = ReadData<bool>(iter, length);
 #endif
@@ -131,10 +131,10 @@ namespace ProtocolCraft
         {
             WriteData<std::string>(language, container);
             WriteData<char>(view_distance, container);
-            WriteVarInt(chat_visibility, container);
+            WriteData<VarInt>(chat_visibility, container);
             WriteData<bool>(chat_colors, container);
             WriteData<unsigned char>(model_customisation, container);
-            WriteVarInt(main_hand, container);
+            WriteData<VarInt>(main_hand, container);
 #if PROTOCOL_VERSION > 754
             WriteData<bool>(text_filtering_enabled, container);
 #endif

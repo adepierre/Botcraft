@@ -77,14 +77,14 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             name = ReadData<std::string>(iter, length);
-            const int number_of_properties = ReadVarInt(iter, length);
+            const int number_of_properties = ReadData<VarInt>(iter, length);
             properties = std::vector<PlayerProperty>(number_of_properties);
             for (int i = 0; i < number_of_properties; ++i)
             {
                 properties[i].Read(iter, length);
             }
-            game_mode = ReadVarInt(iter, length);
-            latency = ReadVarInt(iter, length);
+            game_mode = ReadData<VarInt>(iter, length);
+            latency = ReadData<VarInt>(iter, length);
             const bool has_display_name = ReadData<bool>(iter, length);
             if (has_display_name)
             {
@@ -95,13 +95,13 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(name, container);
-            WriteVarInt(properties.size(), container);
+            WriteData<VarInt>(properties.size(), container);
             for (int i = 0; i < properties.size(); ++i)
             {
                 properties[i].Write(container);
             }
-            WriteVarInt(game_mode, container);
-            WriteVarInt(latency, container);
+            WriteData<VarInt>(game_mode, container);
+            WriteData<VarInt>(latency, container);
             WriteData<bool>(!display_name.GetText().empty() , container);
             if (!display_name.GetText().empty())
             {

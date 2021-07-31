@@ -81,7 +81,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            entity_id = ReadVarInt(iter, length);
+            entity_id = ReadData<VarInt>(iter, length);
             yRot = ReadData<unsigned char>(iter, length);
             xRot = ReadData<unsigned char>(iter, length);
             on_ground = ReadData<bool>(iter, length);
@@ -89,7 +89,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteVarInt(entity_id, container);
+            WriteData<VarInt>(entity_id, container);
             WriteData<unsigned char>(yRot, container);
             WriteData<unsigned char>(xRot, container);
             WriteData<bool>(on_ground, container);

@@ -102,7 +102,7 @@ namespace ProtocolCraft
             title.Read(iter, length);
             description.Read(iter, length);
             icon.Read(iter, length);
-            frame_type = ReadVarInt(iter, length);
+            frame_type = ReadData<VarInt>(iter, length);
             flags = ReadData<int>(iter, length);
             if (flags & 0x01)
             {
@@ -117,7 +117,7 @@ namespace ProtocolCraft
             title.Write(container);
             description.Write(container);
             icon.Write(container);
-            WriteVarInt(frame_type, container);
+            WriteData<VarInt>(frame_type, container);
             WriteData<int>(flags, container);
             if (flags & 0x01)
             {

@@ -63,22 +63,22 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            vehicle = ReadVarInt(iter, length);
-            int passengers_count = ReadVarInt(iter, length);
+            vehicle = ReadData<VarInt>(iter, length);
+            int passengers_count = ReadData<VarInt>(iter, length);
             passengers = std::vector<int>(passengers_count);
             for (int i = 0; i < passengers_count; ++i)
             {
-                passengers[i] = ReadVarInt(iter, length);
+                passengers[i] = ReadData<VarInt>(iter, length);
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(vehicle, container);
-            WriteVarInt(passengers.size(), container);
+            WriteData<VarInt>(vehicle, container);
+            WriteData<VarInt>(passengers.size(), container);
             for (int i = 0; i < passengers.size(); ++i)
             {
-                WriteVarInt(passengers[i], container);
+                WriteData<VarInt>(passengers[i], container);
             }
         }
 

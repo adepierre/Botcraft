@@ -85,7 +85,7 @@ namespace ProtocolCraft
         {
             pos.Read(iter, length);
             command = ReadData<std::string>(iter, length);
-            mode = ReadVarInt(iter, length);
+            mode = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
         }
 
@@ -93,7 +93,7 @@ namespace ProtocolCraft
         {
             pos.Write(container);
             WriteData<std::string>(command, container);
-            WriteVarInt(mode, container);
+            WriteData<VarInt>(mode, container);
             WriteData<char>(flags, container);
         }
 

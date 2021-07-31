@@ -81,7 +81,7 @@ namespace ProtocolCraft
             key = ReadData<std::string>(iter, length);
 #endif
             value = ReadData<double>(iter, length);
-            number_of_modifiers = ReadVarInt(iter, length);
+            number_of_modifiers = ReadData<VarInt>(iter, length);
             modifiers = std::vector<EntityModifierData>(number_of_modifiers);
             for (int i = 0; i < number_of_modifiers; ++i)
             {
@@ -97,7 +97,7 @@ namespace ProtocolCraft
             WriteData<std::string>(key, container);
 #endif
             WriteData<double>(value, container);
-            WriteVarInt(number_of_modifiers, container);
+            WriteData<VarInt>(number_of_modifiers, container);
             for (int i = 0; i < number_of_modifiers; ++i)
             {
                 modifiers[i].Write(container);

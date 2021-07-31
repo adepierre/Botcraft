@@ -74,7 +74,7 @@ namespace ProtocolCraft
         {
             container_id = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION < 348
-            recipe = ReadVarInt(iter, length);
+            recipe = ReadData<VarInt>(iter, length);
 #else
             recipe.Read(iter, length);
 #endif
@@ -84,7 +84,7 @@ namespace ProtocolCraft
         {
             WriteData<char>(container_id, container);
 #if PROTOCOL_VERSION < 348
-            WriteVarInt(recipe, container);
+            WriteData<VarInt>(recipe, container);
 #else
             recipe.Write(container);
 #endif

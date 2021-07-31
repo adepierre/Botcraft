@@ -35,12 +35,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            compression_threshold = ReadVarInt(iter, length);
+            compression_threshold = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteVarInt(compression_threshold, container);
+            WriteData<VarInt>(compression_threshold, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

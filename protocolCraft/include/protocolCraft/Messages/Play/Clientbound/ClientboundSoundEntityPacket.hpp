@@ -91,18 +91,18 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            sound = ReadVarInt(iter, length);
-            source = ReadVarInt(iter, length);
-            id_ = ReadVarInt(iter, length);
+            sound = ReadData<VarInt>(iter, length);
+            source = ReadData<VarInt>(iter, length);
+            id_ = ReadData<VarInt>(iter, length);
             volume = ReadData<float>(iter, length);
             pitch = ReadData<float>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(sound, container);
-            WriteVarInt(source, container);
-            WriteVarInt(id_, container);
+            WriteData<VarInt>(sound, container);
+            WriteData<VarInt>(source, container);
+            WriteData<VarInt>(id_, container);
             WriteData<float>(volume, container);
             WriteData<float>(pitch, container);
         }

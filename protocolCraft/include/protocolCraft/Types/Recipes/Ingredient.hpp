@@ -38,7 +38,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            count = ReadVarInt(iter, length);
+            count = ReadData<VarInt>(iter, length);
             items = std::vector<Slot>(count);
             for (int i = 0; i < count; ++i)
             {
@@ -48,7 +48,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(count, container);
+            WriteData<VarInt>(count, container);
             for (int i = 0; i < count; ++i)
             {
                 items[i].Write(container);

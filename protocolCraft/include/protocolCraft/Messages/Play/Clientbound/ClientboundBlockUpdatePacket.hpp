@@ -63,13 +63,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             pos.Read(iter, length);
-            blockstate = ReadVarInt(iter, length);
+            blockstate = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             pos.Write(container);
-            WriteVarInt(blockstate, container);
+            WriteData<VarInt>(blockstate, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

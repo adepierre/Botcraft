@@ -63,14 +63,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            book_type = ReadVarInt(iter, length);
+            book_type = ReadData<VarInt>(iter, length);
             is_open = ReadData<bool>(iter, length);
             is_filtering = ReadData<bool>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(book_type, container);
+            WriteData<VarInt>(book_type, container);
             WriteData<bool>(is_open, container);
             WriteData<bool>(is_filtering, container);
         }

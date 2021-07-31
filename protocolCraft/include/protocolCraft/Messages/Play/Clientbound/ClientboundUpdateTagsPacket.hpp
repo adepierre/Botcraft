@@ -105,26 +105,26 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 755
-            int block_tags_length = ReadVarInt(iter, length);
+            int block_tags_length = ReadData<VarInt>(iter, length);
             block_tags = std::vector<BlockEntityTag>(block_tags_length);
             for (int i = 0; i < block_tags_length; ++i)
             {
                 block_tags[i].Read(iter, length);
             }
-            int item_tags_length = ReadVarInt(iter, length);
+            int item_tags_length = ReadData<VarInt>(iter, length);
             item_tags = std::vector<BlockEntityTag>(item_tags_length);
             for (int i = 0; i < item_tags_length; ++i)
             {
                 item_tags[i].Read(iter, length);
             }
-            int fluid_tags_length = ReadVarInt(iter, length);
+            int fluid_tags_length = ReadData<VarInt>(iter, length);
             fluid_tags = std::vector<BlockEntityTag>(fluid_tags_length);
             for (int i = 0; i < fluid_tags_length; ++i)
             {
                 fluid_tags[i].Read(iter, length);
             }
 #if PROTOCOL_VERSION > 440
-            int entity_tags_length = ReadVarInt(iter, length);
+            int entity_tags_length = ReadData<VarInt>(iter, length);
             entity_tags = std::vector<BlockEntityTag>(entity_tags_length);
             for (int i = 0; i < entity_tags_length; ++i)
             {
@@ -133,12 +133,12 @@ namespace ProtocolCraft
 #endif
 #else
             tags.clear();
-            const int tags_size = ReadVarInt(iter, length);
+            const int tags_size = ReadData<VarInt>(iter, length);
             for (int i = 0; i < tags_size; ++i)
             {
                 Identifier tag_type;
                 tag_type.Read(iter, length);
-                const int tags_array_size = ReadVarInt(iter, length);
+                const int tags_array_size = ReadData<VarInt>(iter, length);
                 std::vector<BlockEntityTag> tags_array = std::vector<BlockEntityTag>(tags_array_size);
                 for (int j = 0; j < tags_array_size; ++j)
                 {
@@ -152,34 +152,34 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 755
-            WriteVarInt(block_tags.size(), container);
+            WriteData<VarInt>(block_tags.size(), container);
             for (int i = 0; i < block_tags.size(); ++i)
             {
                 block_tags[i].Write(container);
             }
-            WriteVarInt(item_tags.size(), container);
+            WriteData<VarInt>(item_tags.size(), container);
             for (int i = 0; i < item_tags.size(); ++i)
             {
                 item_tags[i].Write(container);
             }
-            WriteVarInt(fluid_tags.size(), container);
+            WriteData<VarInt>(fluid_tags.size(), container);
             for (int i = 0; i < fluid_tags.size(); ++i)
             {
                 fluid_tags[i].Write(container);
             }
 #if PROTOCOL_VERSION > 440
-            WriteVarInt(entity_tags.size(), container);
+            WriteData<VarInt>(entity_tags.size(), container);
             for (int i = 0; i < entity_tags.size(); ++i)
             {
                 entity_tags[i].Write(container);
             }
 #endif
 #else
-            WriteVarInt(tags.size(), container);
+            WriteData<VarInt>(tags.size(), container);
             for (auto it = tags.begin(); it != tags.end(); ++it)
             {
                 it->first.Write(container);
-                WriteVarInt(it->second.size(), container);
+                WriteData<VarInt>(it->second.size(), container);
                 for (int j = 0; j < it->second.size(); ++j)
                 {
                     it->second[j].Write(container);

@@ -103,15 +103,15 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             flags = ReadData<char>(iter, length);
-            children_count = ReadVarInt(iter, length);
+            children_count = ReadData<VarInt>(iter, length);
             children = std::vector<int>(children_count);
             for (int i = 0; i < children_count; ++i)
             {
-                children[i] = ReadVarInt(iter, length);
+                children[i] = ReadData<VarInt>(iter, length);
             }
             if (flags & 0x08)
             {
-                redirect_node = ReadVarInt(iter, length);
+                redirect_node = ReadData<VarInt>(iter, length);
             }
             const char node_type = flags & 0x03;
             if (node_type == 1 || node_type == 2)
@@ -133,14 +133,14 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<char>(flags, container);
-            WriteVarInt(children_count, container);
+            WriteData<VarInt>(children_count, container);
             for (int i = 0; i < children_count; ++i)
             {
-                WriteVarInt(children[i], container);
+                WriteData<VarInt>(children[i], container);
             }
             if (flags & 0x08)
             {
-                WriteVarInt(redirect_node, container);
+                WriteData<VarInt>(redirect_node, container);
             }
             const char node_type = flags & 0x03;
             if (node_type == 1 || node_type == 2)

@@ -40,7 +40,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            size = ReadVarInt(iter, length);
+            size = ReadData<VarInt>(iter, length);
             criteria.clear();
             for (int i = 0; i < size; ++i)
             {
@@ -52,7 +52,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(size, container);
+            WriteData<VarInt>(size, container);
             for (auto it = criteria.begin(); it != criteria.end(); it++)
             {
                 it->first.Write(container);

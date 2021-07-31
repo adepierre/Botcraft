@@ -164,8 +164,8 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             pos.Read(iter, length);
-            update_type = ReadVarInt(iter, length);
-            mode = ReadVarInt(iter, length);
+            update_type = ReadData<VarInt>(iter, length);
+            mode = ReadData<VarInt>(iter, length);
             name_ = ReadData<std::string>(iter, length);
             offset.SetX(ReadData<char>(iter, length));
             offset.SetY(ReadData<char>(iter, length));
@@ -173,19 +173,19 @@ namespace ProtocolCraft
             size.SetX(ReadData<char>(iter, length));
             size.SetY(ReadData<char>(iter, length));
             size.SetZ(ReadData<char>(iter, length));
-            mirror = ReadVarInt(iter, length);
-            rotation = ReadVarInt(iter, length);
+            mirror = ReadData<VarInt>(iter, length);
+            rotation = ReadData<VarInt>(iter, length);
             data = ReadData<std::string>(iter, length);
             integrity = ReadData<float>(iter, length);
-            seed = ReadVarLong(iter, length);
+            seed = ReadData<VarLong>(iter, length);
             flags = ReadData<char>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             pos.Write(container);
-            WriteVarInt(update_type, container);
-            WriteVarInt(mode, container);
+            WriteData<VarInt>(update_type, container);
+            WriteData<VarInt>(mode, container);
             WriteData<std::string>(name_, container);
             WriteData<char>(offset.GetX(), container);
             WriteData<char>(offset.GetY(), container);
@@ -193,11 +193,11 @@ namespace ProtocolCraft
             WriteData<char>(size.GetX(), container);
             WriteData<char>(size.GetY(), container);
             WriteData<char>(size.GetZ(), container);
-            WriteVarInt(mirror, container);
-            WriteVarInt(rotation, container);
+            WriteData<VarInt>(mirror, container);
+            WriteData<VarInt>(rotation, container);
             WriteData<std::string>(data, container);
             WriteData<float>(integrity, container);
-            WriteVarLong(seed, container);
+            WriteData<VarLong>(seed, container);
             WriteData<char>(flags, container);
         }
 

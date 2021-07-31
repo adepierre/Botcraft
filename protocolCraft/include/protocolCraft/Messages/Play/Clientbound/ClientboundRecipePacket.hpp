@@ -108,9 +108,9 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            state = (RecipeState)ReadVarInt(iter, length);
+            state = (RecipeState)(int)ReadData<VarInt>(iter, length);
             book_settings.Read(iter, length);
-            int recipes_size = ReadVarInt(iter, length);
+            int recipes_size = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 348
             recipes = std::vector<Identifier>(recipes_size);
 #else
@@ -121,12 +121,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 348
                 recipes[i].Read(iter, length);
 #else
-                recipes[i] = ReadVarInt(iter, length);
+                recipes[i] = ReadData<VarInt>(iter, length);
 #endif
             }
             if (state == RecipeState::Init)
             {
-                int to_highlight_size = ReadVarInt(iter, length);
+                int to_highlight_size = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 348
                 to_highlight = std::vector<Identifier>(to_highlight_size);
 #else
@@ -137,7 +137,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 348
                     to_highlight[i].Read(iter, length);
 #else
-                    to_highlight[i] = ReadVarInt(iter, length);
+                    to_highlight[i] = ReadData<VarInt>(iter, length);
 #endif
                 }
             }
@@ -145,26 +145,26 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt((int)state, container);
+            WriteData<VarInt>((int)state, container);
             book_settings.Write(container);
-            WriteVarInt(recipes.size(), container);
+            WriteData<VarInt>(recipes.size(), container);
             for (int i = 0; i < recipes.size(); ++i)
             {
 #if PROTOCOL_VERSION > 348
                 recipes[i].Write(container);
 #else
-                WriteVarInt(recipes[i], container);
+                WriteData<VarInt>(recipes[i], container);
 #endif
             }
             if (state == RecipeState::Init)
             {
-                WriteVarInt(to_highlight.size(), container);
+                WriteData<VarInt>(to_highlight.size(), container);
                 for (int i = 0; i < to_highlight.size(); ++i)
                 {
 #if PROTOCOL_VERSION > 348
                     to_highlight[i].Write(container);
 #else
-                    WriteVarInt(to_highlight[i], container);
+                    WriteData<VarInt>(to_highlight[i], container);
 #endif
                 }
             }

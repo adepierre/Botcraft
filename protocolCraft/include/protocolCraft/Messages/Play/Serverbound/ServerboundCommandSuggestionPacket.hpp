@@ -104,7 +104,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION > 344
-            id_ = ReadVarInt(iter, length);
+            id_ = ReadData<VarInt>(iter, length);
 #endif
             command = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION < 345
@@ -120,7 +120,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION > 344
-            WriteVarInt(id_, container);
+            WriteData<VarInt>(id_, container);
 #endif
             WriteData<std::string>(command, container);
 #if PROTOCOL_VERSION < 345

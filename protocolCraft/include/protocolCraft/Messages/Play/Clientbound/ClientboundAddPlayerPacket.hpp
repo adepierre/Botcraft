@@ -127,7 +127,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadVarInt(iter, length);
+            entity_id = ReadData<VarInt>(iter, length);
             player_id = ReadUUID(iter, length);
             x = ReadData<double>(iter, length);
             y = ReadData<double>(iter, length);
@@ -141,7 +141,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(entity_id, container);
+            WriteData<VarInt>(entity_id, container);
             WriteUUID(player_id, container);
             WriteData<double>(x, container);
             WriteData<double>(y, container);

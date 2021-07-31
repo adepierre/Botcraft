@@ -132,7 +132,7 @@ namespace ProtocolCraft
             yRot = ReadData<float>(iter, length);
             xRot = ReadData<float>(iter, length);
             relative_arguments = ReadData<char>(iter, length);
-            id_ = ReadVarInt(iter, length);
+            id_ = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 754
             dismount_vehicle = ReadData<bool>(iter, length);
 #endif
@@ -146,7 +146,7 @@ namespace ProtocolCraft
             WriteData<float>(yRot, container);
             WriteData<float>(xRot, container);
             WriteData<char>(relative_arguments, container);
-            WriteVarInt(id_, container);
+            WriteData<VarInt>(id_, container);
 #if PROTOCOL_VERSION > 754
             WriteData<bool>(dismount_vehicle, container);
 #endif

@@ -104,11 +104,11 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION > 356
-            id_ = ReadVarInt(iter, length);
-            start = ReadVarInt(iter, length);
-            length_ = ReadVarInt(iter, length);
+            id_ = ReadData<VarInt>(iter, length);
+            start = ReadData<VarInt>(iter, length);
+            length_ = ReadData<VarInt>(iter, length);
 #endif
-            int count = ReadVarInt(iter, length);
+            int count = ReadData<VarInt>(iter, length);
             suggestions = std::vector<std::string>(count);
 #if PROTOCOL_VERSION > 356
             tooltips = std::vector<Chat>(count);
@@ -130,11 +130,11 @@ namespace ProtocolCraft
         {
 
 #if PROTOCOL_VERSION > 356
-            WriteVarInt(id_, container);
-            WriteVarInt(start, container);
-            WriteVarInt(length_, container);
+            WriteData<VarInt>(id_, container);
+            WriteData<VarInt>(start, container);
+            WriteData<VarInt>(length_, container);
 #endif
-            WriteVarInt(suggestions.size(), container);
+            WriteData<VarInt>(suggestions.size(), container);
             for (int i = 0; i < suggestions.size(); ++i)
             {
                 WriteData<std::string>(suggestions[i], container);

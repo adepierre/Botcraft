@@ -95,8 +95,8 @@ namespace ProtocolCraft
                 items[i].Read(iter, length);
             }
 #else
-            state_id = ReadVarInt(iter, length);
-            int count = ReadVarInt(iter, length);
+            state_id = ReadData<VarInt>(iter, length);
+            int count = ReadData<VarInt>(iter, length);
             items = std::vector<Slot>(count);
             for (int i = 0; i < count; ++i)
             {
@@ -116,8 +116,8 @@ namespace ProtocolCraft
                 items[i].Write(container);
             }
 #else
-            WriteVarInt(state_id, container);
-            WriteVarInt(items.size(), container);
+            WriteData<VarInt>(state_id, container);
+            WriteData<VarInt>(items.size(), container);
             for (int i = 0; i < items.size(); ++i)
             {
                 items[i].Write(container);

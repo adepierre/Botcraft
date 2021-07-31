@@ -108,12 +108,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            id_ = ReadVarInt(iter, length);
+            id_ = ReadData<VarInt>(iter, length);
             uuid = ReadUUID(iter, length);
 #if PROTOCOL_VERSION < 353
             title = ReadData<std::string>(iter, length);
 #else
-            motive = ReadVarInt(iter, length);
+            motive = ReadData<VarInt>(iter, length);
 #endif
             pos.Read(iter, length);
             direction = ReadData<char>(iter, length);
@@ -121,12 +121,12 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(id_, container);
+            WriteData<VarInt>(id_, container);
             WriteUUID(uuid, container);
 #if PROTOCOL_VERSION < 353
             WriteData<std::string>(title, container);
 #else
-            WriteVarInt(motive, container);
+            WriteData<VarInt>(motive, container);
 #endif
             pos.Write(container);
             WriteData<char>(direction, container);

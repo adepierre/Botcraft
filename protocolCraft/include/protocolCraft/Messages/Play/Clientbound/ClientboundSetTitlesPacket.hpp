@@ -103,7 +103,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            type = (SetTitlesType)ReadVarInt(iter, length);
+            type = (SetTitlesType)ReadData<VarInt>(iter, length);
             switch (type)
             {
             case SetTitlesType::Title:
@@ -130,7 +130,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt((int)type, container);
+            WriteData<VarInt>((int)type, container);
             switch (type)
             {
             case SetTitlesType::Title:

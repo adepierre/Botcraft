@@ -108,17 +108,17 @@ namespace ProtocolCraft
             {
                 display_data.Read(iter, length);
             }
-            number_of_criteria = ReadVarInt(iter, length);
+            number_of_criteria = ReadData<VarInt>(iter, length);
             criteria = std::vector<Identifier>(number_of_criteria);
             for (int i = 0; i < number_of_criteria; ++i)
             {
                 criteria[i].Read(iter, length);
             }
-            array_length = ReadVarInt(iter, length);
+            array_length = ReadData<VarInt>(iter, length);
             requirements = std::vector<std::vector<std::string> >(array_length);
             for (int i = 0; i < array_length; ++i)
             {
-                const int array_length2 = ReadVarInt(iter, length);
+                const int array_length2 = ReadData<VarInt>(iter, length);
                 requirements[i] = std::vector<std::string>(array_length2);
                 for (int j = 0; j < array_length2; ++j)
                 {
@@ -139,15 +139,15 @@ namespace ProtocolCraft
             {
                 display_data.Write(container);
             }
-            WriteVarInt(number_of_criteria, container);
+            WriteData<VarInt>(number_of_criteria, container);
             for (int i = 0; i < number_of_criteria; ++i)
             {
                 criteria[i].Write(container);
             }
-            WriteVarInt(array_length, container);
+            WriteData<VarInt>(array_length, container);
             for (int i = 0; i < array_length; ++i)
             {
-                WriteVarInt(requirements[i].size(), container);
+                WriteData<VarInt>(requirements[i].size(), container);
                 for (int j = 0; j < requirements[i].size(); ++j)
                 {
                     WriteData<std::string>(requirements[i][j], container);

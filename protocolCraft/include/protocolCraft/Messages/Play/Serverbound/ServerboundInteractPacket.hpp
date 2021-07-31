@@ -116,8 +116,8 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadVarInt(iter, length);
-            action = ReadVarInt(iter, length);
+            entity_id = ReadData<VarInt>(iter, length);
+            action = ReadData<VarInt>(iter, length);
             if (action == 2)
             {
                 location_x = ReadData<float>(iter, length);
@@ -126,7 +126,7 @@ namespace ProtocolCraft
             }
             if (action == 0 || action == 2)
             {
-                hand = ReadVarInt(iter, length);
+                hand = ReadData<VarInt>(iter, length);
             }
 #if PROTOCOL_VERSION > 722
             using_secondary_action = ReadData<bool>(iter, length);
@@ -135,8 +135,8 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(entity_id, container);
-            WriteVarInt(action, container); 
+            WriteData<VarInt>(entity_id, container);
+            WriteData<VarInt>(action, container); 
             if (action == 2)
             {
                 WriteData<float>(location_x, container);
@@ -145,7 +145,7 @@ namespace ProtocolCraft
             }
             if (action == 0 || action == 2)
             {
-                WriteVarInt(hand, container);
+                WriteData<VarInt>(hand, container);
             }
 #if PROTOCOL_VERSION > 722
             WriteData<bool>(using_secondary_action, container);

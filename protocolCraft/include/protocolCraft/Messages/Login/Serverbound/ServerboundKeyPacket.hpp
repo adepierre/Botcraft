@@ -45,17 +45,17 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            int key_bytes_length = ReadVarInt(iter, length);
+            int key_bytes_length = ReadData<VarInt>(iter, length);
             key_bytes = ReadByteArray(iter, length, key_bytes_length);
-            int nonce_length = ReadVarInt(iter, length);
+            int nonce_length = ReadData<VarInt>(iter, length);
             nonce = ReadByteArray(iter, length, nonce_length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteVarInt(key_bytes.size(), container);
+            WriteData<VarInt>(key_bytes.size(), container);
             WriteByteArray(key_bytes, container);
-            WriteVarInt(nonce.size(), container);
+            WriteData<VarInt>(nonce.size(), container);
             WriteByteArray(nonce, container);
         }
 

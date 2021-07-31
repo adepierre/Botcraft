@@ -63,13 +63,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            transaction_id = ReadVarInt(iter, length);
+            transaction_id = ReadData<VarInt>(iter, length);
             tag.Read(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(transaction_id, container);
+            WriteData<VarInt>(transaction_id, container);
             tag.Write(container);
         }
 

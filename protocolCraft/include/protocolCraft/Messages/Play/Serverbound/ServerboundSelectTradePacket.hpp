@@ -52,12 +52,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            item = ReadVarInt(iter, length);
+            item = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(item, container);
+            WriteData<VarInt>(item, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

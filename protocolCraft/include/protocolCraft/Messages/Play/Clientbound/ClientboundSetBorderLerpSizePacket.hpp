@@ -65,14 +65,14 @@ namespace ProtocolCraft
         {
             old_size = ReadData<double>(iter, length);
             new_size = ReadData<double>(iter, length);
-            lerp_time = ReadVarLong(iter, length);
+            lerp_time = ReadData<VarLong>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<double>(old_size, container);
             WriteData<double>(new_size, container);
-            WriteVarLong(lerp_time, container);
+            WriteData<VarLong>(lerp_time, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

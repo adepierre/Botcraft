@@ -132,7 +132,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 739
             chunk_x = ReadData<int>(iter, length);
             chunk_z = ReadData<int>(iter, length);
-            record_count = ReadVarInt(iter, length);
+            record_count = ReadData<VarInt>(iter, length);
 
             records = std::vector<Record>(record_count);
 
@@ -143,12 +143,12 @@ namespace ProtocolCraft
 #else
             section_pos = ReadData<long long int>(iter, length);
             suppress_light_updates = ReadData<bool>(iter, length);
-            int data_size = ReadVarInt(iter, length);
+            int data_size = ReadData<VarInt>(iter, length);
             positions = std::vector<short>(data_size);
             states = std::vector<int>(data_size);
             for (int i = 0; i < data_size; ++i)
             {
-                long long int data = ReadVarLong(iter, length);
+                long long int data = ReadData<VarLong>(iter, length);
                 positions[i] = data & 0xFFFl;
                 states[i] = data >> 12;
             }
@@ -160,7 +160,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 739
             WriteData<int>(chunk_x, container);
             WriteData<int>(chunk_z, container);
-            WriteVarInt(record_count, container);
+            WriteData<VarInt>(record_count, container);
             for (int i = 0; i < record_count; ++i)
             {
                 records[i].Write(container);
@@ -168,10 +168,10 @@ namespace ProtocolCraft
 #else
             WriteData<long long int>(section_pos, container);
             WriteData<bool>(suppress_light_updates, container);
-            WriteVarInt(positions.size(), container);
+            WriteData<VarInt>(positions.size(), container);
             for (int i = 0; i < positions.size(); ++i)
             {
-                WriteVarLong((states[i] << 12) | positions[i], container);
+                WriteData<VarLong>((states[i] << 12) | positions[i], container);
             }
 #endif
         }

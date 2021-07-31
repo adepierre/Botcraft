@@ -62,14 +62,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            primary = ReadVarInt(iter, length);
-            secondary = ReadVarInt(iter, length);
+            primary = ReadData<VarInt>(iter, length);
+            secondary = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVarInt(primary, container);
-            WriteVarInt(secondary, container);
+            WriteData<VarInt>(primary, container);
+            WriteData<VarInt>(secondary, container);
         }
 
         virtual const picojson::value SerializeImpl() const override

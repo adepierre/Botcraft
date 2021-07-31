@@ -154,17 +154,17 @@ namespace ProtocolCraft
         {
             container_id = ReadData<unsigned char>(iter, length);
 #if PROTOCOL_VERSION > 755
-            state_id = ReadVarInt(iter, length);
+            state_id = ReadData<VarInt>(iter, length);
 #endif
             slot_num = ReadData<short>(iter, length);
             button_num = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION < 755
             uid = ReadData<short>(iter, length);
 #endif
-            click_type = ReadVarInt(iter, length);
+            click_type = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 754
             changed_slots.clear();
-            const int changed_slots_size = ReadVarInt(iter, length);
+            const int changed_slots_size = ReadData<VarInt>(iter, length);
             for (int i = 0; i < changed_slots_size; ++i)
             {
                 changed_slots[ReadData<short>(iter, length)].Read(iter, length);
@@ -181,16 +181,16 @@ namespace ProtocolCraft
         {
             WriteData<unsigned char>(container_id, container);
 #if PROTOCOL_VERSION > 755
-            WriteVarInt(state_id, container);
+            WriteData<VarInt>(state_id, container);
 #endif
             WriteData<short>(slot_num, container);
             WriteData<char>(button_num, container);
 #if PROTOCOL_VERSION < 755
             WriteData<short>(uid, container);
 #endif
-            WriteVarInt(click_type, container);
+            WriteData<VarInt>(click_type, container);
 #if PROTOCOL_VERSION > 754
-            WriteVarInt(changed_slots.size(), container);
+            WriteData<VarInt>(changed_slots.size(), container);
             for (auto it = changed_slots.begin(); it != changed_slots.end(); ++it)
             {
                 WriteData<short>(it->first, container);

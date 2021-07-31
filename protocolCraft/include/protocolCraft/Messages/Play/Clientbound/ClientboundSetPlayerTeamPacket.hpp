@@ -187,7 +187,7 @@ namespace ProtocolCraft
                 options = ReadData<char>(iter, length);
                 nametag_visibility = ReadData<std::string>(iter, length);
                 collision_rule = ReadData<std::string>(iter, length);
-                color = ReadVarInt(iter, length);
+                color = ReadData<VarInt>(iter, length);
                 player_prefix.Read(iter, length);
                 player_suffix.Read(iter, length);
 #endif
@@ -195,7 +195,7 @@ namespace ProtocolCraft
             
             if (method == 0 || method == 3 || method == 4)
             {
-                int players_count = ReadVarInt(iter, length);
+                int players_count = ReadData<VarInt>(iter, length);
                 players = std::vector<std::string>(players_count);
                 for (int i = 0; i < players_count; ++i)
                 {
@@ -224,7 +224,7 @@ namespace ProtocolCraft
                 WriteData<char>(options, container);
                 WriteData<std::string>(nametag_visibility, container);
                 WriteData<std::string>(collision_rule, container);
-                WriteVarInt(color, container);
+                WriteData<VarInt>(color, container);
                 player_prefix.Write(container);
                 player_suffix.Write(container);
 #endif
@@ -232,7 +232,7 @@ namespace ProtocolCraft
             
             if (method == 0 || method == 3 || method == 4)
             {
-                WriteVarInt(players.size(), container);
+                WriteData<VarInt>(players.size(), container);
                 for (int i = 0; i < players.size(); ++i)
                 {
                     WriteData<std::string>(players[i], container);

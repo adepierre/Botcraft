@@ -66,7 +66,7 @@ namespace ProtocolCraft
             char flags = ReadData<char>(iter, length);
             if (flags & 0x01)
             {
-                source = ReadVarInt(iter, length);
+                source = ReadData<VarInt>(iter, length);
             }
             if (flags & 0x02)
             {
@@ -79,7 +79,7 @@ namespace ProtocolCraft
             WriteData<char>(((!name_.GetName().empty()) << 1) | (source != -1), container);
             if (source != -1)
             {
-                WriteVarInt((int)source, container);
+                WriteData<VarInt>((int)source, container);
             }
             if (!name_.GetName().empty())
             {

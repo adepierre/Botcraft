@@ -79,16 +79,16 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             pos.Read(iter, length);
-            state = ReadVarInt(iter, length);
-            action = ReadVarInt(iter, length);
+            state = ReadData<VarInt>(iter, length);
+            action = ReadData<VarInt>(iter, length);
             all_good = ReadData<bool>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             pos.Write(container);
-            WriteVarInt(state, container);
-            WriteVarInt(action, container);
+            WriteData<VarInt>(state, container);
+            WriteData<VarInt>(action, container);
             WriteData<bool>(all_good, container);
         }
 

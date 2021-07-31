@@ -131,7 +131,7 @@ namespace Botcraft
             int palette_length = 0;
             if (palette_type != Palette::GlobalPalette)
             {
-                palette_length = ReadVarInt(iter, length);
+                palette_length = ReadData<VarInt>(iter, length);
             }
 #endif
             std::vector<int> palette(palette_length);
@@ -145,7 +145,7 @@ namespace Botcraft
 
                 for (int i = 0; i < palette_length; ++i)
                 {
-                    palette[i] = ReadVarInt(iter, length);
+                    palette[i] = ReadData<VarInt>(iter, length);
                 }
             }
             else
@@ -161,7 +161,7 @@ namespace Botcraft
             unsigned int individual_value_mask = (unsigned int)((1 << bits_per_block) - 1);
 
             //Data array length
-            int data_array_size = ReadVarInt(iter, length);
+            int data_array_size = ReadData<VarInt>(iter, length);
 
             //Data array
             std::vector<unsigned long long int> data_array(data_array_size);

@@ -51,14 +51,14 @@ namespace ProtocolCraft
         {
             horizontal_position = ReadData<unsigned char>(iter, length);
             y_coordinate = ReadData<unsigned char>(iter, length);
-            block_id = ReadVarInt(iter, length);
+            block_id = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<unsigned char>(horizontal_position, container);
             WriteData<unsigned char>(y_coordinate, container);
-            WriteVarInt(block_id, container);
+            WriteData<VarInt>(block_id, container);
         }
 
         virtual const picojson::value SerializeImpl() const override
