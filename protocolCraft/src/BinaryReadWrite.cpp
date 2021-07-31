@@ -26,16 +26,6 @@ namespace ProtocolCraft
         container.insert(container.end(), s.begin(), s.end());
     }
 
-    UUID ReadUUID(ReadIterator& iter, size_t& length)
-    {
-        return ReadRawString(iter, length, 16);
-    }
-
-    void WriteUUID(const UUID& s, WriteContainer& container)
-    {
-        WriteRawString(s, container);
-    }
-
     std::vector<unsigned char> ReadByteArray(ReadIterator &iter, size_t &length, const size_t &desired_length)
     {
         if (length < desired_length)
@@ -150,6 +140,25 @@ namespace ProtocolCraft
     }
 
     template<>
+    UUID ReadData(ReadIterator& iter, size_t& length)
+    {
+        if (length < 16)
+        {
+            throw(std::runtime_error("Not enough input in ReadData<UUID>"));
+        }
+        else
+        {
+            UUID output;
+            std::copy_n(iter, 16, output.begin());
+
+            iter += 16;
+            length -= 16;
+
+            return output;
+        }
+    }
+
+    template<>
     void WriteData(const std::string& value, WriteContainer& container)
     {
         WriteData<VarInt>(value.size(), container);
@@ -172,7 +181,7 @@ namespace ProtocolCraft
     }
 
     template<>
-    void WriteData(const VarLong &value, WriteContainer& container)
+    void WriteData(const VarLong& value, WriteContainer& container)
     {
         unsigned long long int val = value;
         do {
@@ -184,5 +193,11 @@ namespace ProtocolCraft
             }
             container.push_back(temp);
         } while (val != 0);
+    }
+
+    template<>
+    void WriteData(const UUID& value, WriteContainer& container)
+    {
+        container.insert(container.end(), value.begin(), value.end());
     }
 } //ProtocolCraft

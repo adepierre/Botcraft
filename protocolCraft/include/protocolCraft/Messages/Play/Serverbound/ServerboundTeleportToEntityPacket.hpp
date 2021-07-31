@@ -53,12 +53,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            uuid = ReadUUID(iter, length);
+            uuid = ReadData<UUID>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteUUID(uuid, container);
+            WriteData<UUID>(uuid, container);
         }
 
         virtual const picojson::value SerializeImpl() const override
@@ -66,7 +66,7 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["uuid"] = picojson::value(uuid);
+            object["uuid"] = picojson::value(std::string(uuid.begin(), uuid.end()));
 
             return value;
         }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 #include <string>
 #include <cstring>
 #include <algorithm>
@@ -11,7 +12,7 @@ namespace ProtocolCraft
     using WriteContainer = std::vector<unsigned char>;
 
     using Angle = unsigned char;
-    using UUID = std::string;
+    using UUID = std::array<unsigned char, 16>;
 
     template <class T>
     class VarType
@@ -29,9 +30,6 @@ namespace ProtocolCraft
 
     std::string ReadRawString(ReadIterator &iter, size_t &length, const int size);
     void WriteRawString(const std::string &s, WriteContainer &container);
-
-    UUID ReadUUID(ReadIterator& iter, size_t& length);
-    void WriteUUID(const UUID& s, WriteContainer& container);
 
     std::vector<unsigned char> ReadByteArray(ReadIterator &iter, size_t &length, const size_t &desired_length);
     void WriteByteArray(const std::vector<unsigned char> &my_array, WriteContainer &container);
@@ -88,6 +86,11 @@ namespace ProtocolCraft
     template<>
     VarLong ReadData(ReadIterator& iter, size_t& length);
 
+    // We could use base ReadData<T>, but sizeof(std::array<?, N>)
+    // is not guaranteed to be N
+    template<>
+    UUID ReadData(ReadIterator& iter, size_t& length);
+
     template<typename T>
     void WriteData(const T &value, WriteContainer &container)
     {
@@ -122,7 +125,12 @@ namespace ProtocolCraft
     void WriteData(const VarInt &value, WriteContainer &container);
 
     template<>
-    void WriteData(const VarLong &value, WriteContainer &container);
+    void WriteData(const VarLong& value, WriteContainer& container);
+
+    // We could use base WriteData<T>, but sizeof(std::array<?, N>)
+    // is not guaranteed to be N
+    template<>
+    void WriteData(const UUID& value, WriteContainer& container);
 
 
     template<typename T>

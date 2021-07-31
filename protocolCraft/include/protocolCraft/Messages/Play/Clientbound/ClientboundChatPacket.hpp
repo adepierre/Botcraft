@@ -79,7 +79,7 @@ namespace ProtocolCraft
             message.Read(iter, length);
             type = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION > 717
-            sender = ReadUUID(iter, length);
+            sender = ReadData<UUID>(iter, length);
 #endif
         }
 
@@ -88,7 +88,7 @@ namespace ProtocolCraft
             message.Write(container);
             WriteData<char>(type, container);
 #if PROTOCOL_VERSION > 717
-            WriteUUID(sender, container);
+            WriteData<UUID>(sender, container);
 #endif
         }
 
@@ -100,7 +100,7 @@ namespace ProtocolCraft
             object["message"] = message.Serialize();
             object["type"] = picojson::value((double)type);
 #if PROTOCOL_VERSION > 717
-            object["sender"] = picojson::value(sender);
+            object["sender"] = picojson::value(std::string(sender.begin(), sender.end()));
 #endif
 
             return value;

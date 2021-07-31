@@ -80,7 +80,7 @@ namespace ProtocolCraft
             const int number_of_entries = ReadData<VarInt>(iter, length);
             for (int i = 0; i < number_of_entries; ++i)
             {
-                UUID uuid = ReadUUID(iter, length);
+                UUID uuid = ReadData<UUID>(iter, length);
                 switch (action)
                 {
                 case PlayerInfoAction::AddPlayer:
@@ -123,7 +123,7 @@ namespace ProtocolCraft
                 WriteData<VarInt>(entries.size(), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    WriteUUID(it->first, container);
+                    WriteData<UUID>(it->first, container);
                     it->second.Write(container);
                 }
                 break;
@@ -131,7 +131,7 @@ namespace ProtocolCraft
                 WriteData<VarInt>(entries.size(), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    WriteUUID(it->first, container);
+                    WriteData<UUID>(it->first, container);
                     WriteData<VarInt>((int)it->second.GetGameMode(), container);
                 }
                 break;
@@ -139,7 +139,7 @@ namespace ProtocolCraft
                 WriteData<VarInt>(entries.size(), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    WriteUUID(it->first, container);
+                    WriteData<UUID>(it->first, container);
                     WriteData<VarInt>((int)it->second.GetLatency(), container);
                 }
                 break;
@@ -147,7 +147,7 @@ namespace ProtocolCraft
                 WriteData<VarInt>(entries.size(), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    WriteUUID(it->first, container);
+                    WriteData<UUID>(it->first, container);
                     WriteData<bool>(!it->second.GetDisplayName().GetText().empty(), container);
                     if (!it->second.GetDisplayName().GetText().empty())
                     {
@@ -159,7 +159,7 @@ namespace ProtocolCraft
                 WriteData<VarInt>(entries.size(), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    WriteUUID(it->first, container);
+                    WriteData<UUID>(it->first, container);
                 }
                 break;
             default:
@@ -184,7 +184,7 @@ namespace ProtocolCraft
                 {
                     picojson::value value2(picojson::object_type, false);
                     picojson::object& object2 = value2.get<picojson::object>();
-                    object2["uuid"] = picojson::value(it->first);
+                    object2["uuid"] = picojson::value(std::string(it->first.begin(), it->first.end()));
                     object2["player_info"] = it->second.Serialize();
                     array.push_back(value2);
                 }
@@ -195,7 +195,7 @@ namespace ProtocolCraft
                 {
                     picojson::value value2(picojson::object_type, false);
                     picojson::object& object2 = value2.get<picojson::object>();
-                    object2["uuid"] = picojson::value(it->first);
+                    object2["uuid"] = picojson::value(std::string(it->first.begin(), it->first.end()));
                     object2["game_mode"] = picojson::value((double)it->second.GetGameMode());
                     array.push_back(value2);
                 }
@@ -206,7 +206,7 @@ namespace ProtocolCraft
                 {
                     picojson::value value2(picojson::object_type, false);
                     picojson::object& object2 = value2.get<picojson::object>();
-                    object2["uuid"] = picojson::value(it->first);
+                    object2["uuid"] = picojson::value(std::string(it->first.begin(), it->first.end()));
                     object2["latency"] = picojson::value((double)it->second.GetLatency());
                     array.push_back(value2);
                 }
@@ -217,7 +217,7 @@ namespace ProtocolCraft
                 {
                     picojson::value value2(picojson::object_type, false);
                     picojson::object& object2 = value2.get<picojson::object>();
-                    object2["uuid"] = picojson::value(it->first);
+                    object2["uuid"] = picojson::value(std::string(it->first.begin(), it->first.end()));
                     if (!it->second.GetDisplayName().GetText().empty())
                     {
                         object2["display_name"] = it->second.GetDisplayName().Serialize();
@@ -229,7 +229,7 @@ namespace ProtocolCraft
                 array.reserve(entries.size());
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    array.push_back(picojson::value(it->first));
+                    array.push_back(picojson::value(std::string(it->first.begin(), it->first.end())));
                 }
                 break;
             default:

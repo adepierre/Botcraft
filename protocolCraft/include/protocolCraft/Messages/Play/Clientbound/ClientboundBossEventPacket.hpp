@@ -114,7 +114,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            id_ = ReadUUID(iter, length);
+            id_ = ReadData<UUID>(iter, length);
             operation = ReadData<VarInt>(iter, length);
             switch (operation)
             {
@@ -147,7 +147,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteUUID(id_, container);
+            WriteData<UUID>(id_, container);
             WriteData<VarInt>((int)operation, container);
             switch (operation)
             {
@@ -183,7 +183,7 @@ namespace ProtocolCraft
             picojson::value value(picojson::object_type, false);
             picojson::object& object = value.get<picojson::object>();
 
-            object["id_"] = picojson::value(id_);
+            object["id_"] = picojson::value(std::string(id_.begin(), id_.end()));
             object["operation"] = picojson::value((double)operation);
 
             switch (operation)
