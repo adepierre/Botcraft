@@ -10,7 +10,7 @@
 // A simple behaviour tree implementation following this blog article
 // https://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
 
-namespace Botcraft::BT
+namespace Botcraft::AI
 {
 	enum class Status
 	{
@@ -43,7 +43,7 @@ namespace Botcraft::BT
 
 	protected:
 		std::vector<std::shared_ptr<Node<C>>> children;
-		std::vector<std::shared_ptr<Node<C>>>::iterator it;
+		typename std::vector<std::shared_ptr<Node<C>>>::iterator it;
 	};
 
 	template<typename C>
@@ -81,11 +81,6 @@ namespace Botcraft::BT
 		std::function<Status(C&)> func;
 	};
 
-	class InterruptedException : public std::exception
-	{
-
-	};
-
 	template<typename C>
 	class BehaviourTree : public Node<C>
 	{
@@ -108,4 +103,4 @@ namespace Botcraft::BT
 		std::shared_ptr<Node<C>> root;
 	};
 
-} // namespace Botcraft::BT
+} // namespace Botcraft::AI
