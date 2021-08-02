@@ -43,7 +43,7 @@ namespace Botcraft::AI
             auto it = blackboard.find(key);
             if (it == blackboard.end())
             {
-                it = blackboard.insert(std::pair<std::string, std::any>(key, value));
+                it = blackboard.insert(std::pair<std::string, std::any>(key, default_value)).first;
             }
             return std::any_cast<T&>(it->second);
         }

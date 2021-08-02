@@ -3,19 +3,11 @@
 #include "botcraft/Game/BaseClient.hpp"
 #include "botcraft/Game/Vector3.hpp"
 
+#include "botcraft/AI/Blackboard.hpp"
+#include "botcraft/AI/PathfindingTask.hpp"
+
 namespace Botcraft
 {
-    // This looks like a state machine A LOT
-    // could be a good idea to refactor this
-    // before it's too big
-    enum class PathFindingState
-    {
-        Waiting,
-        Searching,
-        Moving,
-        Stop
-    };
-
     enum class DiggingState
     {
         Waiting,
@@ -28,10 +20,6 @@ namespace Botcraft
     public:
         InterfaceClient(const bool use_renderer_, const bool afk_only_ = false);
         ~InterfaceClient();
-
-
-
-
 
         const DiggingState GetDiggingState() const;
         // Try to dig the currently pointed block
@@ -80,13 +68,6 @@ namespace Botcraft
 
 
     protected:
-        // Find a path between two positions
-        // the path must finish at least min_end_dist blocks away
-        // from the real end on the X/Z plane (set min_end_dist to
-        // 0 to finish exactly on end)
-        // if can_jump, can go through 1 wide gaps
-        const std::vector<Position> FindPath(const Position &start, const Position &end, const int min_end_dist, const bool can_jump);
-
         // Swap two slots in a given container
         const bool SwapItemsInContainer(const short container_id, const short first_slot, const short second_slot);
 
@@ -107,8 +88,12 @@ namespace Botcraft
         void Jump();
     
     private:
-        PathFindingState pathfinding_state;
-
         DiggingState digging_state;
+
+        AI::Blackboard blackboard;
+        AI::PathfindingTask pathfinding_task;
+
+        // We want the tasks to access the managers
+        friend AI::PathfindingTask;
     };
 }

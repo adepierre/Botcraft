@@ -5,6 +5,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/AI/BehaviourTree.hpp
     include/botcraft/AI/Blackboard.hpp
     include/botcraft/AI/InterfaceClient.hpp
+    include/botcraft/AI/PathfindingTask.hpp
     include/botcraft/Game/AABB.hpp
     include/botcraft/Game/Entities/Entity.hpp
     include/botcraft/Game/Entities/EntityManager.hpp
@@ -47,6 +48,7 @@ set(botcraft_PRIVATE_HDR
 set(botcraft_SRC
     src/AI/AsyncTask.cpp
     src/AI/InterfaceClient.cpp
+    src/AI/PathfindingTask.cpp
     src/Game/AABB.cpp
     src/Game/AssetsManager.cpp
     src/Game/BaseClient.cpp

@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "botcraft/AI/AsyncTask.hpp"
 
 namespace Botcraft::AI
@@ -58,7 +56,10 @@ namespace Botcraft::AI
             quit = true;
         }
         cond_var.notify_all();
-        thread->join();
+        if (thread && thread->joinable())
+        {
+            thread->join();
+        }
     }
 
     void AsyncTask::Yield()
