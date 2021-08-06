@@ -27,19 +27,6 @@ namespace Botcraft
         const bool DigAt(const Botcraft::Position& location, const PlayerDiggingFace face);
         void StopDigging();
 
-
-        // Go to a position
-        // goal is the target position of the feets of the player
-        // in_range: if true, the pathfinding is considered successful if
-        // the final position is less than 4 blocks from the target
-        // min_end_dist: the minimal distance we want to be to the target on 
-        // the X/Z plane at the end (useful if you want to place a block at 
-        // the given location, you don't want to be inside this block)
-        // speed is on block/s on the (X, Z) plane
-        // Returns true if the position was reached, false otherwise
-        const bool GoTo(const Position &goal, const bool in_range, const int min_end_dist = 0, const float speed = 4.317f);
-        void StopPathFinding();
-
         // Place a given block at a given location
         // item: name of the item to place, fails if not present in the inventory
         // location: position of the placed block
@@ -87,7 +74,7 @@ namespace Botcraft
         // Add some speed on Y
         void Jump();
     
-    private:
+    protected:
         DiggingState digging_state;
 
         AI::Blackboard blackboard;

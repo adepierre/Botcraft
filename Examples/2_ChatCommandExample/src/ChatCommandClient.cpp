@@ -73,13 +73,15 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
             return;
         }
 
-        // Launch the command on a new thread
-        std::thread t(&ChatCommandClient::GoTo, this, target_position, false, 0, speed);
-        t.detach();
+        blackboard.Set("pathfinding.goal", target_position);
+        blackboard.Set("pathfinding.dist_tolerance", 0);
+        blackboard.Set("pathfinding.min_end_dist", 0);
+
+        // Create a tree with only the go leaf and starts it
     }
     else if (splitted[1] == "stop")
     {
-        StopPathFinding();
+        pathfinding_task.Stop();
     }
     else if (splitted[1] == "check_perimeter")
     {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <botcraft/Game/Vector3.hpp>
-#include <botcraft/Game/InterfaceClient.hpp>
+#include <botcraft/AI/InterfaceClient.hpp>
 
 class ChatCommandClient : public Botcraft::InterfaceClient
 {
