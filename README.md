@@ -63,14 +63,11 @@ mkdir build
 cd build
 cmake -DGAME_VERSION=latest -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
 make all
-make install
 ```
 
-You don't have to clone the dependencies manually, cmake will clone the ones you need depending on your build configuration.
+At this point, you should have all the examples compiled and ready to run. Plese note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual.
 
-Don't forget to change the cmake install directory if you don't want the library to be installed in the default location.
-
-On Windows with Visual, you can replace the last five steps by launching cmake-gui and then compiling the .sln from Visual.
+You can check [this discussion](https://github.com/adepierre/Botcraft/discussions/45#discussioncomment-1142555) for an example of how to use botcraft with your own code.
 
 There are several cmake options you can modify:
 - GAME_VERSION [1.XX.X or latest]
