@@ -12,11 +12,14 @@ namespace Botcraft
 
         // Take login and password as input,
         // return true if authenticated successfully, false otherwise
-        bool AuthToken(const std::string& login, const std::string& password);
+        bool AuthMojang(const std::string& login, const std::string& password);
 
-        // Take a launcher accounts file as input,
-        // return true if authenticated successfully, false otherwise
-        bool AuthToken(const std::string& launcher_accounts_path);
+        /// <summary>
+        /// Check if there is a saved credentials file, if not
+        /// start the whole Microsoft auth flow
+        /// </summary>
+        /// <returns>true if authenticated successfully, false otherwise</returns>
+        bool AuthMicrosoft();
 
         // Join a server after encryption request arrived
         bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key);
@@ -27,10 +30,13 @@ namespace Botcraft
         const std::string SendPostRequest(const std::string& host, const std::string& endpoint, const std::string& data,
             unsigned int& status_code, std::string& status_message);
 
+        bool AuthFromCacheFile();
+
     private:
 
-        static const std::string auth_server_URL;
-        static const std::string session_server_URL;
+        static const std::string mojang_auth_server_URL;
+        static const std::string mojang_session_server_URL;
+        static const std::string msa_credentials_path;
 
         std::string player_display_name;
         std::string access_token;

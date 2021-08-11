@@ -15,8 +15,9 @@
 
 namespace Botcraft
 {
-    const std::string Authentifier::auth_server_URL = "authserver.mojang.com";
-    const std::string Authentifier::session_server_URL = "sessionserver.mojang.com";
+    const std::string Authentifier::mojang_auth_server_URL = "authserver.mojang.com";
+    const std::string Authentifier::mojang_session_server_URL = "sessionserver.mojang.com";
+    const std::string Authentifier::msa_credentials_path = "botcraft_msa_credentials.json";
 
 
     Authentifier::Authentifier()
@@ -29,7 +30,7 @@ namespace Botcraft
 
     }
 
-    bool Authentifier::AuthToken(const std::string& login, const std::string& password)
+    bool Authentifier::AuthMojang(const std::string& login, const std::string& password)
     {
 #ifndef USE_ENCRYPTION
         return false;
@@ -44,7 +45,7 @@ namespace Botcraft
         unsigned int status_code;
         std::string status_message;
 
-        const std::string output_string = SendPostRequest(auth_server_URL, "/authenticate", data, status_code, status_message);
+        const std::string output_string = SendPostRequest(mojang_auth_server_URL, "/authenticate", data, status_code, status_message);
 
         if (status_code != 200)
         {
@@ -97,12 +98,36 @@ namespace Botcraft
 #endif
     }
 
-    bool Authentifier::AuthToken(const std::string& launcher_accounts_path)
+    bool Authentifier::AuthMicrosoft()
     {
-
 #ifndef USE_ENCRYPTION
         return false;
 #else
+
+        // Check if we have some cached credentials
+        bool have_cached_credentials;
+        {
+            std::ifstream msa_file(msa_credentials_path);
+            have_cached_credentials = msa_file.good();
+        }
+
+        if (have_cached_credentials)
+        {
+            return AuthFromCacheFile();
+        }
+
+        // Otherwise, we start the whole auth flow
+
+
+
+
+
+
+
+
+
+
+
         std::stringstream ss;
         std::ifstream file;
 
@@ -183,7 +208,7 @@ namespace Botcraft
         // Trying to validate the token
         unsigned int validation_status_code;
         std::string validation_status_message;
-        const std::string validation_response = SendPostRequest(auth_server_URL, "/validate",
+        const std::string validation_response = SendPostRequest(mojang_auth_server_URL, "/validate",
             "{\"accessToken\":\"" + access_token + "\"}", validation_status_code, validation_status_message);
 
         if (validation_status_code != 204)
@@ -194,7 +219,7 @@ namespace Botcraft
 
             unsigned int refresh_status_code;
             std::string refresh_status_message;
-            const std::string refresh_response = SendPostRequest(auth_server_URL, "/refresh",
+            const std::string refresh_response = SendPostRequest(mojang_auth_server_URL, "/refresh",
                 "{\"accessToken\":\"" + access_token + "\",\"clientToken\":\"" + client_token + "\"}", refresh_status_code, refresh_status_message);
 
             if (refresh_status_code != 200)
@@ -318,7 +343,7 @@ namespace Botcraft
         unsigned int status_code;
         std::string status_message;
 
-        SendPostRequest(session_server_URL, "/session/minecraft/join", data, status_code, status_message);
+        SendPostRequest(mojang_session_server_URL, "/session/minecraft/join", data, status_code, status_message);
 
         if (status_code != 204)
         {
@@ -426,5 +451,28 @@ namespace Botcraft
         }
 
         return output_string.str();
+    }
+    bool Authentifier::AuthFromCacheFile()
+    {
+        // Read cache file to get data
+
+        // Validate the token
+
+        // If not valid try to refresh it
+        bool fail = true;
+        // If refresh fails, remove the
+        // cache file and restart the whole
+        // auth flow
+        if (fail)
+        {
+            std::remove(msa_credentials_path.c_str());
+            return AuthMicrosoft();
+        }
+        else
+        {
+            // Auth with the data from the cached file
+        }
+
+        return false;
     }
 }
