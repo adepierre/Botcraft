@@ -335,7 +335,7 @@ namespace Botcraft
             {
                 int max_match = 0;
 
-                for (auto& it = json["variants"].begin(); it != json["variants"].end(); ++it)
+                for (nlohmann::json::const_iterator it = json["variants"].begin(); it != json["variants"].end(); ++it)
                 {
                     const std::vector<std::string> variables_values = SplitString(it.key(), ',');
                     
