@@ -316,18 +316,17 @@ namespace Botcraft
         //If it's a "normal" blockstate
         if (json.contains("variants"))
         {
-            const nlohmann::json& variants = json["variants"];
             nlohmann::json null_value;
             nlohmann::json &variant_value = null_value;
 
-            if (variants.contains(""))
+            if (json["variants"].contains(""))
             {
-                variant_value = variants[""];
+                variant_value = json["variants"][""];
             }
 
-            if (variants.contains("normal"))
+            if (json["variants"].contains("normal"))
             {
-                variant_value = variants["normal"];
+                variant_value = json["variants"]["normal"];
             }
 
             //This case means we have to check the variables to find
@@ -336,7 +335,7 @@ namespace Botcraft
             {
                 int max_match = 0;
 
-                for (auto& it = variants.begin(); it != variants.end(); ++it)
+                for (auto& it = json["variants"].begin(); it != json["variants"].end(); ++it)
                 {
                     const std::vector<std::string> variables_values = SplitString(it.key(), ',');
                     
