@@ -114,29 +114,29 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["entity_id"] = picojson::value((double)entity_id);
+            output["entity_id"] = entity_id;
 #if PROTOCOL_VERSION > 730
-            object["slots"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["slots"].get<picojson::array>();
+            output["slots"] = nlohmann::json::array();
+
             for (int i = 0; i < slots.size(); ++i)
             {
-                picojson::value current_slot(picojson::object_type, false);
-                picojson::object& current_slot_object = current_slot.get<picojson::object>();
-                current_slot_object["first"] = picojson::value((double)slots[i].first);
-                current_slot_object["second"] = slots[i].second.Serialize();
-                array.push_back(current_slot);
+                nlohmann::json current_slot;
+
+                current_slot["first"] = slots[i].first;
+                current_slot["second"] = slots[i].second.Serialize();
+
+                output["slots"].push_back(current_slot);
             }
 #else
-            object["slot_first"] = picojson::value((double)slot.first);
-            object["slot_second"] = slot.second.Serialize();
+            output["slot_first"] = slot.first;
+            output["slot_second"] = slot.second.Serialize();
 #endif
 
-            return value;
+            return output;
         }
 
     private:

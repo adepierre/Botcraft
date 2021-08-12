@@ -170,43 +170,38 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["state"] = picojson::value((double)state);
+            output["state"] = state;
 
-            object["recipes"] = picojson::value(picojson::array_type, false);
-            picojson::array& array_recipes = object["recipes"].get<picojson::array>();
-
+#if PROTOCOL_VERSION > 348
+            output["recipes"] = nlohmann::json::array();
             for (int i = 0; i < recipes.size(); ++i)
             {
-#if PROTOCOL_VERSION > 348
-                array_recipes.push_back(recipes[i].Serialize());
-#else
-                array_recipes.push_back(picojson::value((double)recipes[i]));
-#endif
+                output["recipes"].push_back(recipes[i].Serialize());
             }
+#else
+            output["recipes"]= recipes;
+#endif
 
             if (state == RecipeState::Init)
             {
-                object["to_highlight"] = picojson::value(picojson::array_type, false);
-                picojson::array& array_to_highlight = object["to_highlight"].get<picojson::array>();
-
+#if PROTOCOL_VERSION > 348
+                output["to_highlight"] = nlohmann::json::array();
                 for (int i = 0; i < to_highlight.size(); ++i)
                 {
-#if PROTOCOL_VERSION > 348
-                    array_to_highlight.push_back(to_highlight[i].Serialize());
-#else
-                    array_to_highlight.push_back(picojson::value((double)to_highlight[i]));
-#endif
+                    output["to_highlight"].push_back(to_highlight[i].Serialize());
                 }
+#else
+                output["to_highlight"] = to_highlight;
+#endif
             }
 
-            object["book_settings"] = book_settings.Serialize();
+            output["book_settings"] = book_settings.Serialize();
 
-            return value;
+            return output;
         }
 
     private:

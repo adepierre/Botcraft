@@ -85,16 +85,15 @@ namespace ProtocolCraft
             WriteData<char>(direction, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["pos"] = pos.Serialize();
-            object["direction"] = picojson::value((double)direction);
-            object["action"] = picojson::value((double)action);
+            output["pos"] = pos.Serialize();
+            output["direction"] = direction;
+            output["action"] = action;
 
-            return value;
+            return output;
         }
 
     private:

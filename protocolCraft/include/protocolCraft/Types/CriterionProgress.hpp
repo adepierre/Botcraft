@@ -52,18 +52,17 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["achieved"] = picojson::value(achieved);
+            output["achieved"] = achieved;
             if (achieved)
             {
-                object["date_of_achieving"] = picojson::value((double)date_of_achieving);
+                output["date_of_achieving"] = date_of_achieving;
             }
 
-            return value;
+            return output;
         }
 
     private:

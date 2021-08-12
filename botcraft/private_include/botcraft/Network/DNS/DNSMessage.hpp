@@ -266,54 +266,48 @@ namespace Botcraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value val(picojson::object_type, false);
-            picojson::object& object = val.get<picojson::object>();
+            nlohmann::json output;
 
-            object["qr"] = picojson::value((double)qr);
-            object["opcode"] = picojson::value((double)opcode);
-            object["aa"] = picojson::value((double)aa);
-            object["tc"] = picojson::value((double)tc);
-            object["rd"] = picojson::value((double)rd);
-            object["ra"] = picojson::value((double)ra);
-            object["z"] = picojson::value((double)z);
-            object["rcode"] = picojson::value((double)rcode);
-
-            object["number_question"] = picojson::value((double)number_question);
-            object["number_answer"] = picojson::value((double)number_answer);
-            object["number_authority"] = picojson::value((double)number_authority);
-            object["number_additional_rr"] = picojson::value((double)number_additional_rr);
-
-            object["questions"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["questions"].get<picojson::array>();
+            output["qr"] = qr;
+            output["opcode"] = opcode;
+            output["aa"] = aa;
+            output["tc"] = tc;
+            output["rd"] = rd;
+            output["ra"] = ra;
+            output["z"] = z;
+            output["rcode"] = rcode;
+            output["number_question"] = number_question;
+            output["number_answer"] = number_answer;
+            output["number_authority"] = number_authority;
+            output["number_additional_rr"] = number_additional_rr;
+            
+            output["questions"] = nlohmann::json::array();
             for (int i = 0; i < number_question; ++i)
             {
-                array.push_back(questions[i].Serialize());
+                output["questions"].push_back(questions[i].Serialize());
             }
 
-            object["answers"] = picojson::value(picojson::array_type, false);
-            array = object["answers"].get<picojson::array>();
+            output["answers"] = nlohmann::json::array();
             for (int i = 0; i < number_answer; ++i)
             {
-                array.push_back(answers[i].Serialize());
+                output["answers"].push_back(answers[i].Serialize());
             }
 
-            object["authorities"] = picojson::value(picojson::array_type, false);
-            array = object["authorities"].get<picojson::array>();
+            output["authorities"] = nlohmann::json::array();
             for (int i = 0; i < number_authority; ++i)
             {
-                array.push_back(authorities[i].Serialize());
+                output["authorities"].push_back(authorities[i].Serialize());
             }
 
-            object["additionals"] = picojson::value(picojson::array_type, false);
-            array = object["additionals"].get<picojson::array>();
+            output["additionals"] = nlohmann::json::array();
             for (int i = 0; i < number_additional_rr; ++i)
             {
-                array.push_back(additionals[i].Serialize());
+                output["additionals"].push_back(additionals[i].Serialize());
             }
 
-            return val;
+            return output;
         }
 
     private:

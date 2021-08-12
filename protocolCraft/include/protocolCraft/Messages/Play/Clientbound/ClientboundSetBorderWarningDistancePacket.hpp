@@ -51,14 +51,13 @@ namespace ProtocolCraft
             WriteData<VarInt>(warning_blocks, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["warning_blocks"] = picojson::value((double)warning_blocks);
+            output["warning_blocks"] = warning_blocks;
 
-            return value;
+            return output;
         }
 
     private:

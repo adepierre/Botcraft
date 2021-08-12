@@ -368,54 +368,52 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["player_id"] = picojson::value((double)player_id);
+            output["player_id"] = player_id;
 #if PROTOCOL_VERSION > 737
-            object["hardcore"] = picojson::value(hardcore);
+            output["hardcore"] = hardcore;
 #endif
-            object["game_type"] = picojson::value((double)game_type);
+            output["game_type"] = game_type;
 #if PROTOCOL_VERSION > 718
-            object["previous_game_type"] = picojson::value((double)previous_game_type);
-            object["levels"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["levels"].get<picojson::array>();
+            output["previous_game_type"] = previous_game_type;
+            output["levels"] = nlohmann::json::array();
             for (int i = 0; i < levels.size(); ++i)
             {
-                array.push_back(levels[i].Serialize());
+                output["levels"].push_back(levels[i].Serialize());
             }
-            object["registry_holder"] = registry_holder.Serialize();
+            output["registry_holder"] = registry_holder.Serialize();
 
 #if PROTOCOL_VERSION > 747
-            object["dimension_type"] = dimension_type.Serialize();
+            output["dimension_type"] = dimension_type.Serialize();
 #endif
-            object["dimension"] = dimension.Serialize();
+            output["dimension"] = dimension.Serialize();
 #else
-            object["dimension"] = picojson::value((double)dimension);
+            output["dimension"] = dimension;
 #endif
 #if PROTOCOL_VERSION > 551
-            object["seed"] = picojson::value((double)seed);
+            output["seed"] = seed;
 #endif
-            object["difficulty"] = picojson::value((double)difficulty);
-            object["max_players"] = picojson::value((double)max_players);
+            output["difficulty"] = difficulty;
+            output["max_players"] = max_players;
 #if PROTOCOL_VERSION < 719
-            object["level_type"] = picojson::value(level_type);
+            output["level_type"] = level_type;
 #endif
 #if PROTOCOL_VERSION >= 477
-            object["chunk_radius"] = picojson::value((double)chunk_radius);
+            output["chunk_radius"] = chunk_radius;
 #endif
-            object["reduced_debug_info"] = picojson::value(reduced_debug_info);
+            output["reduced_debug_info"] = reduced_debug_info;
 #if PROTOCOL_VERSION > 565
-            object["show_death_screen"] = picojson::value(show_death_screen);
+            output["show_death_screen"] = show_death_screen;
 #endif
 #if PROTOCOL_VERSION > 718
-            object["is_debug"] = picojson::value(is_debug);
-            object["is_flat"] = picojson::value(is_flat);
+            output["is_debug"] = is_debug;
+            output["is_flat"] = is_flat;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

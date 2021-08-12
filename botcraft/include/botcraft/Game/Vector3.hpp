@@ -3,7 +3,7 @@
 #include <ostream>
 #include <cassert>
 
-#include <picojson/picojson.h>
+#include <nlohmann/json.hpp>
 
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
@@ -154,11 +154,9 @@ namespace Botcraft
             return o;
         }
 
-        const picojson::value Serialize() const
+        const nlohmann::json Serialize() const
         {
-            return picojson::value("[" + std::to_string(x) + ", " +
-                std::to_string(y) + ", " +
-                std::to_string(z) + "]");
+            return nlohmann::json({ x, y, z });
         }
 
         const ProtocolCraft::NetworkPosition ToNetworkPosition() const

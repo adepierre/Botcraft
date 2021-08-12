@@ -82,20 +82,18 @@ namespace ProtocolCraft
             WriteData<VarInt>(root_index, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["nodes"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["nodes"].get<picojson::array>();
+            output["nodes"] = nlohmann::json::array();
             for (int i = 0; i < nodes.size(); ++i)
             {
-                array.push_back(nodes[i].Serialize());
+                output["nodes"].push_back(nodes[i].Serialize());
             }
-            object["root_index"] = picojson::value((double)root_index);
+            output["root_index"] = root_index;
 
-            return value;
+            return output;
         }
 
     private:

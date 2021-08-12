@@ -167,10 +167,10 @@ target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
 # Add protocolCraft
 target_link_libraries(botcraft PUBLIC protocolCraft)
 
-# Add picoJson
+# Add json
 target_include_directories(botcraft 
     PUBLIC 
-        $<BUILD_INTERFACE:${PICOJSON_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>
 )
 
 # Add Asio
@@ -239,8 +239,8 @@ install(
         ${CMAKE_INSTALL_LIBDIR}/cmake/botcraft
 )
 
-# Copy picoJson
-install(DIRECTORY ${PICOJSON_INCLUDE_DIR}
+# Copy json
+install(DIRECTORY ${JSON_INCLUDE_DIR}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 export(EXPORT botcraft-targets

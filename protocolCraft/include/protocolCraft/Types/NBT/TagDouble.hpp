@@ -19,7 +19,7 @@ namespace ProtocolCraft
 
         virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
         virtual void WriteImpl(WriteContainer &container) const override;
-        virtual const picojson::value SerializeImpl() const override;
+        virtual const nlohmann::json SerializeImpl() const override;
 
     private:
         double value;

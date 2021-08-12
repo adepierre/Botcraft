@@ -135,40 +135,37 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["reset"] = picojson::value(reset);
-            object["added"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["added"].get<picojson::array>();
+            output["reset"] = reset;
+
+            output["added"] = nlohmann::json::array();
             for (auto it = added.begin(); it != added.end(); ++it)
             {
-                picojson::value value2(picojson::object_type, false);
-                picojson::object& object2 = value2.get<picojson::object>();
-                object2["key"] = it->first.Serialize();
-                object2["value"] = it->second.Serialize();
-                array.push_back(value2);
-            }
-            object["removed"] = picojson::value(picojson::array_type, false); 
-            array = object["removed"].get<picojson::array>();
-            for (int i = 0; i < removed.size(); ++i)
-            {
-                array.push_back(removed[i].Serialize());
-            } 
-            object["progress"] = picojson::value(picojson::array_type, false);
-            array = object["progress"].get<picojson::array>();
-            for (auto it = progress.begin(); it != progress.end(); ++it)
-            {
-                picojson::value value2(picojson::object_type, false);
-                picojson::object& object2 = value2.get<picojson::object>();
-                object2["key"] = it->first.Serialize();
-                object2["value"] = it->second.Serialize();
-                array.push_back(value2);
+                nlohmann::json add;
+                add["key"] = it->first.Serialize();
+                add["value"] = it->second.Serialize();
+                output["added"].push_back(add);
             }
 
-            return value;
+            output["removed"] = nlohmann::json::array();
+            for (int i = 0; i < removed.size(); ++i)
+            {
+                output["removed"].push_back(removed[i].Serialize());
+            } 
+
+            output["progress"] = nlohmann::json::array();
+            for (auto it = progress.begin(); it != progress.end(); ++it)
+            {
+                nlohmann::json prog;
+                prog["key"] = it->first.Serialize();
+                prog["value"] = it->second.Serialize();
+                output["progress"].push_back(prog);
+            }
+
+            return output;
         }
 
     private:

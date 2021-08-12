@@ -1,10 +1,11 @@
 #include "botcraft/Game/Model.hpp"
 #include "botcraft/Utilities/StringUtilities.hpp"
 
-#include <picojson/picojson.h>
+#include <nlohmann/json.hpp>
 
 #include <sstream>
 #include <fstream>
+#include <iostream>
 
 namespace Botcraft
 {
@@ -44,43 +45,22 @@ namespace Botcraft
             full_filepath = ASSETS_PATH + std::string("/minecraft/models/") + filepath + ".json";
         }
 
-        std::stringstream ss;
-        std::ifstream file;
-
         bool error = filepath == "";
-        picojson::value json;
-
+        nlohmann::json obj;
+        
         if (!error)
         {
-            file.open(full_filepath);
-            if (!file.is_open())
+            try
             {
-                std::cerr << "Error reading model file at " << full_filepath << std::endl;
-                error = true;
-            }
-            if (!error)
-            {
-                ss << file.rdbuf();
+                std::ifstream file(full_filepath);
+                file >> obj;
                 file.close();
-
-                ss >> json;
-                std::string err = picojson::get_last_error();
-
-                if (!err.empty())
-                {
-                    std::cerr << "Error parsing model file at " << full_filepath << "\n";
-                    std::cerr << err << std::endl;
-                    error = true;
-                }
-                if (!error)
-                {
-
-                    if (!json.is<picojson::object>())
-                    {
-                        std::cerr << "Error parsing model file at " << full_filepath << std::endl;
-                        error = true;
-                    }
-                }
+            }
+            catch (const nlohmann::json::exception& e)
+            {
+                std::cerr << "Error reading model file  " << full_filepath << std::endl;
+                std::cerr << e.what() << std::endl;
+                error = true;
             }
         }
 
@@ -107,21 +87,19 @@ namespace Botcraft
         //Default values
         ambient_occlusion = true;
 
-        const picojson::value::object &obj = json.get<picojson::object>();
-
         auto it = obj.find("parent");
         if (it != obj.end())
         {
 #if PROTOCOL_VERSION > 578 // > 1.15.2
             // Remove the minecraft: in front of the parent model name
-            std::string model_name = it->second.get<std::string>();
+            std::string model_name = it.value();
             if (StartsWith(model_name, "minecraft:"))
             {
                 model_name = model_name.substr(10);
             }
             const Model& parent_model = GetModel(model_name, custom);
 #else
-            const Model& parent_model = GetModel(it->second.get<std::string>(), custom);
+            const Model& parent_model = GetModel(it.value(), custom);
 #endif
             colliders = parent_model.colliders;
 #if USE_GUI
@@ -135,7 +113,7 @@ namespace Botcraft
         it = obj.find("ambientocclusion");
         if (it != obj.end())
         {
-            ambient_occlusion = it->second.get<bool>();
+            ambient_occlusion = it.value();
         }
 
         it = obj.find("display");
@@ -148,36 +126,31 @@ namespace Botcraft
         it = obj.find("textures_base_size");
         if (it != obj.end())
         {
-            const picojson::value::object& obj_tex = it->second.get<picojson::object>();
-            for (picojson::value::object::const_iterator j = obj_tex.begin(); j != obj_tex.end(); ++j)
+            for (nlohmann::json::const_iterator j = obj["textures_base_size"].begin(); j != obj["textures_base_size"].end(); ++j)
             {
-                const std::string texture_name = j->first;
-
-                picojson::array width_height = j->second.get<picojson::array>();
-                textures_base_size[texture_name] = std::pair<int, int>(width_height[0].get<double>(), width_height[1].get<double>());
+                textures_base_size[j.key()] = std::pair<int, int>(j.value()[0], j.value()[1]);
             }
         }
 
         it = obj.find("textures");
         if (it != obj.end())
         {
-            const picojson::value::object &obj_tex = it->second.get<picojson::object>();
-            for (picojson::value::object::const_iterator j = obj_tex.begin(); j != obj_tex.end(); ++j)
+            for (nlohmann::json::const_iterator j = obj["textures"].begin(); j != obj["textures"].end(); ++j)
             {
 #if PROTOCOL_VERSION > 578 // > 1.15.2
                 // Remove leading minecraft: from the path of the textures
-                std::string texture_name = j->second.get<std::string>();
+                std::string texture_name = j.value();
                 if (StartsWith(texture_name, "minecraft:"))
                 {
                      texture_name = texture_name.substr(10);
                 }
 #else
-                const std::string texture_name = j->second.get<std::string>();
+                const std::string texture_name = j.value();
 #endif
-                textures_variables["#" + j->first] = texture_name;
-                if (j->second.get<std::string>().rfind("#", 0) == 0)
+                textures_variables["#" + j.key()] = texture_name;
+                if (j.value().get<std::string>().rfind("#", 0) == 0)
                 {
-                    textures_variables[j->second.get<std::string>()] = j->second.get<std::string>();
+                    textures_variables[j.value().get<std::string>()] = j.value();
                 }
             }
         }
@@ -191,8 +164,7 @@ namespace Botcraft
             faces.clear();
 #endif
 
-            const picojson::array &elements_array = it->second.get<picojson::array>();
-            for (int j = 0; j < elements_array.size(); ++j)
+            for (auto& element : it.value())
             {
 #if USE_GUI
                 std::vector<FaceDescriptor> current_element;
@@ -201,136 +173,115 @@ namespace Botcraft
                 int start_x, start_y, start_z;
                 int end_x, end_y, end_z;
 
-                const picojson::value::object &current_element_items = elements_array[j].get<picojson::object>();
-
-                auto it2 = current_element_items.find("from");
-                if (it2 != current_element_items.end())
+                if (element.contains("from"))
                 {
-                    picojson::array values = it2->second.get<picojson::array>();
-                    start_x = (int)values[0].get<double>();
-                    start_y = (int)values[1].get<double>();
-                    start_z = (int)values[2].get<double>();
+                    start_x = element["from"][0];
+                    start_y = element["from"][1];
+                    start_z = element["from"][2];
                 }
 
-                it2 = current_element_items.find("to");
-                if (it2 != current_element_items.end())
+                if (element.contains("to"))
                 {
-                    picojson::array values = it2->second.get<picojson::array>();
-                    end_x = (int)values[0].get<double>();
-                    end_y = (int)values[1].get<double>();
-                    end_z = (int)values[2].get<double>();
+                    end_x = element["to"][0];
+                    end_y = element["to"][1];
+                    end_z = element["to"][2];
                 }
 
                 colliders.push_back(AABB(Vector3<double>(start_x + end_x, start_y + end_y, start_z + end_z) / 2.0 / 16.0, Vector3<double>(std::abs(end_x - start_x), std::abs(end_y - start_y), std::abs(end_z - start_z)) / 2.0 / 16.0));
-                
-                it2 = current_element_items.find("rotation");
-                if (it2 != current_element_items.end())
-                {
-                    const picojson::value::object &rotation = it2->second.get<picojson::object>();
-
-                    float origin_x, origin_y, origin_z;
-                    const picojson::array &origin = rotation.find("origin")->second.get<picojson::array>();
-                    origin_x = (float)origin[0].get<double>();
-                    origin_y = (float)origin[1].get<double>();
-                    origin_z = (float)origin[2].get<double>();
-
-                    const std::string axis = rotation.find("axis")->second.get<std::string>();
-
-                    const float angle = (float)rotation.find("angle")->second.get<double>();
 
 #if USE_GUI
+                if (element.contains("rotation"))
+                {
+                    float origin_x, origin_y, origin_z;
+                    origin_x = element["rotation"]["origin"][0];
+                    origin_y = element["rotation"]["origin"][1];
+                    origin_z = element["rotation"]["origin"][2];
+
                     //Add the rotation to global transformations
+
+                    const float angle = (float)element["rotation"]["angle"];
                     element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Translation(-((start_x + end_x) / 2.0 - origin_x) / 16.0f, -((start_y + end_y) / 2.0 - origin_y) / 16.0f, -((start_z + end_z) / 2.0 - origin_z) / 16.0f)));
-                    if (axis == "x")
+                    if (element["rotation"]["axis"] == "x")
                     {
                         element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Rotation(1.0f, 0.0f, 0.0f, angle)));
                     }
-                    else if (axis == "y")
+                    else if (element["rotation"]["axis"] == "y")
                     {
                         element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 1.0f, 0.0f, angle)));
                     }
-                    else if (axis == "z")
+                    else if (element["rotation"]["axis"] == "z")
                     {
                         element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 0.0f, 1.0f, angle)));
                     }
                     element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Translation(((start_x + end_x) / 2.0 - origin_x) / 16.0f, ((start_y + end_y) / 2.0 - origin_y) / 16.0f, ((start_z + end_z) / 2.0 - origin_z) / 16.0f)));
-#endif
 
                     bool rescale = false;
-                    if (rotation.find("rescale") != rotation.end())
+                    if (element["rotation"].contains("rescale"))
                     {
-                        rescale = rotation.find("rescale")->second.get<bool>();
+                        rescale = element["rotation"]["rescale"];
                     }
-#if USE_GUI
+
                     if (rescale)
                     {
                         float scale_factor = abs(1.0f / (cos(angle * 3.14159f / 180.0f)));
-                        if (axis == "x")
+                        if (element["rotation"]["axis"] == "x")
                         {
                             element_global_transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(1.0f, scale_factor, scale_factor)));
                         }
-                        else if (axis == "y")
+                        else if (element["rotation"]["axis"] == "y")
                         {
                             element_global_transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(scale_factor, 1.0f, scale_factor)));
                         }
-                        else if (axis == "z")
+                        else if (element["rotation"]["axis"] == "z")
                         {
                             element_global_transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(scale_factor, scale_factor, 1.0f)));
                         }
                     }
-#endif
                 }
 
-                it2 = current_element_items.find("shade");
-                if (it2 != current_element_items.end())
+                if (element.contains("shade"))
                 {
                     //TODO do something with shade value
                 }
 
-#if USE_GUI
-                it2 = current_element_items.find("faces");
-                if (it2 != current_element_items.end())
+                if (element.contains("faces"))
                 {
-                    const picojson::value::object &faces = it2->second.get<picojson::object>();
-                    for (picojson::value::object::const_iterator face = faces.begin(); face != faces.end(); ++face)
+                    for (nlohmann::json::const_iterator face = element["faces"].begin(); face != element["faces"].end(); ++face)
                     {
                         FaceDescriptor current_face;
-                        if (face->first == "down")
+                        if (face.key() == "down")
                         {
                             current_face.orientation = Orientation::Bottom;
                         }
-                        else if (face->first == "up")
+                        else if (face.key() == "up")
                         {
                             current_face.orientation = Orientation::Top;
                         }
-                        else if (face->first == "north")
+                        else if (face.key() == "north")
                         {
                             current_face.orientation = Orientation::North;
                         }
-                        else if (face->first == "south")
+                        else if (face.key() == "south")
                         {
                             current_face.orientation = Orientation::South;
                         }
-                        else if (face->first == "east")
+                        else if (face.key() == "east")
                         {
                             current_face.orientation = Orientation::East;
                         }
-                        else if (face->first == "west")
+                        else if (face.key() == "west")
                         {
                             current_face.orientation = Orientation::West;
                         }
 
-                        const picojson::value::object &face_params = face->second.get<picojson::object>();
+                        const nlohmann::json &face_params = face.value();
                         
-                        auto it3 = face_params.find("uv");
-                        if (it3 != face_params.end())
+                        if (face_params.contains("uv"))
                         {
-                            picojson::array values = it3->second.get<picojson::array>();
-
-                            current_face.transformations.offset_x1 = values[0].get<double>();
-                            current_face.transformations.offset_y1 = values[1].get<double>();
-                            current_face.transformations.offset_x2 = values[2].get<double>();
-                            current_face.transformations.offset_y2 = values[3].get<double>();
+                            current_face.transformations.offset_x1 = face_params["uv"][0];
+                            current_face.transformations.offset_y1 = face_params["uv"][1];
+                            current_face.transformations.offset_x2 = face_params["uv"][2];
+                            current_face.transformations.offset_y2 = face_params["uv"][3];
                         }
                         //If UV are not specified, we have to get them from [x,y,z] coordinates
                         else
@@ -378,10 +329,9 @@ namespace Botcraft
                             }
                         }
 
-                        it3 = face_params.find("texture");
-                        if (it3 != face_params.end())
+                        if (face_params.contains("texture"))
                         {
-                            std::string texture_name = it3->second.get<std::string>();
+                            std::string texture_name = face_params["texture"];
                             current_face.texture_names[0] = texture_name;
                             if (textures_variables.find(texture_name) == textures_variables.end())
                             {
@@ -389,10 +339,9 @@ namespace Botcraft
                             }
                         }
 
-                        it3 = face_params.find("cullface");
-                        if (it3 != face_params.end())
+                        if (face_params.contains("cullface"))
                         {
-                            std::string value = it3->second.get<std::string>();
+                            std::string value = face_params["cullface"];
                             if (value == "down")
                             {
                                 current_face.cullface_direction = Orientation::Bottom;
@@ -427,15 +376,13 @@ namespace Botcraft
                             current_face.cullface_direction = Orientation::None;
                         }
 
-                        it3 = face_params.find("rotation");
-                        if (it3 != face_params.end())
+                        if (face_params.contains("rotation"))
                         {
-                            int rotation_value = (int)it3->second.get<double>();
+                            int rotation_value = face_params["rotation"];
                             current_face.transformations.rotation = rotation_value / 90;
                         }
 
-                        it3 = face_params.find("tintindex");
-                        if (it3 != face_params.end())
+                        if (face_params.contains("tintindex"))
                         {
                             current_face.use_tintindexes[0] = true;
                         }
@@ -447,14 +394,12 @@ namespace Botcraft
                         current_element.push_back(current_face);
                     }
                 }
-#endif
 
                 //Add the scaling and translation of this element (based on from to)
                 float center_x = (end_x + start_x) / 2.0f;
                 float center_y = (end_y + start_y) / 2.0f;
                 float center_z = (end_z + start_z) / 2.0f;
 
-#if USE_GUI
                 if (center_x != 8.0f || center_y != 8.0f || center_z != 8.0f)
                 {
                     element_global_transformations.translations.push_back(Renderer::TransformationPtr(new Renderer::Translation((center_x - 8) / 16.0f, (center_y - 8) / 16.0f, (center_z - 8) / 16.0f)));

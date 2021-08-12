@@ -199,25 +199,24 @@ namespace ProtocolCraft
             WriteData<short>(za, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["id_"] = picojson::value((double)id_);
-            object["uuid"] = picojson::value(std::string(uuid.begin(), uuid.end()));
-            object["type"] = picojson::value((double)type);
-            object["x"] = picojson::value((double)x);
-            object["y"] = picojson::value((double)y);
-            object["z"] = picojson::value((double)z);
-            object["xRot"] = picojson::value((double)xRot);
-            object["yRot"] = picojson::value((double)yRot);
-            object["data"] = picojson::value((double)data);
-            object["xa"] = picojson::value((double)xa);
-            object["ya"] = picojson::value((double)ya);
-            object["za"] = picojson::value((double)za);
+            output["id_"] = id_;
+            output["uuid"] = uuid;
+            output["type"] = type;
+            output["x"] = x;
+            output["y"] = y;
+            output["z"] = z;
+            output["xRot"] = xRot;
+            output["yRot"] = yRot;
+            output["data"] = data;
+            output["xa"] = xa;
+            output["ya"] = ya;
+            output["za"] = za;
 
-            return value;
+            return output;
     }
 
     private:

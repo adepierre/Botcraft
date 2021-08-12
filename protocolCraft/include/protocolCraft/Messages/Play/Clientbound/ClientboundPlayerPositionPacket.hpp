@@ -152,23 +152,22 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["x"] = picojson::value(x);
-            object["y"] = picojson::value(y);
-            object["z"] = picojson::value(z);
-            object["yRot"] = picojson::value((double)yRot);
-            object["xRot"] = picojson::value((double)xRot);
-            object["relative_arguments"] = picojson::value((double)relative_arguments);
-            object["id_"] = picojson::value((double)id_);
+            output["x"] = x;
+            output["y"] = y;
+            output["z"] = z;
+            output["yRot"] = yRot;
+            output["xRot"] = xRot;
+            output["relative_arguments"] = relative_arguments;
+            output["id_"] = id_;
 #if PROTOCOL_VERSION > 754
-            object["dismount_vehicle"] = picojson::value(dismount_vehicle);
+            output["dismount_vehicle"] = dismount_vehicle;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

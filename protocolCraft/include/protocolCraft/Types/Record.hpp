@@ -61,16 +61,15 @@ namespace ProtocolCraft
             WriteData<VarInt>(block_id, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["horizontal_position"] = picojson::value((double)horizontal_position);
-            object["y_coordinate"] = picojson::value((double)y_coordinate);
-            object["block_id"] = picojson::value((double)block_id);
+            output["horizontal_position"] = horizontal_position;
+            output["y_coordinate"] = y_coordinate;
+            output["block_id"] = block_id;
 
-            return value;
+            return output;
         }
 
     private:

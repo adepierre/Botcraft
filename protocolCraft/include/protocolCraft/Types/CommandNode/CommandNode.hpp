@@ -158,40 +158,35 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["flags"] = picojson::value((double)flags);
-            object["children_count"] = picojson::value((double)children_count);
-            object["children"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["children"].get<picojson::array>();
-            for (int i = 0; i < children_count; ++i)
-            {
-                array.push_back(picojson::value((double)children[i]));
-            }
+            output["flags"] = flags;
+            output["children_count"] = children_count;
+            output["children"] = children;
+
             if (flags & 0x08)
             {
-                object["redirect_node"] = picojson::value((double)redirect_node);
+                output["redirect_node"] = redirect_node;
             }
 
             const char node_type = flags & 0x03;
             if (node_type == 1 || node_type == 2)
             {
-                object["name"] = picojson::value(name);
+                output["name"] = name;
             }
             if (node_type == 2)
             {
-                object["parser"] = parser.Serialize();
-                object["properties"] = properties->Serialize();
+                output["parser"] = parser.Serialize();
+                output["properties"] = properties->Serialize();
             }
             if (flags & 0x10)
             {
-                object["suggestions_type"] = suggestions_type.Serialize();
+                output["suggestions_type"] = suggestions_type.Serialize();
             }
 
-            return value;
+            return output;
         }
 
     private:

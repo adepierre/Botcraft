@@ -66,16 +66,15 @@ namespace ProtocolCraft
         }
     }
 
-    const picojson::value NBT::SerializeImpl() const
+    const nlohmann::json NBT::SerializeImpl() const
     {
-        picojson::value value(picojson::object_type, false);
-        picojson::object& object = value.get<picojson::object>();
+        nlohmann::json output;
 
-        object["type"] = picojson::value("NBT");
-        object["name"] = picojson::value(root_name);
-        object["content"] = root_tag.Serialize();
+        output["type"] = "NBT";
+        output["name"] = root_name;
+        output["content"] = root_tag.Serialize();
 
-        return value;
+        return output;
     }
 
     const std::shared_ptr<Tag> NBT::GetTag(const std::string &s) const

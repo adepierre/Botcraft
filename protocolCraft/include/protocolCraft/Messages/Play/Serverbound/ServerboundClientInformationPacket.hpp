@@ -140,22 +140,21 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["language"] = picojson::value(language);
-            object["view_distance"] = picojson::value((double)view_distance);
-            object["chat_visibility"] = picojson::value((double)chat_visibility);
-            object["chat_colors"] = picojson::value(chat_colors);
-            object["model_customisation"] = picojson::value((double)model_customisation);
-            object["main_hand"] = picojson::value((double)main_hand);
+            output["language"] = language;
+            output["view_distance"] = view_distance;
+            output["chat_visibility"] = chat_visibility;
+            output["chat_colors"] = chat_colors;
+            output["model_customisation"] = model_customisation;
+            output["main_hand"] = main_hand;
 #if PROTOCOL_VERSION > 754
-            object["text_filtering_enabled"] = picojson::value(text_filtering_enabled);
+            output["text_filtering_enabled"] = text_filtering_enabled;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

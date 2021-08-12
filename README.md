@@ -33,7 +33,7 @@ More complex example with 10 survival bots collaborating on a pixel art build. T
 All the libraries are included either directly or as submodules and are built locally automatically (if not already found on your system) so you don't have to install anything manually.
 
 - [asio](https://think-async.com/Asio/)
-- [picoJson](https://github.com/kazuho/picojson)
+- [nlohmann json](https://github.com/nlohmann/json)
 - [zlib](https://github.com/madler/zlib) (optional, used only if compression is enabled on your server)
 - [openssl](https://www.openssl.org/) (optional, used only if your server is in online mode)
 

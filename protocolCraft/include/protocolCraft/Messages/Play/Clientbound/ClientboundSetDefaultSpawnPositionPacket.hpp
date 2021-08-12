@@ -82,17 +82,16 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["location"] = location.Serialize();
+            output["location"] = location.Serialize();
 #if PROTOCOL_VERSION > 754
-            object["angle"] = picojson::value((double)angle);
+            output["angle"] = angle;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

@@ -225,36 +225,35 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747
-            object["dimension_type"] = dimension_type.Serialize();
+            output["dimension_type"] = dimension_type.Serialize();
 #endif
-            object["dimension"] = dimension.Serialize();
+            output["dimension"] = dimension.Serialize();
 #else
-            object["dimension"] = picojson::value((double)dimension);
+            output["dimension"] = dimension;
 #endif
 #if PROTOCOL_VERSION > 551
-            object["seed"] = picojson::value((double)seed);
+            output["seed"] = seed;
 #endif
 #if PROTOCOL_VERSION < 477
-            object["difficulty"] = picojson::value((double)difficulty);
+            output["difficulty"] = difficulty;
 #endif
-            object["player_game_type"] = picojson::value((double)player_game_type);
+            output["player_game_type"] = player_game_type;
 #if PROTOCOL_VERSION < 730
-            object["level_type"] = picojson::value(level_type);
+            output["level_type"] = level_type;
 #else
-            object["previous_player_game_type"] = picojson::value((double)previous_player_game_type);
-            object["is_debug"] = picojson::value(is_debug);
-            object["is_flat"] = picojson::value(is_flat);
-            object["keep_all_player_data"] = picojson::value(keep_all_player_data);
+            output["previous_player_game_type"] = previous_player_game_type;
+            output["is_debug"] = is_debug;
+            output["is_flat"] = is_flat;
+            output["keep_all_player_data"] = keep_all_player_data;
 #endif
 
-            return value;
+            return output;
     }
 
     private:

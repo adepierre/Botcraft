@@ -134,21 +134,20 @@ namespace ProtocolCraft
             WriteData<VarInt>(warning_time, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["new_center_x"] = picojson::value(new_center_x);
-            object["new_center_z"] = picojson::value(new_center_z);
-            object["old_size"] = picojson::value(old_size);
-            object["new_size"] = picojson::value(new_size);
-            object["lerp_time"] = picojson::value((double)lerp_time);
-            object["new_absolute_max_size"] = picojson::value((double)new_absolute_max_size);
-            object["warning_blocks"] = picojson::value((double)warning_blocks);
-            object["warning_time"] = picojson::value((double)warning_time);
+            output["new_center_x"] = new_center_x;
+            output["new_center_z"] = new_center_z;
+            output["old_size"] = old_size;
+            output["new_size"] = new_size;
+            output["lerp_time"] = lerp_time;
+            output["new_absolute_max_size"] = new_absolute_max_size;
+            output["warning_blocks"] = warning_blocks;
+            output["warning_time"] = warning_time;
 
-            return value;
+            return output;
         }
 
     private:

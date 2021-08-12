@@ -87,22 +87,21 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
 
             if (source != -1)
             {
-                object["source"] = picojson::value((double)source);
+                output["source"] = source;
             }
             if (!name_.GetName().empty())
             {
-                object["name_"] = name_.Serialize();
+                output["name_"] = name_.Serialize();
             }
 
-            return value;
+            return output;
         }
 
     private:

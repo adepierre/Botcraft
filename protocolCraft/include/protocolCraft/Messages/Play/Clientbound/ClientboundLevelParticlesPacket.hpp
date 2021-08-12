@@ -227,30 +227,29 @@ namespace ProtocolCraft
             WriteByteArray(data, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["particle_type"] = picojson::value((double)particle_type);
-            object["override_limiter"] = picojson::value((double)override_limiter);
+            output["particle_type"] = particle_type;
+            output["override_limiter"] = override_limiter;
 #if PROTOCOL_VERSION < 569
-            object["x"] = picojson::value((double)x);
-            object["y"] = picojson::value((double)y);
-            object["z"] = picojson::value((double)z);
+            output["x"] = x;
+            output["y"] = y;
+            output["z"] = z;
 #else
-            object["x"] = picojson::value(x);
-            object["y"] = picojson::value(y);
-            object["z"] = picojson::value(z);
+            output["x"] = x;
+            output["y"] = y;
+            output["z"] = z;
 #endif
-            object["x_dist"] = picojson::value((double)x_dist);
-            object["y_dist"] = picojson::value((double)y_dist);
-            object["z_dist"] = picojson::value((double)z_dist);
-            object["particle_data"] = picojson::value((double)particle_data);
-            object["count"] = picojson::value((double)count);
-            object["data"] = picojson::value("Vector of " + std::to_string(data.size()) + " unsigned chars");
+            output["x_dist"] = x_dist;
+            output["y_dist"] = y_dist;
+            output["z_dist"] = z_dist;
+            output["particle_data"] = particle_data;
+            output["count"] = count;
+            output["data"] = "Vector of " + std::to_string(data.size()) + " unsigned chars";
 
-            return value;
+            return output;
         }
 
     private:

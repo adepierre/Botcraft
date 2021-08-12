@@ -128,24 +128,22 @@ namespace ProtocolCraft
             WriteData<bool>(can_restock, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["container_id"] = picojson::value((double)container_id);
-            object["offers"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["offers"].get<picojson::array>();
+            output["container_id"] = container_id;
+            output["offers"] = nlohmann::json::array();
             for (int i = 0; i < offers.size(); ++i)
             {
-                array.push_back(offers[i].Serialize());
+                output["offers"].push_back(offers[i].Serialize());
             }
-            object["villager_level"] = picojson::value((double)villager_level);
-            object["villager_xp"] = picojson::value((double)villager_xp);
-            object["show_progress"] = picojson::value(show_progress);
-            object["can_restock"] = picojson::value(can_restock);
+            output["villager_level"] = villager_level;
+            output["villager_xp"] = villager_xp;
+            output["show_progress"] = show_progress;
+            output["can_restock"] = can_restock;
 
-            return value;
+            return output;
         }
 
     private:

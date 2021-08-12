@@ -75,16 +75,15 @@ namespace ProtocolCraft
             WriteData<int>(fade_out, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["fade_in"] = picojson::value((double)fade_in);
-            object["stay"] = picojson::value((double)stay);
-            object["fade_out"] = picojson::value((double)fade_out);
+            output["fade_in"] = fade_in;
+            output["stay"] = stay;
+            output["fade_out"] = fade_out;
 
-            return value;
+            return output;
         }
 
     private:

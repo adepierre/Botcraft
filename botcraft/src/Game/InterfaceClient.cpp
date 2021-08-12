@@ -13,6 +13,7 @@
 #include <queue>
 #include <unordered_map>
 #include <array>
+#include <iostream>
 
 using namespace ProtocolCraft;
 

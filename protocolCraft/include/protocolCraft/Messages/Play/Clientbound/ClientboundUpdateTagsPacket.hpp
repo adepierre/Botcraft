@@ -188,54 +188,49 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
 #if PROTOCOL_VERSION < 755
-            object["block_tags"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["block_tags"].get<picojson::array>();
+            output["block_tags"] = nlohmann::json::array();
             for (int i = 0; i < block_tags.size(); ++i)
             {
-                array.push_back(block_tags[i].Serialize());
+                output["block_tags"].push_back(block_tags[i].Serialize());
             }
-            object["item_tags"] = picojson::value(picojson::array_type, false);
-            array = object["item_tags"].get<picojson::array>();
+            
+            output["item_tags"] = nlohmann::json::array();
             for (int i = 0; i < item_tags.size(); ++i)
             {
-                array.push_back(item_tags[i].Serialize());
+                output["item_tags"].push_back(item_tags[i].Serialize());
             }
-            object["fluid_tags"] = picojson::value(picojson::array_type, false);
-            array = object["fluid_tags"].get<picojson::array>();
+            
+            output["fluid_tags"] = nlohmann::json::array();
             for (int i = 0; i < fluid_tags.size(); ++i)
             {
-                array.push_back(fluid_tags[i].Serialize());
+                output["fluid_tags"].push_back(fluid_tags[i].Serialize());
             }
 #if PROTOCOL_VERSION > 440
-            object["entity_tags"] = picojson::value(picojson::array_type, false);
-            array = object["entity_tags"].get<picojson::array>();
+            output["entity_tags"] = nlohmann::json::array();
             for (int i = 0; i < entity_tags.size(); ++i)
             {
-                array.push_back(entity_tags[i].Serialize());
+                output["entity_tags"].push_back(entity_tags[i].Serialize());
             }
 #endif
 #else
-            object["tags"] = picojson::value(picojson::object_type, false);
-            picojson::object& tag_object = object["tags"].get<picojson::object>();
+            output["tags"] = nlohmann::json::object();
             
             for (auto it = tags.begin(); it != tags.end(); ++it)
             {
-                tag_object[it->first.GetFull()] = picojson::value(picojson::array_type, false);
-                picojson::array& array = tag_object[it->first.GetFull()].get<picojson::array>();
+                output["tags"][it->first.GetFull()] = nlohmann::json::array();
                 for (int i = 0; i < it->second.size(); ++it)
                 {
-                    array.push_back(it->second[i].Serialize());
+                    output["tags"][it->first.GetFull()].push_back(it->second[i].Serialize());
                 }
             }
 #endif
 
-            return value;
+            return output;
         }
 
     private:

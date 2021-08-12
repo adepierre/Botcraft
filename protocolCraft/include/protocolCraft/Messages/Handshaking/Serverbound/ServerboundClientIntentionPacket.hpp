@@ -79,17 +79,16 @@ namespace ProtocolCraft
             WriteData<VarInt>(intention, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["protocol_version"] = picojson::value((double)protocol_version);
-            object["host_name"] = picojson::value(host_name);
-            object["port"] = picojson::value((double)port);
-            object["intention"] = picojson::value((double)intention);
+            output["protocol_version"] = protocol_version;
+            output["host_name"] = host_name;
+            output["port"] = port;
+            output["intention"] = intention;
 
-            return value;
+            return output;
         }
 
     private:

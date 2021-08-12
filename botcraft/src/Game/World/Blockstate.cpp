@@ -4,7 +4,7 @@
 #include <random>
 #include <chrono>
 
-#include <picojson/picojson.h>
+#include <nlohmann/json.hpp>
 
 #include "botcraft/Game/World/Blockstate.hpp"
 #include "botcraft/Utilities/StringUtilities.hpp"
@@ -13,34 +13,26 @@ namespace Botcraft
 {
     // Utilities functions
 
-    Model ModelModificationFromJson(const Model &model, const std::string &s)
+    Model ModelModificationFromJson(const Model &model, const nlohmann::json &json)
     {
-        picojson::value json_value;
-        picojson::parse(json_value, s);
-
-        const picojson::object &json = json_value.get<picojson::object>();
-
         Model output = model;
 
         bool uv_lock = false;
-        auto it = json.find("uvlock");
-        if (it != json.end())
+        if (json.contains("uvlock"))
         {
-            uv_lock = it->second.get<bool>();
+            uv_lock = json["uvlock"];
         }
 
         int rotation_x = 0;
-        it = json.find("x");
-        if (it != json.end())
+        if (json.contains("x"))
         {
-            rotation_x = (int)it->second.get<double>();
+            rotation_x = json["x"];
         }
 
         int rotation_y = 0;
-        it = json.find("y");
-        if (it != json.end())
+        if (json.contains("y"))
         {
-            rotation_y = (int)it->second.get<double>();
+            rotation_y = json["y"];
         }
 
         //Rotate colliders
@@ -187,15 +179,9 @@ namespace Botcraft
         return output;
     }
 
-    std::string ModelNameFromJson(const std::string &s)
+    std::string ModelNameFromJson(const nlohmann::json &json)
     {
-        picojson::value json_value;
-        picojson::parse(json_value, s);
-
-        const picojson::object &json = json_value.get<picojson::object>();
-
-        auto it = json.find("model");
-        std::string model_path = it->second.get<std::string>();
+        std::string model_path = json["model"];
 #if PROTOCOL_VERSION < 347
         return "block/" + model_path;
 #elif PROTOCOL_VERSION > 578 //> 1.15.2
@@ -206,19 +192,13 @@ namespace Botcraft
 #endif
     }
 
-    int WeightFromJson(const std::string &s)
+    int WeightFromJson(const nlohmann::json &json)
     {
-        picojson::value json_value;
-        picojson::parse(json_value, s);
-
-        const picojson::object &json = json_value.get<picojson::object>();
-
         int output = 1;
 
-        auto it = json.find("weight");
-        if (it != json.end())
+        if (json.contains("weight"))
         {
-            output = (int)it->second.get<double>();
+            output = json["weight"];
         }
 
         return output;
@@ -253,7 +233,7 @@ namespace Botcraft
     }
 
     // Blockstate implementation starts here
-    std::map<std::string, picojson::value> Blockstate::cached_jsons;
+    std::map<std::string, nlohmann::json> Blockstate::cached_jsons;
 
 #if PROTOCOL_VERSION < 347
     Blockstate::Blockstate(const int id_, const unsigned char metadata_, 
@@ -282,6 +262,15 @@ namespace Botcraft
             return;
         }
 
+        if (path.empty())
+        {
+            models.push_back(Model::GetModel("", false));
+            models_weights.push_back(1);
+            weights_sum += 1;
+
+            return;
+        }
+
         std::string full_filepath;
         
         if (custom)
@@ -293,107 +282,63 @@ namespace Botcraft
             full_filepath = ASSETS_PATH + std::string("/minecraft/blockstates/") + path + ".json";
         }
 
-        std::stringstream ss;
-        std::ifstream file;
-
-        bool error = path == "";
-        picojson::value json;
-
-        if (!error)
+        nlohmann::json json;
+        try
         {
-            auto cached = cached_jsons.find(path);
-            if (cached != cached_jsons.end())
+            std::ifstream file(full_filepath);
+            file >> json;
+            file.close();
+        }
+        catch (const nlohmann::json::exception& e)
+        {
+            if (custom)
             {
-                json = cached->second;
+                std::cout << "Missing custom definition for " << full_filepath << std::endl;
             }
             else
             {
-                file.open(full_filepath);
-                if (!file.is_open())
-                {
-                    if (custom)
-                    {
-                        std::cout << "Missing custom definition for " << full_filepath << std::endl;
-                    }
-                    else
-                    {
-                        std::cerr << "Error reading blockstate file at " << full_filepath << std::endl;
-                    }
-
-                    error = true;
-                }
-                if (!error)
-                {
-                    ss << file.rdbuf();
-                    file.close();
-
-                    ss >> json;
-                    std::string err = picojson::get_last_error();
-
-                    if (!err.empty())
-                    {
-                        std::cerr << "Error parsing blockstate file at " << full_filepath << "\n";
-                        std::cerr << err << std::endl;
-                        error = true;
-                    }
-                    if (!error)
-                    {
-                        if (!json.is<picojson::object>())
-                        {
-                            std::cerr << "Error parsing blockstate file at " << full_filepath << std::endl;
-                            error = true;
-                        }
-                        else
-                        {
-                            cached_jsons[path] = json;
-                        }
-                    }
-                }
+                std::cerr << "Error reading blockstate file at " << full_filepath << std::endl;
             }
-        }
-
-        if (error)
-        {
+            std::cerr << e.what() << std::endl;
+            
             models.push_back(Model::GetModel("", false));
             models_weights.push_back(1);
             weights_sum += 1;
+
             return;
         }
 
-        const picojson::object& base_object = json.get<picojson::object>();
+        cached_jsons[path] = json;
 
         // We store the models in a deque for efficiency
         std::deque<Model> models_deque;
 
         //If it's a "normal" blockstate
-        auto it = base_object.find("variants");
-        if (it != base_object.end())
+        if (json.contains("variants"))
         {
-            const picojson::object& variants = it->second.get<picojson::object>();
-            picojson::value null_value = picojson::value();
-            picojson::value &variant_value = null_value;
+            const nlohmann::json& variants = json["variants"];
+            nlohmann::json null_value;
+            nlohmann::json &variant_value = null_value;
 
-            auto it2 = variants.find("");
-            if (it2 != variants.end())
+            if (variants.contains(""))
             {
-                variant_value = it2->second;
+                variant_value = variants[""];
             }
 
-            it2 = variants.find("normal");
-            if (it2 != variants.end())
+            if (variants.contains("normal"))
             {
-                variant_value = it2->second;
+                variant_value = variants["normal"];
             }
 
             //This case means we have to check the variables to find
             //the right variant
-            if (variables.size() > 0 && variant_value.is<picojson::null>())
+            if (variables.size() > 0 && variant_value.is_null())
             {
                 int max_match = 0;
 
-                for (it2 = variants.begin(); it2 != variants.end(); ++it2)
+                for (auto& it = variants.begin(); it != variants.end(); ++it)
                 {
-                    const std::vector<std::string> variables_values = SplitString(it2->first, ',');
+                    const std::vector<std::string> variables_values = SplitString(it.key(), ',');
                     
                     int num_match = 0;
                     for (int i = 0; i < variables.size(); ++i)
@@ -408,34 +353,29 @@ namespace Botcraft
                     }
                     if (num_match > max_match)
                     {
-                        variant_value = it2->second;
+                        variant_value = it.value();
                         max_match = num_match;
                     }
                 }
             }
 
             //If we have found a correct value
-            if (!variant_value.is<picojson::null>())
+            if (!variant_value.is_null())
             {
-                if (variant_value.is<picojson::array>())
+                if (variant_value.is_array())
                 {
-                    picojson::array &models_array = variant_value.get<picojson::array>();
-                    for (int i = 0; i < models_array.size(); ++i)
+                    for (auto& model : variant_value)
                     {
-                        const std::string serialized = models_array[i].serialize();
-                        const std::string model_name = ModelNameFromJson(serialized);
-                        const int weight = WeightFromJson(serialized);
-                        models_deque.push_back(ModelModificationFromJson(Model::GetModel(model_name, custom), serialized));
+                        const int weight = WeightFromJson(model);
+                        models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(model), custom), model));
                         models_weights.push_back(weight);
                         weights_sum += weight;
                     }
                 }
                 else
                 {
-                    const std::string serialized = variant_value.serialize();
-                    const std::string model_name = ModelNameFromJson(serialized);
-                    const int weight = WeightFromJson(serialized);
-                    models_deque.push_back(ModelModificationFromJson(Model::GetModel(model_name, custom), serialized));
+                    const int weight = WeightFromJson(variant_value);
+                    models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(variant_value), custom), variant_value));
                     models_weights.push_back(weight);
                     weights_sum += weight;
                 }
@@ -450,39 +390,29 @@ namespace Botcraft
         }
 
         //If it's a multipart blockstate
-        it = base_object.find("multipart");
-        if (it != base_object.end())
+        if (json.contains("multipart"))
         {
             //Start with an empty model
             models_deque.push_back(Model());
             models_weights.push_back(1);
             weights_sum = 0;
 
-            const picojson::array& parts = it->second.get<picojson::array>();
-
-            for (int i = 0; i < parts.size(); ++i)
+            for (auto& part : json["multipart"])
             {
-                const picojson::object &current_case = parts[i].get<picojson::object>();
-
-                auto it2 = current_case.find("when");
                 //If no condition
-                if (it2 == current_case.end())
+                if (!part.contains("when"))
                 {
-                    auto it3 = current_case.find("apply");
-
                     //If there are several models
-                    if (it3->second.is<picojson::array>())
+                    if (part["apply"].is_array())
                     {
                         size_t num_models = models_deque.size();
-                        const picojson::array &models_array = it3->second.get<picojson::array>();
-                        for (int j = 0; j < models_array.size(); ++j)
+                        for (auto& m : part["apply"])
                         {
-                            const std::string serialized = models_array[j].serialize();
-                            const std::string model_name = ModelNameFromJson(serialized);
+                            const std::string model_name = ModelNameFromJson(m);
                             for (int k = 0; k < num_models; ++k)
                             {
-                                models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), serialized));
-                                models_weights.push_back(models_weights[k] * WeightFromJson(serialized));
+                                models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), m));
+                                models_weights.push_back(models_weights[k] * WeightFromJson(m));
                             }
                         }
                         models_deque.erase(models_deque.begin(), models_deque.begin() + num_models);
@@ -490,12 +420,11 @@ namespace Botcraft
                     }
                     else
                     {
-                        const std::string serialized = it3->second.serialize();
-                        const std::string model_name = ModelNameFromJson(serialized);
+                        const std::string model_name = ModelNameFromJson(part["apply"]);
                         for (int k = 0; k < models_deque.size(); ++k)
                         {
-                            models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, custom), serialized);
-                            models_weights[k] *= WeightFromJson(serialized);
+                            models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, custom), part["apply"]);
+                            models_weights[k] *= WeightFromJson(part["apply"]);
                         }
                     }
                 }
@@ -504,36 +433,27 @@ namespace Botcraft
                 else
                 {
                     bool condition = false;
-
-                    const picojson::object &when = it2->second.get<picojson::object>();
-
-                    auto it_or = when.find("OR");
-
                     //If it's a OR condition
-                    if (it_or != when.end())
+                    if (part["when"].contains("OR"))
                     {
-                        const picojson::array &conditions = it_or->second.get<picojson::array>();
-
-                        for (int c = 0; c < conditions.size(); ++c)
+                        for (auto& current_condition : part["when"]["OR"])
                         {
-                            const picojson::object &current_condition = conditions[c].get<picojson::object>();
-
-                            for (auto condition_it = current_condition.begin(); condition_it != current_condition.end(); ++condition_it)
+                            for (nlohmann::json::const_iterator condition_it = current_condition.begin(); condition_it != current_condition.end(); ++condition_it)
                             {
-                                const std::string condition_name = condition_it->first;
+                                const std::string condition_name = condition_it.key();
                                 std::string condition_value = "";
 
-                                if (condition_it->second.is<std::string>())
+                                if (condition_it.value().is_string())
                                 {
-                                    condition_value = condition_it->second.get<std::string>();
+                                    condition_value = condition_it.value();
                                 }
-                                else if (condition_it->second.is<bool>())
+                                else if (condition_it.value().is_boolean())
                                 {
-                                    condition_value = condition_it->second.get<bool>() ? "true" : "false";
+                                    condition_value = condition_it.value().get<bool>() ? "true" : "false";
                                 }
-                                else if (condition_it->second.is<double>())
+                                else if (condition_it.value().is_number())
                                 {
-                                    condition_value = std::to_string(condition_it->second.get<double>());
+                                    condition_value = std::to_string(condition_it.value().get<double>());
                                 }
 
                                 condition = CheckCondition(condition_name, condition_value, variables);
@@ -553,25 +473,24 @@ namespace Botcraft
                     }
                     else
                     {
-                        for (auto condition_it = when.begin(); condition_it != when.end(); ++condition_it)
+                        for (nlohmann::json::const_iterator condition_it = part["when"].begin(); condition_it != part["when"].end(); ++condition_it)
                         {
-                            const std::string condition_name = condition_it->first;
                             std::string condition_value = "";
 
-                            if (condition_it->second.is<std::string>())
+                            if (condition_it.value().is_string())
                             {
-                                condition_value = condition_it->second.get<std::string>();
+                                condition_value = condition_it.value();
                             }
-                            else if (condition_it->second.is<bool>())
+                            else if (condition_it.value().is_boolean())
                             {
-                                condition_value = condition_it->second.get<bool>() ? "true" : "false";
+                                condition_value = condition_it.value().get<bool>() ? "true" : "false";
                             }
-                            else if (condition_it->second.is<double>())
+                            else if (condition_it.value().is_number())
                             {
-                                condition_value = std::to_string(condition_it->second.get<double>());
+                                condition_value = std::to_string(condition_it.value().get<double>());
                             }
 
-                            condition = CheckCondition(condition_name, condition_value, variables);
+                            condition = CheckCondition(condition_it.key(), condition_value, variables);
                             //If one condition in the list is not verified,
                             //the whole condition is not
                             if (!condition)
@@ -584,22 +503,19 @@ namespace Botcraft
                     //If the condition is verified, add the model
                     if (condition)
                     {
-                        auto it3 = current_case.find("apply");
-
                         //If there are several models
-                        if (it3->second.is<picojson::array>())
+                        if (part["apply"].is_array())
                         {
                             size_t num_models = models_deque.size();
-                            const picojson::array &models_array = it3->second.get<picojson::array>();
-                            for (int j = 0; j < models_array.size(); ++j)
+                            for (auto& m : part["apply"])
                             {
-                                const std::string serialized = models_array[j].serialize();
-                                const std::string model_name = ModelNameFromJson(serialized);
+                                const std::string model_name = ModelNameFromJson(m);
+                                const int model_weight = WeightFromJson(m);
                                 for (int k = 0; k < num_models; ++k)
                                 {
-                                    Model new_model = models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), serialized);
+                                    Model new_model = models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), m);
                                     models_deque.push_back(new_model);
-                                    models_weights.push_back(models_weights[k] * WeightFromJson(serialized));
+                                    models_weights.push_back(models_weights[k] * model_weight);
                                 }
                             }
                             models_deque.erase(models_deque.begin(), models_deque.begin() + num_models);
@@ -607,12 +523,12 @@ namespace Botcraft
                         }
                         else
                         {
-                            const std::string serialized = it3->second.serialize();
-                            const std::string model_name = ModelNameFromJson(serialized);
+                            const std::string model_name = ModelNameFromJson(part["apply"]);
+                            const int model_weight = WeightFromJson(part["apply"]);
                             for (int k = 0; k < models_deque.size(); ++k)
                             {
-                                models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, custom), serialized);
-                                models_weights[k] *= WeightFromJson(serialized);
+                                models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, custom), part["apply"]);
+                                models_weights[k] *= model_weight;
                             }
                         }
                     }

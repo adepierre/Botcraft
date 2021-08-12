@@ -35,14 +35,13 @@ namespace ProtocolCraft
             WriteData<VarInt>(read_type, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["read_type"] = picojson::value((double)read_type);
+            output["read_type"] = read_type;
 
-            return value;
+            return output;
         }
 
     private:

@@ -93,18 +93,17 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["flags"] = picojson::value((double)flags);
+            output["flags"] = flags;
 #if PROTOCOL_VERSION < 727
-            object["flying_speed"] = picojson::value((double)flying_speed);
-            object["walking_speed"] = picojson::value((double)walking_speed);
+            output["flying_speed"] = flying_speed;
+            output["walking_speed"] = walking_speed;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

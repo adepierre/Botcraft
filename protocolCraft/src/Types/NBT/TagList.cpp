@@ -69,21 +69,18 @@ namespace ProtocolCraft
         }
     }
 
-    const picojson::value TagList::SerializeImpl() const
+    const nlohmann::json TagList::SerializeImpl() const
     {
-        picojson::value value(picojson::object_type, false);
-        picojson::object& object = value.get<picojson::object>();
+        nlohmann::json output;
 
-        object["type"] = picojson::value(Tag::TagTypeToString(tags_type));
-        object["content"] = picojson::value(picojson::array_type, false);
-
-        picojson::array& array = object["content"].get<picojson::array>();
+        output["type"] = Tag::TagTypeToString(tags_type);
+        output["content"] = nlohmann::json::array();
 
         for (int i = 0; i < tags.size(); ++i)
         {
-            array.push_back(tags[i]->Serialize());
+            output["content"].push_back(tags[i]->Serialize());
         }
 
-        return value;
+        return output;
     }
 }

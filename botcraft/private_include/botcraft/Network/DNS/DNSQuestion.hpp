@@ -70,21 +70,21 @@ namespace Botcraft
             WriteData<unsigned short>(class_code, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value val(picojson::object_type, false);
-            picojson::object& object = val.get<picojson::object>();
+            nlohmann::json output;
+
             std::string name = "";
             for (int i = 0; i < name_labels.size(); ++i)
             {
                 name += name_labels[i] + ".";
             }
-            object["identification"] = picojson::value(name);
+            output["identification"] = name;
 
-            object["type_code"] = picojson::value((double)type_code);
-            object["class_code"] = picojson::value((double)class_code);
+            output["type_code"] = type_code;
+            output["class_code"] = class_code;
 
-            return val;
+            return output;
         }
 
     private:
