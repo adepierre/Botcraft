@@ -76,7 +76,7 @@ namespace Botcraft
         }
         access_token = json["accessToken"].get<std::string>();
 
-        if (json.find("selectedProfile") == json.end())
+        if (!json.contains("selectedProfile"))
         {
             std::cerr << "Error trying to authenticate, no selectedProfile item found" << std::endl;
             return false;
@@ -84,13 +84,13 @@ namespace Botcraft
 
         const nlohmann::json& profile = json.at("selectedProfile");
 
-        if (!profile["selectedProfile"].contains("name"))
+        if (!profile.contains("name"))
         {
             std::cerr << "Error trying to authenticate, no name in selected profile" << std::endl;
             return false;
         }
 
-        if (!profile["selectedProfile"].contains("id"))
+        if (!profile.contains("id"))
         {
             std::cerr << "Error trying to authenticate, no id in selected profile" << std::endl;
             return false;
