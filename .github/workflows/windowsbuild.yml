@@ -13,14 +13,25 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Create Build Environment
-      run: cmake -E make_directory ${{runner.workspace}}/build
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Install Conan
+      id: conan
+      uses: turtlebrowser/get-conan@main
+      
+    - name: Install conan packages
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: |
+        conan profile new default --detect
+        conan install .. --build=missing
 
     - name: Configure CMake
       shell: bash
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{github.workspace}}/build
       run: cmake $GITHUB_WORKSPACE -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGAME_VERSION=latest -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF
 
     - name: Build
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{github.workspace}}/build
       shell: bash
       run: cmake --build . --config $BUILD_TYPE

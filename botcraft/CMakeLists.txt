@@ -174,15 +174,14 @@ target_include_directories(botcraft
 )
 
 # Add Asio
-target_link_libraries(botcraft PRIVATE asio)
+target_link_libraries(botcraft PRIVATE CONAN_PKG::asio)
 target_compile_definitions(botcraft PRIVATE ASIO_STANDALONE)
-
 # Add threads support
 target_link_libraries(botcraft PUBLIC Threads::Threads)
 
 # Add graphical dependencies
 if(BOTCRAFT_USE_OPENGL_GUI)
-    target_link_libraries(botcraft PRIVATE glfw glad glm rectpack2D OpenGL::GL stb_image)
+target_link_libraries(botcraft PRIVATE CONAN_PKG::glfw CONAN_PKG::glad CONAN_PKG::glm rectpack2D OpenGL::GL CONAN_PKG::stb)
     if(BOTCRAFT_USE_IMGUI)
         target_link_libraries(botcraft PRIVATE imgui)
         target_compile_definitions(botcraft PUBLIC USE_IMGUI=1)
@@ -191,13 +190,12 @@ if(BOTCRAFT_USE_OPENGL_GUI)
 endif(BOTCRAFT_USE_OPENGL_GUI)
 
 if(BOTCRAFT_COMPRESSION)
-    target_link_libraries(botcraft PRIVATE ZLIB::ZLIB)
+    target_link_libraries(botcraft PRIVATE CONAN_PKG::zlib)
     target_compile_definitions(botcraft PUBLIC USE_COMPRESSION=1)
 endif(BOTCRAFT_COMPRESSION)
 
 if(BOTCRAFT_ENCRYPTION)
-    target_link_libraries(botcraft PRIVATE OpenSSL::SSL)
-    target_link_libraries(botcraft PRIVATE OpenSSL::Crypto)
+target_link_libraries(botcraft PRIVATE CONAN_PKG::openssl)
     target_compile_definitions(botcraft PRIVATE USE_ENCRYPTION=1)
 endif(BOTCRAFT_ENCRYPTION)
 

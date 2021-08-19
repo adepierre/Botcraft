@@ -33,6 +33,6 @@ if(NOT TARGET imgui)
     target_include_directories(imgui PUBLIC ${IMGUI_DIR}/examples)
 
     target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
-    target_link_libraries(imgui PRIVATE OpenGL::GL glfw glad)
+    target_link_libraries(imgui PRIVATE OpenGL::GL CONAN_PKG::glfw CONAN_PKG::glad)
     set_target_properties(imgui PROPERTIES FOLDER 3rdparty)
 endif()

@@ -343,6 +343,10 @@ target_include_directories(protocolCraft
     PUBLIC 
         $<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>
 )
+target_link_libraries(protocolCraft
+    PUBLIC
+        CONAN_PKG::nlohmann_json
+)
 
 # Installation stuff
 include(GNUInstallDirs)

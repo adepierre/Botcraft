@@ -1,21 +1,6 @@
 [submodule "3rdparty/imgui"]
 	path = 3rdparty/imgui
 	url = https://github.com/ocornut/imgui.git
-[submodule "3rdparty/glfw"]
-	path = 3rdparty/glfw
-	url = https://github.com/glfw/glfw.git
-[submodule "3rdparty/glm"]
-	path = 3rdparty/glm
-	url = https://github.com/g-truc/glm.git
-[submodule "3rdparty/zlib"]
-	path = 3rdparty/zlib
-	url = https://github.com/madler/zlib.git
-[submodule "3rdparty/asio"]
-	path = 3rdparty/asio
-	url = https://github.com/chriskohlhoff/asio.git
-[submodule "3rdparty/openssl"]
-	path = 3rdparty/openssl
-	url = https://github.com/janbar/openssl-cmake
 [submodule "3rdparty/rectpack2D"]
 	path = 3rdparty/rectpack2D
 	url = https://github.com/TeamHypersomnia/rectpack2D

@@ -2,12 +2,15 @@ cmake_minimum_required(VERSION 3.4)
 
 project(Botcraft)
 
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup(TARGETS)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-option(BOTCRAFT_USE_OPENGL_GUI "Activate if you want to use OpenGL renderer" OFF)
+option(BOTCRAFT_USE_OPENGL_GUI "Activate if you want to use OpenGL renderer" ON)
 if(BOTCRAFT_USE_OPENGL_GUI)
-    option(BOTCRAFT_USE_IMGUI "Activate if you want to use display information on screen with ImGui" OFF)
+    option(BOTCRAFT_USE_IMGUI "Activate if you want to use display information on screen with ImGui" ON)
 endif()
 option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" ON)
 option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
@@ -45,37 +48,9 @@ option(BOTCRAFT_INSTALL_ASSETS "Set to copy used assets to installation folder" 
 
 set(ASSET_DIR ../Assets/${GAME_VERSION})
 
-# Add Asio
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/asio.cmake)
-
-# Add nlohmann json
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/json.cmake)
-
-# Add ZLIB
-if(BOTCRAFT_COMPRESSION)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib.cmake)
-endif(BOTCRAFT_COMPRESSION)
-
-# Add OpenSSL
-if(BOTCRAFT_ENCRYPTION)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/openssl.cmake)
-endif(BOTCRAFT_ENCRYPTION)
-
 if(BOTCRAFT_USE_OPENGL_GUI)
     # Add OpenGL
     find_package(OpenGL REQUIRED)
-    
-    # Add glad
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glad.cmake)
-    
-    #Add GLFW
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glfw.cmake)
-    
-    # Add GLM
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glm.cmake)
-    
-    # Add stb_image
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/stb_image.cmake)
     
     # Add rectpack2D
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/rectpack2D.cmake)
