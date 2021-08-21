@@ -181,7 +181,7 @@ target_link_libraries(botcraft PUBLIC Threads::Threads)
 
 # Add graphical dependencies
 if(BOTCRAFT_USE_OPENGL_GUI)
-target_link_libraries(botcraft PRIVATE CONAN_PKG::glfw CONAN_PKG::glad CONAN_PKG::glm rectpack2D OpenGL::GL CONAN_PKG::stb)
+target_link_libraries(botcraft PRIVATE CONAN_PKG::glfw CONAN_PKG::glad CONAN_PKG::glm CONAN_PKG::rectpack2D OpenGL::GL CONAN_PKG::stb)
     if(BOTCRAFT_USE_IMGUI)
         target_link_libraries(botcraft PRIVATE CONAN_PKG::imgui imgui_impl)
         target_compile_definitions(botcraft PUBLIC USE_IMGUI=1)

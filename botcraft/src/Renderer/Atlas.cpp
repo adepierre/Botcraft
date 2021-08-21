@@ -5,8 +5,7 @@
 #define STBI_ONLY_PNG
 #include <stb_image.h>
 
-// rectpack2D
-#include "finders_interface.h"
+#include <rectpack2D/finders_interface.h>
 
 #include <iostream>
 #include <fstream>

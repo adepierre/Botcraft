@@ -6,6 +6,7 @@ glm/0.9.9.8
 imgui/1.74
 nlohmann_json/3.9.1
 openssl/1.1.1k
+rectpack2D/100721
 stb/20200203
 zlib/1.2.11
 
