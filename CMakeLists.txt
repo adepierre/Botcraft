@@ -51,13 +51,13 @@ set(ASSET_DIR ../Assets/${GAME_VERSION})
 if(BOTCRAFT_USE_OPENGL_GUI)
     # Add OpenGL
     find_package(OpenGL REQUIRED)
-    
+
     # Add rectpack2D
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/rectpack2D.cmake)
     
     if(BOTCRAFT_USE_IMGUI)
-        # Add Dear Imgui
-        include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/imgui.cmake)
+        # Add Dear Imgui impl
+        add_subdirectory(3rdparty/imgui_impl)
     endif()
 endif()
 
