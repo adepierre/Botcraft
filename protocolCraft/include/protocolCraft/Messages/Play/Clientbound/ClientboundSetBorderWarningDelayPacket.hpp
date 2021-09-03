@@ -51,14 +51,13 @@ namespace ProtocolCraft
             WriteData<VarInt>(warning_delay, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["warning_delay"] = picojson::value((double)warning_delay);
+            output["warning_delay"] = warning_delay;
 
-            return value;
+            return output;
         }
 
     private:

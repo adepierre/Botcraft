@@ -201,25 +201,24 @@ namespace ProtocolCraft
             WriteData<char>(flags, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["pos"] = pos.Serialize();
-            object["update_type"] = picojson::value((double)update_type);
-            object["mode"] = picojson::value((double)mode);
-            object["name_"] = picojson::value(name_);
-            object["offset"] = offset.Serialize();
-            object["size"] = size.Serialize();
-            object["mirror"] = picojson::value((double)mirror);
-            object["rotation"] = picojson::value((double)rotation);
-            object["data"] = picojson::value(data);
-            object["integrity"] = picojson::value((double)integrity);
-            object["seed"] = picojson::value((double)seed);
-            object["flags"] = picojson::value((double)flags);
+            output["pos"] = pos.Serialize();
+            output["update_type"] = update_type;
+            output["mode"] = mode;
+            output["name_"] = name_;
+            output["offset"] = offset.Serialize();
+            output["size"] = size.Serialize();
+            output["mirror"] = mirror;
+            output["rotation"] = rotation;
+            output["data"] = data;
+            output["integrity"] = integrity;
+            output["seed"] = seed;
+            output["flags"] = flags;
 
-            return value;
+            return output;
         }
 
     private:

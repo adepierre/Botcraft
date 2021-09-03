@@ -85,16 +85,15 @@ namespace ProtocolCraft
             WriteData<VarInt>(total_experience, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["experience_progress"] = picojson::value((double)experience_progress);
-            object["experience_level"] = picojson::value((double)experience_level);
-            object["total_experience"] = picojson::value((double)total_experience);
+            output["experience_progress"] = experience_progress;
+            output["experience_level"] = experience_level;
+            output["total_experience"] = total_experience;
 
-            return value;
+            return output;
         }
 
     private:

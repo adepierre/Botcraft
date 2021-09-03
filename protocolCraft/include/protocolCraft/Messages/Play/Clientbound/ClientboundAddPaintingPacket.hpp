@@ -132,22 +132,21 @@ namespace ProtocolCraft
             WriteData<char>(direction, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["id_"] = picojson::value((double)id_);
-            object["uuid"] = picojson::value(std::string(uuid.begin(), uuid.end()));
+            output["id_"] = id_;
+            output["uuid"] = uuid;
 #if PROTOCOL_VERSION < 353
-            object["title"] = picojson::value(title);
+            output["title"] = title;
 #else
-            object["motive"] = picojson::value((double)motive);
+            output["motive"] = motive;
 #endif
-            object["pos"] = pos.Serialize();
-            object["direction"] = picojson::value((double)direction);
+            output["pos"] = pos.Serialize();
+            output["direction"] = direction;
 
-            return value;
+            return output;
         }
 
     private:

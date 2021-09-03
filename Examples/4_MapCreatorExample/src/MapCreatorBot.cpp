@@ -1,6 +1,7 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+#include <iostream>
 
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Chunk.hpp>

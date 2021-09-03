@@ -71,15 +71,14 @@ namespace ProtocolCraft
             WriteData<long long int>(day_time, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["game_time"] = picojson::value((double)game_time);
-            object["day_time"] = picojson::value((double)day_time);
+            output["game_time"] = game_time;
+            output["day_time"] = day_time;
 
-            return value;
+            return output;
         }
 
     private:

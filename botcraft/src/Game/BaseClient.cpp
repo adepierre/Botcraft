@@ -1,4 +1,5 @@
 #include <functional>
+#include <iostream>
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
@@ -59,13 +60,7 @@ namespace Botcraft
 
     void BaseClient::Connect(const std::string& address, const std::string& login, const std::string& password)
     {
-        network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(address, login, password, ""));
-        network_manager->AddHandler(this);
-    }
-
-    void BaseClient::Connect(const std::string& address, const std::string& launcher_accounts_path)
-    {
-        network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(address, "", "", launcher_accounts_path));
+        network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(address, login, password));
         network_manager->AddHandler(this);
     }
 

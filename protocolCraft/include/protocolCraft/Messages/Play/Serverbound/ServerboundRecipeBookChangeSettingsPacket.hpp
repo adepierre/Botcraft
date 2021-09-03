@@ -75,17 +75,16 @@ namespace ProtocolCraft
             WriteData<bool>(is_filtering, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["book_type"] = picojson::value((double)book_type);
-            object["is_open"] = picojson::value(is_open);
-            object["is_filtering"] = picojson::value(is_filtering);
+            output["book_type"] = book_type;
+            output["is_open"] = is_open;
+            output["is_filtering"] = is_filtering;
             
 
-            return value;
+            return output;
         }
 
     private:

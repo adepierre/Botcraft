@@ -308,49 +308,33 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["x"] = picojson::value((double)x);
-            object["z"] = picojson::value((double)z);
+            output["x"] = x;
+            output["z"] = z;
 #if PROTOCOL_VERSION > 722
-            object["trust_edges"] = picojson::value(trust_edges);
+            output["trust_edges"] = trust_edges;
 #endif
-#if PROTOCOL_VERSION < 755
-            object["sky_Y_mask"] = picojson::value((double)sky_Y_mask);
-            object["block_Y_mask"] = picojson::value((double)block_Y_mask);
-            object["empty_sky_Y_mask"] = picojson::value((double)empty_sky_Y_mask);
-            object["empty_block_Y_mask"] = picojson::value((double)empty_block_Y_mask);
-#else
-            object["sky_Y_mask"] = picojson::value("Vector of " + std::to_string(sky_Y_mask.size()) + " unsigned long long int");
-            object["block_Y_mask"] = picojson::value("Vector of " + std::to_string(block_Y_mask.size()) + " unsigned long long int");
-            object["empty_sky_Y_mask"] = picojson::value("Vector of " + std::to_string(empty_sky_Y_mask.size()) + " unsigned long long int");
-            object["empty_block_Y_mask"] = picojson::value("Vector of " + std::to_string(empty_block_Y_mask.size()) + " unsigned long long int");
-#endif
+            output["sky_Y_mask"] = sky_Y_mask;
+            output["block_Y_mask"] = block_Y_mask;
+            output["empty_sky_Y_mask"] = empty_sky_Y_mask;
+            output["empty_block_Y_mask"] = empty_block_Y_mask;
 
-            object["sky_updates"] = picojson::value(picojson::array_type, false);
-
-            picojson::array& array1 = object["sky_updates"].get<picojson::array>();
-            array1.reserve(sky_updates.size());
-
+            output["sky_updates"] = nlohmann::json::array();
             for (int i = 0; i < sky_updates.size(); ++i)
             {
-                array1.push_back(picojson::value("Vector of " + std::to_string(sky_updates[i].size()) + " char"));
+                output["sky_updates"].push_back(sky_updates[i]);
             }
 
-            object["block_updates"] = picojson::value(picojson::array_type, false);
-
-            picojson::array& array2 = object["block_updates"].get<picojson::array>();
-            array2.reserve(block_updates.size());
-
+            output["block_updates"] = nlohmann::json::array();
             for (int i = 0; i < block_updates.size(); ++i)
             {
-                array2.push_back(picojson::value("Vector of " + std::to_string(block_updates[i].size()) + " char"));
+                output["block_updates"].push_back(block_updates[i]);
             }
 
-            return value;
+            return output;
         }
 
     private:

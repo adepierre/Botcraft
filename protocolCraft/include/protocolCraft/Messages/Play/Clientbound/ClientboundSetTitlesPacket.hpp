@@ -103,7 +103,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            type = (SetTitlesType)ReadData<VarInt>(iter, length);
+            type = (SetTitlesType)(int)ReadData<VarInt>(iter, length);
             switch (type)
             {
             case SetTitlesType::Title:
@@ -155,23 +155,22 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["type"] = picojson::value((double)type);
+            output["type"] = type;
             switch (type)
             {
             case SetTitlesType::Title:
             case SetTitlesType::Subtitle:
             case SetTitlesType::ActionBar:
-                object["text"] = text.Serialize();
+                output["text"] = text.Serialize();
                 break;
             case SetTitlesType::Times:
-                object["fade_in_time"] = picojson::value((double)fade_in_time);
-                object["stay_time"] = picojson::value((double)stay_time);
-                object["fade_out_time"] = picojson::value((double)fade_out_time);
+                output["fade_in_time"] = fade_in_time;
+                output["stay_time"] = stay_time;
+                output["fade_out_time"] = fade_out_time;
                 break;
             case SetTitlesType::Clear:
 
@@ -184,7 +183,7 @@ namespace ProtocolCraft
                 break;
             }
 
-            return value;
+            return output;
         }
 
     private:

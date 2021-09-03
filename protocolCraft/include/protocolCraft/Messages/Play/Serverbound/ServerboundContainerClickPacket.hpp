@@ -204,37 +204,35 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["container_id"] = picojson::value((double)container_id);
+            output["container_id"] = container_id;
 #if PROTOCOL_VERSION > 755
-            object["state_id"] = picojson::value((double)state_id);
+            output["state_id"] = state_id;
 #endif
-            object["slot_num"] = picojson::value((double)slot_num);
-            object["button_num"] = picojson::value((double)button_num);
+            output["slot_num"] = slot_num;
+            output["button_num"] = button_num;
 #if PROTOCOL_VERSION < 755
-            object["uid"] = picojson::value((double)uid);
+            output["uid"] = uid;
 #endif
-            object["click_type"] = picojson::value((double)click_type);
+            output["click_type"] = click_type;
 #if PROTOCOL_VERSION > 754
-            object["changed_slots"] = picojson::value(picojson::object_type, false);
-            picojson::object& changed_slots_object = object["changed_slots"].get<picojson::object>();
+            output["changed_slots"] = nlohmann::json::object();
 
             for (auto it = changed_slots.begin(); it != changed_slots.end(); ++it)
             {
-                changed_slots_object[std::to_string(it->first)] = it->second.Serialize();
+                output["changed_slots"][std::to_string(it->first)] = it->second.Serialize();
             }
 #endif
 #if PROTOCOL_VERSION < 755
-            object["item_stack"] = item_stack.Serialize();
+            output["item_stack"] = item_stack.Serialize();
 #else
-            object["carried_item"] = carried_item.Serialize();
+            output["carried_item"] = carried_item.Serialize();
 #endif
 
-            return value;
+            return output;
         }
 
     private:

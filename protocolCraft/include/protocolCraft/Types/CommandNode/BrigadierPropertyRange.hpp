@@ -35,14 +35,13 @@ namespace ProtocolCraft
             WriteData<bool>(decimals, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["decimals"] = picojson::value(decimals);
+            output["decimals"] = decimals;
 
-            return value;
+            return output;
         }
 
     private:

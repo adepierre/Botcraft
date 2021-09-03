@@ -167,27 +167,24 @@ namespace ProtocolCraft
             WriteData<float>(knockback_z, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["x"] = picojson::value((double)x);
-            object["y"] = picojson::value((double)y);
-            object["z"] = picojson::value((double)z);
-            object["power"] = picojson::value((double)power);
-            picojson::value value2(picojson::array_type, false);
-            picojson::array& object2 = value2.get<picojson::array>();
+            output["x"] = x;
+            output["y"] = y;
+            output["z"] = z;
+            output["power"] = power;
+            output["to_blow"] = nlohmann::json::array();
             for (int i = 0; i < to_blow.size(); ++i)
             {
-                object2.push_back(to_blow[i].Serialize());
+                output["to_blow"].push_back(to_blow[i].Serialize());
             }
-            object["to_blow"] = value2;
-            object["knockback_x"] = picojson::value((double)knockback_x);
-            object["knockback_y"] = picojson::value((double)knockback_y);
-            object["knockback_z"] = picojson::value((double)knockback_z);
+            output["knockback_x"] = knockback_x;
+            output["knockback_y"] = knockback_y;
+            output["knockback_z"] = knockback_z;
 
-            return value;
+            return output;
         }
 
     private:

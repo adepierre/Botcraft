@@ -37,8 +37,8 @@ namespace ProtocolCraft
         WriteData<short>(value, container);
     }
 
-    const picojson::value TagShort::SerializeImpl() const
+    const nlohmann::json TagShort::SerializeImpl() const
     {
-        return picojson::value((double)value);
+        return nlohmann::json(value);
     }
 }

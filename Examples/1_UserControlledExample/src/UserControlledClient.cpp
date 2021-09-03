@@ -13,6 +13,8 @@
 
 #include "UserControlledClient.hpp"
 
+#include <iostream>
+
 using namespace Botcraft;
 using namespace ProtocolCraft;
 

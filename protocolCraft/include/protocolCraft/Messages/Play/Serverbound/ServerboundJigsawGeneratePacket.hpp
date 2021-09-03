@@ -77,16 +77,15 @@ namespace ProtocolCraft
             WriteData<bool>(keep_jigsaws, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["pos"] = pos.Serialize();
-            object["levels"] = picojson::value((double)levels);
-            object["keep_jigsaws"] = picojson::value(keep_jigsaws);
+            output["pos"] = pos.Serialize();
+            output["levels"] = levels;
+            output["keep_jigsaws"] = keep_jigsaws;
 
-            return value;
+            return output;
         }
 
     private:

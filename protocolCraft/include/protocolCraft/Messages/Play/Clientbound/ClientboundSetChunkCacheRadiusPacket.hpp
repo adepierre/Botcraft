@@ -58,14 +58,13 @@ namespace ProtocolCraft
             WriteData<VarInt>(radius, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["radius"] = picojson::value((double)radius);
+            output["radius"] = radius;
 
-            return value;
+            return output;
         }
 
     private:

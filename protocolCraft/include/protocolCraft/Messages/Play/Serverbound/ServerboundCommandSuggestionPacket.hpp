@@ -133,25 +133,24 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
 #if PROTOCOL_VERSION > 344
-            object["id_"] = picojson::value((double)id_);
+            output["id_"] = id_;
 #endif
-            object["command"] = picojson::value(command);
+            output["command"] = command;
 #if PROTOCOL_VERSION < 345
-            object["assume_command"] = picojson::value(assume_command);
-            object["has_position"] = picojson::value(has_position);
+            output["assume_command"] = assume_command;
+            output["has_position"] = has_position;
             if (has_position)
             {
-                object["looked_at_block"] = looked_at_block.Serialize();
+                output["looked_at_block"] = looked_at_block.Serialize();
             }
 #endif
 
-            return value;
+            return output;
         }
 
     private:

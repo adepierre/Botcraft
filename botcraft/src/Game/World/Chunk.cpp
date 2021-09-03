@@ -126,7 +126,7 @@ namespace Botcraft
             Palette palette_type = (bits_per_block <= 8 ? Palette::SectionPalette : Palette::GlobalPalette);
 
 #if PROTOCOL_VERSION < 384
-            int palette_length = ReadVarInt(iter, length);
+            int palette_length = ReadData<VarInt>(iter, length);
 #else
             int palette_length = 0;
             if (palette_type != Palette::GlobalPalette)

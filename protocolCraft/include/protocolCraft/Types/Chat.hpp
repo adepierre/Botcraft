@@ -60,7 +60,7 @@ namespace ProtocolCraft
 
         const std::string ParseChat(const std::string &json);
 
-        virtual const picojson::value SerializeImpl() const override;
+        virtual const nlohmann::json SerializeImpl() const override;
 
     private:
         std::string text;

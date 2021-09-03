@@ -43,14 +43,13 @@ namespace ProtocolCraft
             WriteData<VarInt>(compression_threshold, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["compression_threshold"] = picojson::value((double)compression_threshold);
+            output["compression_threshold"] = compression_threshold;
 
-            return value;
+            return output;
         }
 
     private:

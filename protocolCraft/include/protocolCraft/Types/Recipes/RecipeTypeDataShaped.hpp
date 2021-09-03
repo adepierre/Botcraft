@@ -93,23 +93,21 @@ namespace ProtocolCraft
             result.Write(container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["width"] = picojson::value((double)width);
-            object["height"] = picojson::value((double)height);
-            object["group"] = picojson::value(group);
-            object["ingredients"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["ingredients"].get<picojson::array>();
+            output["width"] = width;
+            output["height"] = height;
+            output["group"] = group;
+            output["ingredients"] = nlohmann::json::array();
             for (int i = 0; i < width * height; ++i)
             {
-                array.push_back(ingredients[i].Serialize());
+                output["ingredients"].push_back(ingredients[i].Serialize());
             }
-            object["result"] = result.Serialize();
+            output["result"] = result.Serialize();
 
-            return value;
+            return output;
         }
 
     private:

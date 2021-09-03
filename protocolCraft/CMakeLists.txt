@@ -338,10 +338,10 @@ target_include_directories(protocolCraft
         $<INSTALL_INTERFACE:include>
         )
 
-# Add picoJson
+# Add json
 target_include_directories(protocolCraft 
     PUBLIC 
-        $<BUILD_INTERFACE:${PICOJSON_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>
 )
 
 # Installation stuff
@@ -363,8 +363,8 @@ install(EXPORT protocolCraft-targets
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft
 )
 
-# Copy picoJson
-install(DIRECTORY ${PICOJSON_INCLUDE_DIR}
+# Copy json
+install(DIRECTORY ${JSON_INCLUDE_DIR}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 export(EXPORT protocolCraft-targets

@@ -107,18 +107,17 @@ namespace ProtocolCraft
             WriteData<float>(pitch, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["sound"] = picojson::value((double)sound);
-            object["source"] = picojson::value((double)source);
-            object["id_"] = picojson::value((double)id_);
-            object["volume"] = picojson::value((double)volume);
-            object["pitch"] = picojson::value((double)pitch);
+            output["sound"] = sound;
+            output["source"] = source;
+            output["id_"] = id_;
+            output["volume"] = volume;
+            output["pitch"] = pitch;
 
-            return value;
+            return output;
         }
 
     private:

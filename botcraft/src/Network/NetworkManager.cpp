@@ -14,10 +14,36 @@
 
 namespace Botcraft
 {
-    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const std::string& password, const std::string& launcher_accounts_path)
+    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const std::string& password)
     {
         com = nullptr;
-        authentifier = nullptr;
+
+        // Online mode with Microsoft login flow
+        if (login.empty())
+        {
+            authentifier = std::shared_ptr<Authentifier>(new Authentifier());
+            if (!authentifier->AuthMicrosoft())
+            {
+                throw std::runtime_error("Error trying to authenticate on Mojang server using Microsoft auth flow");
+            }
+            name = authentifier->GetPlayerDisplayName();
+        }
+        // Online mode with Mojang Account
+        else if (!password.empty())
+        {
+            authentifier = std::shared_ptr<Authentifier>(new Authentifier());
+            if (!authentifier->AuthMojang(login, password))
+            {
+                throw std::runtime_error("Error trying to authenticate on Mojang server using login and password");
+            }
+            name = authentifier->GetPlayerDisplayName();
+        }
+        // Online mode false
+        else
+        {
+            authentifier = nullptr;
+            name = login;
+        }
 
         compression = -1;
         AddHandler(this);
@@ -41,32 +67,6 @@ namespace Botcraft
         Send(handshake_msg);
 
         state = ProtocolCraft::ConnectionState::Login;
-
-        // Get info from a launcher json file (Mojang or Microsoft account)
-        if (!launcher_accounts_path.empty())
-        {
-            authentifier = std::shared_ptr<Authentifier>(new Authentifier());
-            if (!authentifier->AuthToken(launcher_accounts_path))
-            {
-                throw std::runtime_error("Error trying to authenticate on Mojang server using launcher accounts json file");
-            }
-            name = authentifier->GetPlayerDisplayName();
-        }
-        // Online mode with Mojang Account
-        else if (!password.empty())
-        {
-            authentifier = std::shared_ptr<Authentifier>(new Authentifier());
-            if (!authentifier->AuthToken(login, password))
-            {
-                throw std::runtime_error("Error trying to authenticate on Mojang server using login and password");
-            }
-            name = authentifier->GetPlayerDisplayName();
-        }
-        // Online mode false
-        else
-        {
-            name = login;
-        }
 
         std::shared_ptr<ProtocolCraft::ServerboundHelloPacket> loginstart_msg(new ProtocolCraft::ServerboundHelloPacket);
         loginstart_msg->SetGameProfile(name);
@@ -253,7 +253,7 @@ namespace Botcraft
     {
         if (authentifier == nullptr)
         {
-            throw(std::runtime_error("Authentication asked while no password has been provided, make sure to connect with a valid Mojang Account"));
+            throw(std::runtime_error("Authentication asked while no valid account has been provided, make sure to connect with a valid Mojang or Microsoft Account"));
             return;
         }
 

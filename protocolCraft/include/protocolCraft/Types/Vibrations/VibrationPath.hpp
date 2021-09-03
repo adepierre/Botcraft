@@ -77,17 +77,16 @@ namespace ProtocolCraft
             WriteData<VarInt>(arrival_in_ticks, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["origin"] = origin.Serialize();
-            object["destination"] = destination->Serialize();
-            object["arrival_in_ticks"] = picojson::value((double)arrival_in_ticks);
+            output["origin"] = origin.Serialize();
+            output["destination"] = destination->Serialize();
+            output["arrival_in_ticks"] = arrival_in_ticks;
 
 
-            return value;
+            return output;
         }
 
     private:

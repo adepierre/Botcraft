@@ -85,16 +85,15 @@ namespace ProtocolCraft
             tag.Write(container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["pos"] = pos.Serialize();
-            object["type"] = picojson::value((double)type);
-            object["tag"] = tag.Serialize();
+            output["pos"] = pos.Serialize();
+            output["type"] = type;
+            output["tag"] = tag.Serialize();
 
-            return value;
+            return output;
         }
 
     private:

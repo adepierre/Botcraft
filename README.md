@@ -8,7 +8,7 @@ This was my first project using OpenGL, multi-threading, networking and "sort-of
 
 ## Features
 
-- Connection to minecraft server (both offline mode and online connection with Mojang account, Microsoft accounts are supported using a json file created by the official launcher)
+- Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
 - Automatic refresh of the token when required
 - DNS name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.17.1 supported
@@ -33,7 +33,7 @@ More complex example with 10 survival bots collaborating on a pixel art build. T
 All the libraries are included either directly or as submodules and are built locally automatically (if not already found on your system) so you don't have to install anything manually.
 
 - [asio](https://think-async.com/Asio/)
-- [picoJson](https://github.com/kazuho/picojson)
+- [nlohmann json](https://github.com/nlohmann/json)
 - [zlib](https://github.com/madler/zlib) (optional, used only if compression is enabled on your server)
 - [openssl](https://www.openssl.org/) (optional, used only if your server is in online mode)
 
@@ -94,11 +94,9 @@ Examples can be found in the [Examples](Examples/) folder:
 
 ## Connection
 
-If the server is in online-mode: false mode, you can connect with any username.
+If the server has the option online-mode: false, you can connect with any username.
 
-If the server is in online-mode: true mode, you can connect with a Mojang account (login+password) or with a json file created by the official minecraft launcher. For details about the second approach, please see [this page](launcher_json_connection.md). For users with a Microsoft account, only the second option is available, as implementing the full [Microsoft oauth procedure](https://wiki.vg/Microsoft_Authentication_Scheme) would be rather complicated in C++.
-
-If the access token present in the launcher file is too old, it will be automatically refreshed, and the file will be updated with the new one.
+If the server has the option online-mode: true mode, you can connect with a Mojang account (login+password) or with a Microsoft account (empty login and password). For Microsoft account, you'll need to authenticate in your browser the first time. Then, credentials are stored in a file so you don't need to relog into your account everytime.
 
 ## To-do list
 

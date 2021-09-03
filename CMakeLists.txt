@@ -48,8 +48,8 @@ set(ASSET_DIR ../Assets/${GAME_VERSION})
 # Add Asio
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/asio.cmake)
 
-# Add picoJson
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/picoJson.cmake)
+# Add nlohmann json
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/json.cmake)
 
 # Add ZLIB
 if(BOTCRAFT_COMPRESSION)

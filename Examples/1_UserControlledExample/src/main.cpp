@@ -13,7 +13,6 @@ void ShowHelp(const char* argv0)
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
         << "\t--login\t\tMojang account login for connection, default: BCUserControl\n"
         << "\t--password\tMojang account password for connection, empty for servers in offline mode, default: empty\n"
-        << "\t--jsonaccount\tPath to a json file from the official minecraft launcher, can be used for people with a Microsoft account, default: empty"
         << std::endl;
 }
 
@@ -25,7 +24,6 @@ int main(int argc, char* argv[])
         std::string address = "127.0.0.1:25565";
         std::string login = "BCUserControl";
         std::string password = "";
-        std::string launcher_accounts_file = "";
 
         if (argc == 1)
         {
@@ -89,18 +87,6 @@ int main(int argc, char* argv[])
                     return 1;
                 }
             }
-            else if (arg == "--jsonaccount")
-            {
-                if (i + 1 < argc)
-                {
-                    launcher_accounts_file = argv[++i];
-                }
-                else
-                {
-                    std::cerr << "--jsonaccount requires an argument" << std::endl;
-                    return 1;
-                }
-            }
         }
 
         UserControlledClient client(ONLINE, true);
@@ -108,16 +94,8 @@ int main(int argc, char* argv[])
         if (ONLINE)
         {
             client.SetAutoRespawn(true);
-            if (!launcher_accounts_file.empty())
-            {
-                std::cout << "Starting connection process using launcher accounts file" << std::endl;
-                client.Connect(address, launcher_accounts_file);
-            }
-            else
-            {
-                std::cout << "Starting connection process using login and password" << std::endl;
-                client.Connect(address, login, password);
-            }
+            std::cout << "Starting connection process" << std::endl;
+            client.Connect(address, login, password);
         }
 
         while (!client.GetShouldBeClosed())

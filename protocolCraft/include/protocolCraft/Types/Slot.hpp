@@ -174,24 +174,23 @@ namespace ProtocolCraft
             nbt.Write(container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
 #if PROTOCOL_VERSION < 350
-            object["block_id"] = picojson::value((double)block_id);
+            output["block_id"] = block_id;
             if (block_id != -1)
             {
-                object["item_damage"] = picojson::value((double)item_damage);
+                output["item_damage"] = item_damage;
             }
 #elif PROTOCOL_VERSION < 402
-            object["item_id"] = picojson::value((double)item_id);
+            output["item_id"] = item_id;
 #elif PROTOCOL_VERSION >= 402
-            object["present"] = picojson::value(present);
+            output["present"] = present;
             if (present)
             {
-                object["item_id"] = picojson::value((double)item_id);
+                output["item_id"] = item_id;
             }
 #endif
 #if PROTOCOL_VERSION < 350
@@ -202,13 +201,13 @@ namespace ProtocolCraft
             if (present)
 #endif
             {
-                object["item_count"] = picojson::value((double)item_count);
+                output["item_count"] = item_count;
                 if (nbt.HasData())
                 {
-                    object["nbt"] = nbt.Serialize();
+                    output["nbt"] = nbt.Serialize();
                 }
             }
-            return value;
+            return output;
         }
 
     private:

@@ -152,28 +152,27 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["entity_id"] = picojson::value((double)entity_id);
-            object["action"] = picojson::value((double)action);
+            output["entity_id"] = entity_id;
+            output["action"] = action;
             if (action == 2)
             {
-                object["location_x"] = picojson::value((double)location_x);
-                object["location_y"] = picojson::value((double)location_y);
-                object["location_z"] = picojson::value((double)location_z);
+                output["location_x"] = location_x;
+                output["location_y"] = location_y;
+                output["location_z"] = location_z;
             }
             if (action == 0 || action == 2)
             {
-                object["hand"] = picojson::value((double)hand);
+                output["hand"] = hand;
             }
 #if PROTOCOL_VERSION > 722
-            object["using_secondary_action"] = picojson::value(using_secondary_action);
+            output["using_secondary_action"] = using_secondary_action;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

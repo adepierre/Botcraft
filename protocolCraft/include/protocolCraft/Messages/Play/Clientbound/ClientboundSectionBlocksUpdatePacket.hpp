@@ -176,46 +176,29 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
 #if PROTOCOL_VERSION < 739
-            object["chunk_x"] = picojson::value((double)chunk_x);
-            object["chunk_z"] = picojson::value((double)chunk_z);
-            object["record_count"] = picojson::value((double)record_count);
+            output["chunk_x"] = chunk_x;
+            output["chunk_z"] = chunk_z;
+            output["record_count"] = record_count;
 
-            object["records"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["records"].get<picojson::array>();
-            array.reserve(records.size());
+            output["records"] = nlohmann::json::array();
 
             for (int i = 0; i < records.size(); ++i)
             {
-                array.push_back(records[i].Serialize());
+                output["records"].push_back(records[i].Serialize());
             }
 #else
-            object["section_pos"] = picojson::value((double)section_pos);
-            object["suppress_light_updates"] = picojson::value(suppress_light_updates);
-            object["positions"] = picojson::value(picojson::array_type, false);
-            picojson::array& array_positions = object["positions"].get<picojson::array>();
-            array_positions.reserve(positions.size());
-
-            for (int i = 0; i < positions.size(); ++i)
-            {
-                array_positions.push_back(picojson::value((double)positions[i]));
-            }
-
-            picojson::array& array_states = object["states"].get<picojson::array>();
-            array_states.reserve(states.size());
-
-            for (int i = 0; i < states.size(); ++i)
-            {
-                array_states.push_back(picojson::value((double)states[i]));
-            }
+            output["section_pos"] = section_pos;
+            output["suppress_light_updates"] = suppress_light_updates;
+            output["positions"] = positions;
+            output["states"] = states;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

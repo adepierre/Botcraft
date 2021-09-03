@@ -75,16 +75,15 @@ namespace ProtocolCraft
             WriteData<VarLong>(lerp_time, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["old_size"] = picojson::value(old_size);
-            object["new_size"] = picojson::value(new_size);
-            object["lerp_time"] = picojson::value((double)lerp_time);
+            output["old_size"] = old_size;
+            output["new_size"] = new_size;
+            output["lerp_time"] = lerp_time;
 
-            return value;
+            return output;
         }
 
     private:

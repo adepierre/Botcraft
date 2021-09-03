@@ -106,19 +106,18 @@ namespace ProtocolCraft
             item_stack.Write(container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["container_id"] = picojson::value((double)container_id);
-            object["slot"] = picojson::value((double)slot);
-            object["item_stack"] = item_stack.Serialize();
+            output["container_id"] = container_id;
+            output["slot"] = slot;
+            output["item_stack"] = item_stack.Serialize();
 #if PROTOCOL_VERSION > 755
-            object["state_id"] = picojson::value((double)state_id);
+            output["state_id"] = state_id;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

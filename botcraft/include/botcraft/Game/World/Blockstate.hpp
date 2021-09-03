@@ -4,7 +4,7 @@
 #include <random>
 #include <map>
 
-#include <picojson/picojson.h>
+#include <nlohmann/json.hpp>
 
 #include "botcraft/Game/Model.hpp"
 #include "botcraft/Game/Enums.hpp"
@@ -59,7 +59,7 @@ namespace Botcraft
         static void ClearCache();
 
     private:
-        static std::map<std::string, picojson::value> cached_jsons;
+        static std::map<std::string, nlohmann::json> cached_jsons;
 
         bool transparent;
         bool solid;

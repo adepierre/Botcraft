@@ -178,43 +178,42 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["id_"] = picojson::value(std::string(id_.begin(), id_.end()));
-            object["operation"] = picojson::value((double)operation);
+            output["id_"] = id_;
+            output["operation"] = operation;
 
             switch (operation)
             {
             case 0:
-                object["name_"] = name_.Serialize();
-                object["pct"] = picojson::value((double)pct);
-                object["color"] = picojson::value((double)color);
-                object["overlay"] = picojson::value((double)overlay);
-                object["flags"] = picojson::value((double)flags);
+                output["name_"] = name_.Serialize();
+                output["pct"] = pct;
+                output["color"] = color;
+                output["overlay"] = overlay;
+                output["flags"] = flags;
                 break;
             case 1:
                 break;
             case 2:
-                object["pct"] = picojson::value((double)pct);
+                output["pct"] = pct;
                 break;
             case 3:
-                object["name_"] = name_.Serialize();
+                output["name_"] = name_.Serialize();
                 break;
             case 4:
-                object["color"] = picojson::value((double)color);
-                object["overlay"] = picojson::value((double)overlay);
+                output["color"] = color;
+                output["overlay"] = overlay;
                 break;
             case 5:
-                object["flags"] = picojson::value((double)flags);
+                output["flags"] = flags;
                 break;
             default:
                 break;
             }
 
-            return value;
+            return output;
         }
 
     private:

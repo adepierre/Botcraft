@@ -49,14 +49,13 @@ namespace ProtocolCraft
             WriteData<bool>(reset_times, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["reset_times"] = picojson::value((double)reset_times);
+            output["reset_times"] = reset_times;
 
-            return value;
+            return output;
     }
 
     private:

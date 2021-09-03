@@ -1,6 +1,8 @@
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 
+#include <iostream>
+
 using namespace ProtocolCraft;
 
 namespace Botcraft
