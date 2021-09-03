@@ -2,6 +2,7 @@
 
 #ifdef USE_ENCRYPTION
 #include <asio/ssl.hpp>
+#include <openssl/sha.h>
 #endif
 
 #include <iostream>
