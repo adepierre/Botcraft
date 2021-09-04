@@ -4,8 +4,10 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/AI/AsyncTask.hpp
     include/botcraft/AI/BehaviourTree.hpp
     include/botcraft/AI/Blackboard.hpp
+    include/botcraft/AI/BotBehaviour.hpp
     include/botcraft/AI/InterfaceClient.hpp
     include/botcraft/AI/PathfindingTask.hpp
+    
     include/botcraft/Game/AABB.hpp
     include/botcraft/Game/Entities/Entity.hpp
     include/botcraft/Game/Entities/EntityManager.hpp
