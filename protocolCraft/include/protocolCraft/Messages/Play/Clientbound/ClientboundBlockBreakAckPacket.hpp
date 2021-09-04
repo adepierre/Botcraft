@@ -92,17 +92,16 @@ namespace ProtocolCraft
             WriteData<bool>(all_good, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["pos"] = pos.Serialize();
-            object["state"] = picojson::value((double)state);
-            object["action"] = picojson::value((double)action);
-            object["all_good"] = picojson::value(all_good);
+            output["pos"] = pos.Serialize();
+            output["state"] = state;
+            output["action"] = action;
+            output["all_good"] = all_good;
 
-            return value;
+            return output;
         }
 
     private:

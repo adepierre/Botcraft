@@ -1,5 +1,6 @@
 #include <sstream>
 #include <fstream>
+#include <iostream>
 
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Block.hpp>

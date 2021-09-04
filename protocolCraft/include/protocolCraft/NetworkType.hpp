@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <picojson/picojson.h>
+#include <nlohmann/json.hpp>
 
 #include "protocolCraft/BinaryReadWrite.hpp"
 
@@ -26,7 +26,7 @@ namespace ProtocolCraft
             return WriteImpl(container);
         }
 
-        virtual const picojson::value Serialize() const
+        virtual const nlohmann::json Serialize() const
         {
             return SerializeImpl();
         }
@@ -34,6 +34,6 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) = 0;
         virtual void WriteImpl(WriteContainer &container) const = 0;
-        virtual const picojson::value SerializeImpl() const = 0;
+        virtual const nlohmann::json SerializeImpl() const = 0;
     };
 } // ProtocolCraft

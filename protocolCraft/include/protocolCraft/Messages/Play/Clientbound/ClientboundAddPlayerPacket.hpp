@@ -153,23 +153,22 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["entity_id"] = picojson::value((double)entity_id);
-            object["player_id"] = picojson::value(std::string(player_id.begin(), player_id.end()));
-            object["x"] = picojson::value(x);
-            object["y"] = picojson::value(y);
-            object["z"] = picojson::value(z);
-            object["yRot"] = picojson::value((double)yRot);
-            object["xRot"] = picojson::value((double)xRot);
+            output["entity_id"] = entity_id;
+            output["player_id"] = player_id;
+            output["x"] = x;
+            output["y"] = y;
+            output["z"] = z;
+            output["yRot"] = yRot;
+            output["xRot"] = xRot;
 #if PROTOCOL_VERSION < 550
-            object["raw_metadata"] = picojson::value("Vector of " + std::to_string(raw_metadata.size()) + " unsigned char");
+            output["raw_metadata"] = "Vector of " + std::to_string(raw_metadata.size()) + " unsigned char";
 #endif
 
-            return value;
+            return output;
         }
 
     private:

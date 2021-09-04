@@ -83,16 +83,15 @@ namespace ProtocolCraft
             WriteData<float>(walking_speed, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["flags"] = picojson::value((double)flags);
-            object["flying_speed"] = picojson::value((double)flying_speed);
-            object["walking_speed"] = picojson::value((double)walking_speed);
+            output["flags"] = flags;
+            output["flying_speed"] = flying_speed;
+            output["walking_speed"] = walking_speed;
 
-            return value;
+            return output;
         }
 
     private:

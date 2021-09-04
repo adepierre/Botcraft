@@ -221,35 +221,33 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["map_id"] = picojson::value((double)map_id);
-            object["scale"] = picojson::value((double)scale);
+            output["map_id"] = map_id;
+            output["scale"] = scale;
 #if PROTOCOL_VERSION < 755
-            object["tracking_position"] = picojson::value((double)tracking_position);
+            output["tracking_position"] = tracking_position;
 #endif
 #if PROTOCOL_VERSION > 451
-            object["locked"] = picojson::value((double)locked);
+            output["locked"] = locked;
 #endif
-            object["decorations"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["decorations"].get<picojson::array>();
+            output["decorations"] = nlohmann::json::array();
             for (int i = 0; i < decorations.size(); ++i)
             {
-                array.push_back(decorations[i].Serialize());
+                output["decorations"].push_back(decorations[i].Serialize());
             }
-            object["width"] = picojson::value((double)width);
+            output["width"] = width;
             if (width > 0)
             {
-                object["height"] = picojson::value((double)height);
-                object["start_x"] = picojson::value((double)start_x);
-                object["start_z"] = picojson::value((double)start_z);
-                object["map_colors"] = picojson::value("Vector of " + std::to_string(map_colors.size()) + " unsigned chars");
+                output["height"] = height;
+                output["start_x"] = start_x;
+                output["start_z"] = start_z;
+                output["map_colors"] = "Vector of " + std::to_string(map_colors.size()) + " unsigned chars";
             }
 
-            return value;
+            return output;
         }
 
     private:

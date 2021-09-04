@@ -68,22 +68,15 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["tag_name"] = tag_name.Serialize();
-            object["count"] = picojson::value((double)count);
-            object["entries"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["entries"].get<picojson::array>();
+            output["tag_name"] = tag_name.Serialize();
+            output["count"] = count;
+            output["entries"] = entries;
 
-            for (int i = 0; i < count; ++i)
-            {
-                array.push_back(picojson::value((double)entries[i]));
-            }
-
-            return value;
+            return output;
         }
 
     private:

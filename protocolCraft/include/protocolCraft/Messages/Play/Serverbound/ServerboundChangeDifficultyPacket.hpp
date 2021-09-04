@@ -58,14 +58,13 @@ namespace ProtocolCraft
             WriteData<char>(difficulty, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["difficulty"] = picojson::value((double)difficulty);
+            output["difficulty"] = difficulty;
 
-            return value;
+            return output;
         }
 
     private:

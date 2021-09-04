@@ -1,11 +1,12 @@
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Biome.hpp"
 
-#include <picojson/picojson.h>
+#include <nlohmann/json.hpp>
 
 namespace Botcraft
 {
@@ -132,9 +133,6 @@ namespace Botcraft
 
     void AssetsManager::LoadBlocksFile()
     {
-        std::stringstream ss;
-        std::ifstream file;
-
         std::map<std::string, bool> solidity;
         std::map<std::string, bool> transparency;
         std::map<std::string, float> hardness;
@@ -147,106 +145,84 @@ namespace Botcraft
 #endif
         const std::string info_file_path = ASSETS_PATH + std::string("/custom/Blocks_info.json");
 
-        file.open(info_file_path);
-        if (!file.is_open())
+        nlohmann::json json;
+        try
+        {
+            std::ifstream file(info_file_path);
+            file >> json;
+            file.close();
+        }
+        catch (const nlohmann::json::exception& e)
         {
             std::cerr << "Error reading info block file at " << info_file_path << std::endl;
+            std::cerr << e.what() << std::endl;
             return;
         }
-
-        ss << file.rdbuf();
-        file.close();
-
-        picojson::value json;
-        ss >> json;
-        std::string err = picojson::get_last_error();
-
-        if (!err.empty())
-        {
-            std::cerr << "Error parsing info block file at " << info_file_path << "\n";
-            std::cerr << err << std::endl;
-            return;
-        }
-
-        if (!json.is<picojson::array>())
-        {
-            std::cerr << "Error parsing info block file at " << info_file_path << std::endl;
-            return;
-        }
-
 
         //Load all the info
-        const picojson::value::array &blockstates_info = json.get<picojson::array>();
-
-        for (int i = 0; i < blockstates_info.size(); ++i)
+        for (auto& info : json)
         {
             std::string name = "";
-            const picojson::value &info = blockstates_info[i];
 
-            if (!info.is<picojson::object>())
+            if (!info.contains("name") || !info["name"].is_string())
             {
-                std::cerr << "Error with the " << i << "th element of blockstates info" << std::endl;
-                continue;
-            }
-
-            if (!info.contains("name") || !info.get("name").is<std::string>())
-            {
-                std::cerr << "Error with the name of the " << i << "th element of blockstates info" << std::endl;
+                std::cerr << "Error with an element of blockstates info: " << std::endl;
+                std::cerr << info << std::endl;
                 continue;
             }
             else
             {
-                name = info.get("name").get<std::string>();
+                name = info["name"];
             }
 
-            if (!info.contains("transparent") || !info.get("transparent").is<bool>())
+            if (!info.contains("transparent") || !info["transparent"].is_boolean())
             {
                 transparency[name] = false;
             }
             else
             {
-                transparency[name] = info.get("transparent").get<bool>();
+                transparency[name] = info["transparent"];
             }
 
-            if (!info.contains("solid") || !info.get("solid").is<bool>())
+            if (!info.contains("solid") || !info["solid"].is_boolean())
             {
                 solidity[name] = false;
             }
             else
             {
-                solidity[name] = info.get("solid").get<bool>();
+                solidity[name] = info["solid"];
             }
 
-            if (!info.contains("hardness") || !info.get("hardness").is<double>())
+            if (!info.contains("hardness") || !info["hardness"].is_number())
             {
                 hardness[name] = -2.0f;
             }
             else
             {
-                hardness[name] = info.get("hardness").get<double>();
+                hardness[name] = info["hardness"];
             }
 
-            if (!info.contains("render") || !info.get("render").is<std::string>())
+            if (!info.contains("render") || !info["render"].is_string())
             {
                 rendering[name] = "block";
             }
             else
             {
-                rendering[name] = info.get("render").get<std::string>();
+                rendering[name] = info["render"];
             }
 
             // Get texture info (used for fluids)
-            if (info.contains("texture") && info.get("texture").is<std::string>())
+            if (info.contains("texture") && info["texture"].is_string())
             {
-                textures[name] = info.get("texture").get<std::string>();
+                textures[name] = info["texture"];
             }
 
             // Get the tint type info (for grass/leaves/water ...)
-            if (info.contains("tintType") && info.get("tintType").is<std::string>())
+            if (info.contains("tintType") && info["tintType"].is_string())
             {
                 std::string tint_type_string;
                 TintType tint_type = TintType::None;
-                tint_type_string = info.get("tintType").get<std::string>();
+                tint_type_string = info["tintType"];
                 if (tint_type_string == "grass")
                 {
                     tint_type = TintType::Grass;
@@ -272,14 +248,13 @@ namespace Botcraft
             }
 #if PROTOCOL_VERSION < 347
             // Before the flattening, we could have different tints for different metadata
-            else if (info.contains("tintTypes") && info.get("tintType").is<picojson::object>())
+            else if (info.contains("tintTypes") && info["tintType"].is_object())
             {
                 tint_types[name] = std::map<int, TintType>({});
-                const picojson::object& tints = info.get("tintType").get<picojson::object>();
-                for (auto it = tints.begin(); it != tints.end(); ++it)
+                for (auto it = info["tintType"].begin(); it != info["tintType"].end(); ++it)
                 {
                     TintType tint_type = TintType::None;
-                    std::string tint_type_string = it->second.get<std::string>();
+                    std::string tint_type_string = it.value().get<std::string>();
                     
                     if (tint_type_string == "grass")
                     {
@@ -298,7 +273,7 @@ namespace Botcraft
                         tint_type = TintType::Redstone;
                     }
 
-                    tint_types[name][std::stoi(it->first)] = tint_type;
+                    tint_types[name][std::stoi(it.key())] = tint_type;
                 }
             }
 #endif
@@ -321,59 +296,47 @@ namespace Botcraft
 
         const std::string file_path = ASSETS_PATH + std::string("/custom/Blocks.json");
 
-        file.open(file_path);
-        if (!file.is_open())
+        try
+        {
+            std::ifstream file(file_path);
+            file >> json;
+            file.close();
+        }
+        catch (const nlohmann::json::exception& e)
         {
             std::cerr << "Error reading block file at " << file_path << std::endl;
+            std::cerr << e.what() << std::endl;
             return;
         }
 
-        ss << file.rdbuf();
-        file.close();
-
-        ss >> json;
-
-        if (!err.empty())
-        {
-            std::cerr << "Error parsing block file at " << file_path << "\n";
-            std::cerr << err << std::endl;
-            return;
-        }
 #if PROTOCOL_VERSION < 347
 
-        if (!json.is<picojson::array>())
+        if (!json.is_array())
         {
-            std::cerr << "Error parsing block file at " << file_path << std::endl;
+            std::cerr << "Error block file at " << file_path << " is not a json array as expected" << std::endl;
             return;
         }
 
         //Load all the blockstates from JSON file
-        const picojson::value::array &json_blockstates = json.get<picojson::array>();
-
-        for (int i = 0; i < json_blockstates.size(); ++i)
+        for (auto& element : json)
         {
             int id = -1;
             std::string blockstate_display_name = "";
             std::string blockstate_name = "";
 
-            const picojson::object element = json_blockstates[i].get<picojson::object>();
-
-            auto it = element.find("id");
-            if (it != element.end())
+            if (element.contains("id"))
             {
-                id = (int)it->second.get<double>();
+                id = element["id"];
             }
 
-            it = element.find("display_name");
-            if (it != element.end())
+            if (element.contains("display_name"))
             {
-                blockstate_display_name = it->second.get<std::string>();
+                blockstate_display_name = element["display_name"];
             }
 
-            it = element.find("name");
-            if (it != element.end())
+            if (element.contains("name"))
             {
-                blockstate_name = it->second.get<std::string>();
+                blockstate_name = element["name"];
             }
 
             std::string render = "block";
@@ -397,31 +360,25 @@ namespace Botcraft
                 {
                     std::cerr << "Error, blockstate " << blockstate_name << " is a fluid, but it does not have a texture file specified in Blocks_info.json" << std::endl;
                 }
-                it = element.find("metadata");
-                if (it != element.end())
+                if (element.contains("metadata"))
                 {
-                    const picojson::array metadatas = it->second.get<picojson::array>();
-                    for (int j = 0; j < metadatas.size(); ++j)
+                    for (auto& metadata_obj : element["metadata"])
                     {
                         unsigned char metadata;
                         std::vector<std::string> variables;
                         std::string blockstate;
 
-                        const picojson::object current = metadatas[j].get<picojson::object>();
-                        auto it2 = current.find("value");
-                        metadata = (unsigned char)it2->second.get<double>();
+                        metadata = metadata_obj["value"];
 
-                        it2 = current.find("variables");
-                        if (it2 != current.end())
+                        if (metadata_obj.contains("variables"))
                         {
-                            for (int k = 0; k < it2->second.get<picojson::array>().size(); ++k)
+                            for (auto& s : metadata_obj["variables"])
                             {
-                                variables.push_back(it2->second.get<picojson::array>()[k].get<std::string>());
+                                variables.push_back(s);
                             }
                         }
 
-                        it2 = current.find("blockstate");
-                        blockstate = it2->second.get<std::string>();
+                        blockstate = metadata_obj["blockstate"];
                         
                         TintType tint_type = TintType::None;
 
@@ -484,40 +441,32 @@ namespace Botcraft
             }
         }
 #else
-
-        if (!json.is<picojson::object>())
+        if (!json.is_object())
         {
-            std::cerr << "Error parsing block file at " << file_path << std::endl;
+            std::cerr << "Error block file at " << file_path << " is not a json object as expected" << std::endl;
             return;
         }
 
-        //Load all the blockstates from JSON file
-        const picojson::value::object& obj = json.get<picojson::object>();
-
-        for (picojson::value::object::const_iterator blockstates_it = obj.begin(); blockstates_it != obj.end(); ++blockstates_it)
+        for (nlohmann::json::const_iterator blockstates_it = json.begin(); blockstates_it != json.end(); ++blockstates_it)
         {
             int id = -1;
-            std::string blockstate_name = blockstates_it->first;
+            std::string blockstate_name = blockstates_it.key();
 
-            const picojson::object element = blockstates_it->second.get<picojson::object>();
+            const nlohmann::json& element = blockstates_it.value();
 
-            auto it = element.find("states");
-
-            if (it == element.end() || !it->second.is<picojson::array>())
+            if (!element.contains("states") || !element["states"].is_array())
             {
                 continue;
             }
 
-            const picojson::value::array &json_blockstates = it->second.get<picojson::array>();
-
-            for (int i = 0; i < json_blockstates.size(); ++i)
+            for (auto& blockstate : element["states"])
             {
                 int id = -1;
                 std::vector<std::string> variables;
 
-                if (json_blockstates[i].contains("id") && json_blockstates[i].get("id").is<double>())
+                if (blockstate.contains("id") && blockstate["id"].is_number())
                 {
-                    id = json_blockstates[i].get("id").get<double>();
+                    id = blockstate["id"];
                 }
                 else
                 {
@@ -538,16 +487,14 @@ namespace Botcraft
 
                 // Read the properties (if any)
                 int fluid_level = 0;
-                if (json_blockstates[i].contains("properties") && json_blockstates[i].get("properties").is<picojson::object>())
+                if (blockstate.contains("properties") && blockstate["properties"].is_object())
                 {
-                    const picojson::object &properties = json_blockstates[i].get("properties").get<picojson::object>();
-
-                    for (auto it2 = properties.begin(); it2 != properties.end(); ++it2)
+                    for (nlohmann::json::const_iterator prop = blockstate["properties"].begin(); prop != blockstate["properties"].end(); ++prop)
                     {
-                        variables.push_back(it2->first + "=" + it2->second.get<std::string>());
-                        if (render == "fluid" && it2->first == "level")
+                        variables.push_back(prop.key() + "=" + prop.value().get<std::string>());
+                        if (render == "fluid" && prop.key() == "level")
                         {
-                            fluid_level = std::stoi(it2->second.get<std::string>());
+                            fluid_level = std::stoi(prop.value().get<std::string>());
                         }
                     }
                 }
@@ -588,40 +535,28 @@ namespace Botcraft
     {
         std::string file_path = ASSETS_PATH + std::string("/custom/Biomes.json");
 
-        std::stringstream ss;
-        std::ifstream file;
-
-        file.open(file_path);
-        if (!file.is_open())
+        nlohmann::json json;
+        try
+        {
+            std::ifstream file(file_path);
+            file >> json;
+            file.close();
+        }
+        catch (const nlohmann::json::exception& e)
         {
             std::cerr << "Error reading biome file at " << file_path << std::endl;
+            std::cerr << e.what() << std::endl;
             return;
         }
 
-        ss << file.rdbuf();
-        file.close();
-
-        picojson::value json;
-        ss >> json;
-        std::string err = picojson::get_last_error();
-
-        if (!err.empty())
+        if (!json.is_array())
         {
-            std::cerr << "Error parsing biome file at " << file_path << "\n";
-            std::cerr << err << std::endl;
-            return;
-        }
-
-        if (!json.is<picojson::array>())
-        {
-            std::cerr << "Error parsing biome file at " << file_path << std::endl;
+            std::cerr << "Error biome file at " << file_path << " is not a json object as expected" << std::endl;
             return;
         }
 
         //Load all the biomes from JSON file
-        const picojson::value::array &all_biomes = json.get<picojson::array>();
-
-        for (int i = 0; i < all_biomes.size(); ++i)
+        for (auto& element : json)
         {
             unsigned char id = 0;
             std::string name = "";
@@ -629,36 +564,29 @@ namespace Botcraft
             float temperature = 0.0f;
             BiomeType biome_type = BiomeType::Classic;
 
-            const picojson::object element = all_biomes[i].get<picojson::object>();
-
-            auto it = element.find("id");
-            if (it != element.end())
+            if (element.contains("id"))
             {
-                id = (int)it->second.get<double>();
+                id = element["id"];
             }
 
-            it = element.find("name");
-            if (it != element.end())
+            if (element.contains("name"))
             {
-                name = it->second.get<std::string>();
+                name = element["name"];
             }
 
-            it = element.find("rainfall");
-            if (it != element.end())
+            if (element.contains("rainfall"))
             {
-                rainfall = it->second.get<double>();
+                rainfall = element["rainfall"];
             }
             
-            it = element.find("temperature");
-            if (it != element.end())
+            if (element.contains("temperature"))
             {
-                temperature = it->second.get<double>();
+                temperature = element["temperature"];
             }
 
-            it = element.find("biomeType");
-            if (it != element.end())
+            if (element.contains("biomeType"))
             {
-                std::string string_biome_type = it->second.get<std::string>();
+                std::string string_biome_type = element["biomeType"];
                 if (string_biome_type == "Swamp")
                 {
                     biome_type = BiomeType::Swamp;
@@ -699,33 +627,17 @@ namespace Botcraft
     {
         std::string file_path = ASSETS_PATH + std::string("/custom/Items.json");
 
-        std::stringstream ss;
-        std::ifstream file;
-
-        file.open(file_path);
-        if (!file.is_open())
+        nlohmann::json json;
+        try
+        {
+            std::ifstream file(file_path);
+            file >> json;
+            file.close();
+        }
+        catch (const nlohmann::json::exception& e)
         {
             std::cerr << "Error reading item file at " << file_path << std::endl;
-            return;
-        }
-
-        ss << file.rdbuf();
-        file.close();
-
-        picojson::value json;
-        ss >> json;
-        std::string err = picojson::get_last_error();
-
-        if (!err.empty())
-        {
-            std::cerr << "Error parsing item file at " << file_path << "\n";
-            std::cerr << err << std::endl;
-            return;
-        }
-
-        if (!json.is<picojson::object>())
-        {
-            std::cerr << "Error parsing item file at " << file_path << std::endl;
+            std::cerr << e.what() << std::endl;
             return;
         }
 
@@ -737,28 +649,24 @@ namespace Botcraft
 #endif
 
         //Load all the items from JSON file
-        const picojson::value::object& obj = json.get<picojson::object>();
-
-        for (picojson::value::object::const_iterator items_it = obj.begin(); items_it != obj.end(); ++items_it)
+        for (nlohmann::json::const_iterator items_it = json.begin(); items_it != json.end(); ++items_it)
         {
             int id = -1;
-            std::string item_name = items_it->first;
+            std::string item_name = items_it.key();
 
-            const picojson::object properties = items_it->second.get<picojson::object>();
+            const nlohmann::json& properties = items_it.value();
 
-            auto it = properties.find("id");
-            if (it == properties.end() || !it->second.is<double>())
+            if (!properties.contains("id") || !properties["id"].is_number())
             {
                 continue;
             }
-            id = it->second.get<double>();
+            id = properties["id"];
 #if PROTOCOL_VERSION < 347
-            it = properties.find("damage_id");
-            if (it == properties.end() || !it->second.is<double>())
+            if (!properties.contains("damage_id") || !properties["damage_id"].is_number())
             {
                 continue;
             }
-            unsigned char damage_id = it->second.get<double>();
+            unsigned char damage_id = properties["damage_id"];
             if (items.find(id) == items.end())
             {
                 items[id] = std::map<unsigned char, std::shared_ptr<Item> >();

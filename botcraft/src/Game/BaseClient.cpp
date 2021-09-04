@@ -1,4 +1,5 @@
 #include <functional>
+#include <iostream>
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"

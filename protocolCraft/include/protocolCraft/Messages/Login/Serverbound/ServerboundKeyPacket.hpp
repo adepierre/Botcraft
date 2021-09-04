@@ -59,15 +59,14 @@ namespace ProtocolCraft
             WriteByteArray(nonce, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["key_bytes"] = picojson::value("vector of " + std::to_string(key_bytes.size()) + " unsigned char");
-            object["nonce"] = picojson::value("vector of " + std::to_string(nonce.size()) + " unsigned char");
+            output["key_bytes"] = "vector of " + std::to_string(key_bytes.size()) + " unsigned char";
+            output["nonce"] = "vector of " + std::to_string(nonce.size()) + " unsigned char";
 
-            return value;
+            return output;
         }
 
     private:

@@ -163,27 +163,26 @@ namespace ProtocolCraft
             WriteData<int>(demand, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["input_item_1"] = input_item_1.Serialize();
-            object["output_item"] = output_item.Serialize();
-            object["has_second_item"] = picojson::value(has_second_item);
+            output["input_item_1"] = input_item_1.Serialize();
+            output["output_item"] = output_item.Serialize();
+            output["has_second_item"] = has_second_item;
             if (has_second_item)
             {
-                object["input_item_2"] = input_item_2.Serialize();
+                output["input_item_2"] = input_item_2.Serialize();
             }
-            object["trade_disabled"] = picojson::value(trade_disabled);
-            object["number_of_trades_uses"] = picojson::value((double)number_of_trades_uses);
-            object["maximum_number_of_trade_uses"] = picojson::value((double)maximum_number_of_trade_uses);
-            object["xp"] = picojson::value((double)xp);
-            object["special_price"] = picojson::value((double)special_price);
-            object["price_multiplier"] = picojson::value((double)price_multiplier);
-            object["demand"] = picojson::value((double)demand);
+            output["trade_disabled"] = trade_disabled;
+            output["number_of_trades_uses"] = number_of_trades_uses;
+            output["maximum_number_of_trade_uses"] = maximum_number_of_trade_uses;
+            output["xp"] = xp;
+            output["special_price"] = special_price;
+            output["price_multiplier"] = price_multiplier;
+            output["demand"] = demand;
 
-            return value;
+            return output;
         }
 
     private:

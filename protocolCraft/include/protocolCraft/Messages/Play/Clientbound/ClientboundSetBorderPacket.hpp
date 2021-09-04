@@ -142,8 +142,8 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            action = (SetBorderType)ReadData<VarInt>(iter, length);
-            switch ((SetBorderType)action)
+            action = (SetBorderType)(int)ReadData<VarInt>(iter, length);
+            switch (action)
             {
             case SetBorderType::SetSize:
                 new_size = ReadData<double>(iter, length);
@@ -216,47 +216,46 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["action"] = picojson::value((double)action);
+            output["action"] = action;
             switch ((SetBorderType)action)
             {
             case SetBorderType::SetSize:
-                object["new_size"] = picojson::value(new_size);
+                output["new_size"] = new_size;
                 break;
             case SetBorderType::LerpSize:
-                object["old_size"] = picojson::value(old_size);
-                object["new_size"] = picojson::value(new_size);
-                object["lerp_time"] = picojson::value((double)lerp_time);
+                output["old_size"] = old_size;
+                output["new_size"] = new_size;
+                output["lerp_time"] = lerp_time;
                 break;
             case SetBorderType::SetCenter:
-                object["new_center_x"] = picojson::value(new_center_x);
-                object["new_center_z"] = picojson::value(new_center_z);
+                output["new_center_x"] = new_center_x;
+                output["new_center_z"] = new_center_z;
                 break;
             case SetBorderType::Initialize:
-                object["new_center_x"] = picojson::value(new_center_x);
-                object["new_center_z"] = picojson::value(new_center_z);
-                object["old_size"] = picojson::value(old_size);
-                object["new_size"] = picojson::value(new_size);
-                object["lerp_time"] = picojson::value((double)lerp_time);
-                object["new_absolute_max_size"] = picojson::value((double)new_absolute_max_size);
-                object["warning_time"] = picojson::value((double)warning_time);
-                object["warning_blocks"] = picojson::value((double)warning_blocks);
+                output["new_center_x"] = new_center_x;
+                output["new_center_z"] = new_center_z;
+                output["old_size"] = old_size;
+                output["new_size"] = new_size;
+                output["lerp_time"] = lerp_time;
+                output["new_absolute_max_size"] = new_absolute_max_size;
+                output["warning_time"] = warning_time;
+                output["warning_blocks"] = warning_blocks;
                 break;
             case SetBorderType::SetWarningTime:
-                object["warning_time"] = picojson::value((double)warning_time);
+                output["warning_time"] = warning_time;
                 break;
             case SetBorderType::SetWarningBlocks:
-                object["warning_blocks"] = picojson::value((double)warning_blocks);
+                output["warning_blocks"] = warning_blocks;
                 break;
             default:
                 break;
             }
 
-            return value;
+            return output;
         }
 
     private:

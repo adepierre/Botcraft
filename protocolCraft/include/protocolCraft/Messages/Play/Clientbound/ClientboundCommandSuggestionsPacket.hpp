@@ -149,38 +149,28 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
 
 
 #if PROTOCOL_VERSION > 356
-            object["id_"] = picojson::value((double)id_);
-            object["start"] = picojson::value((double)start);
-            object["length_"] = picojson::value((double)length_);
+            output["id_"] = id_;
+            output["start"] = start;
+            output["length_"] = length_;
 #endif
-            object["suggestions"] = picojson::value(picojson::array_type, false);
-            picojson::array& array_suggestions = object["suggestions"].get<picojson::array>();
-            for (int i = 0; i < suggestions.size(); ++i)
-            {
-                array_suggestions.push_back(picojson::value(suggestions[i]));
-
-            }
-
+            output["suggestions"] = suggestions;
 
 #if PROTOCOL_VERSION > 356
-            object["tooltips"] = picojson::value(picojson::array_type, false);
-            picojson::array& array_tooltips = object["tooltips"].get<picojson::array>();
-            
+            output["tooltips"] = nlohmann::json::array();
             for (int i = 0; i < tooltips.size(); ++i) 
             {
-                array_tooltips.push_back(tooltips[i].Serialize());
+                output["tooltips"].push_back(tooltips[i].Serialize());
             }
 #endif
 
-            return value;
+            return output;
         }
 
     private:

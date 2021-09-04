@@ -258,47 +258,40 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["x"] = picojson::value((double)x);
-            object["z"] = picojson::value((double)z);
+            output["x"] = x;
+            output["z"] = z;
 #if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
-            object["ignore_old_data"] = picojson::value(ignore_old_data);
+            output["ignore_old_data"] = ignore_old_data;
 #endif
 #if PROTOCOL_VERSION < 755
-            object["available_sections"] = picojson::value((double)available_sections);
+            output["available_sections"] = available_sections;
 #else
-            object["available_sections"] = picojson::value(picojson::array_type, false);
-            picojson::array& array_available_sections = object["available_sections"].get<picojson::array>();
-            for (int i = 0; i < available_sections.size(); ++i)
-            {
-                array_available_sections.push_back(picojson::value((double)available_sections[i]));
-            }
+            output["available_sections"] = available_sections;
 #endif
 #if PROTOCOL_VERSION > 442
-            object["heightmaps"] = heightmaps.Serialize();
+            output["heightmaps"] = heightmaps.Serialize();
 #endif
 #if PROTOCOL_VERSION > 551
-            object["biomes"] = picojson::value("Vector of " + std::to_string(biomes.size()) + " int");
+            output["biomes"] = "Vector of " + std::to_string(biomes.size()) + " int";
 #endif
-            object["buffer"] = picojson::value("Vector of " + std::to_string(buffer.size()) + " unsigned char");
-            object["block_entities_tags"] = picojson::value("Vector of " + std::to_string(block_entities_tags.size()) + " unsigned char");
+            output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
+            output["block_entities_tags"] = "Vector of " + std::to_string(block_entities_tags.size()) + " unsigned char";
 
-            object["block_entities_tags"] = picojson::value(picojson::array_type, false);
-            picojson::array& array_block_entities_tags = object["block_entities_tags"].get<picojson::array>();
+            output["block_entities_tags"] = nlohmann::json::array();
             for (int i = 0; i < block_entities_tags.size(); ++i)
             {
-                array_block_entities_tags.push_back(block_entities_tags[i].Serialize());
+                output["block_entities_tags"].push_back(block_entities_tags[i].Serialize());
             }
 
 #if PROTOCOL_VERSION < 755
-            object["full_chunk"] = picojson::value(full_chunk);
+            output["full_chunk"] = full_chunk;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

@@ -83,16 +83,15 @@ namespace ProtocolCraft
             WriteData<float>(food_saturation, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["health"] = picojson::value((double)health);
-            object["food"] = picojson::value((double)food);
-            object["food_saturation"] = picojson::value((double)food_saturation);
+            output["health"] = health;
+            output["food"] = food;
+            output["food_saturation"] = food_saturation;
 
-            return value;
+            return output;
         }
 
     private:

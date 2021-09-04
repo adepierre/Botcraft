@@ -215,40 +215,39 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["purpose"] = picojson::value((double)purpose);
+            output["purpose"] = purpose;
             switch (purpose)
             {
             case 0:
 #if PROTOCOL_VERSION > 375
-                object["recipe"] = recipe.Serialize();
+                output["recipe"] = recipe.Serialize();
 #else
-                object["recipe"] = picojson::value((double)recipe);
+                output["recipe"] = recipe;
 #endif
                 break;
             case 1:
-                object["gui_open"] = picojson::value(gui_open);
-                object["filtering_craftable"] = picojson::value(filtering_craftable);
+                output["gui_open"] = gui_open;
+                output["filtering_craftable"] = filtering_craftable;
 #if PROTOCOL_VERSION > 358
-                object["furnace_gui_open"] = picojson::value(furnace_gui_open);
-                object["furnace_filtering_craftable"] = picojson::value(furnace_filtering_craftable);
+                output["furnace_gui_open"] = furnace_gui_open;
+                output["furnace_filtering_craftable"] = furnace_filtering_craftable;
 #endif
 #if PROTOCOL_VERSION > 450
-                object["blast_furnace_gui_open"] = picojson::value(blast_furnace_gui_open);
-                object["blast_furnace_filtering_craftable"] = picojson::value(blast_furnace_filtering_craftable);
-                object["smoker_gui_open"] = picojson::value(smoker_gui_open);
-                object["smoker_filtering_craftable"] = picojson::value(smoker_filtering_craftable);
+                output["blast_furnace_gui_open"] = blast_furnace_gui_open;
+                output["blast_furnace_filtering_craftable"] = blast_furnace_filtering_craftable;
+                output["smoker_gui_open"] = smoker_gui_open;
+                output["smoker_filtering_craftable"] = smoker_filtering_craftable;
 #endif
                 break;
             default:
                 break;
             }
 
-            return value;
+            return output;
         }
 
     private:

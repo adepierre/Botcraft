@@ -74,15 +74,14 @@ namespace ProtocolCraft
             footer.Write(container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["header"] = header.Serialize();
-            object["footer"] = footer.Serialize();
+            output["header"] = header.Serialize();
+            output["footer"] = footer.Serialize();
 
-            return value;
+            return output;
         }
 
     private:

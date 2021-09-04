@@ -73,15 +73,14 @@ namespace ProtocolCraft
             WriteData<float>(param, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value val(picojson::object_type, false);
-            picojson::object& object = val.get<picojson::object>();
+            nlohmann::json output;
 
-            object["type"] = picojson::value((double)type);
-            object["param"] = picojson::value((double)param);
+            output["type"] = type;
+            output["param"] = param;
 
-            return val;
+            return output;
         }
 
     private:

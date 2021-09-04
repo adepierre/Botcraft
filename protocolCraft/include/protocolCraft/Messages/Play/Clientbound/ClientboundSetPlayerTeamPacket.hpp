@@ -240,46 +240,40 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["name_"] = picojson::value(name_);
-            object["method"] = picojson::value((double)method);
+            output["name_"] = name_;
+            output["method"] = method;
 
             if (method == 0 || method == 2)
             {
 #if PROTOCOL_VERSION < 375
-                object["display_name"] = picojson::value(display_name);
-                object["player_prefix"] = picojson::value(player_prefix);
-                object["player_suffix"] = picojson::value(player_suffix);
-                object["options"] = picojson::value((double)options);
-                object["nametag_visibility"] = picojson::value(nametag_visibility);
-                object["collision_rule"] = picojson::value(collision_rule);
-                object["color"] = picojson::value((double)color);
+                output["display_name"] = display_name;
+                output["player_prefix"] = player_prefix;
+                output["player_suffix"] = player_suffix;
+                output["options"] = options;
+                output["nametag_visibility"] = nametag_visibility;
+                output["collision_rule"] = collision_rule;
+                output["color"] = color;
 #else
-                object["display_name"] = display_name.Serialize();
-                object["options"] = picojson::value((double)options);
-                object["nametag_visibility"] = picojson::value(nametag_visibility);
-                object["collision_rule"] = picojson::value(collision_rule);
-                object["color"] = picojson::value((double)color);
-                object["player_prefix"] = player_prefix.Serialize();
-                object["player_suffix"] = player_suffix.Serialize();
+                output["display_name"] = display_name.Serialize();
+                output["options"] = options;
+                output["nametag_visibility"] = nametag_visibility;
+                output["collision_rule"] = collision_rule;
+                output["color"] = color;
+                output["player_prefix"] = player_prefix.Serialize();
+                output["player_suffix"] = player_suffix.Serialize();
 #endif
             }
 
             if (method == 0 || method == 3 || method == 4)
             {
-                object["players"] = picojson::value(picojson::array_type, false);
-                picojson::array& array = object["players"].get<picojson::array>();
-                for (int i = 0; i < players.size(); ++i)
-                {
-                    array.push_back(picojson::value(players[i]));
-                }
+                output["players"] = players;
             }
 
-            return value;
+            return output;
         }
 
     private:

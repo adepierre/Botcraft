@@ -92,18 +92,17 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["message"] = message.Serialize();
-            object["type"] = picojson::value((double)type);
+            output["message"] = message.Serialize();
+            output["type"] = type;
 #if PROTOCOL_VERSION > 717
-            object["sender"] = picojson::value(std::string(sender.begin(), sender.end()));
+            output["sender"] = sender;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

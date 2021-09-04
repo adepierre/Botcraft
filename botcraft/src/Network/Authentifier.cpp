@@ -1,4 +1,4 @@
-#include <picojson/picojson.h>
+#include <nlohmann/json.hpp>
 #include <asio.hpp>
 
 #ifdef USE_ENCRYPTION
@@ -52,46 +52,52 @@ namespace Botcraft
             return false;
         }
 
-        picojson::value raw_json;
-        picojson::parse(raw_json, output_string);
-
-        const picojson::value::object& json = raw_json.get<picojson::object>();
-
-        if (!picojson::get_last_error().empty())
+        nlohmann::json json;
+        try
         {
-            std::cerr << "Error trying to parse authentication response" << std::endl;
+            json = nlohmann::json::parse(output_string);
+        }
+        catch (const nlohmann::json::exception& e)
+        {
+            std::cerr << "Error trying to parse authentication response: " << e.what() << std::endl;
             return false;
         }
 
-        if (json.find("error") != json.end())
+        if (json.contains("error"))
         {
-            std::cerr << "Error trying to authenticate: " << json.at("errorMessage").get<std::string>() << std::endl;
+            std::cerr << "Error trying to authenticate: " << json["errorMessage"].get<std::string>() << std::endl;
             return false;
         }
 
-        if (json.find("accessToken") == json.end())
+        if (!json.contains("accessToken"))
         {
             std::cerr << "Error trying to authenticate, no accessToken returned" << std::endl;
             return false;
         }
-        access_token = json.find("accessToken")->second.get<std::string>();
+        access_token = json["accessToken"].get<std::string>();
 
-        if (json.find("selectedProfile") == json.end())
+        if (!json.contains("selectedProfile"))
         {
             std::cerr << "Error trying to authenticate, no selectedProfile item found" << std::endl;
             return false;
         }
 
-        const picojson::object& profile = json.at("selectedProfile").get<picojson::object>();
+        const nlohmann::json& profile = json.at("selectedProfile");
 
-        if (profile.find("name") == profile.end())
+        if (!profile.contains("name"))
         {
             std::cerr << "Error trying to authenticate, no name in selected profile" << std::endl;
             return false;
         }
 
-        player_display_name = profile.at("name").get<std::string>();
-        player_uuid = profile.at("id").get<std::string>();
+        if (!profile.contains("id"))
+        {
+            std::cerr << "Error trying to authenticate, no id in selected profile" << std::endl;
+            return false;
+        }
+
+        player_display_name = profile["name"].get<std::string>();
+        player_uuid = profile["id"].get<std::string>();
 
         return true;
 #endif
@@ -103,7 +109,6 @@ namespace Botcraft
 #ifndef USE_ENCRYPTION
         return false;
 #else
-        std::stringstream ss;
         std::ifstream file;
 
         file.open(launcher_accounts_path);
@@ -113,72 +118,64 @@ namespace Botcraft
             return false;
         }
 
-        ss << file.rdbuf();
-        file.close();
-
-        picojson::value raw_json;
-        ss >> raw_json;
-        std::string err = picojson::get_last_error();
-
-        if (!err.empty())
+        nlohmann::json json;
+        try
+        {
+            file >> json;
+        }
+        catch (const nlohmann::json::exception& e)
         {
             std::cerr << "Error parsing launcher accounts file at " << launcher_accounts_path << "\n";
-            std::cerr << err << std::endl;
+            std::cerr << e.what() << std::endl;
             return false;
         }
+        file.close();
 
-        picojson::value::object& json = raw_json.get<picojson::object>();
-
-        if (!picojson::get_last_error().empty())
-        {
-            std::cerr << "Error trying to parse launcher accounts file at " << launcher_accounts_path << std::endl;
-            return false;
-        }
-
-        if (json.find("accounts") == json.end() || json.find("activeAccountLocalId") == json.end())
+        if (!json.contains("accounts") || !json.contains("activeAccountLocalId"))
         {
             std::cerr << "No active account in launcher accounts file at " << launcher_accounts_path << std::endl;
             return false;
         }
 
-        if (json.find("mojangClientToken") == json.end())
+        if (!json.contains("mojangClientToken"))
         {
             std::cerr << "No mojangClientToken in launcher accounts file at " << launcher_accounts_path << std::endl;
             return false;
         }
-        const std::string client_token = json.at("mojangClientToken").get<std::string>();
 
-        picojson::object& account = json.at("accounts").get<picojson::object>().at(json.at("activeAccountLocalId").get<std::string>()).get<picojson::object>();
+        const std::string client_token = json["mojangClientToken"].get<std::string>();
 
-        if (account.find("accessToken") == account.end())
+        nlohmann::json& account = json["accounts"][json["activeAccountLocalId"].get<std::string>()];
+
+        if (!account.contains("accessToken"))
         {
             std::cerr << "Error trying to authenticate, no accessToken found" << std::endl;
             return false;
         }
-        access_token = account.find("accessToken")->second.get<std::string>();
+        access_token = account["accessToken"].get<std::string>();
 
-        if (account.find("minecraftProfile") == account.end())
+        if (!account.contains("minecraftProfile"))
         {
             std::cerr << "Error trying to authenticate, no minecraftProfile item found" << std::endl;
             return false;
         }
 
-        const picojson::object& profile = account.at("minecraftProfile").get<picojson::object>();
+        nlohmann::json& profile = account["minecraftProfile"];
 
-        if (profile.find("name") == profile.end())
+        if (!profile.contains("name"))
         {
             std::cerr << "Error trying to authenticate, no name in profile" << std::endl;
             return false;
         }
 
-        if (profile.find("id") == profile.end())
+        if (!profile.contains("id"))
         {
             std::cerr << "Error trying to authenticate, no id in profile" << std::endl;
             return false;
         }
 
-        player_display_name = profile.at("name").get<std::string>();
-        player_uuid = profile.at("id").get<std::string>();
+        player_display_name = profile["name"].get<std::string>();
+        player_uuid = profile["id"].get<std::string>();
 
         // Trying to validate the token
         unsigned int validation_status_code;
@@ -203,32 +200,33 @@ namespace Botcraft
                 return false;
             }
 
-            picojson::value refresh_raw_json;
-            picojson::parse(refresh_raw_json, refresh_response);
+            nlohmann::json refresh_json;
 
-            const picojson::value::object& refresh_json = refresh_raw_json.get<picojson::object>();
-
-            if (!picojson::get_last_error().empty())
+            try
             {
-                std::cerr << "Error trying to parse refresh response" << std::endl;
+                refresh_json = nlohmann::json::parse(refresh_response);
+            }
+            catch (const nlohmann::json::exception& e)
+            {
+                std::cerr << "Error trying to parse refresh response: " << e.what() << std::endl;
                 return false;
             }
 
-            if (refresh_json.find("accessToken") == refresh_json.end())
+            if (!refresh_json.contains("accessToken"))
             {
                 std::cerr << "Error trying to get refreshed token, no accessToken field found in response" << std::endl;
                 return false;
             }
-            access_token = refresh_json.find("accessToken")->second.get<std::string>();
+            access_token = refresh_json["accessToken"].get<std::string>();
 
             std::cout << "Token refreshed, saving new one into launcher file..." << std::endl;
             // We need to update the refresh token in the launcher file
             // for the next time
-            account["accessToken"] = picojson::value(access_token);
+            account["accessToken"] = access_token;
 
             std::ofstream json_account_file;
             json_account_file.open(launcher_accounts_path);
-            json_account_file << raw_json.serialize(true);
+            json_account_file << json.dump(4);
             json_account_file.close();
         }
         else

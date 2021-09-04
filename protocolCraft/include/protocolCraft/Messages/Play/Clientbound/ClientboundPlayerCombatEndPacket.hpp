@@ -63,15 +63,14 @@ namespace ProtocolCraft
             WriteData<int>(killer_id, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["duration"] = picojson::value((double)duration);
-            object["killer_id"] = picojson::value((double)killer_id);
+            output["duration"] = duration;
+            output["killer_id"] = killer_id;
 
-            return value;
+            return output;
         }
 
     private:

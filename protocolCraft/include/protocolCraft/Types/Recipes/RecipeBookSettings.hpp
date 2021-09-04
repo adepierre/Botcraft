@@ -136,25 +136,24 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["is_gui_open"] = picojson::value((double)is_gui_open);
-            object["is_filtering_craftable"] = picojson::value((double)is_filtering_craftable);
+            output["is_gui_open"] = is_gui_open;
+            output["is_filtering_craftable"] = is_filtering_craftable;
 #if PROTOCOL_VERSION > 356
-            object["is_furnace_gui_open"] = picojson::value(is_furnace_gui_open);
-            object["is_furnace_filtering_craftable"] = picojson::value(is_furnace_filtering_craftable);
+            output["is_furnace_gui_open"] = is_furnace_gui_open;
+            output["is_furnace_filtering_craftable"] = is_furnace_filtering_craftable;
 #endif
 #if PROTOCOL_VERSION > 736
-            object["is_blasting_furnace_gui_open"] = picojson::value(is_blasting_furnace_gui_open);
-            object["is_blasting_furnace_filtering_craftable"] = picojson::value(is_blasting_furnace_filtering_craftable);
-            object["is_smoker_gui_open"] = picojson::value(is_smoker_gui_open);
-            object["is_smoker_filtering_craftable"] = picojson::value(is_smoker_filtering_craftable);
+            output["is_blasting_furnace_gui_open"] = is_blasting_furnace_gui_open;
+            output["is_blasting_furnace_filtering_craftable"] = is_blasting_furnace_filtering_craftable;
+            output["is_smoker_gui_open"] = is_smoker_gui_open;
+            output["is_smoker_filtering_craftable"] = is_smoker_filtering_craftable;
 #endif
 
-            return value;
+            return output;
         }
 
     private:

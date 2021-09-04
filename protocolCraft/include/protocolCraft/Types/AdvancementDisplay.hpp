@@ -127,24 +127,23 @@ namespace ProtocolCraft
             WriteData<float>(y_coord, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["title"] = title.Serialize();
-            object["description"] = description.Serialize();
-            object["icon"] = icon.Serialize();
-            object["frame_type"] = picojson::value((double)frame_type);
-            object["flags"] = picojson::value((double)flags);
+            output["title"] = title.Serialize();
+            output["description"] = description.Serialize();
+            output["icon"] = icon.Serialize();
+            output["frame_type"] = frame_type;
+            output["flags"] = flags;
             if (flags & 0x01)
             {
-                object["background_texture"] = background_texture.Serialize();
+                output["background_texture"] = background_texture.Serialize();
             }
-            object["x_coord"] = picojson::value((double)x_coord);
-            object["y_coord"] = picojson::value((double)y_coord);
+            output["x_coord"] = x_coord;
+            output["y_coord"] = y_coord;
 
-            return value;
+            return output;
         }
 
     private:

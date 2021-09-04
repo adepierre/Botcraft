@@ -76,25 +76,24 @@ namespace ProtocolCraft
         WriteData<char>((char)TagType::End, container);
     }
     
-    const picojson::value TagCompound::SerializeImpl() const
+    const nlohmann::json TagCompound::SerializeImpl() const
     {
-        picojson::value value(picojson::array_type, false);
-        picojson::array& array = value.get<picojson::array>();
+        nlohmann::json output = nlohmann::json::array();
 
         for (auto it = tags.begin(); it != tags.end(); ++it)
         {
             if (it->second->GetType() != TagType::End)
             {
-                picojson::value current_item(picojson::object_type, false);
-                picojson::object& object = current_item.get<picojson::object>();
+                nlohmann::json current_item;
 
-                object["type"] = picojson::value(Tag::TagTypeToString(it->second->GetType()));
-                object["name"] = picojson::value(it->first);
-                object["content"] = it->second->Serialize();
-                array.push_back(current_item);
+                current_item["type"] = Tag::TagTypeToString(it->second->GetType());
+                current_item["name"] = it->first;
+                current_item["content"] = it->second->Serialize();
+                
+                output.push_back(current_item);
             }
         }
 
-        return value;
+        return output;
     }
 }

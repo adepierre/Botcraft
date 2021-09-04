@@ -155,46 +155,37 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["has_parent"] = picojson::value(has_parent);
+            output["has_parent"] = has_parent;
             if (has_parent)
             {
-                object["parent_id"] = parent_id.Serialize();
+                output["parent_id"] = parent_id.Serialize();
             }
-            object["has_display"] = picojson::value(has_display);
+            output["has_display"] = has_display;
             if (has_display)
             {
-                object["display_data"] = display_data.Serialize();
+                output["display_data"] = display_data.Serialize();
             }
-            object["number_of_criteria"] = picojson::value((double)number_of_criteria);
+            output["number_of_criteria"] = number_of_criteria;
             
-            object["criteria"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["criteria"].get<picojson::array>();
+            output["criteria"] = nlohmann::json::array();
             for (int i = 0; i < number_of_criteria; ++i)
             {
-                array.push_back(criteria[i].Serialize());
+                output["criteria"].push_back(criteria[i].Serialize());
             }
 
-            object["array_length"] = picojson::value((double)array_length);
+            output["array_length"] = array_length;
             
-            object["requirements"] = picojson::value(picojson::array_type, false);
-            array = object["requirements"].get<picojson::array>();
+            output["requirements"] = nlohmann::json::array();
             for (int i = 0; i < array_length; ++i)
             {
-                picojson::value sub_array = picojson::value(picojson::array_type, false);
-                picojson::array& array2 = sub_array.get<picojson::array>();
-                for (int j = 0; j < requirements[i].size(); ++j)
-                {
-                    array2.push_back(picojson::value(requirements[i][j]));
-                }
-                array.push_back(sub_array);
+                output.push_back(requirements[i]);
             }
 
-            return value;
+            return output;
         }
 
     private:

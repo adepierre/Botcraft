@@ -167,76 +167,65 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["action"] = picojson::value((double)action);
-            object["entries"] = picojson::value(picojson::array_type, false);
-            picojson::array& array = object["entries"].get<picojson::array>();
+            output["action"] = action;
+            output["entries"] = nlohmann::json::array();
 
             switch (action)
             {
             case PlayerInfoAction::AddPlayer:
-                array.reserve(entries.size());
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    picojson::value value2(picojson::object_type, false);
-                    picojson::object& object2 = value2.get<picojson::object>();
-                    object2["uuid"] = picojson::value(std::string(it->first.begin(), it->first.end()));
-                    object2["player_info"] = it->second.Serialize();
-                    array.push_back(value2);
+                    nlohmann::json entry;
+                    entry["uuid"] = it->first;
+                    entry["player_info"] = it->second.Serialize();
+                    output["entries"].push_back(entry);
                 }
                 break;
             case PlayerInfoAction::UpdateGameMode:
-                array.reserve(entries.size());
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    picojson::value value2(picojson::object_type, false);
-                    picojson::object& object2 = value2.get<picojson::object>();
-                    object2["uuid"] = picojson::value(std::string(it->first.begin(), it->first.end()));
-                    object2["game_mode"] = picojson::value((double)it->second.GetGameMode());
-                    array.push_back(value2);
+                    nlohmann::json entry;
+                    entry["uuid"] = it->first;
+                    entry["game_mode"] = it->second.GetGameMode();
+                    output["entries"].push_back(entry);
                 }
                 break;
             case PlayerInfoAction::UpdateLatency:
-                array.reserve(entries.size());
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    picojson::value value2(picojson::object_type, false);
-                    picojson::object& object2 = value2.get<picojson::object>();
-                    object2["uuid"] = picojson::value(std::string(it->first.begin(), it->first.end()));
-                    object2["latency"] = picojson::value((double)it->second.GetLatency());
-                    array.push_back(value2);
+                    nlohmann::json entry;
+                    entry["uuid"] = it->first;
+                    entry["latency"] = it->second.GetLatency();
+                    output["entries"].push_back(entry);
                 }
                 break;
             case PlayerInfoAction::UpdateDisplayName:
-                array.reserve(entries.size());
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    picojson::value value2(picojson::object_type, false);
-                    picojson::object& object2 = value2.get<picojson::object>();
-                    object2["uuid"] = picojson::value(std::string(it->first.begin(), it->first.end()));
+                    nlohmann::json entry;
+                    entry["uuid"] = it->first;
                     if (!it->second.GetDisplayName().GetText().empty())
                     {
-                        object2["display_name"] = it->second.GetDisplayName().Serialize();
+                        entry["display_name"] = it->second.GetDisplayName().Serialize();
                     }
-                    array.push_back(value2);
+                    output["entries"].push_back(entry);
                 }
                 break;
             case PlayerInfoAction::RemovePlayer:
-                array.reserve(entries.size());
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
-                    array.push_back(picojson::value(std::string(it->first.begin(), it->first.end())));
+                    output["entries"].push_back(it->first);
                 }
                 break;
             default:
                 break;
             }
 
-            return value;
+            return output;
         }
 
     private:

@@ -52,14 +52,13 @@ namespace ProtocolCraft
             recipe.Write(container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["recipe"] = recipe.Serialize();
+            output["recipe"] = recipe.Serialize();
 
-            return value;
+            return output;
         }
 
     private:

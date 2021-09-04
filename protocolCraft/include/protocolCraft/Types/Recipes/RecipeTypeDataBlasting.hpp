@@ -85,18 +85,17 @@ namespace ProtocolCraft
             WriteData<VarInt>(cooking_time, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["group"] = picojson::value(group);
-            object["ingredient"] = ingredient.Serialize();
-            object["result"] = result.Serialize();
-            object["experience"] = picojson::value((double)experience);
-            object["cooking_time"] = picojson::value((double)cooking_time);
+            output["group"] = group;
+            output["ingredient"] = ingredient.Serialize();
+            output["result"] = result.Serialize();
+            output["experience"] = experience;
+            output["cooking_time"] = cooking_time;
 
-            return value;
+            return output;
         }
 
     private:

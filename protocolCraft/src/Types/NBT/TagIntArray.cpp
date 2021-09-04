@@ -39,16 +39,8 @@ namespace ProtocolCraft
         WriteArrayData<int>(values, container);
     }
 
-    const picojson::value TagIntArray::SerializeImpl() const
+    const nlohmann::json TagIntArray::SerializeImpl() const
     {
-        picojson::value value(picojson::array_type, false);
-        picojson::array& array = value.get<picojson::array>();
-
-        for (int i = 0; i < values.size(); ++i)
-        {
-            array.push_back(picojson::value((double)values[i]));
-        }
-
-        return value;
+        return nlohmann::json(values);
     }
 }

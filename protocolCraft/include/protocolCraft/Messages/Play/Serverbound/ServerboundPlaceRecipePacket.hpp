@@ -102,20 +102,19 @@ namespace ProtocolCraft
             WriteData<bool>(shift_down, container);
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["container_id"] = picojson::value((double)container_id);
+            output["container_id"] = container_id;
 #if PROTOCOL_VERSION < 348
-            object["recipe"] = picojson::value((double)recipe);
+            output["recipe"] = recipe;
 #else
-            object["recipe"] = recipe.Serialize();
+            output["recipe"] = recipe.Serialize();
 #endif
-            object["shift_down"] = picojson::value(shift_down);
+            output["shift_down"] = shift_down;
 
-            return value;
+            return output;
         }
 
     private:

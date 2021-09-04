@@ -119,19 +119,18 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const picojson::value SerializeImpl() const override
+        virtual const nlohmann::json SerializeImpl() const override
         {
-            picojson::value value(picojson::object_type, false);
-            picojson::object& object = value.get<picojson::object>();
+            nlohmann::json output;
 
-            object["url"] = picojson::value(url);
-            object["hash"] = picojson::value(hash);
+            output["url"] = url;
+            output["hash"] = hash;
 #if PROTOCOL_VERSION > 754
-            object["required"] = picojson::value(required);
-            object["prompt"] = prompt.Serialize();
+            output["required"] = required;
+            output["prompt"] = prompt.Serialize();
 #endif
 
-            return value;
+            return output;
         }
 
     private:
