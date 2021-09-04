@@ -535,7 +535,7 @@ namespace Botcraft
         }
 
         if (!response.contains("DisplayClaims") || !response["DisplayClaims"].contains("xui")
-            || !response["DisplayClaims"]["xui"].is_array() || !response["DisplayClaims"]["xui"].size() < 1
+            || !response["DisplayClaims"]["xui"].is_array() || response["DisplayClaims"]["xui"].size() < 1
             || !response["DisplayClaims"]["xui"][0].contains("uhs"))
         {
             std::cerr << "Error trying to get XSTS token, no DisplayClaims/xui/0/uhs in authentication response" << std::endl;

@@ -9,7 +9,7 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--login\t\tMojang account login for connection, default: BCAFK\n"
+        << "\t--login\t\tMojang account login for connection, default: BCAFK, supply empty string to summon microsoft authentifier\n"
         << "\t--password\tMojang account password for connection, empty for servers in offline mode, default: empty\n"
         << std::endl;
 }
