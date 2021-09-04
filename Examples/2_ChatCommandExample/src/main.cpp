@@ -9,8 +9,8 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--login\t\tMojang account login for connection, default: BCChatCommand\n"
-        << "\t--password\tMojang account password for connection, empty for servers in offline mode, default: empty\n"
+        << "\t--login\t\tPlayer name in offline mode, login for Mojang account, empty for Microsoft account, default: BCChatCommand\n"
+        << "\t--password\tMojang account password, empty for servers in offline mode or Microsoft account, default: empty\n"
         << std::endl;
 }
 

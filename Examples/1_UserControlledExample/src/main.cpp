@@ -11,8 +11,8 @@ void ShowHelp(const char* argv0)
         << "\t-h, --help\tShow this help message\n"
         << "\t--online\tIf 0, create a local world for testing instead of connecting to a server, default 1\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--login\t\tMojang account login for connection, default: BCUserControl\n"
-        << "\t--password\tMojang account password for connection, empty for servers in offline mode, default: empty\n"
+        << "\t--login\t\tPlayer name in offline mode, login for Mojang account, empty for Microsoft account, default: BCUserControl\n"
+        << "\t--password\tMojang account password, empty for servers in offline mode or Microsoft account, default: empty\n"
         << std::endl;
 }
 
