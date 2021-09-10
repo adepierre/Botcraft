@@ -12,7 +12,7 @@ ${PROJECT_SOURCE_DIR}/include/UserControlledClient.hpp
 add_executable(1_UserControlledExample ${HDR_FILES} ${SRC_FILES})
 target_include_directories(1_UserControlledExample PUBLIC include)
 target_link_libraries(1_UserControlledExample botcraft)
-set_property(TARGET 1_UserControlledExample PROPERTY CXX_STANDARD 11)
+set_property(TARGET 1_UserControlledExample PROPERTY CXX_STANDARD 17)
 set_target_properties(1_UserControlledExample PROPERTIES FOLDER Examples)
 set_target_properties(1_UserControlledExample PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(1_UserControlledExample PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")

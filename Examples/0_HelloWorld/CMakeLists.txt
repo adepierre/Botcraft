@@ -9,7 +9,7 @@ set(HDR_FILES
 add_executable(0_HelloWorld ${HDR_FILES} ${SRC_FILES})
 target_include_directories(0_HelloWorld PUBLIC include)
 target_link_libraries(0_HelloWorld botcraft)
-set_property(TARGET 0_HelloWorld PROPERTY CXX_STANDARD 11)
+set_property(TARGET 0_HelloWorld PROPERTY CXX_STANDARD 17)
 set_target_properties(0_HelloWorld PROPERTIES FOLDER Examples)
 set_target_properties(0_HelloWorld PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(0_HelloWorld PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")

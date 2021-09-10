@@ -18,7 +18,7 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : InterfaceClient(use_renderer_)
+UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : BaseClient(use_renderer_)
 {
 #if USE_GUI
     mouse_sensitivity = 0.1f;
@@ -310,11 +310,14 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
     {
         if (local_player->GetOnGround())
         {
-            Jump();
+            // Jump
+            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+            local_player->SetSpeedY(0.4196141); // Not sure about this. I tried to calculate it in order to get a 1.25 block height jump (reached in 6 ticks)
         }
     }
 
-    if (is_key_pressed[(int)Renderer::KEY_CODE::MOUSE_LEFT] && GetDiggingState() == DiggingState::Waiting)
+    // Doesn't exist anymore with the new behaviour system
+    /*if (is_key_pressed[(int)Renderer::KEY_CODE::MOUSE_LEFT] && GetDiggingState() == DiggingState::Waiting)
     {
         std::thread thread_digging(&InterfaceClient::DigPointedBlock, this);
         thread_digging.detach();
@@ -322,7 +325,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
     else if (!is_key_pressed[(int)Renderer::KEY_CODE::MOUSE_LEFT] && GetDiggingState() == DiggingState::Digging)
     {
         StopDigging();
-    }
+    }*/
 
     local_player->SetIsRunning(is_key_pressed[(int)Renderer::KEY_CODE::SHIFT]);
 

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "botcraft/AI/InterfaceClient.hpp"
+#include "botcraft/Game/BaseClient.hpp"
 
 #include "botcraft/Renderer/RenderingManager.hpp"
 
-class UserControlledClient : public Botcraft::InterfaceClient
+class UserControlledClient : public Botcraft::BaseClient
 {
 public:
     UserControlledClient(bool online, bool use_renderer_);

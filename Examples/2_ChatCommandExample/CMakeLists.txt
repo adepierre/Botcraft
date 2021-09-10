@@ -13,7 +13,7 @@ add_executable(2_ChatCommandExample ${HDR_FILES} ${SRC_FILES})
 target_include_directories(2_ChatCommandExample PUBLIC include)
 target_link_libraries(2_ChatCommandExample botcraft)
 
-set_property(TARGET 2_ChatCommandExample PROPERTY CXX_STANDARD 11)
+set_property(TARGET 2_ChatCommandExample PROPERTY CXX_STANDARD 17)
 set_target_properties(2_ChatCommandExample PROPERTIES FOLDER Examples)
 set_target_properties(2_ChatCommandExample PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(2_ChatCommandExample PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")

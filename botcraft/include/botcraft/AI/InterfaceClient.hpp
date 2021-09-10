@@ -4,7 +4,7 @@
 #include "botcraft/Game/Vector3.hpp"
 
 #include "botcraft/AI/Blackboard.hpp"
-#include "botcraft/AI/PathfindingTask.hpp"
+#include "botcraft/AI/Tasks/PathfindingTask.hpp"
 
 namespace Botcraft
 {
@@ -26,6 +26,9 @@ namespace Botcraft
         void DigPointedBlock();
         const bool DigAt(const Botcraft::Position& location, const PlayerDiggingFace face);
         void StopDigging();
+
+        const bool GoTo(const Position& goal, const int dist_tolerance = 0, const int min_end_dist = 0, const float speed = 4.317f, const bool allow_jump = true);
+        void StopPathFinding();
 
         // Place a given block at a given location
         // item: name of the item to place, fails if not present in the inventory
@@ -76,11 +79,5 @@ namespace Botcraft
     
     protected:
         DiggingState digging_state;
-
-        AI::Blackboard blackboard;
-        AI::PathfindingTask pathfinding_task;
-
-        // We want the tasks to access the managers
-        friend AI::PathfindingTask;
     };
 }

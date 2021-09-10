@@ -25,11 +25,17 @@ namespace Botcraft
     }
 #endif
 
+    /// <summary>
+    /// The base class containing the different managers.
+    /// You can inherit it to handle other packets if you 
+    /// only need some low-level stuff without more complex 
+    /// bot behaviours.
+    /// </summary>
     class BaseClient : public ProtocolCraft::Handler
     {
     public:
         BaseClient(const bool use_renderer_, const bool afk_only_ = false);
-        ~BaseClient();
+        virtual ~BaseClient();
 
         // Connect to a server, if password is empty, the server must be in offline mode
         void Connect(const std::string& address, const std::string& login, const std::string& password);
@@ -43,10 +49,15 @@ namespace Botcraft
 
 
         // Send a message in the chat
-        void Say(const std::string& msg);
+        void SendChatMessage(const std::string& msg);
         // Ask to respawn when dead (use it if auto_respawn is false)
         void Respawn();
         void SetAutoRespawn(const bool b);
+
+        std::shared_ptr<World> GetWorld() const;
+        std::shared_ptr<EntityManager> GetEntityManager() const;
+        std::shared_ptr<NetworkManager> GetNetworkManager() const;
+        std::shared_ptr<InventoryManager> GetInventoryManager() const;
 
 
     protected:

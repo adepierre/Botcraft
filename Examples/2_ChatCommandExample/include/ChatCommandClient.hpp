@@ -1,9 +1,16 @@
 #pragma once
 
 #include <botcraft/Game/Vector3.hpp>
-#include <botcraft/AI/InterfaceClient.hpp>
+#include <botcraft/AI/BaseBehaviourClient.hpp>
 
-class ChatCommandClient : public Botcraft::InterfaceClient
+/// <summary>
+/// Example of a class where we need to add a Handle function
+/// for specific packet processing. In this case we can inherit
+/// BaseBehaviourClient<T>, with this class as parameter.
+/// We can then use Behaviour Trees with this class as
+/// context, and do our stuff.
+/// </summary>
+class ChatCommandClient : public Botcraft::AI::BaseBehaviourClient<ChatCommandClient>
 {
 public:
     ChatCommandClient(const bool use_renderer_, const bool is_afk_);

@@ -1,12 +1,15 @@
 project(botcraft)
 
 set(botcraft_PUBLIC_HDR
-    include/botcraft/AI/AsyncTask.hpp
+    include/botcraft/AI/BehaviourClient.hpp
     include/botcraft/AI/BehaviourTree.hpp
+    include/botcraft/AI/BaseBehaviourClient.hpp
     include/botcraft/AI/Blackboard.hpp
-    include/botcraft/AI/BotBehaviour.hpp
     include/botcraft/AI/InterfaceClient.hpp
-    include/botcraft/AI/PathfindingTask.hpp
+    
+    include/botcraft/AI/Tasks/AllTasks.hpp
+    include/botcraft/AI/Tasks/BaseTasks.hpp
+    include/botcraft/AI/Tasks/PathfindingTask.hpp
     
     include/botcraft/Game/AABB.hpp
     include/botcraft/Game/Entities/Entity.hpp
@@ -48,9 +51,12 @@ set(botcraft_PRIVATE_HDR
 )
 
 set(botcraft_SRC
-    src/AI/AsyncTask.cpp
+    src/AI/BehaviourClient.cpp
     src/AI/InterfaceClient.cpp
-    src/AI/PathfindingTask.cpp
+    
+    src/AI/Tasks/BaseTasks.cpp
+    src/AI/Tasks/PathfindingTask.cpp
+    
     src/Game/AABB.cpp
     src/Game/AssetsManager.cpp
     src/Game/BaseClient.cpp
@@ -67,11 +73,13 @@ set(botcraft_SRC
     src/Game/Inventory/Window.cpp
     src/Game/Inventory/InventoryManager.cpp
     src/Game/Inventory/Item.cpp
+    
     src/Network/Authentifier.cpp
     src/Network/AESEncrypter.cpp
     src/Network/Compression.cpp
     src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
+    
     src/Utilities/StringUtilities.cpp
     src/Utilities/AsyncHandler.cpp
 )

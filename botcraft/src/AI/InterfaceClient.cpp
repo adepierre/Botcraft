@@ -19,8 +19,7 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {    
-    InterfaceClient::InterfaceClient(const bool use_renderer_, const bool afk_only_) : BaseClient(use_renderer_, afk_only_),
-        pathfinding_task(*this)
+    InterfaceClient::InterfaceClient(const bool use_renderer_, const bool afk_only_) : BaseClient(use_renderer_, afk_only_)
     {
         digging_state = DiggingState::Waiting;
     }
@@ -271,26 +270,26 @@ namespace Botcraft
         }
     }
 
-    const bool InterfaceClient::GoTo(const Position &goal, const bool in_range, const int min_end_dist, const float speed)
+    const bool InterfaceClient::GoTo(const Position &goal, const int dist_tolerance, const int min_end_dist, const float speed, const bool allow_jump)
     {
         if (!network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)
         {
             return false;
         }
 
-        blackboard.Set("pathfinding.target", goal);
+        /*blackboard.Set("pathfinding.target", goal);
 
-        blackboard.Set("pathfinding.dist_tolerance", in_range ? 4 : 0);
+        blackboard.Set("pathfinding.dist_tolerance", dist_tolerance);
         blackboard.Set("pathfinding.min_end_dist", min_end_dist);
         blackboard.Set("pathfinding.travel_speed", speed);
-        blackboard.Set("pathfinding.allow_jump", true);
+        blackboard.Set("pathfinding.allow_jump", true);*/
 
         return true;
     }
 
     void InterfaceClient::StopPathFinding()
     {
-        pathfinding_task.Stop();
+        //pathfinding_task.Stop();
     }
 
     const bool InterfaceClient::PlaceBlock(const std::string& item, const Position& location, const PlayerDiggingFace placed_face, const bool wait_confirmation)
@@ -513,7 +512,7 @@ namespace Botcraft
         if (msg.GetHealth() <= 0.0f)
         {
             StopPathFinding();
-            Say("I don't feel so good");
+            SendChatMessage("I don't feel so good");
         }
     }
 

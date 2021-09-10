@@ -17,8 +17,8 @@ void ShowHelp(const char* argv0)
 
 int main(int argc, char* argv[])
 {
-    try
-    {
+    //try
+   //{
         std::string address = "127.0.0.1:25565";
         std::string login = "BCChatCommand";
         std::string password = "";
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        ChatCommandClient client(true, false);
+        ChatCommandClient client(false, false);
         client.SetAutoRespawn(true);
 
         if (!launcher_accounts_file.empty())
@@ -102,15 +102,12 @@ int main(int argc, char* argv[])
             client.Connect(address, login, password);
         }
 
-        while (!client.GetShouldBeClosed())
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
+        client.RunBehaviourUntilClosed();
 
         client.Disconnect();
 
         return 0;
-    }
+    /* }
     catch (std::exception &e)
     {
         std::cerr << "Exception: " << e.what() << "\n";
@@ -120,6 +117,6 @@ int main(int argc, char* argv[])
     {
         std::cerr << "Unknown exception\n";
         return 2;
-    }
+    }*/
 
 }

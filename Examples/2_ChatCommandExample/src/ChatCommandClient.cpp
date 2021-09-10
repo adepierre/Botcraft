@@ -8,17 +8,21 @@
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/Network/NetworkManager.hpp>
 
+#include <botcraft/AI/BehaviourTree.hpp>
+#include <botcraft/AI/Tasks/AllTasks.hpp>
+
 #include "ChatCommandClient.hpp"
 
 using namespace Botcraft;
+using namespace Botcraft::AI;
 using namespace ProtocolCraft;
 
-ChatCommandClient::ChatCommandClient(const bool use_renderer_, const bool is_afk_) : InterfaceClient(use_renderer_, is_afk_)
+ChatCommandClient::ChatCommandClient(const bool use_renderer_, const bool is_afk_) : BaseBehaviourClient<ChatCommandClient>(use_renderer_, is_afk_)
 {
     std::cout << "Known commands:\n";
     std::cout << "    Pathfinding to position:\n";
-    std::cout << "        name goto x y z\n";
-    std::cout << "    Stop current pathfinding:\n";
+    std::cout << "        name goto x y z (speed)\n";
+    std::cout << "    Stop what you're doing:\n";
     std::cout << "        name stop\n";
     std::cout << "    Check perimeter for spawnable blocks and save spawnable positions to file:\n";
     std::cout << "        name check_perimeter [x y z (default = player position)] radius (default = 128) [check_lighting (default = true)]\n";
@@ -52,7 +56,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
     {
         if (splitted.size() < 5)
         {
-            Say("Usage: [BotName] [goto] [x] [y] [z]");
+            SendChatMessage("Usage: [BotName] [goto] [x] [y] [z] [speed]");
             return;
         }
         Position target_position;
@@ -74,15 +78,34 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
             return;
         }
 
-        blackboard.Set("pathfinding.goal", target_position);
-        blackboard.Set("pathfinding.dist_tolerance", 0);
-        blackboard.Set("pathfinding.min_end_dist", 0);
+        auto tree = Builder<ChatCommandClient>()
+            .sequence()
+                // Perform the pathfinding in a Selector,
+                // so it exits as soon as one leaf
+                // returns success
+                .selector()
+                    // The next three lines do exactly the same,
+                    // they're only here to show the different
+                    // possibilities to create a leaf. Note that
+                    // only the lambda solution can use default
+                    // parameters for the last bool value
+                    .leaf([=](ChatCommandClient& c) { return GoTo(c, target_position, 0, 0, speed); })
+                    .leaf(GoTo, target_position, 0, 0, speed, true)
+                    .leaf(std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, speed, true))
+                    // If goto fails, say something in chat
+                    .leaf(Say, "Pathfinding failed :(")
+                .end()
+                // Switch back to empty behaviour
+                .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
+            .end()
+            .build();
 
-        // Create a tree with only the go leaf and starts it
+        SetBehaviourTree(tree);
     }
     else if (splitted[1] == "stop")
     {
-        pathfinding_task.Stop();
+        // Stop any running behaviour
+        SetBehaviourTree(nullptr);
     }
     else if (splitted[1] == "check_perimeter")
     {
@@ -120,7 +143,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
     {
         if (splitted.size() < 6)
         {
-            Say("Usage: [BotName] [place_block] [item] [x] [y] [z]");
+            SendChatMessage("Usage: [BotName] [place_block] [item] [x] [y] [z]");
             return;
         }
         const std::string item = splitted[2];
@@ -138,13 +161,15 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
             return;
         }
 
-        PlaceBlock(item, pos, PlayerDiggingFace::Top, false);
+        // TODO
+        SendChatMessage("Asked to place a block");
+        //PlaceBlock(item, pos, PlayerDiggingFace::Top, false);
     }
     else if (splitted[1] == "interact")
     {
         if (splitted.size() < 5)
         {
-            Say("Usage: [BotName] [interact] [x] [y] [z]");
+            SendChatMessage("Usage: [BotName] [interact] [x] [y] [z]");
             return;
         }
         Position pos;
@@ -161,7 +186,27 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
             return;
         }
 
-        InteractWithBlock(pos, PlayerDiggingFace::Top, true);
+        auto tree = Builder<ChatCommandClient>()
+            // shortcut for composite<Sequence<ChatCommandClient>>()
+            .sequence()
+                .leaf(GoTo, pos, 4, 1, 4.317f, true)
+                // Set interaction position in the blackboard
+                .leaf(SetBlackboardData<Position>, "InteractWithBlock.pos", pos)
+                .selector()
+                    // Perform action using the data in the blackboard
+                    .leaf(InteractWithBlockBlackboard)
+                    // Say something if it fails
+                    .leaf(Say, "Interacting failed :(")
+                .end()
+                // Remove interaction position in the blackboard because
+                // we don't want to leave a mess (and to show how to do it)
+                .leaf(RemoveBlackboardData, "InteractWithBlock.pos")
+                // Switch back to empty behaviour
+                .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
+            .end()
+            .build();
+
+        SetBehaviourTree(tree);
     }
     else
     {

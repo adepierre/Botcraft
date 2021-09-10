@@ -13,7 +13,7 @@ add_executable(4_MapCreatorExample ${HDR_FILES} ${SRC_FILES})
 target_include_directories(4_MapCreatorExample PUBLIC include)
 target_link_libraries(4_MapCreatorExample botcraft)
 
-set_property(TARGET 4_MapCreatorExample PROPERTY CXX_STANDARD 11)
+set_property(TARGET 4_MapCreatorExample PROPERTY CXX_STANDARD 17)
 set_target_properties(4_MapCreatorExample PROPERTIES FOLDER Examples)
 set_target_properties(4_MapCreatorExample PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(4_MapCreatorExample PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")

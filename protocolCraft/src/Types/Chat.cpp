@@ -10,7 +10,7 @@ namespace ProtocolCraft
         nlohmann::json v;
         try
         {
-            v.parse(json);
+            v = nlohmann::json::parse(json);
         }
         catch (const nlohmann::json::exception& e)
         {

@@ -351,7 +351,7 @@ namespace Botcraft
         world = world_;
     }
 
-    void BaseClient::Say(const std::string& msg)
+    void BaseClient::SendChatMessage(const std::string& msg)
     {
         if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
@@ -379,6 +379,26 @@ namespace Botcraft
     void BaseClient::SetAutoRespawn(const bool b)
     {
         auto_respawn = b;
+    }
+
+    std::shared_ptr<World> BaseClient::GetWorld() const
+    {
+        return world;
+    }
+
+    std::shared_ptr<EntityManager> BaseClient::GetEntityManager() const
+    {
+        return entity_manager;
+    }
+
+    std::shared_ptr<NetworkManager> BaseClient::GetNetworkManager() const
+    {
+        return network_manager;
+    }
+
+    std::shared_ptr<InventoryManager> BaseClient::GetInventoryManager() const
+    {
+        return inventory_manager;
     }
 
     void BaseClient::Handle(Message &msg)
