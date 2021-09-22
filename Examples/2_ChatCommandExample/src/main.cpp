@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        ChatCommandClient client(false, false);
+        ChatCommandClient client(true, false);
         client.SetAutoRespawn(true);
 
         if (!launcher_accounts_file.empty())

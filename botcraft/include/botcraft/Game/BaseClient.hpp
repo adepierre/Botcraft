@@ -54,19 +54,22 @@ namespace Botcraft
         void Respawn();
         void SetAutoRespawn(const bool b);
 
+
+        // Set the right transaction id, add it to the inventory manager,
+        // update the next transaction id and send it to the server
+        // return the id of the transaction
+        const int SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
+
         std::shared_ptr<World> GetWorld() const;
         std::shared_ptr<EntityManager> GetEntityManager() const;
         std::shared_ptr<NetworkManager> GetNetworkManager() const;
         std::shared_ptr<InventoryManager> GetInventoryManager() const;
+        const bool GetCreativeMode() const;
 
 
     protected:
         void RunSyncPos();
         void Physics(const bool is_in_fluid);
-        // Set the right transaction id, add it to the inventory manager,
-        // update the next transaction id and send it to the server
-        // return the id of the transaction
-        const int SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
 
     protected:
         virtual void Handle(ProtocolCraft::Message &msg) override;

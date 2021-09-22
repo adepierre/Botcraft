@@ -25,7 +25,7 @@ namespace Botcraft
         Status SayBlackboard(BehaviourClient& client);
 
         /// <summary>
-        /// Interact (right click) with the block at the given location
+        /// Interact (right click) with the block at the given location. Must be in range.
         /// </summary>
         /// <param name="client">The client performing the action</param>
         /// <param name="pos">The position of the block</param>

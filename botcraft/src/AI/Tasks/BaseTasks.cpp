@@ -1,7 +1,9 @@
 #include "botcraft/AI/Tasks/BaseTasks.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
+#include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Game/World/Blockstate.hpp"
 
 
 #include <iostream>
@@ -131,6 +133,5 @@ namespace Botcraft
 
             return RemoveBlackboardData(client, key);
         }
-
     }
 }

@@ -401,6 +401,11 @@ namespace Botcraft
         return inventory_manager;
     }
 
+    const bool BaseClient::GetCreativeMode() const
+    {
+        return creative_mode;
+    }
+
     void BaseClient::Handle(Message &msg)
     {
 

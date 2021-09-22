@@ -9,6 +9,8 @@ set(botcraft_PUBLIC_HDR
     
     include/botcraft/AI/Tasks/AllTasks.hpp
     include/botcraft/AI/Tasks/BaseTasks.hpp
+    include/botcraft/AI/Tasks/DigTask.hpp
+    include/botcraft/AI/Tasks/InventoryTasks.hpp
     include/botcraft/AI/Tasks/PathfindingTask.hpp
     
     include/botcraft/Game/AABB.hpp
@@ -55,6 +57,8 @@ set(botcraft_SRC
     src/AI/InterfaceClient.cpp
     
     src/AI/Tasks/BaseTasks.cpp
+    src/AI/Tasks/DigTask.cpp
+    src/AI/Tasks/InventoryTasks.cpp
     src/AI/Tasks/PathfindingTask.cpp
     
     src/Game/AABB.cpp
