@@ -40,6 +40,7 @@ namespace Botcraft
         const std::string& GetPlayerDisplayName() const;
 
     private:
+#ifdef USE_ENCRYPTION
         /// <summary>
         /// Check if there is a saved credentials file and
         /// if the token is still valid. Refresh it if not.
@@ -109,6 +110,7 @@ namespace Botcraft
         /// <returns>A WebRequestResponse</returns>
         const WebRequestResponse GETRequest(const std::string& host, const std::string& endpoint,
             const std::string& authorization = "") const;
+#endif
 
     private:
 

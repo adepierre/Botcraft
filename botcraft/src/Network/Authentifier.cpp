@@ -259,6 +259,7 @@ namespace Botcraft
         return player_display_name;
     }
 
+#ifdef USE_ENCRYPTION
     const std::string Authentifier::GetMSAToken() const
     {
         // Check if we have some cached credentials
@@ -742,4 +743,5 @@ namespace Botcraft
 
         return WebRequest(host, raw_request);
     }
+#endif
 }
