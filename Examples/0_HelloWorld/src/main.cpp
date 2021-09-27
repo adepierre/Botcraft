@@ -9,9 +9,8 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--login\t\tMojang account login for connection, default: BCHelloWorld\n"
-        << "\t--password\tMojang account password for connection, empty for servers in offline mode, default: empty\n"
-        << "\t--jsonaccount\tPath to a json file from the official minecraft launcher, can be used for people with a Microsoft account, default: empty"
+        << "\t--login\t\tPlayer name in offline mode, login for Mojang account, empty for Microsoft account, default: BCHelloWorld\n"
+        << "\t--password\tMojang account password, empty for servers in offline mode or Microsoft account, default: empty\n"
         << std::endl;
 }
 
@@ -22,7 +21,6 @@ int main(int argc, char* argv[])
         std::string address = "127.0.0.1:25565";
         std::string login = "BCHelloWorld";
         std::string password = "";
-        std::string launcher_accounts_file = "";
 
         if (argc == 1)
         {
@@ -74,33 +72,13 @@ int main(int argc, char* argv[])
                     return 1;
                 }
             }
-            else if (arg == "--jsonaccount")
-            {
-                if (i + 1 < argc)
-                {
-                    launcher_accounts_file = argv[++i];
-                }
-                else
-                {
-                    std::cerr << "--jsonaccount requires an argument" << std::endl;
-                    return 1;
-                }
-            }
         }
 
         Botcraft::BaseClient client(true, false);
         client.SetAutoRespawn(true);
 
-        if (!launcher_accounts_file.empty())
-        {
-            std::cout << "Starting connection process using launcher accounts file" << std::endl;
-            client.Connect(address, launcher_accounts_file);
-        }
-        else
-        {
-            std::cout << "Starting connection process using login and password" << std::endl;
-            client.Connect(address, login, password);
-        }
+        std::cout << "Starting connection process" << std::endl;
+        client.Connect(address, login, password);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         client.Say("Hello world!");

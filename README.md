@@ -4,13 +4,12 @@
 
 Botcraft is a cross-platform C++ library to connect and interact with Minecraft servers with (optional) integrated OpenGL renderer.
 
-This was my first project using OpenGL, multi-threading, networking and "sort-of-complete cmake" so it's a "learn-by-doing" code and many things are probably (really) badly done or should be refactored. Do not hesitate to open an issue or to send a PR if you know how to improve some part of it!
+This is a "learn-by-doing" code, with some lines dating back to 2017 and never changed since. Some things are probably done (very) badly and should be refactored. Do not hesitate to open an issue or to send a PR if you know how to improve some part of it!
 
 ## Features
 
-- Connection to minecraft server (both offline mode and online connection with Mojang account, Microsoft accounts are supported using a json file created by the official launcher)
-- Automatic refresh of the token when required
-- DNS name resolution with and without SRV record
+- Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
+- DNS server name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.17.1 supported
 - Compression
 - Physics and collisions
@@ -96,11 +95,9 @@ Examples can be found in the [Examples](Examples/) folder:
 
 ## Connection
 
-If the server is in online-mode: false mode, you can connect with any username.
+If the server has the option online-mode: false, you can connect with any username.
 
-If the server is in online-mode: true mode, you can connect with a Mojang account (login+password) or with a json file created by the official minecraft launcher. For details about the second approach, please see [this page](launcher_json_connection.md). For users with a Microsoft account, only the second option is available, as implementing the full [Microsoft oauth procedure](https://wiki.vg/Microsoft_Authentication_Scheme) would be rather complicated in C++.
-
-If the access token present in the launcher file is too old, it will be automatically refreshed, and the file will be updated with the new one.
+If the server has the option online-mode: true, you can connect with a Mojang account (login+password) or with a Microsoft account (empty login and password). For Microsoft account, you'll need to authenticate in your browser the first time. Then, credentials are stored in a file so you don't need to relog into your account everytime. Only the access token is saved in the file, Botcraft has never access to your Microsoft account password.
 
 ## To-do list
 

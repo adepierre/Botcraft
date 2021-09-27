@@ -17,7 +17,7 @@ namespace Botcraft
 	class NetworkManager : public ProtocolCraft::Handler
 	{
 	public:
-		NetworkManager(const std::string& address, const std::string& login, const std::string& password, const std::string& launcher_accounts_path);
+		NetworkManager(const std::string& address, const std::string& login, const std::string& password);
 		// Used to create a dummy network manager that does not fire any message
 		// but is always in constant_connection_state
 		NetworkManager(const ProtocolCraft::ConnectionState constant_connection_state);
