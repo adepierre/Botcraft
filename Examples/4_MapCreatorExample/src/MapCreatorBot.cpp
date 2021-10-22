@@ -15,15 +15,16 @@
 
 #include <protocolCraft/Types/NBT/NBT.hpp>
 #include <protocolCraft/Types/NBT/TagList.hpp>
-
-#include "MapCreatorBot.hpp"
 #include <protocolCraft/Types/NBT/TagString.hpp>
 #include <protocolCraft/Types/NBT/TagInt.hpp>
 
+#include "MapCreatorBot.hpp"
+
 using namespace Botcraft;
+using namespace Botcraft::AI;
 using namespace ProtocolCraft;
 
-MapCreatorBot::MapCreatorBot(const bool use_renderer_) : InterfaceClient(use_renderer_, false)
+MapCreatorBot::MapCreatorBot(const bool use_renderer_) : BaseBehaviourClient<MapCreatorBot>(use_renderer_, false)
 {
     random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
     started = false;

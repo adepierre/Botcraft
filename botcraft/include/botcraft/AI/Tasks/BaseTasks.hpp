@@ -10,6 +10,20 @@ namespace Botcraft
     namespace AI
     {
         /// <summary>
+        /// Just call client.Yield(). Can be used to Idle the behaviour.
+        /// </summary>
+        /// <param name="client">The client performing the action</param>
+        /// <returns>Success</returns>
+        Status Yield(BehaviourClient& client);
+
+        /// <summary>
+        /// Ask this client to disconnect from the server by setting should_be_closed to true.
+        /// </summary>
+        /// <param name="client">The client performing the action</param>
+        /// <returns>Success</returns>
+        Status Disconnect(BehaviourClient& client);
+
+        /// <summary>
         /// Say something in the chat
         /// </summary>
         /// <param name="client">The client performing the action</param>
@@ -25,7 +39,8 @@ namespace Botcraft
         Status SayBlackboard(BehaviourClient& client);
 
         /// <summary>
-        /// Interact (right click) with the block at the given location. Must be in range.
+        /// Interact (right click) with the block at the given location. If
+        /// too far, will try to pathfind toward it.
         /// </summary>
         /// <param name="client">The client performing the action</param>
         /// <param name="pos">The position of the block</param>
@@ -71,11 +86,9 @@ namespace Botcraft
 
             // Mandatory
             const std::string& key = blackboard.Get<std::string>(variable_names[0]);
-
-            // Optional
             const T& data = blackboard.Get<T>(variable_names[1]);
 
-            return SetBlackboardData(client, key, data);
+            return SetBlackboardData<T>(client, key, data);
         }
 
         /// <summary>
@@ -92,6 +105,13 @@ namespace Botcraft
         /// <param name="client">The client performing the action</param>
         /// <returns>Success</returns>
         Status RemoveBlackboardDataBlackboard(BehaviourClient& client);
+
+        /// <summary>
+        /// Return success if player food isn't at max
+        /// </summary>
+        /// <param name="client">The client performing the action</param>
+        /// <returns>Success if player.GetFood() < 20, Failure otherwise</returns>
+        Status IsHungry(BehaviourClient& client);
 
     } // namespace AI
 } // namespace Botcraft

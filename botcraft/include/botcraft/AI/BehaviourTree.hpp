@@ -9,7 +9,7 @@
 // If you want the (more complete) original post rather than the new one:
 // https://web.archive.org/web/20210826210308/https://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
 
-// Code inspired by (especially for the builder part)
+// Code inspired (especially for the builder part) by
 // https://github.com/arvidsson/BrainTree
 
 namespace Botcraft
@@ -19,7 +19,6 @@ namespace Botcraft
 		enum class Status
 		{
 			Failure,
-			Running,
 			Success
 		};
 
@@ -29,7 +28,7 @@ namespace Botcraft
 		public:
 			Node() {}
 			virtual ~Node() {}
-			virtual const Status Tick(Context& context) = 0;
+			virtual const Status Tick(Context& context) const = 0;
 		};
 
 
@@ -40,18 +39,13 @@ namespace Botcraft
 			Composite() {}
 			virtual ~Composite() {}
 
-			void AddChild(std::shared_ptr<Node<Context>> child)
+			void AddChild(const std::shared_ptr<Node<Context>>& child)
 			{
 				children.push_back(child);
-
-				// Reset the iterator to the first child
-				// every time one child is added
-				it = children.begin();
 			}
 
 		protected:
 			std::vector<std::shared_ptr<Node<Context>>> children;
-			class std::vector<std::shared_ptr<Node<Context>>>::iterator it;
 		};
 
 		template<class Context>
@@ -75,7 +69,7 @@ namespace Botcraft
 		{
 		public:
 			Leaf() = delete;
-			Leaf(std::function<Status(Context&)> func_)
+			Leaf(const std::function<Status(Context&)> &func_)
 			{
 				func = func_;
 			}
@@ -87,7 +81,7 @@ namespace Botcraft
 			}
 
 			virtual ~Leaf() {}
-			virtual const Status Tick(Context& context) override
+			virtual const Status Tick(Context& context) const override
 			{
 				return func(context);
 			}
@@ -105,7 +99,7 @@ namespace Botcraft
 
 			void SetRoot(const std::shared_ptr<Node<Context>> node) { root = node; }
 
-			virtual const Status Tick(Context& context) override
+			virtual const Status Tick(Context& context) const override
 			{
 				if (root == nullptr)
 				{
@@ -130,25 +124,22 @@ namespace Botcraft
 		class Sequence : public Composite<Context>
 		{
 		public:
-			virtual const Status Tick(Context& context) override
+			virtual const Status Tick(Context& context) const override
 			{
+				auto it = children.begin();
 				while (it != children.end())
 				{
 					Status child_status = (*it)->Tick(context);
 					switch (child_status)
 					{
 					case Status::Failure:
-						it = children.begin();
-						return child_status;
-					case Status::Running:
-						return child_status;
+						return Status::Failure;
 					case Status::Success:
 						++it;
 						break;
 					}
 				}
 				// If we are here, all children succeeded
-				it = children.begin();
 				return Status::Success;
 			}
 		};
@@ -163,8 +154,9 @@ namespace Botcraft
 		class Selector : public Composite<Context>
 		{
 		public:
-			virtual const Status Tick(Context& context) override
+			virtual const Status Tick(Context& context) const override
 			{
+				auto it = children.begin();
 				while (it != children.end())
 				{
 					Status child_status = (*it)->Tick(context);
@@ -174,16 +166,11 @@ namespace Botcraft
 						// Move to next child
 						++it;
 						break;
-					case Status::Running:
-						return child_status;
 					case Status::Success:
-						// Reset for next time, return success
-						it = children.begin();
-						return child_status;
+						return Status::Success;
 					}
 				}
-				// If we are here, no child succeeded
-				it = children.begin();
+				// If we are here, all children failed
 				return Status::Failure;
 			}
 		};
@@ -194,14 +181,13 @@ namespace Botcraft
 
 		/// <summary>
 		/// A Decorator that inverts the result of its child.
-		/// If child returns Running, returns Running too.
 		/// </summary>
 		/// <typeparam name="C">The tree context type</typeparam>
 		template<class Context>
 		class Inverter : public Decorator<Context>
 		{
 		public:
-			virtual const Status Tick(Context& context) override
+			virtual const Status Tick(Context& context) const override
 			{
 				Status child_status = child->Tick(context);
 
@@ -209,8 +195,6 @@ namespace Botcraft
 				{
 				case Status::Failure:
 					return Status::Success;
-				case Status::Running:
-					return Status::Running;
 				case Status::Success:
 					return Status::Failure;
 				}
@@ -227,7 +211,7 @@ namespace Botcraft
 		class Succeeder : public Decorator<Context>
 		{
 		public:
-			virtual const Status Tick(Context& context) override
+			virtual const Status Tick(Context& context) const override
 			{
 				Status child_status = child->Tick(context);
 
@@ -235,8 +219,6 @@ namespace Botcraft
 				{
 				case Status::Failure:
 					return Status::Success;
-				case Status::Running:
-					return Status::Running;
 				case Status::Success:
 					return Status::Success;
 				}
@@ -244,9 +226,9 @@ namespace Botcraft
 		};
 
 		/// <summary>
-		/// A Decorator that returns success if its child returns success
-		/// after max n trials. If its child fails more than n times,
-		/// returns failure (run until success if n == 0).
+		/// A Decorator that ticks its child n times
+		/// (repeat until first success if n == 0).
+		/// Always returns success.
 		/// </summary>
 		/// <typeparam name="C">The tree context type</typeparam>
 		template<class Context>
@@ -256,34 +238,22 @@ namespace Botcraft
 			Repeater(const size_t n_)
 			{
 				n = n_;
-				conter = 0;
 			}
 
-			virtual const Status Tick(Context& context) override
+			virtual const Status Tick(Context& context) const override
 			{
-				Status child_status = child->Tick(context);
-
-				switch (child_status)
+				Status child_status = Status::Failure;
+				size_t counter = 0;
+				while ((child_status == Status::Failure && n == 0) || counter < n)
 				{
-				case Status::Failure:
-					counter++;
-					if (counter == n)
-					{
-						counter = 0;
-						return Status::Failure;
-					}
-					return Status::Running;
-				case Status::Running:
-					return Status::Running;
-				case Status::Success:
-					counter = 0;
-					return Status::Success;
+					child_status = child->Tick(context);
+					counter += 1;
 				}
+				return Status::Success;
 			}
 
 		private:
 			size_t n;
-			size_t counter;
 		};
 
 
@@ -528,14 +498,14 @@ namespace Botcraft
 			// Inverter
 			DecoratorBuilder<Builder, Context> inverter()
 			{
-				root = std::make_shared<Inverter<Context>>(n);
+				root = std::make_shared<Inverter<Context>>();
 				return DecoratorBuilder<Builder, Context>(this, (Inverter<Context>*)root.get());
 			}
 
 			// Succeeder
 			DecoratorBuilder<Builder, Context> succeeder()
 			{
-				root = std::make_shared<Succeeder<Context>>(n);
+				root = std::make_shared<Succeeder<Context>>();
 				return DecoratorBuilder<Builder, Context>(this, (Succeeder<Context>*)root.get());
 			}
 

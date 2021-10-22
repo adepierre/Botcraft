@@ -2,10 +2,13 @@ project(4_MapCreatorExample)
 
 set(SRC_FILES
 ${PROJECT_SOURCE_DIR}/src/MapCreatorBot.cpp
+${PROJECT_SOURCE_DIR}/src/MapCreationTasks.cpp
 ${PROJECT_SOURCE_DIR}/src/main.cpp
 )
 set(HDR_FILES 
 ${PROJECT_SOURCE_DIR}/include/MapCreatorBot.hpp
+${PROJECT_SOURCE_DIR}/include/MapCreationTasks.hpp
+${PROJECT_SOURCE_DIR}/include/CustomBehaviourTree.hpp
 )
 
 

@@ -311,6 +311,7 @@ namespace Botcraft
 
     void BaseClient::Disconnect()
     {
+        should_be_closed = true;
         game_mode = GameType::None;
         difficulty = Difficulty::None;
 #if PROTOCOL_VERSION > 463
@@ -368,6 +369,11 @@ namespace Botcraft
     const bool BaseClient::GetShouldBeClosed() const
     {
         return should_be_closed;
+    }
+
+    void BaseClient::SetShouldBeClosed(const bool b)
+    {
+        should_be_closed = b;
     }
 
     void BaseClient::SetAutoRespawn(const bool b)

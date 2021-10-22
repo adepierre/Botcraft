@@ -45,6 +45,7 @@ namespace Botcraft
         void SetSharedWorld(const std::shared_ptr<World> world_);
 
         const bool GetShouldBeClosed() const;
+        void SetShouldBeClosed(const bool b);
 
 
         // Send a message in the chat

@@ -5,7 +5,6 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/AI/BehaviourTree.hpp
     include/botcraft/AI/BaseBehaviourClient.hpp
     include/botcraft/AI/Blackboard.hpp
-    include/botcraft/AI/InterfaceClient.hpp
     
     include/botcraft/AI/Tasks/AllTasks.hpp
     include/botcraft/AI/Tasks/BaseTasks.hpp
@@ -54,7 +53,6 @@ set(botcraft_PRIVATE_HDR
 
 set(botcraft_SRC
     src/AI/BehaviourClient.cpp
-    src/AI/InterfaceClient.cpp
     
     src/AI/Tasks/BaseTasks.cpp
     src/AI/Tasks/DigTask.cpp

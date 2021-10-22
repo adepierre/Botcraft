@@ -1,10 +1,10 @@
 #include "botcraft/AI/Tasks/BaseTasks.hpp"
+#include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Game/World/Blockstate.hpp"
-
 
 #include <iostream>
 
@@ -12,6 +12,19 @@ namespace Botcraft
 {
     namespace AI
     {
+        Status Yield(BehaviourClient& client)
+        {
+            client.Yield();
+
+            return Status::Success;
+        }
+
+        Status Disconnect(BehaviourClient& client)
+        {
+            client.SetShouldBeClosed(true);
+            return Status::Success;
+        }
+
         Status Say(BehaviourClient& client, const std::string& msg)
         {
             client.SendChatMessage(msg);
@@ -34,12 +47,10 @@ namespace Botcraft
         Status InteractWithBlock(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face, const bool animation)
         {
             std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
-            const Vector3<double> dist(std::floor(local_player->GetPosition().x) - pos.x, std::floor(local_player->GetPosition().y) - pos.y, std::floor(local_player->GetPosition().z) - pos.z);
-            double distance = std::sqrt(dist.dot(dist));
-            if (distance > 5.0f)
+            
+            // Can't go in range
+            if (GoTo(client, pos, 4) == Status::Failure)
             {
-                std::cout << "I am asked to interact at " << pos << " but I'm affraid that's out of my range (" << distance << "m)." << std::endl;
-
                 return Status::Failure;
             }
 
@@ -132,6 +143,11 @@ namespace Botcraft
             const std::string& key = blackboard.Get<std::string>(variable_names[0]);
 
             return RemoveBlackboardData(client, key);
+        }
+
+        Status IsHungry(BehaviourClient& client)
+        {
+            return client.GetEntityManager()->GetLocalPlayer()->GetFood() < 20.0f ? Status::Success : Status::Failure;
         }
     }
 }

@@ -1,14 +1,14 @@
 #pragma once
 
 #include <botcraft/Game/Vector3.hpp>
-#include <botcraft/Game/InterfaceClient.hpp>
+#include <botcraft/AI/BaseBehaviourClient.hpp>
 #include <botcraft/Game/World/Blockstate.hpp>
 
 #include <random>
 #include <set>
 #include <map>
 
-class MapCreatorBot : public Botcraft::InterfaceClient
+class MapCreatorBot : public Botcraft::AI::BaseBehaviourClient<MapCreatorBot>
 {
 public:
     MapCreatorBot(const bool use_renderer_);

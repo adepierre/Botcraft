@@ -2,8 +2,11 @@
 #include <string>
 
 #include <botcraft/Game/World/World.hpp>
+#include <botcraft/AI/BehaviourTree.hpp>
+#include <botcraft/AI/Tasks/AllTasks.hpp>
 
-#include "MapCreatorBot.hpp"
+#include "CustomBehaviourTree.hpp"
+#include "MapCreationTasks.hpp"
 
 void ShowHelp(const char* argv0)
 {
@@ -17,6 +20,118 @@ void ShowHelp(const char* argv0)
         << "\t--offset\t3 ints, offset for the first block, default: 0 0 0\n"
         << "\t--tempblock\tname of the scafholding block, default: minecraft:slime_block\n"
         << std::endl;
+}
+
+using namespace Botcraft::AI;
+
+std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
+{
+    const std::string food_name = "minecraft:golden_carrot";
+    
+    auto completion_tree = Builder<BehaviourClient>()
+        .succeeder()
+            .sequence()
+                .leaf(CheckCompletion)
+                .leaf(WarnCompleted)
+                .repeater(0)
+                    .inverter()
+                        .leaf(Yield)
+                    .end()
+                .end()
+            .end()
+        .end()
+        .build();
+    
+    auto disconnect_subtree = Builder<BehaviourClient>()
+        .sequence()
+            .leaf(Disconnect)
+            .repeater(0)
+                .inverter()
+                    .leaf(Yield)
+                .end()
+            .end()
+        .end()
+        .build();
+
+    auto eat_subtree = Builder<BehaviourClient>()
+        .selector()
+            // If hungry
+            .inverter()
+                .leaf(IsHungry)
+            .end()
+            // Get some food, then eat
+            .sequence()
+                .selector()
+                    .leaf(SetItemInHand, food_name, Botcraft::Hand::Left)
+                    .sequence()
+                        .leaf(GetSomeFood, food_name)
+                        .leaf(SetItemInHand, food_name, Botcraft::Hand::Left)
+                    .end()
+                    .leaf(WarnCantFindFood)
+                .end()
+                .selector()
+                    .leaf(Eat, food_name, true)
+                    .inverter()
+                        .leaf(WarnCantEat)
+                    .end()
+                    // If we are here, hungry and can't eat --> Disconnect
+                    .tree(disconnect_subtree)
+                .end()
+            .end()
+        .end()
+        .build();
+
+    auto getinventory_tree = Builder<BehaviourClient>()
+        // List all blocks in the inventory
+        .selector()
+            .leaf(GetBlocksAvailableInInventory)
+            // If no block found, get some in neighbouring chests
+            .sequence()
+                .leaf(SwapChestsInventory, food_name, true)
+                .selector()
+                    .leaf(GetBlocksAvailableInInventory)
+                    .inverter()
+                        .leaf(WarnNoBlockInChest)
+                    .end()
+                    .tree(disconnect_subtree)
+                .end()
+            .end()
+        .end()
+        .build();
+
+    auto placeblock_tree = Builder<BehaviourClient>()
+        .selector()
+            // Try to perform a task 5 times
+            .decorator<RepeatUntilSuccess<BehaviourClient>>(5)
+                .selector()
+                    .sequence()
+                        .leaf(FindNextTask)
+                        .leaf(ExecuteNextTask)
+                    .end()
+                    // If the previous task failed, sleep for ~1 second
+                    // before retrying to get an action
+                    .inverter()
+                        .repeater(100)
+                            .leaf(Yield)
+                        .end()
+                    .end()
+                .end()
+            .end()
+            // If failed 5 times, put all blocks in chests to
+            // randomize available blocks for next time
+            .leaf(SwapChestsInventory, food_name, false)
+        .end()
+        .build();
+
+    return Builder<BehaviourClient>()
+        // Main sequence of actions
+        .sequence()
+            .tree(completion_tree)
+            .tree(eat_subtree)
+            .tree(getinventory_tree)
+            .tree(placeblock_tree)
+        .end()
+        .build();
 }
 
 int main(int argc, char* argv[])
