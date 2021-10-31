@@ -385,7 +385,7 @@ namespace Botcraft
 			CompositeBuilder<DecoratorBuilder, Context> sequence()
 			{
 				auto child = std::make_shared<Sequence<Context>>();
-				node->AddChild(child);
+				node->SetChild(child);
 				return CompositeBuilder<DecoratorBuilder, Context>(this, (Sequence<Context>*)child.get());
 			}
 
@@ -393,7 +393,7 @@ namespace Botcraft
 			CompositeBuilder<DecoratorBuilder, Context> selector()
 			{
 				auto child = std::make_shared<Selector<Context>>();
-				node->AddChild(child);
+				node->SetChild(child);
 				return CompositeBuilder<DecoratorBuilder, Context>(this, (Selector<Context>*)child.get());
 			}
 
@@ -402,7 +402,7 @@ namespace Botcraft
 			CompositeBuilder<DecoratorBuilder, Context> composite(Args... args)
 			{
 				auto child = std::make_shared<CompositeType>((args)...);
-				node->AddChild(child);
+				node->SetChild(child);
 				return CompositeBuilder<DecoratorBuilder, Context>(this, (CompositeType*)child.get());
 			}
 
@@ -411,7 +411,7 @@ namespace Botcraft
 			DecoratorBuilder<DecoratorBuilder, Context> inverter()
 			{
 				auto child = std::make_shared<Inverter<Context>>();
-				node->AddChild(child);
+				node->SetChild(child);
 				return DecoratorBuilder<DecoratorBuilder, Context>(this, (Inverter<Context>*)child.get());
 			}
 
@@ -419,7 +419,7 @@ namespace Botcraft
 			DecoratorBuilder<DecoratorBuilder, Context> succeeder()
 			{
 				auto child = std::make_shared<Succeeder<Context>>();
-				node->AddChild(child);
+				node->SetChild(child);
 				return DecoratorBuilder<DecoratorBuilder, Context>(this, (Succeeder<Context>*)child.get());
 			}
 
@@ -427,7 +427,7 @@ namespace Botcraft
 			DecoratorBuilder<DecoratorBuilder, Context> repeater(const size_t n)
 			{
 				auto child = std::make_shared<Repeater<Context>>(n);
-				node->AddChild(child);
+				node->SetChild(child);
 				return DecoratorBuilder<DecoratorBuilder, Context>(this, (Repeater<Context>*)child.get());
 			}
 
@@ -436,7 +436,7 @@ namespace Botcraft
 			DecoratorBuilder<DecoratorBuilder, Context> decorator(Args... args)
 			{
 				auto child = std::make_shared<DecoratorType>((args)...);
-				node->AddChild(child);
+				node->SetChild(child);
 				return DecoratorBuilder<DecoratorBuilder, Context>(this, (DecoratorType*)child.get());
 			}
 

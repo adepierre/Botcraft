@@ -11,7 +11,12 @@
 #include <botcraft/AI/Tasks/InventoryTasks.hpp>
 #include <botcraft/AI/Tasks/DigTask.hpp>
 
+#include <protocolCraft/Types/NBT/TagList.hpp>
+#include <protocolCraft/Types/NBT/TagString.hpp>
+
 #include <iostream>
+#include <fstream>
+#include <protocolCraft/Types/NBT/TagInt.hpp>
 
 using namespace Botcraft;
 using namespace Botcraft::AI;
@@ -221,7 +226,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
 
     while (true)
     {
-        if (chests.size() == 0)
+        if (chest_indices.size() == 0)
         {
             return Status::Failure;
         }
@@ -370,7 +375,200 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
 
 Status FindNextTask(BehaviourClient& c)
 {
+    Blackboard& blackboard = c.GetBlackboard();
+    std::shared_ptr<EntityManager> entity_manager = c.GetEntityManager();
+    std::shared_ptr<World> world = c.GetWorld();
 
+    const Position& start = blackboard.Get<Position>("Structure.start");
+    const Position& end = blackboard.Get<Position>("Structure.end");
+    const std::vector<std::vector<std::vector<short> > >& target = blackboard.Get<std::vector<std::vector<std::vector<short> > > >("Structure.target");
+    const std::map<short, std::string>& palette = blackboard.Get<std::map<short, std::string> >("Structure.palette");
+
+    const std::set<std::string>& available = blackboard.Get<std::set<std::string> >("Inventory.block_list");
+
+    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+
+    Position start_pos;
+
+    start_pos.x = std::min(end.x, std::max(start.x, (int)std::floor(entity_manager->GetLocalPlayer()->GetX())));
+    start_pos.y = std::min(end.y, std::max(start.y, (int)std::floor(entity_manager->GetLocalPlayer()->GetY())));
+    start_pos.z = std::min(end.z, std::max(start.z, (int)std::floor(entity_manager->GetLocalPlayer()->GetZ())));
+
+    std::unordered_set<Position> explored;
+    std::unordered_set<Position> to_explore;
+
+    const std::vector<Position> neighbour_offsets({ Position(0, 1, 0), Position(0, -1, 0),
+        Position(0, 0, 1), Position(0, 0, -1),
+        Position(1, 0, 0), Position(-1, 0, 0) });
+
+    to_explore.insert(start_pos);
+
+    std::vector<Position> pos_candidates;
+    std::vector<std::string> item_candidates;
+    std::vector<PlayerDiggingFace> face_candidates;
+
+    while (!to_explore.empty())
+    {
+        // For each candidate, check if
+        // 1) the target is not air
+        // 2) we have the correct block in the inventory
+        // 3) it is currently a free space
+        // 4) it has a block under or next to it so we can put the new block
+
+        // OR
+
+        // 1) the placed block is not air
+        // 2) it does not match the desired build
+        // 3) it has a free block under or next to it so we can dig it
+
+        for (auto it = to_explore.begin(); it != to_explore.end(); ++it)
+        {
+            const Position pos = *it;
+
+            const int target_palette = target[pos.x - start.x][pos.y - start.y][pos.z - start.z];
+            const std::string& target_name = palette.at(target_palette);
+            std::shared_ptr<Blockstate> blockstate;
+            {
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                const Block* block = world->GetBlock(pos);
+
+                if (!block)
+                {
+#if PROTOCOL_VERSION < 347
+                    blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0);
+#else
+                    blockstate = AssetsManager::getInstance().Blockstates().at(0);
+#endif
+                }
+                else
+                {
+                    blockstate = block->GetBlockstate();
+                }
+            }
+
+            // Empty space requiring block placement
+            if (target_palette != -1
+                && blockstate->IsAir()
+                && available.find(target_name) != available.end())
+            {
+                for (int i = 0; i < neighbour_offsets.size(); ++i)
+                {
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                    const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[i]);
+
+                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
+                    {
+                        pos_candidates.push_back(pos);
+                        item_candidates.push_back(target_name);
+                        face_candidates.push_back((PlayerDiggingFace)i);
+                        break;
+                    }
+                }
+            }
+            // Wrong block requiring digging
+            else if ((target_palette != -1 && !blockstate->IsAir() && target_name != blockstate->GetName())
+                || (target_palette == -1 && !blockstate->IsAir()))
+            {
+                for (int i = 0; i < neighbour_offsets.size(); ++i)
+                {
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                    const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[i]);
+
+                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
+                    {
+                        pos_candidates.push_back(pos);
+                        item_candidates.push_back("");
+                        face_candidates.push_back((PlayerDiggingFace)i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If we have at least one candidate
+        if (pos_candidates.size() > 0)
+        {
+            // Get the position of all other players
+            std::vector<Vector3<double> > other_player_pos;
+            {
+                std::lock_guard<std::mutex> entity_manager_lock(entity_manager->GetMutex());
+                for (auto it = entity_manager->GetEntities().begin(); it != entity_manager->GetEntities().end(); ++it)
+                {
+                    if (it->second->GetType() == EntityType::Player)
+                    {
+                        other_player_pos.push_back(it->second->GetPosition());
+                    }
+                }
+            }
+
+            // Get all the candidates that are as far as possible from all 
+            // the other players
+            std::vector<int> max_dist_indices;
+            double max_dist = 0.0;
+            for (int i = 0; i < pos_candidates.size(); ++i)
+            {
+                double dist = 0.0;
+                for (int j = 0; j < other_player_pos.size(); ++j)
+                {
+                    dist += std::abs(pos_candidates[i].x - other_player_pos[j].x) +
+                        std::abs(pos_candidates[i].y - other_player_pos[j].y) +
+                        std::abs(pos_candidates[i].z - other_player_pos[j].z);
+
+                    if (dist > max_dist)
+                    {
+                        max_dist_indices.clear();
+                        max_dist = dist;
+                    }
+
+                    if (dist == max_dist)
+                    {
+                        max_dist_indices.push_back(i);
+                    }
+                }
+            }
+
+            // Select one randomly if multiple possibilities
+            int selected_index = max_dist_indices.size() == 1 ? 0 : max_dist_indices[std::uniform_int_distribution<int>(0, max_dist_indices.size() - 1)(random_engine)];
+
+            blackboard.Set("NextTask.action", item_candidates[selected_index].empty() ? "Dig" : "Place");
+            blackboard.Set("NextTask.block_position", pos_candidates[selected_index]);
+            blackboard.Set("NextTask.face", face_candidates[selected_index]);
+            if (!item_candidates[selected_index].empty())
+            {
+                blackboard.Set("NextTask.item", item_candidates[selected_index]);
+            }
+
+            return Status::Success;
+        }
+
+        explored.insert(to_explore.begin(), to_explore.end());
+        std::unordered_set<Position> neighbours;
+        for (auto it = to_explore.begin(); it != to_explore.end(); ++it)
+        {
+            for (int i = 0; i < neighbour_offsets.size(); ++i)
+            {
+                const Position p = *it + neighbour_offsets[i];
+
+                if (p.x < start.x ||
+                    p.x > end.x ||
+                    p.y < start.y ||
+                    p.y > end.y ||
+                    p.z < start.z ||
+                    p.z > end.z)
+                {
+                    continue;
+                }
+
+                if (explored.find(p) == explored.end())
+                {
+                    neighbours.insert(p);
+                }
+            }
+        }
+        to_explore = neighbours;
+    }
+
+    return Status::Failure;
 }
 
 Status ExecuteNextTask(BehaviourClient& c)
@@ -396,12 +594,29 @@ Status ExecuteNextTask(BehaviourClient& c)
 
 Status CheckCompletion(BehaviourClient& c)
 {
+    Blackboard& blackboard = c.GetBlackboard();
+    std::shared_ptr<World> world = c.GetWorld();
+
     Position world_pos;
     Position target_pos;
 
     int additional_blocks = 0;
     int wrong_blocks = 0;
     int missing_blocks = 0;
+
+    const Position& start = blackboard.Get<Position>("Structure.start");
+    const Position& end = blackboard.Get<Position>("Structure.end");
+    const std::vector<std::vector<std::vector<short> > >& target = blackboard.Get<std::vector<std::vector<std::vector<short> > > >("Structure.target");
+    const std::map<short, std::string>& palette = blackboard.Get<std::map<short, std::string> >("Structure.palette");
+
+    const bool print_details = blackboard.Get<bool>("CheckCompletion.print_details");
+    const bool print_errors = blackboard.Get<bool>("CheckCompletion.print_errors");
+    const bool full_check = blackboard.Get<bool>("CheckCompletion.full_check");
+
+    //Reset values for the next time
+    blackboard.Set("CheckCompletion.print_details", false);
+    blackboard.Set("CheckCompletion.print_errors", false);
+    blackboard.Set("CheckCompletion.full_check", false);
 
     for (int x = start.x; x <= end.x; ++x)
     {
@@ -426,9 +641,9 @@ Status CheckCompletion(BehaviourClient& c)
                     {
                         if (target_id != -1)
                         {
-                            if (!full)
+                            if (!full_check)
                             {
-                                return false;
+                                return Status::Failure;
                             }
                             missing_blocks++;
                             if (print_details)
@@ -445,9 +660,9 @@ Status CheckCompletion(BehaviourClient& c)
                 {
                     if (!blockstate->IsAir())
                     {
-                        if (!full)
+                        if (!full_check)
                         {
-                            return false;
+                            return Status::Failure;
                         }
                         additional_blocks++;
                         if (print_details)
@@ -460,9 +675,9 @@ Status CheckCompletion(BehaviourClient& c)
                 {
                     if (blockstate->IsAir())
                     {
-                        if (!full)
+                        if (!full_check)
                         {
-                            return false;
+                            return Status::Failure;
                         }
                         missing_blocks++;
                         if (print_details)
@@ -475,9 +690,9 @@ Status CheckCompletion(BehaviourClient& c)
                         const std::string& target_name = palette.at(target_id);
                         if (blockstate->GetName() != target_name)
                         {
-                            if (!full)
+                            if (!full_check)
                             {
-                                return false;
+                                return Status::Failure;
                             }
                             wrong_blocks++;
                             if (print_details)
@@ -498,29 +713,245 @@ Status CheckCompletion(BehaviourClient& c)
         std::cout << "Additional blocks: " << additional_blocks << std::endl;
     }
 
-    return missing_blocks + additional_blocks + wrong_blocks == 0;
+    return (missing_blocks + additional_blocks + wrong_blocks == 0) ? Status::Success : Status::Failure;
 }
 
-Status WarnCantFindFood(BehaviourClient& c)
+Status WarnConsole(BehaviourClient& c, const std::string& msg)
 {
-    std::cout << "[" << c.GetNetworkManager()->GetMyName() << "]: Can't find food anywhere" << std::endl;
+    std::cout << "[" << c.GetNetworkManager()->GetMyName() << "]: " << msg << std::endl;
     return Status::Success;
 }
 
-Status WarnCantEat(BehaviourClient& c)
+Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offset, const std::string& temp_block, const bool print_info)
 {
-    std::cout << "[" << c.GetNetworkManager()->GetMyName() << "]: Can't eat!" << std::endl;
-    return Status::Success;
-}
+    std::ifstream infile(path, std::ios_base::binary);
+    infile.unsetf(std::ios::skipws);
 
-Status WarnNoBlockInChest(BehaviourClient& c)
-{
-    std::cout << "[" << c.GetNetworkManager()->GetMyName() << "]: No more block in chests, I will stop here." << std::endl;
-    return Status::Success;
-}
+    infile.seekg(0, std::ios::end);
+    size_t length = infile.tellg();
+    infile.seekg(0, std::ios::beg);
 
-Status WarnCompleted(BehaviourClient& c)
-{
-    std::cout << "[" << c.GetNetworkManager()->GetMyName() << "]: Task fully completed!" << std::endl;
+    std::vector<unsigned char> file_content;
+    file_content.reserve(length);
+
+    file_content.insert(file_content.begin(),
+        std::istream_iterator<unsigned char>(infile),
+        std::istream_iterator<unsigned char>());
+
+    infile.close();
+
+    std::vector<unsigned char>::const_iterator it = file_content.begin();
+
+    NBT loaded_file;
+    try
+    {
+        loaded_file.Read(it, length);
+    }
+    catch (const std::exception&)
+    {
+        std::cerr << "Error loading NBT file. Make sure the file is uncompressed (you can change the extension to .zip and simply unzip it)" << std::endl;
+        return Status::Failure;
+    }
+
+    std::map<short, std::string> palette;
+    short id_temp_block = -1;
+    std::map<short, int> num_blocks_used;
+
+    std::shared_ptr<TagList> palette_tag = std::dynamic_pointer_cast<TagList>(loaded_file.GetTag("palette"));
+
+    for (int i = 0; i < palette_tag->GetValues().size(); ++i)
+    {
+        std::shared_ptr<TagCompound> compound = std::dynamic_pointer_cast<TagCompound>(palette_tag->GetValues()[i]);
+        const std::string& block_name = std::dynamic_pointer_cast<TagString>(compound->GetValues().at("Name"))->GetValue();
+        palette[i] = block_name;
+        num_blocks_used[i] = 0;
+        if (block_name == temp_block)
+        {
+            id_temp_block = i;
+        }
+    }
+
+    Position min(std::numeric_limits<int>().max(), std::numeric_limits<int>().max(), std::numeric_limits<int>().max());
+    Position max(std::numeric_limits<int>().min(), std::numeric_limits<int>().min(), std::numeric_limits<int>().min());
+    std::shared_ptr<TagList> blocks_tag = std::dynamic_pointer_cast<TagList>(loaded_file.GetTag("blocks"));
+    for (int i = 0; i < blocks_tag->GetValues().size(); ++i)
+    {
+        std::shared_ptr<TagCompound> compound = std::dynamic_pointer_cast<TagCompound>(blocks_tag->GetValues()[i]);
+        std::shared_ptr<TagList> pos_list = std::dynamic_pointer_cast<TagList>(compound->GetValues().at("pos"));
+        const int x = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[0])->GetValue();
+        const int y = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[1])->GetValue();
+        const int z = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[2])->GetValue();
+
+        if (x < min.x)
+        {
+            min.x = x;
+        }
+        if (y < min.y)
+        {
+            min.y = y;
+        }
+        if (z < min.z)
+        {
+            min.z = z;
+        }
+        if (x > max.x)
+        {
+            max.x = x;
+        }
+        if (y > max.y)
+        {
+            max.y = y;
+        }
+        if (z > max.z)
+        {
+            max.z = z;
+        }
+    }
+
+    Position size = max - min + Position(1, 1, 1);
+    Position start = offset;
+    Position end = offset + size - Position(1, 1, 1);
+
+    // Fill the target area with air (-1)
+    std::vector<std::vector<std::vector<short> > > target(size.x, std::vector<std::vector<short> >(size.y, std::vector<short>(size.z, -1)));
+
+    // Read all block to place
+    for (int i = 0; i < blocks_tag->GetValues().size(); ++i)
+    {
+        std::shared_ptr<TagCompound> compound = std::dynamic_pointer_cast<TagCompound>(blocks_tag->GetValues()[i]);
+        int state = std::dynamic_pointer_cast<TagInt>(compound->GetValues().at("state"))->GetValue();
+        std::shared_ptr<TagList> pos_list = std::dynamic_pointer_cast<TagList>(compound->GetValues().at("pos"));
+        const int x = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[0])->GetValue();
+        const int y = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[1])->GetValue();
+        const int z = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[2])->GetValue();
+
+        target[x - min.x][y - min.y][z - min.z] = state;
+        num_blocks_used[state] += 1;
+    }
+
+    if (id_temp_block == -1)
+    {
+        std::cerr << "Warning, can't find the given temp block " << temp_block << " in the palette" << std::endl;
+    }
+    else
+    {
+        int removed_layers = 0;
+        // Check the bottom Y layers, if only
+        // air or temp block, the layer can be removed
+        while (true)
+        {
+            bool is_removable = true;
+            int num_temp_block = 0;
+            for (int x = 0; x < size.x; ++x)
+            {
+                for (int z = 0; z < size.z; z++)
+                {
+                    if (target[x][0][z] == id_temp_block)
+                    {
+                        num_temp_block += 1;
+                    }
+
+                    if (target[x][0][z] != -1 &&
+                        target[x][0][z] != id_temp_block)
+                    {
+                        is_removable = false;
+                        break;
+                    }
+                    if (!is_removable)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (!is_removable)
+            {
+                break;
+            }
+
+            for (int x = 0; x < size.x; ++x)
+            {
+                target[x].erase(target[x].begin());
+            }
+            num_blocks_used[id_temp_block] -= num_temp_block;
+            removed_layers++;
+            size.y -= 1;
+            end.y -= 1;
+        }
+
+        if (print_info)
+        {
+            std::cout << "Removed the bottom " << removed_layers << " layer" << (removed_layers > 1 ? "s" : "") << std::endl;
+        }
+    }
+
+    if (print_info)
+    {
+        std::cout << "Total size: " << size << std::endl;
+
+        std::cout << "Block needed:" << std::endl;
+        for (auto it = num_blocks_used.begin(); it != num_blocks_used.end(); ++it)
+        {
+            std::cout << "\t" << palette[it->first] << "\t\t" << it->second << std::endl;
+        }
+
+        // Check if some block can't be placed (flying blocks)
+        std::cout << "Flying blocks, you might have to place them yourself: " << std::endl;
+
+        Position target_pos;
+
+        const std::vector<Position> neighbour_offsets({ Position(0, 1, 0), Position(0, -1, 0),
+            Position(0, 0, 1), Position(0, 0, -1),
+            Position(1, 0, 0), Position(-1, 0, 0) });
+
+        for (int x = 0; x < size.x; ++x)
+        {
+            target_pos.x = x;
+            // If this block is on the floor, it's ok
+            for (int y = 1; y < size.y; ++y)
+            {
+                target_pos.y = y;
+
+                for (int z = 0; z < size.z; ++z)
+                {
+                    target_pos.z = z;
+
+                    const short target_id = target[target_pos.x][target_pos.y][target_pos.z];
+
+                    if (target_id != -1)
+                    {
+                        // Check all target neighbours
+                        bool has_neighbour = false;
+                        for (int i = 0; i < neighbour_offsets.size(); ++i)
+                        {
+                            const Position neighbour_pos = target_pos + neighbour_offsets[i];
+
+                            if (neighbour_pos.x >= 0 && neighbour_pos.x < size.x &&
+                                neighbour_pos.y >= 0 && neighbour_pos.y < size.y &&
+                                neighbour_pos.z >= 0 && neighbour_pos.z < size.z &&
+                                target[neighbour_pos.x][neighbour_pos.y][neighbour_pos.z] != -1)
+                            {
+                                has_neighbour = true;
+                                break;
+                            }
+                        }
+
+                        if (!has_neighbour)
+                        {
+                            std::cout << start + target_pos << "\t" << palette[target_id] << std::endl;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Blackboard& blackboard = c.GetBlackboard();
+
+    blackboard.Set("Structure.start", start);
+    blackboard.Set("Structure.end", end);
+    blackboard.Set("Structure.target", target);
+    blackboard.Set("Structure.palette", palette);
+
     return Status::Success;
 }

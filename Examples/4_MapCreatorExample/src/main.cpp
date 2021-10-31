@@ -4,6 +4,7 @@
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/AI/BehaviourTree.hpp>
 #include <botcraft/AI/Tasks/AllTasks.hpp>
+#include <botcraft/AI/SimpleBehaviourClient.hpp>
 
 #include "CustomBehaviourTree.hpp"
 #include "MapCreationTasks.hpp"
@@ -24,15 +25,15 @@ void ShowHelp(const char* argv0)
 
 using namespace Botcraft::AI;
 
-std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
+std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree()
 {
     const std::string food_name = "minecraft:golden_carrot";
     
-    auto completion_tree = Builder<BehaviourClient>()
+    auto completion_tree = Builder<SimpleBehaviourClient>()
         .succeeder()
             .sequence()
                 .leaf(CheckCompletion)
-                .leaf(WarnCompleted)
+                .leaf(WarnConsole, "Task fully completed!")
                 .repeater(0)
                     .inverter()
                         .leaf(Yield)
@@ -42,7 +43,7 @@ std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
         .end()
         .build();
     
-    auto disconnect_subtree = Builder<BehaviourClient>()
+    auto disconnect_subtree = Builder<SimpleBehaviourClient>()
         .sequence()
             .leaf(Disconnect)
             .repeater(0)
@@ -53,7 +54,7 @@ std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
         .end()
         .build();
 
-    auto eat_subtree = Builder<BehaviourClient>()
+    auto eat_subtree = Builder<SimpleBehaviourClient>()
         .selector()
             // If hungry
             .inverter()
@@ -67,12 +68,12 @@ std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
                         .leaf(GetSomeFood, food_name)
                         .leaf(SetItemInHand, food_name, Botcraft::Hand::Left)
                     .end()
-                    .leaf(WarnCantFindFood)
+                    .leaf(WarnConsole, "Can't find food anywhere!")
                 .end()
                 .selector()
                     .leaf(Eat, food_name, true)
                     .inverter()
-                        .leaf(WarnCantEat)
+                        .leaf(WarnConsole, "Can't eat!")
                     .end()
                     // If we are here, hungry and can't eat --> Disconnect
                     .tree(disconnect_subtree)
@@ -81,7 +82,7 @@ std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
         .end()
         .build();
 
-    auto getinventory_tree = Builder<BehaviourClient>()
+    auto getinventory_tree = Builder<SimpleBehaviourClient>()
         // List all blocks in the inventory
         .selector()
             .leaf(GetBlocksAvailableInInventory)
@@ -91,7 +92,7 @@ std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
                 .selector()
                     .leaf(GetBlocksAvailableInInventory)
                     .inverter()
-                        .leaf(WarnNoBlockInChest)
+                        .leaf(WarnConsole, "No more block in chests, I will stop here.")
                     .end()
                     .tree(disconnect_subtree)
                 .end()
@@ -99,10 +100,10 @@ std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
         .end()
         .build();
 
-    auto placeblock_tree = Builder<BehaviourClient>()
+    auto placeblock_tree = Builder<SimpleBehaviourClient>()
         .selector()
             // Try to perform a task 5 times
-            .decorator<RepeatUntilSuccess<BehaviourClient>>(5)
+            .decorator<RepeatUntilSuccess<SimpleBehaviourClient>>(5)
                 .selector()
                     .sequence()
                         .leaf(FindNextTask)
@@ -123,7 +124,7 @@ std::shared_ptr<BehaviourTree<BehaviourClient>> GenerateMapArtCreatorTree()
         .end()
         .build();
 
-    return Builder<BehaviourClient>()
+    return Builder<SimpleBehaviourClient>()
         // Main sequence of actions
         .sequence()
             .tree(completion_tree)
@@ -237,21 +238,26 @@ int main(int argc, char* argv[])
                 }
             }
         }
+
+        auto map_art_behaviour_tree = GenerateMapArtCreatorTree();
+
         std::vector<std::shared_ptr<Botcraft::World> > shared_worlds(num_world);
         for (int i = 0; i < num_world; i++)
         {
             shared_worlds[i] = std::shared_ptr<Botcraft::World>(new Botcraft::World(true, false));
         }
         std::vector<std::string> names(num_bot);
-        std::vector<std::shared_ptr<MapCreatorBot> > clients(num_bot);
+        std::vector<std::shared_ptr<SimpleBehaviourClient> > clients(num_bot);
         for (int i = 0; i < num_bot; ++i)
         {
             names[i] = base_names[i] + (i < base_names.size() ? "" : ("_" + std::to_string(i / base_names.size())));
-            clients[i] = std::shared_ptr<MapCreatorBot>(new MapCreatorBot(false));
+            clients[i] = std::make_shared<SimpleBehaviourClient>(false);
             clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
             clients[i]->SetAutoRespawn(true);
-            clients[i]->LoadNBTFile(nbt_file, offset, temp_block, i == 0);
+            LoadNBT(*(clients[i]), nbt_file, offset, temp_block, i == 0);
             clients[i]->Connect(address, names[i], "");
+            clients[i]->StartBehaviour();
+            clients[i]->SetBehaviourTree(map_art_behaviour_tree);
         }
 
         std::map<int, std::chrono::system_clock::time_point> restart_time;
@@ -264,9 +270,10 @@ int main(int argc, char* argv[])
                 {
                     clients[i]->Disconnect();
                     clients[i].reset();
-                    clients[i] = std::shared_ptr<MapCreatorBot>(new MapCreatorBot(false));
+                    clients[i] = std::make_shared<SimpleBehaviourClient>(false);
+                    clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
                     clients[i]->SetAutoRespawn(true);
-                    clients[i]->LoadNBTFile(nbt_file, offset, temp_block, i == 0);
+                    LoadNBT(*(clients[i]), nbt_file, offset, temp_block, i == 0);
                     clients[i]->Connect(address, names[i], "");
 
                     // Restart client[i] in 10 seconds
@@ -281,7 +288,8 @@ int main(int argc, char* argv[])
                 if (now > it->second)
                 {
                     std::cout << "Restarting " << names[it->first] << "..." << std::endl;
-                    clients[it->first]->LaunchMapCreation();
+                    clients[it->first]->StartBehaviour();
+                    clients[it->first]->SetBehaviourTree(map_art_behaviour_tree);
                     restart_time.erase(it++);
                 }
                 else
@@ -290,7 +298,15 @@ int main(int argc, char* argv[])
                 }
             }
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+            std::chrono::system_clock::time_point end = start + std::chrono::milliseconds(10);
+
+            for (int i = 0; i < clients.size(); ++i)
+            {
+                clients[i]->BehaviourStep();
+            }
+
+            std::this_thread::sleep_until(end);
         }
 
         return 0;
