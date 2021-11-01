@@ -10,7 +10,7 @@
 /// We can then use Behaviour Trees with this class as
 /// context, and do our stuff.
 /// </summary>
-class ChatCommandClient : public Botcraft::AI::BaseBehaviourClient<ChatCommandClient>
+class ChatCommandClient : public Botcraft::BaseBehaviourClient<ChatCommandClient>
 {
 public:
     ChatCommandClient(const bool use_renderer_, const bool is_afk_);

@@ -14,527 +14,522 @@
 
 namespace Botcraft
 {
-	namespace AI
+	enum class Status
 	{
-		enum class Status
+		Failure,
+		Success
+	};
+
+	template<class Context>
+	class Node
+	{
+	public:
+		Node() {}
+		virtual ~Node() {}
+		virtual const Status Tick(Context& context) const = 0;
+	};
+
+
+	template<class Context>
+	class Composite : public Node<Context>
+	{
+	public:
+		Composite() {}
+		virtual ~Composite() {}
+
+		void AddChild(const std::shared_ptr<Node<Context>>& child)
 		{
-			Failure,
-			Success
-		};
+			children.push_back(child);
+		}
 
-		template<class Context>
-		class Node
+	protected:
+		std::vector<std::shared_ptr<Node<Context>>> children;
+	};
+
+	template<class Context>
+	class Decorator : public Node<Context>
+	{
+	public:
+		Decorator() { child = nullptr; }
+		virtual ~Decorator() {}
+
+		void SetChild(std::shared_ptr<Node<Context>> child_)
 		{
-		public:
-			Node() {}
-			virtual ~Node() {}
-			virtual const Status Tick(Context& context) const = 0;
-		};
+			child = child_;
+		}
 
+	protected:
+		std::shared_ptr<Node<Context>> child;
+	};
 
-		template<class Context>
-		class Composite : public Node<Context>
+	template<class Context>
+	class Leaf : public Node<Context>
+	{
+	public:
+		Leaf() = delete;
+		Leaf(const std::function<Status(Context&)>& func_)
 		{
-		public:
-			Composite() {}
-			virtual ~Composite() {}
+			func = func_;
+		}
 
-			void AddChild(const std::shared_ptr<Node<Context>>& child)
-			{
-				children.push_back(child);
-			}
-
-		protected:
-			std::vector<std::shared_ptr<Node<Context>>> children;
-		};
-
-		template<class Context>
-		class Decorator : public Node<Context>
+		template <class FunctionType, class... Args>
+		Leaf(FunctionType func_, Args... args)
 		{
-		public:
-			Decorator() { child = nullptr; }
-			virtual ~Decorator() {}
+			func = [=](Context& c) -> Status { return func_(c, (args)...); };
+		}
 
-			void SetChild(std::shared_ptr<Node<Context>> child_)
-			{
-				child = child_;
-			}
-
-		protected:
-			std::shared_ptr<Node<Context>> child;
-		};
-
-		template<class Context>
-		class Leaf : public Node<Context>
+		virtual ~Leaf() {}
+		virtual const Status Tick(Context& context) const override
 		{
-		public:
-			Leaf() = delete;
-			Leaf(const std::function<Status(Context&)> &func_)
-			{
-				func = func_;
-			}
+			return func(context);
+		}
 
-			template <class FunctionType, class... Args>
-			Leaf(FunctionType func_, Args... args)
-			{
-				func = [=](Context& c) -> Status { return func_(c, (args)...); };
-			}
+	private:
+		std::function<Status(Context&)> func;
+	};
 
-			virtual ~Leaf() {}
-			virtual const Status Tick(Context& context) const override
-			{
-				return func(context);
-			}
+	template<class Context>
+	class BehaviourTree : public Node<Context>
+	{
+	public:
+		BehaviourTree() { root = nullptr; }
+		virtual ~BehaviourTree() {}
 
-		private:
-			std::function<Status(Context&)> func;
-		};
+		void SetRoot(const std::shared_ptr<Node<Context>> node) { root = node; }
 
-		template<class Context>
-		class BehaviourTree : public Node<Context>
+		virtual const Status Tick(Context& context) const override
 		{
-		public:
-			BehaviourTree() { root = nullptr; }
-			virtual ~BehaviourTree() {}
-
-			void SetRoot(const std::shared_ptr<Node<Context>> node) { root = node; }
-
-			virtual const Status Tick(Context& context) const override
+			if (root == nullptr)
 			{
-				if (root == nullptr)
-				{
-					return Status::Failure;
-				}
-				return root->Tick(context);
-			}
-
-		private:
-			std::shared_ptr<Node<Context>> root;
-		};
-
-		// Common Composites implementations
-
-		/// <summary>
-		/// Sequence implementation. Run all children until
-		/// one fails. Succeeds if all children succeed.
-		/// Equivalent to a logical AND.
-		/// </summary>
-		/// <typeparam name="C">The tree context type</typeparam>
-		template<class Context>
-		class Sequence : public Composite<Context>
-		{
-		public:
-			virtual const Status Tick(Context& context) const override
-			{
-				auto it = children.begin();
-				while (it != children.end())
-				{
-					Status child_status = (*it)->Tick(context);
-					switch (child_status)
-					{
-					case Status::Failure:
-						return Status::Failure;
-					case Status::Success:
-						++it;
-						break;
-					}
-				}
-				// If we are here, all children succeeded
-				return Status::Success;
-			}
-		};
-
-		/// <summary>
-		/// Selector implementation. Run all children until
-		/// one succeeds. Fails if all children fail.
-		/// Equivalent to a logical OR.
-		/// </summary>
-		/// <typeparam name="C">The tree context type</typeparam>
-		template<class Context>
-		class Selector : public Composite<Context>
-		{
-		public:
-			virtual const Status Tick(Context& context) const override
-			{
-				auto it = children.begin();
-				while (it != children.end())
-				{
-					Status child_status = (*it)->Tick(context);
-					switch (child_status)
-					{
-					case Status::Failure:
-						// Move to next child
-						++it;
-						break;
-					case Status::Success:
-						return Status::Success;
-					}
-				}
-				// If we are here, all children failed
 				return Status::Failure;
 			}
-		};
+			return root->Tick(context);
+		}
 
+	private:
+		std::shared_ptr<Node<Context>> root;
+	};
 
+	// Common Composites implementations
 
-		// Common Decorators implementations
-
-		/// <summary>
-		/// A Decorator that inverts the result of its child.
-		/// </summary>
-		/// <typeparam name="C">The tree context type</typeparam>
-		template<class Context>
-		class Inverter : public Decorator<Context>
+	/// <summary>
+	/// Sequence implementation. Run all children until
+	/// one fails. Succeeds if all children succeed.
+	/// Equivalent to a logical AND.
+	/// </summary>
+	/// <typeparam name="C">The tree context type</typeparam>
+	template<class Context>
+	class Sequence : public Composite<Context>
+	{
+	public:
+		virtual const Status Tick(Context& context) const override
 		{
-		public:
-			virtual const Status Tick(Context& context) const override
+			auto it = children.begin();
+			while (it != children.end())
 			{
-				Status child_status = child->Tick(context);
-
+				Status child_status = (*it)->Tick(context);
 				switch (child_status)
 				{
 				case Status::Failure:
-					return Status::Success;
-				case Status::Success:
 					return Status::Failure;
+				case Status::Success:
+					++it;
+					break;
 				}
 			}
-		};
+			// If we are here, all children succeeded
+			return Status::Success;
+		}
+	};
 
-		/// <summary>
-		/// A Decorator that always return success,
-		/// independently of the result of its child.
-		/// Can be combined with an inverter for Failure.
-		/// </summary>
-		/// <typeparam name="C">The tree context type</typeparam>
-		template<class Context>
-		class Succeeder : public Decorator<Context>
+	/// <summary>
+	/// Selector implementation. Run all children until
+	/// one succeeds. Fails if all children fail.
+	/// Equivalent to a logical OR.
+	/// </summary>
+	/// <typeparam name="C">The tree context type</typeparam>
+	template<class Context>
+	class Selector : public Composite<Context>
+	{
+	public:
+		virtual const Status Tick(Context& context) const override
 		{
-		public:
-			virtual const Status Tick(Context& context) const override
+			auto it = children.begin();
+			while (it != children.end())
 			{
-				Status child_status = child->Tick(context);
-
+				Status child_status = (*it)->Tick(context);
 				switch (child_status)
 				{
 				case Status::Failure:
-					return Status::Success;
+					// Move to next child
+					++it;
+					break;
 				case Status::Success:
 					return Status::Success;
 				}
 			}
-		};
+			// If we are here, all children failed
+			return Status::Failure;
+		}
+	};
 
-		/// <summary>
-		/// A Decorator that ticks its child n times
-		/// (repeat until first success if n == 0).
-		/// Always returns success.
-		/// </summary>
-		/// <typeparam name="C">The tree context type</typeparam>
-		template<class Context>
-		class Repeater : public Decorator<Context>
+
+
+	// Common Decorators implementations
+
+	/// <summary>
+	/// A Decorator that inverts the result of its child.
+	/// </summary>
+	/// <typeparam name="C">The tree context type</typeparam>
+	template<class Context>
+	class Inverter : public Decorator<Context>
+	{
+	public:
+		virtual const Status Tick(Context& context) const override
 		{
-		public:
-			Repeater(const size_t n_)
-			{
-				n = n_;
-			}
+			Status child_status = child->Tick(context);
 
-			virtual const Status Tick(Context& context) const override
+			switch (child_status)
 			{
-				Status child_status = Status::Failure;
-				size_t counter = 0;
-				while ((child_status == Status::Failure && n == 0) || counter < n)
-				{
-					child_status = child->Tick(context);
-					counter += 1;
-				}
+			case Status::Failure:
+				return Status::Success;
+			case Status::Success:
+				return Status::Failure;
+			}
+		}
+	};
+
+	/// <summary>
+	/// A Decorator that always return success,
+	/// independently of the result of its child.
+	/// Can be combined with an inverter for Failure.
+	/// </summary>
+	/// <typeparam name="C">The tree context type</typeparam>
+	template<class Context>
+	class Succeeder : public Decorator<Context>
+	{
+	public:
+		virtual const Status Tick(Context& context) const override
+		{
+			Status child_status = child->Tick(context);
+
+			switch (child_status)
+			{
+			case Status::Failure:
+				return Status::Success;
+			case Status::Success:
 				return Status::Success;
 			}
+		}
+	};
 
-		private:
-			size_t n;
-		};
-
-
-
-
-		// Builder implementation for easy tree building
-
-		template <class Parent, class Context>
-		class DecoratorBuilder;
-
-		template <class Parent, class Context>
-		class CompositeBuilder
+	/// <summary>
+	/// A Decorator that ticks its child n times
+	/// (repeat until first success if n == 0).
+	/// Always returns success.
+	/// </summary>
+	/// <typeparam name="C">The tree context type</typeparam>
+	template<class Context>
+	class Repeater : public Decorator<Context>
+	{
+	public:
+		Repeater(const size_t n_)
 		{
-		public:
-			CompositeBuilder(Parent* parent, Composite<Context>* node) : parent(parent), node(node) {}
+			n = n_;
+		}
 
-			// To add a leaf
-			template <class... Args>
-			CompositeBuilder leaf(Args... args)
-			{
-				auto child = std::make_shared<Leaf<Context> >((args)...);
-				node->AddChild(child);
-				return *this;
-			}
-
-			// To add a tree
-			CompositeBuilder tree(std::shared_ptr<BehaviourTree<Context> > arg)
-			{
-				node->AddChild(arg);
-				return *this;
-			}
-
-
-			// Composite
-			// Custom function to add a sequence
-			CompositeBuilder<CompositeBuilder, Context> sequence()
-			{
-				auto child = std::make_shared<Sequence<Context>>();
-				node->AddChild(child);
-				return CompositeBuilder<CompositeBuilder, Context>(this, (Sequence<Context>*)child.get());
-			}
-
-			// Custom function to add a selector
-			CompositeBuilder<CompositeBuilder, Context> selector()
-			{
-				auto child = std::make_shared<Selector<Context>>();
-				node->AddChild(child);
-				return CompositeBuilder<CompositeBuilder, Context>(this, (Selector<Context>*)child.get());
-			}
-
-			// To add any other type of composite
-			template <class CompositeType, class... Args>
-			CompositeBuilder<CompositeBuilder, Context> composite(Args... args)
-			{
-				auto child = std::make_shared<CompositeType>((args)...);
-				node->AddChild(child);
-				return CompositeBuilder<CompositeBuilder, Context>(this, (CompositeType*)child.get());
-			}
-
-			// Decorator
-			// Inverter
-			DecoratorBuilder<CompositeBuilder, Context> inverter()
-			{
-				auto child = std::make_shared<Inverter<Context>>();
-				node->AddChild(child);
-				return DecoratorBuilder<CompositeBuilder, Context>(this, (Inverter<Context>*)child.get());
-			}
-
-			// Succeeder
-			DecoratorBuilder<CompositeBuilder, Context> succeeder()
-			{
-				auto child = std::make_shared<Succeeder<Context>>();
-				node->AddChild(child);
-				return DecoratorBuilder<CompositeBuilder, Context>(this, (Succeeder<Context>*)child.get());
-			}
-
-			// Repeater
-			DecoratorBuilder<CompositeBuilder, Context> repeater(const size_t n)
-			{
-				auto child = std::make_shared<Repeater<Context>>(n);
-				node->AddChild(child);
-				return DecoratorBuilder<CompositeBuilder, Context>(this, (Repeater<Context>*)child.get());
-			}
-
-			// To add any other type of decorator
-			template <class DecoratorType, class... Args>
-			DecoratorBuilder<CompositeBuilder, Context> decorator(Args... args)
-			{
-				auto child = std::make_shared<DecoratorType>((args)...);
-				node->AddChild(child);
-				return DecoratorBuilder<CompositeBuilder, Context>(this, (DecoratorType*)child.get());
-			}
-
-			Parent& end()
-			{
-				return *parent;
-			}
-
-		private:
-			Parent* parent;
-			Composite<Context>* node;
-		};
-
-		template <class Parent, class Context>
-		class DecoratorBuilder
+		virtual const Status Tick(Context& context) const override
 		{
-		public:
-			DecoratorBuilder(Parent* parent, Decorator<Context>* node) : parent(parent), node(node) {}
-
-			// To add a leaf
-			template <typename... Args>
-			DecoratorBuilder leaf(Args... args)
+			Status child_status = Status::Failure;
+			size_t counter = 0;
+			while ((child_status == Status::Failure && n == 0) || counter < n)
 			{
-				auto child = std::make_shared<Leaf<Context> >((args)...);
-				node->SetChild(child);
-				return *this;
+				child_status = child->Tick(context);
+				counter += 1;
 			}
+			return Status::Success;
+		}
 
-			// To add a tree
-			DecoratorBuilder tree(std::shared_ptr<BehaviourTree<Context> > arg)
-			{
-				node->SetChild(arg);
-				return *this;
-			}
+	private:
+		size_t n;
+	};
 
 
-			// Composites
-			// Custom function to add a sequence
-			CompositeBuilder<DecoratorBuilder, Context> sequence()
-			{
-				auto child = std::make_shared<Sequence<Context>>();
-				node->SetChild(child);
-				return CompositeBuilder<DecoratorBuilder, Context>(this, (Sequence<Context>*)child.get());
-			}
 
-			// Custom function to add a selector
-			CompositeBuilder<DecoratorBuilder, Context> selector()
-			{
-				auto child = std::make_shared<Selector<Context>>();
-				node->SetChild(child);
-				return CompositeBuilder<DecoratorBuilder, Context>(this, (Selector<Context>*)child.get());
-			}
 
-			// To add any other type of composite
-			template <class CompositeType, class... Args>
-			CompositeBuilder<DecoratorBuilder, Context> composite(Args... args)
-			{
-				auto child = std::make_shared<CompositeType>((args)...);
-				node->SetChild(child);
-				return CompositeBuilder<DecoratorBuilder, Context>(this, (CompositeType*)child.get());
-			}
+	// Builder implementation for easy tree building
 
-			// Decorator
-			// Inverter
-			DecoratorBuilder<DecoratorBuilder, Context> inverter()
-			{
-				auto child = std::make_shared<Inverter<Context>>();
-				node->SetChild(child);
-				return DecoratorBuilder<DecoratorBuilder, Context>(this, (Inverter<Context>*)child.get());
-			}
+	template <class Parent, class Context>
+	class DecoratorBuilder;
 
-			// Succeeder
-			DecoratorBuilder<DecoratorBuilder, Context> succeeder()
-			{
-				auto child = std::make_shared<Succeeder<Context>>();
-				node->SetChild(child);
-				return DecoratorBuilder<DecoratorBuilder, Context>(this, (Succeeder<Context>*)child.get());
-			}
+	template <class Parent, class Context>
+	class CompositeBuilder
+	{
+	public:
+		CompositeBuilder(Parent* parent, Composite<Context>* node) : parent(parent), node(node) {}
 
-			// Repeater
-			DecoratorBuilder<DecoratorBuilder, Context> repeater(const size_t n)
-			{
-				auto child = std::make_shared<Repeater<Context>>(n);
-				node->SetChild(child);
-				return DecoratorBuilder<DecoratorBuilder, Context>(this, (Repeater<Context>*)child.get());
-			}
-
-			// To add any other type of decorator
-			template <class DecoratorType, class... Args>
-			DecoratorBuilder<DecoratorBuilder, Context> decorator(Args... args)
-			{
-				auto child = std::make_shared<DecoratorType>((args)...);
-				node->SetChild(child);
-				return DecoratorBuilder<DecoratorBuilder, Context>(this, (DecoratorType*)child.get());
-			}
-
-			Parent& end()
-			{
-				return *parent;
-			}
-
-		private:
-			Parent* parent;
-			Decorator<Context>* node;
-		};
-
-		// Now that we have CompositeBuilder and DecoratorBuilder
-		// we can define the main Builder class
-		template<class Context>
-		class Builder
+		// To add a leaf
+		template <class... Args>
+		CompositeBuilder leaf(Args... args)
 		{
-		public:
-			template <typename... Args>
-			Builder leaf(Args... args)
-			{
-				root = std::make_shared<Leaf<Context> >((args)...);
-				return *this;
-			}
+			auto child = std::make_shared<Leaf<Context> >((args)...);
+			node->AddChild(child);
+			return *this;
+		}
 
-			// I'm not sure why someone would add a tree as the root of a tree but...
-			Builder tree(std::shared_ptr<BehaviourTree<Context> > arg)
-			{
-				root = arg;
-				return *this;
-			}
+		// To add a tree
+		CompositeBuilder tree(std::shared_ptr<BehaviourTree<Context> > arg)
+		{
+			node->AddChild(arg);
+			return *this;
+		}
 
 
-			// Composites
-			// Custom function to add a sequence
-			CompositeBuilder<Builder, Context> sequence()
-			{
-				root = std::make_shared<Sequence<Context>>();
-				return CompositeBuilder<Builder, Context>(this, (Sequence<Context>*)root.get());
-			}
+		// Composite
+		// Custom function to add a sequence
+		CompositeBuilder<CompositeBuilder, Context> sequence()
+		{
+			auto child = std::make_shared<Sequence<Context>>();
+			node->AddChild(child);
+			return CompositeBuilder<CompositeBuilder, Context>(this, (Sequence<Context>*)child.get());
+		}
 
-			// Custom function to add a selector
-			CompositeBuilder<Builder, Context> selector()
-			{
-				root = std::make_shared<Selector<Context>>();
-				return CompositeBuilder<Builder, Context>(this, (Selector<Context>*)root.get());
-			}
+		// Custom function to add a selector
+		CompositeBuilder<CompositeBuilder, Context> selector()
+		{
+			auto child = std::make_shared<Selector<Context>>();
+			node->AddChild(child);
+			return CompositeBuilder<CompositeBuilder, Context>(this, (Selector<Context>*)child.get());
+		}
 
-			// To add any other type of composite
-			template <class CompositeType, class... Args>
-			CompositeBuilder<Builder, Context> composite(Args... args)
-			{
-				root = std::make_shared<CompositeType>((args)...);
-				return CompositeBuilder<Builder, Context>(this, (CompositeType*)root.get());
-			}
+		// To add any other type of composite
+		template <class CompositeType, class... Args>
+		CompositeBuilder<CompositeBuilder, Context> composite(Args... args)
+		{
+			auto child = std::make_shared<CompositeType>((args)...);
+			node->AddChild(child);
+			return CompositeBuilder<CompositeBuilder, Context>(this, (CompositeType*)child.get());
+		}
 
-			// Decorator
-			// Inverter
-			DecoratorBuilder<Builder, Context> inverter()
-			{
-				root = std::make_shared<Inverter<Context>>();
-				return DecoratorBuilder<Builder, Context>(this, (Inverter<Context>*)root.get());
-			}
+		// Decorator
+		// Inverter
+		DecoratorBuilder<CompositeBuilder, Context> inverter()
+		{
+			auto child = std::make_shared<Inverter<Context>>();
+			node->AddChild(child);
+			return DecoratorBuilder<CompositeBuilder, Context>(this, (Inverter<Context>*)child.get());
+		}
 
-			// Succeeder
-			DecoratorBuilder<Builder, Context> succeeder()
-			{
-				root = std::make_shared<Succeeder<Context>>();
-				return DecoratorBuilder<Builder, Context>(this, (Succeeder<Context>*)root.get());
-			}
+		// Succeeder
+		DecoratorBuilder<CompositeBuilder, Context> succeeder()
+		{
+			auto child = std::make_shared<Succeeder<Context>>();
+			node->AddChild(child);
+			return DecoratorBuilder<CompositeBuilder, Context>(this, (Succeeder<Context>*)child.get());
+		}
 
-			// Repeater
-			DecoratorBuilder<Builder, Context> repeater(const size_t n)
-			{
-				root = std::make_shared<Repeater<Context>>(n);
-				return DecoratorBuilder<Builder, Context>(this, (Repeater<Context>*)root.get());
-			}
+		// Repeater
+		DecoratorBuilder<CompositeBuilder, Context> repeater(const size_t n)
+		{
+			auto child = std::make_shared<Repeater<Context>>(n);
+			node->AddChild(child);
+			return DecoratorBuilder<CompositeBuilder, Context>(this, (Repeater<Context>*)child.get());
+		}
 
-			// To add any other type of decorator
-			template <class DecoratorType, class... Args>
-			DecoratorBuilder<Builder, Context> decorator(Args... args)
-			{
-				root = std::make_shared<DecoratorType>((args)...);
-				return DecoratorBuilder<Builder, Context>(this, (DecoratorType*)root.get());
-			}
+		// To add any other type of decorator
+		template <class DecoratorType, class... Args>
+		DecoratorBuilder<CompositeBuilder, Context> decorator(Args... args)
+		{
+			auto child = std::make_shared<DecoratorType>((args)...);
+			node->AddChild(child);
+			return DecoratorBuilder<CompositeBuilder, Context>(this, (DecoratorType*)child.get());
+		}
 
-			std::shared_ptr<BehaviourTree<Context> > build()
-			{
-				auto tree = std::make_shared<BehaviourTree<Context> >();
-				tree->SetRoot(root);
-				return tree;
-			}
+		Parent& end()
+		{
+			return *parent;
+		}
 
-		private:
-			std::shared_ptr<Node<Context> > root;
-		};
+	private:
+		Parent* parent;
+		Composite<Context>* node;
+	};
+
+	template <class Parent, class Context>
+	class DecoratorBuilder
+	{
+	public:
+		DecoratorBuilder(Parent* parent, Decorator<Context>* node) : parent(parent), node(node) {}
+
+		// To add a leaf
+		template <typename... Args>
+		DecoratorBuilder leaf(Args... args)
+		{
+			auto child = std::make_shared<Leaf<Context> >((args)...);
+			node->SetChild(child);
+			return *this;
+		}
+
+		// To add a tree
+		DecoratorBuilder tree(std::shared_ptr<BehaviourTree<Context> > arg)
+		{
+			node->SetChild(arg);
+			return *this;
+		}
 
 
-	} // namespace AI
+		// Composites
+		// Custom function to add a sequence
+		CompositeBuilder<DecoratorBuilder, Context> sequence()
+		{
+			auto child = std::make_shared<Sequence<Context>>();
+			node->SetChild(child);
+			return CompositeBuilder<DecoratorBuilder, Context>(this, (Sequence<Context>*)child.get());
+		}
+
+		// Custom function to add a selector
+		CompositeBuilder<DecoratorBuilder, Context> selector()
+		{
+			auto child = std::make_shared<Selector<Context>>();
+			node->SetChild(child);
+			return CompositeBuilder<DecoratorBuilder, Context>(this, (Selector<Context>*)child.get());
+		}
+
+		// To add any other type of composite
+		template <class CompositeType, class... Args>
+		CompositeBuilder<DecoratorBuilder, Context> composite(Args... args)
+		{
+			auto child = std::make_shared<CompositeType>((args)...);
+			node->SetChild(child);
+			return CompositeBuilder<DecoratorBuilder, Context>(this, (CompositeType*)child.get());
+		}
+
+		// Decorator
+		// Inverter
+		DecoratorBuilder<DecoratorBuilder, Context> inverter()
+		{
+			auto child = std::make_shared<Inverter<Context>>();
+			node->SetChild(child);
+			return DecoratorBuilder<DecoratorBuilder, Context>(this, (Inverter<Context>*)child.get());
+		}
+
+		// Succeeder
+		DecoratorBuilder<DecoratorBuilder, Context> succeeder()
+		{
+			auto child = std::make_shared<Succeeder<Context>>();
+			node->SetChild(child);
+			return DecoratorBuilder<DecoratorBuilder, Context>(this, (Succeeder<Context>*)child.get());
+		}
+
+		// Repeater
+		DecoratorBuilder<DecoratorBuilder, Context> repeater(const size_t n)
+		{
+			auto child = std::make_shared<Repeater<Context>>(n);
+			node->SetChild(child);
+			return DecoratorBuilder<DecoratorBuilder, Context>(this, (Repeater<Context>*)child.get());
+		}
+
+		// To add any other type of decorator
+		template <class DecoratorType, class... Args>
+		DecoratorBuilder<DecoratorBuilder, Context> decorator(Args... args)
+		{
+			auto child = std::make_shared<DecoratorType>((args)...);
+			node->SetChild(child);
+			return DecoratorBuilder<DecoratorBuilder, Context>(this, (DecoratorType*)child.get());
+		}
+
+		Parent& end()
+		{
+			return *parent;
+		}
+
+	private:
+		Parent* parent;
+		Decorator<Context>* node;
+	};
+
+	// Now that we have CompositeBuilder and DecoratorBuilder
+	// we can define the main Builder class
+	template<class Context>
+	class Builder
+	{
+	public:
+		template <typename... Args>
+		Builder leaf(Args... args)
+		{
+			root = std::make_shared<Leaf<Context> >((args)...);
+			return *this;
+		}
+
+		// I'm not sure why someone would add a tree as the root of a tree but...
+		Builder tree(std::shared_ptr<BehaviourTree<Context> > arg)
+		{
+			root = arg;
+			return *this;
+		}
+
+
+		// Composites
+		// Custom function to add a sequence
+		CompositeBuilder<Builder, Context> sequence()
+		{
+			root = std::make_shared<Sequence<Context>>();
+			return CompositeBuilder<Builder, Context>(this, (Sequence<Context>*)root.get());
+		}
+
+		// Custom function to add a selector
+		CompositeBuilder<Builder, Context> selector()
+		{
+			root = std::make_shared<Selector<Context>>();
+			return CompositeBuilder<Builder, Context>(this, (Selector<Context>*)root.get());
+		}
+
+		// To add any other type of composite
+		template <class CompositeType, class... Args>
+		CompositeBuilder<Builder, Context> composite(Args... args)
+		{
+			root = std::make_shared<CompositeType>((args)...);
+			return CompositeBuilder<Builder, Context>(this, (CompositeType*)root.get());
+		}
+
+		// Decorator
+		// Inverter
+		DecoratorBuilder<Builder, Context> inverter()
+		{
+			root = std::make_shared<Inverter<Context>>();
+			return DecoratorBuilder<Builder, Context>(this, (Inverter<Context>*)root.get());
+		}
+
+		// Succeeder
+		DecoratorBuilder<Builder, Context> succeeder()
+		{
+			root = std::make_shared<Succeeder<Context>>();
+			return DecoratorBuilder<Builder, Context>(this, (Succeeder<Context>*)root.get());
+		}
+
+		// Repeater
+		DecoratorBuilder<Builder, Context> repeater(const size_t n)
+		{
+			root = std::make_shared<Repeater<Context>>(n);
+			return DecoratorBuilder<Builder, Context>(this, (Repeater<Context>*)root.get());
+		}
+
+		// To add any other type of decorator
+		template <class DecoratorType, class... Args>
+		DecoratorBuilder<Builder, Context> decorator(Args... args)
+		{
+			root = std::make_shared<DecoratorType>((args)...);
+			return DecoratorBuilder<Builder, Context>(this, (DecoratorType*)root.get());
+		}
+
+		std::shared_ptr<BehaviourTree<Context> > build()
+		{
+			auto tree = std::make_shared<BehaviourTree<Context> >();
+			tree->SetRoot(root);
+			return tree;
+		}
+
+	private:
+		std::shared_ptr<Node<Context> > root;
+	};
 } // namespace Botcraft

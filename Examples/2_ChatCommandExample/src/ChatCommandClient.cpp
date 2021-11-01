@@ -14,7 +14,6 @@
 #include "ChatCommandClient.hpp"
 
 using namespace Botcraft;
-using namespace Botcraft::AI;
 using namespace ProtocolCraft;
 
 ChatCommandClient::ChatCommandClient(const bool use_renderer_, const bool is_afk_) : BaseBehaviourClient<ChatCommandClient>(use_renderer_, is_afk_)

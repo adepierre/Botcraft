@@ -19,7 +19,6 @@
 #include <protocolCraft/Types/NBT/TagInt.hpp>
 
 using namespace Botcraft;
-using namespace Botcraft::AI;
 using namespace ProtocolCraft;
 
 Status GetAllChestsAround(BehaviourClient& c)
@@ -226,9 +225,10 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
 
     while (true)
     {
+        // We checked all the chests
         if (chest_indices.size() == 0)
         {
-            return Status::Failure;
+            return Status::Success;
         }
 
         // Select a chest

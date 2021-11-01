@@ -25,7 +25,10 @@ namespace Botcraft
 
         if (it == inventories.end())
         {
+            // In 1.17+ we don't wait for any server confirmation, so this can potentially happen very often.
+#if PROTOCOL_VERSION < 755
             std::cerr << "Warning, trying to add item in an unknown window with id: " << window_id << std::endl;
+#endif
         }
         else
         {
