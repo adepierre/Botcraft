@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
+#include <thread>
+#include <chrono>
 
-#include <botcraft/Game/BaseClient.hpp>
+#include <botcraft/Game/ConnectionClient.hpp>
 
 void ShowHelp(const char* argv0)
 {
@@ -76,11 +78,7 @@ int main(int argc, char* argv[])
     }
 
 
-#if USE_GUI
-        Botcraft::BaseClient client(true, true);
-#else
-        Botcraft::BaseClient client(false, true);
-#endif
+        Botcraft::ConnectionClient client;
 
         std::cout << "Starting connection process" << std::endl;
         client.Connect(address, login, password);

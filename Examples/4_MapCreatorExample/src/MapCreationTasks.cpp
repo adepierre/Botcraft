@@ -13,10 +13,11 @@
 
 #include <protocolCraft/Types/NBT/TagList.hpp>
 #include <protocolCraft/Types/NBT/TagString.hpp>
+#include <protocolCraft/Types/NBT/TagInt.hpp>
 
 #include <iostream>
 #include <fstream>
-#include <protocolCraft/Types/NBT/TagInt.hpp>
+#include <unordered_set>
 
 using namespace Botcraft;
 using namespace ProtocolCraft;
@@ -646,7 +647,7 @@ Status CheckCompletion(BehaviourClient& c)
                                 return Status::Failure;
                             }
                             missing_blocks++;
-                            if (print_details)
+                            if (print_details && missing_blocks < 100) // Don't print more than 100 missing blocks
                             {
                                 std::cout << "Missing " << palette.at(target_id) << " in " << world_pos << std::endl;
                             }

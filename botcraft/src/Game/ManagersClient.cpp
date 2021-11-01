@@ -10,7 +10,7 @@
 #include "botcraft/Game/World/Biome.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
-#include "botcraft/Game/BaseClient.hpp"
+#include "botcraft/Game/ManagersClient.hpp"
 
 #include "botcraft/Network/NetworkManager.hpp"
 #if USE_GUI
@@ -21,9 +21,8 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    BaseClient::BaseClient(const bool use_renderer_, const bool afk_only_)
+    ManagersClient::ManagersClient(const bool use_renderer_)
     {
-        afk_only = afk_only_;
         game_mode = GameType::None;
         difficulty = Difficulty::None;
         is_hardcore = false;
@@ -47,24 +46,48 @@ namespace Botcraft
 #endif
         auto_respawn = false;
 
-        should_be_closed = false;
-
         // Ensure the assets are loaded
         AssetsManager::getInstance();
     }
 
-    BaseClient::~BaseClient()
+    ManagersClient::~ManagersClient()
     {
-        Disconnect();
+
     }
 
-    void BaseClient::Connect(const std::string& address, const std::string& login, const std::string& password)
+    void ManagersClient::Disconnect()
     {
-        network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(address, login, password));
-        network_manager->AddHandler(this);
+        ConnectionClient::Disconnect();
+
+        game_mode = GameType::None;
+        difficulty = Difficulty::None;
+#if PROTOCOL_VERSION > 463
+        difficulty_locked = true;
+#endif
+        is_hardcore = false;
+
+#if USE_GUI
+        if (rendering_manager)
+        {
+            rendering_manager->Close();
+        }
+        rendering_manager.reset();
+#endif
+
+        if (m_thread_physics.joinable())
+        {
+            m_thread_physics.join();
+        }
+
+        if (world && !world->IsShared())
+        {
+            world.reset();
+        }
+        inventory_manager.reset();
+        entity_manager.reset();
     }
 
-    void BaseClient::RunSyncPos()
+    void ManagersClient::RunSyncPos()
     {
         // Wait for 500 milliseconds before starting to send position continuously
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -83,68 +106,61 @@ namespace Botcraft
                 std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
                 if (local_player && local_player->GetPosition().y < 1000.0)
                 {
-                    if (afk_only)
+                    bool is_loaded = false;
+                    bool is_in_fluid = false;
+                    std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
                     {
-                        has_moved = false;
-                    }
-                    else
-                    {
-                        bool is_loaded = false;
-                        bool is_in_fluid = false;
-                        std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
-                        {
-                            std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
-                            const Position player_position = Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ()));
-                            
-                            is_loaded = world->IsLoaded(player_position);
+                        std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
+                        const Position player_position = Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ()));
 
-                            if (is_loaded)
-                            {
-                                const Block* block_ptr = world->GetBlock(player_position);
-                                is_in_fluid = block_ptr && block_ptr->GetBlockstate()->IsFluid();
-                            }
-                        }
+                        is_loaded = world->IsLoaded(player_position);
 
                         if (is_loaded)
                         {
-                            //Check that we did not go through a block
-                            Physics(is_in_fluid);
+                            const Block* block_ptr = world->GetBlock(player_position);
+                            is_in_fluid = block_ptr && block_ptr->GetBlockstate()->IsFluid();
+                        }
+                    }
 
-                            if (local_player->GetHasMoved() ||
-                                std::abs(local_player->GetSpeed().x) > 1e-3 ||
-                                std::abs(local_player->GetSpeed().y) > 1e-3 ||
-                                std::abs(local_player->GetSpeed().z) > 1e-3)
-                            {
-                                has_moved = true;
-                                // Reset the player move state until next tick
-                                local_player->SetHasMoved(false);
-                            }
-                            else
-                            {
-                                has_moved = false;
-                            }
+                    if (is_loaded)
+                    {
+                        //Check that we did not go through a block
+                        Physics(is_in_fluid);
 
-                            //Avoid forever falling if position is <= 0.0
-                            // TODO : not good with world extension
-                            if (local_player->GetPosition().y <= 0.0)
-                            {
-                                local_player->SetY(0.0);
-                                local_player->SetSpeedY(0.0);
-                                local_player->SetOnGround(true);
-                            }
+                        if (local_player->GetHasMoved() ||
+                            std::abs(local_player->GetSpeed().x) > 1e-3 ||
+                            std::abs(local_player->GetSpeed().y) > 1e-3 ||
+                            std::abs(local_player->GetSpeed().z) > 1e-3)
+                        {
+                            has_moved = true;
+                            // Reset the player move state until next tick
+                            local_player->SetHasMoved(false);
+                        }
+                        else
+                        {
+                            has_moved = false;
+                        }
 
-                            // Reset the speed until next frame
-                            // Update the gravity value if needed
-                            local_player->SetSpeedX(0.0);
-                            local_player->SetSpeedZ(0.0);
-                            if (local_player->GetOnGround())
-                            {
-                                local_player->SetSpeedY(0.0);
-                            }
-                            else
-                            {
-                                local_player->SetSpeedY((local_player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
-                            }
+                        //Avoid forever falling if position is <= 0.0
+                        // TODO : not good with world extension
+                        if (local_player->GetPosition().y <= 0.0)
+                        {
+                            local_player->SetY(0.0);
+                            local_player->SetSpeedY(0.0);
+                            local_player->SetOnGround(true);
+                        }
+
+                        // Reset the speed until next frame
+                        // Update the gravity value if needed
+                        local_player->SetSpeedX(0.0);
+                        local_player->SetSpeedZ(0.0);
+                        if (local_player->GetOnGround())
+                        {
+                            local_player->SetSpeedY(0.0);
+                        }
+                        else
+                        {
+                            local_player->SetSpeedY((local_player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
                         }
                     }
 
@@ -173,7 +189,7 @@ namespace Botcraft
         }
     }
 
-    void BaseClient::Physics(const bool is_in_fluid)
+    void ManagersClient::Physics(const bool is_in_fluid)
     {
         if (!entity_manager)
         {
@@ -285,7 +301,7 @@ namespace Botcraft
         }
     }
 
-    const int BaseClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
+    const int ManagersClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
 #if PROTOCOL_VERSION < 755
@@ -309,151 +325,74 @@ namespace Botcraft
 #endif
     }
 
-    void BaseClient::Disconnect()
-    {
-        should_be_closed = true;
-        game_mode = GameType::None;
-        difficulty = Difficulty::None;
-#if PROTOCOL_VERSION > 463
-        difficulty_locked = true;
-#endif
-        is_hardcore = false;
-
-        network_manager.reset();
-#if USE_GUI
-        if (rendering_manager)
-        {
-            rendering_manager->Close();
-        }
-        rendering_manager.reset();
-#endif
-
-        if (m_thread_physics.joinable())
-        {
-            m_thread_physics.join();
-        }
-
-        if (world && !world->IsShared())
-        {
-            world.reset();
-        }
-        inventory_manager.reset();
-        entity_manager.reset();
-    }
-
-    void BaseClient::SetSharedWorld(const std::shared_ptr<World> world_)
+    void ManagersClient::SetSharedWorld(const std::shared_ptr<World> world_)
     {
         world = world_;
     }
 
-    void BaseClient::SendChatMessage(const std::string& msg)
+    const bool ManagersClient::GetAutoRespawn() const
     {
-        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
-        {
-            std::shared_ptr<ServerboundChatPacket> chat_message(new ServerboundChatPacket);
-            chat_message->SetMessage(msg);
-            network_manager->Send(chat_message);
-        }
+        return auto_respawn;
     }
 
-    void BaseClient::Respawn()
-    {
-        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
-        {
-            std::shared_ptr<ServerboundClientCommandPacket> status_message(new ServerboundClientCommandPacket);
-            status_message->SetAction(0);
-            network_manager->Send(status_message);
-        }
-    }
-
-    const bool BaseClient::GetShouldBeClosed() const
-    {
-        return should_be_closed;
-    }
-
-    void BaseClient::SetShouldBeClosed(const bool b)
-    {
-        should_be_closed = b;
-    }
-
-    void BaseClient::SetAutoRespawn(const bool b)
+    void ManagersClient::SetAutoRespawn(const bool b)
     {
         auto_respawn = b;
     }
 
-    std::shared_ptr<World> BaseClient::GetWorld() const
+    std::shared_ptr<World> ManagersClient::GetWorld() const
     {
         return world;
     }
 
-    std::shared_ptr<EntityManager> BaseClient::GetEntityManager() const
+    std::shared_ptr<EntityManager> ManagersClient::GetEntityManager() const
     {
         return entity_manager;
     }
 
-    std::shared_ptr<NetworkManager> BaseClient::GetNetworkManager() const
-    {
-        return network_manager;
-    }
-
-    std::shared_ptr<InventoryManager> BaseClient::GetInventoryManager() const
+    std::shared_ptr<InventoryManager> ManagersClient::GetInventoryManager() const
     {
         return inventory_manager;
     }
 
-    const bool BaseClient::GetCreativeMode() const
+    const bool ManagersClient::GetCreativeMode() const
     {
         return creative_mode;
     }
 
-    void BaseClient::Handle(Message &msg)
+    void ManagersClient::Handle(Message &msg)
     {
 
     }
 
-    void BaseClient::Handle(ClientboundLoginDisconnectPacket &msg)
-    {
-        std::cout << "Disconnect during login with reason: " << 
-            msg.GetReason().GetText() << std::endl;
-        std::cout << "Disconnecting ..." << std::endl;
-
-        should_be_closed = true;
-    }
-
-    void BaseClient::Handle(ClientboundGameProfilePacket &msg)
+    void ManagersClient::Handle(ClientboundGameProfilePacket &msg)
     {
         if (!world)
         {
             world = std::shared_ptr<World>(new World(false, false));
         }
 
-        inventory_manager = std::shared_ptr<InventoryManager>(new InventoryManager);
-        entity_manager = std::shared_ptr<EntityManager>(new EntityManager);
+        inventory_manager = std::make_shared<InventoryManager>();
+        entity_manager = std::make_shared<EntityManager>();
 
-        if (!afk_only)
-        {
-            network_manager->AddHandler(world->GetAsyncHandler());
-            network_manager->AddHandler(inventory_manager.get());
-            network_manager->AddHandler(entity_manager.get());
-        }
+        network_manager->AddHandler(world->GetAsyncHandler());
+        network_manager->AddHandler(inventory_manager.get());
+        network_manager->AddHandler(entity_manager.get());
 
 #if USE_GUI
         if (use_renderer)
         {
             rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world, inventory_manager, 800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
-            if (!afk_only)
-            {
-                network_manager->AddHandler(rendering_manager.get());
-            }
+            network_manager->AddHandler(rendering_manager.get());
             entity_manager->SetRenderingManager(rendering_manager);
         }
 #endif
         
         // Launch the physics thread (continuously sending the position to the server)
-        m_thread_physics = std::thread(&BaseClient::RunSyncPos, this);
+        m_thread_physics = std::thread(&ManagersClient::RunSyncPos, this);
     }
 
-    void BaseClient::Handle(ClientboundChangeDifficultyPacket &msg)
+    void ManagersClient::Handle(ClientboundChangeDifficultyPacket &msg)
     {
         difficulty = (Difficulty)msg.GetDifficulty();
 #if PROTOCOL_VERSION > 463
@@ -461,33 +400,7 @@ namespace Botcraft
 #endif
     }
 
-#if PROTOCOL_VERSION < 755
-    void BaseClient::Handle(ClientboundContainerAckPacket &msg)
-    {
-        // If the transaction was not accepted, we must apologize
-        // else it's processed in InventoryManager
-        if (!msg.GetAccepted())
-        {
-            std::shared_ptr<ServerboundContainerAckPacket> apologize_msg(new ServerboundContainerAckPacket);
-            apologize_msg->SetContainerId(msg.GetContainerId());
-            apologize_msg->SetUid(msg.GetUid());
-            apologize_msg->SetAccepted(msg.GetAccepted());
-
-            network_manager->Send(apologize_msg);
-        }
-    }
-#endif
-
-    void BaseClient::Handle(ClientboundDisconnectPacket &msg)
-    {
-        std::cout << "Disconnect during playing with reason: " << 
-            msg.GetReason().GetRawText() << std::endl;
-        std::cout << "Disconnecting ..." << std::endl;
-        
-        should_be_closed = true;
-    }
-
-    void BaseClient::Handle(ClientboundLoginPacket &msg)
+    void ManagersClient::Handle(ClientboundLoginPacket &msg)
     {
         game_mode = (GameType)(msg.GetGameType() & 0x03);
 #if PROTOCOL_VERSION > 737
@@ -501,18 +414,7 @@ namespace Botcraft
 #endif
     }
 
-    void BaseClient::Handle(ClientboundPlayerPositionPacket& msg)
-    {
-        // Confirmations have to be sent from here
-        // because EntityManager does not receive messages
-        // in case of afk_only mode
-        std::shared_ptr<ServerboundAcceptTeleportationPacket> confirm_msg(new ServerboundAcceptTeleportationPacket);
-        confirm_msg->SetId_(msg.GetId_());
-
-        network_manager->Send(confirm_msg);
-    }
-
-    void BaseClient::Handle(ClientboundSetHealthPacket &msg)
+    void ManagersClient::Handle(ClientboundSetHealthPacket& msg)
     {
         if (msg.GetHealth() <= 0.0f && auto_respawn)
         {
@@ -522,7 +424,7 @@ namespace Botcraft
         }
     }
 
-    void BaseClient::Handle(ClientboundPlayerAbilitiesPacket &msg)
+    void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket &msg)
     {
         allow_flying = msg.GetFlags() & 0x04;
         creative_mode = msg.GetFlags() & 0x08;
@@ -538,7 +440,7 @@ namespace Botcraft
         network_manager->Send(settings_msg);
     }
 
-    void BaseClient::Handle(ClientboundRespawnPacket &msg)
+    void ManagersClient::Handle(ClientboundRespawnPacket &msg)
     {
 #if PROTOCOL_VERSION < 464
         difficulty = (Difficulty)msg.GetDifficulty();

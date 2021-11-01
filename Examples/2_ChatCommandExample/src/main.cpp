@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        ChatCommandClient client(true, false);
+        ChatCommandClient client(true);
         client.SetAutoRespawn(true);
 
         std::cout << "Starting connection process" << std::endl;

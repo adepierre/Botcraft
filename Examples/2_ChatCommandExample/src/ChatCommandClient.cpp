@@ -16,7 +16,7 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-ChatCommandClient::ChatCommandClient(const bool use_renderer_, const bool is_afk_) : BaseBehaviourClient<ChatCommandClient>(use_renderer_, is_afk_)
+ChatCommandClient::ChatCommandClient(const bool use_renderer_) : TemplatedBehaviourClient<ChatCommandClient>(use_renderer_)
 {
     std::cout << "Known commands:\n";
     std::cout << "    Pathfinding to position:\n";
@@ -40,7 +40,7 @@ ChatCommandClient::~ChatCommandClient()
 
 void ChatCommandClient::Handle(ClientboundChatPacket &msg)
 {
-    BaseClient::Handle(msg);
+    ManagersClient::Handle(msg);
     
     // Split the message 
     std::istringstream ss{ msg.GetMessage().GetText() };

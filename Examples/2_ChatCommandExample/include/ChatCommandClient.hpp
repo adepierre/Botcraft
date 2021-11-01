@@ -1,7 +1,7 @@
 #pragma once
 
 #include <botcraft/Game/Vector3.hpp>
-#include <botcraft/AI/BaseBehaviourClient.hpp>
+#include <botcraft/AI/TemplatedBehaviourClient.hpp>
 
 /// <summary>
 /// Example of a class where we need to add a Handle function
@@ -10,10 +10,10 @@
 /// We can then use Behaviour Trees with this class as
 /// context, and do our stuff.
 /// </summary>
-class ChatCommandClient : public Botcraft::BaseBehaviourClient<ChatCommandClient>
+class ChatCommandClient : public Botcraft::TemplatedBehaviourClient<ChatCommandClient>
 {
 public:
-    ChatCommandClient(const bool use_renderer_, const bool is_afk_);
+    ChatCommandClient(const bool use_renderer_);
     ~ChatCommandClient();
 
 protected:

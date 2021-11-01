@@ -8,35 +8,35 @@
 
 namespace Botcraft
 {
-    /// <summary>
-    /// The base class you should inherit if you need to
-    /// add some specific Handle functions for packets AND
-    /// want to use behaviour tree AI system.
-    /// Derived class are defined this way:
-    /// class MyClass : public BaseBehaviourClient<MyClass>
-    /// </summary>
-    /// <typeparam name="TDerived">Any class inheriting from BaseBehaviourClient</typeparam>
+    /// @brief The base class you should inherit if you need to
+    /// implement some custom Handle functions AND need to add
+    /// custom fields to your derived class. If you just need
+    /// some custom Handle, inheriting SimpleBehaviourClient is
+    /// sufficient.
+    /// @tparam TDerived Any class inheriting this class (see SimpleBehaviourClient)
     template<typename TDerived>
-    class BaseBehaviourClient : public BehaviourClient
+    class TemplatedBehaviourClient : public BehaviourClient
     {
-        // Custom internal class exceptions used 
-        // to interrupt behaviours processing
     private:
+        /// @brief Custom internal exception used
+        /// when the tree needs to be changed
         class SwapTreeException : public std::exception
         {
         };
+        /// @brief Custom internal exception used
+        /// when the tree needs to be stopped
         class InterruptedException : public std::exception
         {
         };
 
     public:
-        BaseBehaviourClient(const bool use_renderer_, const bool afk_only_ = false) :
-            BehaviourClient(use_renderer_, afk_only_)
+        TemplatedBehaviourClient(const bool use_renderer_) :
+            BehaviourClient(use_renderer_)
         {
             swap_tree = false;
         }
 
-        virtual ~BaseBehaviourClient()
+        virtual ~TemplatedBehaviourClient()
         {
             // Make sure should_be_closed is set to false
             // otherwise the behaviour_thread will not exit
@@ -90,7 +90,7 @@ namespace Botcraft
         void StartBehaviour()
         {
             std::unique_lock<std::mutex> lock(behaviour_mutex);
-            behaviour_thread = std::thread(&BaseBehaviourClient<TDerived>::TreeLoop, this);
+            behaviour_thread = std::thread(&TemplatedBehaviourClient<TDerived>::TreeLoop, this);
             // Wait for the first Yield call to be sure 
             // the thread is started and ready to run
             behaviour_cond_var.wait(lock);

@@ -1,7 +1,7 @@
 project(botcraft)
 
 set(botcraft_PUBLIC_HDR
-    include/botcraft/AI/BaseBehaviourClient.hpp
+    include/botcraft/AI/TemplatedBehaviourClient.hpp
     include/botcraft/AI/BehaviourClient.hpp
     include/botcraft/AI/BehaviourTree.hpp
     include/botcraft/AI/Blackboard.hpp
@@ -19,7 +19,8 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/LocalPlayer.hpp
     include/botcraft/Game/Entities/Player.hpp
     include/botcraft/Game/AssetsManager.hpp
-    include/botcraft/Game/BaseClient.hpp
+    include/botcraft/Game/ManagersClient.hpp
+    include/botcraft/Game/ConnectionClient.hpp
     include/botcraft/Game/World/Biome.hpp
     include/botcraft/Game/World/Block.hpp
     include/botcraft/Game/World/Blockstate.hpp
@@ -62,7 +63,8 @@ set(botcraft_SRC
     
     src/Game/AABB.cpp
     src/Game/AssetsManager.cpp
-    src/Game/BaseClient.cpp
+    src/Game/ManagersClient.cpp
+    src/Game/ConnectionClient.cpp
     src/Game/Entities/Entity.cpp
     src/Game/Entities/EntityManager.cpp
     src/Game/Entities/LocalPlayer.cpp
