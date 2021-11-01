@@ -97,6 +97,137 @@ namespace Botcraft
         return true;
 #endif
     }
+	
+	const bool Authentifier::checkCachedMSAJson(nlohmann::json j) const {
+		return  j.contains("msa") &&
+				j["msa"].is_object() &&
+				j["msa"].contains("access_token") &&
+				(j["msa"]["access_token"].is_string() || j["msa"]["access_token"].is_null()) &&
+				j["msa"].contains("expires_date") &&
+				(j["msa"]["expires_date"].is_number() || j["msa"]["expires_date"].is_null()) &&
+				j["msa"].contains("refresh_token") &&
+				(j["msa"]["refresh_token"].is_string() || j["msa"]["refresh_token"].is_null());
+	}
+	const bool Authentifier::checkCachedMCJson(nlohmann::json j) const {
+		return  j.contains("name") &&
+				(j["name"].is_string() || j["name"].is_null()) &&
+				j.contains("id") &&
+				(j["id"].is_string() || j["id"].is_null()) &&
+				j.contains("mc_token") &&
+				(j["mc_token"].is_string() || j["mc_token"].is_null());
+	}
+	
+	const nlohmann::json Authentifier::cacheFileStructure = {
+		{"msa", {
+			{"access_token", nullptr},
+			{"expires_date", nullptr},
+			{"refresh_token", nullptr}
+		}},
+		{"name", nullptr},
+		{"id", nullptr},
+		{"mc_token", nullptr},
+		{"expires_date", nullptr}
+	};
+	
+	const nlohmann::json Authentifier::getCachedCredentials() const {
+		std::ifstream cache_file(msa_credentials_path);
+		if(!cache_file.good())
+			return cacheFileStructure;
+		nlohmann::json c;
+		cache_file >> c;
+		cache_file.close();
+		if(!checkCachedMSAJson(c) || !checkCachedMSAJson(c))
+			return cacheFileStructure;
+		return c;
+	}
+	
+	const void Authentifier::updateCacheMSA(std::string access_token, std::string refresh_token, long long int expires_date) const {
+		nlohmann::json c = getCachedCredentials();
+		if(access_token == "") {
+			c["msa"]["access_token"] = nullptr;
+		} else {
+			c["msa"]["access_token"] = access_token;
+		}
+		if(refresh_token == "") {
+			c["msa"]["refresh_token"] = nullptr;
+		} else {
+			c["msa"]["refresh_token"] = refresh_token;
+		}
+		if(expires_date == -1) {
+			c["msa"]["expires_date"] = nullptr;
+		} else {
+			c["msa"]["expires_date"] = expires_date;
+		}
+		writeCacheCredentials(c);
+	}
+	
+	const void Authentifier::updateCacheMC(std::string name, std::string id, std::string mc_token, long long int expires_date) const {
+		nlohmann::json c = getCachedCredentials();
+		if(name == "") {
+			c["name"] = nullptr;
+		} else {
+			c["name"] = name;
+		}
+		if(id == "") {
+			c["id"] = nullptr;
+		} else {
+			c["id"] = id;
+		}
+		if(mc_token == "") {
+			c["mc_token"] = nullptr;
+		} else {
+			c["mc_token"] = mc_token;
+		}
+		if(expires_date == -1) {
+			c["expires_date"] = nullptr;
+		} else {
+			c["expires_date"] = expires_date;
+		}
+		writeCacheCredentials(c);
+	}
+	
+	const void Authentifier::updateCacheMCToken(std::string mc_token, long long int expires_date) const {
+		nlohmann::json c = getCachedCredentials();
+		if(mc_token == "") {
+			c["mc_token"] = nullptr;
+		} else {
+			c["mc_token"] = mc_token;
+		}
+		if(expires_date == -1) {
+			c["expires_date"] = nullptr;
+		} else {
+			c["expires_date"] = expires_date;
+		}
+		writeCacheCredentials(c);
+	}
+	
+	const void Authentifier::updateCacheMCProfile(std::string name, std::string id) const {
+		nlohmann::json c = getCachedCredentials();
+		if(name == "") {
+			c["name"] = nullptr;
+		} else {
+			c["name"] = name;
+		}
+		if(id == "") {
+			c["id"] = nullptr;
+		} else {
+			c["id"] = id;
+		}
+		writeCacheCredentials(c);
+	}
+	
+	const bool Authentifier::writeCacheCredentials(nlohmann::json j) const {
+		std::ofstream cached_file(msa_credentials_path);
+		if(!cached_file.is_open())
+			return false;
+		cached_file << std::setw(4) << j << std::endl;
+		cached_file.close();
+		return true;
+	}
+	
+	const bool Authentifier::checkDateExpired(nlohmann::json j) const {
+		return j.get<unsigned long long int>() < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	}
 
     const bool Authentifier::AuthMicrosoft()
     {
@@ -104,6 +235,19 @@ namespace Botcraft
         return false;
 #else
         // This auth flow is directly inspired from https://github.com/maxsupermanhd/go-mc-ms-auth
+		
+		nlohmann::json c = getCachedCredentials();
+		if(c["mc_token"].is_string() && c["expires_date"].is_number() && c["id"].is_string())
+		if(!checkDateExpired(c["expires_date"])) {
+			mc_access_token = c["mc_token"].get<std::string>();
+			mc_player_uuid = c["id"].get<std::string>();
+			player_display_name = c["name"].get<std::string>();
+			std::cout << "Cached Minecraft token still valid." << std::endl;
+			return true;
+		} else {
+			std::cout << "Cached Minecraft token expired, let's get it again..." << std::endl;
+		}
+		
         std::cout << "Trying to get Microsoft access token..." << std::endl;
         const std::string msa_token = GetMSAToken();
         if (msa_token.empty())
@@ -111,7 +255,6 @@ namespace Botcraft
             std::cerr << "Unable to get a microsoft auth token" << std::endl;
             return false;
         }
-        std::cout << "Microsoft access token obtained!" << std::endl;
 
 
         std::cout << "Trying to get XBL token..." << std::endl;
@@ -260,29 +403,14 @@ namespace Botcraft
     }
 
 #ifdef USE_ENCRYPTION
-    const std::string Authentifier::GetMSAToken() const
-    {
-        // Check if we have some cached credentials
-        std::ifstream msa_file(msa_credentials_path);
-
-        // If we don't, start the auth process to get credentials
-        if (!msa_file.good())
-        {
-            return MSAAuthDeviceFlow();
-        }
-
-        // If we have a cache file check if the token needs to be refreshed
-        nlohmann::json cached;
-        msa_file >> cached;
-        msa_file.close();
-
-        // If this token is expired, we need to refresh it
-        if (cached.contains("expires_date") && cached["expires_date"].get<long long int>() < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count())
+    const std::string Authentifier::GetMSAToken() const {
+		nlohmann::json cached = getCachedCredentials();
+        if(cached["msa"]["refresh_token"].is_string() && checkDateExpired(cached["msa"]["expires_date"]))
         {
             std::cout << "Refreshing Microsoft token..." << std::endl;
             std::string refresh_data;
             refresh_data += "client_id=" + botcraft_app_id;
-            refresh_data += "&refresh_token=" + cached["refresh_token"].get<std::string>();
+            refresh_data += "&refresh_token=" + cached["msa"]["refresh_token"].get<std::string>();
             refresh_data += "&grant_type=refresh_token";
             refresh_data += "&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient";
 
@@ -294,8 +422,8 @@ namespace Botcraft
             if (post_response.status_code != 200)
             {
                 std::cerr << "Response returned with status code " << post_response.status_code << " (" << post_response.status_message << ") during microsoft token refresh" << std::endl;
-                std::remove(msa_credentials_path.c_str());
-                std::cout << "Failed to refresh token, starting Microsoft authentication process..." << std::endl;
+                updateCacheMSA("", "", -1);
+				std::cout << "Failed to refresh token, starting Microsoft authentication process..." << std::endl;
                 return MSAAuthDeviceFlow();
             }
             const nlohmann::json& response = post_response.response;
@@ -303,41 +431,42 @@ namespace Botcraft
             if (!response.contains("expires_in"))
             {
                 std::cerr << "Error trying to refresh microsoft token, no expires_in in response" << std::endl;
+				updateCacheMSA("", "", -1);
                 return "";
             }
             if (!response.contains("refresh_token"))
             {
                 std::cerr << "Error trying to refresh microsoft token, no refresh_token in response" << std::endl;
+				updateCacheMSA("", "", -1);
                 return "";
             }
             if (!response.contains("access_token"))
             {
                 std::cerr << "Error trying to refresh microsoft token, no access_token in response" << std::endl;
+				updateCacheMSA("", "", -1);
                 return "";
             }
 
-            cached["expires_date"] = response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-            cached["refresh_token"] = response["refresh_token"];
-            cached["access_token"] = response["access_token"];
-
-            // Store the new credentials in the cache file
-            std::ofstream cached_file(msa_credentials_path);
-            cached_file << std::setw(4) << cached;
+			updateCacheMSA( response["access_token"].get<std::string>(),
+							response["refresh_token"].get<std::string>(),
+							response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 
             std::cout << "Cached Microsoft token refreshed" << std::endl;
 
             return response["access_token"].get<std::string>();
         }
 
-        if (!cached.contains("access_token"))
+        if(!cached["msa"]["access_token"].is_string())
         {
-            std::cerr << "Error trying to get cached microsoft token, no access_token in " << msa_credentials_path << std::endl;
-            return "";
+            std::cerr << "Error trying to get cached microsoft token, no access_token in cache" << std::endl;
+			updateCacheMSA("", "", -1);
+			std::cerr << "Starting authentication process..." << std::endl;
+            return MSAAuthDeviceFlow();
         }
 
-        std::cout << "Microsoft token obtained from " << msa_credentials_path << std::endl;
+        std::cout << "Microsoft token cached and valid" << std::endl;
 
-        return cached["access_token"].get<std::string>();
+        return cached["msa"]["access_token"].get<std::string>();
     }
 
     const std::string Authentifier::MSAAuthDeviceFlow() const
@@ -453,15 +582,11 @@ namespace Botcraft
                     return "";
                 }
 
-                nlohmann::json credentials;
-                credentials["expires_date"] = status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-                credentials["refresh_token"] = status_response["refresh_token"];
-                credentials["access_token"] = status_response["access_token"];
+				updateCacheMSA( status_response["access_token"].get<std::string>(),
+								status_response["refresh_token"].get<std::string>(),
+								status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 
-                std::ofstream cached_file(msa_credentials_path);
-                cached_file << std::setw(4) << credentials;
-
-                std::cout << "Newly obtained Microsoft token stored in " << msa_credentials_path << std::endl;
+                std::cout << "Newly obtained Microsoft token stored in cache" << std::endl;
 
                 return status_response["access_token"].get<std::string>();
             }
@@ -569,6 +694,17 @@ namespace Botcraft
             return "";
         }
 
+        if (!response.contains("expires_in"))
+        {
+            std::cerr << "Warning! no expires_in in authentication response of MC" << std::endl;
+			// if no expires_in assuming it is one-time, no need to cache it even
+			return response["access_token"].get<std::string>();
+        }
+		
+		updateCacheMCToken( response["access_token"].get<std::string>(),
+							response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+
+
         return response["access_token"].get<std::string>();
     }
 
@@ -603,6 +739,8 @@ namespace Botcraft
             return { "", "" };
         }
 
+		updateCacheMCProfile(   response["name"].get<std::string>(),
+								response["id"].get<std::string>());
         return { response["id"].get<std::string>(), response["name"].get<std::string>() };
     }
 

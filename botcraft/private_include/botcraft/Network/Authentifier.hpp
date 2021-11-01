@@ -40,7 +40,17 @@ namespace Botcraft
         const std::string& GetPlayerDisplayName() const;
 
     private:
+
 #ifdef USE_ENCRYPTION
+		const bool checkCachedMSAJson(nlohmann::json j) const;
+		const bool checkCachedMCJson(nlohmann::json j) const;
+		const nlohmann::json getCachedCredentials() const;
+		const void updateCacheMSA(std::string access_token, std::string refresh_token, long long int expires_date) const;
+		const void updateCacheMC(std::string name, std::string id, std::string mc_token, long long int expires_date) const;
+		const void updateCacheMCToken(std::string mc_token, long long int expires_date) const;
+		const void updateCacheMCProfile(std::string name, std::string id) const;
+		const bool writeCacheCredentials(nlohmann::json j) const;
+		const bool checkDateExpired(nlohmann::json j) const;
         /// <summary>
         /// Check if there is a saved credentials file and
         /// if the token is still valid. Refresh it if not.
@@ -126,5 +136,7 @@ namespace Botcraft
         std::string player_display_name;
         std::string mc_access_token;
         std::string mc_player_uuid;
+		
+		static const nlohmann::json cacheFileStructure;
     };
 }
