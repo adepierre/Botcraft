@@ -16,8 +16,8 @@ void ShowHelp(const char* argv0)
 
 int main(int argc, char* argv[])
 {
-    //try
-   //{
+    try
+    {
         std::string address = "127.0.0.1:25565";
         std::string login = "BCChatCommand";
         std::string password = "";
@@ -85,8 +85,8 @@ int main(int argc, char* argv[])
         client.Disconnect();
 
         return 0;
-    /* }
-    catch (std::exception &e)
+    }
+    catch (std::exception& e)
     {
         std::cerr << "Exception: " << e.what() << "\n";
         return 1;
@@ -95,6 +95,5 @@ int main(int argc, char* argv[])
     {
         std::cerr << "Unknown exception\n";
         return 2;
-    }*/
-
+    }
 }

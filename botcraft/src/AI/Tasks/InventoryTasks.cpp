@@ -52,6 +52,9 @@ namespace Botcraft
 #else
             click_window_msg->SetCarriedItem(copied_slot);
 #endif
+#if PROTOCOL_VERSION > 755
+            click_window_msg->SetStateId(container->GetStateId());
+#endif
 
             transaction_id = client.SendInventoryTransaction(click_window_msg);
 
@@ -98,6 +101,9 @@ namespace Botcraft
 #else
             click_window_msg->SetCarriedItem(copied_slot);
 #endif
+#if PROTOCOL_VERSION > 755
+            click_window_msg->SetStateId(container->GetStateId());
+#endif
 
             transaction_id = client.SendInventoryTransaction(click_window_msg);
 
@@ -141,6 +147,9 @@ namespace Botcraft
             click_window_msg->SetItemStack(copied_slot);
 #else
             click_window_msg->SetCarriedItem(copied_slot);
+#endif
+#if PROTOCOL_VERSION > 755
+            click_window_msg->SetStateId(container->GetStateId());
 #endif
 
             transaction_id = client.SendInventoryTransaction(click_window_msg);

@@ -58,6 +58,16 @@ namespace Botcraft
     {
         next_transaction_id = n;
     }
+#else
+    const int Window::GetStateId() const
+    {
+        return state_id;
+    }
+
+    void Window::SetStateId(const int state_id_)
+    {
+        state_id = state_id_;
+    }
 #endif
 
     const short Window::GetFirstPlayerInventorySlot() const
@@ -97,7 +107,7 @@ namespace Botcraft
         case InventoryType::Generic9x5:
         case InventoryType::Generic9x4:
         case InventoryType::Generic9x6:
-            return ((int)(type) + 1) * 9;
+            return (static_cast<short>(type) + 1) * 9;
         }
     }
 

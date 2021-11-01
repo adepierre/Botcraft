@@ -54,6 +54,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 754
         void SynchronizeContainerPlayerInventory(const short window_id);
 #endif
+#if PROTOCOL_VERSION > 755
+        void SetStateId(const short window_id, const int state_id);
+#endif
 
     private:
 

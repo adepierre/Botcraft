@@ -191,6 +191,18 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION > 755
+    void InventoryManager::SetStateId(const short window_id, const int state_id)
+    {
+        auto it = inventories.find(window_id);
+
+        if (it != inventories.end())
+        {
+            it->second->SetStateId(state_id);
+        }
+    }
+#endif
+
     void InventoryManager::AddInventory(const short window_id, const InventoryType window_type)
     {
         inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
@@ -264,10 +276,13 @@ namespace Botcraft
         else if (msg.GetContainerId() >= 0)
         {
             SetSlot(msg.GetContainerId(), msg.GetSlot(), msg.GetItemStack());
+#if PROTOCOL_VERSION > 755
+            SetStateId(msg.GetContainerId(), msg.GetStateId());
+#endif
         }
         else
         {
-            std::cerr << "Warning, unknown window called in SetSlot: " << msg.GetContainerId() << ", " << msg.GetSlot() << std::endl;
+            std::cerr << "Warning, unknown window called during ClientboundContainerSetSlotPacket Handle: " << msg.GetContainerId() << ", " << msg.GetSlot() << std::endl;
         }
     }
 
@@ -279,6 +294,12 @@ namespace Botcraft
         {
             SetSlot(msg.GetContainerId(), i, msg.GetSlotData()[i]);
         }
+#if PROTOCOL_VERSION > 755
+        if (msg.GetContainerId() >= 0)
+        {
+            SetStateId(msg.GetContainerId(), msg.GetStateId());
+        }
+#endif
     }
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg)
