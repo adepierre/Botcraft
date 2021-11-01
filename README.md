@@ -14,7 +14,10 @@ This is a "learn-by-doing" code, with some lines dating back to 2017 and never c
 - Compression
 - Physics and collisions
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...)
+- Bot programming with a behaviour tree system (see [the wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - Bot control with mouse and keyboard
+
+Available bot behaviours includes:
 - Path finding
 - Block breaking
 - Inventory managing
@@ -51,7 +54,7 @@ The code is cross-platform and is automatically built on both Windows with Visua
 
 ProtocolCraft is a sublibrary of the botcraft repository. It is a full implementation of the minecraft protocol for all supported versions. It used to be based on the protocol description on the [Wiki](https://wiki.vg/Protocol). However, as it seems to no longer be up to date after 1.16.5, I transitioned it to be based on the [official source code mapping](https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a) provided by Mojang.
 
-Transitionning from one protocol description to the other was a breaking change, as all the packets and many variable names were changed. But this should be easier to maintain and update in the future, as it is now directly based on the official game source code, instead of a third-party documentation.
+I try to keep all the packets and variable names as close as possible to the source code ones. To avoid name conflicts, an underscore is sometimes appended at the end of a variable.
 
 ## Building and Installation
 
@@ -83,15 +86,19 @@ There are several cmake options you can modify:
 
 Examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, sends Hello World! in the chat then disconnect
-- [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI, mouse and keyboard controlled player. Can be used in a dummy world (without any server) to test things like physics or rendering
+- [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI, mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering
 - [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Known commands at this point:
   - pathfinding
   - disconnecting 
   - checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof)
   - placing a block
   - interacting with a block (lever, button ...)
-- [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Simple example to stay at the same position. Physics is not processed, chunks are not saved in memory to save RAM.
-- [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same. Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
+- [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Very leight AFK only bot. Simply connect to a server and stay still doing nothing.
+- [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same (due to concurrent access). Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
+
+## Clients
+
+Botcraft has multiple ``XXXClient`` classes you can inherit from depending on what you want to achieve. For more details, you can check the corresponding [wiki page](https://github.com/adepierre/Botcraft/wiki/Clients).
 
 ## Connection
 
