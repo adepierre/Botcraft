@@ -46,15 +46,26 @@ namespace Botcraft
         /// <param name="pos">The position of the block</param>
         /// <param name="face">Face on which we want to clik on</param>
         /// <param name="animation">Whether or not we should send an animation to the server (vanilla client does)</param>
-        /// <returns></returns>
+        /// <returns>Failure if couldn't interact (because the client couldn't get close enough for example). Success otherwise.</returns>
         Status InteractWithBlock(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face = PlayerDiggingFace::Top, const bool animation = false);
 
         /// <summary>
         /// InteractWithBlock version that reads parameters from the blackboard
         /// </summary>
         /// <param name="client">The client performing the action</param>
-        /// <returns>Failure if couldn't interact (because the client is too far for example). Success otherwise.</returns>
+        /// <returns>Failure if couldn't interact (because the client couldn't get close enough for example). Success otherwise.</returns>
         Status InteractWithBlockBlackboard(BehaviourClient& client);
+
+        /// @brief Check in the blackboard if the bool at key is true
+        /// @param client The client performing the action
+        /// @param key The key to get the bool from
+        /// @return Success if true, failure if false
+        Status CheckBlackboardBoolData(BehaviourClient& client, const std::string& key);
+
+        /// @brief CheckBlackboardBoolData version that reads parameters from the blackboard
+        /// @param client The client performing the action
+        /// @return Success if true, failure if false
+        Status CheckBlackboardBoolDataBlackboard(BehaviourClient& client);
 
         /// <summary>
         /// Set a value in the blackboard.

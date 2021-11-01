@@ -125,6 +125,24 @@ namespace Botcraft
             return InteractWithBlock(client, pos, face, animation);
         }
 
+        Status CheckBlackboardBoolData(BehaviourClient& client, const std::string& key)
+        {
+            return client.GetBlackboard().Get(key, false) ? Status::Success : Status::Failure;
+        }
+
+        Status CheckBlackboardBoolDataBlackboard(BehaviourClient& client)
+        {
+            const std::vector<std::string> variable_names = {
+                "CheckBlackboardBoolData.key" };
+
+            Blackboard& blackboard = client.GetBlackboard();
+
+            // Mandatory
+            const std::string& key = blackboard.Get<std::string>(variable_names[0]);
+
+            return CheckBlackboardBoolData(client, key);
+        }
+
         Status RemoveBlackboardData(BehaviourClient& client, const std::string& key)
         {
             client.GetBlackboard().Erase(key);

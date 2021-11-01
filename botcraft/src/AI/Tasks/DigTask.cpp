@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "botcraft/AI/Tasks/DigTask.hpp"
+#include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
 
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
@@ -15,19 +16,15 @@ namespace Botcraft
     namespace AI
     {
 
-        Status Dig(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face)
+        Status Dig(BehaviourClient& c, const Position& pos, const PlayerDiggingFace face)
         {
-            std::shared_ptr<LocalPlayer> player = client.GetEntityManager()->GetLocalPlayer();
-
-            const Vector3<double> pos_diff = player->GetPosition() - pos;
-
-            // Out of range
-            if (pos_diff.dot(pos_diff) > 16.0f)
+            // Can't go close enough
+            if (GoTo(c, pos, 4) == Status::Failure)
             {
                 return Status::Failure;
             }
 
-            std::shared_ptr<World> world = client.GetWorld();
+            std::shared_ptr<World> world = c.GetWorld();
             std::shared_ptr<Blockstate> blockstate;
             {
                 std::lock_guard<std::mutex> world_guard(world->GetMutex());
@@ -50,7 +47,7 @@ namespace Botcraft
 
             // TODO check line of sight
 
-            std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
+            std::shared_ptr<NetworkManager> network_manager = c.GetNetworkManager();
             std::shared_ptr<ServerboundPlayerActionPacket> msg_digging(new ServerboundPlayerActionPacket);
             msg_digging->SetAction((int)PlayerDiggingStatus::StartDigging);
             msg_digging->SetPos(pos.ToNetworkPosition());
@@ -58,7 +55,7 @@ namespace Botcraft
             network_manager->Send(msg_digging);
 
             //  TODO, check tools and stuff
-            const long long int expected_mining_time = 1000.0f * (client.GetCreativeMode() ? 0.0f : 5.0f * blockstate->GetHardness());
+            const long long int expected_mining_time = 1000.0f * (c.GetCreativeMode() ? 0.0f : 5.0f * blockstate->GetHardness());
 
             if (expected_mining_time > 60000)
             {
@@ -95,18 +92,18 @@ namespace Botcraft
                         return Status::Success;
                     }
                 }
-                client.Yield();
+                c.Yield();
             }
 
             return Status::Success;
         }
 
-        Status DigBlackboard(BehaviourClient& client)
+        Status DigBlackboard(BehaviourClient& c)
         {
             const std::vector<std::string> variable_names = {
                 "Dig.pos", "Dig.face" };
 
-            Blackboard& blackboard = client.GetBlackboard();
+            Blackboard& blackboard = c.GetBlackboard();
 
             // Mandatory
             const Position& pos = blackboard.Get<Position>(variable_names[0]);
@@ -114,7 +111,7 @@ namespace Botcraft
             // Optional
             const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[1], PlayerDiggingFace::Top);
 
-            return Dig(client, pos, face);
+            return Dig(c, pos, face);
         }
 
     }

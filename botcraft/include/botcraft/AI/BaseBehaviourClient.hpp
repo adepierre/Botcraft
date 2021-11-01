@@ -168,12 +168,12 @@ namespace Botcraft
                     }
                     catch (std::exception& e)
                     {
-                        std::cerr << "Exception caught during tree ticking: " << e.what() << std::endl;
+                        std::cerr << "Exception caught during tree ticking: " << e.what() << ". Stopping behaviour." << std::endl;
                         return;
                     }
                     catch (...)
                     {
-                        std::cerr << "Unknown exception caught during tree ticking" << std::endl;
+                        std::cerr << "Unknown exception caught during tree ticking. Stopping behaviour." << std::endl;
                         return;
                     }
                 }

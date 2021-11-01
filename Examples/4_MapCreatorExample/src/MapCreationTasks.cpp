@@ -530,7 +530,7 @@ Status FindNextTask(BehaviourClient& c)
             // Select one randomly if multiple possibilities
             int selected_index = max_dist_indices.size() == 1 ? 0 : max_dist_indices[std::uniform_int_distribution<int>(0, max_dist_indices.size() - 1)(random_engine)];
 
-            blackboard.Set("NextTask.action", item_candidates[selected_index].empty() ? "Dig" : "Place");
+            blackboard.Set<std::string>("NextTask.action", item_candidates[selected_index].empty() ? "Dig" : "Place");
             blackboard.Set("NextTask.block_position", pos_candidates[selected_index]);
             blackboard.Set("NextTask.face", face_candidates[selected_index]);
             if (!item_candidates[selected_index].empty())
@@ -609,9 +609,9 @@ Status CheckCompletion(BehaviourClient& c)
     const std::vector<std::vector<std::vector<short> > >& target = blackboard.Get<std::vector<std::vector<std::vector<short> > > >("Structure.target");
     const std::map<short, std::string>& palette = blackboard.Get<std::map<short, std::string> >("Structure.palette");
 
-    const bool print_details = blackboard.Get<bool>("CheckCompletion.print_details");
-    const bool print_errors = blackboard.Get<bool>("CheckCompletion.print_errors");
-    const bool full_check = blackboard.Get<bool>("CheckCompletion.full_check");
+    const bool print_details = blackboard.Get<bool>("CheckCompletion.print_details", false);
+    const bool print_errors = blackboard.Get<bool>("CheckCompletion.print_errors", false);
+    const bool full_check = blackboard.Get<bool>("CheckCompletion.full_check", false);
 
     //Reset values for the next time
     blackboard.Set("CheckCompletion.print_details", false);
@@ -754,6 +754,7 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
     }
 
     std::map<short, std::string> palette;
+    palette[-1] = "minecraft:air";
     short id_temp_block = -1;
     std::map<short, int> num_blocks_used;
 
@@ -811,6 +812,12 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
     Position size = max - min + Position(1, 1, 1);
     Position start = offset;
     Position end = offset + size - Position(1, 1, 1);
+
+    if (print_info)
+    {
+        std::cout << "Start: " << start << "\n"
+            << "End: " << end << std::endl;
+    }
 
     // Fill the target area with air (-1)
     std::vector<std::vector<std::vector<short> > > target(size.x, std::vector<std::vector<short> >(size.y, std::vector<short>(size.z, -1)));
@@ -952,6 +959,7 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
     blackboard.Set("Structure.end", end);
     blackboard.Set("Structure.target", target);
     blackboard.Set("Structure.palette", palette);
+    blackboard.Set("Structure.loaded", true);
 
     return Status::Success;
 }

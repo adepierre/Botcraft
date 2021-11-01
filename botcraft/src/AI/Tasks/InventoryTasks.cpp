@@ -264,7 +264,7 @@ namespace Botcraft
             std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
             std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
 
-            if (GoTo(client, pos, 4) == Status::Failure)
+            if (GoTo(client, pos, 4, 1) == Status::Failure)
             {
                 return Status::Failure;
             }

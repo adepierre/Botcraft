@@ -25,10 +25,18 @@ void ShowHelp(const char* argv0)
 
 using namespace Botcraft::AI;
 
-std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree()
+std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(const std::string& food_name,
+    const std::string& nbt_path, const Botcraft::Position& offset, const std::string& temp_block, const bool detailed)
 {
-    const std::string food_name = "minecraft:golden_carrot";
-    
+    auto loading_tree = Builder<SimpleBehaviourClient>()
+        .selector()
+            // Check if the structure is already loaded
+            .leaf(CheckBlackboardBoolData, "Structure.loaded")
+            // Otherwise load it
+            .leaf(LoadNBT, nbt_path, offset, temp_block, detailed)
+        .end()
+        .build();
+
     auto completion_tree = Builder<SimpleBehaviourClient>()
         .succeeder()
             .sequence()
@@ -88,7 +96,19 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
             .leaf(GetBlocksAvailableInInventory)
             // If no block found, get some in neighbouring chests
             .sequence()
-                .leaf(SwapChestsInventory, food_name, true)
+                .selector()
+                    .leaf(SwapChestsInventory, food_name, true)
+                    .inverter()
+                        .leaf(WarnConsole, "Can't swap with chests, will wait before retrying.")
+                    .end()
+                    // If the previous task failed, maybe chests were just
+                    // not loaded yet, sleep for ~1 second
+                    .inverter()
+                        .repeater(100)
+                            .leaf(Yield)
+                        .end()
+                    .end()
+                .end()
                 .selector()
                     .leaf(GetBlocksAvailableInInventory)
                     .inverter()
@@ -127,6 +147,7 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
     return Builder<SimpleBehaviourClient>()
         // Main sequence of actions
         .sequence()
+            .tree(loading_tree)
             .tree(completion_tree)
             .tree(eat_subtree)
             .tree(getinventory_tree)
@@ -239,7 +260,8 @@ int main(int argc, char* argv[])
             }
         }
 
-        auto map_art_behaviour_tree = GenerateMapArtCreatorTree();
+        auto map_art_detailed_behaviour_tree = GenerateMapArtCreatorTree("minecraft:golden_carrot", nbt_file, offset, temp_block, true);
+        auto map_art_behaviour_tree = GenerateMapArtCreatorTree("minecraft:golden_carrot", nbt_file, offset, temp_block, false);
 
         std::vector<std::shared_ptr<Botcraft::World> > shared_worlds(num_world);
         for (int i = 0; i < num_world; i++)
@@ -254,16 +276,18 @@ int main(int argc, char* argv[])
             clients[i] = std::make_shared<SimpleBehaviourClient>(false);
             clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
             clients[i]->SetAutoRespawn(true);
-            LoadNBT(*(clients[i]), nbt_file, offset, temp_block, i == 0);
             clients[i]->Connect(address, names[i], "");
             clients[i]->StartBehaviour();
-            clients[i]->SetBehaviourTree(map_art_behaviour_tree);
+            clients[i]->SetBehaviourTree(i == 0 ? map_art_detailed_behaviour_tree : map_art_behaviour_tree);
         }
 
         std::map<int, std::chrono::system_clock::time_point> restart_time;
 
+        std::chrono::system_clock::time_point next_time_display = std::chrono::system_clock::now() + std::chrono::minutes(2);
+
         while (true)
         {
+            // Check if any client should be closed, and schedule the restart 10 seconds later
             for (int i = 0; i < clients.size(); ++i)
             {
                 if (clients[i]->GetShouldBeClosed())
@@ -273,7 +297,6 @@ int main(int argc, char* argv[])
                     clients[i] = std::make_shared<SimpleBehaviourClient>(false);
                     clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
                     clients[i]->SetAutoRespawn(true);
-                    LoadNBT(*(clients[i]), nbt_file, offset, temp_block, i == 0);
                     clients[i]->Connect(address, names[i], "");
 
                     // Restart client[i] in 10 seconds
@@ -282,6 +305,7 @@ int main(int argc, char* argv[])
                 }
             }
 
+            // Check if any scheduled restart should happen
             auto now = std::chrono::system_clock::now();
             for (auto it = restart_time.begin(); it != restart_time.end(); )
             {
@@ -298,8 +322,20 @@ int main(int argc, char* argv[])
                 }
             }
 
-            std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
-            std::chrono::system_clock::time_point end = start + std::chrono::milliseconds(10);
+            // Check if we should display progress details
+            if (now > next_time_display)
+            {
+                Blackboard& blackboard = clients[0]->GetBlackboard();
+
+                // Set blackboard values to true so the next check completion will print the details
+                blackboard.Set<bool>("CheckCompletion.print_details", true);
+                blackboard.Set<bool>("CheckCompletion.print_errors", true);
+                blackboard.Set<bool>("CheckCompletion.full_check", true);
+
+                next_time_display += std::chrono::seconds(5);
+            }
+
+            std::chrono::system_clock::time_point end = now + std::chrono::milliseconds(10);
 
             for (int i = 0; i < clients.size(); ++i)
             {
