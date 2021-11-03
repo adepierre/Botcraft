@@ -75,7 +75,6 @@ namespace Botcraft
 
         bool auto_respawn;
 
-        //ProtocolCraft::ConnectionState state;
         GameType game_mode;
 
         Difficulty difficulty;

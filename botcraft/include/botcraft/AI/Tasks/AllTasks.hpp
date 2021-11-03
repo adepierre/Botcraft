@@ -1,7 +1,6 @@
 #pragma once
 
-/// <summary>
-/// Base functions you can use as tree leaf 
+/// @brief Base functions you can use as tree leaf 
 /// in any Botcraft behaviour tree. When a function
 /// has some arguments, there are two versions. The first,
 /// with arguments, can be used with a lambda or std::bind
@@ -12,7 +11,6 @@
 /// naming convention: FunctionName.param_name, and then
 /// call their blackboardless counterpart with the retrieved
 /// data.
-/// </summary>
 
 #include "botcraft/AI/Tasks/BaseTasks.hpp"
 #include "botcraft/AI/Tasks/DigTask.hpp"

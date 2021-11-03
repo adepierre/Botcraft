@@ -55,6 +55,7 @@ set(botcraft_PRIVATE_HDR
 
 set(botcraft_SRC
     src/AI/BehaviourClient.cpp
+    src/AI/SimpleBehaviourClient.cpp
     
     src/AI/Tasks/BaseTasks.cpp
     src/AI/Tasks/DigTask.cpp

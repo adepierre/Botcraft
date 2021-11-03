@@ -3,13 +3,10 @@
 #include <botcraft/Game/Vector3.hpp>
 #include <botcraft/AI/TemplatedBehaviourClient.hpp>
 
-/// <summary>
-/// Example of a class where we need to add a Handle function
-/// for specific packet processing. In this case we can inherit
-/// BaseBehaviourClient<T>, with this class as parameter.
+/// @brief Example of a class where we inherit
+/// TemplatedBehaviourClient<T>, with this class as parameter.
 /// We can then use Behaviour Trees with this class as
-/// context, and do our stuff.
-/// </summary>
+/// context, and do our stuff. We also override on Handle function
 class ChatCommandClient : public Botcraft::TemplatedBehaviourClient<ChatCommandClient>
 {
 public:

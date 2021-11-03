@@ -53,10 +53,8 @@ namespace Botcraft
             }
         }
 
-        /// <summary>
-        /// Save the given tree to replace the current one as soon as possible.
-        /// </summary>
-        /// <param name="tree_">The new tree</param>
+        /// @brief Save the given tree to replace the current one as soon as possible.
+        /// @param tree_ The new tree
         void SetBehaviourTree(const std::shared_ptr<BehaviourTree<TDerived> >& tree_)
         {
             std::lock_guard<std::mutex> behaviour_guard(behaviour_mutex);
@@ -64,11 +62,9 @@ namespace Botcraft
             new_tree = tree_;
         }
 
-        /// <summary>
-        /// Can be called to pause the execution of the internal
+        /// @brief Can be called to pause the execution of the internal
         /// tree function. Call it in long function so the behaviour
         /// can be interrupted.
-        /// </summary>
         virtual void Yield() override
         {
             std::unique_lock<std::mutex> lock(behaviour_mutex);
@@ -82,11 +78,9 @@ namespace Botcraft
             {
                 throw SwapTreeException();
             }
-        }
-
-        /// <summary>
-        /// Start the behaviour thread loop.
-        /// </summary>
+        }        
+        
+        /// @brief Start the behaviour thread loop.
         void StartBehaviour()
         {
             std::unique_lock<std::mutex> lock(behaviour_mutex);
@@ -96,10 +90,8 @@ namespace Botcraft
             behaviour_cond_var.wait(lock);
         }
 
-        /// <summary>
-        /// Blocking call, will return only when the client is
+        /// @brief Blocking call, will return only when the client is
         /// disconnected from the server.
-        /// </summary>
         void RunBehaviourUntilClosed()
         {
             if (!behaviour_thread.joinable())
@@ -119,10 +111,8 @@ namespace Botcraft
             }
         }
 
-        /// <summary>
-        /// Perform one step of the behaviour tree.
+        /// @brief Perform one step of the behaviour tree.
         /// Don't forget to call StartBehaviour before.
-        /// </summary>
         void BehaviourStep()
         {
             if (should_be_closed || !network_manager || network_manager->GetConnectionState() != ProtocolCraft::ConnectionState::Play)

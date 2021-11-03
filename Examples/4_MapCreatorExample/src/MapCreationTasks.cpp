@@ -8,8 +8,7 @@
 #include <botcraft/Game/Vector3.hpp>
 #include <botcraft/Game/Inventory/InventoryManager.hpp>
 #include <botcraft/Game/Inventory/Window.hpp>
-#include <botcraft/AI/Tasks/InventoryTasks.hpp>
-#include <botcraft/AI/Tasks/DigTask.hpp>
+#include <botcraft/AI/Tasks/AllTasks.hpp>
 
 #include <protocolCraft/Types/NBT/TagList.hpp>
 #include <protocolCraft/Types/NBT/TagString.hpp>

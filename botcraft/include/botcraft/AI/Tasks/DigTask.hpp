@@ -7,19 +7,15 @@
 
 namespace Botcraft
 {
-    /// <summary>
-    /// Tries to dig a block at a given location. Must be in range.
-    /// </summary>
-    /// <param name="c">The client performing the action</param>
-    /// <param name="pos">Location of block to dig</param>
-    /// <param name="face">Digging direction</param>
-    /// <returns>Success if the block was mined, Failure otherwise</returns>
+    /// @brief Dig a block at a given location. If too far, will try to pathfind toward it
+    /// @param c The client performing the action
+    /// @param pos Location of block to dig
+    /// @param face Digging direction
+    /// @return Success if the block is broken, Failure otherwise
     Status Dig(BehaviourClient& c, const Position& pos, const PlayerDiggingFace face = PlayerDiggingFace::Top);
-
-    /// <summary>
-    /// Dig that reads parameter from the blackboard
-    /// </summary>
-    /// <param name="c">The client performing the action</param>
-    /// <returns>Success if the block was mined, Failure otherwise</returns>
+        
+    /// @brief Same thing as Dig, but reads its parameters from the blackboard
+    /// @param c The client performing the action
+    /// @return Success if the block is broken, Failure otherwise
     Status DigBlackboard(BehaviourClient& c);
 }

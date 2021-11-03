@@ -110,14 +110,10 @@ namespace Botcraft
 		std::shared_ptr<Node<Context>> root;
 	};
 
-	// Common Composites implementations
-
-	/// <summary>
-	/// Sequence implementation. Run all children until
+	/// @brief Sequence implementation. Run all children until
 	/// one fails. Succeeds if all children succeed.
 	/// Equivalent to a logical AND.
-	/// </summary>
-	/// <typeparam name="C">The tree context type</typeparam>
+	/// @tparam Context The tree context type
 	template<class Context>
 	class Sequence : public Composite<Context>
 	{
@@ -142,12 +138,10 @@ namespace Botcraft
 		}
 	};
 
-	/// <summary>
-	/// Selector implementation. Run all children until
+	/// @brief Selector implementation. Run all children until
 	/// one succeeds. Fails if all children fail.
 	/// Equivalent to a logical OR.
-	/// </summary>
-	/// <typeparam name="C">The tree context type</typeparam>
+	/// @tparam Context The tree context type
 	template<class Context>
 	class Selector : public Composite<Context>
 	{
@@ -176,11 +170,9 @@ namespace Botcraft
 
 
 	// Common Decorators implementations
-
-	/// <summary>
-	/// A Decorator that inverts the result of its child.
-	/// </summary>
-	/// <typeparam name="C">The tree context type</typeparam>
+		
+	/// @brief A Decorator that inverts the result of its child.
+	/// @tparam Context The tree context type
 	template<class Context>
 	class Inverter : public Decorator<Context>
 	{
@@ -199,12 +191,10 @@ namespace Botcraft
 		}
 	};
 
-	/// <summary>
-	/// A Decorator that always return success,
+	/// @brief A Decorator that always return success,
 	/// independently of the result of its child.
 	/// Can be combined with an inverter for Failure.
-	/// </summary>
-	/// <typeparam name="C">The tree context type</typeparam>
+	/// @tparam Context The tree context type
 	template<class Context>
 	class Succeeder : public Decorator<Context>
 	{
@@ -223,12 +213,10 @@ namespace Botcraft
 		}
 	};
 
-	/// <summary>
-	/// A Decorator that ticks its child n times
+	/// @brief A Decorator that ticks its child n times
 	/// (repeat until first success if n == 0).
 	/// Always returns success.
-	/// </summary>
-	/// <typeparam name="C">The tree context type</typeparam>
+	/// @tparam Context The tree context type
 	template<class Context>
 	class Repeater : public Decorator<Context>
 	{

@@ -2,12 +2,10 @@
 
 #include <botcraft/AI/BehaviourTree.hpp>
 
-/// <summary>
-/// A Decorator that ticks its child until
+/// @brief A Decorator that ticks its child until
 /// it successes. If ticked n times with no
 /// success, return failure.
-/// </summary>
-/// <typeparam name="Context">The tree context type</typeparam>
+/// @tparam Context The tree context type
 template<class Context>
 class RepeatUntilSuccess : public Botcraft::Decorator<Context>
 {

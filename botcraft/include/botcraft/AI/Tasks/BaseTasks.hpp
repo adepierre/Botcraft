@@ -7,72 +7,58 @@
 
 namespace Botcraft
 {
-    /// <summary>
-    /// Just call client.Yield(). Can be used to Idle the behaviour.
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <returns>Success</returns>
+    /// @brief Just call client.Yield(). Can be used to Idle the behaviour.
+    /// @param client The client performing the action
+    /// @return Always return Success
     Status Yield(BehaviourClient& client);
 
-    /// <summary>
-    /// Ask this client to disconnect from the server by setting should_be_closed to true.
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <returns>Success</returns>
+    /// @brief Ask this client to disconnect from the server by setting should_be_closed to true.
+    /// @param client The client performing the action
+    /// @return Always return Success
     Status Disconnect(BehaviourClient& client);
-
-    /// <summary>
-    /// Say something in the chat
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <param name="msg">The message to send</param>
-    /// <returns>Success</returns>
+        
+    /// @brief Send a message in the game chat
+    /// @param client The client performing the action
+    /// @param msg The message to send
+    /// @return Always return Success
     Status Say(BehaviourClient& client, const std::string& msg);
 
-    /// <summary>
-    /// Say version that reads parameters from the blackboard
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <returns>Success</returns>
+    /// @brief Same thing as Say, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Always return Success
     Status SayBlackboard(BehaviourClient& client);
 
-    /// <summary>
-    /// Interact (right click) with the block at the given location. If
+    /// @brief Interact (right click) with the block at the given location. If
     /// too far, will try to pathfind toward it.
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <param name="pos">The position of the block</param>
-    /// <param name="face">Face on which we want to clik on</param>
-    /// <param name="animation">Whether or not we should send an animation to the server (vanilla client does)</param>
-    /// <returns>Failure if couldn't interact (because the client couldn't get close enough for example). Success otherwise.</returns>
+    /// @param client The client performing the action
+    /// @param pos The position of the block
+    /// @param face Face on which we want to clik on
+    /// @param animation Whether or not we should send an animation to the server (vanilla client does)
+    /// @return Failure if couldn't interact (because the client couldn't get close enough for example). Success otherwise.
     Status InteractWithBlock(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face = PlayerDiggingFace::Top, const bool animation = false);
-
-    /// <summary>
-    /// InteractWithBlock version that reads parameters from the blackboard
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <returns>Failure if couldn't interact (because the client couldn't get close enough for example). Success otherwise.</returns>
+        
+    /// @brief Same thing as InteractWithBlock, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Failure if couldn't interact (because the client couldn't get close enough for example). Success otherwise.
     Status InteractWithBlockBlackboard(BehaviourClient& client);
 
     /// @brief Check in the blackboard if the bool at key is true
     /// @param client The client performing the action
     /// @param key The key to get the bool from
-    /// @return Success if true, failure if false
+    /// @return Success if true, failure if false or not found
     Status CheckBlackboardBoolData(BehaviourClient& client, const std::string& key);
 
-    /// @brief CheckBlackboardBoolData version that reads parameters from the blackboard
+    /// @brief Same thing as CheckBlackboardBoolData, but reads its parameters from the blackboard
     /// @param client The client performing the action
-    /// @return Success if true, failure if false
+    /// @return Success if true, failure if false or not found
     Status CheckBlackboardBoolDataBlackboard(BehaviourClient& client);
 
-    /// <summary>
-    /// Set a value in the blackboard.
-    /// </summary>
-    /// <typeparam name="T">Any type</typeparam>
-    /// <param name="client">The client performing the action</param>
-    /// <param name="key">The key in the blackboard</param>
-    /// <param name="data">The data to set to key</param>
-    /// <returns>Success</returns>
+    /// @brief Set a value in the blackboard
+    /// @tparam T Any type
+    /// @param client The client performing the action
+    /// @param key The key in the blackboard
+    /// @param data The data to store
+    /// @return Always return success
     template<typename T>
     Status SetBlackboardData(BehaviourClient& client, const std::string& key, const T& data)
     {
@@ -80,11 +66,10 @@ namespace Botcraft
         return Status::Success;
     }
 
-    /// <summary>
-    /// SetBlackboardData that reads parameters from the blackboard
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <returns>Success</returns>
+    /// @brief Same thing as SetBlackboardData, but reads its parameters from the blackboard
+    /// @tparam T Any type
+    /// @param client The client performing the action
+    /// @return Always return success
     template<typename T>
     Status SetBlackboardDataBlackboard(BehaviourClient& client)
     {
@@ -99,27 +84,21 @@ namespace Botcraft
 
         return SetBlackboardData<T>(client, key, data);
     }
-
-    /// <summary>
-    /// Remove a value from the blackboard if exist.
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <param name="key">The key in the blackboard</param>
-    /// <returns>Sucess</returns>
+    
+    /// @brief Remove a value from the blackboard if exist
+    /// @param client The client performing the action
+    /// @param key The key to clear
+    /// @return Always return Success
     Status RemoveBlackboardData(BehaviourClient& client, const std::string& key);
-
-    /// <summary>
-    /// RemoveBlackboardData that reads parameter from the blackboard
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <returns>Success</returns>
+        
+    /// @brief Same thing as RemoveBlackboardData, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Always return Success
     Status RemoveBlackboardDataBlackboard(BehaviourClient& client);
-
-    /// <summary>
-    /// Return success if player food isn't at max
-    /// </summary>
-    /// <param name="client">The client performing the action</param>
-    /// <returns>Success if player.GetFood() < 20, Failure otherwise</returns>
+        
+    /// @brief Return success if player food isn't at max
+    /// @param client The client performing the action
+    /// @return Success if player.GetFood() < 20, Failure otherwise
     Status IsHungry(BehaviourClient& client);
 
 } // namespace Botcraft
