@@ -120,8 +120,8 @@ namespace Botcraft
 	public:
 		virtual const Status Tick(Context& context) const override
 		{
-			auto it = children.begin();
-			while (it != children.end())
+			auto it = this->children.begin();
+			while (it != this->children.end())
 			{
 				Status child_status = (*it)->Tick(context);
 				switch (child_status)
@@ -148,8 +148,8 @@ namespace Botcraft
 	public:
 		virtual const Status Tick(Context& context) const override
 		{
-			auto it = children.begin();
-			while (it != children.end())
+			auto it = this->children.begin();
+			while (it != this->children.end())
 			{
 				Status child_status = (*it)->Tick(context);
 				switch (child_status)
@@ -179,7 +179,7 @@ namespace Botcraft
 	public:
 		virtual const Status Tick(Context& context) const override
 		{
-			Status child_status = child->Tick(context);
+			Status child_status = this->child->Tick(context);
 
 			switch (child_status)
 			{
@@ -201,7 +201,7 @@ namespace Botcraft
 	public:
 		virtual const Status Tick(Context& context) const override
 		{
-			Status child_status = child->Tick(context);
+			Status child_status = this->child->Tick(context);
 
 			switch (child_status)
 			{
@@ -232,7 +232,7 @@ namespace Botcraft
 			size_t counter = 0;
 			while ((child_status == Status::Failure && n == 0) || counter < n)
 			{
-				child_status = child->Tick(context);
+				child_status = this->child->Tick(context);
 				counter += 1;
 			}
 			return Status::Success;

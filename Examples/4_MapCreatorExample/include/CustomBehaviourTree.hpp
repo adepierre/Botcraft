@@ -19,7 +19,7 @@ public:
     {
         for (size_t i = 0; i < n; ++i)
         {
-            Botcraft::Status child_return = child->Tick(context);
+            Botcraft::Status child_return = this->child->Tick(context);
             if (child_return == Botcraft::Status::Success)
             {
                 return Botcraft::Status::Success;
