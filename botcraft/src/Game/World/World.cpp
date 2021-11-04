@@ -266,7 +266,7 @@ namespace Botcraft
         {
             cached->RemoveBlockEntityData(chunk_pos);
         }
-        UpdateChunk(chunk_x, chunk_z);
+        UpdateChunk(chunk_x, chunk_z, chunk_pos);
 
         return true;
     }
