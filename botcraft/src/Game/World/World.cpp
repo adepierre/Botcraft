@@ -257,14 +257,17 @@ namespace Botcraft
             }
         }
 
+        const Position chunk_pos((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH);
         if (data.HasData())
         {
-            cached->GetBlockEntitiesData()[pos] = std::shared_ptr<ProtocolCraft::NBT>(new ProtocolCraft::NBT(data));
+            cached->SetBlockEntityData(chunk_pos, data);
         }
         else
         {
-            cached->GetBlockEntitiesData().erase(pos);
+            cached->RemoveBlockEntityData(chunk_pos);
         }
+        UpdateChunk(chunk_x, chunk_z);
+
         return true;
     }
 

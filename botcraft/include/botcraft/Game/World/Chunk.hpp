@@ -47,6 +47,9 @@ namespace Botcraft
         void LoadChunkData(const std::vector<unsigned char>& data, const std::vector<unsigned long long int>& primary_bit_mask);
 #endif
         void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::NBT>& block_entities);
+        void SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT& block_entity);
+        void RemoveBlockEntityData(const Position& pos);
+        const std::shared_ptr<ProtocolCraft::NBT> GetBlockEntityData(const Position& pos) const;
 
         const Block *GetBlock(const Position &pos) const;
 #if PROTOCOL_VERSION < 347
@@ -65,8 +68,6 @@ namespace Botcraft
 #else
         const std::string& GetDimension() const;
 #endif
-
-        std::map<Position, std::shared_ptr<ProtocolCraft::NBT> >& GetBlockEntitiesData();
         const std::map<Position, std::shared_ptr<ProtocolCraft::NBT> >& GetBlockEntitiesData() const;
 
         const bool HasSection(const int y) const;
@@ -85,7 +86,6 @@ namespace Botcraft
 		void SetBiome(const int x, const int y, const int z, const int new_biome);
 		void SetBiome(const int i, const int new_biome);
 #endif
-        std::shared_ptr<ProtocolCraft::NBT> GetBlockEntityData(const Position &pos);
         void UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction);
         
     private:

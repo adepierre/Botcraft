@@ -302,7 +302,7 @@ namespace Botcraft
 
                 if (tag_x && tag_y && tag_z)
                 {
-                    block_entities_data[Position(tag_x->GetValue(), tag_y->GetValue(), tag_z->GetValue())] = std::shared_ptr<NBT>(new NBT(block_entities[i]));
+                    block_entities_data[Position((tag_x->GetValue() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, tag_y->GetValue(), (tag_z->GetValue() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = std::make_shared<NBT>(block_entities[i]);
                 }
             }
         }
@@ -310,6 +310,36 @@ namespace Botcraft
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
+    }
+
+    void Chunk::SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT& block_entity)
+    {
+        if (pos.x < -1 || pos.x > CHUNK_WIDTH || pos.y < 0 || pos.y > CHUNK_HEIGHT - 1 || pos.z < -1 || pos.z > CHUNK_WIDTH)
+        {
+            return;
+        }
+
+        block_entities_data[pos] = std::make_shared<NBT>(block_entity);
+
+#if USE_GUI
+        modified_since_last_rendered = true;
+#endif
+    }
+
+    void Chunk::RemoveBlockEntityData(const Position& pos)
+    {
+        block_entities_data.erase(pos);
+    }
+
+    const std::shared_ptr<NBT> Chunk::GetBlockEntityData(const Position& pos) const
+    {
+        auto it = block_entities_data.find(pos);
+        if (it == block_entities_data.end())
+        {
+            return nullptr;
+        }
+
+        return it->second;
     }
 
     const Block *Chunk::GetBlock(const Position &pos) const
@@ -560,17 +590,6 @@ namespace Botcraft
 	}
 #endif
 
-    std::shared_ptr<NBT> Chunk::GetBlockEntityData(const Position &pos)
-    {
-        auto it = block_entities_data.find(pos);
-        if (it == block_entities_data.end())
-        {
-            return nullptr;
-        }
-
-        return it->second;
-    }
-
     void Chunk::UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction)
     {
         Position this_dest_position = Position(0, 0, 0);
@@ -727,11 +746,6 @@ namespace Botcraft
 #endif
     {
         return dimension;
-    }
-
-    std::map<Position, std::shared_ptr<NBT> >& Chunk::GetBlockEntitiesData()
-    {
-        return block_entities_data;
     }
 
     const std::map<Position, std::shared_ptr<NBT> >& Chunk::GetBlockEntitiesData() const
