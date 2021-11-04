@@ -288,12 +288,13 @@ namespace Botcraft
         InventoryType type = InventoryType::Default;
         if (msg.GetType() == "minecraft:chest")
         {
+            //std::cout << (int)msg.GetNumberOfSlots() << std::endl;
             switch (msg.GetNumberOfSlots())
             {
-            case 62:
+            case 9*3://62:
                 type = InventoryType::Generic9x3;
                 break;
-            case 89:
+            case 9*6://89:
                 type = InventoryType::Generic9x6;
                 break;
             default:
