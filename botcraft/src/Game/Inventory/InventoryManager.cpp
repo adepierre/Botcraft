@@ -314,10 +314,10 @@ namespace Botcraft
         {
             switch (msg.GetNumberOfSlots())
             {
-            case 62:
+            case 9*3:
                 type = InventoryType::Generic9x3;
                 break;
-            case 89:
+            case 9*6:
                 type = InventoryType::Generic9x6;
                 break;
             default:
