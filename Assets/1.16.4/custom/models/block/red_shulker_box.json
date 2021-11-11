@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_shulker_box",
-	"textures": {
-		"all": "entity/shulker/shulker_red"
-	},
-	"textures_base_size": {
-		"entity/shulker/shulker_red": [64, 64]
-	}
-}

@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_wall_sign",
-	"textures": {
-		"all": "entity/signs/warped"
-	},
-	"textures_base_size": {
-		"entity/signs/warped": [64, 32]
-	}
-}

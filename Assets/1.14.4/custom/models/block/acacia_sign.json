@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_sign_0",
-	"textures": {
-		"all": "entity/signs/acacia"
-	},
-	"textures_base_size": {
-		"entity/signs/acacia": [64, 32]
-	}
-}

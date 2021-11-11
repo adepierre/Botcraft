@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_sign_0",
-	"textures": {
-		"all": "entity/signs/birch"
-	},
-	"textures_base_size": {
-		"entity/signs/birch": [64, 32]
-	}
-}

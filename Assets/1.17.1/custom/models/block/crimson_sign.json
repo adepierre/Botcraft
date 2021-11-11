@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_sign_0",
-	"textures": {
-		"all": "entity/signs/crimson"
-	},
-	"textures_base_size": {
-		"entity/signs/crimson": [64, 32]
-	}
-}

@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_left_chest",
-	"textures": {
-		"all": "entity/chest/trapped_left"
-	},
-	"textures_base_size": {
-		"entity/chest/trapped_left": [64, 64]
-	}
-}

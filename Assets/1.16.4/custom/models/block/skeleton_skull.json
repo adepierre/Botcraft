@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_head_0",
-	"textures": {
-		"all": "entity/skeleton/skeleton"
-	},
-	"textures_base_size": {
-		"entity/skeleton/skeleton": [64, 32]
-	}
-}

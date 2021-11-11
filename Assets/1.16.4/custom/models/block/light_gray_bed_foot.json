@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_bed_foot",
-	"textures": {
-		"all": "entity/bed/light_gray"
-	},
-	"textures_base_size": {
-		"entity/bed/light_gray": [64, 64]
-	}
-}

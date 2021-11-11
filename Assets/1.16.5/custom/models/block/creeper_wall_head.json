@@ -1,9 +1,0 @@
-{
-	"parent": "block/base_wall_head",
-	"textures": {
-		"all": "entity/creeper/creeper"
-	},
-	"textures_base_size": {
-		"entity/creeper/creeper": [64, 32]
-	}
-}
