@@ -56,7 +56,7 @@ ProtocolCraft is a sublibrary of the botcraft repository. It is a full implement
 
 I try to keep all the packets and variable names as close as possible to the source code ones. To avoid name conflicts, an underscore is sometimes appended at the end of a variable.
 
-## Building and Installation
+## Building
 
 To build the library for the latest version of the game with both encryption and compression support, but without OpenGL rendering support:
 ```
@@ -75,10 +75,9 @@ You can check [this discussion](https://github.com/adepierre/Botcraft/discussion
 There are several cmake options you can modify:
 - GAME_VERSION [1.XX.X or latest]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
-- BOTCRAFT_INSTALL_ASSETS [ON/OFF] Copy all the needed assets to the installation folder along with the library and executable
+- BOTCRAFT_OUTPUT_DIR [PATH] Base output build path. Binaries, assets and libs will be created in subfolders of this path (default: top project dir)
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
 - BOTCRAFT_ENCRYPTION [ON/OFF] Add encryption ability, must be ON to connect to a server in online mode
-- BOTCRAFT_AI [ON/OFF] If OFF, only build core Botcraft functionalities, if ON, also add some more advanced AI capabilities
 - BOTCRAFT_USE_OPENGL_GUI [ON/OFF] If ON, botcraft will be compiled with the OpenGL GUI enabled
 - BOTCRAFT_USE_IMGUI [ON/OFF] If ON, additional information will be displayed on the GUI (need BOTCRAFT_USE_OPENGL_GUI to be ON)
 

@@ -14,7 +14,8 @@ endif()
 option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" ON)
 option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
-option(BOTCRAFT_INSTALL_ASSETS "Set to copy used assets to installation folder" ON)
+
+set(BOTCRAFT_OUTPUT_DIR ${CMAKE_SOURCE_DIR} CACHE PATH "Base output build path")
 
 # Version selection stuffs
 set(GAME_VERSION "latest" CACHE STRING "Each version of the game uses a specific protocol. Make sure this matches the version of your server.")
@@ -30,21 +31,8 @@ endif()
     list(GET ProtocolVersionValues ${game_version_index} PROTOCOL_VERSION)
 message(STATUS "Selected game version: " ${GAME_VERSION} " || Protocol: " ${PROTOCOL_VERSION})
 
-# Check if the minecraft assets folder already exists
-# If not, download the client and extract the assets
-if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft)
-    list(GET ClientURLs ${game_version_index} VERSION_CLIENTURL)
-    message(STATUS "Downloading assets for version " ${GAME_VERSION} " from " ${VERSION_CLIENTURL} "...")
-    file(DOWNLOAD ${VERSION_CLIENTURL} ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/client.jar)
-    message(STATUS "Extracting assets...")
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/)
-    execute_process(COMMAND "cmake" "-E" "tar" "xfz" "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/client.jar" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/)
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/temp/assets/minecraft/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/)
-    message(STATUS "Removing temp folder")
-    file(REMOVE_RECURSE ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/temp)
-endif()
-
-set(ASSET_DIR ../Assets/${GAME_VERSION})
+# Do all the asset related stuffs
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/assets.cmake)
 
 # Add Asio
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/asio.cmake)

@@ -153,22 +153,22 @@ set_target_properties(botcraft PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")
 
 if(MSVC)
     # To avoid having folder for each configuration when building with Visual
-    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/lib")
-    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/lib")
-    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_SOURCE_DIR}/lib")
-    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_SOURCE_DIR}/lib")
+    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${BOTCRAFT_OUTPUT_DIR}/lib")
+    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${BOTCRAFT_OUTPUT_DIR}/lib")
+    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${BOTCRAFT_OUTPUT_DIR}/lib")
+    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL "${BOTCRAFT_OUTPUT_DIR}/lib")
 else()
-    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
-    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib")
+    set_target_properties(botcraft PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin")
+    set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/lib")
 endif(MSVC)
 
 # Set version header
@@ -183,7 +183,7 @@ target_include_directories(botcraft
     PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private_include>
         )
-        
+
 target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
 
 # Add protocolCraft
@@ -269,49 +269,7 @@ export(EXPORT botcraft-targets
     FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-targets.cmake
 )
 
-if(BOTCRAFT_INSTALL_ASSETS)
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/custom
-        DESTINATION Assets/${GAME_VERSION}
-    )
-    
-    # Check for assets, copy only needed files to install folder
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft)
-        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/blockstates)
-            install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/blockstates
-                DESTINATION Assets/${GAME_VERSION}/minecraft
-            )
-        else()
-            message(WARNING "Can't find assets folder ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/blockstates")
-        endif()
-        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block)
-            install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block
-                DESTINATION Assets/${GAME_VERSION}/minecraft/models
-            )
-        else()
-            message(WARNING "Can't find assets folder ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block")
-        endif()
-        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block)
-            install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block
-                DESTINATION Assets/${GAME_VERSION}/minecraft/models
-            )
-        else()
-            message(WARNING "Can't find assets folder ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/models/block")
-        endif()
-        
-        if(BOTCRAFT_USE_OPENGL_GUI)
-            if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/blocks)
-                install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/blocks
-                    DESTINATION Assets/${GAME_VERSION}/minecraft/textures
-                )
-            elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/block)
-                install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/block
-                    DESTINATION Assets/${GAME_VERSION}/minecraft/textures
-                )
-            else()
-                message(WARNING "Can't find assets folder ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/blocks or ${CMAKE_CURRENT_SOURCE_DIR}/../Assets/${GAME_VERSION}/minecraft/textures/block")
-            endif()
-        endif()
-    else()
-        message(WARNING "Assets folder can't be found for selected game version.")
-    endif()
-endif()
+# Copy asset files into install binary folder
+install(DIRECTORY ${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}/Assets
+)
