@@ -363,8 +363,23 @@ install(EXPORT protocolCraft-targets
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft
 )
 
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/protocolCraft-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft
+)
+
+install(
+    FILES 
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake
+    DESTINATION
+        ${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft
+)
+
 # Copy json
-install(DIRECTORY ${JSON_INCLUDE_DIR}
+install(DIRECTORY ${JSON_INCLUDE_DIR}/nlohmann
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 export(EXPORT protocolCraft-targets

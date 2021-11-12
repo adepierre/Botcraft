@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+
+if(NOT TARGET protocolCraft)
+    include(${CMAKE_CURRENT_LIST_DIR}/protocolCraft-targets.cmake)
+endif()

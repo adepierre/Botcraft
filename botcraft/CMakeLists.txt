@@ -253,7 +253,7 @@ configure_package_config_file(
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-config.cmake
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/botcraft
 )
-    
+
 install(
     FILES 
         ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-config.cmake
@@ -262,7 +262,7 @@ install(
 )
 
 # Copy json
-install(DIRECTORY ${JSON_INCLUDE_DIR}
+install(DIRECTORY ${JSON_INCLUDE_DIR}/nlohmann
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 export(EXPORT botcraft-targets
