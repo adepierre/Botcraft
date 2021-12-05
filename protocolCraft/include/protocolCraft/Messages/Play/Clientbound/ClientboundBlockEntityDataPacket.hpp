@@ -25,6 +25,8 @@ namespace ProtocolCraft
             return 0x09;
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x0A;
+#elif PROTOCOL_VERSION == 757 // 1.18
+            return 0x0A;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -45,10 +47,17 @@ namespace ProtocolCraft
             pos = pos_;
         }
 
+#if PROTOCOL_VERSION < 757
         void SetType(const unsigned char type_)
         {
             type = type_;
         }
+#else
+        void SetType(const int type_)
+        {
+            type = type_;
+        }
+#endif
 
         void SetTag(const NBT& tag_)
         {
@@ -60,10 +69,17 @@ namespace ProtocolCraft
             return pos;
         }
 
+#if PROTOCOL_VERSION < 757
         const unsigned char GetType() const
         {
             return type;
         }
+#else
+        const int GetType() const
+        {
+            return type;
+        }
+#endif
 
         const NBT& GetTag() const
         {
@@ -74,14 +90,22 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             pos.Read(iter, length);
+#if PROTOCOL_VERSION < 757
             type = ReadData<unsigned char>(iter, length);
+#else
+            type = ReadData<VarInt>(iter, length);
+#endif
             tag.Read(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             pos.Write(container);
+#if PROTOCOL_VERSION < 757
             WriteData<unsigned char>(type, container);
+#else
+            WriteData<VarInt>(type, container);
+#endif
             tag.Write(container);
         }
 
@@ -98,7 +122,11 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
+#if PROTOCOL_VERSION < 757
         unsigned char type;
+#else
+        int type;
+#endif
         NBT tag;
     };
 } //ProtocolCraft

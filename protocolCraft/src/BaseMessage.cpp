@@ -173,7 +173,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 450
     template class BaseMessage<ClientboundOpenBookPacket>;
 #endif
+#if PROTOCOL_VERSION < 757
     template class BaseMessage<ClientboundLevelChunkPacket>;
+#endif
     template class BaseMessage<ClientboundLoginPacket>;
     template class BaseMessage<ClientboundLevelEventPacket>;
 #if PROTOCOL_VERSION < 755
@@ -279,5 +281,9 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundSetSubtitleTextPacket>;
     template class BaseMessage<ClientboundSetTitleTextPacket>;
     template class BaseMessage<ClientboundSetTitlesAnimationPacket>;
+#endif
+#if PROTOCOL_VERSION > 756
+    template class BaseMessage<ClientboundLevelChunkWithLightPacket>;
+    template class BaseMessage<ClientboundSetSimulationDistancePacket>;
 #endif
 }

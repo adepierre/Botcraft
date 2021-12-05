@@ -113,7 +113,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundDisconnectPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundForgetLevelChunkPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundKeepAlivePacket.hpp"
+#if PROTOCOL_VERSION < 757
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundLoginPacket.hpp"
 #if PROTOCOL_VERSION < 755
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacket.hpp"
@@ -256,6 +258,10 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetSubtitleTextPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetTitleTextPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetTitlesAnimationPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 756
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkWithLightPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetSimulationDistancePacket.hpp"
 #endif
 
 
@@ -422,7 +428,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 450
         ClientboundOpenBookPacket,
 #endif
+#if PROTOCOL_VERSION < 757
         ClientboundLevelChunkPacket,
+#endif
         ClientboundLoginPacket,
         ClientboundLevelEventPacket, 
 #if PROTOCOL_VERSION < 755
@@ -527,6 +535,10 @@ namespace ProtocolCraft
         ClientboundSetSubtitleTextPacket,
         ClientboundSetTitleTextPacket,
         ClientboundSetTitlesAnimationPacket,
+#endif
+#if PROTOCOL_VERSION > 756
+        ClientboundLevelChunkWithLightPacket,
+        ClientboundSetSimulationDistancePacket,
 #endif
         ClientboundSetCarriedItemPacket
     > ;

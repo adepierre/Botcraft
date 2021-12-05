@@ -1,5 +1,6 @@
 #pragma once
 
+#if PROTOCOL_VERSION < 757
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
 
@@ -279,7 +280,6 @@ namespace ProtocolCraft
             output["biomes"] = "Vector of " + std::to_string(biomes.size()) + " int";
 #endif
             output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
-            output["block_entities_tags"] = "Vector of " + std::to_string(block_entities_tags.size()) + " unsigned char";
 
             output["block_entities_tags"] = nlohmann::json::array();
             for (int i = 0; i < block_entities_tags.size(); ++i)
@@ -318,3 +318,4 @@ namespace ProtocolCraft
 #endif
     };
 } //ProtocolCraft
+#endif

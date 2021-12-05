@@ -1,6 +1,9 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION > 756
+#include "protocolCraft/Types/ClientboundLightUpdatePacketData.hpp"
+#endif
 
 #if PROTOCOL_VERSION > 404
 namespace ProtocolCraft
@@ -19,6 +22,8 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x23;
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
+            return 0x25;
+#elif PROTOCOL_VERSION == 757 // 1.18
             return 0x25;
 #else
 #error "Protocol version not implemented"
@@ -45,6 +50,7 @@ namespace ProtocolCraft
             z = z_;
         }
 
+#if PROTOCOL_VERSION < 757
 #if PROTOCOL_VERSION < 755
         void SetSkyYMask(const int sky_Y_mask_)
         {
@@ -103,6 +109,12 @@ namespace ProtocolCraft
             trust_edges = trust_edges_;
         }
 #endif
+#else
+        void SetLightData(const ClientboundLightUpdatePacketData& light_data_)
+        {
+            light_data = light_data_;
+        }
+#endif
 
 
         const int GetX() const
@@ -115,6 +127,7 @@ namespace ProtocolCraft
             return z;
         }
 
+#if PROTOCOL_VERSION < 757
 #if PROTOCOL_VERSION < 755
         const int GetSkyYMask() const
         {
@@ -174,12 +187,19 @@ namespace ProtocolCraft
             return trust_edges;
         }
 #endif
+#else
+        const ClientboundLightUpdatePacketData& GetLightData() const
+        {
+            return light_data;
+        }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             x = ReadData<VarInt>(iter, length);
             z = ReadData<VarInt>(iter, length);
+#if PROTOCOL_VERSION < 757
 #if PROTOCOL_VERSION > 722
             trust_edges = ReadData<bool>(iter, length);
 #endif
@@ -252,12 +272,16 @@ namespace ProtocolCraft
                 block_updates[i] = ReadArrayData<char>(iter, length, 2048);
             }
 #endif
+#else
+            light_data.Read(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<VarInt>(x, container);
             WriteData<VarInt>(z, container);
+#if PROTOCOL_VERSION < 757
 #if PROTOCOL_VERSION > 722
             WriteData<bool>(trust_edges, container);
 #endif
@@ -306,6 +330,9 @@ namespace ProtocolCraft
                 WriteData<VarInt>(block_updates[i].size(), container);
                 WriteArrayData(block_updates[i], container);
             }
+#else
+            light_data.Write(container);
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -314,6 +341,7 @@ namespace ProtocolCraft
 
             output["x"] = x;
             output["z"] = z;
+#if PROTOCOL_VERSION < 757
 #if PROTOCOL_VERSION > 722
             output["trust_edges"] = trust_edges;
 #endif
@@ -333,6 +361,9 @@ namespace ProtocolCraft
             {
                 output["block_updates"].push_back(block_updates[i]);
             }
+#else
+            output["light_data"] = light_data.Serialize();
+#endif
 
             return output;
         }
@@ -340,6 +371,7 @@ namespace ProtocolCraft
     private:
         int x;
         int z;
+#if PROTOCOL_VERSION < 757
 #if PROTOCOL_VERSION < 755
         int sky_Y_mask;
         int block_Y_mask;
@@ -355,6 +387,9 @@ namespace ProtocolCraft
         std::vector<std::vector<char> > block_updates;
 #if PROTOCOL_VERSION > 722
         bool trust_edges;
+#endif
+#else
+        ClientboundLightUpdatePacketData light_data;
 #endif
     };
 } //ProtocolCraft

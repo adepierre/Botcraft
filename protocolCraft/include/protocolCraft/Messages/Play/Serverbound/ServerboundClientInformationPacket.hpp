@@ -23,6 +23,8 @@ namespace ProtocolCraft
             return 0x05;
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x05;
+#elif PROTOCOL_VERSION == 757 // 1.18
+            return 0x05;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -69,9 +71,15 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 754
-        void SetTextFilteringEnabled(const int text_filtering_enabled_)
+        void SetTextFilteringEnabled(const bool text_filtering_enabled_)
         {
             text_filtering_enabled = text_filtering_enabled_;
+        }
+#endif
+#if PROTOCOL_VERSION > 756
+        void SetAllowListing(const bool allow_listing_)
+        {
+            allow_listing = allow_listing_;
         }
 #endif
 
@@ -107,9 +115,15 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 754
-        const int GetTextFilteringEnabled() const
+        const bool GetTextFilteringEnabled() const
         {
             return text_filtering_enabled;
+        }
+#endif
+#if PROTOCOL_VERSION > 756
+        const bool GetAllowListing() const
+        {
+            return allow_listing;
         }
 #endif
 
@@ -125,6 +139,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 754
             text_filtering_enabled = ReadData<bool>(iter, length);
 #endif
+#if PROTOCOL_VERSION > 756
+            allow_listing = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -137,6 +154,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(main_hand, container);
 #if PROTOCOL_VERSION > 754
             WriteData<bool>(text_filtering_enabled, container);
+#endif
+#if PROTOCOL_VERSION > 756
+            WriteData<bool>(allow_listing, container);
 #endif
         }
 
@@ -153,6 +173,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 754
             output["text_filtering_enabled"] = text_filtering_enabled;
 #endif
+#if PROTOCOL_VERSION > 756
+            output["allow_listing"] = allow_listing;
+#endif
 
             return output;
         }
@@ -166,6 +189,9 @@ namespace ProtocolCraft
         int main_hand;
 #if PROTOCOL_VERSION > 754
         bool text_filtering_enabled;
+#endif
+#if PROTOCOL_VERSION > 756
+        bool allow_listing;
 #endif
     };
 } //ProtocolCraft

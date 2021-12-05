@@ -34,6 +34,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundGameEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkWithLightPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundContainerClosePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTakeItemEntityPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundContainerAckPacket.hpp
@@ -44,6 +45,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntitiesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDisconnectPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetDisplayObjectivePacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetSimulationDistancePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundLevelEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundAnimatePacket.hpp
@@ -199,7 +201,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Advancement.hpp
     include/protocolCraft/Types/AdvancementDisplay.hpp
     include/protocolCraft/Types/AdvancementProgress.hpp
+    include/protocolCraft/Types/BlockEntityInfo.hpp
     include/protocolCraft/Types/Chat.hpp
+    include/protocolCraft/Types/ClientboundLevelChunkPacketData.hpp
+    include/protocolCraft/Types/ClientboundLightUpdatePacketData.hpp
     include/protocolCraft/Types/CriterionProgress.hpp
     include/protocolCraft/Types/EntityModifierData.hpp
     include/protocolCraft/Types/EntityProperty.hpp

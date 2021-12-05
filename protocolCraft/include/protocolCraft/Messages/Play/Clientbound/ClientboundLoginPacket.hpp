@@ -24,6 +24,8 @@ namespace ProtocolCraft
             return 0x24;
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x26;
+#elif PROTOCOL_VERSION == 757 // 1.18
+            return 0x26;
 #else
             #error "Protocol version not implemented"
 #endif
@@ -129,6 +131,12 @@ namespace ProtocolCraft
             chunk_radius = chunk_radius_;
         }
 #endif
+#if PROTOCOL_VERSION > 756
+        void SetSimulationDistance(const int simulation_distance_)
+        {
+            simulation_distance = simulation_distance_;
+        }
+#endif
 
         void SetReducedDebugInfo(const bool reduced_debug_info_)
         {
@@ -153,6 +161,7 @@ namespace ProtocolCraft
             is_flat = is_flat_;
         }
 #endif
+
 
         const int GetPlayerId() const
         {
@@ -244,6 +253,12 @@ namespace ProtocolCraft
             return chunk_radius;
         }
 #endif
+#if PROTOCOL_VERSION > 756
+        const int GetSimulationDistance() const
+        {
+            return simulation_distance;
+        }
+#endif
 
         const bool GetReducedDebugInfo() const
         {
@@ -308,6 +323,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION >= 477
             chunk_radius = ReadData<VarInt>(iter, length);
+#if PROTOCOL_VERSION > 756
+            simulation_distance = ReadData<VarInt>(iter, length);
+#endif
 #endif
             reduced_debug_info = ReadData<bool>(iter, length);
 #if PROTOCOL_VERSION > 565
@@ -358,6 +376,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION >= 477
             WriteData<VarInt>(chunk_radius, container);
 #endif
+#if PROTOCOL_VERSION > 756
+            WriteData<VarInt>(simulation_distance, container);
+#endif
             WriteData<bool>(reduced_debug_info, container);
 #if PROTOCOL_VERSION > 565
             WriteData<bool>(show_death_screen, container);
@@ -404,6 +425,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION >= 477
             output["chunk_radius"] = chunk_radius;
 #endif
+#if PROTOCOL_VERSION > 756
+            output["simulation_distance"] = simulation_distance;
+#endif
             output["reduced_debug_info"] = reduced_debug_info;
 #if PROTOCOL_VERSION > 565
             output["show_death_screen"] = show_death_screen;
@@ -447,6 +471,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION >= 477
         int chunk_radius;
+#endif
+#if PROTOCOL_VERSION > 756
+        int simulation_distance;
 #endif
         bool reduced_debug_info;
 #if PROTOCOL_VERSION > 565
