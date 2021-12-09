@@ -19,9 +19,6 @@ namespace Botcraft
     class Blockstate;
     class AsyncHandler;
 
-    static const int WORLD_START_Y = 0;
-    static const int WORLD_END_Y = WORLD_START_Y + CHUNK_HEIGHT;
-
     class World : public ProtocolCraft::Handler
     {
     public:
@@ -62,12 +59,18 @@ namespace Botcraft
 #elif PROTOCOL_VERSION < 755
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const int primary_bit_mask);
-#else
+#elif PROTOCOL_VERSION < 757
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const std::vector<unsigned long long int>& primary_bit_mask);
+#else
+        bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data);
 #endif
+#if PROTOCOL_VERSION < 757
         bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT>& block_entities);
-#if PROTOCOL_VERSION > 551
+#else
+        bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities);
+#endif
+#if PROTOCOL_VERSION > 551 && PROTOCOL_VERSION < 757
         bool LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes);
 #endif
 
@@ -86,6 +89,9 @@ namespace Botcraft
         //Get the block at a given position
         const Block* GetBlock(const Position& pos);
         const bool IsLoaded(const Position& pos) const;
+
+        const int GetHeight() const;
+        const int GetMinY() const;
 
         bool SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT& data);
         // Get the block entity data at a given position
@@ -150,7 +156,11 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg) override;
+#if PROTOCOL_VERSION < 757
         virtual void Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg) override;
+#else
+        virtual void Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg) override;
+#endif
 #if PROTOCOL_VERSION > 404
         virtual void Handle(ProtocolCraft::ClientboundLightUpdatePacket& msg) override;
 #endif
@@ -169,6 +179,12 @@ namespace Botcraft
         Dimension current_dimension;
 #else
         std::string current_dimension;
+#endif
+#if PROTOCOL_VERSION > 756
+        /// @brief Height of the chunks in a given dimension
+        std::map<std::string, int> dimension_height;
+        /// @brief Height of the lowest block in a given dimension
+        std::map<std::string, unsigned int> dimension_min_y;
 #endif
         std::unique_ptr<AsyncHandler> async_handler;
     };

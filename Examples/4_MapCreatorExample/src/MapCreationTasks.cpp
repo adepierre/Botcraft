@@ -41,9 +41,9 @@ Status GetAllChestsAround(BehaviourClient& c)
             for (int x = 0; x < CHUNK_WIDTH; ++x)
             {
                 checked_position.x = it->first.first * CHUNK_WIDTH + x;
-                for (int y = 0; y < CHUNK_HEIGHT; ++y)
+                for (int y = 0; y < world->GetHeight(); ++y)
                 {
-                    checked_position.y = y;
+                    checked_position.y = y + world->GetMinY();
                     for (int z = 0; z < CHUNK_WIDTH; ++z)
                     {
                         checked_position.z = it->first.second * CHUNK_WIDTH + z;

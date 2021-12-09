@@ -5,6 +5,7 @@
 #include "botcraft/Utilities/AsyncHandler.hpp"
 
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#include "protocolCraft/Types/NBT/TagInt.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -67,12 +68,20 @@ namespace Botcraft
 
         if (!chunk)
         {
-            terrain[{x, z}] = std::shared_ptr<Chunk>(new Chunk(dim));
+#if PROTOCOL_VERSION < 757
+            terrain[{x, z}] = std::make_shared<Chunk>(dim);
+#else
+            terrain[{x, z}] = std::make_shared<Chunk>(dimension_min_y[dim], dimension_height[dim], dim);
+#endif
         }
         else if (chunk->GetDimension() != dim)
         {
             RemoveChunk(x, z);
-            terrain[{x, z}] = std::shared_ptr<Chunk>(new Chunk(dim));
+#if PROTOCOL_VERSION < 757
+            terrain[{x, z}] = std::make_shared<Chunk>(dim);
+#else
+            terrain[{x, z}] = std::make_shared<Chunk>(dimension_min_y[dim], dimension_height[dim], dim);
+#endif
         }
         
         //Not necessary, from void to air, there is no difference
@@ -129,8 +138,10 @@ namespace Botcraft
     bool World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous)
 #elif PROTOCOL_VERSION < 755
     bool World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data, const int primary_bit_mask)
-#else
+#elif PROTOCOL_VERSION < 757
     bool World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data, const std::vector<unsigned long long int>& primary_bit_mask)
+#else
+    bool World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data)
 #endif
     {
         std::shared_ptr<Chunk> chunk = GetChunk(x, z);
@@ -138,8 +149,10 @@ namespace Botcraft
         {
 #if PROTOCOL_VERSION < 552
             chunk->LoadChunkData(data, primary_bit_mask, ground_up_continuous);
-#else
+#elif PROTOCOL_VERSION < 757
             chunk->LoadChunkData(data, primary_bit_mask);
+#else
+            chunk->LoadChunkData(data);
 #endif
             UpdateChunk(x, z);
             return true;
@@ -147,7 +160,11 @@ namespace Botcraft
         return false;
     }
 
+#if PROTOCOL_VERSION < 757
     bool World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT>& block_entities)
+#else
+    bool World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities)
+#endif
     {
         std::shared_ptr<Chunk> chunk = GetChunk(x, z);
         if (chunk)
@@ -159,7 +176,7 @@ namespace Botcraft
         return false;
     }
 
-#if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION > 551 && PROTOCOL_VERSION < 757
     bool World::LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes)
     {
         std::shared_ptr<Chunk> chunk = GetChunk(x, z);
@@ -367,7 +384,7 @@ namespace Botcraft
         int counter_arrays = 0;
         Position pos1, pos2;
 
-        const int num_sections = CHUNK_HEIGHT / 16 + 2;
+        const int num_sections = GetHeight() / 16 + 2;
 
         for (int i = 0; i < num_sections; ++i)
         {
@@ -384,7 +401,7 @@ namespace Botcraft
                 {
                     for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
                     {
-                        pos1.y = block_y + section_Y * SECTION_HEIGHT;
+                        pos1.y = block_y + section_Y * SECTION_HEIGHT + GetMinY();
                         pos2.y = pos1.y;
                         for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
                         {
@@ -422,7 +439,7 @@ namespace Botcraft
                 {
                     for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
                     {
-                        pos1.y = block_y + section_Y * SECTION_HEIGHT;
+                        pos1.y = block_y + section_Y * SECTION_HEIGHT + GetMinY();
                         pos2.y = pos1.y;
                         for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
                         {
@@ -582,6 +599,24 @@ namespace Botcraft
         const int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
 
         return terrain.find({ chunk_x, chunk_z }) != terrain.end();
+    }
+
+    const int World::GetHeight() const
+    {
+#if PROTOCOL_VERSION < 757
+        return 256;
+#else
+        return dimension_height.at(current_dimension);
+#endif
+    }
+
+    const int World::GetMinY() const
+    {
+#if PROTOCOL_VERSION < 757
+        return 0;
+#else
+        return dimension_min_y.at(current_dimension);
+#endif
     }
 
     std::shared_ptr<ProtocolCraft::NBT> World::GetBlockEntityData(const Position &pos)
@@ -751,6 +786,10 @@ namespace Botcraft
 #else
         current_dimension = msg.GetDimension().GetName();
 #endif
+#if PROTOCOL_VERSION > 756
+        dimension_height[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("height"))->GetValue();
+        dimension_min_y[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("min_y"))->GetValue();
+#endif
     }
 
     void World::Handle(ProtocolCraft::ClientboundRespawnPacket& msg)
@@ -762,6 +801,10 @@ namespace Botcraft
         current_dimension = (Dimension)msg.GetDimension();
 #else
         current_dimension = msg.GetDimension().GetName();
+#endif
+#if PROTOCOL_VERSION > 756
+        dimension_height[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("height"))->GetValue();
+        dimension_min_y[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("min_y"))->GetValue();
 #endif
     }
 
@@ -828,6 +871,7 @@ namespace Botcraft
         RemoveChunk(msg.GetX(), msg.GetZ());
     }
 
+#if PROTOCOL_VERSION < 757
     void World::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
     {
 #if PROTOCOL_VERSION < 719
@@ -885,6 +929,41 @@ namespace Botcraft
             LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBlockEntitiesTags());
         }
     }
+#else
+    void World::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)
+    {
+        std::string chunk_dim;
+        {
+            std::lock_guard<std::mutex> world_guard(world_mutex);
+            chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
+        }
+
+        bool success = true;
+
+        if (chunk_dim != current_dimension)
+        {
+            std::lock_guard<std::mutex> world_guard(world_mutex);
+            success = AddChunk(msg.GetX(), msg.GetZ(), current_dimension);
+        }
+
+        if (!success)
+        {
+            std::cerr << "Error adding chunk in pos : " << msg.GetX() << ", " << msg.GetZ() << " in dimension " << current_dimension << std::endl;
+            return;
+        }
+
+        {
+            // lock guard scope
+            std::lock_guard<std::mutex> world_guard(world_mutex);
+            LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBuffer());
+            LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBlockEntitiesData());
+            UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
+                msg.GetLightData().GetSkyYMask(), msg.GetLightData().GetEmptySkyYMask(), msg.GetLightData().GetSkyUpdates(), true);
+            UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
+                msg.GetLightData().GetBlockYMask(), msg.GetLightData().GetEmptyBlockYMask(), msg.GetLightData().GetBlockUpdates(), false);
+        }
+    }
+#endif
 
     std::shared_ptr<Blockstate> World::Raycast(const Vector3<double> &origin, const Vector3<double> &direction,
         const float max_radius, Position & out_pos, Position & out_normal)
@@ -1012,10 +1091,17 @@ namespace Botcraft
     void World::Handle(ProtocolCraft::ClientboundLightUpdatePacket& msg)
     {
         std::lock_guard<std::mutex> world_guard(world_mutex);
+#if PROTOCOL_VERSION < 757
         UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
             msg.GetSkyYMask(), msg.GetEmptySkyYMask(), msg.GetSkyUpdates(), true);
         UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
             msg.GetBlockYMask(), msg.GetEmptyBlockYMask(), msg.GetBlockUpdates(), false);
+#else
+        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
+            msg.GetLightData().GetSkyYMask(), msg.GetLightData().GetEmptySkyYMask(), msg.GetLightData().GetSkyUpdates(), true);
+        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
+            msg.GetLightData().GetBlockYMask(), msg.GetLightData().GetEmptyBlockYMask(), msg.GetLightData().GetBlockUpdates(), false);
+#endif
     }
 #endif
 

@@ -13,6 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <unordered_set>
+#include <iostream>
 
 namespace Botcraft
 {
@@ -147,12 +148,10 @@ namespace Botcraft
             // Remove any previous version of this chunk
             {
                 std::lock_guard<std::mutex> lock(chunks_mutex);
-                Position pos(x_, 0, z_);
-                for (int y = 0; y < CHUNK_HEIGHT / section_height; ++y)
+
+                for (auto it = chunks.begin(); it != chunks.end(); ++it)
                 {
-                    pos.y = y;
-                    auto it = chunks.find(pos);
-                    if (it != chunks.end())
+                    if (it->first.x == x_ && it->first.z == z_)
                     {
                         it->second->ClearFaces();
                     }
@@ -160,12 +159,10 @@ namespace Botcraft
             }
             {
                 std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
-                Position pos(x_, 0, z_);
-                for (int y = 0; y < CHUNK_HEIGHT / CHUNK_WIDTH; ++y)
+
+                for (auto it = transparent_chunks.begin(); it != transparent_chunks.end(); ++it)
                 {
-                    pos.y = y;
-                    auto it = transparent_chunks.find(pos);
-                    if (it != transparent_chunks.end())
+                    if (it->first.x == x_ && it->first.z == z_)
                     {
                         it->second->ClearFaces();
                     }
@@ -189,7 +186,7 @@ namespace Botcraft
             std::vector<unsigned char> neighbour_model_ids(6);
 
             Position pos;
-            for (int y = 0; y < CHUNK_HEIGHT; ++y)
+            for (int y = chunk->GetMinY(); y < chunk->GetHeight() + chunk->GetMinY(); ++y)
             {
                 pos.y = y;
                 for (int z = 0; z < CHUNK_WIDTH; ++z)
@@ -559,6 +556,8 @@ namespace Botcraft
 #elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 || PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753  || PROTOCOL_VERSION == 754 // 1.16.X
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2058) / 9) % 16));
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
+                    texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2114) / 9) % 16));
+#elif PROTOCOL_VERSION == 757 // 1.18
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2114) / 9) % 16));
 #else
                     #error "Protocol version not implemented"

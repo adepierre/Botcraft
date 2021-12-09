@@ -81,7 +81,11 @@ namespace Botcraft
             virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg) override;
+#if PROTOCOL_VERSION < 757
             virtual void Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg) override;
+#else
+            virtual void Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg) override;
+#endif
             virtual void Handle(ProtocolCraft::ClientboundSetTimePacket& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
 

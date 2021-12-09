@@ -595,7 +595,11 @@ namespace Botcraft
             AddChunkToUpdate(msg.GetX(), msg.GetZ());
         }
 
+#if PROTOCOL_VERSION < 757
         void RenderingManager::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
+#else
+        void RenderingManager::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)
+#endif
         {
             AddChunkToUpdate(msg.GetX(), msg.GetZ());
         }

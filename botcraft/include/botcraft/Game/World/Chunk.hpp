@@ -7,32 +7,33 @@
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/Enums.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#include "protocolCraft/Types/BlockEntityInfo.hpp"
 
 namespace Botcraft
 {
     struct Section;
 
-    //We assume that a chunk is 16*256*16
+    //We assume that a chunk is 16*256*16 in versions before 1.18 and 16*N*16 after
     //And a section is 16*16*16
     static const int CHUNK_WIDTH = 16;
     static const int SECTION_HEIGHT = 16;
-    static const int CHUNK_HEIGHT = 256;
-
-#if PROTOCOL_VERSION > 551
-	static const unsigned int BIOMES_SIZE = 1024;
-#endif
 
     class Chunk
     {
     public:
 #if PROTOCOL_VERSION < 719
         Chunk(const Dimension &dim = Dimension::Overworld);
-#else
+#elif PROTOCOL_VERSION < 757
         Chunk(const std::string& dim = "minecraft:overworld");
+#else
+        Chunk(const int min_y_, const unsigned int height_, const std::string& dim = "minecraft:overworld");
 #endif
         Chunk(const Chunk& c);
 
         static const Position BlockCoordsToChunkCoords(const Position& pos);
+
+        const int GetMinY() const;
+        const int GetHeight() const;
 
 #if USE_GUI
         const bool GetModifiedSinceLastRender() const;
@@ -43,10 +44,16 @@ namespace Botcraft
         void LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous);
 #elif PROTOCOL_VERSION < 755
         void LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask);
-#else
+#elif PROTOCOL_VERSION < 757
         void LoadChunkData(const std::vector<unsigned char>& data, const std::vector<unsigned long long int>& primary_bit_mask);
+#else
+        void LoadChunkData(const std::vector<unsigned char>& data);
 #endif
+#if PROTOCOL_VERSION < 757
         void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::NBT>& block_entities);
+#else
+        void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities);
+#endif
         void SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT& block_entity);
         void RemoveBlockEntityData(const Position& pos);
         const std::shared_ptr<ProtocolCraft::NBT> GetBlockEntityData(const Position& pos) const;
@@ -100,6 +107,13 @@ namespace Botcraft
         Dimension dimension;
 #else
         std::string dimension;
+#endif
+#if PROTOCOL_VERSION < 757
+        static const int min_y = 0;
+        static const int height = 256;
+#else
+        int min_y;
+        int height;
 #endif
 #if USE_GUI
         bool modified_since_last_rendered;

@@ -141,9 +141,8 @@ namespace Botcraft
                             has_moved = false;
                         }
 
-                        //Avoid forever falling if position is <= 0.0
-                        // TODO : not good with world extension
-                        if (local_player->GetPosition().y <= 0.0)
+                        //Avoid forever falling if position is in the void
+                        if (creative_mode && local_player->GetPosition().y <= world->GetHeight())
                         {
                             local_player->SetY(0.0);
                             local_player->SetSpeedY(0.0);

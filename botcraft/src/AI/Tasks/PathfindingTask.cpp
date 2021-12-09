@@ -227,7 +227,7 @@ namespace Botcraft
 
                     const Block* block;
 
-                    for (int y = -4; next_location.y + y >= WORLD_START_Y; --y)
+                    for (int y = -4; next_location.y + y >= world->GetMinY(); --y)
                     {
                         block = world->GetBlock(next_location + Position(0, y, 0));
 
