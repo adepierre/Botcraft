@@ -10,7 +10,7 @@ This is a "learn-by-doing" code, with some lines dating back to 2017 and never c
 
 - Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
 - DNS server name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.17.1 supported
+- All official releases from 1.12.2 to 1.18 supported
 - Compression
 - Physics and collisions
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...)
