@@ -87,6 +87,8 @@ namespace ProtocolCraft
             {
                 output["block_entities_data"].push_back(block_entities_data[i].Serialize());
             }
+
+            return output;
         }
 
     private:

@@ -14,12 +14,12 @@ namespace ProtocolCraft
 
         }
 
-        void SetPackedXZ(const int packed_XZ_)
+        void SetPackedXZ(const unsigned char packed_XZ_)
         {
             packed_XZ = packed_XZ_;
         }
 
-        void SetY(const int y_)
+        void SetY(const short y_)
         {
             y = y_;
         }
@@ -35,12 +35,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetPackedXZ() const
+        const unsigned char GetPackedXZ() const
         {
             return packed_XZ;
         }
 
-        const int GetY() const
+        const short GetY() const
         {
             return y;
         }
@@ -58,12 +58,18 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-
+            packed_XZ = ReadData<unsigned char>(iter, length);
+            y = ReadData<short>(iter, length);
+            type = ReadData<VarInt>(iter, length);
+            tag.Read(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-
+            WriteData<unsigned char>(packed_XZ, container);
+            WriteData<short>(y, container);
+            WriteData<VarInt>(type, container);
+            tag.Write(container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -79,8 +85,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int packed_XZ;
-        int y;
+        unsigned char packed_XZ;
+        short y;
         int type;
         NBT tag;
     };
