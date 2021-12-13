@@ -5,6 +5,7 @@
 #include <openssl/sha.h>
 #endif
 
+#include <thread>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
