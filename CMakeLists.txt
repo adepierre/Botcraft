@@ -4,6 +4,7 @@ project(Botcraft)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+cmake_policy(SET CMP0074 NEW)
 
 # All building options
 
