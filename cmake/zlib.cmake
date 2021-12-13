@@ -5,8 +5,7 @@ find_package(ZLIB QUIET)
 
 # If not found, build from sources
 if(NOT TARGET ZLIB::ZLIB)
-	cmake_policy(SET CMP0074 NEW)
-	message(STATUS "Can't find Zlib, cloning and building it from sources")
+    message(STATUS "Can't find Zlib, cloning and building it from sources")
     
     file(GLOB RESULT "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/zlib/examples")
     list(LENGTH RESULT RES_LEN)
