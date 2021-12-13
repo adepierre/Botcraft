@@ -4,6 +4,7 @@ project(Botcraft)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+cmake_policy(SET CMP0074 NEW)
 
 # All building options
 
@@ -15,7 +16,7 @@ option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" O
 option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
 
-set(BOTCRAFT_OUTPUT_DIR ${CMAKE_SOURCE_DIR} CACHE PATH "Base output build path")
+set(BOTCRAFT_OUTPUT_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Base output build path")
 
 # Version selection stuffs
 set(GAME_VERSION "latest" CACHE STRING "Each version of the game uses a specific protocol. Make sure this matches the version of your server.")
@@ -32,22 +33,22 @@ endif()
 message(STATUS "Selected game version: " ${GAME_VERSION} " || Protocol: " ${PROTOCOL_VERSION})
 
 # Do all the asset related stuffs
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/assets.cmake)
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/assets.cmake")
 
 # Add Asio
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/asio.cmake)
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/asio.cmake")
 
 # Add nlohmann json
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/json.cmake)
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/json.cmake")
 
 # Add ZLIB
 if(BOTCRAFT_COMPRESSION)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib.cmake)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib.cmake")
 endif(BOTCRAFT_COMPRESSION)
 
 # Add OpenSSL
 if(BOTCRAFT_ENCRYPTION)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/openssl.cmake)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/openssl.cmake")
 endif(BOTCRAFT_ENCRYPTION)
 
 if(BOTCRAFT_USE_OPENGL_GUI)
@@ -55,23 +56,23 @@ if(BOTCRAFT_USE_OPENGL_GUI)
     find_package(OpenGL REQUIRED)
     
     # Add glad
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glad.cmake)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/glad.cmake")
     
     #Add GLFW
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glfw.cmake)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/glfw.cmake")
     
     # Add GLM
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/glm.cmake)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/glm.cmake")
     
     # Add stb_image
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/stb_image.cmake)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/stb_image.cmake")
     
     # Add rectpack2D
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/rectpack2D.cmake)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/rectpack2D.cmake")
     
     if(BOTCRAFT_USE_IMGUI)
         # Add Dear Imgui
-        include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/imgui.cmake)
+        include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/imgui.cmake")
     endif()
 endif()
 
