@@ -336,13 +336,13 @@ namespace ProtocolCraft
                 case 0x08:
                     return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
                     break;
-				case 0x09:
-					return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-					break;
+                case 0x09:
+                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
+                    break;
                 case 0x0A:
                     return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
                     break;
-				case 0x0B:
+                case 0x0B:
                     return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
                     break;
                 case 0x0C:
@@ -595,13 +595,13 @@ namespace ProtocolCraft
                 case 0x08:
                     return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
                     break;
-				case 0x09:
-					return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-				    break;
+                case 0x09:
+                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
+                    break;
                 case 0x0A:
                     return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
                     break;
-				case 0x0B:
+                case 0x0B:
                     return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
                     break;
                 case 0x0C:
@@ -874,9 +874,9 @@ namespace ProtocolCraft
                 case 0x07:
                     return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
                     break;
-				case 0x08:
-					return std::shared_ptr<ClientboundBlockBreakAckPacket>(new ClientboundBlockBreakAckPacket);
-					break;
+                case 0x08:
+                    return std::shared_ptr<ClientboundBlockBreakAckPacket>(new ClientboundBlockBreakAckPacket);
+                    break;
                 case 0x09:
                     return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
                     break;
@@ -886,42 +886,42 @@ namespace ProtocolCraft
                 case 0x0B:
                     return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
                     break;
-				case 0x0C:
-					return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-					break;
+                case 0x0C:
+                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
+                    break;
                 case 0x0D:
                     return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
                     break;
-				case 0x0E:
-					return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-					break;
-				case 0x0F:
-					return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-					break;
-				case 0x10:
-					return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-					break;
+                case 0x0E:
+                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
+                    break;
+                case 0x0F:
+                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
+                    break;
+                case 0x10:
+                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
+                    break;
                 case 0x11:
                     return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
                     break;
                 case 0x12:
                     return std::shared_ptr<ClientboundCommandsPacket>(new ClientboundCommandsPacket);
                     break;
-				case 0x13:
-					return std::shared_ptr<ClientboundContainerAckPacket>(new ClientboundContainerAckPacket);
-					break;
+                case 0x13:
+                    return std::shared_ptr<ClientboundContainerAckPacket>(new ClientboundContainerAckPacket);
+                    break;
                 case 0x14:
                     return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
                     break;
-				case 0x15:
-					return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-					break;
+                case 0x15:
+                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
+                    break;
                 case 0x16:
                     return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
                     break;
-				case 0x17:
-					return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-					break;
+                case 0x17:
+                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
+                    break;
                 case 0x18:
                     return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
                     break;
@@ -931,42 +931,42 @@ namespace ProtocolCraft
                 case 0x1A:
                     return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
                     break;
-				case 0x1B:
-					return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-					break;
+                case 0x1B:
+                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
+                    break;
                 case 0x1C:
                     return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
                     break;
                 case 0x1D:
                     return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
                     break;
-				case 0x1E:
-					return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-					break;
+                case 0x1E:
+                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
+                    break;
                 case 0x1F:
                     return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
                     break;
                 case 0x20:
                     return std::shared_ptr<ClientboundHorseScreenOpenPacket>(new ClientboundHorseScreenOpenPacket);
                     break;
-				case 0x21:
-					return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-					break;
-				case 0x22:
-					return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
-					break;
+                case 0x21:
+                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
+                    break;
+                case 0x22:
+                    return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
+                    break;
                 case 0x23:
                     return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
                     break;
                 case 0x24:
                     return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
                     break;
-				case 0x25:
-					return std::shared_ptr<ClientboundLightUpdatePacket>(new ClientboundLightUpdatePacket);
-					break;
-				case 0x26:
-					return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-					break;
+                case 0x25:
+                    return std::shared_ptr<ClientboundLightUpdatePacket>(new ClientboundLightUpdatePacket);
+                    break;
+                case 0x26:
+                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
+                    break;
                 case 0x27:
                     return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
                     break;
@@ -982,9 +982,9 @@ namespace ProtocolCraft
                 case 0x2B:
                     return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
                     break;
-				case 0x2C:
-					return std::shared_ptr<ClientboundMoveEntityPacket>(new ClientboundMoveEntityPacket);
-					break;
+                case 0x2C:
+                    return std::shared_ptr<ClientboundMoveEntityPacket>(new ClientboundMoveEntityPacket);
+                    break;
                 case 0x2D:
                     return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
                     break;
@@ -1000,21 +1000,21 @@ namespace ProtocolCraft
                 case 0x31:
                     return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
                     break;
-				case 0x32:
-					return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-					break;
+                case 0x32:
+                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
+                    break;
                 case 0x33:
                     return std::shared_ptr<ClientboundPlayerCombatPacket>(new ClientboundPlayerCombatPacket);
                     break;
-				case 0x34:
-					return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-					break;
+                case 0x34:
+                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
+                    break;
                 case 0x35:
                     return std::shared_ptr<ClientboundPlayerLookAtPacket>(new ClientboundPlayerLookAtPacket);
                     break;
-				case 0x36:
-					return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-					break;
+                case 0x36:
+                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
+                    break;
                 case 0x37:
                     return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
                     break;
@@ -1027,9 +1027,9 @@ namespace ProtocolCraft
                 case 0x3A:
                     return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
                     break;
-				case 0x3B:
-					return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-					break;
+                case 0x3B:
+                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
+                    break;
                 case 0x3C:
                     return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
                     break;
@@ -1042,9 +1042,9 @@ namespace ProtocolCraft
                 case 0x3F:
                     return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
                     break;
-				case 0x40:
-					return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-					break;
+                case 0x40:
+                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
+                    break;
                 case 0x41:
                     return std::shared_ptr<ClientboundSetChunkCacheCenterPacket>(new ClientboundSetChunkCacheCenterPacket);
                     break;
@@ -1087,9 +1087,9 @@ namespace ProtocolCraft
                 case 0x4E:
                     return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
                     break;
-				case 0x4F:
-					return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-					break;
+                case 0x4F:
+                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
+                    break;
                 case 0x50:
                     return std::shared_ptr<ClientboundSetTitlesPacket>(new ClientboundSetTitlesPacket);
                     break;
@@ -1111,9 +1111,9 @@ namespace ProtocolCraft
                 case 0x56:
                     return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
                     break;
-				case 0x57:
-					return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-					break;
+                case 0x57:
+                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
+                    break;
                 case 0x58:
                     return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
                     break;

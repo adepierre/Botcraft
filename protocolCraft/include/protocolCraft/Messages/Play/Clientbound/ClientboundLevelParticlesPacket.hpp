@@ -2,6 +2,8 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
+#include "protocolCraft/Types/Particles/Particle.hpp"
+
 namespace ProtocolCraft
 {
     class ClientboundLevelParticlesPacket : public BaseMessage<ClientboundLevelParticlesPacket>
@@ -40,10 +42,6 @@ namespace ProtocolCraft
 
         }
 
-        void SetParticleType(const int particle_type_)
-        {
-            particle_type = particle_type_;
-        }
 
 #if PROTOCOL_VERSION < 569
         void SetX(const float x_)
@@ -92,9 +90,9 @@ namespace ProtocolCraft
             z_dist = z_dist_;
         }
 
-        void SetParticleData(const float particle_data_)
+        void SetMaxSpeed(const float max_speed_)
         {
-            particle_data = particle_data_;
+            max_speed = max_speed_;
         }
 
         void SetCount(const int count_)
@@ -107,16 +105,11 @@ namespace ProtocolCraft
             override_limiter = override_limiter_;
         }
 
-        void SetData(const std::vector<unsigned char>& data_)
+        void SetParticle(const std::shared_ptr<Particle>& particle_)
         {
-            data = data_;
+            particle = particle_;
         }
 
-
-        const int GetParticleType() const
-        {
-            return particle_type;
-        }
 
 #if PROTOCOL_VERSION < 569
         const float GetX() const
@@ -165,9 +158,9 @@ namespace ProtocolCraft
             return z_dist;
         }
 
-        const float GetParticleData() const
+        const float GetMaxSpeed() const
         {
-            return particle_data;
+            return max_speed;
         }
 
         const int GetCount() const
@@ -180,16 +173,17 @@ namespace ProtocolCraft
             return override_limiter;
         }
 
-        const std::vector<unsigned char>& GetData() const
+        const std::shared_ptr<Particle> GetParticle() const
         {
-            return data;
+            return particle;
         }
 
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            particle_type = ReadData<int>(iter, length);
+            const ParticleType particle_type = static_cast<ParticleType>(ReadData<int>(iter, length));
+            particle = Particle::CreateParticle(particle_type);
             override_limiter = ReadData<bool>(iter, length);
 #if PROTOCOL_VERSION < 569
             x = ReadData<float>(iter, length);
@@ -203,14 +197,14 @@ namespace ProtocolCraft
             x_dist = ReadData<float>(iter, length);
             y_dist = ReadData<float>(iter, length);
             z_dist = ReadData<float>(iter, length);
-            particle_data = ReadData<float>(iter, length);
+            max_speed = ReadData<float>(iter, length);
             count = ReadData<int>(iter, length);
-            data = ReadByteArray(iter, length, length);
+            particle->Read(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<int>(particle_type, container);
+            WriteData<int>(static_cast<int>(particle->GetType()), container);
             WriteData<bool>(override_limiter, container);
 #if PROTOCOL_VERSION < 569
             WriteData<float>(x, container);
@@ -224,16 +218,15 @@ namespace ProtocolCraft
             WriteData<float>(x_dist, container);
             WriteData<float>(y_dist, container);
             WriteData<float>(z_dist, container);
-            WriteData<float>(particle_data, container);
+            WriteData<float>(max_speed, container);
             WriteData<int>(count, container);
-            WriteByteArray(data, container);
+            particle->Write(container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
         {
             nlohmann::json output;
 
-            output["particle_type"] = particle_type;
             output["override_limiter"] = override_limiter;
 #if PROTOCOL_VERSION < 569
             output["x"] = x;
@@ -247,15 +240,15 @@ namespace ProtocolCraft
             output["x_dist"] = x_dist;
             output["y_dist"] = y_dist;
             output["z_dist"] = z_dist;
-            output["particle_data"] = particle_data;
+            output["max_speed"] = max_speed;
             output["count"] = count;
-            output["data"] = "Vector of " + std::to_string(data.size()) + " unsigned chars";
+            output["particle_type"] = particle->GetName();
+            output["particle"] = particle->Serialize();
 
             return output;
         }
 
     private:
-        int particle_type;
 #if PROTOCOL_VERSION < 569
         float x;
         float y;
@@ -268,10 +261,10 @@ namespace ProtocolCraft
         float x_dist;
         float y_dist;
         float z_dist;
-        float particle_data;
+        float max_speed;
         int count;
         bool override_limiter;
-        std::vector<unsigned char> data;
+        std::shared_ptr<Particle> particle;
 
     };
 } //ProtocolCraft

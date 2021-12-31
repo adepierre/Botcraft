@@ -17,7 +17,7 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x2E;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
-			return 0x2F;
+            return 0x2F;
 #elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.0 or 1.16.1
             return 0x2E;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
@@ -91,15 +91,15 @@ namespace ProtocolCraft
             return type;
         }
 #else
-		const int GetContainerId() const
-		{
-			return container_id;
-		}
+        const int GetContainerId() const
+        {
+            return container_id;
+        }
 
-		const int GetType() const
-		{
-			return type;
-		}
+        const int GetType() const
+        {
+            return type;
+        }
 #endif
 
         const Chat& GetTitle() const
@@ -132,9 +132,9 @@ namespace ProtocolCraft
                 id_ = ReadData<int>(iter, length);
             }
 #else
-			container_id = ReadData<VarInt>(iter, length);
-			type = ReadData<VarInt>(iter, length);
-			title.Read(iter, length);
+            container_id = ReadData<VarInt>(iter, length);
+            type = ReadData<VarInt>(iter, length);
+            title.Read(iter, length);
 #endif
         }
 
@@ -178,13 +178,13 @@ namespace ProtocolCraft
     private:
 #if PROTOCOL_VERSION < 452
         unsigned char container_id;
-		std::string type;
-		unsigned char number_of_slots;
-		int id_;
+        std::string type;
+        unsigned char number_of_slots;
+        int id_;
 #else
-		int container_id;
-		int type;
+        int container_id;
+        int type;
 #endif
-		Chat title;
+        Chat title;
     };
 } //ProtocolCraft

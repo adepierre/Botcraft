@@ -245,7 +245,20 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/NBT/TagCompound.hpp
     include/protocolCraft/Types/NBT/TagIntArray.hpp
     include/protocolCraft/Types/NBT/TagLongArray.hpp    
-        
+    
+    include/protocolCraft/Types/Particles/Particle.hpp
+    include/protocolCraft/Types/Particles/NoDataTypedParticle.hpp
+    include/protocolCraft/Types/Particles/BlockcrackParticle.hpp
+    include/protocolCraft/Types/Particles/BlockdustParticle.hpp
+    include/protocolCraft/Types/Particles/BlockMarkerParticle.hpp
+    include/protocolCraft/Types/Particles/BlockParticle.hpp
+    include/protocolCraft/Types/Particles/DustColorTransitionParticle.hpp
+    include/protocolCraft/Types/Particles/DustParticle.hpp
+    include/protocolCraft/Types/Particles/FallingDustParticle.hpp
+    include/protocolCraft/Types/Particles/IconcrackParticle.hpp
+    include/protocolCraft/Types/Particles/ItemParticle.hpp
+    include/protocolCraft/Types/Particles/VibrationParticle.hpp
+            
     include/protocolCraft/Types/Recipes/Recipe.hpp
     include/protocolCraft/Types/Recipes/RecipeBookSettings.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeData.hpp
@@ -270,6 +283,7 @@ set(protocolCraft_SRC
     src/BaseMessage.cpp
     src/BinaryReadWrite.cpp
     src/Types/Chat.cpp
+    
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp
     src/Types/NBT/TagEnd.cpp
@@ -285,8 +299,24 @@ set(protocolCraft_SRC
     src/Types/NBT/TagCompound.cpp
     src/Types/NBT/TagIntArray.cpp
     src/Types/NBT/TagLongArray.cpp
+    
     src/Types/CommandNode/BrigadierProperty.cpp
+    
+    src/Types/Particles/Particle.cpp
+    src/Types/Particles/NoDataTypedParticle.cpp
+    src/Types/Particles/BlockcrackParticle.cpp
+    src/Types/Particles/BlockdustParticle.cpp
+    src/Types/Particles/BlockMarkerParticle.cpp
+    src/Types/Particles/BlockParticle.cpp
+    src/Types/Particles/DustColorTransitionParticle.cpp
+    src/Types/Particles/DustParticle.cpp
+    src/Types/Particles/FallingDustParticle.cpp
+    src/Types/Particles/IconcrackParticle.cpp
+    src/Types/Particles/ItemParticle.cpp
+    src/Types/Particles/VibrationParticle.cpp
+    
     src/Types/Recipes/RecipeTypeData.cpp
+    
     src/Types/Vibrations/PositionSource.cpp
 )
 

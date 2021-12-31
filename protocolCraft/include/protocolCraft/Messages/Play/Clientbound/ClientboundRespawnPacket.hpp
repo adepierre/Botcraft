@@ -127,10 +127,10 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 551
-		const long long int GetSeed() const
-		{
-			return seed;
-		}
+        const long long int GetSeed() const
+        {
+            return seed;
+        }
 #endif
 
 #if PROTOCOL_VERSION < 477
@@ -184,7 +184,7 @@ namespace ProtocolCraft
             dimension = ReadData<int>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 551
-			seed = ReadData<long long int>(iter, length);
+            seed = ReadData<long long int>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 477
             difficulty = ReadData<unsigned char>(iter, length);
@@ -268,7 +268,7 @@ namespace ProtocolCraft
         int dimension;
 #endif
 #if PROTOCOL_VERSION > 551
-		long long int seed;
+        long long int seed;
 #endif
 #if PROTOCOL_VERSION < 477
         int difficulty;

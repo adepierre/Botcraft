@@ -19,7 +19,7 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
             return 0x21;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
-			return 0x22;
+            return 0x22;
 #elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.0 or 1.16.1
             return 0x21;
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
@@ -133,10 +133,10 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 551
-		const std::vector<int>& GetBiomes() const
-		{
-			return biomes;
-		}
+        const std::vector<int>& GetBiomes() const
+        {
+            return biomes;
+        }
 #endif
 
         const std::vector<unsigned char>& GetBuffer() const
@@ -183,8 +183,8 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 551
 #if PROTOCOL_VERSION < 755
-			if (full_chunk)
-			{
+            if (full_chunk)
+            {
 #endif
 #if PROTOCOL_VERSION > 738
                 const int biomes_size = ReadData<VarInt>(iter, length);
@@ -197,7 +197,7 @@ namespace ProtocolCraft
                 biomes = ReadArrayData<int>(iter, length, 1024);
 #endif
 #if PROTOCOL_VERSION < 755
-			}
+            }
 #endif
 #endif
             const int buffer_size = ReadData<VarInt>(iter, length);
@@ -309,7 +309,7 @@ namespace ProtocolCraft
         NBT heightmaps;
 #endif
 #if PROTOCOL_VERSION > 551
-		std::vector<int> biomes;
+        std::vector<int> biomes;
 #endif
         std::vector<unsigned char> buffer;
         std::vector<NBT> block_entities_tags;
