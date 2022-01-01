@@ -290,32 +290,32 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 358
     bool World::SetBiome(const int x, const int z, const unsigned char biome)
-	{
-		auto it = terrain.find({ floor(x / (double)CHUNK_WIDTH), floor(z / (double)CHUNK_WIDTH) });
+    {
+        auto it = terrain.find({ floor(x / (double)CHUNK_WIDTH), floor(z / (double)CHUNK_WIDTH) });
 
-		if (it != terrain.end())
-		{
-			it->second->SetBiome((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, biome);
-			return true;
-		}
+        if (it != terrain.end())
+        {
+            it->second->SetBiome((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, biome);
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 #elif PROTOCOL_VERSION < 552
-	bool World::SetBiome(const int x, const int z, const int biome)
-	{
-		auto it = terrain.find({ floor(x / (double)CHUNK_WIDTH), floor(z / (double)CHUNK_WIDTH) });
+    bool World::SetBiome(const int x, const int z, const int biome)
+    {
+        auto it = terrain.find({ floor(x / (double)CHUNK_WIDTH), floor(z / (double)CHUNK_WIDTH) });
 
-		if (it != terrain.end())
-		{
-			it->second->SetBiome((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, biome);
-			return true;
-		}
+        if (it != terrain.end())
+        {
+            it->second->SetBiome((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, biome);
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 #else
-	bool World::SetBiome(const int x, const int y, const int z, const int biome)
+    bool World::SetBiome(const int x, const int y, const int z, const int biome)
     {
         auto it = terrain.find({ floor(x / (double)CHUNK_WIDTH), floor(z / (double)CHUNK_WIDTH) });
 
@@ -670,11 +670,11 @@ namespace Botcraft
             }
         }
 #if PROTOCOL_VERSION < 552
-		return cached->GetBiome((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH);
+        return cached->GetBiome((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH);
 #else
         return cached->GetBiome((pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, pos.y, (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH);
 #endif
-	}
+    }
 
     const unsigned char World::GetSkyLight(const Position &pos)
     {

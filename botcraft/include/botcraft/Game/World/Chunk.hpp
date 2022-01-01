@@ -87,11 +87,11 @@ namespace Botcraft
         const int GetBiome(const int x, const int z) const;
         void SetBiome(const int x, const int z, const int b);
 #else
-		const int GetBiome(const int x, const int y, const int z) const;
-		const int GetBiome(const int i) const;
-		void SetBiomes(const std::vector<int>& new_biomes);
-		void SetBiome(const int x, const int y, const int z, const int new_biome);
-		void SetBiome(const int i, const int new_biome);
+        const int GetBiome(const int x, const int y, const int z) const;
+        const int GetBiome(const int i) const;
+        void SetBiomes(const std::vector<int>& new_biomes);
+        void SetBiome(const int x, const int y, const int z, const int new_biome);
+        void SetBiome(const int i, const int new_biome);
 #endif
         void UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction);
         

@@ -737,104 +737,104 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 358
-	const unsigned char Chunk::GetBiome(const int x, const int z) const
-	{
-		if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
-		{
-			return 0;
-		}
+    const unsigned char Chunk::GetBiome(const int x, const int z) const
+    {
+        if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
+        {
+            return 0;
+        }
 
-		return biomes[z * CHUNK_WIDTH + x];
-	}
+        return biomes[z * CHUNK_WIDTH + x];
+    }
 
-	void Chunk::SetBiome(const int x, const int z, const unsigned char b)
-	{
-		if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
-		{
-			return;
-		}
+    void Chunk::SetBiome(const int x, const int z, const unsigned char b)
+    {
+        if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
+        {
+            return;
+        }
 
-		biomes[z * CHUNK_WIDTH + x] = b;
+        biomes[z * CHUNK_WIDTH + x] = b;
 
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
-	}
+    }
 
 #elif PROTOCOL_VERSION < 552
-	const int Chunk::GetBiome(const int x, const int z) const
-	{
-		if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
-		{
-			return 0;
-		}
+    const int Chunk::GetBiome(const int x, const int z) const
+    {
+        if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
+        {
+            return 0;
+        }
 
-		return biomes[z * CHUNK_WIDTH + x];
-	}
+        return biomes[z * CHUNK_WIDTH + x];
+    }
 
-	void Chunk::SetBiome(const int x, const int z, const int b)
-	{
-		if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
-		{
-			return;
-		}
+    void Chunk::SetBiome(const int x, const int z, const int b)
+    {
+        if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
+        {
+            return;
+        }
 
-		biomes[z * CHUNK_WIDTH + x] = b;
+        biomes[z * CHUNK_WIDTH + x] = b;
 
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
-	}
+    }
 #else
-	const int Chunk::GetBiome(const int x, const int y, const int z) const
-	{
+    const int Chunk::GetBiome(const int x, const int y, const int z) const
+    {
         // y / 4 * 16 + z / 4 * 4 + x / 4
-		return GetBiome((((y - min_y) >> 2) & 63) << 4 | ((z >> 2) & 3) << 2 | ((x >> 2) & 3));
-	}
+        return GetBiome((((y - min_y) >> 2) & 63) << 4 | ((z >> 2) & 3) << 2 | ((x >> 2) & 3));
+    }
 
-	const int Chunk::GetBiome(const int i) const
-	{
-		if (i < 0 || i > biomes.size() - 1)
-		{
-			return 0;
-		}
+    const int Chunk::GetBiome(const int i) const
+    {
+        if (i < 0 || i > biomes.size() - 1)
+        {
+            return 0;
+        }
 
-		return biomes[i];
-	}
+        return biomes[i];
+    }
 
-	void Chunk::SetBiomes(const std::vector<int>& new_biomes)
-	{
-		if (new_biomes.size() != 64 * height / SECTION_HEIGHT)
-		{
-			std::cerr << "Warning, trying to set biomes with a wrong size" << std::endl;
-			return;
-		}
-		biomes = new_biomes;
+    void Chunk::SetBiomes(const std::vector<int>& new_biomes)
+    {
+        if (new_biomes.size() != 64 * height / SECTION_HEIGHT)
+        {
+            std::cerr << "Warning, trying to set biomes with a wrong size" << std::endl;
+            return;
+        }
+        biomes = new_biomes;
 
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
-	}
+    }
 
-	void Chunk::SetBiome(const int x, const int y, const int z, const int new_biome)
-	{
+    void Chunk::SetBiome(const int x, const int y, const int z, const int new_biome)
+    {
         // y / 4 * 16 + z / 4 * 4 + x / 4
-		SetBiome((((y - min_y) >> 2) & 63) << 4 | ((z >> 2) & 3) << 2 | ((x >> 2) & 3), new_biome);
-	}
+        SetBiome((((y - min_y) >> 2) & 63) << 4 | ((z >> 2) & 3) << 2 | ((x >> 2) & 3), new_biome);
+    }
 
-	void Chunk::SetBiome(const int i, const int new_biome)
-	{
-		if (i < 0 || i > biomes.size() - 1)
-		{
-			return;
-		}
+    void Chunk::SetBiome(const int i, const int new_biome)
+    {
+        if (i < 0 || i > biomes.size() - 1)
+        {
+            return;
+        }
 
-		biomes[i] = new_biome;
+        biomes[i] = new_biome;
 
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
-	}
+    }
 #endif
 
     void Chunk::UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction)

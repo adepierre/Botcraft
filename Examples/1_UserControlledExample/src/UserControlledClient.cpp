@@ -176,9 +176,9 @@ void UserControlledClient::CreateTestWorld()
     }
 
 #if PROTOCOL_VERSION < 552
-	const int biome_spacing = 1;
+    const int biome_spacing = 1;
 #else
-	const int biome_spacing = 4;
+    const int biome_spacing = 4;
 #endif
 
     for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
@@ -202,7 +202,7 @@ void UserControlledClient::CreateTestWorld()
 #if PROTOCOL_VERSION < 552
             world->SetBiome(pos.x, pos.z, i);
 #else
-			world->SetBiome(pos.x, pos.y, pos.z, i);
+            world->SetBiome(pos.x, pos.y, pos.z, i);
 #endif
             pos = Position(-(x * biome_spacing) - 1, 0, 1);
 
@@ -229,9 +229,9 @@ void UserControlledClient::CreateTestWorld()
             world->SetBlock(pos, 157);
 #endif
 #if PROTOCOL_VERSION < 552
-			world->SetBiome(pos.x, pos.z, i);
+            world->SetBiome(pos.x, pos.z, i);
 #else
-			world->SetBiome(pos.x, pos.y, pos.z, i);
+            world->SetBiome(pos.x, pos.y, pos.z, i);
 #endif
             pos = Position(-(x * biome_spacing) - 1, 0, 2);
 
@@ -257,9 +257,9 @@ void UserControlledClient::CreateTestWorld()
             world->SetBlock(pos, 34);
 #endif
 #if PROTOCOL_VERSION < 552
-			world->SetBiome(pos.x, pos.z, i);
+            world->SetBiome(pos.x, pos.z, i);
 #else
-			world->SetBiome(pos.x, pos.y, pos.z, i);
+            world->SetBiome(pos.x, pos.y, pos.z, i);
 #endif
             x++;
         }

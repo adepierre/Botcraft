@@ -177,6 +177,6 @@ namespace Botcraft
         std::string player_display_name;
         std::string mc_access_token;
         std::string mc_player_uuid;
-		
+        
     };
 }
