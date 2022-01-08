@@ -68,8 +68,8 @@ namespace Botcraft
 
         output["data_type_id"] = GetDataTypeId();
         output["data_flags_id"] = GetDataFlagsId();
-        output["data_trusted_id_0"] = GetDataTrustedId0() ? nlohmann::json(GetDataTrustedId0().value()) : nullptr;
-        output["data_trusted_id_1"] = GetDataTrustedId1() ? nlohmann::json(GetDataTrustedId1().value()) : nullptr;
+        output["data_trusted_id_0"] = GetDataTrustedId0() ? nlohmann::json(GetDataTrustedId0().value()) : nlohmann::json();
+        output["data_trusted_id_1"] = GetDataTrustedId1() ? nlohmann::json(GetDataTrustedId1().value()) : nlohmann::json();
 
         return output;
     }

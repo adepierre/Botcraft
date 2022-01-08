@@ -30,7 +30,7 @@ namespace Botcraft
         nlohmann::json output = AnimalEntity::Serialize();
 
         output["data_flags_id"] = GetDataFlagsId();
-        output["data_owneruuid_id"] = GetDataOwneruuidId() ? nlohmann::json(GetDataOwneruuidId().value()) : nullptr;
+        output["data_owneruuid_id"] = GetDataOwneruuidId() ? nlohmann::json(GetDataOwneruuidId().value()) : nlohmann::json();
 
         return output;
     }

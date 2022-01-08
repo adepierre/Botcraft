@@ -45,7 +45,7 @@ namespace Botcraft
 
         output["id_flags"] = GetIdFlags();
 #if PROTOCOL_VERSION < 579 && PROTOCOL_VERSION > 393
-        output["data_owneruuid_id"] = GetDataOwneruuidId() ? nlohmann::json(GetDataOwneruuidId().value()) : nullptr;
+        output["data_owneruuid_id"] = GetDataOwneruuidId() ? nlohmann::json(GetDataOwneruuidId().value()) : nlohmann::json();
 #endif
 #if PROTOCOL_VERSION > 404
         output["pierce_level"] = GetPierceLevel();

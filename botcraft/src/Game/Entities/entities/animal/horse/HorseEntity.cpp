@@ -67,7 +67,7 @@ namespace Botcraft
 
         output["data_id_type_variant"] = GetDataIdTypeVariant();
 #if PROTOCOL_VERSION < 405
-        output["armor_type"] = GetArmorType() ? nlohmann::json(GetArmorType().value()) : nullptr;
+        output["armor_type"] = GetArmorType() ? nlohmann::json(GetArmorType().value()) : nlohmann::json();
 #endif
 
         return output;

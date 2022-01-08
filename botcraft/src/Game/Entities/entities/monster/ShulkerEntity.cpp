@@ -71,7 +71,7 @@ namespace Botcraft
 
         output["data_attach_face_id"] = static_cast<int>(GetDataAttachFaceId());
 #if PROTOCOL_VERSION < 755
-        output["data_attach_pos_id"] = GetDataAttachPosId() ? GetDataAttachPosId().value().Serialize() : nullptr;
+        output["data_attach_pos_id"] = GetDataAttachPosId() ? GetDataAttachPosId().value().Serialize() : nlohmann::json();
 #endif
         output["data_peek_id"] = GetDataPeekId();
         output["data_color_id"] = GetDataColorId();

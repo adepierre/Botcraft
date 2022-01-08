@@ -75,7 +75,7 @@ namespace Botcraft
 
         output["data_id_fireworks_item"] = GetDataIdFireworksItem().Serialize();
 #if PROTOCOL_VERSION > 404
-        output["data_attached_to_target"] = GetDataAttachedToTarget() ? nlohmann::json(GetDataAttachedToTarget().value()) : nullptr;
+        output["data_attached_to_target"] = GetDataAttachedToTarget() ? nlohmann::json(GetDataAttachedToTarget().value()) : nlohmann::json();
         output["data_shot_at_angle"] = GetDataShotAtAngle();
 #else
         output["data_attached_to_target"] = GetDataAttachedToTarget();

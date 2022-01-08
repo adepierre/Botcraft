@@ -79,9 +79,9 @@ namespace Botcraft
         output["data_color"] = GetDataColor();
         output["data_waiting"] = GetDataWaiting();
 #if PROTOCOL_VERSION > 340
-        output["data_particle"] = GetDataParticle() ? nlohmann::json({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : nullptr;
+        output["data_particle"] = GetDataParticle() ? nlohmann::json({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : nlohmann::json();
 #else
-        output["data_particle"] = GetDataParticle() ? nlohmann::json(GetDataParticle().value()) : nullptr;
+        output["data_particle"] = GetDataParticle() ? nlohmann::json(GetDataParticle().value()) : nlohmann::json();
 #endif
         return output;
     }

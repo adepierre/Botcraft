@@ -666,7 +666,7 @@ namespace Botcraft
         output["data_shared_flags_id"] = GetDataSharedFlagsId();
         output["data_air_supply_id"] = GetDataAirSupplyId();
 #if PROTOCOL_VERSION > 340
-        output["data_custom_name"] = GetDataCustomName() ? GetDataCustomName().value().Serialize() : nullptr;
+        output["data_custom_name"] = GetDataCustomName() ? GetDataCustomName().value().Serialize() : nlohmann::json();
 #else
         output["data_custom_name"] = GetDataCustomName();
 #endif

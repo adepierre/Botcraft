@@ -56,7 +56,7 @@ namespace Botcraft
         output["data_stinger_count_id"] = GetDataStingerCountId();
 #endif
 #if PROTOCOL_VERSION > 404
-        output["sleeping_pos_id"] = GetSleepingPosId() ? GetSleepingPosId().value().Serialize() : nullptr;
+        output["sleeping_pos_id"] = GetSleepingPosId() ? GetSleepingPosId().value().Serialize() : nlohmann::json();
 #endif
 
         return output;
