@@ -74,12 +74,12 @@ namespace Botcraft
         nlohmann::json output = TamableAnimalEntity::Serialize();
 
 #if PROTOCOL_VERSION < 499
-        output["data_health_id"] = GetDataHealthId();
+        output["metadata"]["data_health_id"] = GetDataHealthId();
 #endif
-        output["data_interested_id"] = GetDataInterestedId();
-        output["data_collar_color"] = GetDataCollarColor();
+        output["metadata"]["data_interested_id"] = GetDataInterestedId();
+        output["metadata"]["data_collar_color"] = GetDataCollarColor();
 #if PROTOCOL_VERSION > 578
-        output["data_remaining_anger_time"] = GetDataRemainingAngerTime();
+        output["metadata"]["data_remaining_anger_time"] = GetDataRemainingAngerTime();
 #endif
 
         return output;

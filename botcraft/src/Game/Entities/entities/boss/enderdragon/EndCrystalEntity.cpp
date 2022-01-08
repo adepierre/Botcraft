@@ -61,8 +61,8 @@ namespace Botcraft
     {
         nlohmann::json output = Entity::Serialize();
 
-        output["data_beam_target"] = GetDataBeamTarget() ? GetDataBeamTarget().value().Serialize() : nlohmann::json();
-        output["data_show_bottom"] = GetDataShowBottom();
+        output["metadata"]["data_beam_target"] = GetDataBeamTarget() ? GetDataBeamTarget().value().Serialize() : nlohmann::json();
+        output["metadata"]["data_show_bottom"] = GetDataShowBottom();
 
         return output;
     }

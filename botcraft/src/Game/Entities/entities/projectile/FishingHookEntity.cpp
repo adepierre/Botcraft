@@ -70,9 +70,9 @@ namespace Botcraft
         nlohmann::json output = Entity::Serialize();
 #endif
 
-        output["data_hooked_entity"] = GetDataHookedEntity();
+        output["metadata"]["data_hooked_entity"] = GetDataHookedEntity();
 #if PROTOCOL_VERSION > 578
-        output["data_biting"] = GetDataBiting();
+        output["metadata"]["data_biting"] = GetDataBiting();
 #endif
 
         return output;

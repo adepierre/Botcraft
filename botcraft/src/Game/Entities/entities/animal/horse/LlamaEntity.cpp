@@ -63,9 +63,9 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractChestedHorseEntity::Serialize();
 
-        output["data_strength_id"] = GetDataStrengthId();
-        output["data_swag_id"] = GetDataSwagId();
-        output["data_variant_id"] = GetDataVariantId();
+        output["metadata"]["data_strength_id"] = GetDataStrengthId();
+        output["metadata"]["data_swag_id"] = GetDataSwagId();
+        output["metadata"]["data_variant_id"] = GetDataVariantId();
 
         return output;
     }

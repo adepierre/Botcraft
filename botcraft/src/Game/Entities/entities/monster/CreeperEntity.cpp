@@ -63,9 +63,9 @@ namespace Botcraft
     {
         nlohmann::json output = MonsterEntity::Serialize();
 
-        output["data_swell_dir"] = GetDataSwellDir();
-        output["data_is_powered"] = GetDataIsPowered();
-        output["data_is_ignited"] = GetDataIsIgnited();
+        output["metadata"]["data_swell_dir"] = GetDataSwellDir();
+        output["metadata"]["data_is_powered"] = GetDataIsPowered();
+        output["metadata"]["data_is_ignited"] = GetDataIsIgnited();
 
         return output;
     }

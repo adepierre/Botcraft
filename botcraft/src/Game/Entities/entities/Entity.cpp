@@ -663,21 +663,35 @@ namespace Botcraft
     {
         nlohmann::json output;
 
-        output["data_shared_flags_id"] = GetDataSharedFlagsId();
-        output["data_air_supply_id"] = GetDataAirSupplyId();
+        output["id"] = entity_id;
+        output["position"] = position.Serialize();
+        output["yaw"] = yaw;
+        output["pitch"] = pitch;
+        output["speed"] = speed.Serialize();
+        output["on_ground"] = on_ground;
+        output["equipment"] = nlohmann::json();
+        for (auto& p : equipments)
+        {
+            output["equipment"][std::to_string(static_cast<int>(p.first))] = p.second.Serialize();
+        }
+
+        output["metadata"] = nlohmann::json();
+
+        output["metadata"]["data_shared_flags_id"] = GetDataSharedFlagsId();
+        output["metadata"]["data_air_supply_id"] = GetDataAirSupplyId();
 #if PROTOCOL_VERSION > 340
-        output["data_custom_name"] = GetDataCustomName() ? GetDataCustomName().value().Serialize() : nlohmann::json();
+        output["metadata"]["data_custom_name"] = GetDataCustomName() ? GetDataCustomName().value().Serialize() : nlohmann::json();
 #else
-        output["data_custom_name"] = GetDataCustomName();
+        output["metadata"]["data_custom_name"] = GetDataCustomName();
 #endif
-        output["data_custom_name_visible"] = GetDataCustomNameVisible();
-        output["data_silent"] = GetDataSilent();
-        output["data_no_gravity"] = GetDataNoGravity();
+        output["metadata"]["data_custom_name_visible"] = GetDataCustomNameVisible();
+        output["metadata"]["data_silent"] = GetDataSilent();
+        output["metadata"]["data_no_gravity"] = GetDataNoGravity();
 #if PROTOCOL_VERSION > 404
-        output["data_pose"] = static_cast<int>(GetDataPose());
+        output["metadata"]["data_pose"] = static_cast<int>(GetDataPose());
 #endif
 #if PROTOCOL_VERSION > 754
-        output["data_ticks_frozen"] = GetDataTicksFrozen();
+        output["metadata"]["data_ticks_frozen"] = GetDataTicksFrozen();
 #endif
 
         return output;

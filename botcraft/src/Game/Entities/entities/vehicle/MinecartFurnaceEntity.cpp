@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractMinecartEntity::Serialize();
 
-        output["data_id_fuel"] = GetDataIdFuel();
+        output["metadata"]["data_id_fuel"] = GetDataIdFuel();
 
         return output;
     }

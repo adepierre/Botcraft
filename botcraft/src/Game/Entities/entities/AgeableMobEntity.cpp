@@ -27,7 +27,7 @@ namespace Botcraft
     {
         nlohmann::json output = PathfinderMobEntity::Serialize();
 
-        output["data_baby_id"] = GetDataBabyId();
+        output["metadata"]["data_baby_id"] = GetDataBabyId();
 
         return output;
     }

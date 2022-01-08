@@ -69,12 +69,12 @@ namespace Botcraft
     {
         nlohmann::json output = LivingEntity::Serialize();
 
-        output["data_player_absorption_id"] = GetDataPlayerAbsorptionId();
-        output["data_score_id"] = GetDataScoreId();
-        output["data_player_mode_customisation"] = GetDataPlayerModeCustomisation();
-        output["data_player_main_hand"] = GetDataPlayerMainHand();
-        output["data_shoulder_left"] = GetDataShoulderLeft().Serialize();
-        output["data_shoulder_right"] = GetDataShoulderRight().Serialize();
+        output["metadata"]["data_player_absorption_id"] = GetDataPlayerAbsorptionId();
+        output["metadata"]["data_score_id"] = GetDataScoreId();
+        output["metadata"]["data_player_mode_customisation"] = GetDataPlayerModeCustomisation();
+        output["metadata"]["data_player_main_hand"] = GetDataPlayerMainHand();
+        output["metadata"]["data_shoulder_left"] = GetDataShoulderLeft().Serialize();
+        output["metadata"]["data_shoulder_right"] = GetDataShoulderRight().Serialize();
 
         return output;
     }

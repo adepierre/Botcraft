@@ -64,7 +64,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractSkeletonEntity::Serialize();
 
-        output["data_stray_conversion_id"] = GetDataStrayConversionId();
+        output["metadata"]["data_stray_conversion_id"] = GetDataStrayConversionId();
 
         return output;
     }

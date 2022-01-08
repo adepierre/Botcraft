@@ -67,10 +67,10 @@ namespace Botcraft
     {
         nlohmann::json output = MonsterEntity::Serialize();
 
-        output["data_carry_state"] = GetDataCarryState();
-        output["data_creepy"] = GetDataCreepy();
+        output["metadata"]["data_carry_state"] = GetDataCarryState();
+        output["metadata"]["data_creepy"] = GetDataCreepy();
 #if PROTOCOL_VERSION > 498
-        output["data_stared_at"] = GetDataStaredAt();
+        output["metadata"]["data_stared_at"] = GetDataStaredAt();
 #endif
 
         return output;

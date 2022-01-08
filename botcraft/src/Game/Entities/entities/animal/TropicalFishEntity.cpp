@@ -60,7 +60,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractSchoolingFishEntity::Serialize();
 
-        output["data_id_type_variant"] = GetDataIdTypeVariant();
+        output["metadata"]["data_id_type_variant"] = GetDataIdTypeVariant();
 
         return output;
     }

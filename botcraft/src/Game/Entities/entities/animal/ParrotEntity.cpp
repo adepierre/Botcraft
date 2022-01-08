@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = ShoulderRidingEntity::Serialize();
 
-        output["data_variant_id"] = GetDataVariantId();
+        output["metadata"]["data_variant_id"] = GetDataVariantId();
 
         return output;
     }

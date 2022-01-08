@@ -61,8 +61,8 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractMinecartEntity::Serialize();
 
-        output["data_id_command_name"] = GetDataIdCommandName();
-        output["data_id_last_output"] = GetDataIdLastOutput().Serialize();
+        output["metadata"]["data_id_command_name"] = GetDataIdCommandName();
+        output["metadata"]["data_id_last_output"] = GetDataIdLastOutput().Serialize();
 
         return output;
     }

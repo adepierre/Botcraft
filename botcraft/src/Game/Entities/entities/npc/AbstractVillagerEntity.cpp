@@ -28,7 +28,7 @@ namespace Botcraft
     {
         nlohmann::json output = AgeableMobEntity::Serialize();
 
-        output["data_unhappy_counter"] = GetDataUnhappyCounter();
+        output["metadata"]["data_unhappy_counter"] = GetDataUnhappyCounter();
 
         return output;
     }

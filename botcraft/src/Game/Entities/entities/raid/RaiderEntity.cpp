@@ -28,7 +28,7 @@ namespace Botcraft
     {
         nlohmann::json output = PatrollingMonsterEntity::Serialize();
 
-        output["is_celebrating"] = GetIsCelebrating();
+        output["metadata"]["is_celebrating"] = GetIsCelebrating();
 
         return output;
     }

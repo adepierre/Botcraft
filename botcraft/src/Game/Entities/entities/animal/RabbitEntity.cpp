@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = AnimalEntity::Serialize();
 
-        output["data_type_id"] = GetDataTypeId();
+        output["metadata"]["data_type_id"] = GetDataTypeId();
 
         return output;
     }

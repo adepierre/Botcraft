@@ -43,12 +43,12 @@ namespace Botcraft
         nlohmann::json output = Entity::Serialize();
 #endif
 
-        output["id_flags"] = GetIdFlags();
+        output["metadata"]["id_flags"] = GetIdFlags();
 #if PROTOCOL_VERSION < 579 && PROTOCOL_VERSION > 393
-        output["data_owneruuid_id"] = GetDataOwneruuidId() ? nlohmann::json(GetDataOwneruuidId().value()) : nlohmann::json();
+        output["metadata"]["data_owneruuid_id"] = GetDataOwneruuidId() ? nlohmann::json(GetDataOwneruuidId().value()) : nlohmann::json();
 #endif
 #if PROTOCOL_VERSION > 404
-        output["pierce_level"] = GetPierceLevel();
+        output["metadata"]["pierce_level"] = GetPierceLevel();
 #endif
 
         return output;

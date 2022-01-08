@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractGolemEntity::Serialize();
 
-        output["data_pumpkin_id"] = GetDataPumpkinId();
+        output["metadata"]["data_pumpkin_id"] = GetDataPumpkinId();
 
         return output;
     }

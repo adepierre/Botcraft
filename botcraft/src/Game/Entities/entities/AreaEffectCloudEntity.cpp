@@ -75,13 +75,13 @@ namespace Botcraft
     {
         nlohmann::json output = Entity::Serialize();
 
-        output["data_radius"] = GetDataRadius();
-        output["data_color"] = GetDataColor();
-        output["data_waiting"] = GetDataWaiting();
+        output["metadata"]["data_radius"] = GetDataRadius();
+        output["metadata"]["data_color"] = GetDataColor();
+        output["metadata"]["data_waiting"] = GetDataWaiting();
 #if PROTOCOL_VERSION > 340
-        output["data_particle"] = GetDataParticle() ? nlohmann::json({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : nlohmann::json();
+        output["metadata"]["data_particle"] = GetDataParticle() ? nlohmann::json({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : nlohmann::json();
 #else
-        output["data_particle"] = GetDataParticle() ? nlohmann::json(GetDataParticle().value()) : nlohmann::json();
+        output["metadata"]["data_particle"] = GetDataParticle() ? nlohmann::json(GetDataParticle().value()) : nlohmann::json();
 #endif
         return output;
     }

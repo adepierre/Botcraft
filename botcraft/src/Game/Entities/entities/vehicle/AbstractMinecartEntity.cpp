@@ -37,12 +37,12 @@ namespace Botcraft
     {
         nlohmann::json output = Entity::Serialize();
 
-        output["data_id_hurt"] = GetDataIdHurt();
-        output["data_id_hurtdir"] = GetDataIdHurtdir();
-        output["data_id_damage"] = GetDataIdDamage();
-        output["data_id_display_block"] = GetDataIdDisplayBlock();
-        output["data_id_display_offset"] = GetDataIdDisplayOffset();
-        output["data_id_custom_display"] = GetDataIdCustomDisplay();
+        output["metadata"]["data_id_hurt"] = GetDataIdHurt();
+        output["metadata"]["data_id_hurtdir"] = GetDataIdHurtdir();
+        output["metadata"]["data_id_damage"] = GetDataIdDamage();
+        output["metadata"]["data_id_display_block"] = GetDataIdDisplayBlock();
+        output["metadata"]["data_id_display_offset"] = GetDataIdDisplayOffset();
+        output["metadata"]["data_id_custom_display"] = GetDataIdCustomDisplay();
 
         return output;
     }

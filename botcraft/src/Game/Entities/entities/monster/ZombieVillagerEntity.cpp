@@ -69,11 +69,11 @@ namespace Botcraft
     {
         nlohmann::json output = ZombieEntity::Serialize();
 
-        output["data_converting_id"] = GetDataConvertingId();
+        output["metadata"]["data_converting_id"] = GetDataConvertingId();
 #if PROTOCOL_VERSION > 404
-        output["data_villager_data"] = { GetDataVillagerData().type, GetDataVillagerData().profession, GetDataVillagerData().level };
+        output["metadata"]["data_villager_data"] = { GetDataVillagerData().type, GetDataVillagerData().profession, GetDataVillagerData().level };
 #else
-        output["data_villager_profession_id"] = GetDataVillagerProfessionId();
+        output["metadata"]["data_villager_profession_id"] = GetDataVillagerProfessionId();
 #endif
 
         return output;

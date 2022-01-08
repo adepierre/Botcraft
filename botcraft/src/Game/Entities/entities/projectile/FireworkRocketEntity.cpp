@@ -73,12 +73,12 @@ namespace Botcraft
         nlohmann::json output = Entity::Serialize();
 #endif
 
-        output["data_id_fireworks_item"] = GetDataIdFireworksItem().Serialize();
+        output["metadata"]["data_id_fireworks_item"] = GetDataIdFireworksItem().Serialize();
 #if PROTOCOL_VERSION > 404
-        output["data_attached_to_target"] = GetDataAttachedToTarget() ? nlohmann::json(GetDataAttachedToTarget().value()) : nlohmann::json();
-        output["data_shot_at_angle"] = GetDataShotAtAngle();
+        output["metadata"]["data_attached_to_target"] = GetDataAttachedToTarget() ? nlohmann::json(GetDataAttachedToTarget().value()) : nlohmann::json();
+        output["metadata"]["data_shot_at_angle"] = GetDataShotAtAngle();
 #else
-        output["data_attached_to_target"] = GetDataAttachedToTarget();
+        output["metadata"]["data_attached_to_target"] = GetDataAttachedToTarget();
 #endif
 
         return output;

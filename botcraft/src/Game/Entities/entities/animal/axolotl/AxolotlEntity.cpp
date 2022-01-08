@@ -64,9 +64,9 @@ namespace Botcraft
     {
         nlohmann::json output = AnimalEntity::Serialize();
 
-        output["data_variant"] = GetDataVariant();
-        output["data_playing_dead"] = GetDataPlayingDead();
-        output["from_bucket"] = GetFromBucket();
+        output["metadata"]["data_variant"] = GetDataVariant();
+        output["metadata"]["data_playing_dead"] = GetDataPlayingDead();
+        output["metadata"]["from_bucket"] = GetFromBucket();
 
         return output;
     }

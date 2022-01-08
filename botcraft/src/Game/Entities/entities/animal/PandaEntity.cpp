@@ -70,12 +70,12 @@ namespace Botcraft
     {
         nlohmann::json output = AnimalEntity::Serialize();
 
-        output["unhappy_counter"] = GetUnhappyCounter();
-        output["sneeze_counter"] = GetSneezeCounter();
-        output["eat_counter"] = GetEatCounter();
-        output["main_gene_id"] = GetMainGeneId();
-        output["hidden_gene_id"] = GetHiddenGeneId();
-        output["data_id_flags"] = GetDataIdFlags();
+        output["metadata"]["unhappy_counter"] = GetUnhappyCounter();
+        output["metadata"]["sneeze_counter"] = GetSneezeCounter();
+        output["metadata"]["eat_counter"] = GetEatCounter();
+        output["metadata"]["main_gene_id"] = GetMainGeneId();
+        output["metadata"]["hidden_gene_id"] = GetHiddenGeneId();
+        output["metadata"]["data_id_flags"] = GetDataIdFlags();
 
         return output;
     }

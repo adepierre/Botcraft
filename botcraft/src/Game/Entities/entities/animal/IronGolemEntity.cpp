@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractGolemEntity::Serialize();
 
-        output["data_flags_id"] = GetDataFlagsId();
+        output["metadata"]["data_flags_id"] = GetDataFlagsId();
 
         return output;
     }

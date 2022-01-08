@@ -27,7 +27,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractIllagerEntity::Serialize();
 
-        output["data_spell_casting_id"] = GetDataSpellCastingId();
+        output["metadata"]["data_spell_casting_id"] = GetDataSpellCastingId();
 
         return output;
     }

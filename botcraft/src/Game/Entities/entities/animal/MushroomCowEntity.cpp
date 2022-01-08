@@ -64,7 +64,7 @@ namespace Botcraft
     {
         nlohmann::json output = CowEntity::Serialize();
 
-        output["data_type"] = GetDataType();
+        output["metadata"]["data_type"] = GetDataType();
 
         return output;
     }

@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractHurtingProjectileEntity::Serialize();
 
-        output["data_dangerous"] = GetDataDangerous();
+        output["metadata"]["data_dangerous"] = GetDataDangerous();
 
         return output;
     }

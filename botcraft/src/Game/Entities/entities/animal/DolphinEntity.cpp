@@ -64,9 +64,9 @@ namespace Botcraft
     {
         nlohmann::json output = WaterAnimalEntity::Serialize();
 
-        output["treasure_pos"] = GetTreasurePos().Serialize();
-        output["got_fish"] = GetGotFish();
-        output["moistness_level"] = GetMoistnessLevel();
+        output["metadata"]["treasure_pos"] = GetTreasurePos().Serialize();
+        output["metadata"]["got_fish"] = GetGotFish();
+        output["metadata"]["moistness_level"] = GetMoistnessLevel();
 
         return output;
     }

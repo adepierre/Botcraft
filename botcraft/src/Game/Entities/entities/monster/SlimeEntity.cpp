@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = MobEntity::Serialize();
 
-        output["id_size"] = GetIdSize();
+        output["metadata"]["id_size"] = GetIdSize();
 
         return output;
     }

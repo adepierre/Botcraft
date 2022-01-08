@@ -60,7 +60,7 @@ namespace Botcraft
     {
         nlohmann::json output = AnimalEntity::Serialize();
 
-        output["data_immune_to_zombification"] = GetDataImmuneToZombification();
+        output["metadata"]["data_immune_to_zombification"] = GetDataImmuneToZombification();
 
         return output;
     }

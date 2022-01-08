@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = FlyingMobEntity::Serialize();
 
-        output["data_is_charging"] = GetDataIsCharging();
+        output["metadata"]["data_is_charging"] = GetDataIsCharging();
 
         return output;
     }

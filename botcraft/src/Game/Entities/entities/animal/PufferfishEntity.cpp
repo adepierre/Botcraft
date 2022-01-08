@@ -60,7 +60,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractFishEntity::Serialize();
 
-        output["puff_state"] = GetPuffState();
+        output["metadata"]["puff_state"] = GetPuffState();
 
         return output;
     }

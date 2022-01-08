@@ -65,10 +65,10 @@ namespace Botcraft
     {
         nlohmann::json output = MonsterEntity::Serialize();
 
-        output["data_target_a"] = GetDataTargetA();
-        output["data_target_b"] = GetDataTargetB();
-        output["data_target_c"] = GetDataTargetC();
-        output["data_id_inv"] = GetDataIdInv();
+        output["metadata"]["data_target_a"] = GetDataTargetA();
+        output["metadata"]["data_target_b"] = GetDataTargetB();
+        output["metadata"]["data_target_c"] = GetDataTargetC();
+        output["metadata"]["data_id_inv"] = GetDataIdInv();
 
         return output;
     }

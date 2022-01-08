@@ -65,9 +65,9 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractHorseEntity::Serialize();
 
-        output["data_id_type_variant"] = GetDataIdTypeVariant();
+        output["metadata"]["data_id_type_variant"] = GetDataIdTypeVariant();
 #if PROTOCOL_VERSION < 405
-        output["armor_type"] = GetArmorType() ? nlohmann::json(GetArmorType().value()) : nlohmann::json();
+        output["metadata"]["armor_type"] = GetArmorType() ? nlohmann::json(GetArmorType().value()) : nlohmann::json();
 #endif
 
         return output;

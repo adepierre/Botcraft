@@ -66,10 +66,10 @@ namespace Botcraft
     {
         nlohmann::json output = TamableAnimalEntity::Serialize();
 
-        output["data_type_id"] = GetDataTypeId();
-        output["is_lying"] = GetIsLying();
-        output["relax_state_one"] = GetRelaxStateOne();
-        output["data_collar_color"] = GetDataCollarColor();
+        output["metadata"]["data_type_id"] = GetDataTypeId();
+        output["metadata"]["is_lying"] = GetIsLying();
+        output["metadata"]["relax_state_one"] = GetRelaxStateOne();
+        output["metadata"]["data_collar_color"] = GetDataCollarColor();
 
         return output;
     }

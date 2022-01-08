@@ -70,12 +70,12 @@ namespace Botcraft
     {
         nlohmann::json output = AnimalEntity::Serialize();
 
-        output["home_pos"] = GetHomePos().Serialize();
-        output["has_egg"] = GetHasEgg();
-        output["laying_egg"] = GetLayingEgg();
-        output["travel_pos"] = GetTravelPos().Serialize();
-        output["going_home"] = GetGoingHome();
-        output["travelling"] = GetTravelling();
+        output["metadata"]["home_pos"] = GetHomePos().Serialize();
+        output["metadata"]["has_egg"] = GetHasEgg();
+        output["metadata"]["laying_egg"] = GetLayingEgg();
+        output["metadata"]["travel_pos"] = GetTravelPos().Serialize();
+        output["metadata"]["going_home"] = GetGoingHome();
+        output["metadata"]["travelling"] = GetTravelling();
 
         return output;
     }

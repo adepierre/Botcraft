@@ -60,7 +60,7 @@ namespace Botcraft
     {
         nlohmann::json output = MonsterEntity::Serialize();
 
-        output["data_baby_id"] = GetDataBabyId();
+        output["metadata"]["data_baby_id"] = GetDataBabyId();
 
         return output;
     }

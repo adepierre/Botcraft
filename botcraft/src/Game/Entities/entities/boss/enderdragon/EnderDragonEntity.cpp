@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = MobEntity::Serialize();
 
-        output["data_phase"] = GetDataPhase();
+        output["metadata"]["data_phase"] = GetDataPhase();
 
         return output;
     }

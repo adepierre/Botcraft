@@ -72,9 +72,9 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 404
-        output["data_villager_data"] = { GetDataVillagerData().type, GetDataVillagerData().profession, GetDataVillagerData().level };
+        output["metadata"]["data_villager_data"] = { GetDataVillagerData().type, GetDataVillagerData().profession, GetDataVillagerData().level };
 #else
-        output["data_villager_profession_id"] = std::any_cast<int>(GetDataVillagerProfessionId());
+        output["metadata"]["data_villager_profession_id"] = std::any_cast<int>(GetDataVillagerProfessionId());
 #endif
 
         return output;

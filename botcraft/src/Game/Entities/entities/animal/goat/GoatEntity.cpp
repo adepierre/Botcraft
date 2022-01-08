@@ -60,7 +60,7 @@ namespace Botcraft
     {
         nlohmann::json output = AnimalEntity::Serialize();
 
-        output["data_is_screaming_goat"] = GetDataIsScreamingGoat();
+        output["metadata"]["data_is_screaming_goat"] = GetDataIsScreamingGoat();
 
         return output;
     }

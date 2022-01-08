@@ -74,12 +74,12 @@ namespace Botcraft
         nlohmann::json output = MonsterEntity::Serialize();
 #endif
 
-        output["data_baby_id"] = GetDataBabyId();
+        output["metadata"]["data_baby_id"] = GetDataBabyId();
 #if PROTOCOL_VERSION < 737
-        output["data_immune_to_zombification"] = GetDataImmuneToZombification();
+        output["metadata"]["data_immune_to_zombification"] = GetDataImmuneToZombification();
 #endif
-        output["data_is_charging_crossbow"] = GetDataIsChargingCrossbow();
-        output["data_is_dancing"] = GetDataIsDancing();
+        output["metadata"]["data_is_charging_crossbow"] = GetDataIsChargingCrossbow();
+        output["metadata"]["data_is_dancing"] = GetDataIsDancing();
 
         return output;
     }

@@ -64,7 +64,7 @@ namespace Botcraft
     {
         nlohmann::json output = ThrowableProjectileEntity::Serialize();
 
-        output["data_item_stack"] = GetDataItemStack().Serialize();
+        output["metadata"]["data_item_stack"] = GetDataItemStack().Serialize();
 
         return output;
     }

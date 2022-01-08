@@ -32,7 +32,7 @@ namespace Botcraft
     {
         nlohmann::json output = MonsterEntity::Serialize();
 
-        output["is_swinging_arms"] = GetIsSwingingArms();
+        output["metadata"]["is_swinging_arms"] = GetIsSwingingArms();
 
         return output;
     }

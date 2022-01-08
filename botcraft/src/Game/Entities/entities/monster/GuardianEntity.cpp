@@ -61,8 +61,8 @@ namespace Botcraft
     {
         nlohmann::json output = MonsterEntity::Serialize();
 
-        output["data_id_moving"] = GetDataIdMoving();
-        output["data_id_attack_target"] = GetDataIdAttackTarget();
+        output["metadata"]["data_id_moving"] = GetDataIdMoving();
+        output["metadata"]["data_id_attack_target"] = GetDataIdAttackTarget();
 
         return output;
     }

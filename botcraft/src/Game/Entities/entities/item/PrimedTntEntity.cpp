@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = Entity::Serialize();
 
-        output["data_fuse_id"] = GetDataFuseId();
+        output["metadata"]["data_fuse_id"] = GetDataFuseId();
 
         return output;
     }

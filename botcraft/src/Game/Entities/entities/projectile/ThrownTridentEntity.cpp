@@ -66,9 +66,9 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractArrowEntity::Serialize();
 
-        output["id_loyalty"] = GetIdLoyalty();
+        output["metadata"]["id_loyalty"] = GetIdLoyalty();
 #if PROTOCOL_VERSION > 498
-        output["id_foil"] = GetIdFoil();
+        output["metadata"]["id_foil"] = GetIdFoil();
 #endif
 
         return output;

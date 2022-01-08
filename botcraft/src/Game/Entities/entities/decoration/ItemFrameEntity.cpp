@@ -61,8 +61,8 @@ namespace Botcraft
     {
         nlohmann::json output = HangingEntity::Serialize();
 
-        output["data_item"] = GetDataItem().Serialize();
-        output["data_rotation"] = GetDataRotation();
+        output["metadata"]["data_item"] = GetDataItem().Serialize();
+        output["metadata"]["data_rotation"] = GetDataRotation();
 
         return output;
     }

@@ -27,7 +27,7 @@ namespace Botcraft
     {
         nlohmann::json output = WaterAnimalEntity::Serialize();
 
-        output["from_bucket"] = GetFromBucket();
+        output["metadata"]["from_bucket"] = GetFromBucket();
 
         return output;
     }

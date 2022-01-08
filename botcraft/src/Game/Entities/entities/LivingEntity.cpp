@@ -47,16 +47,16 @@ namespace Botcraft
     {
         nlohmann::json output = Entity::Serialize();
 
-        output["data_living_entity_flags"] = GetDataLivingEntityFlags();
-        output["data_health_id"] = GetDataHealthId();
-        output["data_effect_color_id"] = GetDataEffectColorId();
-        output["data_effect_ambience_id"] = GetDataEffectAmbienceId();
-        output["data_arrow_count_id"] = GetDataArrowCountId();
+        output["metadata"]["data_living_entity_flags"] = GetDataLivingEntityFlags();
+        output["metadata"]["data_health_id"] = GetDataHealthId();
+        output["metadata"]["data_effect_color_id"] = GetDataEffectColorId();
+        output["metadata"]["data_effect_ambience_id"] = GetDataEffectAmbienceId();
+        output["metadata"]["data_arrow_count_id"] = GetDataArrowCountId();
 #if PROTOCOL_VERSION > 498
-        output["data_stinger_count_id"] = GetDataStingerCountId();
+        output["metadata"]["data_stinger_count_id"] = GetDataStingerCountId();
 #endif
 #if PROTOCOL_VERSION > 404
-        output["sleeping_pos_id"] = GetSleepingPosId() ? GetSleepingPosId().value().Serialize() : nlohmann::json();
+        output["metadata"]["sleeping_pos_id"] = GetSleepingPosId() ? GetSleepingPosId().value().Serialize() : nlohmann::json();
 #endif
 
         return output;

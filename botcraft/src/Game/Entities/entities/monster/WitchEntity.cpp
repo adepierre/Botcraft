@@ -63,7 +63,7 @@ namespace Botcraft
         nlohmann::json output = MobEntity::Serialize();
 #endif
 
-        output["data_using_item"] = GetDataUsingItem();
+        output["metadata"]["data_using_item"] = GetDataUsingItem();
 
         return output;
     }

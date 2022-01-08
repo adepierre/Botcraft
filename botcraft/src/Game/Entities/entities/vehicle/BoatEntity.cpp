@@ -75,14 +75,14 @@ namespace Botcraft
     {
         nlohmann::json output = Entity::Serialize();
 
-        output["data_id_hurt"] = GetDataIdHurt();
-        output["data_id_hurtdir"] = GetDataIdHurtdir();
-        output["data_id_damage"] = GetDataIdDamage();
-        output["data_id_type"] = GetDataIdType();
-        output["data_id_paddle_left"] = GetDataIdPaddleLeft();
-        output["data_id_paddle_right"] = GetDataIdPaddleRight();
+        output["metadata"]["data_id_hurt"] = GetDataIdHurt();
+        output["metadata"]["data_id_hurtdir"] = GetDataIdHurtdir();
+        output["metadata"]["data_id_damage"] = GetDataIdDamage();
+        output["metadata"]["data_id_type"] = GetDataIdType();
+        output["metadata"]["data_id_paddle_left"] = GetDataIdPaddleLeft();
+        output["metadata"]["data_id_paddle_right"] = GetDataIdPaddleRight();
 #if PROTOCOL_VERSION > 340
-        output["data_id_bubble_time"] = GetDataIdBubbleTime();
+        output["metadata"]["data_id_bubble_time"] = GetDataIdBubbleTime();
 #endif
 
         return output;

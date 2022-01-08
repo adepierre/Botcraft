@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractArrowEntity::Serialize();
 
-        output["id_effect_color"] = GetIdEffectColor();
+        output["metadata"]["id_effect_color"] = GetIdEffectColor();
 
         return output;
     }

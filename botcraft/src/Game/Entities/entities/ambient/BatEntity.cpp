@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = AmbientCreatureEntity::Serialize();
 
-        output["data_id_flags"] = GetDataIdFlags();
+        output["metadata"]["data_id_flags"] = GetDataIdFlags();
 
         return output;
     }

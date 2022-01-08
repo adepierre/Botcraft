@@ -64,9 +64,9 @@ namespace Botcraft
     {
         nlohmann::json output = AnimalEntity::Serialize();
 
-        output["data_boost_time"] = GetDataBoostTime();
-        output["data_suffocating"] = GetDataSuffocating();
-        output["data_saddle_id"] = GetDataSaddleId();
+        output["metadata"]["data_boost_time"] = GetDataBoostTime();
+        output["metadata"]["data_suffocating"] = GetDataSuffocating();
+        output["metadata"]["data_saddle_id"] = GetDataSaddleId();
 
         return output;
     }

@@ -60,7 +60,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractIllagerEntity::Serialize();
 
-        output["is_charging_crossbow"] = GetIsChargingCrossbow();
+        output["metadata"]["is_charging_crossbow"] = GetIsChargingCrossbow();
 
         return output;
     }

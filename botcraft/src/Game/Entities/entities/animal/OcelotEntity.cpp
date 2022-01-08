@@ -68,9 +68,9 @@ namespace Botcraft
         nlohmann::json output = AnimalEntity::Serialize();
 
 #if PROTOCOL_VERSION > 404
-        output["data_trusting"] = GetDataTrusting();
+        output["metadata"]["data_trusting"] = GetDataTrusting();
 #else
-        output["data_type_id"] = GetDataTypeId();
+        output["metadata"]["data_type_id"] = GetDataTypeId();
 #endif
 
         return output;

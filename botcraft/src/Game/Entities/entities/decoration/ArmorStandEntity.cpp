@@ -71,13 +71,13 @@ namespace Botcraft
     {
         nlohmann::json output = LivingEntity::Serialize();
 
-        output["data_client_flags"] = GetDataClientFlags();
-        output["data_head_pose"] = GetDataHeadPose().Serialize();
-        output["data_body_pose"] = GetDataBodyPose().Serialize();
-        output["data_left_arm_pose"] = GetDataLeftArmPose().Serialize();
-        output["data_right_arm_pose"] = GetDataRightArmPose().Serialize();
-        output["data_left_leg_pose"] = GetDataLeftLegPose().Serialize();
-        output["data_right_leg_pose"] = GetDataRightLegPose().Serialize();
+        output["metadata"]["data_client_flags"] = GetDataClientFlags();
+        output["metadata"]["data_head_pose"] = GetDataHeadPose().Serialize();
+        output["metadata"]["data_body_pose"] = GetDataBodyPose().Serialize();
+        output["metadata"]["data_left_arm_pose"] = GetDataLeftArmPose().Serialize();
+        output["metadata"]["data_right_arm_pose"] = GetDataRightArmPose().Serialize();
+        output["metadata"]["data_left_leg_pose"] = GetDataLeftLegPose().Serialize();
+        output["metadata"]["data_right_leg_pose"] = GetDataRightLegPose().Serialize();
 
         return output;
     }

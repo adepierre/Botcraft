@@ -27,7 +27,7 @@ namespace Botcraft
     {
         nlohmann::json output = AbstractHorseEntity::Serialize();
 
-        output["data_id_chest"] = GetDataIdChest();
+        output["metadata"]["data_id_chest"] = GetDataIdChest();
 
         return output;
     }

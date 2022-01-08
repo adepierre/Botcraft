@@ -31,7 +31,7 @@ namespace Botcraft
     {
         nlohmann::json output = MonsterEntity::Serialize();
 
-        output["has_target"] = GetHasTarget();
+        output["metadata"]["has_target"] = GetHasTarget();
 
         return output;
     }

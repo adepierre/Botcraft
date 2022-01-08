@@ -60,7 +60,7 @@ namespace Botcraft
     {
         nlohmann::json output = SquidEntity::Serialize();
 
-        output["data_dark_ticks_remaining"] = GetDataDarkTicksRemaining();
+        output["metadata"]["data_dark_ticks_remaining"] = GetDataDarkTicksRemaining();
 
         return output;
     }

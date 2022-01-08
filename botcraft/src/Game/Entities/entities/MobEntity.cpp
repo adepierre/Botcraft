@@ -27,7 +27,7 @@ namespace Botcraft
     {
         nlohmann::json output = LivingEntity::Serialize();
 
-        output["data_mob_flags_id"] = GetDataMobFlagsId();
+        output["metadata"]["data_mob_flags_id"] = GetDataMobFlagsId();
 
         return output;
     }

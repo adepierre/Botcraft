@@ -59,7 +59,7 @@ namespace Botcraft
     {
         nlohmann::json output = Entity::Serialize();
 
-        output["data_item"] = GetDataItem().Serialize();
+        output["metadata"]["data_item"] = GetDataItem().Serialize();
 
         return output;
     }

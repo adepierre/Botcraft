@@ -73,13 +73,13 @@ namespace Botcraft
     {
         nlohmann::json output = MonsterEntity::Serialize();
 
-        output["data_baby_id"] = GetDataBabyId();
-        output["data_special_type_id"] = GetDataSpecialTypeId();
+        output["metadata"]["data_baby_id"] = GetDataBabyId();
+        output["metadata"]["data_special_type_id"] = GetDataSpecialTypeId();
 #if PROTOCOL_VERSION < 405
-        output["data_are_hands_up"] = GetDataAreHandsUp();
+        output["metadata"]["data_are_hands_up"] = GetDataAreHandsUp();
 #endif
 #if PROTOCOL_VERSION > 340
-        output["data_drowned_conversion_id"] = GetDataDrownedConversionId();
+        output["metadata"]["data_drowned_conversion_id"] = GetDataDrownedConversionId();
 #endif
 
         return output;
