@@ -57,12 +57,12 @@ namespace Botcraft
         place_block_msg->SetDirection((int)face);
         switch (face)
         {
-        case PlayerDiggingFace::Bottom:
+        case PlayerDiggingFace::Down:
             place_block_msg->SetCursorPositionX(0.5f);
             place_block_msg->SetCursorPositionY(0.0f);
             place_block_msg->SetCursorPositionZ(0.5f);
             break;
-        case PlayerDiggingFace::Top:
+        case PlayerDiggingFace::Up:
             place_block_msg->SetCursorPositionX(0.5f);
             place_block_msg->SetCursorPositionY(1.0f);
             place_block_msg->SetCursorPositionZ(0.5f);
@@ -117,7 +117,7 @@ namespace Botcraft
         const Position& pos = blackboard.Get<Position>(variable_names[0]);
 
         // Optional
-        const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[1], PlayerDiggingFace::Top);
+        const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[1], PlayerDiggingFace::Up);
         const bool animation = blackboard.Get(variable_names[2], false);
 
         return InteractWithBlock(client, pos, face, animation);

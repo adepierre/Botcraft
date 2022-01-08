@@ -106,7 +106,7 @@ namespace Botcraft
         const Position& pos = blackboard.Get<Position>(variable_names[0]);
 
         // Optional
-        const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[1], PlayerDiggingFace::Top);
+        const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[1], PlayerDiggingFace::Up);
 
         return Dig(c, pos, face);
     }

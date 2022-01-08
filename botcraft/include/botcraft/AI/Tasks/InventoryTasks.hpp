@@ -39,7 +39,7 @@ namespace Botcraft
     /// @param face The face on which the block is placed
     /// @param wait_confirmation If true, waits for the server to send the new block in pos
     /// @return Success if placement attempt was made (and confirmed by the server if wait_confirmation is true), Failure otherwise
-    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const PlayerDiggingFace face = PlayerDiggingFace::Top, const bool wait_confirmation = false);
+    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const PlayerDiggingFace face = PlayerDiggingFace::Up, const bool wait_confirmation = false);
 
     /// @brief Same thing as PlaceBlock, but reads its parameters from the blackboard
     /// @param client The client performing the action

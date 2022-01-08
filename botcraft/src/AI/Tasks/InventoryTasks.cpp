@@ -321,12 +321,12 @@ namespace Botcraft
         place_block_msg->SetDirection(static_cast<int>(face));
         switch (face)
         {
-        case PlayerDiggingFace::Bottom:
+        case PlayerDiggingFace::Down:
             place_block_msg->SetCursorPositionX(0.5f);
             place_block_msg->SetCursorPositionY(0.0f);
             place_block_msg->SetCursorPositionZ(0.5f);
             break;
-        case PlayerDiggingFace::Top:
+        case PlayerDiggingFace::Up:
             place_block_msg->SetCursorPositionX(0.5f);
             place_block_msg->SetCursorPositionY(1.0f);
             place_block_msg->SetCursorPositionZ(0.5f);
@@ -418,7 +418,7 @@ namespace Botcraft
         const Position& pos = blackboard.Get<Position>(variable_names[1]);
 
         // Optional
-        const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[2], PlayerDiggingFace::Top);
+        const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[2], PlayerDiggingFace::Up);
         const bool wait_confirmation = blackboard.Get<bool>(variable_names[3], false);
 
 
@@ -479,7 +479,7 @@ namespace Botcraft
     Status OpenContainer(BehaviourClient& client, const Position& pos)
     {
         // Open the container
-        if (InteractWithBlock(client, pos, PlayerDiggingFace::Top) == Status::Failure)
+        if (InteractWithBlock(client, pos, PlayerDiggingFace::Up) == Status::Failure)
         {
             return Status::Failure;
         }

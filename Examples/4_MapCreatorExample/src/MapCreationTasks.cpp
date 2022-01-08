@@ -120,7 +120,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
                         && it->first < first_player_index
                         && !it->second.IsEmptySlot()
 #if PROTOCOL_VERSION < 347
-                        && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item_name
+                        && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == food_name
 #else
                         && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == food_name
 #endif
@@ -161,7 +161,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
         auto start = std::chrono::system_clock::now();
         while (
 #if PROTOCOL_VERSION < 347
-            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetBlockID()).at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemDamage())->GetName() != item_name
+            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetBlockID()).at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemDamage())->GetName() != food_name
 #else
             AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemID())->GetName() != food_name
 #endif

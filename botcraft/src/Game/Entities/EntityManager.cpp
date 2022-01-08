@@ -1,7 +1,9 @@
+#include <iostream>
+
 #include "botcraft/Game/Entities/EntityManager.hpp"
-#include "botcraft/Game/Entities/Entity.hpp"
+#include "botcraft/Game/Entities/entities/Entity.hpp"
+#include "botcraft/Game/Entities/entities/UnknownEntity.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
-#include "botcraft/Game/Entities/Player.hpp"
 
 #if USE_GUI
 #include "botcraft/Renderer/RenderingManager.hpp"
@@ -11,7 +13,7 @@ namespace Botcraft
 {
     EntityManager::EntityManager()
     {
-        local_player = std::shared_ptr<LocalPlayer>(new LocalPlayer);
+        local_player = std::make_shared<LocalPlayer>();
     }
 
     std::shared_ptr<LocalPlayer> EntityManager::GetLocalPlayer()
@@ -39,9 +41,9 @@ namespace Botcraft
     void EntityManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
-        local_player = std::shared_ptr<LocalPlayer>(new LocalPlayer);
+        local_player = std::make_shared<LocalPlayer>();
         local_player->GetMutex().lock();
-        local_player->SetEID(msg.GetPlayerId());
+        local_player->SetEntityID(msg.GetPlayerId());
         local_player->GetMutex().unlock();
         entities[msg.GetPlayerId()] = local_player;
     }
@@ -53,8 +55,8 @@ namespace Botcraft
         auto it = entities.find(msg.GetEntityId());
         if (it == entities.end())
         {
-            std::shared_ptr<Entity> entity = std::shared_ptr<Entity>(new Entity);
-            entity->SetEID(msg.GetEntityId());
+            std::shared_ptr<Entity> entity = std::make_shared<UnknownEntity>();
+            entity->SetEntityID(msg.GetEntityId());
             entities[msg.GetEntityId()] = entity;
         }
     }
@@ -65,7 +67,7 @@ namespace Botcraft
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         // Player position is also used by physics thread, so we need
         // to lock it
-        if (msg.GetEntityId() == local_player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEntityID())
         {
             local_player->GetMutex().lock();
         }
@@ -79,7 +81,7 @@ namespace Botcraft
             it->second->SetOnGround(msg.GetOnGround());
         }
         
-        if (msg.GetEntityId() == local_player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEntityID())
         {
 #ifdef USE_GUI
             if (rendering_manager)
@@ -96,7 +98,7 @@ namespace Botcraft
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         // Player position is also used by physics thread, so we need
         // to lock it
-        if (msg.GetEntityId() == local_player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEntityID())
         {
             local_player->GetMutex().lock();
         }
@@ -112,7 +114,7 @@ namespace Botcraft
             it->second->SetOnGround(msg.GetOnGround());
         }
 
-        if (msg.GetEntityId() == local_player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEntityID())
         {
 #ifdef USE_GUI
             if (rendering_manager)
@@ -129,7 +131,7 @@ namespace Botcraft
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
         // Player position is also used by physics thread, so we need
         // to lock it
-        if (msg.GetEntityId() == local_player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEntityID())
         {
             local_player->GetMutex().lock();
         }
@@ -142,7 +144,7 @@ namespace Botcraft
             it->second->SetOnGround(msg.GetOnGround());
         }
 
-        if (msg.GetEntityId() == local_player->GetEID())
+        if (msg.GetEntityId() == local_player->GetEntityID())
         {
 #ifdef USE_GUI
             if (rendering_manager)
@@ -174,19 +176,10 @@ namespace Botcraft
     void EntityManager::Handle(ProtocolCraft::ClientboundAddEntityPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
-        // TODO create the real entity type
-        std::shared_ptr<Entity> entity;
+
+        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
         
-        if (msg.GetType() == 106)
-        {
-            entity = std::shared_ptr<Player>(new Player);
-        }
-        else
-        {
-            entity = std::shared_ptr<Entity>(new Entity);
-        }
-        
-        entity->SetEID(msg.GetId_());
+        entity->SetEntityID(msg.GetId_());
         entity->SetX(msg.GetX());
         entity->SetY(msg.GetY());
         entity->SetZ(msg.GetZ());
@@ -199,19 +192,10 @@ namespace Botcraft
     void EntityManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
-        // TODO create the real entity type
-        std::shared_ptr<Entity> entity;
 
-        if (msg.GetType() == 106)
-        {
-            entity = std::shared_ptr<Player>(new Player);
-        }
-        else
-        {
-            entity = std::shared_ptr<Entity>(new Entity);
-        }
-        
-        entity->SetEID(msg.GetId_());
+        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
+
+        entity->SetEntityID(msg.GetId_());
         entity->SetX(msg.GetX());
         entity->SetY(msg.GetY());
         entity->SetZ(msg.GetZ());
@@ -220,6 +204,22 @@ namespace Botcraft
 
         entities[msg.GetId_()] = entity;
     }
+
+#if PROTOCOL_VERSION < 721
+    void EntityManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+
+        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
+
+        entity->SetEntityID(msg.GetId_());
+        entity->SetX(msg.GetX());
+        entity->SetY(msg.GetY());
+        entity->SetZ(msg.GetZ());
+
+        entities[msg.GetId_()] = entity;
+    }
+#endif
 
     void EntityManager::Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg)
     {
@@ -230,7 +230,7 @@ namespace Botcraft
         auto it = entities.find(msg.GetEntityId());
         if (it == entities.end())
         {
-            entity = std::shared_ptr<Player>(new Player);
+            entity = Entity::CreateEntity(EntityType::Player);
             entities[msg.GetEntityId()] = entity;
         }
         else
@@ -238,7 +238,7 @@ namespace Botcraft
             entity = it->second;
         }
 
-        entity->SetEID(msg.GetEntityId());
+        entity->SetEntityID(msg.GetEntityId());
         entity->SetX(msg.GetX());
         entity->SetY(msg.GetY());
         entity->SetZ(msg.GetZ());
@@ -257,7 +257,7 @@ namespace Botcraft
     void EntityManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
-        if (msg.GetId_() == local_player->GetEID())
+        if (msg.GetId_() == local_player->GetEntityID())
         {
             local_player->GetMutex().lock();
         }
@@ -273,7 +273,7 @@ namespace Botcraft
             it->second->SetOnGround(msg.GetOnGround());
         }
 
-        if (msg.GetId_() == local_player->GetEID())
+        if (msg.GetId_() == local_player->GetEntityID())
         {
 #ifdef USE_GUI
             if (rendering_manager)
@@ -291,8 +291,7 @@ namespace Botcraft
         local_player->SetIsInvulnerable(msg.GetFlags() & 0x01);
         local_player->SetIsFlying(msg.GetFlags() & 0x02);
         local_player->SetFlyingSpeed(msg.GetFlyingSpeed());
-
-        //TODO do something with the walking speed
+        local_player->SetWalkingSpeed(msg.GetWalkingSpeed());
     }
 
 #if PROTOCOL_VERSION == 755
@@ -311,4 +310,73 @@ namespace Botcraft
         }
     }
 #endif
+
+    void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        auto it = entities.find(msg.GetId_());
+        if (it == entities.end())
+        {
+            std::cerr << "Warning, trying to load metadata in unexisting entity" << std::endl;
+        }
+        else
+        {
+            it->second->LoadMetadataFromRawArray(msg.GetPackedItems());
+        }
+    }
+
+    void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityMotionPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        auto it = entities.find(msg.GetId_());
+        if (it == entities.end())
+        {
+            std::cerr << "Warning, trying to set speed of an unexisting entity" << std::endl;
+        }
+        else
+        {
+            // Packet data is in 1/8000 of block per tick, so convert it back to block/s
+            it->second->SetSpeed(Vector3<double>(msg.GetXA(), msg.GetYA(), msg.GetZA()) / 8000.0 / 0.05);
+        }
+    }
+
+    void EntityManager::Handle(ProtocolCraft::ClientboundSetEquipmentPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+#if PROTOCOL_VERSION > 730
+        auto it = entities.find(msg.GetEntityId());
+        if (it == entities.end())
+        {
+            std::cerr << "Warning, trying to set equipment of an unexisting entity" << std::endl;
+        }
+        else
+        {
+            for (auto& p : msg.GetSlots())
+            {
+                it->second->SetEquipment(static_cast<EquipmentSlot>(p.first), p.second);
+            }
+        }
+#else
+        auto it = entities.find(msg.GetEntityId());
+        if (it == entities.end())
+        {
+            std::cerr << "Warning, trying to set equipment of an unexisting entity" << std::endl;
+        }
+        else
+        {
+            // Packet data is in 1/8000 of block per tick, so convert it back to block/s
+            it->second->SetEquipment(static_cast<EquipmentSlot>(msg.GetSlot().first), msg.GetSlot().second);
+        }
+#endif
+    }
+
+    void EntityManager::Handle(ProtocolCraft::ClientboundUpdateAttributesPacket& msg)
+    {
+        // TODO
+    }
+
+    void EntityManager::Handle(ProtocolCraft::ClientboundUpdateMobEffectPacket& msg)
+    {
+        // TODO
+    }
 }

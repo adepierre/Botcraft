@@ -92,15 +92,16 @@ namespace Botcraft
         SwapItemHand
     };
 
-    enum class PlayerDiggingFace
+    enum class Direction
     {
-        Bottom = 0, // -Y
-        Top,        // +Y
+        Down = 0, // -Y
+        Up,        // +Y
         North,      // -Z
         South,      // +Z
         West,       // -X
         East        // +X
     };
+    typedef Direction PlayerDiggingFace;
 
     // Types are detailed in registries, see https://wiki.vg/Inventory
 
@@ -133,10 +134,25 @@ namespace Botcraft
         StoneCutter
     };
 
-    enum class EntityType
+    enum class Pose
     {
-        Entity = 0,
-        Player,
-        LocalPlayer
+        Standing,
+        FallFlying,
+        Sleeping,
+        Swimming,
+        SpinAttack,
+        Crouching,
+        LongJumping,
+        Dying
+    };
+
+    enum class EquipmentSlot
+    {
+        MainHand = 0,
+        OffHand,
+        Boots,
+        Leggings,
+        ChestPlate,
+        Helmet
     };
 } // Botcraft

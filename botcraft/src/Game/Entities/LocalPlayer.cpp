@@ -7,7 +7,6 @@ namespace Botcraft
     LocalPlayer::LocalPlayer()
     {
         position = Vector3<double>(0.0, 1000.0, 0.0);
-
         frontVector = Vector3<double>(0.0, 0.0, 1.0);
         rightVector = Vector3<double>(1.0, 0.0, 0.0);
 
@@ -24,10 +23,17 @@ namespace Botcraft
         has_moved = true;
     }
 
+    LocalPlayer::~LocalPlayer()
+    {
+
+    }
+
+
     std::mutex& LocalPlayer::GetMutex()
     {
         return player_mutex;
     }
+
 
     const Vector3<double>& LocalPlayer::GetFrontVector() const
     {
@@ -44,104 +50,52 @@ namespace Botcraft
         return rightVector;
     }
 
-    const AABB LocalPlayer::GetCollider() const
-    {
-        return AABB(Vector3<double>(position.x, position.y + 0.9, position.z), Vector3<double>(0.3, 0.9, 0.3));
-    }
 
-    const float LocalPlayer::GetFlyingSpeed() const
+    float LocalPlayer::GetFlyingSpeed() const
     {
         return flying_speed;
     }
 
-    const float LocalPlayer::GetWalkingSpeed() const
+    float LocalPlayer::GetWalkingSpeed() const
     {
         return walking_speed;
     }
 
-    const bool LocalPlayer::GetIsFlying() const
+    bool LocalPlayer::GetIsFlying() const
     {
         return is_flying;
     }
 
-    const bool LocalPlayer::GetIsRunning() const
+    bool LocalPlayer::GetIsRunning() const
     {
         return is_running;
     }
 
-    const bool LocalPlayer::GetIsInvulnerable() const
+    bool LocalPlayer::GetIsInvulnerable() const
     {
         return is_invulnerable;
     }
 
-    const float LocalPlayer::GetHealth() const
+    float LocalPlayer::GetHealth() const
     {
         return health;
     }
 
-    const int LocalPlayer::GetFood() const
+    int LocalPlayer::GetFood() const
     {
         return food;
     }
 
-    const float LocalPlayer::GetFoodSaturation() const
+    float LocalPlayer::GetFoodSaturation() const
     {
         return food_saturation;
     }
 
-    const bool LocalPlayer::GetHasMoved() const
+    bool LocalPlayer::GetHasMoved() const
     {
         return has_moved;
     }
 
-    const EntityType LocalPlayer::GetType() const
-    {
-        return EntityType::LocalPlayer;
-    }
-
-    void LocalPlayer::SetPosition(const Vector3<double>& pos)
-    {
-        has_moved = position != pos;
-        position = pos;
-    }
-
-    void LocalPlayer::SetX(const double x)
-    {
-        has_moved = position.x != x;
-        position.x = x;
-    }
-
-    void LocalPlayer::SetY(const double y)
-    {
-        has_moved = position.y != y;
-        position.y = y;
-    }
-
-    void LocalPlayer::SetZ(const double z)
-    {
-        has_moved = position.z != z;
-        position.z = z;
-    }
-
-    void LocalPlayer::SetYaw(const float yaw_)
-    {
-        if (yaw != yaw_)
-        {
-            has_moved = true;
-            yaw = yaw_;
-            UpdateVectors();
-        }
-    }
-
-    void LocalPlayer::SetPitch(const float pitch_)
-    {
-        if (pitch != pitch_)
-        {
-            has_moved = true;
-            pitch = pitch_;
-            UpdateVectors();
-        }
-    }
 
     void LocalPlayer::SetFlyingSpeed(const float flying_speed_)
     {
@@ -187,6 +141,52 @@ namespace Botcraft
     {
         has_moved = has_moved_;
     }
+
+
+    void LocalPlayer::SetPosition(const Vector3<double>& pos)
+    {
+        has_moved = position != pos;
+        position = pos;
+    }
+
+    void LocalPlayer::SetX(const double x)
+    {
+        has_moved = position.x != x;
+        position.x = x;
+    }
+
+    void LocalPlayer::SetY(const double y)
+    {
+        has_moved = position.y != y;
+        position.y = y;
+    }
+
+    void LocalPlayer::SetZ(const double z)
+    {
+        has_moved = position.z != z;
+        position.z = z;
+    }
+
+    void LocalPlayer::SetYaw(const float yaw_)
+    {
+        if (yaw != yaw_)
+        {
+            has_moved = true;
+            yaw = yaw_;
+            UpdateVectors();
+        }
+    }
+
+    void LocalPlayer::SetPitch(const float pitch_)
+    {
+        if (pitch != pitch_)
+        {
+            has_moved = true;
+            pitch = pitch_;
+            UpdateVectors();
+        }
+    }
+
 
     void LocalPlayer::LookAt(const Vector3<double>& pos, const bool set_pitch)
     {

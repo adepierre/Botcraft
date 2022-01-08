@@ -12,7 +12,7 @@ namespace Botcraft
     /// @param pos Location of block to dig
     /// @param face Digging direction
     /// @return Success if the block is broken, Failure otherwise
-    Status Dig(BehaviourClient& c, const Position& pos, const PlayerDiggingFace face = PlayerDiggingFace::Top);
+    Status Dig(BehaviourClient& c, const Position& pos, const PlayerDiggingFace face = PlayerDiggingFace::Up);
         
     /// @brief Same thing as Dig, but reads its parameters from the blackboard
     /// @param c The client performing the action
