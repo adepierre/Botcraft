@@ -145,25 +145,25 @@ namespace Botcraft
 
     void LocalPlayer::SetPosition(const Vector3<double>& pos)
     {
-        has_moved = position != pos;
+        has_moved |= position != pos;
         position = pos;
     }
 
     void LocalPlayer::SetX(const double x)
     {
-        has_moved = position.x != x;
+        has_moved |= position.x != x;
         position.x = x;
     }
 
     void LocalPlayer::SetY(const double y)
     {
-        has_moved = position.y != y;
+        has_moved |= position.y != y;
         position.y = y;
     }
 
     void LocalPlayer::SetZ(const double z)
     {
-        has_moved = position.z != z;
+        has_moved |= position.z != z;
         position.z = z;
     }
 
