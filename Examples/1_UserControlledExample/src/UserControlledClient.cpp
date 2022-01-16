@@ -1,6 +1,7 @@
 #include <botcraft/Game/AssetsManager.hpp>
 #include <botcraft/Version.hpp>
 #include <botcraft/Game/Entities/EntityManager.hpp>
+#include <botcraft/Game/Entities/entities/Entity.hpp>
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Chunk.hpp>
@@ -31,11 +32,12 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
         entity_manager = std::shared_ptr<EntityManager>(new EntityManager);
 
         should_be_closed = false;
+        creative_mode = true;
 
 #ifdef USE_GUI
         if (use_renderer)
         {
-            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world, inventory_manager, 800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
+            rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
             mouse_sensitivity = 0.1f;
 
             rendering_manager->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
@@ -66,6 +68,25 @@ void UserControlledClient::CreateTestWorld()
 #else
     const std::string dimension = "minecraft:overworld";
 #endif
+
+#if PROTOCOL_VERSION > 756
+    world->SetDimensionMinY(dimension, 0);
+    world->SetDimensionHeight(dimension, 256);
+    world->SetCurrentDimension(dimension);
+#endif
+
+    std::shared_ptr<Entity> entity = Entity::CreateEntity(EntityType::Zombie);
+    entity->SetEntityID(42);
+    entity->SetPosition(Vector3<double>(0.0, 1.0, 0.0));
+    entity->SetYaw(45.0f);
+    entity_manager->AddEntity(entity);
+#ifdef USE_GUI
+    if (use_renderer)
+    {
+        rendering_manager->AddEntityToUpdate(entity->GetEntityID());
+    }
+#endif
+
     int max_id = 0;
     int min_id = std::numeric_limits<int>::max();
     for (auto it = AssetsManager::getInstance().Blockstates().begin(); it != AssetsManager::getInstance().Blockstates().end(); ++it)
