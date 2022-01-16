@@ -387,6 +387,7 @@ namespace Botcraft
             // Apply frustum culling to render only the visible ones
             std::vector<Position> chunks_to_render;
             chunks_to_render.reserve(all_loaded_chunks.size());
+            std::unordered_map<Position, bool> inside_frustum;
             // Frustum culling algorithm from http://old.cescg.org/CESCG-2002/DSykoraJJelinek/
             for (auto it = all_loaded_chunks.begin(); it != all_loaded_chunks.end(); ++it)
             {
@@ -421,6 +422,7 @@ namespace Botcraft
                     }
                 }
 
+                inside_frustum[*it] = result != FrustumResult::Outside;
                 if (result != FrustumResult::Outside)
                 {
                     chunks_to_render.push_back(*it);
@@ -447,15 +449,24 @@ namespace Botcraft
             }
             chunks_mutex.unlock();
 
-            // Render entities
+            // Render entities, with approximate frustum culling
             entities_mutex.lock();
             const int num_entities = entities.size();
             int num_rendered_entities = 0;
-            for (auto& e: entities)
+            for (auto& e : entities)
             {
-                e.second->Render();
-                num_rendered_entities += 1;
-                num_rendered_faces += e.second->GetNumFace();
+                const Vector3<float> approx_pos = e.second->GetApproxPos();
+                const Position chunk_position(
+                    static_cast<int>(floor(approx_pos.x / static_cast<double>(CHUNK_WIDTH))),
+                    static_cast<int>(floor(approx_pos.y / static_cast<double>(section_height))),
+                    static_cast<int>(floor(approx_pos.z / static_cast<double>(CHUNK_WIDTH)))
+                );
+                if (inside_frustum[chunk_position])
+                {
+                    e.second->Render();
+                    num_rendered_entities += 1;
+                    num_rendered_faces += e.second->GetNumFace();
+                }
                 num_faces += e.second->GetNumFace();
             }
             entities_mutex.unlock();

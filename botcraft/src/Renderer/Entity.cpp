@@ -68,5 +68,20 @@ namespace Botcraft
 
             faces = std::deque<Face>(faces_.begin(), faces_.end());
         }
+
+        Vector3<float> Entity::GetApproxPos()
+        {
+            std::lock_guard<std::mutex> lock_faces(mutex_faces);
+            if (faces.size() == 0)
+            {
+                return Vector3<float>();
+            }
+
+            return Vector3<float>(
+                    faces[0].GetMatrix()[12],
+                    faces[0].GetMatrix()[13],
+                    faces[0].GetMatrix()[14]
+                );
+        }
     } // Renderer
 } // Botcraft
