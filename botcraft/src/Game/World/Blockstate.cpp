@@ -286,18 +286,13 @@ namespace Botcraft
             full_filepath = ASSETS_PATH + std::string("/minecraft/blockstates/") + path + ".json";
         }
 
-        nlohmann::json json;
         try
         {
             auto it = cached_jsons.find(full_filepath);
-            if (it != cached_jsons.end())
-            {
-                json = it->second;
-            }
-            else
+            if (it == cached_jsons.end())
             {
                 std::ifstream file(full_filepath);
-                file >> json;
+                file >> cached_jsons[full_filepath];
                 file.close();
             }
         }
@@ -320,7 +315,7 @@ namespace Botcraft
             return;
         }
 
-        cached_jsons[full_filepath] = json;
+        const nlohmann::json& json = cached_jsons[full_filepath];
 
         // We store the models in a deque for efficiency
         std::deque<Model> models_deque;
@@ -676,10 +671,11 @@ namespace Botcraft
 
                 for (int i = 0; i < std::min(2, static_cast<int>(f.texture_names.size())); ++i)
                 {
-                    std::tie(texture_pos[2 * i + 0] , texture_pos[2 * i + 1]) = atlas->GetPosition(f.texture_names[i]);
-                    std::tie(texture_size[2 * i + 0], texture_size[2 * i + 1]) = atlas->GetSize(f.texture_names[i]);
-                    transparencies[i] = atlas->GetTransparency(f.texture_names[i]);
-                    animated[i] = atlas->GetAnimation(f.texture_names[i]);
+                    const Renderer::TextureData& texture_data = atlas->GetData(f.texture_names[i]);
+                    std::tie(texture_pos[2 * i + 0], texture_pos[2 * i + 1]) = texture_data.position;
+                    std::tie(texture_size[2 * i + 0], texture_size[2 * i + 1]) = texture_data.size;
+                    transparencies[i] = texture_data.transparency;
+                    animated[i] = texture_data.animation;
                 }
 
                 // Main texture coords in the atlas

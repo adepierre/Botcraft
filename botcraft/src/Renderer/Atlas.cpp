@@ -48,10 +48,7 @@ namespace Botcraft
             height = height_;
             width = width_;
             data = std::vector<unsigned char>(height * width * 4, 0);
-            transparency_map.clear();
-            animation_map.clear();
-            textures_size_map.clear();
-            textures_position_map.clear();
+            textures_map.clear();
 
             //Fill with "undefined" texture
             for (int row = 0; row < height; ++row)
@@ -149,19 +146,23 @@ namespace Botcraft
             Reset(result_size.h, result_size.w);
 
             //Set the default texture
-            transparency_map[""] = Transparency::Opaque;
-            animation_map[""] = Animation::Static;
-            textures_size_map[""] = { rectangles[0].w, rectangles[0].h };
-            textures_position_map[""] = { rectangles[0].x, rectangles[0].y };
+            textures_map[""] = TextureData{
+                { rectangles[0].w, rectangles[0].h }, // size
+                { rectangles[0].x, rectangles[0].y }, // position
+                Transparency::Opaque,
+                Animation::Static
+            };
 
             for (int i = 0; i < kept_textures.size(); ++i)
             {
                 const rect_type& rectangle = rectangles[i + 1];
                 
-                transparency_map[kept_textures[i].identifier] = Transparency::Opaque;
-                animation_map[kept_textures[i].identifier] = (kept_textures[i].animated ? Animation::Animated : Animation::Static);
-                textures_size_map[kept_textures[i].identifier] = { rectangle.w, rectangle.h };
-                textures_position_map[kept_textures[i].identifier] = { rectangle.x, rectangle.y };
+                textures_map[kept_textures[i].identifier] = TextureData{
+                    { rectangle.w, rectangle.h }, // size
+                    { rectangle.x, rectangle.y }, // position
+                    Transparency::Opaque,
+                    kept_textures[i].animated ? Animation::Animated : Animation::Static
+                };
 
                 for (int row = 0; row < rectangle.h; ++row)
                 {
@@ -205,14 +206,14 @@ namespace Botcraft
                         *(Get(rectangle.y + row, rectangle.x + col, 2)) = b;
                         *(Get(rectangle.y + row, rectangle.x + col, 3)) = a;
 
-                         
-                        if (a == 0 && transparency_map[kept_textures[i].identifier] != Transparency::Partial)
+                        TextureData& data = textures_map[kept_textures[i].identifier];
+                        if (a == 0 && data.transparency != Transparency::Partial)
                         {
-                            transparency_map[kept_textures[i].identifier] = Transparency::Total;
+                            data.transparency = Transparency::Total;
                         }
                         else if (a < 255)
                         {
-                            transparency_map[kept_textures[i].identifier] = Transparency::Partial;
+                            data.transparency = Transparency::Partial;
                         }
                     }
                 }
@@ -232,48 +233,15 @@ namespace Botcraft
             return height;
         }
 
-        const std::pair<int, int>& Atlas::GetSize(const std::string& name) const
+        const TextureData& Atlas::GetData(const std::string& name) const
         {
-            auto it =textures_size_map.find(name);
-            if (it != textures_size_map.end())
+            auto it = textures_map.find(name);
+            if (it != textures_map.end())
             {
                 return it->second;
             }
 
-            return textures_size_map.at("");
-        }
-
-        const std::pair<int, int>& Atlas::GetPosition(const std::string& name) const
-        {
-            auto it = textures_position_map.find(name);
-            if (it != textures_position_map.end())
-            {
-                return it->second;
-            }
-
-            return textures_position_map.at("");
-        }
-
-        const Transparency Atlas::GetTransparency(const std::string& name) const
-        {
-            auto it = transparency_map.find(name);
-            if (it != transparency_map.end())
-            {
-                return it->second;
-            }
-
-            return transparency_map.at("");
-        }
-
-        const Animation Atlas::GetAnimation(const std::string& name) const
-        {
-            auto it = animation_map.find(name);
-            if (it != animation_map.end())
-            {
-                return it->second;
-            }
-
-            return animation_map.at("");
+            return textures_map.at("");
         }
 
         const unsigned char* Atlas::Get(const int row, const int col, const int depth) const

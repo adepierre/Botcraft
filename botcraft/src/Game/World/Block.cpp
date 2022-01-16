@@ -46,6 +46,15 @@ namespace Botcraft
 
     void Block::ChangeBlockstate(const int id_, const int model_id_)
     {
+        // For air we know there is no model, so we can optimize this
+        if (id_ == 0)
+        {
+            static const std::shared_ptr<Blockstate>& air_blockstate = AssetsManager::getInstance().Blockstates().at(0);
+            blockstate = air_blockstate;
+            model_id = model_id_;
+            return;
+        }
+
         auto &blockstates_map = AssetsManager::getInstance().Blockstates();
         auto it = blockstates_map.find(id_);
         if (it != blockstates_map.end())
@@ -57,14 +66,7 @@ namespace Botcraft
             blockstate = blockstates_map.at(-1);
         }
 
-        if (model_id_ < 0)
-        {
-            model_id = blockstate->GetRandomModelId();
-        }
-        else
-        {
-            model_id = model_id_;
-        }
+        model_id = model_id_ < 0 ? blockstate->GetRandomModelId() : model_id_;
     }
 #endif
 

@@ -47,18 +47,18 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 347
-    const std::map<int, std::map<unsigned char, std::shared_ptr<Blockstate> > >& AssetsManager::Blockstates() const
+    const std::unordered_map<int, std::unordered_map<unsigned char, std::shared_ptr<Blockstate> > >& AssetsManager::Blockstates() const
 #else
-    const std::map<int, std::shared_ptr<Blockstate> >& AssetsManager::Blockstates() const
+    const std::unordered_map<int, std::shared_ptr<Blockstate> >& AssetsManager::Blockstates() const
 #endif
     {
         return blockstates;
     }
 
 #if PROTOCOL_VERSION < 358
-    const std::map<unsigned char, std::shared_ptr<Biome> >& AssetsManager::Biomes() const
+    const std::unordered_map<unsigned char, std::shared_ptr<Biome> >& AssetsManager::Biomes() const
 #else
-    const std::map<int, std::shared_ptr<Biome> >& AssetsManager::Biomes() const
+    const std::unordered_map<int, std::shared_ptr<Biome> >& AssetsManager::Biomes() const
 #endif
     {
         return biomes;
@@ -82,9 +82,9 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 347
-    const std::map<int, std::map<unsigned char, std::shared_ptr<Item> > >& AssetsManager::Items() const
+    const std::unordered_map<int, std::unordered_map<unsigned char, std::shared_ptr<Item> > >& AssetsManager::Items() const
 #else
-    const std::map<int, std::shared_ptr<Item>>& AssetsManager::Items() const
+    const std::unordered_map<int, std::shared_ptr<Item>>& AssetsManager::Items() const
 #endif
     {
         return items;
@@ -99,15 +99,15 @@ namespace Botcraft
 
     void AssetsManager::LoadBlocksFile()
     {
-        std::map<std::string, bool> solidity;
-        std::map<std::string, bool> transparency;
-        std::map<std::string, float> hardness;
-        std::map<std::string, std::string> textures;
-        std::map<std::string, std::string> rendering;
+        std::unordered_map<std::string, bool> solidity;
+        std::unordered_map<std::string, bool> transparency;
+        std::unordered_map<std::string, float> hardness;
+        std::unordered_map<std::string, std::string> textures;
+        std::unordered_map<std::string, std::string> rendering;
 #if PROTOCOL_VERSION < 347
-        std::map<std::string, std::map<int, TintType> > tint_types;
+        std::unordered_map<std::string, std::unordered_map<int, TintType> > tint_types;
 #else
-        std::map<std::string, TintType> tint_types;
+        std::unordered_map<std::string, TintType> tint_types;
 #endif
         const std::string info_file_path = ASSETS_PATH + std::string("/custom/Blocks_info.json");
 
@@ -207,7 +207,7 @@ namespace Botcraft
                 }
 
 #if PROTOCOL_VERSION < 347
-                tint_types[name] = std::map<int, TintType>({ { -1, tint_type } });
+                tint_types[name] = std::unordered_map<int, TintType>({ { -1, tint_type } });
 #else
                 tint_types[name] = tint_type;
 #endif
@@ -216,7 +216,7 @@ namespace Botcraft
             // Before the flattening, we could have different tints for different metadata
             else if (info.contains("tintTypes") && info["tintType"].is_object())
             {
-                tint_types[name] = std::map<int, TintType>({});
+                tint_types[name] = std::unordered_map<int, TintType>({});
                 for (auto it = info["tintType"].begin(); it != info["tintType"].end(); ++it)
                 {
                     TintType tint_type = TintType::None;
@@ -246,7 +246,7 @@ namespace Botcraft
             else
             {
 #if PROTOCOL_VERSION < 347
-                tint_types[name] = std::map<int, TintType>({ { -1, TintType::None } });
+                tint_types[name] = std::unordered_map<int, TintType>({ { -1, TintType::None } });
 #else
                 tint_types[name] = TintType::None;
 #endif
@@ -255,7 +255,7 @@ namespace Botcraft
 
         // Add a default block
 #if PROTOCOL_VERSION < 347
-        blockstates[-1] = std::map<unsigned char, std::shared_ptr<Blockstate> >({ { 0, std::shared_ptr<Blockstate>(new Blockstate(-1, 0, false, true, false, false, -2.0f, TintType::None, "default", "")) } });
+        blockstates[-1] = std::unordered_map<unsigned char, std::shared_ptr<Blockstate> >({ { 0, std::shared_ptr<Blockstate>(new Blockstate(-1, 0, false, true, false, false, -2.0f, TintType::None, "default", "")) } });
 #else
         blockstates[-1] = std::shared_ptr<Blockstate>(new Blockstate(-1, false, true, false, false, -2.0f, TintType::None, "default", ""));
 #endif
@@ -484,13 +484,13 @@ namespace Botcraft
                 {
                     // Remove the minecraft: prefix to get the blockstate name
                     std::string blockstate = blockstate_name.substr(10);
-                    blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], false, false, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables));
+                    blockstates[id] = std::make_shared<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], false, false, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables);
                 }
                 else if (render == "other")
                 {
                     // Remove the minecraft: prefix to get the blockstate name
                     std::string blockstate = blockstate_name.substr(10);
-                    blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], false, true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables));
+                    blockstates[id] = std::make_shared<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], false, true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables);
                 }
             }
         }
@@ -635,7 +635,7 @@ namespace Botcraft
             unsigned char damage_id = properties["damage_id"];
             if (items.find(id) == items.end())
             {
-                items[id] = std::map<unsigned char, std::shared_ptr<Item> >();
+                items[id] = std::unordered_map<unsigned char, std::shared_ptr<Item> >();
             }
             items[id][damage_id] = std::shared_ptr<Item>(new Item(id, damage_id, item_name));
 #else

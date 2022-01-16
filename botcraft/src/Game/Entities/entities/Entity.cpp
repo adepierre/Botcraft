@@ -1322,10 +1322,11 @@ namespace Botcraft
 
             for (int i = 0; i < std::min(2, static_cast<int>(face_descriptors[i].texture_names.size())); ++i)
             {
-                std::tie(texture_pos[2 * i + 0], texture_pos[2 * i + 1]) = atlas->GetPosition(face_descriptors[i].texture_names[i]);
-                std::tie(texture_size[2 * i + 0], texture_size[2 * i + 1]) = atlas->GetSize(face_descriptors[i].texture_names[i]);
-                transparencies[i] = atlas->GetTransparency(face_descriptors[i].texture_names[i]);
-                animated[i] = atlas->GetAnimation(face_descriptors[i].texture_names[i]);
+                const Renderer::TextureData& texture_data = atlas->GetData(face_descriptors[i].texture_names[i]);
+                std::tie(texture_pos[2 * i + 0], texture_pos[2 * i + 1]) = texture_data.position;
+                std::tie(texture_size[2 * i + 0], texture_size[2 * i + 1]) = texture_data.size;
+                transparencies[i] = texture_data.transparency;
+                animated[i] = texture_data.animation;
             }
 
             // Main texture coords in the atlas
