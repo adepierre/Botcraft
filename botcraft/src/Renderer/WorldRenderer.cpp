@@ -198,7 +198,7 @@ namespace Botcraft
             const std::vector<Position> neighbour_positions({ Position(0, -1, 0), Position(0, 0, -1),
                             Position(-1, 0, 0), Position(1, 0, 0), Position(0, 0, 1), Position(0, 1, 0) });
 
-            std::vector<std::shared_ptr<Blockstate> > neighbour_blockstates(6);
+            std::vector<Blockstate*> neighbour_blockstates(6);
             std::vector<unsigned char> neighbour_model_ids(6);
 
             Position pos;
@@ -231,11 +231,12 @@ namespace Botcraft
                             }
                             else
                             {
-                                neighbour_blockstates[i] = neighbour_block->GetBlockstate();
+                                neighbour_blockstates[i] = neighbour_block->GetBlockstate().get();
                                 neighbour_model_ids[i] = neighbour_block->GetModelId();
                             }
                         }
 
+                        bool is_surrounded_by_opaque = false;
                         //Check if this block is sourrounded by non transparent blocks
                         for (int i = 0; i < neighbour_positions.size(); ++i)
                         {
@@ -249,8 +250,13 @@ namespace Botcraft
                             //there is no face to add to the renderer
                             if (i == neighbour_positions.size() - 1)
                             {
-                                continue;
+                                is_surrounded_by_opaque = true;
                             }
+                        }
+
+                        if (is_surrounded_by_opaque)
+                        {
+                            continue;
                         }
 
                         //Add all faces of the current state

@@ -70,7 +70,7 @@ namespace Botcraft
     }
 #endif
 
-    const std::shared_ptr<Blockstate> Block::GetBlockstate() const
+    const std::shared_ptr<Blockstate>& Block::GetBlockstate() const
     {
         return blockstate;
     }

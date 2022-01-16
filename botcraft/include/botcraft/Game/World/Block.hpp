@@ -23,7 +23,7 @@ namespace Botcraft
         void ChangeBlockstate(const int id_, const int model_id_ = -1);
 #endif
 
-        const std::shared_ptr<Blockstate> GetBlockstate() const;
+        const std::shared_ptr<Blockstate>& GetBlockstate() const;
         const unsigned short GetModelId() const;
 
     private:
