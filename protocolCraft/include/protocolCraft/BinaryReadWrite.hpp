@@ -59,21 +59,23 @@ namespace ProtocolCraft
             length -= sizeof(T);
             iter += sizeof(T);
 
-            // The compiler should(?) optimize that
-            // This check doesn't work if int and char
-            // have the same size, but I guess this is not
-            // the only thing that souldn't work in this case
-            const int num = 1;
-            if (*(char *)&num == 1)
+            // Don't need to change endianess of char!
+            if constexpr (sizeof(T) > 1)
             {
-                // Little endian
-                return ChangeEndianness(output);
+                // The compiler should(?) optimize that
+                // This check doesn't work if int and char
+                // have the same size, but I guess this is not
+                // the only thing that souldn't work in this case
+                const int num = 1;
+                if (*(char*)&num == 1)
+                {
+                    // Little endian
+                    return ChangeEndianness(output);
+                }
             }
-            else
-            {
-                // Big endian
-                return output;
-            }
+
+            // Big endian or sizeof(1)
+            return output;
         }
     }
 
@@ -92,29 +94,30 @@ namespace ProtocolCraft
     UUID ReadData(ReadIterator& iter, size_t& length);
 
     template<typename T>
-    void WriteData(const T &value, WriteContainer &container)
+    void WriteData(const T& value, WriteContainer& container)
     {
         std::vector<unsigned char> output(sizeof(T));
 
-        T big_endian_var;
-        // The compiler should(?) optimize that
-        // This check doesn't work if int and char
-        // have the same size, but I guess this is not
-        // the only thing that souldn't work in this case
-        const int num = 1;
-        if (*(char *)&num == 1)
+        // Don't need to change endianess of char!
+        if constexpr (sizeof(T) > 1)
         {
-            // Little endian
-            big_endian_var = ChangeEndianness(value);
-        }
-        else
-        {
-            // Big endian
-            big_endian_var = value;
+            // The compiler should(?) optimize that
+            // This check doesn't work if int and char
+            // have the same size, but I guess this is not
+            // the only thing that souldn't work in this case
+            const int num = 1;
+            if (*(char*)&num == 1)
+            {
+                // Little endian
+                T big_endian_var = ChangeEndianness(value);
+                memcpy(output.data(), &big_endian_var, sizeof(T));
+                container.insert(container.end(), output.begin(), output.end());
+                return;
+            }
         }
 
-        memcpy(output.data(), &big_endian_var, sizeof(T));
-
+        // Big endian or sizeof(T) == 1
+        memcpy(output.data(), &value, sizeof(T));
         container.insert(container.end(), output.begin(), output.end());
     }
 
@@ -147,17 +150,20 @@ namespace ProtocolCraft
             length -= size * sizeof(T);
             iter += size * sizeof(T);
 
-            // The compiler should(?) optimize that
-            // This check doesn't work if int and char
-            // have the same size, but I guess this is not
-            // the only thing that souldn't work in this case
-            const int num = 1;
-            if (*(char *)&num == 1)
+            if constexpr (sizeof(T) > 1)
             {
-                // Little endian
-                for (int i = 0; i < size; ++i)
+                // The compiler should(?) optimize that
+                // This check doesn't work if int and char
+                // have the same size, but I guess this is not
+                // the only thing that souldn't work in this case
+                const int num = 1;
+                if (*(char*)&num == 1)
                 {
-                    output[i] = ChangeEndianness(output[i]);
+                    // Little endian
+                    for (int i = 0; i < size; ++i)
+                    {
+                        output[i] = ChangeEndianness(output[i]);
+                    }
                 }
             }
             return output;
@@ -169,7 +175,6 @@ namespace ProtocolCraft
     {
         std::vector<unsigned char> bytes(sizeof(T));
 
-        T big_endian_var;
         // The compiler should(?) optimize that
         // This check doesn't work if int and char
         // have the same size, but I guess this is not
@@ -178,17 +183,20 @@ namespace ProtocolCraft
 
         for (int i = 0; i < values.size(); ++i)
         {
-            if (*(char *)&num == 1)
+            if constexpr (sizeof(T) > 1)
             {
-                // Little endian
-                big_endian_var = ChangeEndianness(values[i]);
+                if (*(char*)&num == 1)
+                {
+                    // Little endian
+                    T big_endian_var = ChangeEndianness(values[i]);
+                    memcpy(bytes.data(), &big_endian_var, sizeof(T));
+                    container.insert(container.end(), bytes.begin(), bytes.end());
+                    continue;
+                }
             }
-            else
-            {
-                // Big endian
-                big_endian_var = values[i];
-            }
-            memcpy(bytes.data(), &big_endian_var, sizeof(T));
+
+            // Big endian or sizeof(T) == 1
+            memcpy(bytes.data(), &values[i], sizeof(T));
             container.insert(container.end(), bytes.begin(), bytes.end());
         }
     }
