@@ -52,7 +52,7 @@ namespace Botcraft
 
     ManagersClient::~ManagersClient()
     {
-
+        Disconnect();
     }
 
     void ManagersClient::Disconnect()
@@ -142,9 +142,9 @@ namespace Botcraft
                         }
 
                         //Avoid forever falling if position is in the void
-                        if (creative_mode && local_player->GetPosition().y <= world->GetHeight())
+                        if (creative_mode && local_player->GetPosition().y <= world->GetMinY())
                         {
-                            local_player->SetY(0.0);
+                            local_player->SetY(world->GetMinY());
                             local_player->SetSpeedY(0.0);
                             local_player->SetOnGround(true);
                         }
@@ -381,7 +381,7 @@ namespace Botcraft
 #if USE_GUI
         if (use_renderer)
         {
-            rendering_manager = std::shared_ptr<Renderer::RenderingManager>(new Renderer::RenderingManager(world, inventory_manager, 800, 600, AssetsManager::getInstance().GetTexturesPathsNames(), CHUNK_WIDTH, false));
+            rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
             network_manager->AddHandler(rendering_manager.get());
             entity_manager->SetRenderingManager(rendering_manager);
         }

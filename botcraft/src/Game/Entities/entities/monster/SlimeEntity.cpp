@@ -30,7 +30,8 @@ namespace Botcraft
 
     AABB SlimeEntity::GetCollider() const
     {
-        return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2.0, position.z), Vector3<double>(GetWidth() / 2.0, GetHeight() / 2.0, GetWidth() / 2.0));
+        const double real_half_size = 0.255 * GetIdSize() * GetWidth() / 2.0;
+        return AABB(Vector3<double>(position.x, position.y + real_half_size, position.z), Vector3<double>(real_half_size, real_half_size, real_half_size));
     }
 
     double SlimeEntity::GetWidth() const

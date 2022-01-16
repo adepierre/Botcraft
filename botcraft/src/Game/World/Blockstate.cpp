@@ -9,6 +9,10 @@
 #include "botcraft/Game/World/Blockstate.hpp"
 #include "botcraft/Utilities/StringUtilities.hpp"
 
+#if USE_GUI
+#include "botcraft/Renderer/Atlas.hpp"
+#endif
+
 namespace Botcraft
 {
     // Utilities functions
@@ -285,9 +289,17 @@ namespace Botcraft
         nlohmann::json json;
         try
         {
-            std::ifstream file(full_filepath);
-            file >> json;
-            file.close();
+            auto it = cached_jsons.find(full_filepath);
+            if (it != cached_jsons.end())
+            {
+                json = it->second;
+            }
+            else
+            {
+                std::ifstream file(full_filepath);
+                file >> json;
+                file.close();
+            }
         }
         catch (const nlohmann::json::exception& e)
         {
@@ -308,7 +320,7 @@ namespace Botcraft
             return;
         }
 
-        cached_jsons[path] = json;
+        cached_jsons[full_filepath] = json;
 
         // We store the models in a deque for efficiency
         std::deque<Model> models_deque;
@@ -512,8 +524,7 @@ namespace Botcraft
                                 const int model_weight = WeightFromJson(m);
                                 for (int k = 0; k < num_models; ++k)
                                 {
-                                    Model new_model = models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), m);
-                                    models_deque.push_back(new_model);
+                                    models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), m));
                                     models_weights.push_back(models_weights[k] * model_weight);
                                 }
                             }
@@ -649,6 +660,54 @@ namespace Botcraft
     {
         cached_jsons.clear();
     }
+
+#if USE_GUI
+    void Blockstate::UpdateModelsWithAtlasData(const Renderer::Atlas* atlas)
+    {
+        for (auto& m : models)
+        {
+            for (auto& f : m.GetFaces())
+            {
+                // Extract texture info in the atlas
+                std::array<unsigned short, 4> texture_pos = { 0, 0, 0, 0 };
+                std::array<unsigned short, 4> texture_size = { 0, 0, 0, 0 };
+                std::array<Renderer::Transparency, 2> transparencies = { Renderer::Transparency::Opaque, Renderer::Transparency::Opaque };
+                std::array<Renderer::Animation, 2> animated = { Renderer::Animation::Static, Renderer::Animation::Static };
+
+                for (int i = 0; i < std::min(2, static_cast<int>(f.texture_names.size())); ++i)
+                {
+                    std::tie(texture_pos[2 * i + 0] , texture_pos[2 * i + 1]) = atlas->GetPosition(f.texture_names[i]);
+                    std::tie(texture_size[2 * i + 0], texture_size[2 * i + 1]) = atlas->GetSize(f.texture_names[i]);
+                    transparencies[i] = atlas->GetTransparency(f.texture_names[i]);
+                    animated[i] = atlas->GetAnimation(f.texture_names[i]);
+                }
+
+                // Main texture coords in the atlas
+                std::array<float, 4> coords = f.face.GetTextureCoords(false);
+                unsigned short height_normalizer = animated[0] == Renderer::Animation::Animated ? texture_size[0] : texture_size[1];
+                coords[0] = (texture_pos[0] + coords[0] / 16.0f * texture_size[0]) / atlas->GetWidth();
+                coords[1] = (texture_pos[1] + coords[1] / 16.0f * height_normalizer) / atlas->GetHeight();
+                coords[2] = (texture_pos[0] + coords[2] / 16.0f * texture_size[0]) / atlas->GetWidth();
+                coords[3] = (texture_pos[1] + coords[3] / 16.0f * height_normalizer) / atlas->GetHeight();
+                f.face.SetTextureCoords(coords, false);
+
+                // Overlay texture coords in the atlas if existing
+                if (f.texture_names.size() > 1)
+                {
+                    coords = f.face.GetTextureCoords(true);
+                    height_normalizer = animated[1] == Renderer::Animation::Animated ? texture_size[2] : texture_size[3];
+                    coords[0] = (texture_pos[2] + coords[0] / 16.0f * texture_size[2]) / atlas->GetWidth();
+                    coords[1] = (texture_pos[3] + coords[1] / 16.0f * height_normalizer) / atlas->GetHeight();
+                    coords[2] = (texture_pos[2] + coords[2] / 16.0f * texture_size[2]) / atlas->GetWidth();
+                    coords[3] = (texture_pos[3] + coords[3] / 16.0f * height_normalizer) / atlas->GetHeight();
+                    f.face.SetTextureCoords(coords, true);
+                }
+            
+                f.face.SetTransparencyData(transparencies[0]);
+            }
+        }
+    }
+#endif
 
     const int Blockstate::GetNumModels() const
     {

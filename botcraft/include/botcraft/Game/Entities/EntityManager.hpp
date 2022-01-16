@@ -24,6 +24,8 @@ namespace Botcraft
 
         std::shared_ptr<LocalPlayer> GetLocalPlayer();
         const std::unordered_map<int, std::shared_ptr<Entity> >& GetEntities() const;
+        std::shared_ptr<Entity> GetEntity(const int id) const;
+        void AddEntity(const std::shared_ptr<Entity>& entity);
 
 #if USE_GUI
         void SetRenderingManager(std::shared_ptr<Renderer::RenderingManager> rendering_manager_);

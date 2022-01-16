@@ -1,49 +1,20 @@
 #pragma once
 
-#include <deque>
-#include <mutex>
-
-#include "botcraft/Renderer/Face.hpp"
+#include "botcraft/Renderer/BlockRenderable.hpp"
 
 namespace Botcraft
 {
     namespace Renderer
     {
-        // Status of a face buffer
-        enum class BufferStatus
-        {
-            Created,  // The buffer is new, must be created in OpenGL
-            Updated,  // The existing buffer has been updated
-            UpToDate, // The OpenGL buffer is up to date
-        };
-
-        class Chunk
+        class Chunk : public BlockRenderable
         {
         public:
             Chunk();
             ~Chunk();
 
             void Update();
-            void AddFace(const Face &f);
-            void ClearFaces();
-            const unsigned int GetNumFace() const;
-            void Render() const;
-
-        protected:
-            void GenerateOpenGLBuffer();
-            void DeleteOpenGLBuffer();
-
-        protected:
-            unsigned int faces_VAO;
-            unsigned int faces_VBO;
-            unsigned int data_VBO;
-            unsigned int face_number;
-
-            std::deque<Face> faces_positions;
-
-            BufferStatus buffer_status;
-
-            std::mutex mutex_faces;
+            void AddFace(const Face &f, const std::array<unsigned int, 2>& texture_multipliers,
+                const float offset_x, const float offset_y, const float offset_z);
         };
     } // Renderer
 } // Botcraft

@@ -11,6 +11,13 @@
 
 namespace Botcraft
 {
+#if USE_GUI
+    namespace Renderer
+    {
+        class Atlas;
+    }
+#endif
+
     class Blockstate
     {
     public:
@@ -57,6 +64,10 @@ namespace Botcraft
         static void IdToIdMetadata(const unsigned int input_id, unsigned int &output_id, unsigned char &output_metadata);
 #endif
         static void ClearCache();
+
+#if USE_GUI
+        void UpdateModelsWithAtlasData(const Renderer::Atlas* atlas);
+#endif
 
     private:
         static std::map<std::string, nlohmann::json> cached_jsons;

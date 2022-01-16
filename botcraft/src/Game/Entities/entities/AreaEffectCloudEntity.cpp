@@ -46,7 +46,8 @@ namespace Botcraft
 
     AABB AreaEffectCloudEntity::GetCollider() const
     {
-        return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2.0, position.z), Vector3<double>(GetWidth() / 2.0, GetHeight() / 2.0, GetWidth() / 2.0));
+        const double real_half_width = GetDataRadius();
+        return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2, position.z), Vector3<double>(real_half_width, GetHeight() / 2, real_half_width));
     }
 
     double AreaEffectCloudEntity::GetWidth() const

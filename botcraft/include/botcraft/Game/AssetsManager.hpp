@@ -8,6 +8,13 @@
 
 namespace Botcraft
 {
+#if USE_GUI
+    namespace Renderer
+    {
+        class Atlas;
+    }
+#endif
+
     class AssetsManager
     {
     public:
@@ -16,9 +23,6 @@ namespace Botcraft
         AssetsManager(AssetsManager const&) = delete;
         void operator=(AssetsManager const&) = delete;
 
-#ifdef USE_GUI
-        const std::vector<std::pair<std::string, std::string> > GetTexturesPathsNames() const;
-#endif
 #if PROTOCOL_VERSION < 347
         const std::map<int, std::map<unsigned char, std::shared_ptr<Blockstate> > >& Blockstates() const;
 #else
@@ -39,13 +43,24 @@ namespace Botcraft
         const std::map<int, std::shared_ptr<Item> >& Items() const;
 #endif
 
+#if USE_GUI
+        const Renderer::Atlas* GetAtlas() const;
+#endif
+
     private:
         AssetsManager();
 
         void LoadBlocksFile();
         void LoadBiomesFile();
         void LoadItemsFile();
+#if USE_GUI
+        void LoadTextures();
+#endif
         void ClearCaches();
+
+#if USE_GUI
+        void UpdateModelsWithAtlasData();
+#endif
 
     private:
 #if PROTOCOL_VERSION < 347
@@ -62,6 +77,9 @@ namespace Botcraft
         std::map<int, std::map<unsigned char, std::shared_ptr<Item> > > items;
 #else
         std::map<int, std::shared_ptr<Item> > items;
+#endif
+#if USE_GUI
+        std::unique_ptr<Renderer::Atlas> atlas;
 #endif
     };
 } // Botcraft

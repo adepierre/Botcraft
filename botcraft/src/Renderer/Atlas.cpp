@@ -34,7 +34,8 @@ namespace Botcraft
 
         Atlas::Atlas()
         {
-
+            height = 0;
+            width = 0;
         }
 
         Atlas::~Atlas()
@@ -273,6 +274,11 @@ namespace Botcraft
             }
 
             return animation_map.at("");
+        }
+
+        const unsigned char* Atlas::Get(const int row, const int col, const int depth) const
+        {
+            return data.data() + ((row * width + col) * 4 + depth);
         }
 
         unsigned char* Atlas::Get(const int row, const int col, const int depth)

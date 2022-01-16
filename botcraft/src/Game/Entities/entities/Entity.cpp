@@ -6,7 +6,14 @@
 #include "protocolCraft/Types/Chat.hpp"
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#if PROTOCOL_VERSION > 404
 #include "botcraft/Game/Entities/VillagerData.hpp"
+#endif
+
+#if USE_GUI
+#include "botcraft/Game/AssetsManager.hpp"
+#include "botcraft/Renderer/Atlas.hpp"
+#endif
 
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp"
@@ -236,6 +243,22 @@ namespace Botcraft
     Entity::~Entity()
     {
 
+    }
+
+
+    AABB Entity::GetCollider() const
+    {
+        return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2, position.z), Vector3<double>(GetWidth() / 2, GetHeight() / 2, GetWidth() / 2));
+    }
+
+    double Entity::GetWidth() const
+    {
+        return -1.0;
+    }
+
+    double Entity::GetHeight() const
+    {
+        return -1.0;
     }
 
 
@@ -592,6 +615,29 @@ namespace Botcraft
         return equipments.at(slot);
     }
 
+#if USE_GUI
+    const std::vector<Renderer::Face>& Entity::GetFaces()
+    {
+        if (faces.size() == 0)
+        {
+            InitializeFaces();
+        }
+        if (!are_rendered_faces_up_to_date)
+        {
+            for (size_t i = 0; i < faces.size(); ++i)
+            {
+                faces[i].UpdateMatrix(face_descriptors[i].transformations, face_descriptors[i].orientation);
+            }
+        }
+        return faces;
+    }
+
+    bool Entity::GetAreRenderedFacesUpToDate() const
+    {
+        return are_rendered_faces_up_to_date;
+    }
+#endif
+
 
     void Entity::SetEntityID(const int entity_id_)
     {
@@ -600,31 +646,92 @@ namespace Botcraft
 
     void Entity::SetPosition(const Vector3<double>& position_)
     {
+#if USE_GUI
+        if (position_ != position)
+        {
+            are_rendered_faces_up_to_date = false;
+            for (size_t i = 0; i < faces.size(); ++i)
+            {
+                std::shared_ptr<Renderer::Translation> f = std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back());
+                f->x = position_.x;
+                f->y = position_.y;
+                f->z = position_.z;
+            }
+        }
+#endif
         position = position_;
     }
 
     void Entity::SetX(const double x_)
     {
+#if USE_GUI
+        if (x_ != position.x)
+        {
+            are_rendered_faces_up_to_date = false;
+            for (size_t i = 0; i < faces.size(); ++i)
+            {
+                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->x = x_;
+            }
+        }
+#endif
         position.x = x_;
     }
 
     void Entity::SetY(const double y_)
     {
+#if USE_GUI
+        if (y_ != position.y)
+        {
+            are_rendered_faces_up_to_date = false;
+            for (size_t i = 0; i < faces.size(); ++i)
+            {
+                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->y = y_;
+            }
+        }
+#endif
         position.y = y_;
     }
 
     void Entity::SetZ(const double z_)
     {
+#if USE_GUI
+        if (z_ != position.z)
+        {
+            are_rendered_faces_up_to_date = false;
+            for (size_t i = 0; i < faces.size(); ++i)
+            {
+                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->z = z_;
+            }
+        }
+#endif
         position.z = z_;
     }
 
     void Entity::SetYaw(const float yaw_)
     {
+#if USE_GUI
+        if (yaw_ != yaw)
+        {
+            are_rendered_faces_up_to_date = false;
+            for (size_t i = 0; i < faces.size(); ++i)
+            {
+                std::static_pointer_cast<Renderer::Rotation>(face_descriptors[i].transformations.rotations.front())->deg_angle = yaw_;
+            }
+        }
+#endif
         yaw = yaw_;
     }
 
     void Entity::SetPitch(const float pitch_)
     {
+        if (pitch_ != pitch)
+        {
+            are_rendered_faces_up_to_date = false;
+            for (size_t i = 0; i < faces.size(); ++i)
+            {
+                std::static_pointer_cast<Renderer::Rotation>(face_descriptors[i].transformations.rotations.back())->deg_angle = pitch_; 
+            }
+        }
         pitch = pitch_;
     }
 
@@ -657,6 +764,13 @@ namespace Botcraft
     {
         equipments.at(slot) = item;
     }
+
+#if USE_GUI
+    void Entity::SetAreRenderedFacesUpToDate(const bool should_be_updated_)
+    {
+        are_rendered_faces_up_to_date = should_be_updated_;
+    }
+#endif
 
 
     nlohmann::json Entity::Serialize() const
@@ -697,6 +811,10 @@ namespace Botcraft
         return output;
     }
 
+    bool Entity::IsLocalPlayer() const
+    {
+        return false;
+    }
 
     bool Entity::IsLivingEntity() const
     {
@@ -1164,4 +1282,76 @@ namespace Botcraft
             return nullptr;
         }
     }
+
+#if USE_GUI
+    void Entity::InitializeFaces()
+    {
+        const Renderer::Atlas* atlas = AssetsManager::getInstance().GetAtlas();
+
+        // Generate default faces
+        face_descriptors = std::vector<FaceDescriptor>(6);
+        faces = std::vector<Renderer::Face>(6);
+        for (int i = 0; i < 6; ++i)
+        {
+            face_descriptors[i].orientation = static_cast<Orientation>(i);
+            face_descriptors[i].texture_names = { "" };
+            face_descriptors[i].cullface_direction = Orientation::None;
+            face_descriptors[i].use_tintindexes = { false };
+
+            // Base entity scale
+            face_descriptors[i].transformations.scales.push_back(std::make_shared<Renderer::Scale>(GetWidth() / 2.0f, GetHeight() / 2.0f, GetWidth() / 2.0f));
+            // Base translation
+            face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(0.0f, GetHeight() / 2.0f, 0.0f));
+            // Entity pos translation
+            face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(position.x, position.y, position.z));
+            // Entity yaw/pitch rotation
+            face_descriptors[i].transformations.rotations.push_back(std::make_shared<Renderer::Rotation>(0.0f, 1.0f, 0.0f, yaw));
+            face_descriptors[i].transformations.rotations.push_back(std::make_shared<Renderer::Rotation>(1.0f, 0.0f, 0.0f, pitch));
+
+            face_descriptors[i].transformations.rotation = 0;
+
+            faces[i] = Renderer::Face(face_descriptors[i].transformations, face_descriptors[i].orientation);
+            faces[i].SetDisplayBackface(false);
+            faces[i].SetTextureMultipliers({ 0xFFFFFFFF, 0xFFFFFFFF });
+
+            // Extract texture info from the atlas
+            std::array<unsigned short, 4> texture_pos = { 0, 0, 0, 0 };
+            std::array<unsigned short, 4> texture_size = { 0, 0, 0, 0 };
+            std::array<Renderer::Transparency, 2> transparencies = { Renderer::Transparency::Opaque, Renderer::Transparency::Opaque };
+            std::array<Renderer::Animation, 2> animated = { Renderer::Animation::Static, Renderer::Animation::Static };
+
+            for (int i = 0; i < std::min(2, static_cast<int>(face_descriptors[i].texture_names.size())); ++i)
+            {
+                std::tie(texture_pos[2 * i + 0], texture_pos[2 * i + 1]) = atlas->GetPosition(face_descriptors[i].texture_names[i]);
+                std::tie(texture_size[2 * i + 0], texture_size[2 * i + 1]) = atlas->GetSize(face_descriptors[i].texture_names[i]);
+                transparencies[i] = atlas->GetTransparency(face_descriptors[i].texture_names[i]);
+                animated[i] = atlas->GetAnimation(face_descriptors[i].texture_names[i]);
+            }
+
+            // Main texture coords in the atlas
+            std::array<float, 4> coords = faces[i].GetTextureCoords(false);
+            unsigned short height_normalizer = animated[0] == Renderer::Animation::Animated ? texture_size[0] : texture_size[1];
+            coords[0] = (texture_pos[0] + coords[0] / 16.0f * texture_size[0]) / atlas->GetWidth();
+            coords[1] = (texture_pos[1] + coords[1] / 16.0f * height_normalizer) / atlas->GetHeight();
+            coords[2] = (texture_pos[0] + coords[2] / 16.0f * texture_size[0]) / atlas->GetWidth();
+            coords[3] = (texture_pos[1] + coords[3] / 16.0f * height_normalizer) / atlas->GetHeight();
+            faces[i].SetTextureCoords(coords, false);
+
+            // Overlay texture coords in the atlas if existing
+            if (face_descriptors[i].texture_names.size() > 1)
+            {
+                coords = faces[i].GetTextureCoords(true);
+                height_normalizer = animated[1] == Renderer::Animation::Animated ? texture_size[2] : texture_size[3];
+                coords[0] = (texture_pos[2] + coords[0] / 16.0f * texture_size[2]) / atlas->GetWidth();
+                coords[1] = (texture_pos[3] + coords[1] / 16.0f * height_normalizer) / atlas->GetHeight();
+                coords[2] = (texture_pos[2] + coords[2] / 16.0f * texture_size[2]) / atlas->GetWidth();
+                coords[3] = (texture_pos[3] + coords[3] / 16.0f * height_normalizer) / atlas->GetHeight();
+                faces[i].SetTextureCoords(coords, true);
+            }
+
+            faces[i].SetTransparencyData(transparencies[0]);
+        }
+        are_rendered_faces_up_to_date = false;
+    }
+#endif
 }

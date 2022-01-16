@@ -106,18 +106,53 @@ namespace Botcraft
             texture_coords_overlay = texture_coords;
 
             texture_data = 0;
-            texture_data = (texture_rotation << 1) | (display_back_face);
+            texture_data = (texture_rotation << 3) | (display_back_face << 2);
         }
 
-        void Face::SetDisplayBackface(const bool display_back_face)
+        void Face::SetTransparencyData(const Transparency transparency)
         {
-            if (display_back_face)
+            // 0 0 means opaque
+            // 0 1 means fully transparent
+            // 1 1 means partially transparent
+            switch (transparency)
             {
+            case Transparency::Opaque:
+                texture_data &= ~3UL;
+                break;
+            case Transparency::Total:
                 texture_data |= 1UL;
+                texture_data &= ~2UL;
+                break;
+            case Transparency::Partial:
+                texture_data |= 3UL;
+                break;
+            }
+        }
+
+        Transparency Face::GetTransparencyData() const
+        {
+            switch (texture_data & 3UL)
+            {
+            case 0:
+                return Transparency::Opaque;
+            case 1:
+                return Transparency::Total;
+            case 3:
+                return Transparency::Partial;
+            default:
+                return Transparency::Opaque;
+            }
+        }
+
+        void Face::SetDisplayBackface(const bool display_backface)
+        {
+            if (display_backface)
+            {
+                texture_data |= 1Ul << 2;
             }
             else
             {
-                texture_data &= ~1UL;
+                texture_data &= (~1Ul) << 2;
             }
         }
 
@@ -151,11 +186,65 @@ namespace Botcraft
             {
                 texture_coords_overlay = coords;
 
-                texture_data |= 1Ul << 3;
+                texture_data |= 1Ul << 5;
             }
             else
             {
                 texture_coords = coords;
+            }
+        }
+
+        void Face::UpdateMatrix(const FaceTransformation& transformations, const Orientation orientation)
+        {
+            IMatrix model;
+
+            //Apply the translations of the model
+            for (int i = 0; i < transformations.translations.size(); ++i)
+            {
+                transformations.translations[i]->ApplyTransformation(model);
+            }
+
+            //Apply the rotations
+            for (int i = 0; i < transformations.rotations.size(); ++i)
+            {
+                transformations.rotations[i]->ApplyTransformation(model);
+            }
+
+            //Apply the scales
+            for (int i = 0; i < transformations.scales.size(); ++i)
+            {
+                transformations.scales[i]->ApplyTransformation(model);
+            }
+
+            //Apply the transformations to get the good face from the base one
+            switch (orientation)
+            {
+            case Orientation::Top:
+                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                break;
+            case Orientation::East:
+                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                break;
+            case Orientation::West:
+                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                break;
+            case Orientation::North:
+                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                break;
+            case Orientation::South:
+                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                break;
+            }
+
+            const float* model_ptr = glm::value_ptr(model.m);
+
+            for (int i = 0; i < 16; ++i)
+            {
+                model_matrix[i] = model_ptr[i];
             }
         }
     } // Renderer

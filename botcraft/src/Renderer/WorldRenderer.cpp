@@ -1,6 +1,7 @@
 #include "botcraft/Renderer/Atlas.hpp"
 #include "botcraft/Renderer/Camera.hpp"
 #include "botcraft/Renderer/Chunk.hpp"
+#include "botcraft/Renderer/Entity.hpp"
 #include "botcraft/Renderer/TransparentChunk.hpp"
 #include "botcraft/Renderer/WorldRenderer.hpp"
 
@@ -13,33 +14,29 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <unordered_set>
-#include <iostream>
 
 namespace Botcraft
 {
     namespace Renderer
     {
-        WorldRenderer::WorldRenderer(const unsigned int section_height_,
-            const std::vector<std::pair<std::string, std::string> >& textures_path_names)
+        WorldRenderer::WorldRenderer(const unsigned int section_height_)
         {
             section_height = section_height_;
 
             chunks = std::unordered_map<Position, std::shared_ptr<Chunk> >();
             transparent_chunks = std::unordered_map<Position, std::shared_ptr<TransparentChunk> >();
 
-            faces_should_be_updated = true;
+            blocks_faces_should_be_updated = true;
 
-            camera = std::shared_ptr<Camera>(new Camera);
+            entities = std::unordered_map<int, std::shared_ptr<Entity> >();
+            entities_faces_should_be_updated = true;
 
-            //Build atlas
-            atlas = std::shared_ptr<Atlas>(new Atlas);
-            atlas->LoadData(textures_path_names);
+            camera = std::make_shared<Camera>();
         }
 
         WorldRenderer::~WorldRenderer()
         {
             glDeleteTextures(1, &atlas_texture);
-            atlas.reset();
             camera.reset();
         }
 
@@ -68,6 +65,8 @@ namespace Botcraft
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+            const Atlas* atlas = AssetsManager::getInstance().GetAtlas();
 
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, atlas->GetWidth(), atlas->GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, atlas->Get());
             glGenerateMipmap(GL_TEXTURE_2D);
@@ -107,9 +106,9 @@ namespace Botcraft
 
         void WorldRenderer::UpdateFaces()
         {
-            if (faces_should_be_updated)
+            if (blocks_faces_should_be_updated)
             {
-                faces_should_be_updated = false;
+                blocks_faces_should_be_updated = false;
                 {
                     std::lock_guard<std::mutex> lock(chunks_mutex);
                     for (auto it = chunks.begin(); it != chunks.end();)
@@ -138,6 +137,23 @@ namespace Botcraft
                         {
                             ++it;
                         }
+                    }
+                }
+            }
+            if (entities_faces_should_be_updated)
+            {
+                entities_faces_should_be_updated = false;
+                std::lock_guard<std::mutex> lock(entities_mutex);
+                for (auto it = entities.begin(); it != entities.end();)
+                {
+                    it->second->Update();
+                    if (it->second->GetNumFace() == 0)
+                    {
+                        it = entities.erase(it);
+                    }
+                    else
+                    {
+                        ++it;
                     }
                 }
             }
@@ -171,7 +187,7 @@ namespace Botcraft
 
             if (chunk == nullptr)
             {
-                faces_should_be_updated = true;
+                blocks_faces_should_be_updated = true;
                 return;
             }
 
@@ -265,7 +281,30 @@ namespace Botcraft
                     }
                 }
             }
-            faces_should_be_updated = true;
+            blocks_faces_should_be_updated = true;
+        }
+
+        void WorldRenderer::UpdateEntity(const int id, const std::vector<Face>& faces)
+        {
+            std::lock_guard<std::mutex> lock(entities_mutex);
+
+            auto it = entities.find(id);
+
+            if (it == entities.end() && faces.size() != 0)
+            {
+                entities[id] = std::make_shared<Entity>(faces);
+                entities_faces_should_be_updated = true;
+            }
+            else if (it != entities.end() && faces.size() == 0)
+            {
+                it->second->ClearFaces();
+                entities_faces_should_be_updated = true;
+            }
+            else if (it != entities.end())
+            {
+                it->second->UpdateFaces(faces);
+                entities_faces_should_be_updated = true;
+            }
         }
 
         void WorldRenderer::UseAtlasTextureGL()
@@ -291,7 +330,15 @@ namespace Botcraft
                     it->second->ClearFaces();
                 }
             }
-            faces_should_be_updated = true;
+            {
+                std::lock_guard<std::mutex> lock(entities_mutex);
+                for (auto it = entities.begin(); it != entities.end(); it++)
+                {
+                    it->second->ClearFaces();
+                }
+            }
+            blocks_faces_should_be_updated = true;
+            entities_faces_should_be_updated = true;
         }
 
         void WorldRenderer::SetPosOrientation(const double x_, const double y_, const double z_, const float yaw_, const float pitch_)
@@ -305,6 +352,7 @@ namespace Botcraft
         }
 
         void WorldRenderer::RenderFaces(int* num_chunks_, int* num_rendered_chunks_,
+            int* num_entities_, int* num_rendered_entities_,
             int* num_faces_, int* num_rendered_faces_)
         {
             const std::array<glm::vec4, 6>& frustum_planes = camera->GetFrustumPlanes();
@@ -373,7 +421,7 @@ namespace Botcraft
                 }
             }
 
-            // Sort the chunks from far to near the camera
+            // Sort the chunks from far to near the camera (necessary for transparent chunks to render in the right order)
             m_mutex_camera.lock();
             std::sort(chunks_to_render.begin(), chunks_to_render.end(), [this](const Position& p1, const Position& p2) {return this->DistanceToCamera(p1) > this->DistanceToCamera(p2); });
             m_mutex_camera.unlock();
@@ -392,6 +440,19 @@ namespace Botcraft
                 }
             }
             chunks_mutex.unlock();
+
+            // Render entities
+            entities_mutex.lock();
+            const int num_entities = entities.size();
+            int num_rendered_entities = 0;
+            for (auto& e: entities)
+            {
+                e.second->Render();
+                num_rendered_entities += 1;
+                num_rendered_faces += e.second->GetNumFace();
+                num_faces += e.second->GetNumFace();
+            }
+            entities_mutex.unlock();
 
             m_mutex_camera.lock();
             const glm::vec3 cam_pos = camera->GetPosition();
@@ -427,90 +488,51 @@ namespace Botcraft
             {
                 *num_rendered_faces_ = num_rendered_faces;
             }
+            if (num_entities_)
+            {
+                *num_entities_ = num_entities;
+            }
+            if (num_rendered_entities_)
+            {
+                *num_rendered_entities_ = num_rendered_entities;
+            }
         }
 
         void WorldRenderer::AddFace(const int x_, const int y_, const int z_, const Face& face_, const std::vector<std::string>& texture_identifiers_, const std::vector<unsigned int>& texture_multipliers_)
         {
-            std::array<unsigned short, 4> atlas_pos = { 0 };
-            std::array<unsigned short, 4> atlas_size = { 0 };
-            std::array<Transparency, 2> transparencies = { Transparency::Opaque };
-            std::array<Animation, 2> animated = { Animation::Static };
-
-            for (int i = 0; i < std::min(2, (int)texture_identifiers_.size()); ++i)
-            {
-                const std::pair<int, int>& atlas_coords = atlas->GetPosition(texture_identifiers_[i]);
-                atlas_pos[2 * i + 0] = atlas_coords.first;
-                atlas_pos[2 * i + 1] = atlas_coords.second;
-                const std::pair<int, int>& atlas_dims = atlas->GetSize(texture_identifiers_[i]);
-                atlas_size[2 * i + 0] = atlas_dims.first;
-                atlas_size[2 * i + 1] = atlas_dims.second;
-                transparencies[i] = atlas->GetTransparency(texture_identifiers_[i]);
-                animated[i] = atlas->GetAnimation(texture_identifiers_[i]);
-            }
-
-            std::array<unsigned int, 2> texture_multipliers = { 0xFFFFFFFF };
-            for (int i = 0; i < std::min(2, (int)texture_multipliers_.size()); ++i)
+            std::array<unsigned int, 2> texture_multipliers = { 0xFFFFFFFF, 0xFFFFFFFF };
+            for (int i = 0; i < std::min(2, static_cast<int>(texture_multipliers_.size())); ++i)
             {
                 texture_multipliers[i] = texture_multipliers_[i];
             }
 
-            Face face(face_);
-            face.SetTextureMultipliers(texture_multipliers);
+            const Position chunk_position(
+                static_cast<int>(floor(x_ / static_cast<double>(CHUNK_WIDTH))), 
+                static_cast<int>(floor(y_ / static_cast<double>(section_height))), 
+                static_cast<int>(floor(z_ / static_cast<double>(CHUNK_WIDTH)))
+            );
 
-            std::array<float, 4> coords = face.GetTextureCoords(false);
-            unsigned short height_normalizer = animated[0] == Animation::Animated ? atlas_size[0] : atlas_size[1];
-            for (int i = 0; i < 2; ++i)
-            {
-                coords[2 * i + 0] = (atlas_pos[0] + coords[2 * i + 0] / 16.0f * atlas_size[0]) / atlas->GetWidth();
-                coords[2 * i + 1] = (atlas_pos[1] + coords[2 * i + 1] / 16.0f * height_normalizer) / atlas->GetHeight();
-            }
-            face.SetTextureCoords(coords, false);
-
-            if (texture_identifiers_.size() > 1)
-            {
-                coords = face.GetTextureCoords(true);
-                height_normalizer = animated[1] == Animation::Animated ? atlas_size[2] : atlas_size[3];
-                for (int i = 0; i < 2; ++i)
-                {
-                    coords[2 * i + 0] = (atlas_pos[2] + coords[2 * i + 0] / 16.0f * atlas_size[2]) / atlas->GetWidth();
-                    coords[2 * i + 1] = (atlas_pos[3] + coords[2 * i + 1] / 16.0f * height_normalizer) / atlas->GetHeight();
-                }
-                face.SetTextureCoords(coords, true);
-            }
-
-            //Add 0.5 because the origin of the block is at the center
-            //but the coordinates start from the block corner
-            face.GetMatrix()[12] += x_ + 0.5f;
-            face.GetMatrix()[13] += y_ + 0.5f;
-            face.GetMatrix()[14] += z_ + 0.5f;
-
-            const Transparency transparency = transparencies[0];
-            if (transparency == Transparency::Opaque)
-            {
-                face.SetDisplayBackface(false);
-            }
-
-            const Position position((int)floor(x_ / (double)CHUNK_WIDTH), (int)floor(y_ / (double)section_height), (int)floor(z_ / (double)CHUNK_WIDTH));
-
-            if (transparency == Transparency::Partial)
+            if (face_.GetTransparencyData() == Transparency::Partial)
             {
                 std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
-                auto chunk_it = transparent_chunks.find(position);
+                auto chunk_it = transparent_chunks.find(chunk_position);
                 if (chunk_it == transparent_chunks.end())
                 {
-                    transparent_chunks[position] = std::shared_ptr<TransparentChunk>(new TransparentChunk);
+                    transparent_chunks[chunk_position] = std::make_shared<TransparentChunk>();
                 }
-                transparent_chunks[position]->AddFace(face);
+                //Add 0.5 because the origin of the block is at the center
+                //but the coordinates start from the block corner
+                transparent_chunks[chunk_position]->AddFace(face_, texture_multipliers, x_ + 0.5f, y_ + 0.5f, z_ + 0.5f);
             }
             else
             {
                 std::lock_guard<std::mutex> lock(chunks_mutex);
-                auto chunk_it = chunks.find(position);
+                auto chunk_it = chunks.find(chunk_position);
                 if (chunk_it == chunks.end())
                 {
-                    chunks[position] = std::shared_ptr<Chunk>(new Chunk);
+                    chunks[chunk_position] = std::make_shared<Chunk>();
                 }
-                chunks[position]->AddFace(face);
+                chunks[chunk_position]->AddFace(face_, texture_multipliers, x_ + 0.5f, y_ + 0.5f, z_ + 0.5f);
             }
         }
 

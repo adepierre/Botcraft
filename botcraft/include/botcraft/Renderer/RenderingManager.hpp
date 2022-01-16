@@ -26,6 +26,7 @@ namespace Botcraft
 {
     class World;
     class InventoryManager;
+    class EntityManager;
 
     namespace Renderer
     {
@@ -55,8 +56,8 @@ namespace Botcraft
             // Chunks in renderer are independant of chunks in the corresponding world.
             // Set headless_ to true to run without opening a window (rendering is still done)
             RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
+                std::shared_ptr<EntityManager> entity_manager_,
                 const unsigned int &window_width, const unsigned int &window_height,
-                const std::vector<std::pair<std::string, std::string> > &textures_path_names,
                 const unsigned int section_height_ = 16, const bool headless = false);
             ~RenderingManager();
 
@@ -67,6 +68,7 @@ namespace Botcraft
             void SetMouseCallback(std::function<void(double, double)> callback);
             void SetKeyboardCallback(std::function<void(std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, double)> callback);
             void AddChunkToUpdate(const int x, const int z);
+            void AddEntityToUpdate(const int id);
 
             // Set world renderer's camera position and orientation
             void SetPosOrientation(const double x_, const double y_, const double z_, const float yaw_, const float pitch_);
@@ -78,6 +80,8 @@ namespace Botcraft
             void WaitForRenderingUpdate();
 
             virtual void Handle(ProtocolCraft::Message& msg) override;
+            
+            // Chunk stuff
             virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg) override;
@@ -86,8 +90,32 @@ namespace Botcraft
 #else
             virtual void Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg) override;
 #endif
+
+            // Entity stuff
+            virtual void Handle(ProtocolCraft::ClientboundAddEntityPacket& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundAddMobPacket& msg) override;
+#if PROTOCOL_VERSION < 721
+            virtual void Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg) override;
+#endif
+            virtual void Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg) override;
+#if PROTOCOL_VERSION < 755
+            virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg) override;
+#endif
+            virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg) override;
+#if PROTOCOL_VERSION == 755
+            virtual void Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg) override;
+#else
+            virtual void Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg) override;
+#endif
+
+            // Misc stuff
             virtual void Handle(ProtocolCraft::ClientboundSetTimePacket& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
+
+
 
         private:
             // Initialize all the stuff
@@ -107,6 +135,7 @@ namespace Botcraft
             // External modules
             std::shared_ptr<World> world;
             std::shared_ptr<InventoryManager> inventory_manager;
+            std::shared_ptr<EntityManager> entity_manager;
 
 #if USE_IMGUI
             bool inventory_open;
@@ -143,10 +172,11 @@ namespace Botcraft
             bool running;
 
             std::unordered_set<Position> chunks_to_udpate;
+            std::unordered_set<int> entities_to_update;
             std::mutex mutex_updating;
             std::condition_variable condition_update;
-            // Thread used to update the rendered chunks with current world data 
-            std::thread thread_updating_chunks; 
+            // Thread used to update the rendered data with current data 
+            std::thread thread_updating_renderable; 
         };
     } // Renderer
 } // Botcraft

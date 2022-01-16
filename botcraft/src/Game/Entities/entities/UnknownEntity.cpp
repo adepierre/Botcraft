@@ -26,14 +26,4 @@ namespace Botcraft
     {
         return AABB(position, Vector3<double>(0.5, 0.5, 0.5));
     }
-
-    double UnknownEntity::GetWidth() const
-    {
-        return -1.0;
-    }
-
-    double UnknownEntity::GetHeight() const
-    {
-        return -1.0;
-    }
 }

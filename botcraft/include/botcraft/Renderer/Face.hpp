@@ -9,6 +9,7 @@
 #include "botcraft/Game/Enums.hpp"
 
 #include "botcraft/Renderer/Transformation.hpp"
+#include "botcraft/Renderer/Enums.hpp"
 
 namespace Botcraft
 {
@@ -35,13 +36,17 @@ namespace Botcraft
                 return true;
             }
 
-            void SetDisplayBackface(const bool display_back_face);
+            void SetTransparencyData(const Transparency transparency);
+            Transparency GetTransparencyData() const;
+            void SetDisplayBackface(const bool display_backface);
 
             const std::array<float, 16> &GetMatrix() const;
             std::array<float, 16> &GetMatrix();
             void SetTextureMultipliers(const std::array<unsigned int, 2> &mult);
             const std::array<float, 4>& GetTextureCoords(const bool overlay) const;
             void SetTextureCoords(const std::array<float, 4>& coords, const bool overlay);
+
+            void UpdateMatrix(const FaceTransformation& transformations, const Orientation orientation);
 
             static const std::vector<float> base_face;
 
@@ -55,7 +60,7 @@ namespace Botcraft
             std::array<float, 4> texture_coords_overlay;
 
             //One int with all textures data packed inside
-            //(unused : 28 bits, use_overlay : 1 bit, rotation : 2 bits, display_backface : 1 bit)
+            //(unused : 26 bits, use_overlay : 1 bit, rotation : 2 bits, display_backface: 1 bit, transparency_data : 2 bit)
             unsigned int texture_data;
 
             //One int with texture multiplier packed inside (rgba) x2 for one optional overlay

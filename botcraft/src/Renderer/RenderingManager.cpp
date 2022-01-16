@@ -28,6 +28,9 @@ static bool imgui_demo = false;
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 
+#include "botcraft/Game/Entities/EntityManager.hpp"
+#include "botcraft/Game/Entities/entities/Entity.hpp"
+
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 
@@ -39,12 +42,13 @@ namespace Botcraft
     namespace Renderer
     {
         RenderingManager::RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
+            std::shared_ptr<EntityManager> entity_manager_,
             const unsigned int &window_width, const unsigned int &window_height,
-            const std::vector<std::pair<std::string, std::string> > &textures_path_names,
             const unsigned int section_height_, const bool headless)
         {
             world = world_;
             inventory_manager = inventory_manager_;
+            entity_manager = entity_manager_;
 #if USE_IMGUI
             inventory_open = false;
             last_time_inventory_changed = 0;
@@ -64,7 +68,7 @@ namespace Botcraft
             MouseCallback = [](double, double) {};
             KeyboardCallback = [](std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, float) {};
 
-            world_renderer = std::unique_ptr<WorldRenderer>(new WorldRenderer(section_height_, textures_path_names));
+            world_renderer = std::make_unique<WorldRenderer>(section_height_);
 
             take_screenshot = false;
 
@@ -72,7 +76,7 @@ namespace Botcraft
 
             running = true;
             rendering_thread = std::thread(&RenderingManager::Run, this, headless);
-            thread_updating_chunks = std::thread(&RenderingManager::WaitForRenderingUpdate, this);
+            thread_updating_renderable = std::thread(&RenderingManager::WaitForRenderingUpdate, this);
 
         }
 
@@ -81,9 +85,9 @@ namespace Botcraft
             running = false;
 
             condition_update.notify_all();
-            if (thread_updating_chunks.joinable())
+            if (thread_updating_renderable.joinable())
             {
-                thread_updating_chunks.join();
+                thread_updating_renderable.join();
             }
 
             if (rendering_thread.joinable())
@@ -190,16 +194,18 @@ namespace Botcraft
                 world_renderer->UseAtlasTextureGL();
 
 #ifdef USE_IMGUI
-                int num_chunks, num_rendered_chunks, num_faces, num_rendered_faces;
-                world_renderer->RenderFaces(&num_chunks, &num_rendered_chunks, &num_faces, &num_rendered_faces);
+                int num_chunks, num_rendered_chunks, num_entities, num_rendered_entities, num_faces, num_rendered_faces;
+                world_renderer->RenderFaces(&num_chunks, &num_rendered_chunks, &num_entities, &num_rendered_entities, &num_faces, &num_rendered_faces);
                 {
                     ImGui::SetNextWindowPos(ImVec2(current_window_width, 0), 0, ImVec2(1.0f, 0.0f));
-                    ImGui::SetNextWindowSize(ImVec2(180, 140));
+                    ImGui::SetNextWindowSize(ImVec2(180, 170));
                     ImGui::Begin("Rendering");
                     ImGui::Text("Lim. FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
                     ImGui::Text("Real FPS: %.1f (%.2fms)", 1.0 / real_fps, real_fps * 1000.0);
                     ImGui::Text("Loaded sections: %i", num_chunks);
                     ImGui::Text("Rendered sections: %i", num_rendered_chunks);
+                    ImGui::Text("Num entities: %i", num_entities);
+                    ImGui::Text("Rendered entities: %i", num_rendered_entities);
                     ImGui::Text("Loaded faces: %i", num_faces);
                     ImGui::Text("Rendered faces: %i", num_rendered_faces);
                     ImGui::End();
@@ -512,6 +518,13 @@ namespace Botcraft
             condition_update.notify_all();
         }
 
+        void RenderingManager::AddEntityToUpdate(const int id)
+        {
+            std::lock_guard<std::mutex> guard_rendering(mutex_updating);
+            entities_to_update.insert(id);
+            condition_update.notify_all();
+        }
+
         void RenderingManager::SetPosOrientation(const double x_, const double y_, const double z_, const float yaw_, const float pitch_)
         {
             if (world_renderer)
@@ -567,6 +580,51 @@ namespace Botcraft
                         break;
                     }
                 }
+
+                while (!entities_to_update.empty())
+                {
+                    int entity_id;
+                    mutex_updating.lock();
+                    if (!entities_to_update.empty())
+                    {
+                        auto eid_it = entities_to_update.begin();
+                        entity_id = *eid_it;
+                        entities_to_update.erase(eid_it);
+                    }
+                    mutex_updating.unlock();
+
+                    std::vector<Face> faces;
+                    // Get the new values
+                    entity_manager->GetMutex().lock();
+                    std::shared_ptr<Botcraft::Entity> entity = entity_manager->GetEntity(entity_id);
+                    bool should_update = false;
+                    if (entity == nullptr)
+                    {
+                        should_update = true;
+                    }
+                    else if (!entity->GetAreRenderedFacesUpToDate())
+                    {
+                        faces = entity->GetFaces();
+                        entity->SetAreRenderedFacesUpToDate(true);
+                        should_update = true;
+                    }
+                    entity_manager->GetMutex().unlock();
+
+                    if (should_update)
+                    {
+                        world_renderer->UpdateEntity(entity_id, faces);
+                    }
+
+                    // If we left the game, we don't need to process 
+                    // the rest of the data, just discard them
+                    if (!running)
+                    {
+                        mutex_updating.lock();
+                        entities_to_update.clear();
+                        mutex_updating.unlock();
+                        break;
+                    }
+                }
             }
         }
 
@@ -602,6 +660,70 @@ namespace Botcraft
 #endif
         {
             AddChunkToUpdate(msg.GetX(), msg.GetZ());
+        }
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundAddEntityPacket& msg)
+        {
+            AddEntityToUpdate(msg.GetId_());
+        }
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
+        {
+            AddEntityToUpdate(msg.GetId_());
+        }
+
+#if PROTOCOL_VERSION < 721
+        void RenderingManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)
+        {
+            AddEntityToUpdate(msg.GetId_());
+        }
+#endif
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg)
+        {
+            AddEntityToUpdate(msg.GetEntityId());
+        }
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg)
+        {
+            AddEntityToUpdate(msg.GetId_());
+        }
+
+#if PROTOCOL_VERSION < 755
+        void RenderingManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg)
+        {
+            AddEntityToUpdate(msg.GetEntityId());
+        }
+#endif
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg)
+        {
+            AddEntityToUpdate(msg.GetEntityId());
+        }
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& msg)
+        {
+            AddEntityToUpdate(msg.GetEntityId());
+        }
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg)
+        {
+            AddEntityToUpdate(msg.GetEntityId());
+        }
+
+#if PROTOCOL_VERSION == 755
+        void RenderingManager::Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg)
+        {
+            AddEntityToUpdate(msg.GetEntityId());
+        }
+#endif
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg)
+        {
+            for (auto id: msg.GetEntityIds())
+            {
+                AddEntityToUpdate(id);
+            }
         }
 
         void RenderingManager::Handle(ProtocolCraft::ClientboundSetTimePacket& msg)

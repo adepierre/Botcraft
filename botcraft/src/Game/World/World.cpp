@@ -752,6 +752,23 @@ namespace Botcraft
         return cached->GetDimension();
     }
 
+#if PROTOCOL_VERSION > 756
+    void World::SetDimensionHeight(const std::string& dimension, const int height)
+    {
+        dimension_height[dimension] = height;
+    }
+
+    void World::SetDimensionMinY(const std::string& dimension, const int min_y)
+    {
+        dimension_min_y[dimension] = min_y;
+    }
+
+    void World::SetCurrentDimension(const std::string& dimension)
+    {
+        current_dimension = dimension;
+    }
+#endif
+
 
     const std::map<std::pair<int, int>, std::shared_ptr<Chunk> >& World::GetAllChunks() const
     {

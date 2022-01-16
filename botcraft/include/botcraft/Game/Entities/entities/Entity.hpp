@@ -16,6 +16,10 @@
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/Vector3.hpp"
 
+#if USE_GUI
+#include "botcraft/Game/Model.hpp"
+#endif
+
 namespace Botcraft
 {
     enum class EntityType;
@@ -40,9 +44,9 @@ namespace Botcraft
         // Object related stuff
         virtual std::string GetName() const = 0;
         virtual EntityType GetType() const = 0;
-        virtual AABB GetCollider() const = 0;
-        virtual double GetWidth() const = 0;
-        virtual double GetHeight() const = 0;
+        virtual AABB GetCollider() const;
+        virtual double GetWidth() const;
+        virtual double GetHeight() const;
 
         // Metadata stuff
         void LoadMetadataFromRawArray(const std::vector<unsigned char>& data);
@@ -97,6 +101,10 @@ namespace Botcraft
         bool GetOnGround() const;
         const std::map<EquipmentSlot, ProtocolCraft::Slot>& GetEquipments() const;
         const ProtocolCraft::Slot& GetEquipment(const EquipmentSlot slot) const;
+#if USE_GUI
+        const std::vector<Renderer::Face>& GetFaces();
+        bool GetAreRenderedFacesUpToDate() const;
+#endif
 
         // Generic properties setter
         void SetEntityID(const int entity_id_);
@@ -112,10 +120,14 @@ namespace Botcraft
         void SetSpeedZ(const double speed_z_);
         void SetOnGround(const bool on_ground_);
         void SetEquipment(const EquipmentSlot slot, const ProtocolCraft::Slot& item);
+#if USE_GUI
+        void SetAreRenderedFacesUpToDate(const bool are_rendered_faces_up_to_date_);
+#endif
 
         // In case it's needed one day, could be useful
         virtual nlohmann::json Serialize() const;
 
+        virtual bool IsLocalPlayer() const;
         // Can be used to know if an entity has a certain virtual type as ancestor
         virtual bool IsLivingEntity() const;
         virtual bool IsAbstractArrow() const;
@@ -162,6 +174,11 @@ namespace Botcraft
 
         // Factory stuff
         static std::shared_ptr<Entity> CreateEntity(const EntityType type);
+    
+    protected:
+#if USE_GUI
+        virtual void InitializeFaces();
+#endif
 
     protected:
         int entity_id;
@@ -173,12 +190,20 @@ namespace Botcraft
         std::map<EquipmentSlot, ProtocolCraft::Slot> equipments;
 
         std::map<std::string, std::any> metadata;
+
+#if USE_GUI
+        //All the faces of this model
+        std::vector<FaceDescriptor> face_descriptors;
+        std::vector<Renderer::Face> faces;
+
+        bool are_rendered_faces_up_to_date;
+#endif
     };
 
-#if PROTOCOL_VERSION > 754 // 1.17+
     enum class EntityType
     {
         None = -1,
+#if PROTOCOL_VERSION > 754 // 1.17+
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -292,11 +317,7 @@ namespace Botcraft
         ZombifiedPiglin = 110,
         Player = 111,
         FishingHook = 112,
-    };
 #elif PROTOCOL_VERSION > 736 // 1.16.2+
-    enum class EntityType
-    {
-        None = -1,
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -405,11 +426,7 @@ namespace Botcraft
         ZombifiedPiglin = 105,
         Player = 106,
         FishingHook = 107,
-    };
 #elif PROTOCOL_VERSION > 578 // 1.16+
-    enum class EntityType
-    {
-        None = -1,
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -517,11 +534,7 @@ namespace Botcraft
         ZombifiedPiglin = 104,
         Player = 105,
         FishingHook = 106,
-    };
 #elif PROTOCOL_VERSION > 498 // 1.15+
-    enum class EntityType
-    {
-        None = -1,
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -625,11 +638,7 @@ namespace Botcraft
         LightningBolt = 100,
         Player = 101,
         FishingHook = 102,
-    };
 #elif PROTOCOL_VERSION > 404 //1.14+
-    enum class EntityType
-    {
-        None = -1,
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -732,11 +741,7 @@ namespace Botcraft
         LightningBolt = 99,
         Player = 100,
         FishingHook = 101,
-    };
 #elif PROTOCOL_VERSION > 340 // 1.13+
-    enum class EntityType
-    {
-        None = -1,
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -832,12 +837,8 @@ namespace Botcraft
         Player = 92,
         FishingHook = 93,
         ThrownTrident = 94,
-    };
 #else // 1.12
-    enum class EntityType
-    {
         Player = -2,
-        None = -1,
         ItemEntity = 1,
         ExperienceOrb = 2,
         AreaEffectCloud = 3,
@@ -921,6 +922,7 @@ namespace Botcraft
         Parrot = 105,
         Villager = 120,
         EndCrystal = 200,
-    };
 #endif
+        MaxEntityIndex
+    };
 }

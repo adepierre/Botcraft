@@ -23,11 +23,6 @@ namespace Botcraft
         return EntityType::MagmaCube;
     }
 
-    AABB MagmaCubeEntity::GetCollider() const
-    {
-        return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2.0, position.z), Vector3<double>(GetWidth() / 2.0, GetHeight() / 2.0, GetWidth() / 2.0));
-    }
-
     double MagmaCubeEntity::GetWidth() const
     {
         return 2.04;

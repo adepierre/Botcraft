@@ -394,14 +394,17 @@ set(botcraft_SRC
 if(BOTCRAFT_USE_OPENGL_GUI)
     list(APPEND botcraft_PUBLIC_HDR
             include/botcraft/Renderer/RenderingManager.hpp
+            include/botcraft/Renderer/Enums.hpp
             include/botcraft/Renderer/Face.hpp
             include/botcraft/Renderer/Transformation.hpp
             )
             
     list(APPEND botcraft_PRIVATE_HDR
             private_include/botcraft/Renderer/Atlas.hpp
+            private_include/botcraft/Renderer/BlockRenderable.hpp
             private_include/botcraft/Renderer/Camera.hpp
             private_include/botcraft/Renderer/Chunk.hpp
+            private_include/botcraft/Renderer/Entity.hpp
             private_include/botcraft/Renderer/ImageSaver.hpp
             private_include/botcraft/Renderer/Shader.hpp
             private_include/botcraft/Renderer/TransparentChunk.hpp
@@ -410,8 +413,10 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             
     list(APPEND botcraft_SRC
             src/Renderer/Atlas.cpp
+            src/Renderer/BlockRenderable.cpp
             src/Renderer/Camera.cpp
             src/Renderer/Chunk.cpp
+            src/Renderer/Entity.cpp
             src/Renderer/RenderingManager.cpp
             src/Renderer/Face.cpp
             src/Renderer/ImageSaver.cpp

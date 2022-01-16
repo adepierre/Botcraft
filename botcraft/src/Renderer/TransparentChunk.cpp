@@ -40,7 +40,7 @@ namespace Botcraft
             case BufferStatus::Created:
             {
                 GenerateOpenGLBuffer();
-                display_faces_positions = std::vector<Face>(faces_positions.begin(), faces_positions.end());
+                display_faces_positions = std::vector<Face>(faces.begin(), faces.end());
                 face_number = display_faces_positions.size();
                 glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Face) * face_number, display_faces_positions.data(), GL_DYNAMIC_DRAW);
@@ -51,7 +51,7 @@ namespace Botcraft
             }
             case BufferStatus::Updated:
             {
-                display_faces_positions = std::vector<Face>(faces_positions.begin(), faces_positions.end());
+                display_faces_positions = std::vector<Face>(faces.begin(), faces.end());
                 face_number = display_faces_positions.size();
                 display_buffer_status = BufferStatus::Updated;
                 glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
@@ -92,7 +92,7 @@ namespace Botcraft
 
 
             glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(Face) * face_number, display_faces_positions.data(), GL_DYNAMIC_DRAW);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Face) * display_faces_positions.size(), display_faces_positions.data());
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             display_buffer_status = BufferStatus::UpToDate;

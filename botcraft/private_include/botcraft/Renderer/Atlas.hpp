@@ -2,24 +2,12 @@
 #include <vector>
 #include <map>
 
+#include "botcraft/Renderer/Enums.hpp"
+
 namespace Botcraft
 {
     namespace Renderer
     {
-        // Transparency values for textures
-        enum class Transparency
-        {
-            Opaque, // Alpha = 255
-            Total,  // Alpha == 0
-            Partial // 0 < Alpha < 255
-        };
-
-        enum class Animation
-        {
-            Static,
-            Animated
-        };
-
         class Atlas
         {
         public:
@@ -39,6 +27,9 @@ namespace Botcraft
             const Transparency GetTransparency(const std::string& name) const;
             const Animation GetAnimation(const std::string& name) const;
 
+            const unsigned char* Get(const int row = 0, const int col = 0, const int depth = 0) const;
+
+        private:
             unsigned char* Get(const int row = 0, const int col = 0, const int depth = 0);
 
         private:

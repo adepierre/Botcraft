@@ -28,11 +28,6 @@ namespace Botcraft
         return EntityType::Sheep;
     }
 
-    AABB SheepEntity::GetCollider() const
-    {
-        return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2.0, position.z), Vector3<double>(GetWidth() / 2.0, GetHeight() / 2.0, GetWidth() / 2.0));
-    }
-
     double SheepEntity::GetWidth() const
     {
         return 0.9;

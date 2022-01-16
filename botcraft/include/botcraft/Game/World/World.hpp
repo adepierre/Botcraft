@@ -131,6 +131,12 @@ namespace Botcraft
         const std::string GetDimension(const int x, const int z);
 #endif
 
+#if PROTOCOL_VERSION > 756
+        void SetDimensionHeight(const std::string& dimension, const int height);
+        void SetDimensionMinY(const std::string& dimension, const int min_y);
+        void SetCurrentDimension(const std::string& dimension);
+#endif
+
         /**
         * Perform a raycast in the voxel world and return position, normal and blockstate which are hit
         *

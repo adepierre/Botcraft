@@ -6,6 +6,10 @@
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Biome.hpp"
 
+#if USE_GUI
+#include "botcraft/Renderer/Atlas.hpp"
+#endif
+
 #include <nlohmann/json.hpp>
 
 namespace Botcraft
@@ -28,6 +32,15 @@ namespace Botcraft
         std::cout << "Loading items from file..." << std::endl;
         LoadItemsFile();
         std::cout << "Done!" << std::endl;
+#if USE_GUI
+        std::cout << "Loading textures..." << std::endl;
+        atlas = std::make_unique<Renderer::Atlas>();
+        LoadTextures();
+        std::cout << "Done!" << std::endl;
+        std::cout << "Updating models with Atlas data..." << std::endl;
+        UpdateModelsWithAtlasData();
+        std::cout << "Done!" << std::endl;
+#endif
         std::cout << "Clearing cache from memory..." << std::endl;
         ClearCaches();
         std::cout << "Done!" << std::endl;
@@ -77,57 +90,10 @@ namespace Botcraft
         return items;
     }
 
-#ifdef USE_GUI
-    const std::vector<std::pair<std::string, std::string> > AssetsManager::GetTexturesPathsNames() const
+#if USE_GUI
+    const Renderer::Atlas* AssetsManager::GetAtlas() const
     {
-        std::set<std::string> unique_names;
-
-        for (auto it = blockstates.begin(); it != blockstates.end(); ++it)
-        {
-#if PROTOCOL_VERSION < 347
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-            {
-                for (int n = 0; n < it2->second->GetNumModels(); ++n)
-                {
-                    const auto &faces = it2->second->GetModel(n).GetFaces();
-
-                    for (int i = 0; i < faces.size(); ++i)
-                    {
-                        for (int s = 0; s < faces[i].texture_names.size(); ++s)
-                        {
-                            unique_names.insert(faces[i].texture_names[s]);
-                        }
-                    }
-                }
-            }
-#else
-            for (int n = 0; n < it->second->GetNumModels(); ++n)
-            {
-                const auto &faces = it->second->GetModel(n).GetFaces();
-
-                for (int i = 0; i < faces.size(); ++i)
-                {
-                    for (int s = 0; s < faces[i].texture_names.size(); ++s)
-                    {
-                        unique_names.insert(faces[i].texture_names[s]);
-                    }
-                }
-            }
-#endif
-        }
-
-        std::vector<std::pair<std::string, std::string> > output;
-        output.reserve(unique_names.size());
-        for (auto it = unique_names.begin(); it != unique_names.end(); ++it)
-        {
-            if ((*it).empty())
-            {
-                continue;
-            }
-            output.push_back({ (ASSETS_PATH + std::string("/minecraft/textures/") + *it + ".png") , *it});
-        }
-
-        return output;
+        return atlas.get();
     }
 #endif
 
@@ -678,9 +644,81 @@ namespace Botcraft
         }
     }
 
+#if USE_GUI
+    void AssetsManager::LoadTextures()
+    {
+        std::set<std::string> unique_names;
+
+        for (auto it = blockstates.begin(); it != blockstates.end(); ++it)
+        {
+#if PROTOCOL_VERSION < 347
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+            {
+                for (int n = 0; n < it2->second->GetNumModels(); ++n)
+                {
+                    const auto& faces = it2->second->GetModel(n).GetFaces();
+
+                    for (int i = 0; i < faces.size(); ++i)
+                    {
+                        for (int s = 0; s < faces[i].texture_names.size(); ++s)
+                        {
+                            unique_names.insert(faces[i].texture_names[s]);
+                        }
+                    }
+                }
+            }
+#else
+            for (int n = 0; n < it->second->GetNumModels(); ++n)
+            {
+                const auto& faces = it->second->GetModel(n).GetFaces();
+
+                for (int i = 0; i < faces.size(); ++i)
+                {
+                    for (int s = 0; s < faces[i].texture_names.size(); ++s)
+                    {
+                        unique_names.insert(faces[i].texture_names[s]);
+                    }
+                }
+            }
+#endif
+        }
+
+        std::vector<std::pair<std::string, std::string> > paths;
+        paths.reserve(unique_names.size());
+        for (auto it = unique_names.begin(); it != unique_names.end(); ++it)
+        {
+            if ((*it).empty())
+            {
+                continue;
+            }
+            paths.push_back({ (ASSETS_PATH + std::string("/minecraft/textures/") + *it + ".png") , *it });
+        }
+
+        atlas->LoadData(paths);
+    }
+#endif
+
     void AssetsManager::ClearCaches()
     {
         Blockstate::ClearCache();
         Model::ClearCache();
     }
+
+#if USE_GUI
+    void AssetsManager::UpdateModelsWithAtlasData()
+    {
+        for (auto it = blockstates.begin(); it != blockstates.end(); ++it)
+        {
+#if PROTOCOL_VERSION < 347
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+            {
+                it2->second->UpdateModelsWithAtlasData(atlas.get());
+            }
+#else
+            it->second->UpdateModelsWithAtlasData(atlas.get());
+#endif
+        }
+    }
+#endif
+
 } //Botcraft

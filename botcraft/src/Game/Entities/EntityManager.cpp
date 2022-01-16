@@ -26,6 +26,23 @@ namespace Botcraft
         return entities;
     }
 
+    std::shared_ptr<Entity> EntityManager::GetEntity(const int id) const
+    {
+        auto it = entities.find(id);
+        return it == entities.end() ? nullptr : it->second;
+    }
+
+    void EntityManager::AddEntity(const std::shared_ptr<Entity>& entity)
+    {
+        if (entity == nullptr)
+        {
+            return;
+        }
+
+        std::lock_guard<std::mutex> lock(entity_manager_mutex);
+        entities[entity->GetEntityID()] = entity;
+    }
+
 #if USE_GUI
     void EntityManager::SetRenderingManager(std::shared_ptr<Renderer::RenderingManager> rendering_manager_)
     {
