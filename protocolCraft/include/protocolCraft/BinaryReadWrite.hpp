@@ -22,7 +22,7 @@ namespace ProtocolCraft
         VarType() {}
         operator T() const { return value; }
     private:
-        int value;
+        T value;
     };
 
     using VarInt = VarType<int>;
