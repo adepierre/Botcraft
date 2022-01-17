@@ -450,24 +450,32 @@ namespace Botcraft
             chunks_mutex.unlock();
 
             // Render entities, with approximate frustum culling
+            const std::vector<Position> neighbouring_positions({ Position(0, 0, 0), Position(0, -1, 0), Position(0, 0, -1),
+                            Position(-1, 0, 0), Position(1, 0, 0), Position(0, 0, 1), Position(0, 1, 0) });
             entities_mutex.lock();
             const int num_entities = entities.size();
             int num_rendered_entities = 0;
             for (auto& e : entities)
             {
+                num_faces += e.second->GetNumFace();
+
                 const Vector3<float> approx_pos = e.second->GetApproxPos();
                 const Position chunk_position(
                     static_cast<int>(floor(approx_pos.x / static_cast<double>(CHUNK_WIDTH))),
                     static_cast<int>(floor(approx_pos.y / static_cast<double>(section_height))),
                     static_cast<int>(floor(approx_pos.z / static_cast<double>(CHUNK_WIDTH)))
                 );
-                if (inside_frustum[chunk_position])
+
+                for (int i = 0; i < neighbouring_positions.size(); ++i)
                 {
-                    e.second->Render();
-                    num_rendered_entities += 1;
-                    num_rendered_faces += e.second->GetNumFace();
+                    if (inside_frustum[chunk_position + neighbouring_positions[i]])
+                    {
+                        e.second->Render();
+                        num_rendered_entities += 1;
+                        num_rendered_faces += e.second->GetNumFace();
+                        break;
+                    }
                 }
-                num_faces += e.second->GetNumFace();
             }
             entities_mutex.unlock();
 
