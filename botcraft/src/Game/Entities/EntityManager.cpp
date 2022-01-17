@@ -331,6 +331,11 @@ namespace Botcraft
     void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        if (msg.GetId_() == local_player->GetEntityID())
+        {
+            local_player->GetMutex().lock();
+        }
+
         auto it = entities.find(msg.GetId_());
         if (it == entities.end())
         {
@@ -340,11 +345,21 @@ namespace Botcraft
         {
             it->second->LoadMetadataFromRawArray(msg.GetPackedItems());
         }
+
+        if (msg.GetId_() == local_player->GetEntityID())
+        {
+            local_player->GetMutex().unlock();
+        }
     }
 
     void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityMotionPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        if (msg.GetId_() == local_player->GetEntityID())
+        {
+            local_player->GetMutex().lock();
+        }
+
         auto it = entities.find(msg.GetId_());
         if (it == entities.end())
         {
@@ -352,8 +367,13 @@ namespace Botcraft
         }
         else
         {
-            // Packet data is in 1/8000 of block per tick, so convert it back to block/s
-            it->second->SetSpeed(Vector3<double>(msg.GetXA(), msg.GetYA(), msg.GetZA()) / 8000.0 / 0.05);
+            // Packet data is in 1/8000 of block per tick, so convert it back to block/tick
+            it->second->SetSpeed(Vector3<double>(msg.GetXA(), msg.GetYA(), msg.GetZA()) / 8000.0 );
+        }
+
+        if (msg.GetId_() == local_player->GetEntityID())
+        {
+            local_player->GetMutex().unlock();
         }
     }
 
