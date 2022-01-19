@@ -60,7 +60,7 @@ namespace ProtocolCraft
             iter += sizeof(T);
 
             // Don't need to change endianess of char!
-            if constexpr (sizeof(T) > 1)
+            if (sizeof(T) > 1)
             {
                 // The compiler should(?) optimize that
                 // This check doesn't work if int and char
@@ -99,7 +99,7 @@ namespace ProtocolCraft
         std::vector<unsigned char> output(sizeof(T));
 
         // Don't need to change endianess of char!
-        if constexpr (sizeof(T) > 1)
+        if (sizeof(T) > 1)
         {
             // The compiler should(?) optimize that
             // This check doesn't work if int and char
@@ -150,7 +150,7 @@ namespace ProtocolCraft
             length -= size * sizeof(T);
             iter += size * sizeof(T);
 
-            if constexpr (sizeof(T) > 1)
+            if (sizeof(T) > 1)
             {
                 // The compiler should(?) optimize that
                 // This check doesn't work if int and char
@@ -183,7 +183,7 @@ namespace ProtocolCraft
 
         for (int i = 0; i < values.size(); ++i)
         {
-            if constexpr (sizeof(T) > 1)
+            if (sizeof(T) > 1)
             {
                 if (*(char*)&num == 1)
                 {
