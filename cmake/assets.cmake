@@ -52,18 +52,18 @@ endif()
 # Textures
 if(BOTCRAFT_USE_OPENGL_GUI)
     # Blocks
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/blocks AND NOT EXISTS ${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures/blocks)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/blocks" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures/blocks")
         message(STATUS "Copying minecraft block textures...")
-        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/blocks DESTINATION ${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures)
-    elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/block AND NOT EXISTS ${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures/block)
+        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/blocks" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures")
+    elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/block" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures/block")
         message(STATUS "Copying minecraft block textures...")
-        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/block DESTINATION ${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures)
+        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/block" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures")
     endif()
     
     # Entities
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/entity AND NOT EXISTS ${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures/entity)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/entity" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures/entity")
         message(STATUS "Copying minecraft entity textures...")
-        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/entity DESTINATION ${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures)
+        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/entity" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures")
     endif()
 
 endif()

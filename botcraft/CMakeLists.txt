@@ -478,16 +478,16 @@ else()
 endif(MSVC)
 
 # Set version header
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/include/botcraft/Version.hpp)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/include/botcraft/Version.hpp")
 
 # Add include folders
 target_include_directories(botcraft 
     PUBLIC 
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>        
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+        "$<INSTALL_INTERFACE:include>"   
     PRIVATE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private_include>
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private_include>"
         )
 
 target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
@@ -498,7 +498,7 @@ target_link_libraries(botcraft PUBLIC protocolCraft)
 # Add json
 target_include_directories(botcraft 
     PUBLIC 
-        $<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>
+        "$<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>"
 )
 
 # Add Asio
@@ -534,48 +534,50 @@ include(GNUInstallDirs)
 
 install(TARGETS botcraft
     EXPORT botcraft-targets
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
     
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/botcraft
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/botcraft"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 install(FILES 
-    ${CMAKE_CURRENT_BINARY_DIR}/include/botcraft/Version.hpp
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/botcraft)
+    "${CMAKE_CURRENT_BINARY_DIR}/include/botcraft/Version.hpp"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/botcraft"
+)
     
 install(EXPORT botcraft-targets
     FILE botcraft-targets.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/botcraft
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/botcraft"
 )
     
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/botcraft-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-config.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/botcraft
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/botcraft-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/botcraft"
 )
 
 install(
     FILES 
-        ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-config.cmake
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-config.cmake"
     DESTINATION
-        ${CMAKE_INSTALL_LIBDIR}/cmake/botcraft
+        "${CMAKE_INSTALL_LIBDIR}/cmake/botcraft"
 )
 
 # Copy json
-install(DIRECTORY ${JSON_INCLUDE_DIR}/nlohmann
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY "${JSON_INCLUDE_DIR}/nlohmann"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
 
 export(EXPORT botcraft-targets
-    FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-targets.cmake
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-targets.cmake"
 )
 
 # Copy asset files into install binary folder
-install(DIRECTORY ${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}
-    DESTINATION ${CMAKE_INSTALL_BINDIR}/Assets
+install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}"
+    DESTINATION "${CMAKE_INSTALL_BINDIR}/Assets"
 )

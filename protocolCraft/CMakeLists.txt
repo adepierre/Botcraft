@@ -369,14 +369,14 @@ target_compile_definitions(protocolCraft PUBLIC PROTOCOL_VERSION=${PROTOCOL_VERS
 # Add include folders
 target_include_directories(protocolCraft 
     PUBLIC 
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<INSTALL_INTERFACE:include>"
         )
 
 # Add json
 target_include_directories(protocolCraft 
     PUBLIC 
-        $<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>
+        "$<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>"
 )
 
 # Installation stuff
@@ -384,39 +384,40 @@ include(GNUInstallDirs)
 
 install(TARGETS protocolCraft
     EXPORT protocolCraft-targets
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/protocolCraft
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/protocolCraft"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 install(EXPORT protocolCraft-targets
     FILE protocolCraft-targets.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft"
 )
 
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/protocolCraft-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/protocolCraft-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft"
 )
 
 install(
     FILES 
-        ${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake"
     DESTINATION
-        ${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft
+        "${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft"
 )
 
 # Copy json
-install(DIRECTORY ${JSON_INCLUDE_DIR}/nlohmann
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY "${JSON_INCLUDE_DIR}/nlohmann"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
 
 export(EXPORT protocolCraft-targets
-    FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-targets.cmake
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-targets.cmake"
 )

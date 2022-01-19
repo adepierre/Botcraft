@@ -1,36 +1,36 @@
 # Check if imgui folder is empty and clone submodule if needed
-file(GLOB RESULT ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/misc)
+file(GLOB RESULT "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/misc")
 list(LENGTH RESULT RES_LEN)
 if(RES_LEN EQUAL 0)
     message(STATUS "Imgui not found, cloning it...")
-    execute_process(COMMAND git submodule update --init -- 3rdparty/imgui WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    execute_process(COMMAND git submodule update --init -- 3rdparty/imgui WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 
 if(NOT TARGET imgui)
-    set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui)
 
     set(IMGUI_SOURCES 
-        ${IMGUI_DIR}/imgui.cpp
-        ${IMGUI_DIR}/imgui_demo.cpp
-        ${IMGUI_DIR}/imgui_draw.cpp
-        ${IMGUI_DIR}/imgui_widgets.cpp
-        ${IMGUI_DIR}/examples/imgui_impl_glfw.cpp
-        ${IMGUI_DIR}/examples/imgui_impl_opengl3.cpp)
+        3rdparty/imgui/imgui.cpp
+        3rdparty/imgui/imgui_demo.cpp
+        3rdparty/imgui/imgui_draw.cpp
+        3rdparty/imgui/imgui_widgets.cpp
+        3rdparty/imgui/examples/imgui_impl_glfw.cpp
+        3rdparty/imgui/examples/imgui_impl_opengl3.cpp)
 
     set(IMGUI_HEADERS 
-        ${IMGUI_DIR}/imconfig.h
-        ${IMGUI_DIR}/imgui_internal.h
-        ${IMGUI_DIR}/imstb_rectpack.h
-        ${IMGUI_DIR}/imstb_textedit.h
-        ${IMGUI_DIR}/imstb_truetype.h
-        ${IMGUI_DIR}/imgui.h
-        ${IMGUI_DIR}/examples/imgui_impl_glfw.h
-        ${IMGUI_DIR}/examples/imgui_impl_opengl3.h)
+        3rdparty/imgui/imconfig.h
+        3rdparty/imgui/imgui_internal.h
+        3rdparty/imgui/imstb_rectpack.h
+        3rdparty/imgui/imstb_textedit.h
+        3rdparty/imgui/imstb_truetype.h
+        3rdparty/imgui/imgui.h
+        3rdparty/imgui/examples/imgui_impl_glfw.h
+        3rdparty/imgui/examples/imgui_impl_opengl3.h)
 
     add_library(imgui STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
     set_property(TARGET imgui PROPERTY POSITION_INDEPENDENT_CODE ON)
-    target_include_directories(imgui PUBLIC ${IMGUI_DIR})
-    target_include_directories(imgui PUBLIC ${IMGUI_DIR}/examples)
+    set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui")
+    target_include_directories(imgui PUBLIC "${IMGUI_DIR}")
+    target_include_directories(imgui PUBLIC "${IMGUI_DIR}/examples")
 
     target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
     target_link_libraries(imgui PRIVATE OpenGL::GL glfw glad)
