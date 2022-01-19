@@ -23,6 +23,9 @@
 namespace Botcraft
 {
     enum class EntityType;
+#if PROTOCOL_VERSION < 458
+    enum class ObjectEntityType;
+#endif
 
     class Entity
     {
@@ -174,6 +177,9 @@ namespace Botcraft
 
         // Factory stuff
         static std::shared_ptr<Entity> CreateEntity(const EntityType type);
+#if PROTOCOL_VERSION < 458
+        static std::shared_ptr<Entity> CreateObjectEntity(const ObjectEntityType type);
+#endif
     
     protected:
 #if USE_GUI
@@ -837,7 +843,8 @@ namespace Botcraft
         Player = 92,
         FishingHook = 93,
         ThrownTrident = 94,
-#else // 1.12
+#else // 1.12.2
+        FishingHook = -3,
         Player = -2,
         ItemEntity = 1,
         ExperienceOrb = 2,
@@ -925,4 +932,41 @@ namespace Botcraft
 #endif
         MaxEntityIndex
     };
+
+#if PROTOCOL_VERSION < 458
+    enum class ObjectEntityType
+    {
+        None = -1,
+        Boat = 1,
+        ItemEntity = 2,
+        AreaEffectCloud = 3,
+        PrimedTnt = 50,
+        EndCrystal = 51,
+        Arrow = 60,
+        Snowball = 61,
+        ThrownEgg = 62,
+        LargeFireball = 63,
+        SmallFireball = 64,
+        ThrownEnderpearl = 65,
+        WitherSkull = 66,
+        ShulkerBullet = 67,
+        LlamaSpit = 68,
+        FallingBlockEntity = 70,
+        ItemFrame = 71,
+        EyeOfEnder = 72,
+        ThrownPotion = 73,
+        ThrownExperienceBottle = 75,
+        FireworkRocketEntity = 76,
+        LeashFenceKnotEntity = 77,
+        ArmorStand = 78,
+        EvokerFangs = 79,
+        FishingHook = 90,
+        SpectralArrow = 91,
+        DragonFireball = 93,
+#if PROTOCOL_VERSION > 340
+        ThrownTrident = 94,
+#endif
+        MaxEntityIndex
+    };
+#endif
 }

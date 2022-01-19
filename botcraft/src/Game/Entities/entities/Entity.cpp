@@ -182,9 +182,7 @@
 #include "botcraft/Game/Entities/entities/monster/ZombifiedPiglinEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/player/PlayerEntity.hpp"
-#if PROTOCOL_VERSION > 340
 #include "botcraft/Game/Entities/entities/projectile/FishingHookEntity.hpp"
-#endif
 
 namespace Botcraft
 {
@@ -724,6 +722,7 @@ namespace Botcraft
 
     void Entity::SetPitch(const float pitch_)
     {
+#if USE_GUI
         if (pitch_ != pitch)
         {
             are_rendered_faces_up_to_date = false;
@@ -732,6 +731,7 @@ namespace Botcraft
                 std::static_pointer_cast<Renderer::Rotation>(face_descriptors[i].transformations.rotations.back())->deg_angle = pitch_; 
             }
         }
+#endif
         pitch = pitch_;
     }
 
@@ -1282,6 +1282,75 @@ namespace Botcraft
             return nullptr;
         }
     }
+
+#if PROTOCOL_VERSION < 458
+    std::shared_ptr<Entity> Entity::CreateObjectEntity(const ObjectEntityType type)
+    {
+        switch (type)
+        {
+        case ObjectEntityType::None:
+            return nullptr;
+        case ObjectEntityType::Boat:
+            return std::make_shared<BoatEntity>();
+        case ObjectEntityType::ItemEntity:
+            return std::make_shared<ItemEntity>();
+        case ObjectEntityType::AreaEffectCloud:
+            return std::make_shared<AreaEffectCloudEntity>();
+        case ObjectEntityType::PrimedTnt:
+            return std::make_shared<PrimedTntEntity>();
+        case ObjectEntityType::EndCrystal:
+            return std::make_shared<EndCrystalEntity>();
+        case ObjectEntityType::Arrow:
+            return std::make_shared<ArrowEntity>();
+        case ObjectEntityType::Snowball:
+            return std::make_shared<SnowballEntity>();
+        case ObjectEntityType::ThrownEgg:
+            return std::make_shared<ThrownEggEntity>();
+        case ObjectEntityType::LargeFireball:
+            return std::make_shared<LargeFireballEntity>();
+        case ObjectEntityType::SmallFireball:
+            return std::make_shared<SmallFireballEntity>();
+        case ObjectEntityType::ThrownEnderpearl:
+            return std::make_shared<ThrownEnderpearlEntity>();
+        case ObjectEntityType::WitherSkull:
+            return std::make_shared<WitherSkullEntity>();
+        case ObjectEntityType::ShulkerBullet:
+            return std::make_shared<ShulkerBulletEntity>();
+        case ObjectEntityType::LlamaSpit:
+            return std::make_shared<LlamaSpitEntity>();
+        case ObjectEntityType::FallingBlockEntity:
+            return std::make_shared<FallingBlockEntity>();
+        case ObjectEntityType::ItemFrame:
+            return std::make_shared<ItemFrameEntity>();
+        case ObjectEntityType::EyeOfEnder:
+            return std::make_shared<EyeOfEnderEntity>();
+        case ObjectEntityType::ThrownPotion:
+            return std::make_shared<ThrownPotionEntity>();
+        case ObjectEntityType::ThrownExperienceBottle:
+            return std::make_shared<ThrownExperienceBottleEntity>();
+        case ObjectEntityType::FireworkRocketEntity:
+            return std::make_shared<FireworkRocketEntity>();
+        case ObjectEntityType::LeashFenceKnotEntity:
+            return std::make_shared<LeashFenceKnotEntity>();
+        case ObjectEntityType::ArmorStand:
+            return std::make_shared<ArmorStandEntity>();
+        case ObjectEntityType::EvokerFangs:
+            return std::make_shared<EvokerFangsEntity>();
+        case ObjectEntityType::FishingHook:
+            return std::make_shared<FishingHookEntity>();
+        case ObjectEntityType::SpectralArrow:
+            return std::make_shared<SpectralArrowEntity>();
+        case ObjectEntityType::DragonFireball:
+            return std::make_shared<DragonFireballEntity>();
+#if PROTOCOL_VERSION > 340
+        case ObjectEntityType::ThrownTrident:
+            return std::make_shared<ThrownTridentEntity>();
+#endif
+        default:
+            return nullptr;
+        }
+    }
+#endif
 
 #if USE_GUI
     void Entity::InitializeFaces()

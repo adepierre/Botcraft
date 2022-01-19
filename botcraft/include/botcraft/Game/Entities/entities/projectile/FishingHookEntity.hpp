@@ -1,4 +1,3 @@
-#if PROTOCOL_VERSION > 340
 #pragma once
 
 #if PROTOCOL_VERSION > 578
@@ -22,6 +21,7 @@ namespace Botcraft
         static constexpr int metadata_count = 1;
 #endif
         static const std::array<std::string, metadata_count> metadata_names;
+
 #if PROTOCOL_VERSION > 578
         static constexpr int hierarchy_metadata_count = ProjectileEntity::metadata_count + ProjectileEntity::hierarchy_metadata_count;
 #else
@@ -42,7 +42,6 @@ namespace Botcraft
         static std::string GetClassName();
         static EntityType GetClassType();
 
-
         virtual nlohmann::json Serialize() const override;
 
         // Metadata stuff
@@ -60,4 +59,3 @@ namespace Botcraft
 
     };
 }
-#endif

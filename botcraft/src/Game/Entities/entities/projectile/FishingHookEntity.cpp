@@ -1,4 +1,3 @@
-#if PROTOCOL_VERSION > 340
 #include "botcraft/Game/Entities/entities/projectile/FishingHookEntity.hpp"
 
 namespace Botcraft
@@ -55,7 +54,6 @@ namespace Botcraft
     {
         return EntityType::FishingHook;
     }
-
 
     nlohmann::json FishingHookEntity::Serialize() const
     {
@@ -116,4 +114,3 @@ namespace Botcraft
 #endif
 
 }
-#endif

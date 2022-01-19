@@ -194,7 +194,11 @@ namespace Botcraft
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
 
+#if PROTOCOL_VERSION < 458
+        std::shared_ptr<Entity> entity = Entity::CreateObjectEntity(static_cast<ObjectEntityType>(msg.GetType()));
+#else
         std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
+#endif
         
         entity->SetEntityID(msg.GetId_());
         entity->SetX(msg.GetX());
