@@ -82,6 +82,9 @@ namespace Botcraft
 
         RenderingManager::~RenderingManager()
         {
+            MouseCallback = [](double, double) {};
+            KeyboardCallback = [](std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, float) {};
+
             running = false;
 
             condition_update.notify_all();
