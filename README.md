@@ -27,7 +27,7 @@ Available bot behaviours includes:
 Example of pathfinding. Right of the screen is the integrated renderer
 ![](gifs/video.gif)
 
-More complex example with 10 survival bots collaborating on a pixel art build. They are all in survival, so they have to pick the right blocks in the chests, eat food and obviously can't fly. There is no global supervision, and they can't communicate with each other. Better quality video in [this reddit post](https://www.reddit.com/r/Minecraft/comments/mwzm26/my_survival_bot_project_applied_to_map_pixelart/).
+More complex example with 10 survival bots collaborating on a pixel art build. They are all in survival, so they have to pick the right blocks in the chests, eat food and obviously can't fly. There is no global supervision, and they can't communicate with each other.
 ![](gifs/mapart.gif)
 
 ## Dependencies
@@ -107,9 +107,9 @@ If the server has the option online-mode: true, you can connect with a Mojang ac
 
 ## To-do list
 
-It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to activate a farm with almost 0% usage of CPU/GPU. The next step is to add some functionalities like entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
+It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to keep chunks loaded with almost 0% usage of CPU/GPU. The next step is to add more functionalities like entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
 
-There are also some minor improvements to existing features that have to be done:
+There are also some minor improvements to existing features that might be useful:
 - Improve scafholding/ladder physics (the player can't climb the ladders)
 - Improve pathfinding with real colliders (the pathfinding considers every solid block as box of size 1 but the collisions are computed with the real shapes which lead to bad situations, for example with fences)
 
