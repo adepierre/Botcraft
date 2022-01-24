@@ -142,10 +142,15 @@ namespace Botcraft
 
         void Normalize()
         {
-            double norm = sqrt(x * x + y * y + z * z);
+            const double norm = sqrt(SqrNorm());
             x /= norm;
             y /= norm;
             z /= norm;
+        }
+
+        double SqrNorm()
+        {
+            return x * x + y * y + z * z;
         }
 
         friend std::ostream& operator << (std::ostream &o, const Vector3 &vec)

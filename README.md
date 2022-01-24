@@ -13,7 +13,9 @@ This is a "learn-by-doing" code, with some lines dating back to 2017 and never c
 - All official releases from 1.12.2 to 1.18.1 supported
 - Compression
 - Physics and collisions
-- (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...)
+- World data
+- Full entity support (type, data and metadata)
+- (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system (see [the wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - Bot control with mouse and keyboard
 
@@ -26,6 +28,9 @@ Available bot behaviours includes:
 
 Example of pathfinding. Right of the screen is the integrated renderer
 ![](gifs/video.gif)
+
+Example of entity processing. Only monsters are attacked as soon as they are in range. Passive mobs are ignored.
+![](gifs/entities.gif)
 
 More complex example with 10 survival bots collaborating on a pixel art build. They are all in survival, so they have to pick the right blocks in the chests, eat food and obviously can't fly. There is no global supervision, and they can't communicate with each other.
 ![](gifs/mapart.gif)
@@ -94,6 +99,7 @@ Examples can be found in the [Examples](Examples/) folder:
   - interacting with a block (lever, button ...)
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Very leight AFK only bot. Simply connect to a server and stay still doing nothing.
 - [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same (due to concurrent access). Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
+- [5_MobHitterExample](Examples/5_MobHitterExample): Entity processing example. Attack every monster in range, with a per-entity cooldown of 0.5s. /!\ This is only an example about entities, no eating is performed, so would starve to death pretty quickly if used as-is.
 
 ## Clients
 
@@ -107,9 +113,9 @@ If the server has the option online-mode: true, you can connect with a Mojang ac
 
 ## To-do list
 
-It's only a free time project, but there are still a lot of things to do! Right now the only usecase is an AFK bot to keep chunks loaded with almost 0% usage of CPU/GPU. The next step is to add more functionalities like entities handling/rendering, attacking, crafting... Everything needed to automate more tasks in survival vanilla Minecraft!
+It's only a free time project, but there are still a lot of things to do! I sometimes work on stuff when I need them or when there is something I'd like to learn. Don't expect a detailed roadmap.
 
-There are also some minor improvements to existing features that might be useful:
+There are also some minor improvements to existing features that could be done, but I'm not sure how at the moment:
 - Improve scafholding/ladder physics (the player can't climb the ladders)
 - Improve pathfinding with real colliders (the pathfinding considers every solid block as box of size 1 but the collisions are computed with the real shapes which lead to bad situations, for example with fences)
 

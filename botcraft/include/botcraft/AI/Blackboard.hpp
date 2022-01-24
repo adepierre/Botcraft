@@ -42,6 +42,24 @@ namespace Botcraft
             return std::any_cast<T&>(it->second);
         }
 
+        /// @brief Get a ref to the map value at key, casting it to T&.
+        /// If the key is not present in the map, add
+        /// it with default_value, and returns it.
+        /// @tparam T Any type, must match the type stored at key
+        /// @param key key to retrieve the value from
+        /// @param default_value The default value to return if key is not found
+        /// @return The stored value
+        template<class T>
+        T& GetRef(const std::string& key, const T& default_value)
+        {
+            auto it = blackboard.find(key);
+            if (it == blackboard.end())
+            {
+                it = blackboard.insert(std::pair<std::string, std::any>(key, default_value)).first;
+            }
+            return std::any_cast<T&>(it->second);
+        }
+
         /// @brief Set map entry at key to value
         /// @tparam T Any type, be careful to be explicit with strings because "foo" is not a std::string
         /// @param key key to store the value at
