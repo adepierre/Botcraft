@@ -10,7 +10,7 @@ using namespace ProtocolCraft;
 Status HitCloseHostiles(BehaviourClient& c)
 {
     std::shared_ptr<EntityManager> entity_manager = c.GetEntityManager();
-    std::shared_ptr<LocalPlayer>& local_player = entity_manager->GetLocalPlayer();
+    std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
     std::shared_ptr<NetworkManager> network_manager = c.GetNetworkManager();
     Blackboard& blackboard = c.GetBlackboard();
     
