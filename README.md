@@ -33,6 +33,7 @@ Example of entity processing. Only monsters are attacked as soon as they are in 
 ![](gifs/entities.gif)
 
 More complex example with 10 survival bots collaborating on a pixel art build. They are all in survival, so they have to pick the right blocks in the chests, eat food and obviously can't fly. There is no global supervision, and they can't communicate with each other.
+
 ![](gifs/mapart.gif)
 
 ## Dependencies
