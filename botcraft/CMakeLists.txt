@@ -492,6 +492,9 @@ target_include_directories(botcraft
 
 target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
 
+# Add DL lib for linux compilation
+target_link_libraries(botcraft PUBLIC ${CMAKE_DL_LIBS})
+
 # Add protocolCraft
 target_link_libraries(botcraft PUBLIC protocolCraft)
 
