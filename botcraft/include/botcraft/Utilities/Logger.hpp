@@ -7,6 +7,7 @@
 #include <functional>
 #include <sstream>
 #include <atomic>
+#include <thread>
 
 constexpr const char* file_name(const char* path)
 {
