@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <functional>
 #include <sstream>
+#include <atomic>
 
 constexpr const char* file_name(const char* path)
 {
