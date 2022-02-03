@@ -34,6 +34,8 @@ static bool imgui_demo = false;
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 
+#include "botcraft/Utilities/Logger.hpp"
+
 const std::vector<float> color_day({ 0.6f, 0.85f, 0.9f });
 const std::vector<float> color_night({0.1f, 0.1f, 0.1f});
 
@@ -101,8 +103,10 @@ namespace Botcraft
 
         void RenderingManager::Run(const bool headless)
         {
+            Logger::GetInstance().RegisterThread("RenderingLoop");
             if (!Init(headless))
             {
+                LOG_ERROR("Can't init rendering manager");
                 return;
             }
 
@@ -352,7 +356,7 @@ namespace Botcraft
             window = glfwCreateWindow(current_window_width, current_window_height, "RenderingManager", NULL, NULL);
             if (window == NULL)
             {
-                std::cerr << "Failed to create GLFW window" << std::endl;
+                LOG_ERROR("Failed to create GLFW window");
                 glfwTerminate();
                 return false;
             }
@@ -368,7 +372,7 @@ namespace Botcraft
             // ---------------------------------------
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
             {
-                std::cout << "Failed to initialize GLAD" << std::endl;
+                LOG_ERROR("Failed to initialize GLAD");
                 return false;
             }
 
@@ -538,6 +542,7 @@ namespace Botcraft
 
         void RenderingManager::WaitForRenderingUpdate()
         {
+            Logger::GetInstance().RegisterThread("RenderingDataUpdate");
             while (running)
             {
                 {

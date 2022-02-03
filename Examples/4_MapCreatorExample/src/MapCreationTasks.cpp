@@ -9,6 +9,7 @@
 #include <botcraft/Game/Inventory/InventoryManager.hpp>
 #include <botcraft/Game/Inventory/Window.hpp>
 #include <botcraft/AI/Tasks/AllTasks.hpp>
+#include <botcraft/Utilities/Logger.hpp>
 
 #include <protocolCraft/Types/NBT/TagList.hpp>
 #include <protocolCraft/Types/NBT/TagString.hpp>
@@ -169,7 +170,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to get food from chest (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to get food from chest (Timeout).");
                 return Status::Failure;
             }
             c.Yield();
@@ -354,7 +355,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to get items from chest (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to get items from chest (Timeout).");
                 return Status::Failure;
             }
             {
@@ -588,7 +589,7 @@ Status ExecuteNextTask(BehaviourClient& c)
         return PlaceBlock(c, item_name, block_position, face, true);
     }
 
-    std::cerr << "Warning, unknown task in ExecuteNextTask" << std::endl;
+    LOG_WARNING("Unknown task in ExecuteNextTask");
     return Status::Failure;
 }
 
@@ -609,13 +610,13 @@ Status CheckCompletion(BehaviourClient& c)
     const std::vector<std::vector<std::vector<short> > >& target = blackboard.Get<std::vector<std::vector<std::vector<short> > > >("Structure.target");
     const std::map<short, std::string>& palette = blackboard.Get<std::map<short, std::string> >("Structure.palette");
 
-    const bool print_details = blackboard.Get<bool>("CheckCompletion.print_details", false);
-    const bool print_errors = blackboard.Get<bool>("CheckCompletion.print_errors", false);
+    const bool log_details = blackboard.Get<bool>("CheckCompletion.log_details", false);
+    const bool log_errors = blackboard.Get<bool>("CheckCompletion.log_errors", false);
     const bool full_check = blackboard.Get<bool>("CheckCompletion.full_check", false);
 
     //Reset values for the next time
-    blackboard.Set("CheckCompletion.print_details", false);
-    blackboard.Set("CheckCompletion.print_errors", false);
+    blackboard.Set("CheckCompletion.log_details", false);
+    blackboard.Set("CheckCompletion.log_errors", false);
     blackboard.Set("CheckCompletion.full_check", false);
 
     for (int x = start.x; x <= end.x; ++x)
@@ -646,9 +647,9 @@ Status CheckCompletion(BehaviourClient& c)
                                 return Status::Failure;
                             }
                             missing_blocks++;
-                            if (print_details && missing_blocks < 100) // Don't print more than 100 missing blocks
+                            if (log_details && missing_blocks < 100) // Don't print more than 100 missing blocks
                             {
-                                std::cout << "Missing " << palette.at(target_id) << " in " << world_pos << std::endl;
+                                LOG_INFO("Missing " << palette.at(target_id) << " in " << world_pos);
                             }
                         }
                         continue;
@@ -665,9 +666,9 @@ Status CheckCompletion(BehaviourClient& c)
                             return Status::Failure;
                         }
                         additional_blocks++;
-                        if (print_details)
+                        if (log_details)
                         {
-                            std::cout << "Additional " << blockstate->GetName() << " in " << world_pos << std::endl;
+                            LOG_INFO("Additional " << blockstate->GetName() << " in " << world_pos);
                         }
                     }
                 }
@@ -680,9 +681,9 @@ Status CheckCompletion(BehaviourClient& c)
                             return Status::Failure;
                         }
                         missing_blocks++;
-                        if (print_details)
+                        if (log_details)
                         {
-                            std::cout << "Missing " << palette.at(target_id) << " in " << world_pos << std::endl;
+                            LOG_INFO("Missing " << palette.at(target_id) << " in " << world_pos);
                         }
                     }
                     else
@@ -695,9 +696,9 @@ Status CheckCompletion(BehaviourClient& c)
                                 return Status::Failure;
                             }
                             wrong_blocks++;
-                            if (print_details)
+                            if (log_details)
                             {
-                                std::cout << "Wrong " << blockstate->GetName() << " instead of " << target_name << " in " << world_pos << std::endl;
+                                LOG_INFO("Wrong " << blockstate->GetName() << " instead of " << target_name << " in " << world_pos);
                             }
                         }
                     }
@@ -706,11 +707,11 @@ Status CheckCompletion(BehaviourClient& c)
         }
     }
 
-    if (print_errors)
+    if (log_errors)
     {
-        std::cout << "Wrong blocks: " << wrong_blocks << std::endl;
-        std::cout << "Missing blocks: " << missing_blocks << std::endl;
-        std::cout << "Additional blocks: " << additional_blocks << std::endl;
+        LOG_INFO("Wrong blocks: " << wrong_blocks);
+        LOG_INFO("Missing blocks: " << missing_blocks);
+        LOG_INFO("Additional blocks: " << additional_blocks);
     }
 
     return (missing_blocks + additional_blocks + wrong_blocks == 0) ? Status::Success : Status::Failure;
@@ -718,11 +719,11 @@ Status CheckCompletion(BehaviourClient& c)
 
 Status WarnConsole(BehaviourClient& c, const std::string& msg)
 {
-    std::cout << "[" << c.GetNetworkManager()->GetMyName() << "]: " << msg << std::endl;
+    LOG_WARNING("[" << c.GetNetworkManager()->GetMyName() << "]: " << msg);
     return Status::Success;
 }
 
-Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offset, const std::string& temp_block, const bool print_info)
+Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offset, const std::string& temp_block, const bool log_info)
 {
     std::ifstream infile(path, std::ios_base::binary);
     infile.unsetf(std::ios::skipws);
@@ -749,7 +750,7 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
     }
     catch (const std::exception&)
     {
-        std::cerr << "Error loading NBT file. Make sure the file is uncompressed (you can change the extension to .zip and simply unzip it)" << std::endl;
+        LOG_ERROR("Error loading NBT file. Make sure the file is uncompressed (you can change the extension to .zip and simply unzip it)");
         return Status::Failure;
     }
 
@@ -813,10 +814,9 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
     Position start = offset;
     Position end = offset + size - Position(1, 1, 1);
 
-    if (print_info)
+    if (log_info)
     {
-        std::cout << "Start: " << start << "\n"
-            << "End: " << end << std::endl;
+        LOG_INFO("Start: " << start << " | " << "End: " << end);
     }
 
     // Fill the target area with air (-1)
@@ -838,7 +838,7 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
 
     if (id_temp_block == -1)
     {
-        std::cerr << "Warning, can't find the given temp block " << temp_block << " in the palette" << std::endl;
+        LOG_WARNING("Can't find the given temp block " << temp_block << " in the palette");
     }
     else
     {
@@ -886,25 +886,27 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
             end.y -= 1;
         }
 
-        if (print_info)
+        if (log_info)
         {
-            std::cout << "Removed the bottom " << removed_layers << " layer" << (removed_layers > 1 ? "s" : "") << std::endl;
+            LOG_INFO("Removed the bottom " << removed_layers << " layer" << (removed_layers > 1 ? "s" : ""));
         }
     }
 
-    if (print_info)
+    if (log_info)
     {
-        std::cout << "Total size: " << size << std::endl;
+        LOG_INFO("Total size: " << size);
 
-        std::cout << "Block needed:" << std::endl;
+        std::stringstream needed;
+        needed << "Block needed:\n";
         for (auto it = num_blocks_used.begin(); it != num_blocks_used.end(); ++it)
         {
-            std::cout << "\t" << palette[it->first] << "\t\t" << it->second << std::endl;
+            needed << "\t" << palette[it->first] << "\t\t" << it->second << "\n";
         }
+        LOG_INFO(needed.rdbuf());
 
         // Check if some block can't be placed (flying blocks)
-        std::cout << "Flying blocks, you might have to place them yourself: " << std::endl;
-
+        std::stringstream flyings;
+        flyings << "Flying blocks, you might have to place them yourself:\n";
         Position target_pos;
 
         const std::vector<Position> neighbour_offsets({ Position(0, 1, 0), Position(0, -1, 0),
@@ -945,12 +947,13 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
 
                         if (!has_neighbour)
                         {
-                            std::cout << start + target_pos << "\t" << palette[target_id] << std::endl;
+                            flyings << start + target_pos << "\t" << palette[target_id] << "\n";
                         }
                     }
                 }
             }
         }
+        LOG_WARNING(flyings.rdbuf());
     }
 
     Blackboard& blackboard = c.GetBlackboard();

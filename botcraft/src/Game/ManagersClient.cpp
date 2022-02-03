@@ -1,6 +1,3 @@
-#include <functional>
-#include <iostream>
-
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
@@ -11,6 +8,7 @@
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Game/ManagersClient.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include "botcraft/Network/NetworkManager.hpp"
 #if USE_GUI
@@ -40,8 +38,7 @@ namespace Botcraft
 #else
         if (use_renderer_)
         {
-            std::cerr << "Warning, your version of botcraft hasn't been"
-                << " compiled with GUI enabled, setting use_renderer_ to false" << std::endl;
+            LOG_WARNING("Your version of botcraft hasn't been compiled with GUI enabled, setting use_renderer_ to false");
         }
 #endif
         auto_respawn = false;
@@ -89,6 +86,8 @@ namespace Botcraft
 
     void ManagersClient::RunSyncPos()
     {
+        Logger::GetInstance().RegisterThread("RunSyncPos");
+
         // Wait for 500 milliseconds before starting to send position continuously
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -307,7 +306,7 @@ namespace Botcraft
         std::shared_ptr<Window> window = inventory_manager->GetWindow(transaction->GetContainerId());
         if (!window)
         {
-            std::cerr << "Warning, trying to set a transaction for an unknown window" << std::endl;
+            LOG_WARNING("Trying to set a transaction for an unknown window");
         }
         const int transaction_id = window->GetNextTransactionId();
         transaction->SetUid(transaction_id);

@@ -5,13 +5,13 @@
 #include <openssl/sha.h>
 #endif
 
-#include <thread>
-#include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 #include "botcraft/Network/Authentifier.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 namespace Botcraft
 {
@@ -49,11 +49,11 @@ namespace Botcraft
             !cached.contains("name") || !cached["name"].is_string() ||
             !cached.contains("id") || !cached["id"].is_string())
         {
-            std::cerr << "Missing or malformed cached credentials for Mojang account with login <" << login << ">, sending credentials to get a new one..." << std::endl;
+            LOG_WARNING("Missing or malformed cached credentials for Mojang account with login <" << login << ">, sending credentials to get a new one...");
         }
         else if (!IsMCTokenValid(cached["mc_token"]))
         {
-            std::cout << "Minecraft token for Mojang account with login <" << login << "> not valid. Refreshing it..." << std::endl;
+            LOG_INFO("Minecraft token for Mojang account with login <" << login << "> not valid. Refreshing it...");
             std::tie(mc_access_token, player_display_name, mc_player_uuid) = RefreshMCToken(cached["mc_token"]);
 
             UpdateCachedMC(login, player_display_name,
@@ -61,22 +61,22 @@ namespace Botcraft
 
             if (!mc_access_token.empty())
             {
-                std::cout << "Cached Minecraft token for Mojang login <" << login << "> refreshed." << std::endl;
+                LOG_INFO("Cached Minecraft token for Mojang login <" << login << "> refreshed.");
                 return true;
             }
 
-            std::cout << "Refreshing cached Minecraft token for Mojang login <" << login << "> failed." << std::endl;
+            LOG_WARNING("Refreshing cached Minecraft token for Mojang login <" << login << "> failed.");
         }
         else
         {
             mc_access_token = cached["mc_token"].get<std::string>();
             mc_player_uuid = cached["id"].get<std::string>();
             player_display_name = cached["name"].get<std::string>();
-            std::cout << "Cached Minecraft token for login <" << login << "> still valid." << std::endl;
+            LOG_INFO("Cached Minecraft token for login <" << login << "> still valid.");
             return true;
         }
 
-        std::cout << "Sending credentials to Mojang authentication server..." << std::endl;
+        LOG_INFO("Sending credentials to Mojang authentication server...");
 
         const nlohmann::json data = {
             {
@@ -94,9 +94,9 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            std::cerr << "Error during authentication, returned status code " << post_response.status_code 
+            LOG_ERROR("Error during authentication, returned status code " << post_response.status_code 
                 << " (" << post_response.status_message << "):\n" 
-                << post_response.response.dump(4) << std::endl;
+                << post_response.response.dump(4));
             UpdateCachedMC(login, "", "", "");
             return false;
         }
@@ -113,7 +113,7 @@ namespace Botcraft
         }
         else
         {
-            std::cout << "Authentication completed!" << std::endl;
+            LOG_INFO("Authentication completed!");
             return true;
         }
 #endif
@@ -130,59 +130,56 @@ namespace Botcraft
             !cached.contains("name") || !cached["name"].is_string() ||
             !cached.contains("id") || !cached["id"].is_string())
         {
-            std::cerr << "Missing or malformed cached credentials for Microsoft account, starting auth flow..." << std::endl;
+            LOG_WARNING("Missing or malformed cached credentials for Microsoft account, starting auth flow...");
         }
         else if (IsTokenExpired(cached["expires_date"].get<long long int>()))
         {
-            std::cout << "Cached Minecraft token for Microsoft account expired, starting auth flow..." << std::endl;
+            LOG_INFO("Cached Minecraft token for Microsoft account expired, starting auth flow...");
         }
         else
         {
             mc_access_token = cached["mc_token"].get<std::string>();
             mc_player_uuid = cached["id"].get<std::string>();
             player_display_name = cached["name"].get<std::string>();
-            std::cout << "Cached Minecraft token for Microsoft account still valid." << std::endl;
+            LOG_INFO("Cached Minecraft token for Microsoft account still valid.");
             return true;
         }
 
         // This auth flow is directly inspired from https://github.com/maxsupermanhd/go-mc-ms-auth
-        std::cout << "Trying to get Microsoft access token..." << std::endl;
+        LOG_INFO("Trying to get Microsoft access token...");
         const std::string msa_token = GetMSAToken(login);
         if (msa_token.empty())
         {
-            std::cerr << "Unable to get a microsoft auth token" << std::endl;
+            LOG_ERROR("Unable to get a microsoft auth token");
             return false;
         }
 
-
-        std::cout << "Trying to get XBL token..." << std::endl;
+        LOG_INFO("Trying to get XBL token...");
         const std::string xbl_token = GetXBLToken(msa_token);
         if (xbl_token.empty())
         {
-            std::cerr << "Unable to get a XBL token" << std::endl;
+            LOG_ERROR("Unable to get a XBL token");
             return false;
         }
-        std::cout << "XBL token obtained!" << std::endl;
+        LOG_INFO("XBL token obtained!");
 
-
-        std::cout << "Trying to get XSTS token..." << std::endl;
+        LOG_INFO("Trying to get XSTS token...");
         const auto [xsts_token, xsts_userhash] = GetXSTSToken(xbl_token);
         if (xsts_token.empty())
         {
-            std::cerr << "Unable to get a XSTS token" << std::endl;
+            LOG_ERROR("Unable to get a XSTS token");
             return false;
         }
-        std::cout << "XSTS token obtained!" << std::endl;
+        LOG_INFO("XSTS token obtained!");
 
-
-        std::cout << "Trying to get MC token..." << std::endl;
+        LOG_INFO("Trying to get MC token...");
         mc_access_token = GetMCToken(login, xsts_token, xsts_userhash);
         if (mc_access_token.empty())
         {
-            std::cerr << "Unable to get a MC token" << std::endl;
+            LOG_ERROR("Unable to get a MC token");
             return false;
         }
-        std::cout << "MC token obtained! Almost there..." << std::endl;
+        LOG_INFO("MC token obtained! Almost there...");
 
 
         // We assume you're using an account owning minecraft so
@@ -190,19 +187,18 @@ namespace Botcraft
         // If you don't, Botcraft won't work on online mode.
         // But you can buy yourself a copy of the game: 
         // https://www.minecraft.net/get-minecraft
-        std::cout << "Assuming the account owns Minecraft..." << std::endl;
+        LOG_INFO("Assuming the account owns Minecraft...");
 
-
-        std::cout << "Trying to get MC profile..." << std::endl;
+        LOG_INFO("Trying to get MC profile...");
         std::tie(mc_player_uuid, player_display_name) = GetMCProfile(login, mc_access_token);
         if (mc_player_uuid.empty())
         {
-            std::cerr << "Unable to get a MC profile" << std::endl;
+            LOG_ERROR("Unable to get a MC profile");
             return false;
         }
-        std::cout << "MC profile obtained!" << std::endl;
+        LOG_INFO("MC profile obtained!");
 
-        std::cout << "Authentication completed!" << std::endl;
+        LOG_INFO("Authentication completed!");
 
         return true;
 #endif
@@ -215,7 +211,7 @@ namespace Botcraft
 #else
         if (mc_player_uuid.empty())
         {
-            std::cerr << "Error, trying to join a server before authentication" << std::endl;
+            LOG_ERROR("Trying to join a server before authentication");
             return false;
         }
 
@@ -287,9 +283,9 @@ namespace Botcraft
 
         if (post_response.status_code != 204)
         {
-            std::cerr << "Response returned with status code " << post_response.status_code 
+            LOG_ERROR("Response returned with status code " << post_response.status_code 
                 << " (" << post_response.status_message << ") during server join:\n" 
-                << post_response.response.dump(4) << std::endl;
+                << post_response.response.dump(4));
             return false;
         }
 
@@ -335,19 +331,19 @@ namespace Botcraft
     {
         if (response.contains("error"))
         {
-            std::cerr << "Error trying to authenticate: " << response["errorMessage"].get<std::string>() << std::endl;
+            LOG_ERROR("Error trying to authenticate: " << response["errorMessage"].get<std::string>());
             return { "","","" };
         }
 
         if (!response.contains("accessToken"))
         {
-            std::cerr << "Error trying to authenticate, no accessToken returned" << std::endl;
+            LOG_ERROR("Error trying to authenticate, no accessToken returned");
             return { "","","" };
         }
 
         if (!response.contains("selectedProfile"))
         {
-            std::cerr << "Error trying to authenticate, no selectedProfile item found" << std::endl;
+            LOG_ERROR("Error trying to authenticate, no selectedProfile item found");
             return { "","","" };
         }
 
@@ -355,13 +351,13 @@ namespace Botcraft
 
         if (!profile.contains("name"))
         {
-            std::cerr << "Error trying to authenticate, no name in selected profile" << std::endl;
+            LOG_ERROR("Error trying to authenticate, no name in selected profile");
             return { "","","" };
         }
 
         if (!profile.contains("id"))
         {
-            std::cerr << "Error trying to authenticate, no id in selected profile" << std::endl;
+            LOG_ERROR("Error trying to authenticate, no id in selected profile");
             return { "","","" };
         }
 
@@ -396,8 +392,8 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            std::cerr << "Error during refreshing, returned status code " << post_response.status_code << " (" << post_response.status_message << ")" << std::endl;
-            std::cerr << "Error message: " << post_response.response.dump(4) << std::endl;
+            LOG_ERROR("Error during refreshing, returned status code " << post_response.status_code << " (" << post_response.status_message << ")\n"
+                << "Error message: " << post_response.response.dump(4));
             return { "", "", "" };
         }
 
@@ -574,15 +570,15 @@ namespace Botcraft
             !cached["msa"].contains("access_token") || !cached["msa"]["access_token"].is_string() ||
             !cached["msa"].contains("expires_date") || !cached["msa"]["expires_date"].is_number())
         {
-            std::cerr << "Error trying to get cached Microsoft credentials" << std::endl;
+            LOG_ERROR("Error trying to get cached Microsoft credentials");
             UpdateCachedMSA(login, "", "", -1);
-            std::cerr << "Starting authentication process..." << std::endl;
+            LOG_INFO("Starting authentication process...");
             return MSAAuthDeviceFlow(login);
         }
 
         if (IsTokenExpired(cached["msa"]["expires_date"].get<long long int>()))
         {
-            std::cout << "Refreshing Microsoft token..." << std::endl;
+            LOG_INFO("Refreshing Microsoft token...");
             std::string refresh_data;
             refresh_data += "client_id=" + botcraft_app_id;
             refresh_data += "&refresh_token=" + cached["msa"]["refresh_token"].get<std::string>();
@@ -596,11 +592,11 @@ namespace Botcraft
             // file and restart the whole auth flow
             if (post_response.status_code != 200)
             {
-                std::cerr << "Response returned with status code " << post_response.status_code 
+                LOG_ERROR("Response returned with status code " << post_response.status_code 
                     << " (" << post_response.status_message << ") during Microsoft token refresh:\n" 
-                    << post_response.response.dump(4) << std::endl;
+                    << post_response.response.dump(4));
                 UpdateCachedMSA(login, "", "", -1);
-                std::cout << "Failed to refresh token, starting Microsoft authentication process..." << std::endl;
+                LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
                 return MSAAuthDeviceFlow(login);
             }
 
@@ -608,25 +604,25 @@ namespace Botcraft
 
             if (!response.contains("expires_in"))
             {
-                std::cerr << "Error trying to refresh Microsoft token, no expires_in in response" << std::endl;
+                LOG_ERROR("Error trying to refresh Microsoft token, no expires_in in response");
                 UpdateCachedMSA(login, "", "", -1);
-                std::cout << "Failed to refresh token, starting Microsoft authentication process..." << std::endl;
+                LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
                 return MSAAuthDeviceFlow(login);
             }
 
             if (!response.contains("refresh_token"))
             {
-                std::cerr << "Error trying to refresh microsoft token, no refresh_token in response" << std::endl;
+                LOG_ERROR("Error trying to refresh microsoft token, no refresh_token in response");
                 UpdateCachedMSA(login, "", "", -1);
-                std::cout << "Failed to refresh token, starting Microsoft authentication process..." << std::endl;
+                LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
                 return MSAAuthDeviceFlow(login);
             }
 
             if (!response.contains("access_token"))
             {
-                std::cerr << "Error trying to refresh microsoft token, no access_token in response" << std::endl;
+                LOG_ERROR("Error trying to refresh microsoft token, no access_token in response");
                 UpdateCachedMSA(login, "", "", -1);
-                std::cout << "Failed to refresh token, starting Microsoft authentication process..." << std::endl;
+                LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
                 return MSAAuthDeviceFlow(login);
             }
 
@@ -635,12 +631,12 @@ namespace Botcraft
                 response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
             );
 
-            std::cout << "Cached Microsoft token refreshed" << std::endl;
+            LOG_INFO("Cached Microsoft token refreshed");
 
             return response["access_token"].get<std::string>();
         }
 
-        std::cout << "Microsoft token obtained from cache" << std::endl;
+        LOG_INFO("Microsoft token obtained from cache");
 
         return cached["msa"]["access_token"].get<std::string>();
     }
@@ -656,9 +652,9 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            std::cerr << "Response returned with status code " << post_response.status_code << " ("
+            LOG_ERROR("Response returned with status code " << post_response.status_code << " ("
                 << post_response.status_message << ") during microsoft authentification:\n" 
-                << post_response.response.dump(4) << std::endl;
+                << post_response.response.dump(4));
             return "";
         }
 
@@ -666,24 +662,25 @@ namespace Botcraft
 
         if (!auth_response.contains("interval"))
         {
-            std::cerr << "Error trying to get microsoft token, no interval in authentication response" << std::endl;
+            LOG_ERROR("Error trying to get microsoft token, no interval in authentication response");
             return "";
         }
 
         if (!auth_response.contains("message"))
         {
-            std::cerr << "Error trying to get microsoft token, no message in authentication response" << std::endl;
+            LOG_ERROR("Error trying to get microsoft token, no message in authentication response");
             return "";
         }
 
         if (!auth_response.contains("device_code"))
         {
-            std::cerr << "Error trying to get microsoft token, no device_code in authentication response" << std::endl;
+            LOG_ERROR("Error trying to get microsoft token, no device_code in authentication response");
             return "";
         }
 
-        // Display the instructions the user has to follow to authenticate
+        // Display the instructions the user has to follow to authenticate in the console
         std::cout << auth_response["message"].get<std::string>() << std::endl;
+        LOG_INFO(auth_response["message"].get<std::string>());
 
         const long long int pool_interval = auth_response["interval"];
         while (true)
@@ -705,7 +702,7 @@ namespace Botcraft
             {
                 if (!status_response.contains("error"))
                 {
-                    std::cerr << "Unknown error happened during microsoft device authentication process" << std::endl;
+                    LOG_ERROR("Unknown error happened during microsoft device authentication process");
                     return "";
                 }
 
@@ -717,23 +714,23 @@ namespace Botcraft
                 }
                 else if (error == "authorization_declined")
                 {
-                    std::cerr << "User declined authorization during microsoft device authentication check" << std::endl;
+                    LOG_ERROR("User declined authorization during microsoft device authentication check");
                     return "";
                 }
                 else if (error == "expired_token")
                 {
-                    std::cerr << "User took too long to perform device authentication, aborting" << std::endl;
+                    LOG_ERROR("User took too long to perform device authentication, aborting");
                     return "";
                 }
                 else if (error == "invalid_grant")
                 {
                     if (!status_response.contains("error_description"))
                     {
-                        std::cerr << "While waiting for microsoft device authentication, token got invalidated (no further information)" << std::endl;
+                        LOG_ERROR("While waiting for microsoft device authentication, token got invalidated (no further information)");
                     }
                     else
                     {
-                        std::cerr << "While waiting for microsoft device authentication, token got invalidated: " << status_response["error_description"] << std::endl;
+                        LOG_ERROR("While waiting for microsoft device authentication, token got invalidated: " << status_response["error_description"]);
                     }
 
                     return "";
@@ -743,19 +740,19 @@ namespace Botcraft
             {
                 if (!status_response.contains("expires_in"))
                 {
-                    std::cerr << "Error trying to get microsoft token, no expires_in in device authentication status response" << std::endl;
+                    LOG_ERROR("Error trying to get microsoft token, no expires_in in device authentication status response");
                     return "";
                 }
 
                 if (!status_response.contains("refresh_token"))
                 {
-                    std::cerr << "Error trying to get microsoft token, no refresh_token in device authentication status response" << std::endl;
+                    LOG_ERROR("Error trying to get microsoft token, no refresh_token in device authentication status response");
                     return "";
                 }
 
                 if (!status_response.contains("access_token"))
                 {
-                    std::cerr << "Error trying to get microsoft token, no access_token in device authentication status response" << std::endl;
+                    LOG_ERROR("Error trying to get microsoft token, no access_token in device authentication status response");
                     return "";
                 }
 
@@ -765,13 +762,13 @@ namespace Botcraft
                     status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
                 );
 
-                std::cout << "Newly obtained Microsoft token stored in cache" << std::endl;
+                LOG_INFO("Newly obtained Microsoft token stored in cache");
 
                 return status_response["access_token"].get<std::string>();
             }
             else
             {
-                std::cerr << "Response returned with status code " << post_response.status_code << " (" << post_response.status_message << ") during microsoft device authentification check" << std::endl;
+                LOG_ERROR("Response returned with status code " << post_response.status_code << " (" << post_response.status_message << ") during microsoft device authentification check");
                 return "";
             }
         }
@@ -795,9 +792,9 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            std::cerr << "Response returned with status code " << post_response.status_code 
+            LOG_ERROR("Response returned with status code " << post_response.status_code 
                 << " (" << post_response.status_message << ") during XBL authentication:\n" 
-                << post_response.response.dump(4) << std::endl;
+                << post_response.response.dump(4));
             return "";
         }
 
@@ -805,7 +802,7 @@ namespace Botcraft
 
         if (!response.contains("Token"))
         {
-            std::cerr << "Error trying to get XBL token, no Token in authentication response" << std::endl;
+            LOG_ERROR("Error trying to get XBL token, no Token in authentication response");
             return "";
         }
 
@@ -829,9 +826,9 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            std::cerr << "Response returned with status code " << post_response.status_code 
+            LOG_ERROR("Response returned with status code " << post_response.status_code 
                 << " (" << post_response.status_message << ") during XSTS authentication:\n" 
-                << post_response.response.dump(4) << std::endl;
+                << post_response.response.dump(4));
             return { "", "" };
         }
 
@@ -839,7 +836,7 @@ namespace Botcraft
 
         if (!response.contains("Token"))
         {
-            std::cerr << "Error trying to get XSTS token, no Token in authentication response" << std::endl;
+            LOG_ERROR("Error trying to get XSTS token, no Token in authentication response");
             return { "", "" };
         }
 
@@ -847,7 +844,7 @@ namespace Botcraft
             || !response["DisplayClaims"]["xui"].is_array() || response["DisplayClaims"]["xui"].size() < 1
             || !response["DisplayClaims"]["xui"][0].contains("uhs"))
         {
-            std::cerr << "Error trying to get XSTS token, no DisplayClaims/xui/0/uhs in authentication response" << std::endl;
+            LOG_ERROR("Error trying to get XSTS token, no DisplayClaims/xui/0/uhs in authentication response");
             return { "", "" };
         }
 
@@ -865,9 +862,9 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            std::cerr << "Response returned with status code " << post_response.status_code 
+            LOG_ERROR("Response returned with status code " << post_response.status_code 
                 << " (" << post_response.status_message << ") during MC authentication:\n" 
-                << post_response.response.dump(4) << std::endl;
+                << post_response.response.dump(4));
             return "";
         }
 
@@ -875,13 +872,13 @@ namespace Botcraft
 
         if (!response.contains("access_token"))
         {
-            std::cerr << "Error trying to get MC token, no access_token in authentication response" << std::endl;
+            LOG_ERROR("Error trying to get MC token, no access_token in authentication response");
             return "";
         }
 
         if (!response.contains("expires_in"))
         {
-            std::cerr << "Warning! no expires_in in authentication response of MC" << std::endl;
+            LOG_WARNING("No expires_in in authentication response of MC");
             // if no expires_in assuming it is one-time, don't need to cache it
             return response["access_token"].get<std::string>();
         }
@@ -901,7 +898,7 @@ namespace Botcraft
 
         if (get_response.status_code != 200)
         {
-            std::cerr << "Response returned with status code " << get_response.status_code << " (" << get_response.status_message << ") during MC profile retrieval" << std::endl;
+            LOG_ERROR("Response returned with status code " << get_response.status_code << " (" << get_response.status_message << ") during MC profile retrieval");
             return { "", "" };
         }
 
@@ -909,19 +906,19 @@ namespace Botcraft
 
         if (response.contains("errorMessage"))
         {
-            std::cerr << "Error trying to get MC profile: " << response["errorMessage"] << std::endl;
+            LOG_ERROR("Error trying to get MC profile : " << response["errorMessage"]);
             return { "", "" };
         }
 
         if (!response.contains("id"))
         {
-            std::cerr << "Error trying to get MC profile, no id in response" << std::endl;
+            LOG_ERROR("Error trying to get MC profile, no id in response");
             return { "", "" };
         }
 
         if (!response.contains("name"))
         {
-            std::cerr << "Error trying to get MC profile, no name in response" << std::endl;
+            LOG_ERROR("Error trying to get MC profile, no name in response");
             return { "", "" };
         }
 
@@ -979,7 +976,7 @@ namespace Botcraft
 
         if (!response_stream || http_version.substr(0, 5) != "HTTP/")
         {
-            std::cerr << "Invalid response during web request" << std::endl;
+            LOG_ERROR("Invalid response during web request");
             web_response.response = {};
             return web_response;
         }
@@ -1022,7 +1019,7 @@ namespace Botcraft
 
         if (error != asio::error::eof && raw_response.size() != data_length)
         {
-            std::cerr << "Error trying to read web request response, Error:\n " << error << std::endl;
+            LOG_ERROR("Error trying to read web request response, Error:\n " << error);
             web_response.response = {};
         }
         else

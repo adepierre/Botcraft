@@ -1,7 +1,6 @@
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
-
-#include <iostream>
+#include "botcraft/Utilities/Logger.hpp"
 
 using namespace ProtocolCraft;
 
@@ -27,7 +26,7 @@ namespace Botcraft
         {
             // In 1.17+ we don't wait for any server confirmation, so this can potentially happen very often.
 #if PROTOCOL_VERSION < 755
-            std::cerr << "Warning, trying to add item in an unknown window with id: " << window_id << std::endl;
+            LOG_WARNING("Trying to add item in an unknown window with id : " << window_id);
 #endif
         }
         else
@@ -131,7 +130,7 @@ namespace Botcraft
 
         if (it == transaction_states.end())
         {
-            std::cerr << "Error, asking state of a transaction for a closed window" << std::endl;
+            LOG_ERROR("Asking state of a transaction for a closed window");
             return TransactionState::Refused;
         }
 
@@ -139,7 +138,7 @@ namespace Botcraft
 
         if (it2 == it->second.end())
         {
-            std::cerr << "Error, asking state of an unknown transaction" << std::endl;
+            LOG_ERROR("Asking state of an unknown transaction");
             return TransactionState::Refused;
         }
 
@@ -180,7 +179,7 @@ namespace Botcraft
 
         if (it == inventories.end())
         {
-            std::cerr << "Warning, trying to synchronize inventory with a non existing container" << std::endl;
+            LOG_WARNING("Trying to synchronize inventory with a non existing container");
             return;
         }
 
@@ -251,8 +250,7 @@ namespace Botcraft
             }
             break;
         default:
-            std::cerr << "Transaction type '" << transaction->GetClickType()
-                << "' not implemented." << std::endl;
+            LOG_ERROR("Transaction type '" << transaction->GetClickType() << "' not implemented.");
             break;
         }
 
@@ -285,7 +283,7 @@ namespace Botcraft
         }
         else
         {
-            std::cerr << "Warning, unknown window called during ClientboundContainerSetSlotPacket Handle: " << msg.GetContainerId() << ", " << msg.GetSlot() << std::endl;
+            LOG_WARNING("Unknown window called during ClientboundContainerSetSlotPacket Handle : " << msg.GetContainerId() << ", " << msg.GetSlot());
         }
     }
 
@@ -321,13 +319,13 @@ namespace Botcraft
                 type = InventoryType::Generic9x6;
                 break;
             default:
-                std::cerr << "Warning, not implemented chest type: " << msg.GetType() << std::endl;
+                LOG_ERROR("Not implemented chest type : " << msg.GetType());
                 break;
             }
         }
         else
         {
-            std::cerr << "Warning, not implemented container type: " << msg.GetType() << std::endl;
+            LOG_ERROR("Not implemented container type : " << msg.GetType());
         }
         AddInventory(msg.GetContainerId(), type);
 #else
@@ -359,7 +357,7 @@ namespace Botcraft
 
         if (container_transactions == pending_transactions.end())
         {
-            std::cerr << "Warning, the server accepted a transaction for an unknown container" << std::endl;
+            LOG_WARNING("The server accepted a transaction for an unknown container");
             return;
         }
 
@@ -368,7 +366,7 @@ namespace Botcraft
         // Get the corresponding transaction
         if (transaction == container_transactions->second.end())
         {
-            std::cerr << "Warning, server accepted an unknown transaction Uid" << std::endl;
+            LOG_WARNING("Server accepted an unknown transaction Uid");
             return;
         }
 

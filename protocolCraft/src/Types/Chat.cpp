@@ -1,4 +1,3 @@
-#include <iostream>
 #include <nlohmann/json.hpp>
 
 #include "protocolCraft/Types/Chat.hpp"
@@ -8,15 +7,7 @@ namespace ProtocolCraft
     const std::string Chat::ParseChat(const std::string &json)
     {
         nlohmann::json v;
-        try
-        {
-            v = nlohmann::json::parse(json);
-        }
-        catch (const nlohmann::json::exception& e)
-        {
-            std::cerr << "Error parsing chat message: " << e.what() << std::endl;
-            return "";
-        }
+        v = nlohmann::json::parse(json);
 
         if (v.is_object())
         {

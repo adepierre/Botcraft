@@ -6,8 +6,6 @@
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Game/World/Blockstate.hpp"
 
-#include <iostream>
-
 namespace Botcraft
 {
     Status Yield(BehaviourClient& client)

@@ -1,17 +1,16 @@
-#include <iterator>
-#include <iostream>
 #include <functional>
 
 #include "protocolCraft/BinaryReadWrite.hpp"
 
-#include "botcraft/Network/TCP_Com.hpp"
-#include "botcraft/Utilities/StringUtilities.hpp"
 #include "botcraft/Network/DNS/DNSMessage.hpp"
 #include "botcraft/Network/DNS/DNSSrvData.hpp"
-
+#include "botcraft/Network/TCP_Com.hpp"
 #ifdef USE_ENCRYPTION
 #include "botcraft/Network/AESEncrypter.hpp"
 #endif
+
+#include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/StringUtilities.hpp"
 
 namespace Botcraft
 {
@@ -26,18 +25,20 @@ namespace Botcraft
         asio::ip::tcp::resolver resolver(io_service);
         asio::ip::tcp::resolver::query query(ip, std::to_string(port));
         asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
-        std::cout << "Trying to connect to " << ip << ":" << port << std::endl;
+        LOG_INFO("Trying to connect to " << ip << ":" << port);
         asio::async_connect(socket, iterator,
             std::bind(&TCP_Com::handle_connect, this,
             std::placeholders::_1));
 
         thread_com = std::thread([&] { io_service.run(); });
+        Logger::GetInstance().RegisterThread(thread_com.get_id(), "NetworkIOService");
     }
 
     TCP_Com::~TCP_Com()
     {
         if (thread_com.joinable())
         {
+            Logger::GetInstance().UnregisterThread(thread_com.get_id());
             thread_com.join();
         }
     }
@@ -89,14 +90,14 @@ namespace Botcraft
     {
         if (!error)
         {
-            std::cout << "Connected to server." << std::endl;
+            LOG_INFO("Connected to server.");
             socket.async_read_some(asio::buffer(read_msg.data(), read_msg.size()),
                 std::bind(&TCP_Com::handle_read, this,
                 std::placeholders::_1, std::placeholders::_2));
         }
         else
         {
-            std::cerr << "Error when connecting to server. Error code :" << error << std::endl;
+            LOG_ERROR("Error when connecting to server. Error code :" << error);
         }
     }
 
@@ -241,7 +242,7 @@ namespace Botcraft
         }
 
         // If port is unknown we first try a SRV DNS lookup
-        std::cout << "Performing SRV DNS lookup on " << "_minecraft._tcp." << address << " to find an endpoint" << std::endl;
+        LOG_INFO("Performing SRV DNS lookup on " << "_minecraft._tcp." << address << " to find an endpoint");
         asio::ip::udp::socket udp_socket(io_service);
 
         // Create the query
@@ -301,10 +302,10 @@ namespace Botcraft
             }
             port = data.GetPort();
 
-            std::cout << "SRV DNS lookup successful!" << std::endl;
+            LOG_INFO("SRV DNS lookup successful!")
             return;
         }
-        std::cout << "SRV DNS lookup failed to find an address" << std::endl;
+        LOG_WARNING("SRV DNS lookup failed to find an address");
 
         // If we are here either the port was given or the SRV failed 
         // In both cases we need to assume the given address is the correct one

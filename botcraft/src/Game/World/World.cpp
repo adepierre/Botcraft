@@ -3,11 +3,11 @@
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Utilities/AsyncHandler.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Types/NBT/TagInt.hpp"
 
-#include <iostream>
 #include <fstream>
 
 namespace Botcraft
@@ -915,13 +915,13 @@ namespace Botcraft
 
             if (!success)
             {
-                std::cerr << "Error adding chunk in pos : " << msg.GetX() << ", " << msg.GetZ() << " in dimension " <<
+                LOG_ERROR("Error adding chunk in pos : " << msg.GetX() << ", " << msg.GetZ() << " in dimension " <<
 #if PROTOCOL_VERSION < 719
                     (int)current_dimension
 #else
                     current_dimension
 #endif
-                    << std::endl;
+                    );
                 return;
             }
 #if PROTOCOL_VERSION < 755
@@ -965,7 +965,7 @@ namespace Botcraft
 
         if (!success)
         {
-            std::cerr << "Error adding chunk in pos : " << msg.GetX() << ", " << msg.GetZ() << " in dimension " << current_dimension << std::endl;
+            LOG_ERROR("Error adding chunk in pos : " << msg.GetX() << ", " << msg.GetZ() << " in dimension " << current_dimension);
             return;
         }
 

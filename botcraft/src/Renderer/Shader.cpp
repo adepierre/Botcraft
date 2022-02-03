@@ -1,4 +1,7 @@
 #include "botcraft/Renderer/Shader.hpp"
+#include "botcraft/Utilities/Logger.hpp"
+
+#include <sstream>
 
 namespace Botcraft
 {
@@ -24,7 +27,7 @@ namespace Botcraft
                 }
                 catch (std::ifstream::failure e)
                 {
-                    std::cout << "ERROR::SHADER::VERTEX_FILE_NOT_SUCCESFULLY_READ" << std::endl;
+                    LOG_ERROR("Vertex shader file not succesfully read");
                 }
             }
             else
@@ -46,7 +49,7 @@ namespace Botcraft
                 }
                 catch (std::ifstream::failure e)
                 {
-                    std::cout << "ERROR::SHADER::FRAGMENT_FILE_NOT_SUCCESFULLY_READ" << std::endl;
+                    LOG_ERROR("Fragment shader file not sucesfully read");
                 }
             }
             else
@@ -165,7 +168,7 @@ namespace Botcraft
                 if (!success)
                 {
                     glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                    std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                    LOG_ERROR("Shader compilation error of type: " << type << '\n' << infoLog)
                 }
             }
             else
@@ -174,7 +177,7 @@ namespace Botcraft
                 if (!success)
                 {
                     glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                    std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                    LOG_ERROR("Shader program linking error of type: " << type << '\n' << infoLog)
                 }
             }
         }

@@ -1,11 +1,8 @@
-#include <iostream>
-
 #include "botcraft/AI/Tasks/InventoryTasks.hpp"
 #include "botcraft/AI/Tasks/BaseTasks.hpp"
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
-
-
 #include "botcraft/AI/Blackboard.hpp"
+
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
@@ -13,6 +10,7 @@
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 using namespace ProtocolCraft;
 
@@ -63,7 +61,7 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to select first slot during swap inventory (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to select first slot during swap inventory (Timeout).");
                 return Status::Failure;
             }
             TransactionState transaction_state = inventory_manager->GetTransactionState(container_id, transaction_id);
@@ -112,7 +110,7 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to select second slot during swap inventory (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to select second slot during swap inventory (Timeout).");
                 return Status::Failure;
             }
 
@@ -159,7 +157,7 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to select third slot during swap inventory (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to select third slot during swap inventory (Timeout).");
                 return Status::Failure;
             }
 
@@ -375,7 +373,7 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
             {
-                std::cerr << "[" << network_manager->GetMyName() << "] Something went wrong waiting block placement confirmation at " << pos << " (Timeout)." << std::endl;
+                LOG_WARNING('[' << network_manager->GetMyName() << "] Something went wrong waiting block placement confirmation at " << pos << " (Timeout).");
                 return Status::Failure;
             }
             if (!is_block_ok)
@@ -450,7 +448,7 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
             {
-                std::cerr << "Something went wrong trying to eat (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to eat (Timeout).");
                 return Status::Failure;
             }
             client.Yield();
@@ -492,7 +490,7 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
             {
-                std::cerr << "Something went wrong trying to open container (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to open container (Timeout).");
                 return Status::Failure;
             }
             client.Yield();

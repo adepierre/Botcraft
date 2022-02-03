@@ -6,6 +6,7 @@
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Chunk.hpp>
 #include <botcraft/Network/NetworkManager.hpp>
+#include <botcraft/Utilities/Logger.hpp>
 #include <protocolCraft/enums.hpp>
 
 #if USE_GUI
@@ -48,11 +49,11 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
         // Launch the thread for the position
         entity_manager->GetLocalPlayer()->SetPosition(Vector3<double>(0.0, 0.0, 0.0));
         m_thread_physics = std::thread(&UserControlledClient::RunSyncPos, this);
-        std::cout << "Client created!" << std::endl;
+        LOG_INFO("Client created!");
 
-        std::cout << "Creating world..." << std::endl;
+        LOG_INFO("Creating world...");
         CreateTestWorld();
-        std::cout << "Done!" << std::endl;
+        LOG_INFO("Done!");
     }
 }
 

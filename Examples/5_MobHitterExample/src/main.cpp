@@ -2,6 +2,7 @@
 #include <string>
 
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
+#include <botcraft/Utilities/Logger.hpp>
 
 #include "MobHitterTasks.hpp"
 
@@ -21,13 +22,19 @@ int main(int argc, char* argv[])
 {
     try
     {
+        // Init logging, log everything >= Info, only to console, no file
+        Botcraft::Logger::GetInstance().SetLogLevel(Botcraft::LogLevel::Info);
+        Botcraft::Logger::GetInstance().SetFilename("");
+        // Add a name to this thread for logging
+        Botcraft::Logger::GetInstance().RegisterThread("main");
+
         std::string address = "127.0.0.1:25565";
         std::string login = "BCMobHitter";
         std::string password = "";
 
         if (argc == 1)
         {
-            std::cout << "No command arguments. Using default options.\n";
+            LOG_WARNING("No command arguments. Using default options.");
             ShowHelp(argv[0]);
         }
 
@@ -47,7 +54,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--address requires an argument" << std::endl;
+                    LOG_FATAL("--address requires an argument");
                     return 1;
                 }
             }
@@ -59,7 +66,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--login requires an argument" << std::endl;
+                    LOG_FATAL("--login requires an argument");
                     return 1;
                 }
             }
@@ -71,7 +78,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--password requires an argument" << std::endl;
+                    LOG_FATAL("--password requires an argument");
                     return 1;
                 }
             }
@@ -87,7 +94,7 @@ int main(int argc, char* argv[])
         Botcraft::SimpleBehaviourClient client(true);
         client.SetAutoRespawn(true);
 
-        std::cout << "Starting connection process" << std::endl;
+        LOG_INFO("Starting connection process");
         client.Connect(address, login, password);
         client.SetBehaviourTree(mob_hitter_tree);
 
@@ -99,12 +106,12 @@ int main(int argc, char* argv[])
     }
     catch (std::exception& e)
     {
-        std::cerr << "Exception: " << e.what() << "\n";
+        LOG_FATAL("Exception: " << e.what());
         return 1;
     }
     catch (...)
     {
-        std::cerr << "Unknown exception\n";
+        LOG_FATAL("Unknown exception");
         return 2;
     }
 }

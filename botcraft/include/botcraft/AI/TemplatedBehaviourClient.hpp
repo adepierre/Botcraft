@@ -1,10 +1,9 @@
 #pragma once
 
-#include <iostream>
-
 #include "botcraft/AI/BehaviourClient.hpp"
 #include "botcraft/AI/BehaviourTree.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 namespace Botcraft
 {
@@ -130,6 +129,7 @@ namespace Botcraft
     private:
         void TreeLoop()
         {
+            Logger::GetInstance().RegisterThread("BehaviourTreeLoop");
             while (true)
             {
                 try
@@ -156,12 +156,12 @@ namespace Botcraft
                 }
                 catch (std::exception& e)
                 {
-                    std::cerr << "Exception caught during tree ticking: " << e.what() << ". Stopping behaviour." << std::endl;
+                    LOG_ERROR("Exception caught during tree ticking: " << e.what() << ". Stopping behaviour.");
                     return;
                 }
                 catch (...)
                 {
-                    std::cerr << "Unknown exception caught during tree ticking. Stopping behaviour." << std::endl;
+                    LOG_ERROR("Unknown exception caught during tree ticking. Stopping behaviour.");
                     return;
                 }
             }

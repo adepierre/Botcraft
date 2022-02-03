@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
 
@@ -7,6 +5,8 @@
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+
+#include "botcraft/Utilities/Logger.hpp"
 
 namespace Botcraft
 {
@@ -417,7 +417,7 @@ namespace Botcraft
             // Path finding step
             if (!is_goal_loaded)
             {
-                std::cout << "[" << client.GetNetworkManager()->GetMyName() << "] Current goal position " << goal << " is either air or not loaded, trying to get closer to load the chunk" << std::endl;
+                LOG_INFO('[' << client.GetNetworkManager()->GetMyName() << "] Current goal position " << goal << " is either air or not loaded, trying to get closer to load the chunk");
                 Vector3<double> goal_direction(goal.x - current_position.x, goal.y - current_position.y, goal.z - current_position.z);
                 goal_direction.Normalize();
                 path = FindPath(client, current_position,
@@ -437,7 +437,7 @@ namespace Botcraft
             {
                 if (!dist_tolerance)
                 {
-                    std::cout << "Warning, pathfinding cannot find a better position than " << current_position << ". Staying there." << std::endl;
+                    LOG_WARNING("Pathfinding cannot find a better position than " << current_position << ". Staying there.");
                     return Status::Failure;
                 }
                 else
