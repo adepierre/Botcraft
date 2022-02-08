@@ -468,13 +468,13 @@ namespace Botcraft
                     if (std::abs(motion_vector.x) < 1.5 &&
                         std::abs(motion_vector.z) < 1.5)
                     {
-                        auto now = std::chrono::system_clock::now();
+                        auto now = std::chrono::steady_clock::now();
                         bool has_timeout = false;
                         while (local_player->GetY() - initial_position.y < 1.0f)
                         {
                             // This indicates that a jump we wanted to make is not possible anymore
                             // recalculating the path
-                            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - now).count() >= 3000)
+                            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - now).count() >= 3000)
                             {
                                 has_timeout = true;
                                 break;
@@ -488,12 +488,12 @@ namespace Botcraft
                     }
                 }
 
-                auto start = std::chrono::system_clock::now();
+                auto start = std::chrono::steady_clock::now();
                 auto previous_step = start;
                 const double motion_norm_xz = std::abs(motion_vector.x) + std::abs(motion_vector.z);
                 while (true)
                 {
-                    auto now = std::chrono::system_clock::now();
+                    auto now = std::chrono::steady_clock::now();
                     long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
                     // If we are over the time we have at speed to travel one block
                     if (time_count > 1000 * motion_norm_xz / speed)
@@ -529,11 +529,11 @@ namespace Botcraft
                 }
 
                 // Wait for the confirmation that we arrived at the destination
-                start = std::chrono::system_clock::now();
+                start = std::chrono::steady_clock::now();
                 bool has_timeout = false;
                 while (true)
                 {
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
                     {
                         has_timeout = true;
                         break;

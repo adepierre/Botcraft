@@ -11,7 +11,7 @@ namespace Botcraft
         filename = "";
         file_buffer = "";
         log_level = LogLevel::Info;
-        last_time_logged = std::chrono::system_clock::now();
+        last_time_logged = std::chrono::steady_clock::now();
         log_func = [this](const std::string& s)
         {
             std::cout << s;
@@ -42,7 +42,7 @@ namespace Botcraft
         log_func(s);
 
         file_buffer += s;
-        auto now = std::chrono::system_clock::now();
+        auto now = std::chrono::steady_clock::now();
         // Only write to file every 5 seconds
         if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_time_logged).count() > 5000)
         {

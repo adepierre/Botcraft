@@ -107,7 +107,7 @@ namespace Botcraft
         std::atomic<LogLevel> log_level;
         std::function<void(const std::string&)> log_func;
 
-        std::chrono::system_clock::time_point last_time_logged;
+        std::chrono::steady_clock::time_point last_time_logged;
         std::string file_buffer;
 
         std::mutex thread_mutex;

@@ -15,6 +15,7 @@ endif()
 option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" ON)
 option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
+option(BOTCRAFT_WINDOWS_BETTER_SLEEP "Set to use better thread sleep on Windows" OFF)
 
 set(BOTCRAFT_OUTPUT_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Base output build path")
 

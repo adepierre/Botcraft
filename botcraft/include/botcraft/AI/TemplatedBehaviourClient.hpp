@@ -4,6 +4,7 @@
 #include "botcraft/AI/BehaviourTree.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/SleepUtilities.hpp"
 
 namespace Botcraft
 {
@@ -101,12 +102,12 @@ namespace Botcraft
             // Main behaviour loop
             while (!should_be_closed)
             {
-                std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
-                std::chrono::system_clock::time_point end = start + std::chrono::milliseconds(10);
+                std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+                std::chrono::steady_clock::time_point end = start + std::chrono::milliseconds(10);
 
                 BehaviourStep();
 
-                std::this_thread::sleep_until(end);
+                SleepUntil(end);
             }
         }
 

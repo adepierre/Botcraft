@@ -256,7 +256,7 @@ namespace Botcraft
 #endif
     {
         weights_sum = 0;
-        random_generator = std::mt19937(std::chrono::system_clock::now().time_since_epoch().count());
+        random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
 
         if (path == "none")
         {
@@ -564,7 +564,7 @@ namespace Botcraft
 #endif
     {
         weights_sum = 1;
-        random_generator = std::mt19937(std::chrono::system_clock::now().time_since_epoch().count());
+        random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
 
         models_weights = { 1 };
         models = { model_ };

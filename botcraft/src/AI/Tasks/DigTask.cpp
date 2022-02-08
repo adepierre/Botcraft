@@ -58,11 +58,11 @@ namespace Botcraft
             LOG_INFO("Starting an expected " << expected_mining_time / 1000.0f << " seconds long mining at " << pos << ".A little help ? ");
         }
 
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
         bool finished_sent = false;
         while (true)
         {
-            long long int elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
+            long long int elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
             if (elapsed > 5000 + expected_mining_time)
             {
                 LOG_WARNING("Something went wrong waiting block breaking confirmation (Timeout).");

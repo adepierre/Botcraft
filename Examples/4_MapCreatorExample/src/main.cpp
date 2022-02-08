@@ -6,6 +6,7 @@
 #include <botcraft/AI/Tasks/AllTasks.hpp>
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
 #include <botcraft/Utilities/Logger.hpp>
+#include <botcraft/Utilities/SleepUtilities.hpp>
 
 #include "CustomBehaviourTree.hpp"
 #include "MapCreationTasks.hpp"
@@ -160,9 +161,9 @@ int main(int argc, char* argv[])
             clients[i]->SetBehaviourTree(i == 0 ? map_art_detailed_behaviour_tree : map_art_behaviour_tree);
         }
 
-        std::map<int, std::chrono::system_clock::time_point> restart_time;
+        std::map<int, std::chrono::steady_clock::time_point> restart_time;
 
-        std::chrono::system_clock::time_point next_time_display = std::chrono::system_clock::now() + std::chrono::minutes(2);
+        std::chrono::steady_clock::time_point next_time_display = std::chrono::steady_clock::now() + std::chrono::minutes(2);
 
         while (true)
         {
@@ -180,12 +181,12 @@ int main(int argc, char* argv[])
 
                     // Restart client[i] in 10 seconds
                     LOG_INFO(names[i] << " has been stopped. Scheduling a restart in 10 seconds...");
-                    restart_time[i] = std::chrono::system_clock::now() + std::chrono::seconds(10);
+                    restart_time[i] = std::chrono::steady_clock::now() + std::chrono::seconds(10);
                 }
             }
 
             // Check if any scheduled restart should happen
-            auto now = std::chrono::system_clock::now();
+            auto now = std::chrono::steady_clock::now();
             for (auto it = restart_time.begin(); it != restart_time.end(); )
             {
                 if (now > it->second)
@@ -214,14 +215,14 @@ int main(int argc, char* argv[])
                 next_time_display += std::chrono::minutes(2);
             }
 
-            std::chrono::system_clock::time_point end = now + std::chrono::milliseconds(10);
+            std::chrono::steady_clock::time_point end = now + std::chrono::milliseconds(10);
 
             for (int i = 0; i < clients.size(); ++i)
             {
                 clients[i]->BehaviourStep();
             }
 
-            std::this_thread::sleep_until(end);
+            SleepUntil(end);
         }
 
         return 0;

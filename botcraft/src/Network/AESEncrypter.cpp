@@ -37,7 +37,7 @@ namespace Botcraft
 
         RSA* rsa = d2i_RSA_PUBKEY(nullptr, &pub_key_ptr, pub_key.size());
 
-        std::mt19937 random_gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+        std::mt19937 random_gen(std::chrono::steady_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<unsigned int> random_dist(0, 255);
 
         raw_shared_secret = std::vector<unsigned char>(AES_BLOCK_SIZE);

@@ -78,7 +78,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
         chests_indices[i] = i;
     }
 
-    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
 
     std::shuffle(chests_indices.begin(), chests_indices.end(), random_engine);
 
@@ -159,7 +159,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
         }
 
         // Wait until player inventory is updated after the container is closed
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
         while (
 #if PROTOCOL_VERSION < 347
             AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetBlockID()).at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemDamage())->GetName() != food_name
@@ -168,7 +168,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
 #endif
             )
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
             {
                 LOG_WARNING("Something went wrong trying to get food from chest (Timeout).");
                 return Status::Failure;
@@ -222,7 +222,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
         chest_indices[i] = i;
     }
 
-    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
 
     while (true)
     {
@@ -349,11 +349,11 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
         }
 
         // Wait for the confirmation from the server
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
         const short checked_slot_index = (take_from_chest ? slots_dst[dst_index] : slots_src[src_index]) - first_player_index + 9; /*Window::INVENTORY_STORAGE_START*/
         while (true)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
             {
                 LOG_WARNING("Something went wrong trying to get items from chest (Timeout).");
                 return Status::Failure;
@@ -387,7 +387,7 @@ Status FindNextTask(BehaviourClient& c)
 
     const std::set<std::string>& available = blackboard.Get<std::set<std::string> >("Inventory.block_list");
 
-    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
 
     Position start_pos;
 
