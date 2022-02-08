@@ -43,15 +43,24 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
     ManagersClient::Handle(msg);
     
     // Split the message 
-    std::istringstream ss{ msg.GetMessage().GetText() };
-    const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
+    const std::string text = msg.GetMessage().GetText();
+    std::cout << "Received message: " << text << '\n';
+    std::cout << "Message JSON: " << msg.GetMessage().GetRawText() << '\n';
+    std::istringstream sstr(text);
+    std::vector<std::string> splitted;
+    std::string tmp;
 
-    if (splitted.size() < 2 || splitted[0] != network_manager->GetMyName())
+    while (std::getline(sstr, tmp, ' '))
+    {
+        splitted.push_back(tmp);
+    }
+
+    if (splitted.size() < 3 || splitted[1] != network_manager->GetMyName())
     {
         return;
     }
 
-    if (splitted[1] == "goto")
+    if (splitted[2] == "goto")
     {
         if (splitted.size() < 5)
         {
@@ -62,10 +71,10 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         float speed = 4.317f;
         try
         {
-            target_position = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
-            if (splitted.size() > 5)
+            target_position = Position(std::stoi(splitted[3]), std::stoi(splitted[4]), std::stoi(splitted[5]));
+            if (splitted.size() > 6)
             {
-                speed = std::stof(splitted[5]);
+                speed = std::stof(splitted[6]);
             }
         }
         catch (const std::invalid_argument &e)
@@ -101,55 +110,55 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
 
         SetBehaviourTree(tree);
     }
-    else if (splitted[1] == "stop")
+    else if (splitted[2] == "stop")
     {
         // Stop any running behaviour
         SetBehaviourTree(nullptr);
     }
-    else if (splitted[1] == "check_perimeter")
+    else if (splitted[2] == "check_perimeter")
     {
         float radius = 128.0f;
         Position pos = Position(entity_manager->GetLocalPlayer()->GetPosition().x, entity_manager->GetLocalPlayer()->GetPosition().y, entity_manager->GetLocalPlayer()->GetPosition().z);
         bool check_lighting = true;
 
-        if (splitted.size() == 3)
+        if (splitted.size() == 4)
         {
-            radius = std::stof(splitted[2]);
+            radius = std::stof(splitted[3]);
         }
-        else if (splitted.size() == 4)
+        else if (splitted.size() == 5)
         {
-            radius = std::stof(splitted[2]);
-            check_lighting = std::stoi(splitted[3]);
+            radius = std::stof(splitted[3]);
+            check_lighting = std::stoi(splitted[4]);
         }
         else if (splitted.size() == 6)
         {
-            pos = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
-            radius = std::stof(splitted[5]);
+            pos = Position(std::stoi(splitted[3]), std::stoi(splitted[4]), std::stoi(splitted[5]));
+            radius = std::stof(splitted[6]);
         }
         else if (splitted.size() == 7)
         {
-            pos = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
-            radius = std::stof(splitted[5]);
-            check_lighting = std::stoi(splitted[6]);
+            pos = Position(std::stoi(splitted[3]), std::stoi(splitted[4]), std::stoi(splitted[5]));
+            radius = std::stof(splitted[6]);
+            check_lighting = std::stoi(splitted[7]);
         }
         CheckPerimeter(pos, radius, check_lighting);
     }
-    else if (splitted[1] == "die")
+    else if (splitted[2] == "die")
     {
         should_be_closed = true;
     }
-    else if (splitted[1] == "place_block")
+    else if (splitted[2] == "place_block")
     {
         if (splitted.size() < 6)
         {
             SendChatMessage("Usage: [BotName] [place_block] [item] [x] [y] [z]");
             return;
         }
-        const std::string item = splitted[2];
+        const std::string item = splitted[3];
         Position pos;
         try
         {
-            pos = Position(std::stoi(splitted[3]), std::stoi(splitted[4]), std::stoi(splitted[5]));
+            pos = Position(std::stoi(splitted[4]), std::stoi(splitted[5]), std::stoi(splitted[6]));
         }
         catch (const std::invalid_argument& e)
         {
@@ -164,7 +173,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         SendChatMessage("Asked to place a block");
         //PlaceBlock(item, pos, PlayerDiggingFace::Top, false);
     }
-    else if (splitted[1] == "interact")
+    else if (splitted[2] == "interact")
     {
         if (splitted.size() < 5)
         {
@@ -174,7 +183,7 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         Position pos;
         try
         {
-            pos = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
+            pos = Position(std::stoi(splitted[3]), std::stoi(splitted[4]), std::stoi(splitted[5]));
         }
         catch (const std::invalid_argument& e)
         {

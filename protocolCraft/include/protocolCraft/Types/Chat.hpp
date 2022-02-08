@@ -14,7 +14,7 @@ namespace ProtocolCraft
 
         }
 
-        void SetText(const std::string &s)
+        void SetText(const std::string& s)
         {
             text = s;
         }
@@ -45,7 +45,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             raw_text = ReadData<std::string>(iter, length);
             
@@ -53,12 +53,15 @@ namespace ProtocolCraft
             text = ParseChat(raw_text);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(raw_text, container);
         }
 
-        const std::string ParseChat(const std::string &json);
+        // Parses the message JSON and extracts message data
+        std::string ParseChat(const std::string& json);
+        // used for recursive parsing of sub messages
+        std::string ParseChat(const nlohmann::json&);
 
         virtual const nlohmann::json SerializeImpl() const override;
 
