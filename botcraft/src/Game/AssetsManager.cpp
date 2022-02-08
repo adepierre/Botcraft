@@ -1,10 +1,10 @@
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Biome.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #if USE_GUI
 #include "botcraft/Renderer/Atlas.hpp"
@@ -23,27 +23,27 @@ namespace Botcraft
 
     AssetsManager::AssetsManager()
     {
-        std::cout << "Loading blocks from file..." << std::endl;
+        LOG_INFO("Loading blocks from file...");
         LoadBlocksFile();
-        std::cout << "Done!" << std::endl;
-        std::cout << "Loading biomes from file..." << std::endl;
+        LOG_INFO("Done!");
+        LOG_INFO("Loading biomes from file...");
         LoadBiomesFile();
-        std::cout << "Done!" << std::endl;
-        std::cout << "Loading items from file..." << std::endl;
+        LOG_INFO("Done!");
+        LOG_INFO("Loading items from file...");
         LoadItemsFile();
-        std::cout << "Done!" << std::endl;
+        LOG_INFO("Done!");
 #if USE_GUI
-        std::cout << "Loading textures..." << std::endl;
+        LOG_INFO("Loading textures...");
         atlas = std::make_unique<Renderer::Atlas>();
         LoadTextures();
-        std::cout << "Done!" << std::endl;
-        std::cout << "Updating models with Atlas data..." << std::endl;
+        LOG_INFO("Done!");
+        LOG_INFO("Updating models with Atlas data...");
         UpdateModelsWithAtlasData();
-        std::cout << "Done!" << std::endl;
+        LOG_INFO("Done!");
 #endif
-        std::cout << "Clearing cache from memory..." << std::endl;
+        LOG_INFO("Clearing cache from memory...");
         ClearCaches();
-        std::cout << "Done!" << std::endl;
+        LOG_INFO("Done!");
     }
 
 #if PROTOCOL_VERSION < 347
@@ -120,8 +120,7 @@ namespace Botcraft
         }
         catch (const nlohmann::json::exception& e)
         {
-            std::cerr << "Error reading info block file at " << info_file_path << std::endl;
-            std::cerr << e.what() << std::endl;
+            LOG_ERROR("Error reading info block file at " << info_file_path << '\n' << e.what());
             return;
         }
 
@@ -132,8 +131,7 @@ namespace Botcraft
 
             if (!info.contains("name") || !info["name"].is_string())
             {
-                std::cerr << "Error with an element of blockstates info: " << std::endl;
-                std::cerr << info << std::endl;
+                LOG_ERROR("Error with an element of blockstates info: \n" << info);
                 continue;
             }
             else
@@ -270,8 +268,7 @@ namespace Botcraft
         }
         catch (const nlohmann::json::exception& e)
         {
-            std::cerr << "Error reading block file at " << file_path << std::endl;
-            std::cerr << e.what() << std::endl;
+            LOG_ERROR("Error reading block file at " << file_path << '\n' << e.what());
             return;
         }
 
@@ -279,7 +276,7 @@ namespace Botcraft
 
         if (!json.is_array())
         {
-            std::cerr << "Error block file at " << file_path << " is not a json array as expected" << std::endl;
+            LOG_ERROR("Error block file at " << file_path << " is not a json array as expected");
             return;
         }
 
@@ -308,7 +305,7 @@ namespace Botcraft
             std::string render = "block";
             if (rendering.find(blockstate_name) == rendering.end())
             {
-                std::cerr << "Error trying to get rendering information for blockstate " << blockstate_name << std::endl;
+                LOG_ERROR("Error trying to get rendering information for blockstate " << blockstate_name);
                 continue;
             }
             else
@@ -324,7 +321,7 @@ namespace Botcraft
             {
                 if(render == "fluid" && textures.find(blockstate_name) == textures.end())
                 {
-                    std::cerr << "Error, blockstate " << blockstate_name << " is a fluid, but it does not have a texture file specified in Blocks_info.json" << std::endl;
+                    LOG_ERROR("Error, blockstate " << blockstate_name << " is a fluid, but it does not have a texture file specified in Blocks_info.json");
                 }
                 if (element.contains("metadata"))
                 {
@@ -409,7 +406,7 @@ namespace Botcraft
 #else
         if (!json.is_object())
         {
-            std::cerr << "Error block file at " << file_path << " is not a json object as expected" << std::endl;
+            LOG_ERROR("Error block file at " << file_path << " is not a json object as expected");
             return;
         }
 
@@ -436,7 +433,7 @@ namespace Botcraft
                 }
                 else
                 {
-                    std::cerr << "Error trying to read the id of block " << blockstate_name << std::endl;
+                    LOG_ERROR("Error trying to read the id of block " << blockstate_name);
                     continue;
                 }
 
@@ -445,7 +442,7 @@ namespace Botcraft
                     transparency.find(blockstate_name) == transparency.end() ||
                     tint_types.find(blockstate_name) == tint_types.end())
                 {
-                    std::cerr << "Error trying to get information for blockstate " << blockstate_name << std::endl;
+                    LOG_ERROR("Error trying to get information for blockstate " << blockstate_name);
                     continue;
                 }
 
@@ -473,7 +470,7 @@ namespace Botcraft
                 {
                     if (textures.find(blockstate_name) == textures.end())
                     {
-                        std::cerr << "Error, blockstate " << blockstate_name << " is a fluid, but it does not have a texture file specified in Blocks_info.json" << std::endl;
+                        LOG_ERROR("Error, blockstate " << blockstate_name << " is a fluid, but it does not have a texture file specified in Blocks_info.json");
                     }
                     else
                     {
@@ -510,14 +507,13 @@ namespace Botcraft
         }
         catch (const nlohmann::json::exception& e)
         {
-            std::cerr << "Error reading biome file at " << file_path << std::endl;
-            std::cerr << e.what() << std::endl;
+            LOG_ERROR("Error reading biome file at " << file_path << '\n' << e.what());
             return;
         }
 
         if (!json.is_array())
         {
-            std::cerr << "Error biome file at " << file_path << " is not a json object as expected" << std::endl;
+            LOG_ERROR("Error biome file at " << file_path << " is not a json object as expected");
             return;
         }
 
@@ -602,8 +598,7 @@ namespace Botcraft
         }
         catch (const nlohmann::json::exception& e)
         {
-            std::cerr << "Error reading item file at " << file_path << std::endl;
-            std::cerr << e.what() << std::endl;
+            LOG_ERROR("Error reading item file at " << file_path << '\n' << e.what());
             return;
         }
 

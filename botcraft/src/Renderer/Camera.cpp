@@ -1,7 +1,5 @@
 #include "botcraft/Renderer/Camera.hpp"
 
-#include <iostream>
-
 namespace Botcraft
 {
     namespace Renderer

@@ -1,11 +1,11 @@
 #ifdef USE_ENCRYPTION
 
 #include "botcraft/Network/AESEncrypter.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 #include <openssl/aes.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
 
-#include <iostream>
 #include <random>
 #include <chrono>
 
@@ -37,7 +37,7 @@ namespace Botcraft
 
         RSA* rsa = d2i_RSA_PUBKEY(nullptr, &pub_key_ptr, pub_key.size());
 
-        std::mt19937 random_gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+        std::mt19937 random_gen(std::chrono::steady_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<unsigned int> random_dist(0, 255);
 
         raw_shared_secret = std::vector<unsigned char>(AES_BLOCK_SIZE);
@@ -70,7 +70,7 @@ namespace Botcraft
     {
         if (encryption_context == nullptr)
         {
-            std::cerr << "Warning, trying to encrypt packet while encryption is not initialized yet" << std::endl;
+            LOG_WARNING("Warning, trying to encrypt packet while encryption is not initialized yet");
             return in;
         }
 
@@ -88,7 +88,7 @@ namespace Botcraft
     {
         if (decryption_context == nullptr)
         {
-            std::cerr << "Warning, trying to decrypt packet while decryption is not initialized yet" << std::endl;
+            LOG_WARNING("Warning, trying to decrypt packet while decryption is not initialized yet");
             return in;
         }
 

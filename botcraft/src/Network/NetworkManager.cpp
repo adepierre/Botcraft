@@ -4,6 +4,7 @@
 #include "botcraft/Network/TCP_Com.hpp"
 #include "botcraft/Network/Authentifier.hpp"
 #include "botcraft/Network/AESEncrypter.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #if USE_COMPRESSION
 #include "botcraft/Network/Compression.hpp"
@@ -149,6 +150,7 @@ namespace Botcraft
 
     void NetworkManager::WaitForNewPackets()
     {
+        Logger::GetInstance().RegisterThread("NetworkPacketProcessing");
         while (state != ProtocolCraft::ConnectionState::None)
         {
             {

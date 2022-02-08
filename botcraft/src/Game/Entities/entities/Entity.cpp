@@ -1,7 +1,5 @@
 #include "botcraft/Game/Entities/entities/Entity.hpp"
 
-#include <iostream>
-
 #include "protocolCraft/Types/Slot.hpp"
 #include "protocolCraft/Types/Chat.hpp"
 #include "protocolCraft/Types/Particles/Particle.hpp"
@@ -14,6 +12,7 @@
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Renderer/Atlas.hpp"
 #endif
+#include "botcraft/Utilities/Logger.hpp"
 
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp"
@@ -425,7 +424,7 @@ namespace Botcraft
                 break;
 #endif
             default:
-                std::cerr << "WARNING, unknown type in entity metadata: " << type << ". Stopping metadata parsing." << std::endl;
+                LOG_ERROR("Unknown type in entity metadata : " << type << ".Stopping current metadata parsing.");
                 return;
             }
             SetMetadataValue(index, value);

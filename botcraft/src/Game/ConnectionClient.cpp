@@ -1,7 +1,6 @@
-#include <iostream>
-
 #include "botcraft/Game/ConnectionClient.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 using namespace ProtocolCraft;
 
@@ -73,9 +72,7 @@ namespace Botcraft
 
     void ConnectionClient::Handle(ClientboundLoginDisconnectPacket &msg)
     {
-        std::cout << "Disconnect during login with reason: " << 
-            msg.GetReason().GetText() << std::endl;
-        std::cout << "Disconnecting ..." << std::endl;
+        LOG_INFO("Disconnect during login with reason: " << msg.GetReason().GetText());
 
         should_be_closed = true;
     }
@@ -99,9 +96,7 @@ namespace Botcraft
 
     void ConnectionClient::Handle(ClientboundDisconnectPacket &msg)
     {
-        std::cout << "Disconnect during playing with reason: " << 
-            msg.GetReason().GetRawText() << std::endl;
-        std::cout << "Disconnecting ..." << std::endl;
+        LOG_INFO("Disconnect during playing with reason: " << msg.GetReason().GetRawText());
         
         should_be_closed = true;
     }

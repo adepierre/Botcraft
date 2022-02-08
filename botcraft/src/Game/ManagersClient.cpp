@@ -1,6 +1,3 @@
-#include <functional>
-#include <iostream>
-
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
@@ -11,6 +8,8 @@
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Game/ManagersClient.hpp"
+#include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/SleepUtilities.hpp"
 
 #include "botcraft/Network/NetworkManager.hpp"
 #if USE_GUI
@@ -40,8 +39,7 @@ namespace Botcraft
 #else
         if (use_renderer_)
         {
-            std::cerr << "Warning, your version of botcraft hasn't been"
-                << " compiled with GUI enabled, setting use_renderer_ to false" << std::endl;
+            LOG_WARNING("Your version of botcraft hasn't been compiled with GUI enabled, setting use_renderer_ to false");
         }
 #endif
         auto_respawn = false;
@@ -89,17 +87,19 @@ namespace Botcraft
 
     void ManagersClient::RunSyncPos()
     {
+        Logger::GetInstance().RegisterThread("RunSyncPos");
+
         // Wait for 500 milliseconds before starting to send position continuously
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        auto last_send = std::chrono::system_clock::now();
+        auto last_send = std::chrono::steady_clock::now();
         std::shared_ptr<ServerboundMovePlayerPacketPosRot> msg_position(new ServerboundMovePlayerPacketPosRot);
         bool has_moved = false;
 
         while (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
             // End of the current tick
-            auto end = std::chrono::system_clock::now() + std::chrono::milliseconds(50);
+            auto end = std::chrono::steady_clock::now() + std::chrono::milliseconds(50);
 
             if (entity_manager)
             {
@@ -170,7 +170,7 @@ namespace Botcraft
                     }
 #endif
                     if (network_manager &&
-                        (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_send).count() >= 1000))
+                        (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_send).count() >= 1000))
                     {
                         msg_position->SetX(local_player->GetPosition().x);
                         msg_position->SetY(local_player->GetPosition().y);
@@ -180,11 +180,11 @@ namespace Botcraft
                         msg_position->SetOnGround(local_player->GetOnGround());
 
                         network_manager->Send(msg_position);
-                        last_send = std::chrono::system_clock::now();
+                        last_send = std::chrono::steady_clock::now();
                     }
                 }
             }
-            std::this_thread::sleep_until(end);
+            SleepUntil(end);
         }
     }
 
@@ -307,7 +307,7 @@ namespace Botcraft
         std::shared_ptr<Window> window = inventory_manager->GetWindow(transaction->GetContainerId());
         if (!window)
         {
-            std::cerr << "Warning, trying to set a transaction for an unknown window" << std::endl;
+            LOG_WARNING("Trying to set a transaction for an unknown window");
         }
         const int transaction_id = window->GetNextTransactionId();
         transaction->SetUid(transaction_id);

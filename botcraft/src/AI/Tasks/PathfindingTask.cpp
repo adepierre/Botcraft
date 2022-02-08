@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
 
@@ -7,6 +5,8 @@
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+
+#include "botcraft/Utilities/Logger.hpp"
 
 namespace Botcraft
 {
@@ -417,7 +417,7 @@ namespace Botcraft
             // Path finding step
             if (!is_goal_loaded)
             {
-                std::cout << "[" << client.GetNetworkManager()->GetMyName() << "] Current goal position " << goal << " is either air or not loaded, trying to get closer to load the chunk" << std::endl;
+                LOG_INFO('[' << client.GetNetworkManager()->GetMyName() << "] Current goal position " << goal << " is either air or not loaded, trying to get closer to load the chunk");
                 Vector3<double> goal_direction(goal.x - current_position.x, goal.y - current_position.y, goal.z - current_position.z);
                 goal_direction.Normalize();
                 path = FindPath(client, current_position,
@@ -437,7 +437,7 @@ namespace Botcraft
             {
                 if (!dist_tolerance)
                 {
-                    std::cout << "Warning, pathfinding cannot find a better position than " << current_position << ". Staying there." << std::endl;
+                    LOG_WARNING("Pathfinding cannot find a better position than " << current_position << ". Staying there.");
                     return Status::Failure;
                 }
                 else
@@ -468,13 +468,13 @@ namespace Botcraft
                     if (std::abs(motion_vector.x) < 1.5 &&
                         std::abs(motion_vector.z) < 1.5)
                     {
-                        auto now = std::chrono::system_clock::now();
+                        auto now = std::chrono::steady_clock::now();
                         bool has_timeout = false;
                         while (local_player->GetY() - initial_position.y < 1.0f)
                         {
                             // This indicates that a jump we wanted to make is not possible anymore
                             // recalculating the path
-                            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - now).count() >= 3000)
+                            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - now).count() >= 3000)
                             {
                                 has_timeout = true;
                                 break;
@@ -488,12 +488,12 @@ namespace Botcraft
                     }
                 }
 
-                auto start = std::chrono::system_clock::now();
+                auto start = std::chrono::steady_clock::now();
                 auto previous_step = start;
                 const double motion_norm_xz = std::abs(motion_vector.x) + std::abs(motion_vector.z);
                 while (true)
                 {
-                    auto now = std::chrono::system_clock::now();
+                    auto now = std::chrono::steady_clock::now();
                     long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
                     // If we are over the time we have at speed to travel one block
                     if (time_count > 1000 * motion_norm_xz / speed)
@@ -529,11 +529,11 @@ namespace Botcraft
                 }
 
                 // Wait for the confirmation that we arrived at the destination
-                start = std::chrono::system_clock::now();
+                start = std::chrono::steady_clock::now();
                 bool has_timeout = false;
                 while (true)
                 {
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
                     {
                         has_timeout = true;
                         break;

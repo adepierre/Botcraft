@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include "botcraft/Utilities/AsyncHandler.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 namespace Botcraft
 {
@@ -37,6 +38,7 @@ namespace Botcraft
 
     void AsyncHandler::DequeueMsg()
     {
+        Logger::GetInstance().RegisterThread("AsyncHandlerMsgProcessing");
         while (processing)
         {
             // Wait for the signal that there is

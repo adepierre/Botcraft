@@ -188,6 +188,8 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Network/NetworkManager.hpp
     
     include/botcraft/Utilities/AsyncHandler.hpp
+    include/botcraft/Utilities/Logger.hpp
+    include/botcraft/Utilities/SleepUtilities.hpp
 )
 
 set(botcraft_PRIVATE_HDR
@@ -387,8 +389,10 @@ set(botcraft_SRC
     src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
     
-    src/Utilities/StringUtilities.cpp
     src/Utilities/AsyncHandler.cpp
+    src/Utilities/Logger.cpp
+    src/Utilities/StringUtilities.cpp
+    src/Utilities/SleepUtilities.cpp
 )
 
 if(BOTCRAFT_USE_OPENGL_GUI)
@@ -497,6 +501,11 @@ target_link_libraries(botcraft PUBLIC ${CMAKE_DL_LIBS})
 
 # Add protocolCraft
 target_link_libraries(botcraft PUBLIC protocolCraft)
+
+if (WIN32 AND BOTCRAFT_WINDOWS_BETTER_SLEEP)
+    target_link_libraries(botcraft PRIVATE winmm.lib)
+    target_compile_definitions(botcraft PRIVATE BETTER_SLEEP=1)
+endif()
 
 # Add json
 target_include_directories(botcraft 

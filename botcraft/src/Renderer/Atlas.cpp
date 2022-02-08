@@ -1,6 +1,8 @@
 #include "botcraft/Renderer/Atlas.hpp"
 #include "botcraft/Renderer/ImageSaver.hpp"
 
+#include "botcraft/Utilities/Logger.hpp"
+
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
 #include <stb_image/stb_image.h>
@@ -8,7 +10,6 @@
 // rectpack2D
 #include "finders_interface.h"
 
-#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -107,7 +108,7 @@ namespace Botcraft
                 // If the depth is not good, don't keep the texture
                 if (textures[i].depth < 1 || textures[i].depth > 4)
                 {
-                    std::cout << "Warning, unknown depth format (" << textures[i].depth << ") for texture " << textures[i].identifier << std::endl;
+                    LOG_WARNING("Unknown depth format(" << textures[i].depth << ") for texture " << textures[i].identifier);
                     continue;
                 }
                 kept_textures.push_back(textures[i]);
@@ -133,14 +134,14 @@ namespace Botcraft
                         return rectpack2D::callback_result::CONTINUE_PACKING;
                     },
                     [](rect_type&) {
-                        std::cerr << "Error packing the textures, aborting" << std::endl;
+                        LOG_ERROR("Error packing the textures, aborting");
                         return rectpack2D::callback_result::ABORT_PACKING;
                     },
                     rectpack2D::flipping_option::DISABLED
                 )
                 );
 
-            std::cout << "All textures packed, resultant atlas size: " << result_size.h << "x" << result_size.w << std::endl;
+            LOG_INFO("All textures packed, resultant atlas size: " << result_size.h << "x" << result_size.w);
             
             //Compute the global texture image
             Reset(result_size.h, result_size.w);

@@ -34,6 +34,9 @@ static bool imgui_demo = false;
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 
+#include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/SleepUtilities.hpp"
+
 const std::vector<float> color_day({ 0.6f, 0.85f, 0.9f });
 const std::vector<float> color_night({0.1f, 0.1f, 0.1f});
 
@@ -101,8 +104,10 @@ namespace Botcraft
 
         void RenderingManager::Run(const bool headless)
         {
+            Logger::GetInstance().RegisterThread("RenderingLoop");
             if (!Init(headless))
             {
+                LOG_ERROR("Can't init rendering manager");
                 return;
             }
 
@@ -112,7 +117,7 @@ namespace Botcraft
             while (!glfwWindowShouldClose(window))
             {
                 double currentFrame = glfwGetTime();
-                auto start = std::chrono::high_resolution_clock::now();
+                auto start = std::chrono::steady_clock::now();
 
                 //Max 60 FPS
                 auto end = start + std::chrono::microseconds(1000000 / 60);
@@ -293,9 +298,10 @@ namespace Botcraft
                     take_screenshot = false;
                 }
 
-                real_fps = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1e6;
+                real_fps = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count() / 1e6;
+                
                 //Wait to have 60 FPS
-                std::this_thread::sleep_until(end);
+                SleepUntil(end);
             }
 
             world_renderer.reset();
@@ -352,7 +358,7 @@ namespace Botcraft
             window = glfwCreateWindow(current_window_width, current_window_height, "RenderingManager", NULL, NULL);
             if (window == NULL)
             {
-                std::cerr << "Failed to create GLFW window" << std::endl;
+                LOG_ERROR("Failed to create GLFW window");
                 glfwTerminate();
                 return false;
             }
@@ -368,7 +374,7 @@ namespace Botcraft
             // ---------------------------------------
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
             {
-                std::cout << "Failed to initialize GLAD" << std::endl;
+                LOG_ERROR("Failed to initialize GLAD");
                 return false;
             }
 
@@ -481,9 +487,9 @@ namespace Botcraft
             }
 
             if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS &&
-                std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - last_time_inventory_changed > 1000)
+                std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() - last_time_inventory_changed > 1000)
             {
-                last_time_inventory_changed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+                last_time_inventory_changed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
                 inventory_open = !inventory_open;
                 if (inventory_open)
                 {
@@ -538,6 +544,7 @@ namespace Botcraft
 
         void RenderingManager::WaitForRenderingUpdate()
         {
+            Logger::GetInstance().RegisterThread("RenderingDataUpdate");
             while (running)
             {
                 {

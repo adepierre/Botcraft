@@ -1,11 +1,8 @@
-#include <iostream>
-
 #include "botcraft/AI/Tasks/InventoryTasks.hpp"
 #include "botcraft/AI/Tasks/BaseTasks.hpp"
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
-
-
 #include "botcraft/AI/Blackboard.hpp"
+
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
@@ -13,6 +10,7 @@
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 using namespace ProtocolCraft;
 
@@ -58,12 +56,12 @@ namespace Botcraft
 
         // Wait for the click confirmation (versions < 1.17)
 #if PROTOCOL_VERSION < 755
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
         while (true)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to select first slot during swap inventory (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to select first slot during swap inventory (Timeout).");
                 return Status::Failure;
             }
             TransactionState transaction_state = inventory_manager->GetTransactionState(container_id, transaction_id);
@@ -107,12 +105,12 @@ namespace Botcraft
 
         // Wait for confirmation in version < 1.17
 #if PROTOCOL_VERSION < 755
-        start = std::chrono::system_clock::now();
+        start = std::chrono::steady_clock::now();
         while (true)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to select second slot during swap inventory (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to select second slot during swap inventory (Timeout).");
                 return Status::Failure;
             }
 
@@ -154,12 +152,12 @@ namespace Botcraft
 
         // Wait for confirmation in version < 1.17
 #if PROTOCOL_VERSION < 755
-        start = std::chrono::system_clock::now();
+        start = std::chrono::steady_clock::now();
         while (true)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 10000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
             {
-                std::cerr << "Something went wrong trying to select third slot during swap inventory (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to select third slot during swap inventory (Timeout).");
                 return Status::Failure;
             }
 
@@ -370,12 +368,12 @@ namespace Botcraft
 
         bool is_block_ok = false;
         bool is_slot_ok = false;
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
         while (!is_block_ok || !is_slot_ok)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
             {
-                std::cerr << "[" << network_manager->GetMyName() << "] Something went wrong waiting block placement confirmation at " << pos << " (Timeout)." << std::endl;
+                LOG_WARNING('[' << network_manager->GetMyName() << "] Something went wrong waiting block placement confirmation at " << pos << " (Timeout).");
                 return Status::Failure;
             }
             if (!is_block_ok)
@@ -445,12 +443,12 @@ namespace Botcraft
             return Status::Success;
         }
 
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
         while (inventory_manager->GetOffHand().GetItemCount() == current_stack_size)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
             {
-                std::cerr << "Something went wrong trying to eat (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to eat (Timeout).");
                 return Status::Failure;
             }
             client.Yield();
@@ -487,12 +485,12 @@ namespace Botcraft
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
         // Wait for a window to be opened
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
         while (inventory_manager->GetFirstOpenedWindowId() == -1)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() >= 3000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
             {
-                std::cerr << "Something went wrong trying to open container (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong trying to open container (Timeout).");
                 return Status::Failure;
             }
             client.Yield();

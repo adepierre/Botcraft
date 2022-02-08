@@ -8,6 +8,8 @@ This is a "learn-by-doing" code, with some lines dating back to 2017 and never c
 
 ## Features
 
+Main features are listed below. To see the eveolution of the project, check the [changelog](https://github.com/adepierre/Botcraft/wiki/Changelog).
+
 - Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
 - DNS server name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.18.1 supported
@@ -54,13 +56,11 @@ Optional dependencies (can be disabled with cmake options)
 - [stb_image](https://github.com/nothings/stb)\* for texture loading
 - [zlib](https://github.com/madler/zlib)† for compression
 
-The code is cross-platform and is automatically built on both Windows with Visual 2019 and Linux at each push. It should also work on reasonably older versions of Visual Studio and macOS as well.
+The code is cross-platform and requires a C++17 compiler.
 
 ### ProtocolCraft
 
-ProtocolCraft is a sublibrary of the botcraft repository. It is a full implementation of the minecraft protocol for all supported versions. It used to be based on the protocol description on the [Wiki](https://wiki.vg/Protocol). However, as it seems to no longer be up to date after 1.16.5, I transitioned it to be based on the [official source code mapping](https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a) provided by Mojang.
-
-I try to keep all the packets and variable names as close as possible to the source code ones. To avoid name conflicts, an underscore is sometimes appended at the end of a variable name.
+ProtocolCraft is a sublibrary of the botcraft repository. It is a full implementation of the minecraft protocol for all supported versions. It's based on the [official source code mapping](https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a) provided by Mojang. I try to keep all the packets and variable names as close as possible to the source code ones. To avoid name conflicts, an underscore is sometimes appended at the end of a variable name.
 
 ## Building
 
@@ -86,6 +86,7 @@ There are several cmake options you can modify:
 - BOTCRAFT_ENCRYPTION [ON/OFF] Add encryption ability, must be ON to connect to a server in online mode
 - BOTCRAFT_USE_OPENGL_GUI [ON/OFF] If ON, botcraft will be compiled with the OpenGL GUI enabled
 - BOTCRAFT_USE_IMGUI [ON/OFF] If ON, additional information will be displayed on the GUI (need BOTCRAFT_USE_OPENGL_GUI to be ON)
+- BOTCRAFT_WINDOWS_BETTER_SLEEP [ON/OFF] If ON, thread sleep durations will be more precise (only for Windows 10/11, no effect on other OS)
 
 ## Examples
 

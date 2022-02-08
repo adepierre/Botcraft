@@ -14,7 +14,7 @@ Status HitCloseHostiles(BehaviourClient& c)
     std::shared_ptr<NetworkManager> network_manager = c.GetNetworkManager();
     Blackboard& blackboard = c.GetBlackboard();
     
-    std::map<int, std::chrono::system_clock::time_point>& last_time_hit = blackboard.GetRef("Entities.LastTimeHit", std::map<int, std::chrono::system_clock::time_point>());
+    std::map<int, std::chrono::steady_clock::time_point>& last_time_hit = blackboard.GetRef("Entities.LastTimeHit", std::map<int, std::chrono::steady_clock::time_point>());
 
     Vector3<double> player_pos;
     {
@@ -22,7 +22,7 @@ Status HitCloseHostiles(BehaviourClient& c)
         player_pos = local_player->GetPosition();
     }
 
-    auto now = std::chrono::system_clock::now();
+    auto now = std::chrono::steady_clock::now();
     {
         std::lock_guard<std::mutex> entities_guard(entity_manager->GetMutex());
         for (auto& it : entity_manager->GetEntities())
@@ -63,9 +63,9 @@ Status HitCloseHostiles(BehaviourClient& c)
 
 Status CleanLastTimeHit(BehaviourClient& c)
 {
-    std::map<int, std::chrono::system_clock::time_point>& last_time_hit = c.GetBlackboard().GetRef("Entities.LastTimeHit", std::map<int, std::chrono::system_clock::time_point>());
+    std::map<int, std::chrono::steady_clock::time_point>& last_time_hit = c.GetBlackboard().GetRef("Entities.LastTimeHit", std::map<int, std::chrono::steady_clock::time_point>());
 
-    auto now = std::chrono::system_clock::now();
+    auto now = std::chrono::steady_clock::now();
     for (auto it = last_time_hit.begin(); it != last_time_hit.end();)
     {
         if (std::chrono::duration_cast<std::chrono::seconds>(now - it->second).count() > 10)

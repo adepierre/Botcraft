@@ -1,11 +1,11 @@
 #include "botcraft/Game/Model.hpp"
 #include "botcraft/Utilities/StringUtilities.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include <nlohmann/json.hpp>
 
 #include <sstream>
 #include <fstream>
-#include <iostream>
 
 namespace Botcraft
 {
@@ -58,8 +58,7 @@ namespace Botcraft
             }
             catch (const nlohmann::json::exception& e)
             {
-                std::cerr << "Error reading model file  " << full_filepath << std::endl;
-                std::cerr << e.what() << std::endl;
+                LOG_ERROR("Error reading model file  " << full_filepath << '\n' << e.what());
                 error = true;
             }
         }

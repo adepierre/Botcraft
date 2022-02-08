@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <sstream>
-#include <iostream>
 
 namespace Botcraft
 {

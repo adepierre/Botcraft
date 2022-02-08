@@ -1,12 +1,12 @@
 #include <sstream>
 #include <fstream>
-#include <iostream>
 #include <random>
 #include <chrono>
 
 #include <nlohmann/json.hpp>
 
 #include "botcraft/Game/World/Blockstate.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/StringUtilities.hpp"
 
 #if USE_GUI
@@ -71,7 +71,7 @@ namespace Botcraft
                     colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().x, colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y));
                     break;
                 default:
-                    std::cerr << "Error, blockstate X rotation should be in 90° steps" << std::endl;
+                    LOG_ERROR("Blockstate X rotation should be in 90° steps");
                     break;
                 }
             }
@@ -107,7 +107,7 @@ namespace Botcraft
                     colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y, colliders[i].GetHalfSize().x));
                     break;
                 default:
-                    std::cerr << "Error, blockstate Y rotation should be in 90° steps" << std::endl;
+                    LOG_ERROR("Blockstate Y rotation should be in 90° steps");
                     break;
                 }
             }
@@ -256,7 +256,7 @@ namespace Botcraft
 #endif
     {
         weights_sum = 0;
-        random_generator = std::mt19937(std::chrono::system_clock::now().time_since_epoch().count());
+        random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
 
         if (path == "none")
         {
@@ -300,13 +300,12 @@ namespace Botcraft
         {
             if (custom)
             {
-                std::cout << "Missing custom definition for " << full_filepath << std::endl;
+                LOG_ERROR("Missing custom definition for " << full_filepath << '\n' << e.what());
             }
             else
             {
-                std::cerr << "Error reading blockstate file at " << full_filepath << std::endl;
+                LOG_ERROR("Error reading blockstate file at " << full_filepath << '\n' << e.what());
             }
-            std::cerr << e.what() << std::endl;
             
             models.push_back(Model::GetModel("", false));
             models_weights.push_back(1);
@@ -388,7 +387,7 @@ namespace Botcraft
             }
             else
             {
-                std::cerr << "Error reading " << full_filepath << std::endl;
+                LOG_ERROR("Error reading " << full_filepath);
                 models_deque.push_back(Model::GetModel("", false));
                 models_weights.push_back(1);
                 weights_sum += 1;
@@ -565,7 +564,7 @@ namespace Botcraft
 #endif
     {
         weights_sum = 1;
-        random_generator = std::mt19937(std::chrono::system_clock::now().time_since_epoch().count());
+        random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
 
         models_weights = { 1 };
         models = { model_ };

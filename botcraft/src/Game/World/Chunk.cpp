@@ -1,9 +1,8 @@
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/Section.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include "protocolCraft/Types/NBT/TagInt.hpp"
-
-#include <iostream>
 
 using namespace ProtocolCraft;
 
@@ -116,7 +115,7 @@ namespace Botcraft
 
         if (data.size() == 0)
         {
-            std::cerr << "Error, cannot load chunk data without data" << std::endl;
+            LOG_ERROR("Cannot load chunk data without data");
             return;
         }
 
@@ -153,7 +152,7 @@ namespace Botcraft
             {
                 if (bits_per_block < 4)
                 {
-                    std::cerr << "Error, bits per block must be between 4 and 8 when using a palette. Stop loading chunk data" << std::endl;
+                    LOG_ERROR("Bits per block must be between 4 and 8 when using a palette (current: " << bits_per_block << "). Stop loading current chunk data");
                     return;
                 }
 
@@ -166,7 +165,7 @@ namespace Botcraft
             {
                 if (palette_length != 0)
                 {
-                    std::cerr << "Error, palette length should be 0 for global palette. Stop loading chunk data" << std::endl;
+                    LOG_ERROR("Palette length should be 0 for global palette (current: " << palette_length << "). Stop loading current chunk data");
                     return;
                 }
             }
@@ -319,7 +318,7 @@ namespace Botcraft
 
         if (data.size() == 0)
         {
-            std::cerr << "Error, cannot load chunk data without data" << std::endl;
+            LOG_ERROR("Cannot load chunk data without data");
             return;
         }
 
@@ -806,7 +805,7 @@ namespace Botcraft
     {
         if (new_biomes.size() != 64 * height / SECTION_HEIGHT)
         {
-            std::cerr << "Warning, trying to set biomes with a wrong size" << std::endl;
+            LOG_ERROR("Trying to set biomes with a wrong size");
             return;
         }
         biomes = new_biomes;

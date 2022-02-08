@@ -5,6 +5,8 @@
 #include <botcraft/AI/BehaviourTree.hpp>
 #include <botcraft/AI/Tasks/AllTasks.hpp>
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
+#include <botcraft/Utilities/Logger.hpp>
+#include <botcraft/Utilities/SleepUtilities.hpp>
 
 #include "CustomBehaviourTree.hpp"
 #include "MapCreationTasks.hpp"
@@ -32,6 +34,12 @@ int main(int argc, char* argv[])
 {
     try
     {
+        // Init logging, log everything >= Info, only to console, no file
+        Botcraft::Logger::GetInstance().SetLogLevel(Botcraft::LogLevel::Info);
+        Botcraft::Logger::GetInstance().SetFilename("");
+        // Add a name to this thread for logging
+        Botcraft::Logger::GetInstance().RegisterThread("main");
+
         std::string address = "127.0.0.1:25565";
         int num_bot = 5;
         int num_world = 1;
@@ -43,7 +51,7 @@ int main(int argc, char* argv[])
 
         if (argc == 1)
         {
-            std::cout << "No command arguments. Using default options.\n";
+            LOG_WARNING("No command arguments. Using default options.");
             ShowHelp(argv[0]);
         }
 
@@ -63,7 +71,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--address requires an argument" << std::endl;
+                    LOG_FATAL("--address requires an argument");
                     return 1;
                 }
             }
@@ -75,7 +83,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--numbot requires an argument" << std::endl;
+                    LOG_FATAL("--numbot requires an argument");
                     return 1;
                 }
             }
@@ -87,7 +95,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--numworld requires an argument" << std::endl;
+                    LOG_FATAL("--numworld requires an argument");
                     return 1;
                 }
             }
@@ -99,7 +107,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--nbt requires an argument" << std::endl;
+                    LOG_FATAL("--nbt requires an argument");
                     return 1;
                 }
             }
@@ -114,7 +122,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--offset requires 3 arguments" << std::endl;
+                    LOG_FATAL("--offset requires 3 arguments");
                     return 1;
                 }
             }
@@ -126,7 +134,7 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    std::cerr << "--tempblock requires an argument" << std::endl;
+                    LOG_FATAL("--tempblock requires an argument");
                     return 1;
                 }
             }
@@ -153,9 +161,9 @@ int main(int argc, char* argv[])
             clients[i]->SetBehaviourTree(i == 0 ? map_art_detailed_behaviour_tree : map_art_behaviour_tree);
         }
 
-        std::map<int, std::chrono::system_clock::time_point> restart_time;
+        std::map<int, std::chrono::steady_clock::time_point> restart_time;
 
-        std::chrono::system_clock::time_point next_time_display = std::chrono::system_clock::now() + std::chrono::minutes(2);
+        std::chrono::steady_clock::time_point next_time_display = std::chrono::steady_clock::now() + std::chrono::minutes(2);
 
         while (true)
         {
@@ -172,18 +180,18 @@ int main(int argc, char* argv[])
                     clients[i]->Connect(address, names[i], "");
 
                     // Restart client[i] in 10 seconds
-                    std::cout << names[i] << " has been stopped. Scheduling a restart in 10 seconds..." << std::endl;
-                    restart_time[i] = std::chrono::system_clock::now() + std::chrono::seconds(10);
+                    LOG_INFO(names[i] << " has been stopped. Scheduling a restart in 10 seconds...");
+                    restart_time[i] = std::chrono::steady_clock::now() + std::chrono::seconds(10);
                 }
             }
 
             // Check if any scheduled restart should happen
-            auto now = std::chrono::system_clock::now();
+            auto now = std::chrono::steady_clock::now();
             for (auto it = restart_time.begin(); it != restart_time.end(); )
             {
                 if (now > it->second)
                 {
-                    std::cout << "Restarting " << names[it->first] << "..." << std::endl;
+                    LOG_INFO("Restarting " << names[it->first] << "...");
                     clients[it->first]->StartBehaviour();
                     clients[it->first]->SetBehaviourTree(map_art_behaviour_tree);
                     restart_time.erase(it++);
@@ -207,26 +215,26 @@ int main(int argc, char* argv[])
                 next_time_display += std::chrono::minutes(2);
             }
 
-            std::chrono::system_clock::time_point end = now + std::chrono::milliseconds(10);
+            std::chrono::steady_clock::time_point end = now + std::chrono::milliseconds(10);
 
             for (int i = 0; i < clients.size(); ++i)
             {
                 clients[i]->BehaviourStep();
             }
 
-            std::this_thread::sleep_until(end);
+            SleepUntil(end);
         }
 
         return 0;
     }
     catch (std::exception &e)
     {
-        std::cerr << "Exception: " << e.what() << "\n";
+        LOG_FATAL("Exception: " << e.what());
         return 1;
     }
     catch (...)
     {
-        std::cerr << "Unknown exception\n";
+        LOG_FATAL("Unknown exception");
         return 2;
     }
 

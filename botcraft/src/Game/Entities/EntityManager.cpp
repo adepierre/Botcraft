@@ -1,9 +1,9 @@
-#include <iostream>
-
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/entities/Entity.hpp"
 #include "botcraft/Game/Entities/entities/UnknownEntity.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
+
+#include "botcraft/Utilities/Logger.hpp"
 
 #if USE_GUI
 #include "botcraft/Renderer/RenderingManager.hpp"
@@ -343,7 +343,7 @@ namespace Botcraft
         auto it = entities.find(msg.GetId_());
         if (it == entities.end())
         {
-            std::cerr << "Warning, trying to load metadata in unexisting entity" << std::endl;
+            LOG_WARNING("Trying to load metadata in unexisting entity");
         }
         else
         {
@@ -367,7 +367,7 @@ namespace Botcraft
         auto it = entities.find(msg.GetId_());
         if (it == entities.end())
         {
-            std::cerr << "Warning, trying to set speed of an unexisting entity" << std::endl;
+            LOG_WARNING("Trying to set speed of an unexisting entity");
         }
         else
         {
@@ -388,7 +388,7 @@ namespace Botcraft
         auto it = entities.find(msg.GetEntityId());
         if (it == entities.end())
         {
-            std::cerr << "Warning, trying to set equipment of an unexisting entity" << std::endl;
+            LOG_WARNING("Trying to set equipment of an unexisting entity");
         }
         else
         {
@@ -401,7 +401,7 @@ namespace Botcraft
         auto it = entities.find(msg.GetEntityId());
         if (it == entities.end())
         {
-            std::cerr << "Warning, trying to set equipment of an unexisting entity" << std::endl;
+            LOG_WARNING("Trying to set equipment of an unexisting entity");
         }
         else
         {

@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "botcraft/AI/Tasks/DigTask.hpp"
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
@@ -8,6 +6,7 @@
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 using namespace ProtocolCraft;
 
@@ -56,17 +55,17 @@ namespace Botcraft
 
         if (expected_mining_time > 60000)
         {
-            std::cout << "Starting an expected " << expected_mining_time / 1000.0f << " seconds long mining at " << pos << ". A little help?" << std::endl;
+            LOG_INFO("Starting an expected " << expected_mining_time / 1000.0f << " seconds long mining at " << pos << ".A little help ? ");
         }
 
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
         bool finished_sent = false;
         while (true)
         {
-            long long int elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
+            long long int elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
             if (elapsed > 5000 + expected_mining_time)
             {
-                std::cerr << "Something went wrong waiting block breaking confirmation (Timeout)." << std::endl;
+                LOG_WARNING("Something went wrong waiting block breaking confirmation (Timeout).");
                 return Status::Failure;
             }
             if (elapsed >= expected_mining_time
