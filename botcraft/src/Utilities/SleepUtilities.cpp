@@ -2,7 +2,7 @@
 
 #include <thread>
 
-#ifdef _WIN32 && BETTER_SLEEP
+#if _WIN32 && BETTER_SLEEP
 #include <Windows.h>
 #include <timeapi.h>
 #endif
