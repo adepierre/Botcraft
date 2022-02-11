@@ -944,6 +944,7 @@ namespace Botcraft
         asio::ssl::stream<asio::ip::tcp::socket> socket(io_context, ctx);
         socket.set_verify_mode(asio::ssl::verify_none);
         socket.set_verify_callback([](bool, asio::ssl::verify_context&) {return true; });
+        SSL_set_tlsext_host_name(socket.native_handle(), host.c_str());
         asio::connect(socket.lowest_layer(), endpoints);
         socket.handshake(socket.client);
         socket.lowest_layer().set_option(asio::ip::tcp::no_delay(true));
