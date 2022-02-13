@@ -109,17 +109,7 @@ Botcraft has multiple ``XXXClient`` classes you can inherit from depending on wh
 
 ## Connection
 
-If the server has the option online-mode: false, you can connect with any username.
-
-If the server has the option online-mode: true, you can connect with a Mojang account (login+password) or with a Microsoft account (empty login and password). For Microsoft account, you'll need to authenticate in your browser the first time. Then, credentials are stored in a file so you don't need to relog into your account everytime. Only the access token is saved in the file, Botcraft has never access to your Microsoft account password.
-
-## To-do list
-
-It's only a free time project, but there are still a lot of things to do! I sometimes work on stuff when I need them or when there is something I'd like to learn. Don't expect a detailed roadmap.
-
-There are also some minor improvements to existing features that could be done, but I'm not sure how at the moment:
-- Improve scafholding/ladder physics (the player can't climb the ladders)
-- Improve pathfinding with real colliders (the pathfinding considers every solid block as box of size 1 but the collisions are computed with the real shapes which lead to bad situations, for example with fences)
+Botcraft supports both servers in offline and online mode. If the server is in online mode, a valid account (Mojang while they still work or Microsoft) owning the game is required. Detailed information about how to connect with Mojang or Microsoft accounts can be found in the [wiki page](https://github.com/adepierre/Botcraft/wiki/Connection).
 
 ## License
 
