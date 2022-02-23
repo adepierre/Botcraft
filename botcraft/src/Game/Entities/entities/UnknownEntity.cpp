@@ -22,8 +22,13 @@ namespace Botcraft
         return EntityType::None;
     }
 
-    AABB UnknownEntity::GetCollider() const
+    double UnknownEntity::GetWidth() const
     {
-        return AABB(position, Vector3<double>(0.5, 0.5, 0.5));
+        return 1.0;
+    }
+
+    double UnknownEntity::GetHeight() const
+    {
+        return 1.0;
     }
 }

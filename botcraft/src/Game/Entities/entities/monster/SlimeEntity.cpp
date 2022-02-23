@@ -28,20 +28,14 @@ namespace Botcraft
         return EntityType::Slime;
     }
 
-    AABB SlimeEntity::GetCollider() const
-    {
-        const double real_half_size = 0.255 * GetIdSize() * GetWidth() / 2.0;
-        return AABB(Vector3<double>(position.x, position.y + real_half_size, position.z), Vector3<double>(real_half_size, real_half_size, real_half_size));
-    }
-
     double SlimeEntity::GetWidth() const
     {
-        return 2.04;
+        return 0.255 * 2.04 * GetIdSize();
     }
 
     double SlimeEntity::GetHeight() const
     {
-        return 2.04;
+        return 0.255 * 2.04 * GetIdSize();
     }
 
 
@@ -87,6 +81,15 @@ namespace Botcraft
     void SlimeEntity::SetIdSize(const int id_size)
     {
         metadata["id_size"] = id_size;
+#if USE_GUI
+        are_rendered_faces_up_to_date = false;
+        for (size_t i = 0; i < faces.size(); ++i)
+        {
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_x = GetWidth() / 2.0;
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_y = GetHeight() / 2.0;
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_z = GetWidth() / 2.0;
+        }
+#endif
     }
 
 }

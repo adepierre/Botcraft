@@ -44,15 +44,9 @@ namespace Botcraft
         return EntityType::AreaEffectCloud;
     }
 
-    AABB AreaEffectCloudEntity::GetCollider() const
-    {
-        const double real_half_width = GetDataRadius();
-        return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2, position.z), Vector3<double>(real_half_width, GetHeight() / 2, real_half_width));
-    }
-
     double AreaEffectCloudEntity::GetWidth() const
     {
-        return 6.0;
+        return GetDataRadius() * 2.0;
     }
 
     double AreaEffectCloudEntity::GetHeight() const
@@ -141,6 +135,14 @@ namespace Botcraft
     void AreaEffectCloudEntity::SetDataRadius(const float data_radius)
     {
         metadata["data_radius"] = data_radius;
+#if USE_GUI
+        are_rendered_faces_up_to_date = false;
+        for (size_t i = 0; i < faces.size(); ++i)
+        {
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_x = data_radius;
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_z = data_radius;
+        }
+#endif
     }
 
     void AreaEffectCloudEntity::SetDataColor(const int data_color)
