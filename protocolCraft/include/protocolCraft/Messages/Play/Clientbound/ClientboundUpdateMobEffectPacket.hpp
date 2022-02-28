@@ -23,10 +23,10 @@ namespace ProtocolCraft
             return 0x59;
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x64;
-#elif PROTOCOL_VERSION == 757 // 1.18
+#elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x65;
 #else
-            #error "Protocol version not implemented"
+#error "Protocol version not implemented"
 #endif
         }
 
@@ -45,10 +45,17 @@ namespace ProtocolCraft
             entity_id = entity_id_;
         }
 
+#if PROTOCOL_VERSION < 758
         void SetEffectId(const char effect_id_)
         {
             effect_id = effect_id_;
         }
+#else
+        void SetEffectId(const int effect_id_)
+        {
+            effect_id = effect_id_;
+        }
+#endif
 
         void SetEffectAmplifier(const char effect_amplifier_)
         {
@@ -71,10 +78,17 @@ namespace ProtocolCraft
             return entity_id;
         }
 
+#if PROTOCOL_VERSION < 758
         const char GetEffectId() const
         {
             return effect_id;
         }
+#else
+        const int GetEffectId() const
+        {
+            return effect_id;
+        }
+#endif
 
         const char GetEffectAmplifier() const
         {
@@ -96,7 +110,11 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             entity_id = ReadData<VarInt>(iter, length);
+#if PROTOCOL_VERSION < 758
             effect_id = ReadData<char>(iter, length);
+#else
+            effect_id = ReadData<VarInt>(iter, length);
+#endif
             effect_amplifier = ReadData<char>(iter, length);
             effect_duration_ticks = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
@@ -105,7 +123,11 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(entity_id, container);
+#if PROTOCOL_VERSION < 758
             WriteData<char>(effect_id, container);
+#else
+            WriteData<VarInt>(effect_id, container);
+#endif
             WriteData<char>(effect_amplifier, container);
             WriteData<VarInt>(effect_duration_ticks, container);
             WriteData<char>(flags, container);
@@ -126,7 +148,11 @@ namespace ProtocolCraft
 
     private:
         int entity_id;
+#if PROTOCOL_VERSION < 758
         char effect_id;
+#else
+        int effect_id;
+#endif
         char effect_amplifier;
         int effect_duration_ticks;
         char flags;

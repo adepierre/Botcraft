@@ -12,7 +12,7 @@ Main features are listed below. To see the eveolution of the project, check the 
 
 - Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
 - DNS server name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.18.1 supported
+- All official releases from 1.12.2 to 1.18.2 supported
 - Compression
 - Physics and collisions
 - World data

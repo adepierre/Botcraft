@@ -1997,7 +1997,7 @@ namespace ProtocolCraft
                 case 0x66:
                     return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
                     break;
-#elif PROTOCOL_VERSION == 757 // 1.18
+#elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
                 case 0x00:
                     return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
                     break;
@@ -2311,7 +2311,7 @@ namespace ProtocolCraft
                     return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
                     break;
 #else
-                #error "Protocol version not implemented"
+    #error "Protocol version not implemented"
 #endif
                 default:
                     return nullptr;
@@ -3317,7 +3317,7 @@ namespace ProtocolCraft
                 case 0x2F:
                     return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
                     break;
-#elif PROTOCOL_VERSION == 757 // 1.18
+#elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
                 case 0x00:
                     return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
                     break;

@@ -27,7 +27,7 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x22;
 #else
-            #error "Protocol version not implemented"
+#error "Protocol version not implemented"
 #endif
         }
 

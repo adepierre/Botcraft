@@ -29,7 +29,7 @@ constexpr const char* file_name(const char* path)
         break; \
     std::ostringstream s; \
     s << logger.GetDate().rdbuf() << ' ' << Botcraft::Logger::level_strings.at(level) \
-    << " [" << logger.GetThreadName(std::this_thread::get_id()) << "(" << std::this_thread::get_id() << ")]" \
+    << " [" << logger.GetThreadName(std::this_thread::get_id()) << "(" << std::this_thread::get_id() << ")] " \
     << file_name(__FILE__) << '(' << __LINE__ << "): " << osstream << '\n'; \
     logger.Log(s.str()); \
 } while(0);

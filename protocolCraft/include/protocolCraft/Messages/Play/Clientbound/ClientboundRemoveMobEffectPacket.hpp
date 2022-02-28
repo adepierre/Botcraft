@@ -23,7 +23,7 @@ namespace ProtocolCraft
             return 0x37;
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
             return 0x3B;
-#elif PROTOCOL_VERSION == 757 // 1.18
+#elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x3B;
 #else
 #error "Protocol version not implemented"
@@ -45,10 +45,17 @@ namespace ProtocolCraft
             entity_id = entity_id_;
         }
 
+#if PROTOCOL_VERSION < 758
         void SetEffect(const char effect_)
         {
             effect = effect_;
         }
+#else
+        void SetEffect(const int effect_)
+        {
+            effect = effect_;
+        }
+#endif
 
 
         const int GetEntityId() const
@@ -56,23 +63,38 @@ namespace ProtocolCraft
             return entity_id;
         }
 
+#if PROTOCOL_VERSION < 758
         const char GetEffect() const
         {
             return effect;
         }
+#else
+        const int GetEffect() const
+        {
+            return effect;
+        }
+#endif
 
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             entity_id = ReadData<VarInt>(iter, length);
+#if PROTOCOL_VERSION < 758
             effect = ReadData<char>(iter, length);
+#else
+            effect = ReadData<VarInt>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(entity_id, container);
+#if PROTOCOL_VERSION < 758
             WriteData<char>(effect, container);
+#else
+            WriteData<VarInt>(effect, container);
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -87,7 +109,11 @@ namespace ProtocolCraft
 
     private:
         int entity_id;
+#if PROTOCOL_VERSION < 758
         char effect;
+#else
+        int effect;
+#endif
 
     };
 } //ProtocolCraft

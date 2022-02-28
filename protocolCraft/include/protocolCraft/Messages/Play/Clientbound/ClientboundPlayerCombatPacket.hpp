@@ -24,7 +24,7 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
             return 0x31;
 #else
-            #error "Protocol version not implemented"
+#error "Protocol version not implemented"
 #endif
         }
 
