@@ -226,6 +226,20 @@ namespace Botcraft
         entities[msg.GetId_()] = entity;
     }
 
+    void EntityManager::Handle(ProtocolCraft::ClientboundAddExperienceOrbPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+
+        std::shared_ptr<Entity> entity = Entity::CreateEntity(EntityType::ExperienceOrb);
+
+        entity->SetEntityID(msg.GetId_());
+        entity->SetX(msg.GetX());
+        entity->SetY(msg.GetY());
+        entity->SetZ(msg.GetZ());
+        // What do we do with the xp value?
+        entities[msg.GetId_()] = entity;
+    }
+
 #if PROTOCOL_VERSION < 721
     void EntityManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)
     {
