@@ -95,7 +95,7 @@ namespace Botcraft
     {
         for (const auto& p : items)
         {
-            for (const auto& p2 : items.second)
+            for (const auto& p2 : p.second)
             {
                 if (p2.second->GetName() == item_name)
                 {
@@ -666,7 +666,7 @@ namespace Botcraft
             {
                 items[id] = std::unordered_map<unsigned char, std::shared_ptr<Item> >();
             }
-            items[id][damage_id] = std::shared_ptr<Item>(new Item(id, damage_id, item_name));
+            items[id][damage_id] = std::make_shared<Item>(id, damage_id, item_name, stack_size);
 #else
             items[id] = std::make_shared<Item>(id, item_name, stack_size);
 #endif
