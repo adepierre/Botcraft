@@ -1,6 +1,5 @@
 1.17\custom\Blocks.json
 1.17\custom\Blocks_info.json
-1.17\custom\Items.json
 1.16\custom\blockstates\acacia_sign.json
 1.16\custom\blockstates\acacia_wall_sign.json
 1.16\custom\blockstates\barrier.json
