@@ -597,7 +597,8 @@
     },
     "minecraft:cake": {
         "id": 354,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:white_stained_glass": {
         "id": 95,
@@ -1276,16 +1277,16 @@
         "damage_id": 0
     },
     "minecraft:purpur_double_slab": {
-        "id": 181,
-        "damage_id": 1
+        "id": 204,
+        "damage_id": 0
     },
     "minecraft:red_sandstone_slab": {
         "id": 182,
         "damage_id": 0
     },
     "minecraft:purpur_slab": {
-        "id": 182,
-        "damage_id": 1
+        "id": 205,
+        "damage_id": 0
     },
     "minecraft:spruce_fence_gate": {
         "id": 183,
@@ -1371,14 +1372,6 @@
         "id": 203,
         "damage_id": 0
     },
-    "minecraft:purpur_double_slab": {
-        "id": 204,
-        "damage_id": 0
-    },
-    "minecraft:purpur_slab": {
-        "id": 205,
-        "damage_id": 0
-    },
     "minecraft:end_bricks": {
         "id": 206,
         "damage_id": 0
@@ -1429,67 +1422,83 @@
     },
     "minecraft:white_shulker_box": {
         "id": 219,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:orange_shulker_box": {
         "id": 220,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:magenta_shulker_box": {
         "id": 221,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:light_blue_shulker_box": {
         "id": 222,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:yellow_shulker_box": {
         "id": 223,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:lime_shulker_box": {
         "id": 224,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:pink_shulker_box": {
         "id": 225,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:gray_shulker_box": {
         "id": 226,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:silver_shulker_box": {
         "id": 227,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:cyan_shulker_box": {
         "id": 228,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:purple_shulker_box": {
         "id": 229,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:blue_shulker_box": {
         "id": 230,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:brown_shulker_box": {
         "id": 231,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:green_shulker_box": {
         "id": 232,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:red_shulker_box": {
         "id": 233,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:black_shulker_box": {
         "id": 234,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:white_glazed_terracotta": {
         "id": 235,
@@ -1689,19 +1698,23 @@
     },
     "minecraft:iron_shovel": {
         "id": 256,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:iron_pickaxe": {
         "id": 257,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:iron_axe": {
         "id": 258,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:flint_and_steel": {
         "id": 259,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:apple": {
         "id": 260,
@@ -1709,7 +1722,8 @@
     },
     "minecraft:bow": {
         "id": 261,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:arrow": {
         "id": 262,
@@ -1733,55 +1747,68 @@
     },
     "minecraft:iron_sword": {
         "id": 267,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:wooden_sword": {
         "id": 268,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:wooden_shovel": {
         "id": 269,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:wooden_pickaxe": {
         "id": 270,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:wooden_axe": {
         "id": 271,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:stone_sword": {
         "id": 272,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:stone_shovel": {
         "id": 273,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:stone_pickaxe": {
         "id": 274,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:stone_axe": {
         "id": 275,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_sword": {
         "id": 276,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_shovel": {
         "id": 277,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_pickaxe": {
         "id": 278,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_axe": {
         "id": 279,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:stick": {
         "id": 280,
@@ -1793,23 +1820,28 @@
     },
     "minecraft:mushroom_stew": {
         "id": 282,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_sword": {
         "id": 283,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_shovel": {
         "id": 284,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_pickaxe": {
         "id": 285,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_axe": {
         "id": 286,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:string": {
         "id": 287,
@@ -1825,23 +1857,28 @@
     },
     "minecraft:wooden_hoe": {
         "id": 290,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:stone_hoe": {
         "id": 291,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:iron_hoe": {
         "id": 292,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_hoe": {
         "id": 293,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_hoe": {
         "id": 294,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:wheat_seeds": {
         "id": 295,
@@ -1853,83 +1890,103 @@
     },
     "minecraft:leather_helmet": {
         "id": 298,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:leather_chestplate": {
         "id": 299,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:leather_leggings": {
         "id": 300,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:leather_boots": {
         "id": 301,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:chainmail_helmet": {
         "id": 302,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:chainmail_chestplate": {
         "id": 303,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:chainmail_leggings": {
         "id": 304,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:chainmail_boots": {
         "id": 305,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:iron_helmet": {
         "id": 306,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:iron_chestplate": {
         "id": 307,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:iron_leggings": {
         "id": 308,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:iron_boots": {
         "id": 309,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_helmet": {
         "id": 310,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_chestplate": {
         "id": 311,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_leggings": {
         "id": 312,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_boots": {
         "id": 313,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_helmet": {
         "id": 314,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_chestplate": {
         "id": 315,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_leggings": {
         "id": 316,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_boots": {
         "id": 317,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:flint": {
         "id": 318,
@@ -1953,27 +2010,33 @@
     },
     "minecraft:sign": {
         "id": 323,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 16
     },
     "minecraft:bucket": {
         "id": 325,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 16
     },
     "minecraft:water_bucket": {
         "id": 326,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:lava_bucket": {
         "id": 327,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:minecart": {
         "id": 328,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:saddle": {
         "id": 329,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:redstone": {
         "id": 331,
@@ -1981,11 +2044,13 @@
     },
     "minecraft:snowball": {
         "id": 332,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 16
     },
     "minecraft:boat": {
         "id": 333,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:leather": {
         "id": 334,
@@ -1993,7 +2058,8 @@
     },
     "minecraft:milk_bucket": {
         "id": 335,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:brick": {
         "id": 336,
@@ -2017,15 +2083,18 @@
     },
     "minecraft:chest_minecart": {
         "id": 342,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:furnace_minecart": {
         "id": 343,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:egg": {
         "id": 344,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 16
     },
     "minecraft:compass": {
         "id": 345,
@@ -2033,7 +2102,8 @@
     },
     "minecraft:fishing_rod": {
         "id": 346,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:clock": {
         "id": 347,
@@ -2065,7 +2135,8 @@
     },
     "minecraft:bed": {
         "id": 355,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:repeater": {
         "id": 356,
@@ -2081,7 +2152,8 @@
     },
     "minecraft:shears": {
         "id": 359,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:melon": {
         "id": 360,
@@ -2117,7 +2189,8 @@
     },
     "minecraft:ender_pearl": {
         "id": 368,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 16
     },
     "minecraft:blaze_rod": {
         "id": 369,
@@ -2133,7 +2206,8 @@
     },
     "minecraft:potion": {
         "id": 373,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:glass_bottle": {
         "id": 374,
@@ -2177,11 +2251,13 @@
     },
     "minecraft:writable_book": {
         "id": 386,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:written_book": {
         "id": 387,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 16
     },
     "minecraft:emerald": {
         "id": 388,
@@ -2221,7 +2297,8 @@
     },
     "minecraft:carrot_on_a_stick": {
         "id": 398,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:nether_star": {
         "id": 399,
@@ -2241,7 +2318,8 @@
     },
     "minecraft:enchanted_book": {
         "id": 403,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:comparator": {
         "id": 404,
@@ -2257,11 +2335,13 @@
     },
     "minecraft:tnt_minecart": {
         "id": 407,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:hopper_minecart": {
         "id": 408,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:prismarine_shard": {
         "id": 409,
@@ -2281,7 +2361,8 @@
     },
     "minecraft:rabbit_stew": {
         "id": 413,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:rabbit_foot": {
         "id": 414,
@@ -2293,19 +2374,23 @@
     },
     "minecraft:armor_stand": {
         "id": 416,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 16
     },
     "minecraft:iron_horse_armor": {
         "id": 417,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:golden_horse_armor": {
         "id": 418,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:diamond_horse_armor": {
         "id": 419,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:lead": {
         "id": 420,
@@ -2317,7 +2402,8 @@
     },
     "minecraft:command_block_minecart": {
         "id": 422,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:mutton": {
         "id": 423,
@@ -2329,7 +2415,8 @@
     },
     "minecraft:banner": {
         "id": 425,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 16
     },
     "minecraft:end_crystal": {
         "id": 426,
@@ -2353,7 +2440,8 @@
     },
     "minecraft:beetroot_soup": {
         "id": 436,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:dragon_breath": {
         "id": 437,
@@ -2361,7 +2449,8 @@
     },
     "minecraft:splash_potion": {
         "id": 438,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:spectral_arrow": {
         "id": 439,
@@ -2373,39 +2462,48 @@
     },
     "minecraft:lingering_potion": {
         "id": 441,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:shield": {
         "id": 442,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:elytra": {
         "id": 443,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:spruce_boat": {
         "id": 444,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:birch_boat": {
         "id": 445,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:jungle_boat": {
         "id": 446,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:acacia_boat": {
         "id": 447,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:dark_oak_boat": {
         "id": 448,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:totem_of_undying": {
         "id": 449,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:shulker_shell": {
         "id": 450,
@@ -2417,54 +2515,67 @@
     },
     "minecraft:knowledge_book": {
         "id": 453,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_13": {
         "id": 2256,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_cat": {
         "id": 2257,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_blocks": {
         "id": 2258,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_chirp": {
         "id": 2259,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_far": {
         "id": 2260,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_mall": {
         "id": 2261,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_mellohi": {
         "id": 2262,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_stal": {
         "id": 2263,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_strad": {
         "id": 2264,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_ward": {
         "id": 2265,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_11": {
         "id": 2266,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     },
     "minecraft:record_wait": {
         "id": 2267,
-        "damage_id": 0
+        "damage_id": 0,
+        "stack_size": 1
     }
 }

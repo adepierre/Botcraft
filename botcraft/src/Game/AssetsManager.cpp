@@ -90,6 +90,35 @@ namespace Botcraft
         return items;
     }
 
+#if PROTOCOL_VERSION < 347
+    const std::pair<int, unsigned char> AssetsManager::GetItemID(const std::string& item_name) const
+    {
+        for (const auto& p : items)
+        {
+            for (const auto& p2 : items.second)
+            {
+                if (p2.second->GetName() == item_name)
+                {
+                    return { p.first, p2.first };
+                }
+            }
+        }
+        return { -1, 0 };
+    }
+#else
+    const int AssetsManager::GetItemID(const std::string& item_name) const
+    {
+        for (const auto& p : items)
+        {
+            if (p.second->GetName() == item_name)
+            {
+                return p.first;
+            }
+        }
+        return -1;
+    }
+#endif
+
 #if USE_GUI
     const Renderer::Atlas* AssetsManager::GetAtlas() const
     {
@@ -604,15 +633,16 @@ namespace Botcraft
 
         // Add a default item
 #if PROTOCOL_VERSION < 347
-        items[-1] = { { 0, std::shared_ptr<Item>(new Item(-1, 0, "default")) } };
+        items[-1] = { { 0, std::make_shared<Item>(-1, 0, "default", 64) } };
 #else
-        items[-1] = std::shared_ptr<Item>(new Item(-1, "default"));
+        items[-1] = std::make_shared<Item>(-1, "default", 64);
 #endif
 
         //Load all the items from JSON file
         for (nlohmann::json::const_iterator items_it = json.begin(); items_it != json.end(); ++items_it)
         {
             int id = -1;
+            unsigned char stack_size = 64;
             std::string item_name = items_it.key();
 
             const nlohmann::json& properties = items_it.value();
@@ -622,6 +652,10 @@ namespace Botcraft
                 continue;
             }
             id = properties["id"];
+            if (properties.contains("stack_size"))
+            {
+                stack_size = properties["stack_size"];
+            }
 #if PROTOCOL_VERSION < 347
             if (!properties.contains("damage_id") || !properties["damage_id"].is_number())
             {
@@ -634,7 +668,7 @@ namespace Botcraft
             }
             items[id][damage_id] = std::shared_ptr<Item>(new Item(id, damage_id, item_name));
 #else
-            items[id] = std::shared_ptr<Item>(new Item(id, item_name));
+            items[id] = std::make_shared<Item>(id, item_name, stack_size);
 #endif
         }
     }
