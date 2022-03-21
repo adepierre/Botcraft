@@ -915,13 +915,17 @@ namespace Botcraft
 
             if (!success)
             {
-                LOG_ERROR("Error adding chunk in pos : " << msg.GetX() << ", " << msg.GetZ() << " in dimension " <<
 #if PROTOCOL_VERSION < 719
-                    (int)current_dimension
+                LOG_ERROR("Error adding chunk in pos : " 
+                    << msg.GetX() << ", "
+                    << msg.GetZ() << " in dimension "
+                    << (int)current_dimension);
 #else
-                    current_dimension
+                LOG_ERROR("Error adding chunk in pos : "
+                    << msg.GetX() << ", "
+                    << msg.GetZ() << " in dimension "
+                    << current_dimension);
 #endif
-                    );
                 return;
             }
 #if PROTOCOL_VERSION < 755

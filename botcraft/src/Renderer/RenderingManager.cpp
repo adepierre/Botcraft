@@ -726,8 +726,7 @@ namespace Botcraft
         {
             AddEntityToUpdate(msg.GetEntityId());
         }
-#endif
-
+#else
         void RenderingManager::Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg)
         {
             for (auto id: msg.GetEntityIds())
@@ -735,6 +734,7 @@ namespace Botcraft
                 AddEntityToUpdate(id);
             }
         }
+#endif
 
         void RenderingManager::Handle(ProtocolCraft::ClientboundSetTimePacket& msg)
         {
