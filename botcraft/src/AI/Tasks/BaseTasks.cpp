@@ -50,7 +50,7 @@ namespace Botcraft
             return Status::Failure;
         }
 
-        std::shared_ptr<ProtocolCraft::ServerboundUseItemOnPacket> place_block_msg(new ProtocolCraft::ServerboundUseItemOnPacket);
+        std::shared_ptr<ProtocolCraft::ServerboundUseItemOnPacket> place_block_msg = std::make_shared<ProtocolCraft::ServerboundUseItemOnPacket>();
         place_block_msg->SetLocation(pos.ToNetworkPosition());
         place_block_msg->SetDirection((int)face);
         switch (face)
@@ -96,7 +96,7 @@ namespace Botcraft
 
         if (animation)
         {
-            std::shared_ptr<ProtocolCraft::ServerboundSwingPacket> animation_msg(new ProtocolCraft::ServerboundSwingPacket);
+            std::shared_ptr<ProtocolCraft::ServerboundSwingPacket> animation_msg = std::make_shared<ProtocolCraft::ServerboundSwingPacket>();
             animation_msg->SetHand((int)Hand::Right);
             client.GetNetworkManager()->Send(animation_msg);
         }

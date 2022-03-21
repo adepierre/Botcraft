@@ -41,7 +41,7 @@ namespace Botcraft
         // Set the right transaction id, add it to the inventory manager,
         // update the next transaction id and send it to the server
         // return the id of the transaction
-        const int SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
+        const int SendInventoryTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
 
         std::shared_ptr<World> GetWorld() const;
         std::shared_ptr<EntityManager> GetEntityManager() const;

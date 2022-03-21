@@ -29,7 +29,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 755
         const int GetNextTransactionId() const;
         void SetNextTransactionId(const int n);
-#else
+#elif PROTOCOL_VERSION > 755
         const int GetStateId() const;
         void SetStateId(const int state_id_);
 #endif

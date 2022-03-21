@@ -19,6 +19,8 @@ namespace Botcraft
     {
 #if PROTOCOL_VERSION < 755
         next_transaction_id = 1;
+#elif PROTOCOL_VERSION > 755
+        state_id = 1;
 #endif
         type = type_;
     }
@@ -58,7 +60,7 @@ namespace Botcraft
     {
         next_transaction_id = n;
     }
-#else
+#elif PROTOCOL_VERSION > 755
     const int Window::GetStateId() const
     {
         return state_id;

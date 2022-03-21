@@ -32,7 +32,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 350
             return block_id == -1;
 #elif PROTOCOL_VERSION < 402
-            return item_id == -1;;
+            return item_id == -1;
 #elif PROTOCOL_VERSION >= 402
             return !present;
 #endif
@@ -68,6 +68,18 @@ namespace ProtocolCraft
         void SetItemCount(const char item_count_)
         {
             item_count = item_count_;
+            if (item_count == 0)
+            {
+#if PROTOCOL_VERSION < 350
+                block_id = -1;
+#elif PROTOCOL_VERSION < 402
+                item_id = -1;
+#elif PROTOCOL_VERSION >= 402
+                present = false;
+                item_id = -1;
+#endif
+                nbt = NBT();
+            }
         }
 
         void SetNBT(const NBT& nbt_)

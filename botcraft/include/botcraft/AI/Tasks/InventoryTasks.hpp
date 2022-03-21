@@ -3,9 +3,24 @@
 #include "botcraft/AI/BehaviourTree.hpp"
 #include "botcraft/AI/BehaviourClient.hpp"
 #include "botcraft/Game/Vector3.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 namespace Botcraft
-{    
+{
+    /// @brief Perform a click action on a container
+    /// @param client The client performing the action
+    /// @param container_id Container id
+    /// @param slot_id Clicked slot id
+    /// @param click_type Type of click (same as in ServerboundContainerClickPacket)
+    /// @param button_num Button clicked (same as in ServerboundContainerClickPacket)
+    /// @return Success if the slots is clicked (for versions < 1.17 and the server confirms it), Failure otherwise
+    Status ClickSlotInContainer(BehaviourClient& client, const short container_id, const short slot_id, const int click_type, const char button_num);
+
+    /// @brief Same thing as ClickSlotInContainer, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if the slots is clicked (for versions < 1.17 and the server confirms it), Failure otherwise
+    Status ClickSlotInContainerBlackboard(BehaviourClient& client);
+
     /// @brief Swap two slots in a given container
     /// @param client The client performing the action
     /// @param container_id Container ID
@@ -18,6 +33,32 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Success if the two slots have been correctly swapped, Failure otherwise
     Status SwapItemsInContainerBlackboard(BehaviourClient& client);
+
+    /// @brief Drop item out of inventory
+    /// @param client The client performing the action
+    /// @param container_id Container ID
+    /// @param slot_id Slot ID
+    /// @param num_to_keep Number of items to keep in the input slot
+    /// @return Success if items were correctly dropped, Failure otherwise
+    Status DropItemsFromContainer(BehaviourClient& client, const short container_id, const short slot_id, const short num_to_keep = 0);
+
+    /// @brief Same thing as DropItemsFromContainer, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if items were correctly dropped, Failure otherwise
+    Status DropItemsFromContainerBlackboard(BehaviourClient& client);
+
+    /// @brief Take one item from source_slot, and put it on destination_slot
+    /// @param client The client performing the action
+    /// @param container_id Container ID
+    /// @param source_slot Slot from which the item is taken
+    /// @param destination_slot Slot receiving the item
+    /// @return Success if the item is correctly set, Failure otherwise
+    Status PutOneItemInContainerSlot(BehaviourClient& client, const short container_id, const short source_slot, const short destination_slot);
+
+    /// @brief Same thing as PutOneItemInContainerSlot, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if the item is correctly set, Failure otherwise
+    Status PutOneItemInContainerSlotBlackboard(BehaviourClient& client);
 
     /// @brief Try to set a given item in the given hand
     /// @param client The client performing the action
@@ -79,4 +120,47 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Always return Success
     Status CloseContainerBlackboard(BehaviourClient& client);
+
+    /// @brief Log all the inventory content at given log level
+    /// @param client The client performing the action
+    /// @param level Desired log level
+    /// @return Always return Success
+    Status LogInventoryContent(BehaviourClient& client, const LogLevel level = LogLevel::Info);
+
+    /// @brief Same thing as LogInventoryContent, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Always return Success
+    Status LogInventoryContentBlackboard(BehaviourClient& client);
+
+#if PROTOCOL_VERSION > 451
+    /// @brief Buy or sell an item, assuming a trading window is currently opened.
+    /// @param client The client performing the action
+    /// @param item_id Id of the item to buy/sell
+    /// @param buy If true, the item is bought, otherwise is sold
+    /// @param trade_id If > -1, specify which trade we want to use in the list
+    /// (useful when the villager sells multiple variants of the same item like
+    /// enchanted books or bows)
+    /// @return Success if the exchange went sucessfully, Failure otherwise
+    Status Trade(BehaviourClient& client, const int item_id, const bool buy, const int trade_id = -1);
+
+    /// @brief Same thing as Trade, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if the exchange went sucessfully, Failure otherwise
+    Status TradeBlackboard(BehaviourClient& client);
+
+    /// @brief Buy or sell an item, assuming a trading window is currently opened.
+    /// @param client The client performing the action
+    /// @param item_name Item to buy/sell
+    /// @param buy If true, the item is bought, otherwise is sold
+    /// @param trade_id If > -1, specify which trade we want to use in the list
+    /// (useful when the villager sells multiple variants of the same item like
+    /// enchanted books or bows)
+    /// @return Success if the exchange went sucessfully, Failure otherwise
+    Status TradeName(BehaviourClient& client, const std::string& item_name, const bool buy, const int trade_id = -1);
+
+    /// @brief Same thing as Trade, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if the exchange went sucessfully, Failure otherwise
+    Status TradeNameBlackboard(BehaviourClient& client);
+#endif
 }

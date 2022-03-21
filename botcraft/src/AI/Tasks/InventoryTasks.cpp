@@ -16,43 +16,19 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    Status SwapItemsInContainer(BehaviourClient& client, const short container_id, const short first_slot, const short second_slot)
+    Status ClickSlotInContainer(BehaviourClient& client, const short container_id, const short slot_id, const int click_type, const char button_num)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
-        std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
 
-        if (!container)
-        {
-            return Status::Failure;
-        }
-
-        Slot copied_slot;
-        std::shared_ptr<ServerboundContainerClickPacket> click_window_msg;
-        int transaction_id;
-
-        // Left click on the first slot, transferring the slot
-        // to the cursor
-        {
-            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-            copied_slot = container->GetSlots().at(first_slot);
-        }
-
-        click_window_msg = std::make_shared<ServerboundContainerClickPacket>();
+        std::shared_ptr<ServerboundContainerClickPacket> click_window_msg = std::make_shared<ServerboundContainerClickPacket>();
 
         click_window_msg->SetContainerId(container_id);
-        click_window_msg->SetSlotNum(first_slot);
-        click_window_msg->SetButtonNum(0); // Left click to select the stack
-        click_window_msg->SetClickType(0); // Regular click
-#if PROTOCOL_VERSION < 755
-        click_window_msg->SetItemStack(copied_slot);
-#else
-        click_window_msg->SetCarriedItem(copied_slot);
-#endif
-#if PROTOCOL_VERSION > 755
-        click_window_msg->SetStateId(container->GetStateId());
-#endif
+        click_window_msg->SetSlotNum(slot_id);
+        click_window_msg->SetButtonNum(button_num);
+        click_window_msg->SetClickType(click_type);
 
-        transaction_id = client.SendInventoryTransaction(click_window_msg);
+        // ItemStack/CarriedItem, StateId and ChangedSlots will be set in SendInventoryTransaction
+        int transaction_id = client.SendInventoryTransaction(click_window_msg);
 
         // Wait for the click confirmation (versions < 1.17)
 #if PROTOCOL_VERSION < 755
@@ -61,7 +37,7 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
             {
-                LOG_WARNING("Something went wrong trying to select first slot during swap inventory (Timeout).");
+                LOG_WARNING("Something went wrong trying to click slot (Timeout).");
                 return Status::Failure;
             }
             TransactionState transaction_state = inventory_manager->GetTransactionState(container_id, transaction_id);
@@ -69,7 +45,7 @@ namespace Botcraft
             {
                 break;
             }
-            // The transaction has been refused by the server, don't bother with other clicks
+            // The transaction has been refused by the server
             else if (transaction_state == TransactionState::Refused)
             {
                 return Status::Failure;
@@ -78,104 +54,51 @@ namespace Botcraft
             client.Yield();
         }
 #endif
+        return Status::Success;
+    }
 
+    Status ClickSlotInContainerBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+               "ClickSlotInContainer.container_id",
+               "ClickSlotInContainer.slot_id",
+               "ClickSlotInContainer.click_type",
+               "ClickSlotInContainer.button_num" };
 
+        Blackboard& blackboard = client.GetBlackboard();
 
-        // left click on the second slot, transferring the cursor to the slot
+        // Mandatory
+        const short container_id = blackboard.Get<short>(variable_names[0]);
+        const short slot_id = blackboard.Get<short>(variable_names[1]);
+        const int click_type = blackboard.Get<int>(variable_names[2]);
+        const char button_num = blackboard.Get<char>(variable_names[3]);
+
+        return ClickSlotInContainer(client, container_id, slot_id, click_type, button_num);
+    }
+
+    Status SwapItemsInContainer(BehaviourClient& client, const short container_id, const short first_slot, const short second_slot)
+    {
+        // Left click on the first slot, transferring the slot to the cursor
+        if (ClickSlotInContainer(client, container_id, first_slot, 0, 0) == Status::Failure)
         {
-            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-            copied_slot = container->GetSlots().at(second_slot);
+            LOG_WARNING("Failed to swap items (first click)");
+            return Status::Failure;
         }
-        click_window_msg = std::make_shared<ServerboundContainerClickPacket>();
 
-        click_window_msg->SetContainerId(container_id);
-        click_window_msg->SetSlotNum(second_slot);
-        click_window_msg->SetButtonNum(0); // Left click to select the stack
-        click_window_msg->SetClickType(0); // Regular click
-#if PROTOCOL_VERSION < 755
-        click_window_msg->SetItemStack(copied_slot);
-#else
-        click_window_msg->SetCarriedItem(copied_slot);
-#endif
-#if PROTOCOL_VERSION > 755
-        click_window_msg->SetStateId(container->GetStateId());
-#endif
-
-        transaction_id = client.SendInventoryTransaction(click_window_msg);
-
-        // Wait for confirmation in version < 1.17
-#if PROTOCOL_VERSION < 755
-        start = std::chrono::steady_clock::now();
-        while (true)
+        // Left click on the second slot, transferring the cursor to the slot
+        if (ClickSlotInContainer(client, container_id, second_slot, 0, 0) == Status::Failure)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
-            {
-                LOG_WARNING("Something went wrong trying to select second slot during swap inventory (Timeout).");
-                return Status::Failure;
-            }
-
-            TransactionState transaction_state = inventory_manager->GetTransactionState(container_id, transaction_id);
-            if (transaction_state == TransactionState::Accepted)
-            {
-                break;
-            }
-            // The transaction has been refused by the server, don't bother with other clicks
-            else if (transaction_state == TransactionState::Refused)
-            {
-                return Status::Failure;
-            }
-
-            client.Yield();
+            LOG_WARNING("Failed to swap items (second click)");
+            return Status::Failure;
         }
-#endif
-        // Left click once again on the first slot, transferring the cursor to the slot
+
+        // Left click on the first slot, transferring back the cursor to the slot
+        if (ClickSlotInContainer(client, container_id, first_slot, 0, 0) == Status::Failure)
         {
-            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-            copied_slot = container->GetSlots().at(first_slot);
+            LOG_WARNING("Failed to swap items (third click)");
+            return Status::Failure;
         }
-        click_window_msg = std::make_shared<ServerboundContainerClickPacket>();
 
-        click_window_msg->SetContainerId(container_id);
-        click_window_msg->SetSlotNum(first_slot);
-        click_window_msg->SetButtonNum(0); // Left click to select the stack
-        click_window_msg->SetClickType(0); // Regular click
-#if PROTOCOL_VERSION < 755
-        click_window_msg->SetItemStack(copied_slot);
-#else
-        click_window_msg->SetCarriedItem(copied_slot);
-#endif
-#if PROTOCOL_VERSION > 755
-        click_window_msg->SetStateId(container->GetStateId());
-#endif
-
-        transaction_id = client.SendInventoryTransaction(click_window_msg);
-
-        // Wait for confirmation in version < 1.17
-#if PROTOCOL_VERSION < 755
-        start = std::chrono::steady_clock::now();
-        while (true)
-        {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
-            {
-                LOG_WARNING("Something went wrong trying to select third slot during swap inventory (Timeout).");
-                return Status::Failure;
-            }
-
-            TransactionState transaction_state = inventory_manager->GetTransactionState(container_id, transaction_id);
-            if (transaction_state == TransactionState::Accepted)
-            {
-                break;
-            }
-            // The transaction has been refused by the server, don't bother with other clicks
-            else if (transaction_state == TransactionState::Refused)
-            {
-                return Status::Failure;
-            }
-
-            client.Yield();
-        }
-#endif
-        // If we're here, everything succeeded
         return Status::Success;
     }
 
@@ -196,6 +119,103 @@ namespace Botcraft
         return SwapItemsInContainer(client, container_id, first_slot, second_slot);
     }
 
+    Status DropItemsFromContainer(BehaviourClient& client, const short container_id, const short slot_id, const short num_to_keep)
+    {
+        if (ClickSlotInContainer(client, container_id, slot_id, 0, 0) == Status::Failure)
+        {
+            return Status::Failure;
+        }
+
+        // Drop all
+        if (num_to_keep == 0)
+        {
+            return ClickSlotInContainer(client, container_id, -999, 0, 0);
+        }
+
+        int item_count = 0;
+        {
+            std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            item_count = inventory_manager->GetCursor().GetItemCount();
+        }
+
+        // Drop the right amount of items
+        while (item_count > num_to_keep)
+        {
+            if (ClickSlotInContainer(client, container_id, -999, 0, 1) == Status::Failure)
+            {
+                return Status::Failure;
+            }
+            item_count -= 1;
+        }
+
+        // Put back remaining items in the initial slot
+        return ClickSlotInContainer(client, container_id, slot_id, 0, 0);
+    }
+
+    Status DropItemsFromContainerBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+               "DropItemsFromContainer.container_id",
+               "DropItemsFromContainer.slot_id",
+               "DropItemsFromContainer.num_to_keep" };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const short container_id = blackboard.Get<short>(variable_names[0]);
+        const short slot_id = blackboard.Get<short>(variable_names[1]);
+
+        // Optional
+        const short num_to_keep = blackboard.Get<short>(variable_names[2], 0);
+
+        return DropItemsFromContainer(client, container_id, slot_id, num_to_keep);
+    }
+
+    Status PutOneItemInContainerSlot(BehaviourClient& client, const short container_id, const short source_slot, const short destination_slot)
+    {
+
+        // Left click on the first slot, transferring the slot to the cursor
+        if (ClickSlotInContainer(client, container_id, source_slot, 0, 0) == Status::Failure)
+        {
+            LOG_WARNING("Failed to put one item in slot (first click)");
+            return Status::Failure;
+        }
+
+        // Right click on the second slot, transferring one item of the cursor to the slot
+        if (ClickSlotInContainer(client, container_id, destination_slot, 0, 1) == Status::Failure)
+        {
+            LOG_WARNING("Failed to put one item in slot (second click)");
+            return Status::Failure;
+        }
+
+        // Left click on the first slot, transferring back the cursor to the slot
+        if (ClickSlotInContainer(client, container_id, source_slot, 0, 0) == Status::Failure)
+        {
+            LOG_WARNING("Failed to put one item in slot (third click)");
+            return Status::Failure;
+        }
+
+        return Status::Success;
+    }
+
+    Status PutOneItemInContainerSlotBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+               "PutOneItemInContainerSlot.container_id",
+               "PutOneItemInContainerSlot.source_slot",
+               "PutOneItemInContainerSlot.destination_slot" };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const short container_id = blackboard.Get<short>(variable_names[0]);
+        const short source_slot = blackboard.Get<short>(variable_names[1]);
+        const short destination_slot = blackboard.Get<short>(variable_names[2]);
+
+        return PutOneItemInContainerSlot(client, container_id, source_slot, destination_slot);
+    }
+
     Status SetItemInHand(BehaviourClient& client, const std::string& item_name, const Hand hand)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
@@ -203,7 +223,7 @@ namespace Botcraft
         short inventory_correct_slot_index = -1;
         short inventory_destination_slot_index = -1;
         {
-            std::lock_guard<std::mutex>(inventory_manager->GetMutex());
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
 
             inventory_destination_slot_index = hand == Hand::Left ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
 
@@ -542,4 +562,234 @@ namespace Botcraft
 
         return CloseContainer(client, container_id);
     }
+
+    Status LogInventoryContent(BehaviourClient& client, const LogLevel level)
+    {
+        std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+
+        std::stringstream output;
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            for (const auto& s: inventory_manager->GetPlayerInventory()->GetSlots())
+            {
+                output << s.first << " --> " << s.second.Serialize().dump() << "\n";
+            }
+        }
+        LOG(output.str(), level);
+        return Status::Success;
+    }
+
+    Status LogInventoryContentBlackboard(BehaviourClient& client)
+    {        
+        const std::vector<std::string> variable_names = {
+               "LogInventoryContent.level" };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        //Optional
+        const LogLevel level = blackboard.Get<LogLevel>(variable_names[0], LogLevel::Info);
+
+        return LogInventoryContent(client, level);
+    }
+
+#if PROTOCOL_VERSION > 451
+    Status Trade(BehaviourClient& client, const int item_id, const bool buy, const int trade_id)
+    {
+        std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+
+        // Make sure a trading window is opened and
+        // possible trades are available
+        auto start = std::chrono::steady_clock::now();
+        size_t num_trades = 0;
+        do
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() > 5000)
+            {
+                LOG_WARNING("Something went wrong waiting trade opening (Timeout).");
+                return Status::Failure;
+            }
+
+            {
+                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                num_trades = inventory_manager->GetAvailableTrades().size();
+            }
+            client.Yield();
+        } while (num_trades <= 0 || inventory_manager->GetFirstOpenedWindowId() == -1);
+
+        int trade_index = trade_id;
+        bool has_trade_second_item = false;
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            const std::vector<ProtocolCraft::Trade>& trades = inventory_manager->GetAvailableTrades();
+
+            // Find which trade we want in the list
+            if (trade_id == -1)
+            {
+                for (int i = 0; i < trades.size(); ++i)
+                {
+                    if ((buy && trades[i].GetOutputItem().GetItemID() == item_id)
+                        || (!buy && trades[i].GetInputItem1().GetItemID() == item_id))
+                    {
+                        trade_index = i;
+                        has_trade_second_item = trades[i].GetHasSecondItem();
+                        break;
+                    }
+                }
+            }
+
+            // Check that the trade is not locked
+            if (trades[trade_index].GetNumberOfTradesUses() >= trades[trade_index].GetMaximumNumberOfTradeUses())
+            {
+                LOG_WARNING("Failed trading (trade locked)")
+                return Status::Failure;
+            }
+        }
+
+        std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
+
+        // Select the trade in the list
+        std::shared_ptr<ServerboundSelectTradePacket> select_trade_msg = std::make_shared<ServerboundSelectTradePacket>();
+        select_trade_msg->SetItem(trade_index);
+
+        network_manager->Send(select_trade_msg);
+
+        start = std::chrono::steady_clock::now();
+        // Wait until the output/input is set with the correct item
+        bool correct_items = false;
+        do
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() > 5000)
+            {
+                LOG_WARNING("Something went wrong waiting trade selection (Timeout). Maybe an item was missing?");
+                return Status::Failure;
+            }
+
+            {
+                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                std::shared_ptr<Window> trading_container = inventory_manager->GetWindow(inventory_manager->GetFirstOpenedWindowId());
+                if (!trading_container)
+                {
+                    LOG_WARNING("Trading container closed during trade");
+                    return Status::Failure;
+                }
+                correct_items = (buy && trading_container->GetSlot(2).GetItemID() == item_id) ||
+                    (!buy && (trading_container->GetSlot(0).GetItemID() == item_id || trading_container->GetSlot(1).GetItemID() == item_id));
+            }
+            client.Yield();
+        } while (!correct_items);
+
+        // Check we have at least one empty slot to get back input remainings + outputs
+        std::vector<short> empty_slots(has_trade_second_item ? 3 : 2);
+        int empty_slots_index = 0;
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            std::shared_ptr<Window> trading_container = inventory_manager->GetWindow(inventory_manager->GetFirstOpenedWindowId());
+            if (!trading_container)
+            {
+                LOG_WARNING("Trading container closed during trade");
+                return Status::Failure;
+            }
+            for (const auto& s: trading_container->GetSlots())
+            {
+                if (s.first < trading_container->GetFirstPlayerInventorySlot())
+                {
+                    continue;
+                }
+
+                if (s.second.IsEmptySlot())
+                {
+                    empty_slots[empty_slots_index] = s.first;
+                    empty_slots_index++;
+                    if (empty_slots_index == empty_slots.size())
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        if (empty_slots_index == 0)
+        {
+            LOG_WARNING("No free space in inventory for trading to happen.");
+            return Status::Failure;
+        }
+        else if (empty_slots_index < empty_slots.size())
+        {
+            LOG_WARNING("Not enough free space in inventory for trading. Input items may be lost");
+        }
+
+        // Get the output in the inventory
+        if (SwapItemsInContainer(client, inventory_manager->GetFirstOpenedWindowId(), empty_slots[0], 2) == Status::Failure)
+        {
+            LOG_WARNING("Failed to swap output slot during trading attempt");
+            return Status::Failure;
+        }
+
+        // Get back the input remainings in the inventory
+        for (int i = 0; i < empty_slots_index - 1; ++i)
+        {
+            if (SwapItemsInContainer(client, inventory_manager->GetFirstOpenedWindowId(), empty_slots[i + 1], i) == Status::Failure)
+            {
+                LOG_WARNING("Failed to swap slots " << i << " after trading attempt");
+                return Status::Failure;
+            }
+        }
+
+        // If we are here, everything is fine (or should be),
+        // remove 1 to the possible trade counter on the villager
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            ProtocolCraft::Trade& trade = inventory_manager->GetAvailableTrade(trade_index);
+            trade.SetNumberOfTradesUses(trade.GetNumberOfTradesUses() + 1);
+        }
+
+        return Status::Success;
+    }
+
+    Status TradeBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+               "Trade.item_id", "Trade.buy", "Trade.trade_id"};
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const int item_id = blackboard.Get<int>(variable_names[0]);
+        const bool buy = blackboard.Get<bool>(variable_names[1]);
+
+        //Optional
+        const int trade_id = blackboard.Get<int>(variable_names[2], -1);
+
+        return Trade(client, item_id, buy, trade_id);
+    }
+
+    Status TradeName(BehaviourClient& client, const std::string& item_name, const bool buy, const int trade_id)
+    {
+        // Get item id corresponding to the name
+        const int item_id = AssetsManager::getInstance().GetItemID(item_name);
+        if (item_id < 0)
+        {
+            LOG_WARNING("Trying to trade an unknown item");
+            return Status::Failure;
+        }
+
+        return Trade(client, item_id, buy, trade_id);
+    }
+
+    Status TradeNameBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+               "TradeName.item_name", "TradeName.buy", "TradeName.trade_id" };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const std::string& item_name = blackboard.Get<std::string>(variable_names[0]);
+        const bool buy = blackboard.Get<bool>(variable_names[1]);
+
+        // Optional
+        const int trade_id = blackboard.Get<int>(variable_names[2], -1);
+
+        return TradeName(client, item_name, buy, trade_id);
+    }
+#endif
 }

@@ -19,6 +19,15 @@ namespace Botcraft
     };
 #endif
 
+    struct InventoryTransaction
+    {
+        std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> msg;
+#if PROTOCOL_VERSION < 755
+        std::map<short, ProtocolCraft::Slot> changed_slots;
+        ProtocolCraft::Slot carried_item;
+#endif
+    };
+
     class Window;
 
     class InventoryManager : public ProtocolCraft::Handler
@@ -40,10 +49,20 @@ namespace Botcraft
         void EraseInventory(const short window_id);
 #if PROTOCOL_VERSION < 755
         const TransactionState GetTransactionState(const short window_id, const int transaction_id);
-        void AddPendingTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
+        void AddPendingTransaction(const InventoryTransaction& transaction);
 #endif
-        const std::map<short, ProtocolCraft::Slot> ApplyTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction);
-
+        /// @brief "think" about the changes made by this transaction, filling in the necessary values in the msg
+        /// @param transaction The transaction to update with the modifications
+        /// @return An InventoryTransaction with various info, depending on the version
+        InventoryTransaction PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
+        
+        /// @brief Apply a given transaction to a container
+        /// @param transaction The transaction to apply
+        void ApplyTransaction(const InventoryTransaction& transaction);
+#if PROTOCOL_VERSION > 451
+        const std::vector<ProtocolCraft::Trade>& GetAvailableTrades() const;
+        ProtocolCraft::Trade& GetAvailableTrade(const int index);
+#endif
 
     private:
         void SetHotbarSelected(const short index);
@@ -68,6 +87,12 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 755
         virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
 #endif
+#if PROTOCOL_VERSION > 451
+        virtual void Handle(ProtocolCraft::ClientboundMerchantOffersPacket& msg) override;
+#endif
+        virtual void Handle(ProtocolCraft::ClientboundContainerClosePacket& msg) override;
+
+        void ApplyTransactionInternal(const InventoryTransaction& transaction);
 
     private:
         std::mutex inventory_manager_mutex;
@@ -78,9 +103,13 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 755
         // Storing all the transactions that have neither been accepted
         // nor refused by the server yet
-        std::map<short, std::map<short, std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> > > pending_transactions;
+        std::map<short, std::map<short, InventoryTransaction > > pending_transactions;
         // Storing the old transactions (accepted/refused) for all opened windows
         std::map<short, std::map<short, TransactionState> > transaction_states;
+#endif
+#if PROTOCOL_VERSION > 451
+        int trading_container_id;
+        std::vector<ProtocolCraft::Trade> available_trades;
 #endif
     };
 } // Botcraft

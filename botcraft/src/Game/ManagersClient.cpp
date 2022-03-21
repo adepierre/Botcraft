@@ -300,26 +300,17 @@ namespace Botcraft
         }
     }
 
-    const int ManagersClient::SendInventoryTransaction(std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
+    const int ManagersClient::SendInventoryTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction)
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager->GetMutex());
+        InventoryTransaction inventory_transaction = inventory_manager->PrepareTransaction(transaction);
 #if PROTOCOL_VERSION < 755
-        std::shared_ptr<Window> window = inventory_manager->GetWindow(transaction->GetContainerId());
-        if (!window)
-        {
-            LOG_WARNING("Trying to set a transaction for an unknown window");
-        }
-        const int transaction_id = window->GetNextTransactionId();
-        transaction->SetUid(transaction_id);
-        window->SetNextTransactionId(transaction_id + 1);
-        inventory_manager->AddPendingTransaction(transaction);
-
+        inventory_manager->AddPendingTransaction(inventory_transaction);
         network_manager->Send(transaction);
-        return transaction_id;
+        return transaction->GetUid();
 #else
-        const std::map<short, Slot> changed_slots = inventory_manager->ApplyTransaction(transaction);
-        transaction->SetChangedSlots(changed_slots);
         network_manager->Send(transaction);
+        // In 1.17+ there is no server confirmation so apply it directly
+        inventory_manager->ApplyTransaction(inventory_transaction);
         return 1;
 #endif
     }
