@@ -107,6 +107,7 @@ namespace Botcraft
 
     enum class InventoryType
     {
+        PlayerInventory = -2,
         Default = -1,
         Generic9x1 = 0,
         Generic9x2,

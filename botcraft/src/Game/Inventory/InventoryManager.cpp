@@ -1,3 +1,4 @@
+#include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Utilities/Logger.hpp"
@@ -10,7 +11,7 @@ namespace Botcraft
     {
         index_hotbar_selected = 0;
         cursor = Slot();
-        inventories[Window::PLAYER_INVENTORY_INDEX] = std::shared_ptr<Window>(new Window(InventoryType::Default));
+        inventories[Window::PLAYER_INVENTORY_INDEX] = std::make_shared<Window>(InventoryType::PlayerInventory);
     }
 
     std::mutex& InventoryManager::GetMutex()
@@ -120,6 +121,14 @@ namespace Botcraft
         SynchronizeContainerPlayerInventory(window_id);
 #endif
         inventories.erase(window_id);
+
+#if PROTOCOL_VERSION > 451
+        if (window_id == trading_container_id)
+        {
+            trading_container_id == -1;
+            available_trades.clear();
+        }
+#endif
     }
 
 #if PROTOCOL_VERSION < 755
@@ -145,21 +154,17 @@ namespace Botcraft
         return it2->second;
     }
 
-    void InventoryManager::AddPendingTransaction(const std::shared_ptr<ServerboundContainerClickPacket> transaction)
+    void InventoryManager::AddPendingTransaction(const InventoryTransaction& transaction)
     {
-        if (!transaction)
-        {
-            return;
-        }
-        pending_transactions[transaction->GetContainerId()].insert(std::make_pair(transaction->GetUid(), transaction));
-        transaction_states[transaction->GetContainerId()].insert(std::make_pair(transaction->GetUid(), TransactionState::Waiting));
+        pending_transactions[transaction.msg->GetContainerId()].insert(std::make_pair(transaction.msg->GetUid(), transaction));
+        transaction_states[transaction.msg->GetContainerId()].insert(std::make_pair(transaction.msg->GetUid(), TransactionState::Waiting));
 
         // Clean oldest transaction to avoid infinite growing map
-        for (auto it = transaction_states[transaction->GetContainerId()].begin(); it != transaction_states[transaction->GetContainerId()].end(); )
+        for (auto it = transaction_states[transaction.msg->GetContainerId()].begin(); it != transaction_states[transaction.msg->GetContainerId()].end(); )
         {
-            if (std::abs(it->first - transaction->GetUid()) > 25)
+            if (std::abs(it->first - transaction.msg->GetUid()) > 25)
             {
-                it = transaction_states[transaction->GetContainerId()].erase(it);
+                it = transaction_states[transaction.msg->GetContainerId()].erase(it);
             }
             else
             {
@@ -209,7 +214,7 @@ namespace Botcraft
     {
         inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
 #if PROTOCOL_VERSION < 755
-        pending_transactions[window_id] = std::map<short, std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> >();
+        pending_transactions[window_id] = std::map<short, InventoryTransaction >();
         transaction_states[window_id] = std::map<short, TransactionState>();
 #endif
     }
@@ -229,33 +234,271 @@ namespace Botcraft
         cursor = c;
     }
 
-    const std::map<short, Slot> InventoryManager::ApplyTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> transaction)
+    InventoryTransaction InventoryManager::PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction)
     {
+        // We need to lock because we access the container and the cursor
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+
         // Get the container
         std::shared_ptr<Window> window = GetWindow(transaction->GetContainerId());
 
-        std::map<short, Slot> modified_slots;
+        InventoryTransaction output{ transaction };
+        std::map<short, Slot> changed_slots;
+        Slot carried_item;
 
         // Process the transaction
-        switch (transaction->GetClickType())
+        
+        // Click on the output of a crafting container
+        if ((window->GetType() == InventoryType::PlayerInventory || window->GetType() == InventoryType::Crafting) &&
+            transaction->GetSlotNum() == 0)
         {
-        case 0:
-            // "Left click"
-            if (transaction->GetButtonNum() == 0)
+            if (transaction->GetClickType() != 0 && transaction->GetClickType() != 1)
             {
-                const Slot switched_slot = window->GetSlot(transaction->GetSlotNum());
-                window->SetSlot(transaction->GetSlotNum(), cursor);
-                modified_slots[transaction->GetSlotNum()] = cursor;
-                cursor = switched_slot;
+                LOG_ERROR("Transaction type '" << transaction->GetClickType() << "' not implemented.");
+                throw std::runtime_error("Non supported transaction type created");
             }
-            break;
-        default:
-            LOG_ERROR("Transaction type '" << transaction->GetClickType() << "' not implemented.");
-            break;
+
+            if (transaction->GetButtonNum() != 0 && transaction->GetButtonNum() != 1)
+            {
+                LOG_ERROR("Transaction button num '" << transaction->GetButtonNum() << "' not supported.");
+                throw std::runtime_error("Non supported transaction button created");
+            }
+
+            const Slot& clicked_slot = window->GetSlot(transaction->GetSlotNum());
+            // If cursor is not empty, we can't click if the items are not the same, 
+            if (!cursor.IsEmptySlot() &&
+#if PROTOCOL_VERSION < 347
+                (cursor.GetBlockID() != clicked_slot.GetBlockID()
+                    || cursor.GetItemDamage() != clicked_slot.GetItemDamage())
+#else
+                cursor.GetItemID() != clicked_slot.GetItemID()
+#endif
+                )
+            {
+                carried_item = cursor;
+            }
+            // We can't click if the crafted items don't fit in the stack
+            else if (!cursor.IsEmptySlot() &&
+                cursor.GetItemCount() + clicked_slot.GetItemCount() >
+#if PROTOCOL_VERSION < 347
+                AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(cursor.GetItemDamage())->GetStackSize()
+#else
+                AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize()
+#endif
+                )
+            {
+                carried_item = cursor;
+            }
+            else
+            {
+                carried_item = clicked_slot;
+                carried_item.SetItemCount(cursor.GetItemCount() + clicked_slot.GetItemCount());
+                changed_slots[0] = Window::EMPTY_SLOT;
+                for (int i = 1; i < (window->GetType() == InventoryType::Crafting ? 10 : 5); ++i)
+                {
+                    Slot cloned_slot = window->GetSlot(i);
+                    cloned_slot.SetItemCount(cloned_slot.GetItemCount() - 1);
+                    changed_slots[i] = cloned_slot;
+                }
+            }
+        }
+        // Drop item
+        else if (transaction->GetSlotNum() == -999)
+        {
+            switch (transaction->GetClickType())
+            {
+                case 0:
+                {
+                    switch (transaction->GetButtonNum())
+                    {
+                        case 0:
+                        {
+                            carried_item = Window::EMPTY_SLOT;
+                            break;
+                        }
+                        case 1:
+                        {
+                            carried_item = cursor;
+                            carried_item.SetItemCount(cursor.GetItemCount() - 1);
+                            break;
+                        }
+                        default:
+                        {
+                            break;
+                        }
+                    }
+                    break;
+                }
+                default:
+                {
+                    LOG_ERROR("Transaction type '" << transaction->GetClickType() << "' not implemented.");
+                    throw std::runtime_error("Non supported transaction type created");
+                    break;
+                }
+            }
+        }
+        // Normal case
+        else
+        {
+            switch (transaction->GetClickType())
+            {
+                case 0:
+                {
+                    const Slot& clicked_slot = window->GetSlot(transaction->GetSlotNum());
+                    switch (transaction->GetButtonNum())
+                    {
+
+                        case 0: // "Left click"
+                        {
+                            // Special case: left click with same item
+                            if (!cursor.IsEmptySlot() && !clicked_slot.IsEmptySlot()
+#if PROTOCOL_VERSION < 347
+                                && cursor.GetBlockID() == clicked_slot.GetBlockID()
+                                && cursor.GetItemDamage() == clicked_slot.GetItemDamage()
+#else
+                                && cursor.GetItemID() == clicked_slot.GetItemID()
+#endif
+                                )
+                            {
+                                const int sum_count = cursor.GetItemCount() + clicked_slot.GetItemCount();
+#if PROTOCOL_VERSION < 347
+                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(cursor.GetItemDamage())->GetStackSize();
+#else
+                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize();
+#endif
+                                // The cursor becomes the clicked slot
+                                carried_item = clicked_slot;
+                                carried_item.SetItemCount(std::max(0, sum_count - max_stack_size));
+                                // The content of the clicked slot becomes the cursor
+                                changed_slots = { {transaction->GetSlotNum(), cursor} };
+                                changed_slots.at(transaction->GetSlotNum()).SetItemCount(std::min(max_stack_size, sum_count));
+                            }
+                            else
+                            {
+                                // The cursor becomes the clicked slot
+                                carried_item = clicked_slot;
+                                // The content of the clicked slot becomes the cursor
+                                changed_slots = { {transaction->GetSlotNum(), cursor} };
+                            }
+                            break;
+                        }
+                        case 1: // "Right Click"
+                        {
+                            // If cursor is empty, take half the stack
+                            if (cursor.IsEmptySlot())
+                            {
+                                const int new_quantity = clicked_slot.GetItemCount() / 2;
+                                carried_item = clicked_slot;
+                                carried_item.SetItemCount(clicked_slot.GetItemCount() - new_quantity);
+                                changed_slots = { {transaction->GetSlotNum(), clicked_slot} };
+                                changed_slots.at(transaction->GetSlotNum()).SetItemCount(new_quantity);
+                            }
+                            // If clicked is empty, put one item in the slot
+                            else if (clicked_slot.IsEmptySlot())
+                            {
+                                // Cursor is the same, minus one item
+                                carried_item = cursor;
+                                carried_item.SetItemCount(cursor.GetItemCount() - 1);
+                                // Dest slot it the same, plus one item
+                                changed_slots = { {transaction->GetSlotNum(), cursor} };
+                                changed_slots.at(transaction->GetSlotNum()).SetItemCount(1);
+                            }
+                            // If same items in both
+#if PROTOCOL_VERSION < 347
+                            else if (cursor.GetBlockID() == clicked_slot.GetBlockID()
+                                && cursor.GetItemDamage() == clicked_slot.GetItemDamage())
+#else
+                            else if (cursor.GetItemID() == clicked_slot.GetItemID())
+#endif
+                            {
+#if PROTOCOL_VERSION < 347
+                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(cursor.GetItemDamage())->GetStackSize();
+#else
+                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize();
+#endif
+                                const bool transfer = clicked_slot.GetItemCount() < max_stack_size;
+                                // The cursor loses 1 item if possible
+                                carried_item = clicked_slot;
+                                carried_item.SetItemCount(transfer ? cursor.GetItemCount() - 1 : cursor.GetItemCount());
+                                // The content of the clicked slot gains one item if possible
+                                changed_slots = { {transaction->GetSlotNum(), cursor} };
+                                changed_slots.at(transaction->GetSlotNum()).SetItemCount(transfer ? clicked_slot.GetItemCount() + 1 : clicked_slot.GetItemCount());
+                            }
+                            // Else just switch like a left click
+                            else
+                            {
+                                // The cursor becomes the clicked slot
+                                carried_item = clicked_slot;
+                                // The content of the clicked slot becomes the cursor
+                                changed_slots = { {transaction->GetSlotNum(), cursor} };
+                            }
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                    break;
+                }
+                default:
+                {
+                    LOG_ERROR("Transaction type '" << transaction->GetClickType() << "' not implemented.");
+                    throw std::runtime_error("Non supported transaction type created");
+                    break;
+                }
+            }
         }
 
-        return modified_slots;
+#if PROTOCOL_VERSION > 754
+        transaction->SetCarriedItem(carried_item);
+        transaction->SetChangedSlots(changed_slots);
+        transaction->SetStateId(window->GetStateId());
+#else
+        transaction->SetItemStack(window->GetSlot(transaction->GetSlotNum()));
+        output.changed_slots = changed_slots;
+        output.carried_item = carried_item;
+
+        const int transaction_id = window->GetNextTransactionId();
+        transaction->SetUid(transaction_id);
+        window->SetNextTransactionId(transaction_id + 1);
+#endif
+        return output;
     }
+
+    void InventoryManager::ApplyTransactionInternal(const InventoryTransaction& transaction)
+    {
+#if PROTOCOL_VERSION > 754
+        const std::map<short, Slot>& modified_slots = transaction.msg->GetChangeSlots();
+        cursor = transaction.msg->GetCarriedItem();
+#else
+        const std::map<short, Slot>& modified_slots = transaction.changed_slots;
+        cursor = transaction.carried_item;
+#endif
+
+        // Get the container
+        std::shared_ptr<Window> window = GetWindow(transaction.msg->GetContainerId());
+        for (const auto& p : modified_slots)
+        {
+            window->SetSlot(p.first, p.second);
+        }
+    }
+
+    void InventoryManager::ApplyTransaction(const InventoryTransaction& transaction)
+    {
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+        ApplyTransactionInternal(transaction);
+    }
+
+#if PROTOCOL_VERSION > 451
+    const std::vector<ProtocolCraft::Trade>& InventoryManager::GetAvailableTrades() const
+    {
+        return available_trades;
+    }
+
+    ProtocolCraft::Trade& InventoryManager::GetAvailableTrade(const int index)
+    {
+        return available_trades[index];
+    }
+#endif
 
     void InventoryManager::Handle(ProtocolCraft::Message& msg)
     {
@@ -329,7 +572,7 @@ namespace Botcraft
         }
         AddInventory(msg.GetContainerId(), type);
 #else
-        AddInventory(msg.GetContainerId(), (InventoryType)msg.GetType());
+        AddInventory(msg.GetContainerId(), static_cast<InventoryType>(msg.GetType()));
 #endif
     }
 
@@ -372,12 +615,26 @@ namespace Botcraft
 
         if (msg.GetAccepted())
         {
-            ApplyTransaction(transaction->second);
+            ApplyTransactionInternal(transaction->second);
         }
 
         // Remove the transaction from the waiting state
         container_transactions->second.erase(transaction);
     }
 #endif
+
+#if PROTOCOL_VERSION > 451
+    void InventoryManager::Handle(ProtocolCraft::ClientboundMerchantOffersPacket& msg)
+    {
+        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+        trading_container_id = msg.GetContainerId();
+        available_trades = msg.GetOffers();
+    }
+#endif
+
+    void InventoryManager::Handle(ProtocolCraft::ClientboundContainerClosePacket& msg)
+    {
+        EraseInventory(msg.GetContainerId());
+    }
 
 } //Botcraft

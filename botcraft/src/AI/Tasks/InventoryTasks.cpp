@@ -570,6 +570,7 @@ namespace Botcraft
         std::stringstream output;
         {
             std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            output << "Cursor --> " << inventory_manager->GetCursor().Serialize().dump() << "\n";
             for (const auto& s: inventory_manager->GetPlayerInventory()->GetSlots())
             {
                 output << s.first << " --> " << s.second.Serialize().dump() << "\n";
@@ -792,4 +793,312 @@ namespace Botcraft
         return TradeName(client, item_name, buy, trade_id);
     }
 #endif
+
+#if PROTOCOL_VERSION < 340
+    Status Craft(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft)
+#else
+    Status Craft(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft)
+#endif
+    {
+        std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+
+        int min_x = 3;
+        int max_x = -1;
+        int min_y = 3;
+        int max_y = -1;
+        bool use_inventory_craft = false;
+        if (!allow_inventory_craft)
+        {
+            use_inventory_craft = false;
+            min_x = 0;
+            max_x = 2;
+            min_y = 0;
+            max_y = 2;
+        }
+        else
+        {
+            for (int y = 0; y < 3; ++y)
+            {
+                for (int x = 0; x < 3; ++x)
+                {
+#if PROTOCOL_VERSION < 340
+                    if (inputs[y][x].first != -1)
+#else
+                    if (inputs[y][x] != -1)
+#endif
+                    {
+                        min_x = std::min(x, min_x);
+                        max_x = std::max(x, max_x);
+                        min_y = std::min(y, min_y);
+                        max_y = std::max(y, max_y);
+                    }
+                }
+            }
+
+            use_inventory_craft = (max_x - min_x) < 2 && (max_y - min_y) < 2;
+        }
+
+        int crafting_container_id = -1;
+        // If we need a crafting table, make sure one is open
+        if (!use_inventory_craft)
+        {
+            auto start = std::chrono::steady_clock::now();
+            do
+            {
+                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() > 5000)
+                {
+                    LOG_WARNING("Something went wrong waiting craft opening (Timeout).");
+                    return Status::Failure;
+                }
+                {
+                    std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                    crafting_container_id = inventory_manager->GetFirstOpenedWindowId();
+                }
+                client.Yield();
+            } while (crafting_container_id == -1);
+        }
+        else
+        {
+            crafting_container_id = Window::PLAYER_INVENTORY_INDEX;
+        }
+
+        std::shared_ptr<Window> crafting_container;
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            crafting_container = inventory_manager->GetWindow(crafting_container_id);
+        }
+
+        if (!crafting_container)
+        {
+            LOG_WARNING("Something went wrong during craft (window closed).");
+            return Status::Failure;
+        }
+
+        Slot output_slot_before;
+        // For each input slot
+        for (int y = min_y; y < max_y + 1; ++y)
+        {
+            for (int x = min_x; x < max_x + 1; ++x)
+            {
+                // Save the output slot just before the last input is set
+                if (y == min_y && x == min_x)
+                {
+                    std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                    output_slot_before = crafting_container->GetSlot(0);
+                }
+
+                const int destination_slot = use_inventory_craft ? (1 + x - min_x + (y - min_y) * 2) : (1 + x + 3 * y);
+                
+                int source_slot = -1;
+                int source_quantity = -1;
+                // Search for the required item in inventory
+                {
+                    std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                    for (const auto& s : crafting_container->GetSlots())
+                    {
+                        if (s.first < crafting_container->GetFirstPlayerInventorySlot())
+                        {
+                            continue;
+                        }
+#if PROTOCOL_VERSION < 340
+                        if (s.second.GetBlockID() == inputs[y][x].first && s.second.GetItemDamage() == inputs[y][x].second)
+#else
+                        if (s.second.GetItemID() == inputs[y][x])
+#endif
+                        {
+                            source_slot = s.first;
+                            source_quantity = s.second.GetItemCount();
+                            break;
+                        }
+                    }
+                }
+
+                if (source_slot == -1)
+                {
+#if PROTOCOL_VERSION < 340
+                    LOG_WARNING("Not enough source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] found in inventory for crafting.");
+#else
+                    LOG_WARNING("Not enough source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] found in inventory for crafting.");
+#endif
+                    return Status::Failure;
+                }
+
+                if (ClickSlotInContainer(client, crafting_container_id, source_slot, 0, 0) == Status::Failure)
+                {
+#if PROTOCOL_VERSION < 340
+                    LOG_WARNING("Error trying to pick source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
+#else
+                    LOG_WARNING("Error trying to pick source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
+#endif
+                    return Status::Failure;
+                }
+
+                // Right click in the destination slot
+                if (ClickSlotInContainer(client, crafting_container_id, destination_slot, 0, 1) == Status::Failure)
+                {
+#if PROTOCOL_VERSION < 340
+                    LOG_WARNING("Error trying to place source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
+#else
+                    LOG_WARNING("Error trying to place source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
+#endif
+                    return Status::Failure;
+                }
+
+                // Put back the remaining items in the origin slot
+                if (source_quantity > 1)
+                {
+                    if (ClickSlotInContainer(client, crafting_container_id, source_slot, 0, 0) == Status::Failure)
+                    {
+#if PROTOCOL_VERSION < 340
+                        LOG_WARNING("Error trying to place back source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
+#else
+                        LOG_WARNING("Error trying to place back source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
+#endif
+                        return Status::Failure;
+                    }
+                }
+            }
+        }
+
+        // Wait for the server to send the output change
+        // TODO: with the recipe book, we could know without waiting
+        auto start = std::chrono::steady_clock::now();
+        while (true)
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() > 5000)
+            {
+                LOG_WARNING("Something went wrong waiting craft output update (Timeout).");
+                return Status::Failure;
+            }
+            {
+                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                const Slot& output = crafting_container->GetSlot(0);
+                if ((output_slot_before.IsEmptySlot() && !output.IsEmptySlot())
+                    || (!output_slot_before.IsEmptySlot() &&
+#if PROTOCOL_VERSION < 340
+                        output_slot_before.GetBlockID() != output.GetBlockID()
+                        && output_slot_before.GetItemDamage() != output.GetItemDamage()
+#else
+                        output_slot_before.GetItemID() != output.GetItemID()
+#endif
+                        )
+                    )
+                {
+                    break;
+                }
+            }
+            client.Yield();
+        }
+
+        // All inputs are in place, output is ready, click on output
+        if (ClickSlotInContainer(client, crafting_container_id, 0, 0, 0) == Status::Failure)
+        {
+            LOG_WARNING("Error trying to click on output during crafting");
+            return Status::Failure;
+        }
+
+        // Find an empty slot in inventory to place the cursor content
+        int destination_slot = -999;
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            for (const auto& s : crafting_container->GetSlots())
+            {
+                if (s.first < crafting_container->GetFirstPlayerInventorySlot())
+                {
+                    continue;
+                }
+
+                // If it fits in a slot (empty or with the same item)
+                if (s.second.IsEmptySlot() ||
+#if PROTOCOL_VERSION < 347
+                    (inventory_manager->GetCursor().GetBlockID() == s.second.GetBlockID()
+                        && inventory_manager->GetCursor().GetItemDamage() == s.second.GetItemDamage()
+                        && s.second.GetItemCount() < AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetStackSize() - 1)
+#else
+                    (inventory_manager->GetCursor().GetItemID() == s.second.GetItemID() &&
+                        s.second.GetItemCount() < AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetStackSize() - 1)
+#endif
+                    )
+                {
+                    destination_slot = s.first;
+                    break;
+                }
+            }
+        }
+
+        if (destination_slot == -999)
+        {
+            LOG_INFO("No available space for crafted item, will be thrown out");
+        }
+
+        if (ClickSlotInContainer(client, crafting_container_id, destination_slot, 0, 0) == Status::Failure)
+        {
+            LOG_WARNING("Error trying to put back output during crafting");
+            return Status::Failure;
+        }
+
+        return Status::Success;
+    }
+
+    Status CraftBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+               "Craft.inputs",
+               "Craft.allow_inventory_craft"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+#if PROTOCOL_VERSION < 340
+        const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs = blackboard.Get<std::array<std::array<std::pair<int, unsigned char>, 3>, 3>>(variable_names[0]);
+#else
+        const std::array<std::array<int, 3>, 3>& inputs = blackboard.Get<std::array<std::array<int, 3>, 3>>(variable_names[0]);
+#endif
+
+        // Optional
+        const bool allow_inventory_craft = blackboard.Get<bool>(variable_names[1], true);
+
+        return Craft(client, inputs, allow_inventory_craft);
+    }
+
+    Status CraftNamed(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)
+    {
+        const AssetsManager& assets_manager = AssetsManager::getInstance();
+#if PROTOCOL_VERSION < 340
+        std::array<std::array<std::pair<int, unsigned char>, 3>, 3> inputs_ids;
+#else
+        std::array<std::array<int, 3>, 3> inputs_ids;
+#endif
+        for (size_t i = 0; i < 3; ++i)
+        {
+            for (size_t j = 0; j < 3; ++j)
+            {
+#if PROTOCOL_VERSION < 340
+                inputs_ids[i][j] = inputs[i][j] == "" ? {-1, 0} : assets_manager.GetItemID(inputs[i][j]);
+#else
+                inputs_ids[i][j] = inputs[i][j] == "" ? -1 : assets_manager.GetItemID(inputs[i][j]);
+#endif
+            }
+        }
+        return Craft(client, inputs_ids, allow_inventory_craft);
+    }
+
+    Status CraftNamedBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+               "CraftNamed.inputs",
+               "CraftNamed.allow_inventory_craft"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const std::array<std::array<std::string, 3>, 3>& inputs = blackboard.Get<std::array<std::array<std::string, 3>, 3>>(variable_names[0]);
+
+        // Optional
+        const bool allow_inventory_craft = blackboard.Get<bool>(variable_names[1], true);
+
+        return CraftNamed(client, inputs, allow_inventory_craft);
+    }
 }

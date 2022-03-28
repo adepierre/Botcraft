@@ -14,5 +14,6 @@
 
 #include "botcraft/AI/Tasks/BaseTasks.hpp"
 #include "botcraft/AI/Tasks/DigTask.hpp"
+#include "botcraft/AI/Tasks/EntitiesTasks.hpp"
 #include "botcraft/AI/Tasks/InventoryTasks.hpp"
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"

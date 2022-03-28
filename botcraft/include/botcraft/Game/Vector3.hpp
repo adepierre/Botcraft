@@ -33,11 +33,12 @@ namespace Botcraft
             z = position.GetZ();
         }
 
-        Vector3(const Vector3<int>& position)
+        template <typename U>
+        Vector3(const Vector3<U>& position)
         {
-            x = position.x;
-            y = position.y;
-            z = position.z;
+            x = static_cast<T>(position.x);
+            y = static_cast<T>(position.y);
+            z = static_cast<T>(position.z);
         }
 
         T x;
@@ -98,6 +99,13 @@ namespace Botcraft
             output += y * v.y;
             output += z * v.z;
             return output;
+        }
+
+        const double SqrDist(const Vector3& v) const
+        {
+            return (x - v.x) * (x - v.x)
+                 + (y - v.y) * (y - v.y)
+                 + (z - v.z) * (z - v.z);
         }
 
         T& operator[] (const int i)
