@@ -1066,7 +1066,7 @@
         "hardness": 1,
         "name": "minecraft:sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
@@ -1101,7 +1101,7 @@
         "hardness": 1,
         "name": "minecraft:wall_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {

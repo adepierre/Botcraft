@@ -1087,42 +1087,42 @@
         "hardness": 1,
         "name": "minecraft:oak_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:spruce_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:birch_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:acacia_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:jungle_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:dark_oak_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
@@ -1157,42 +1157,42 @@
         "hardness": 1,
         "name": "minecraft:oak_wall_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:spruce_wall_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:birch_wall_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:acacia_wall_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:jungle_wall_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {
         "hardness": 1,
         "name": "minecraft:dark_oak_wall_sign",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": true
     },
     {

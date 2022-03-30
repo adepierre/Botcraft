@@ -453,7 +453,7 @@
     {
         "name": "minecraft:standing_sign",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "other",
         "hardness": 1
     },
@@ -488,7 +488,7 @@
     {
         "name": "minecraft:wall_sign",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "other",
         "hardness": 1
     },
