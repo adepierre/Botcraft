@@ -435,10 +435,14 @@ namespace Botcraft
 
             if (path.size() == 0 || path[path.size() - 1] == current_position)
             {
-                if (!dist_tolerance)
+                if (!dist_tolerance && current_position != goal)
                 {
-                    LOG_WARNING("Pathfinding cannot find a better position than " << current_position << ". Staying there.");
+                    LOG_WARNING("Pathfinding cannot find a better position than " << current_position << " (asked " << goal << "). Staying there.");
                     return Status::Failure;
+                }
+                else if (!dist_tolerance)
+                {
+                    return Status::Success;
                 }
                 else
                 {
@@ -453,6 +457,7 @@ namespace Botcraft
                 const Vector3<double> target_position(path[i].x + 0.5, path[i].y, path[i].z + 0.5);
                 const Vector3<double> motion_vector = target_position - initial_position;
                 local_player->LookAt(target_position);
+                local_player->SetPitch(0.0f);
 
                 // If we have to jump to get to the next position
                 if (path[i].y > current_position.y ||
@@ -587,6 +592,42 @@ namespace Botcraft
         const float speed = blackboard.Get(variable_names[3], 4.317f);
         const bool allow_jump = blackboard.Get(variable_names[4], true);
 
-        return GoTo(client, goal, dist_tolerance, min_end_dist, speed, allow_jump);;
+        return GoTo(client, goal, dist_tolerance, min_end_dist, speed, allow_jump);
+    }
+
+    Status LookAt(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
+    {
+        {
+            std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+            std::lock_guard<std::mutex> lock_player(local_player->GetMutex());
+            local_player->LookAt(target, set_pitch);
+        }
+
+        // Wait at least 70 ms to be sure the new orientation is sent to the server
+        // (position is sent every 50 ms) TODO: find a clean way to do that?
+        for (int i = 0; i < 7; ++i)
+        {
+            client.Yield();
+        }
+
+        return Status::Success;
+    }
+
+    Status LookAtBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+            "LookAt.target",
+            "LookAt.set_pitch"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const Vector3<double>& target = blackboard.Get<Vector3<double>>(variable_names[0]);
+
+        // Optional
+        const bool set_pitch = blackboard.Get(variable_names[1], true);
+
+        return LookAt(client, target, set_pitch);
     }
 }

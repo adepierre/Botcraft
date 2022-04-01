@@ -23,4 +23,16 @@ namespace Botcraft
     /// @return Success if goal is reached, Failure otherwise
     Status GoToBlackboard(BehaviourClient& client);
 
+    /// @brief Turn the camera to look at a given target
+    /// @param client The client performing the action
+    /// @param target The target to look at
+    /// @param set_pitch If false, only the yaw will be changed
+    /// @return Always return Success
+    Status LookAt(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch = true);
+
+    /// @brief Same thing as LookAt, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Always return Success
+    Status LookAtBlackboard(BehaviourClient& client);
+
 } // namespace Botcraft
