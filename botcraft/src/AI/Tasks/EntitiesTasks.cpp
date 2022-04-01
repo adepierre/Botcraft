@@ -13,7 +13,7 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    Status InteractEntity(BehaviourClient& client, const double entity_id, const Hand hand, const bool swing)
+    Status InteractEntity(BehaviourClient& client, const int entity_id, const Hand hand, const bool swing)
     {
         std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
 
@@ -31,12 +31,20 @@ namespace Botcraft
 
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
-        Vector3<double> entity_position = entity->GetPosition();
-        Vector3<double> position = local_player->GetPosition();
+        Vector3<double> entity_position;
+        {
+            std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
+            entity_position = entity->GetPosition();
+        }
+        Vector3<double> position;
+        {
+            std::lock_guard<std::mutex> lock(local_player->GetMutex());
+            position = local_player->GetPosition();
+        }
 
         while (position.SqrDist(entity_position) > 16.0)
         {
-            if (GoTo(client, entity_position, 4, 0) == Status::Failure)
+            if (GoTo(client, entity_position, 3, 0) == Status::Failure)
             {
                 return Status::Failure;
             }
@@ -47,7 +55,7 @@ namespace Botcraft
         
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            local_player->LookAt(entity_position, true);
+            local_player->LookAt(entity_position + Vector3<double>(0, entity->GetHeight() / 2.0, 0), true);
         }
 
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
@@ -74,12 +82,15 @@ namespace Botcraft
     Status InteractEntityBlackboard(BehaviourClient& client)
     {
         const std::vector<std::string> variable_names = {
-            "InteractEntity.entity_id", "InteractEntity.hand", "InteractEntity.swing" };
+            "InteractEntity.entity_id",
+            "InteractEntity.hand", 
+            "InteractEntity.swing" 
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
         // Mandatory
-        const double entity_id = blackboard.Get<double>(variable_names[0]);
+        const int entity_id = blackboard.Get<int>(variable_names[0]);
 
         // Optional
         const Hand hand = blackboard.Get<Hand>(variable_names[1], Hand::Main);

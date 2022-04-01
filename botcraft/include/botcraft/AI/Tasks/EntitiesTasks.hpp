@@ -12,7 +12,7 @@ namespace Botcraft
     /// @param hand The hand we want to use
     /// @param swing If true, a swing packet will be sent too
     /// @return Success if the entity is right clicked (does not mean the server accepted it though). Failure otherwise.
-    Status InteractEntity(BehaviourClient& client, const double entity_id, const Hand hand = Hand::Main, const bool swing = false);
+    Status InteractEntity(BehaviourClient& client, const int entity_id, const Hand hand = Hand::Main, const bool swing = false);
 
     /// @brief Same thing as InteractEntity, but reads its parameters from the blackboard
     /// @param client The client performing the action
