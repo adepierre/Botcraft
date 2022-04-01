@@ -112,9 +112,9 @@ namespace Botcraft
 
     /// @brief Close an opened container
     /// @param client The client performing the action
-    /// @param container_id The id of the container to close
+    /// @param container_id The id of the container to close, if -1, will close the first one found
     /// @return Always return Success
-    Status CloseContainer(BehaviourClient& client, const short container_id);
+    Status CloseContainer(BehaviourClient& client, const short container_id = -1);
 
     /// @brief Same thing as CloseContainer, but reads its parameters from the blackboard
     /// @param client The client performing the action
@@ -191,4 +191,21 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Success if item is crafted, Failure otherwise
     Status CraftNamedBlackboard(BehaviourClient& client);
+
+    /// @brief Check if item_name is present in inventory
+    /// @param client The client performing the action
+    /// @param item_name Item name
+    /// @param min_quantity Min quantity to have
+    /// @return Success if inventory quantity is >= quantity else Failure
+    Status HasItemInInventory(BehaviourClient& client, const std::string& item_name, const int quantity = 1);
+
+    /// @brief Same thing as HasItemInInventory, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if inventory quantity is >= quantity else Failure
+    Status HasItemInInventoryBlackboard(BehaviourClient& client);
+
+    /// @brief Clean the inventory stacking same items together
+    /// @param client The client performing the action
+    /// @return Success if no operation failed, Failure otherwise
+    Status SortInventory(BehaviourClient& client);
 }

@@ -288,10 +288,23 @@ namespace Botcraft
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
         std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
-
-        if (GoTo(client, pos, 4, 1) == Status::Failure)
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+        
+        Vector3<double> player_pos;
         {
-            return Status::Failure;
+            std::lock_guard<std::mutex> lock(local_player->GetMutex());
+            player_pos = local_player->GetPosition();
+        }
+
+        // Compute the distance from the hand? Might be from somewhere else
+        player_pos.y += 1.0;
+
+        if (player_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 16.0f)
+        {
+            if (GoTo(client, pos, 4, 1) == Status::Failure)
+            {
+                return Status::Failure;
+            }
         }
 
         // Check if block is air
@@ -455,7 +468,7 @@ namespace Botcraft
 
         const char current_stack_size = inventory_manager->GetOffHand().GetItemCount();
         std::shared_ptr<ServerboundUseItemPacket> use_item_msg(new ServerboundUseItemPacket);
-        use_item_msg->SetHand((int)Hand::Left);
+        use_item_msg->SetHand(static_cast<int>(Hand::Left));
         network_manager->Send(use_item_msg);
 
         if (!wait_confirmation)
@@ -539,12 +552,18 @@ namespace Botcraft
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
         std::shared_ptr<ServerboundContainerClosePacket> close_container_msg = std::make_shared<ServerboundContainerClosePacket>();
-        close_container_msg->SetContainerId(container_id);
+        short true_container_id = container_id;
+        if (true_container_id < 0)
+        {
+            std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
+            true_container_id = inventory_manager->GetFirstOpenedWindowId();
+        }
+        close_container_msg->SetContainerId(true_container_id);
         network_manager->Send(close_container_msg);
 
         // There is no confirmation from the server, so we
         // can simply close the window here
-        inventory_manager->EraseInventory(container_id);
+        inventory_manager->EraseInventory(true_container_id);
 
         return Status::Success;
     }
@@ -556,8 +575,8 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        // Mandatory
-        const short container_id = blackboard.Get<short>(variable_names[0]);
+        // Optional
+        const short container_id = blackboard.Get<short>(variable_names[0], -1);
 
 
         return CloseContainer(client, container_id);
@@ -617,6 +636,20 @@ namespace Botcraft
             client.Yield();
         } while (num_trades <= 0 || inventory_manager->GetFirstOpenedWindowId() == -1);
 
+        short container_id;
+        std::shared_ptr<Window> trading_container;
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            container_id = inventory_manager->GetFirstOpenedWindowId();
+            trading_container = inventory_manager->GetWindow(container_id);
+        }
+
+        if (!trading_container)
+        {
+            LOG_WARNING("Something went wrong during trade (window closed).");
+            return Status::Failure;
+        }
+
         int trade_index = trade_id;
         bool has_trade_second_item = false;
         {
@@ -636,6 +669,12 @@ namespace Botcraft
                         break;
                     }
                 }
+            }
+
+            if (trade_index == -1)
+            {
+                LOG_WARNING("Failed trading (this villager does not sell/buy " << AssetsManager::getInstance().Items().at(item_id)->GetName() << ")");
+                return Status::Failure;
             }
 
             // Check that the trade is not locked
@@ -667,14 +706,9 @@ namespace Botcraft
 
             {
                 std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-                std::shared_ptr<Window> trading_container = inventory_manager->GetWindow(inventory_manager->GetFirstOpenedWindowId());
-                if (!trading_container)
-                {
-                    LOG_WARNING("Trading container closed during trade");
-                    return Status::Failure;
-                }
                 correct_items = (buy && trading_container->GetSlot(2).GetItemID() == item_id) ||
-                    (!buy && (trading_container->GetSlot(0).GetItemID() == item_id || trading_container->GetSlot(1).GetItemID() == item_id));
+                    (!buy && !trading_container->GetSlot(2).IsEmptySlot()
+                        && (trading_container->GetSlot(0).GetItemID() == item_id || trading_container->GetSlot(1).GetItemID() == item_id));
             }
             client.Yield();
         } while (!correct_items);
@@ -684,12 +718,6 @@ namespace Botcraft
         int empty_slots_index = 0;
         {
             std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            std::shared_ptr<Window> trading_container = inventory_manager->GetWindow(inventory_manager->GetFirstOpenedWindowId());
-            if (!trading_container)
-            {
-                LOG_WARNING("Trading container closed during trade");
-                return Status::Failure;
-            }
             for (const auto& s: trading_container->GetSlots())
             {
                 if (s.first < trading_container->GetFirstPlayerInventorySlot())
@@ -718,17 +746,46 @@ namespace Botcraft
             LOG_WARNING("Not enough free space in inventory for trading. Input items may be lost");
         }
 
+        // Copy the input slots to see when they'll change
+        Slot input_slot_1, input_slot_2;
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            input_slot_1 = trading_container->GetSlot(0);
+            input_slot_2 = trading_container->GetSlot(1);
+        }
+
         // Get the output in the inventory
-        if (SwapItemsInContainer(client, inventory_manager->GetFirstOpenedWindowId(), empty_slots[0], 2) == Status::Failure)
+        if (SwapItemsInContainer(client, container_id, empty_slots[0], 2) == Status::Failure)
         {
             LOG_WARNING("Failed to swap output slot during trading attempt");
             return Status::Failure;
         }
 
+        // Wait for the server to update the input slots
+        start = std::chrono::steady_clock::now();
+        while (true)
+        {
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() > 5000)
+            {
+                LOG_WARNING("Something went wrong waiting trade input update (Timeout).");
+                return Status::Failure;
+            }
+
+            {
+                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                if ((input_slot_1.IsEmptySlot() || input_slot_1.GetItemCount() != trading_container->GetSlot(0).GetItemCount()) &&
+                    (input_slot_2.IsEmptySlot() || input_slot_2.GetItemCount() != trading_container->GetSlot(1).GetItemCount()))
+                {
+                    break;
+                }
+            }
+            client.Yield();
+        }
+
         // Get back the input remainings in the inventory
         for (int i = 0; i < empty_slots_index - 1; ++i)
         {
-            if (SwapItemsInContainer(client, inventory_manager->GetFirstOpenedWindowId(), empty_slots[i + 1], i) == Status::Failure)
+            if (SwapItemsInContainer(client, container_id, empty_slots[i + 1], i) == Status::Failure)
             {
                 LOG_WARNING("Failed to swap slots " << i << " after trading attempt");
                 return Status::Failure;
@@ -972,17 +1029,7 @@ namespace Botcraft
             }
             {
                 std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-                const Slot& output = crafting_container->GetSlot(0);
-                if ((output_slot_before.IsEmptySlot() && !output.IsEmptySlot())
-                    || (!output_slot_before.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 340
-                        output_slot_before.GetBlockID() != output.GetBlockID()
-                        && output_slot_before.GetItemDamage() != output.GetItemDamage()
-#else
-                        output_slot_before.GetItemID() != output.GetItemID()
-#endif
-                        )
-                    )
+                if (!crafting_container->GetSlot(0).SameItem(output_slot_before))
                 {
                     break;
                 }
@@ -1003,7 +1050,7 @@ namespace Botcraft
             std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
             for (const auto& s : crafting_container->GetSlots())
             {
-                if (s.first < crafting_container->GetFirstPlayerInventorySlot())
+                if (s.first < (use_inventory_craft ? Window::INVENTORY_STORAGE_START : crafting_container->GetFirstPlayerInventorySlot()))
                 {
                     continue;
                 }
@@ -1100,5 +1147,134 @@ namespace Botcraft
         const bool allow_inventory_craft = blackboard.Get<bool>(variable_names[1], true);
 
         return CraftNamed(client, inputs, allow_inventory_craft);
+    }
+
+    Status HasItemInInventory(BehaviourClient& client, const std::string& item_name, const int quantity)
+    {
+        std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+
+        const auto item_id = AssetsManager::getInstance().GetItemID(item_name);
+
+        int quantity_sum = 0;
+        {
+            std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
+            for (const auto& s : inventory_manager->GetPlayerInventory()->GetSlots())
+            {
+                if (s.first < Window::INVENTORY_STORAGE_START)
+                {
+                    continue;
+                }
+
+                if (!s.second.IsEmptySlot() &&
+#if PROTOCOL_VERSION < 340
+                    s.second.GetBlockID() == item_id.first && s.second.GetItemDamage() == item_id.second
+#else
+                    s.second.GetItemID() == item_id
+#endif
+                    )
+                {
+                    quantity_sum += s.second.GetItemCount();
+                }
+
+                if (quantity_sum >= quantity)
+                {
+                    return Status::Success;
+                }
+            }
+        }
+
+        return Status::Failure;
+    }
+
+    Status HasItemInInventoryBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+               "HasItemInInventory.item_name",
+               "HasItemInInventory.quantity"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const std::string& item_name = blackboard.Get<std::string>(variable_names[0]);
+
+        // Optional
+        const int quantity = blackboard.Get<int>(variable_names[1], 1);
+
+        return HasItemInInventory(client, item_name, quantity);
+    }
+
+    Status SortInventory(BehaviourClient& client)
+    {
+        std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+        std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
+
+        while (true)
+        {
+            short src_index = -1;
+            short dst_index = -1;
+            {
+                std::lock_guard<std::mutex> inventory_manager_lock(inventory_manager->GetMutex());
+                for (short i = Window::INVENTORY_OFFHAND_INDEX; i > Window::INVENTORY_STORAGE_START; --i)
+                {
+                    const Slot& dst_slot = player_inventory->GetSlot(i);
+                    if (dst_slot.IsEmptySlot())
+                    {
+                        continue;
+                    }
+                    // If this slot is not empty, and not full,
+                    // check if "lower" slot with same items that
+                    // could fit in it
+#if PROTOCOL_VERSION < 340
+                    const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetBlockID()).at(dst_slot.GetItemDamage())->GetStackSize() - dst_slot.GetItemCount();
+#else
+                    const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetItemID())->GetStackSize() - dst_slot.GetItemCount();
+#endif
+                    if (available_space == 0)
+                    {
+                        continue;
+                    }
+
+                    for (short j = Window::INVENTORY_STORAGE_START; j < i; ++j)
+                    {
+                        const Slot& src_slot = player_inventory->GetSlot(j);
+                        if (!src_slot.IsEmptySlot()
+                            && dst_slot.SameItem(src_slot)
+                            && src_slot.GetItemCount() <= available_space)
+                        {
+                            src_index = j;
+                            break;
+                        }
+                    }
+
+                    if (src_index != -1)
+                    {
+                        dst_index = i;
+                        break;
+                    }
+                }
+            }
+
+            // Nothing to do
+            if (src_index == -1 && dst_index == -1)
+            {
+                break;
+            }
+
+            // Pick slot src, put it in dst
+            if (ClickSlotInContainer(client, Window::PLAYER_INVENTORY_INDEX, src_index, 0, 0) == Status::Failure)
+            {
+                LOG_WARNING("Error trying to pick up slot during inventory sorting");
+                return Status::Failure;
+            }
+
+            if (ClickSlotInContainer(client, Window::PLAYER_INVENTORY_INDEX, dst_index, 0, 0) == Status::Failure)
+            {
+                LOG_WARNING("Error trying to put down slot during inventory sorting");
+                return Status::Failure;
+            }
+        }
+
+        return Status::Success;
     }
 }
