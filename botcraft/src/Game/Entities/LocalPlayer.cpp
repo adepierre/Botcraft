@@ -196,8 +196,10 @@ namespace Botcraft
     void LocalPlayer::LookAt(const Vector3<double>& pos, const bool set_pitch)
     {
         Vector3<double> direction = (pos - position);
+        // We want to set the orientation from the eyes, not the feet
+        direction.y -= 1.62;
         direction.Normalize();
-        const double new_pitch = asin(direction.y) * 180.0 / PI;
+        const double new_pitch = -asin(direction.y) * 180.0 / PI;
         double new_yaw = -atan2(direction.x, direction.z) * 180.0 / PI;
         if (new_yaw < 0)
         {
