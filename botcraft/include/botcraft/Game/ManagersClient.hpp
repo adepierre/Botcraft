@@ -1,6 +1,7 @@
 #pragma once
 
 #include <thread>
+#include <atomic>
 
 #include "protocolCraft/Handler.hpp"
 #include "protocolCraft/Message.hpp"
