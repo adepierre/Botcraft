@@ -513,9 +513,17 @@ namespace Botcraft
         {
             SetCursor(msg.GetItemStack());
         }
+        // Slot index is starting in the hotbar, THEN in the main storage in this case :)
         else if (msg.GetContainerId() == -2)
         {
-            SetSlot(Window::PLAYER_INVENTORY_INDEX, msg.GetSlot(), msg.GetItemStack());
+            if (msg.GetSlot() < Window::INVENTORY_OFFHAND_INDEX - Window::INVENTORY_HOTBAR_START)
+            {
+                SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + msg.GetSlot(), msg.GetItemStack());
+            }
+            else
+            {
+                SetSlot(Window::PLAYER_INVENTORY_INDEX, msg.GetSlot() + Window::INVENTORY_OFFHAND_INDEX - Window::INVENTORY_HOTBAR_START, msg.GetItemStack());
+            }
         }
         else if (msg.GetContainerId() >= 0)
         {

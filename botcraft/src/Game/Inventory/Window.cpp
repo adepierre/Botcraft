@@ -97,6 +97,7 @@ namespace Botcraft
         case InventoryType::BrewingStand:
             return 5;
         case InventoryType::Default:
+        case InventoryType::PlayerInventory:
         case InventoryType::Generic3x3:
             return 9;
         case InventoryType::Crafting:

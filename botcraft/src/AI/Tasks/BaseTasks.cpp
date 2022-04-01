@@ -109,7 +109,7 @@ namespace Botcraft
         if (animation)
         {
             std::shared_ptr<ProtocolCraft::ServerboundSwingPacket> animation_msg = std::make_shared<ProtocolCraft::ServerboundSwingPacket>();
-            animation_msg->SetHand((int)Hand::Right);
+            animation_msg->SetHand(static_cast<int>(Hand::Right));
             client.GetNetworkManager()->Send(animation_msg);
         }
 

@@ -27,6 +27,30 @@ namespace ProtocolCraft
 
         }
 
+        const bool SameItem(const Slot& s) const
+        {
+            if (IsEmptySlot() && s.IsEmptySlot())
+            {
+                return true;
+            }
+            if (IsEmptySlot() && !s.IsEmptySlot())
+            {
+                return false;
+            }
+            // !IsEmptySlot
+            if (s.IsEmptySlot())
+            {
+                return false;
+            }
+
+            // Both are non empty
+#if PROTOCOL_VERSION < 340
+            return block_id == s.GetBlockID() && item_damage == s.GetItemDamage();
+#else
+            return item_id == s.GetItemID();
+#endif
+        }
+
         const bool IsEmptySlot() const
         {
 #if PROTOCOL_VERSION < 350
