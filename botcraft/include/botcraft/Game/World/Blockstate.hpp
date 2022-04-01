@@ -26,7 +26,7 @@ namespace Botcraft
         Blockstate(const int id_, const unsigned char metadata_,
                    const bool transparent_, const bool solid_,  const bool fluid_, const bool custom,
                    const float hardness_, const TintType tint_type_, const std::string &name_,
-                   const std::string &path = "", const std::vector<std::string> &variables = std::vector<std::string>());
+                   const std::string &path = "", const std::vector<std::string> &variables_ = std::vector<std::string>());
 
         Blockstate(const int id_, const unsigned char metadata_,
                    const bool transparent_, const bool solid_, const bool fluid_,
@@ -36,7 +36,7 @@ namespace Botcraft
         Blockstate(const int id_,
                    const bool transparent_, const bool solid_, const bool fluid_, const bool custom,
                    const float hardness_, const TintType tint_type_, const std::string &name_,
-                   const std::string &path = "", const std::vector<std::string> &variables = std::vector<std::string>());
+                   const std::string &path = "", const std::vector<std::string> &variables_ = std::vector<std::string>());
         
         Blockstate(const int id_,
                    const bool transparent_, const bool solid_, const bool fluid_,
@@ -51,6 +51,7 @@ namespace Botcraft
         const unsigned char GetRandomModelId();
         const int GetNumModels() const;
         const std::string &GetName() const;
+        const std::string& GetVariableValue(const std::string& variable) const;
 
         const bool IsAir() const;
         const bool IsSolid() const;
@@ -82,8 +83,9 @@ namespace Botcraft
         std::vector<Model> models;
         std::vector<int> models_weights;
         int weights_sum;
-
         std::mt19937 random_generator;
+
+        std::unordered_map<std::string, std::string> variables;
 
         unsigned int id;
 #if PROTOCOL_VERSION < 347

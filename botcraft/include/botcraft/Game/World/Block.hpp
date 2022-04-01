@@ -30,6 +30,4 @@ namespace Botcraft
         std::shared_ptr<Blockstate> blockstate;
         unsigned short model_id;
     };
-
-    typedef std::shared_ptr<Block> BlockPtr;
 } // Botcraft

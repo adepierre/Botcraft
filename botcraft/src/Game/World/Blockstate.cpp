@@ -243,14 +243,14 @@ namespace Botcraft
     Blockstate::Blockstate(const int id_, const unsigned char metadata_, 
                            const bool transparent_, const bool solid_, const bool fluid_, const bool custom,
                            const float hardness_, const TintType tint_type_, const std::string &name_,
-                           const std::string &path, const std::vector<std::string> &variables) :
+                           const std::string &path, const std::vector<std::string> &variables_) :
                            id(id_), metadata(metadata_), transparent(transparent_), solid(solid_), fluid(fluid_),
                            hardness(hardness_), tint_type(tint_type_), m_name(name_)
 #else
     Blockstate::Blockstate(const int id_,
                            const bool transparent_, const bool solid_, const bool fluid_, const bool custom,
                            const float hardness_, const TintType tint_type_, const std::string &name_,
-                           const std::string &path, const std::vector<std::string> &variables) :
+                           const std::string &path, const std::vector<std::string> &variables_) :
                            id(id_), transparent(transparent_), solid(solid_), fluid(fluid_),
                            hardness(hardness_), tint_type(tint_type_), m_name(name_)
 #endif
@@ -319,6 +319,12 @@ namespace Botcraft
         // We store the models in a deque for efficiency
         std::deque<Model> models_deque;
 
+        for (int i = 0; i < variables_.size(); ++i)
+        {
+            std::vector<std::string> splitted = SplitString(variables_[i], '=');
+            variables[splitted[0]] = splitted[1];
+        }
+
         //If it's a "normal" blockstate
         if (json.contains("variants"))
         {
@@ -337,7 +343,7 @@ namespace Botcraft
 
             //This case means we have to check the variables to find
             //the right variant
-            if (variables.size() > 0 && variant_value.is_null())
+            if (variables_.size() > 0 && variant_value.is_null())
             {
                 int max_match = 0;
 
@@ -346,11 +352,11 @@ namespace Botcraft
                     const std::vector<std::string> variables_values = SplitString(it.key(), ',');
                     
                     int num_match = 0;
-                    for (int i = 0; i < variables.size(); ++i)
+                    for (int i = 0; i < variables_.size(); ++i)
                     {
                         for (int j = 0; j < variables_values.size(); ++j)
                         {
-                            if (variables[i] == variables_values[j])
+                            if (variables_[i] == variables_values[j])
                             {
                                 num_match++;
                             }
@@ -461,7 +467,7 @@ namespace Botcraft
                                     condition_value = std::to_string(condition_it.value().get<double>());
                                 }
 
-                                condition = CheckCondition(condition_name, condition_value, variables);
+                                condition = CheckCondition(condition_name, condition_value, variables_);
                                 //If one condition in the list is not verified,
                                 //the whole condition is not
                                 if (!condition)
@@ -495,7 +501,7 @@ namespace Botcraft
                                 condition_value = std::to_string(condition_it.value().get<double>());
                             }
 
-                            condition = CheckCondition(condition_it.key(), condition_value, variables);
+                            condition = CheckCondition(condition_it.key(), condition_value, variables_);
                             //If one condition in the list is not verified,
                             //the whole condition is not
                             if (!condition)
@@ -605,6 +611,11 @@ namespace Botcraft
     const std::string& Blockstate::GetName() const
     {
         return m_name;
+    }
+
+    const std::string& Blockstate::GetVariableValue(const std::string& variable) const
+    {
+        return variables.at(variable);
     }
 
     const bool Blockstate::IsAir() const
