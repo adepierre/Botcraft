@@ -85,6 +85,11 @@ namespace Botcraft
         entity_manager.reset();
     }
 
+    const int ManagersClient::GetDayTime() const
+    {
+        return day_time;
+    }
+
     void ManagersClient::RunSyncPos()
     {
         Logger::GetInstance().RegisterThread("RunSyncPos");
@@ -436,5 +441,10 @@ namespace Botcraft
         difficulty = (Difficulty)msg.GetDifficulty();
 #endif
         game_mode = (GameType)msg.GetPlayerGameType();
+    }
+
+    void ManagersClient::Handle(ProtocolCraft::ClientboundSetTimePacket& msg)
+    {
+        day_time = msg.GetDayTime() % 24000;
     }
 } //Botcraft

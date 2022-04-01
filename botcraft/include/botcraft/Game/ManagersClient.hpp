@@ -48,6 +48,10 @@ namespace Botcraft
         std::shared_ptr<InventoryManager> GetInventoryManager() const;
         const bool GetCreativeMode() const;
 
+        /// @brief Get the current tick
+        /// @return An int representing the time of day
+        const int GetDayTime() const;
+
     protected:
         void RunSyncPos();
         void Physics(const bool is_in_fluid);
@@ -60,6 +64,7 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket &msg) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket &msg) override;
         virtual void Handle(ProtocolCraft::ClientboundRespawnPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetTimePacket& msg) override;
 
     protected:
         std::shared_ptr<World> world;
@@ -82,6 +87,7 @@ namespace Botcraft
         bool difficulty_locked;
 #endif
         bool is_hardcore;
+        std::atomic<int> day_time;
 
         bool allow_flying;
         bool creative_mode; // Instant break
