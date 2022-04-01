@@ -44,10 +44,22 @@ namespace Botcraft
     {
         std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
 
-        // Can't go in range
-        if (GoTo(client, pos, 4) == Status::Failure)
+        Vector3<double> player_pos;
         {
-            return Status::Failure;
+            std::lock_guard<std::mutex> lock(local_player->GetMutex());
+            player_pos = local_player->GetPosition();
+        }
+
+        // Compute the distance from the hand? Might be from somewhere else
+        player_pos.y += 1.0;
+
+        if (player_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 16.0f)
+        {
+            // Go in range
+            if (GoTo(client, pos, 4) == Status::Failure)
+            {
+                return Status::Failure;
+            }
         }
 
         std::shared_ptr<ProtocolCraft::ServerboundUseItemOnPacket> place_block_msg = std::make_shared<ProtocolCraft::ServerboundUseItemOnPacket>();
@@ -99,6 +111,11 @@ namespace Botcraft
             std::shared_ptr<ProtocolCraft::ServerboundSwingPacket> animation_msg = std::make_shared<ProtocolCraft::ServerboundSwingPacket>();
             animation_msg->SetHand((int)Hand::Right);
             client.GetNetworkManager()->Send(animation_msg);
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(local_player->GetMutex());
+            local_player->LookAt(Vector3<double>(0.5, 0.5, 0.5) + pos, true);
         }
 
         return Status::Success;
@@ -162,5 +179,33 @@ namespace Botcraft
     Status IsHungry(BehaviourClient& client)
     {
         return client.GetEntityManager()->GetLocalPlayer()->GetFood() < 20.0f ? Status::Success : Status::Failure;
+    }
+
+    Status CopyBlackboardData(BehaviourClient& client, const std::string& src, const std::string& dst)
+    {
+        client.GetBlackboard().Copy(src, dst);
+
+        return Status::Success;
+    }
+
+    Status CopyBlackboardDataBlackboard(BehaviourClient& client)
+    {
+        const std::vector<std::string> variable_names = {
+            "CopyBlackboardData.src",
+            "CopyBlackboardData.dst"};
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const std::string& src = blackboard.Get<std::string>(variable_names[0]);
+        const std::string& dst = blackboard.Get<std::string>(variable_names[1]);
+
+        return CopyBlackboardData(client, src, dst);
+    }
+
+    Status IsNightTime(BehaviourClient& client)
+    {
+        const int day_time = client.GetDayTime();
+        return (day_time > 12541 && day_time < 23460) ? Status::Success : Status::Failure;
     }
 }

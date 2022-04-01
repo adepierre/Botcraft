@@ -101,4 +101,21 @@ namespace Botcraft
     /// @return Success if player.GetFood() < 20, Failure otherwise
     Status IsHungry(BehaviourClient& client);
 
+    /// @brief Copy a blackboard data
+    /// @param client The client performing the action
+    /// @param src Source blackboard key
+    /// @param dst Destination blackboard key
+    /// @return Always return Success
+    Status CopyBlackboardData(BehaviourClient& client, const std::string& src, const std::string& dst);
+
+    /// @brief Same thing as CopyBlackboardData, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Always return Success
+    Status CopyBlackboardDataBlackboard(BehaviourClient& client);
+
+    /// @brief Return Success if it's night time (sleep is possible)
+    /// @param client The client performing the action
+    /// @return Success if it's time to sleep, Failure otherwise
+    Status IsNightTime(BehaviourClient& client);
+
 } // namespace Botcraft

@@ -70,6 +70,14 @@ namespace Botcraft
             blackboard[key] = value;
         }
 
+        /// @brief Copy a blackboard value
+        /// @param src Source key
+        /// @param dst Destination key
+        void Copy(const std::string& src, const std::string& dst)
+        {
+            blackboard[dst] = blackboard[src];
+        }
+
         /// @brief Remove a map entry if present
         /// @param key key we want to remove
         void Erase(const std::string& key)
