@@ -581,7 +581,7 @@ Status ExecuteNextTask(BehaviourClient& c)
     const PlayerDiggingFace face = b.Get<PlayerDiggingFace>("NextTask.face");
     if (action == "Dig")
     {
-        return Dig(c, block_position, face);
+        return Dig(c, block_position, true, face);
     }
     else if (action == "Place")
     {
