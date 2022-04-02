@@ -1,6 +1,13 @@
 name: Linux
 
-on: [push]
+on: 
+  push:
+    paths-ignore:
+      - 'README.md'
+      - 'Assets/'
+      - 'Visuals/'
+      - '.gitignore'
+      - 'LICENSE'
 
 env:
   BUILD_TYPE: Release
