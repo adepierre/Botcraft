@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
         Botcraft::Logger::GetInstance().RegisterThread("main");
 
         std::string address = "127.0.0.1:25565";
-        std::string login = "BCDispenserFarm";
+        std::string login = "BotAuFeu";
         std::string password = "";
 
         if (argc == 1)
@@ -131,6 +131,9 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .leaf(CopyRandomFromVectorBlackboardData<int>, blackboard_entity_location, "InteractEntity.entity_id")
                 .leaf(Botcraft::SetBlackboardData<bool>, "InteractEntity.swing", true)
                 .leaf(Botcraft::InteractEntityBlackboard)
+                .repeater(100)
+                    .leaf(Botcraft::Yield)
+                .end()
                 .selector()
                     // If trading fail, we still want to close the container
                     .leaf(Botcraft::TradeName, item_name, true, -1)
@@ -155,6 +158,9 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                     .leaf(Botcraft::GoToBlackboard)
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.rotten_flesh_shulker_position", "OpenContainer.pos")
                     .leaf(Botcraft::OpenContainerBlackboard)
+                    .repeater(100)
+                        .leaf(Botcraft::Yield)
+                    .end()
                     .succeeder()
                         .leaf(TakeFromChest, "minecraft:rotten_flesh", 64)
                     .end()
@@ -174,7 +180,10 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                             .leaf(Botcraft::TradeName, "minecraft:rotten_flesh", false, -1)
                             .leaf([](Botcraft::SimpleBehaviourClient& c) { Botcraft::CloseContainer(c, -1); return Botcraft::Status::Failure;})
                         .end()
-                        .leaf(Botcraft::CloseContainer, -1)                
+                        .leaf(Botcraft::CloseContainer, -1)
+                        .repeater(50)
+                            .leaf(Botcraft::Yield)
+                        .end()              
                     .end()
                 .end()
             .end()
@@ -199,6 +208,9 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                     .leaf(Botcraft::GoToBlackboard)
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.bones_shulker_position", "OpenContainer.pos")
                     .leaf(Botcraft::OpenContainerBlackboard)
+                    .repeater(100)
+                        .leaf(Botcraft::Yield)
+                    .end()
                     .succeeder()
                         .leaf(TakeFromChest, "minecraft:bone", 32)
                     .end()
@@ -238,7 +250,10 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                             .leaf(Botcraft::TradeName, "minecraft:white_dye", false, -1)
                             .leaf([](Botcraft::SimpleBehaviourClient& c) { Botcraft::CloseContainer(c, -1); return Botcraft::Status::Failure;})
                         .end()
-                        .leaf(Botcraft::CloseContainer, -1)                
+                        .leaf(Botcraft::CloseContainer, -1)
+                        .repeater(50)
+                            .leaf(Botcraft::Yield)
+                        .end()              
                     .end()
                 .end()
             .end()
@@ -267,6 +282,9 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                         .leaf(CopyRandomFromVectorBlackboardData<int>, "DispenserFarmBot.farmer_id", "InteractEntity.entity_id")
                         .leaf(Botcraft::SetBlackboardData<bool>, "InteractEntity.swing", true)
                         .leaf(Botcraft::InteractEntityBlackboard)
+                        .repeater(100)
+                            .leaf(Botcraft::Yield)
+                        .end()
                         .selector()
                             // If trading fail, we still want to close the container
                             .leaf(Botcraft::TradeName, item_name, false, -1)
@@ -352,6 +370,9 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .leaf(Botcraft::GoToBlackboard)
             .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.crafting_table_position", "OpenContainer.pos")
             .leaf(Botcraft::OpenContainerBlackboard)
+            .repeater(100)
+                .leaf(Botcraft::Yield)
+            .end()
             .leaf(Botcraft::CraftNamed, dispenser_recipe, false)
             .leaf(Botcraft::CloseContainer, -1)
             .selector()

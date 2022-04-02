@@ -264,6 +264,11 @@ Status StartSpawners(BehaviourClient& client)
         return Status::Failure;
     }
 
+    for (int i = 0; i < 100; ++i)
+    {
+        client.Yield();
+    }
+
     return Status::Success;
 }
 
@@ -315,6 +320,10 @@ Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboa
         {
             LOG_WARNING("Failed to open container for cleaning");
             return Status::Failure;
+        }
+        for (int i = 0; i < 100; ++i)
+        {
+            client.Yield();
         }
 
         short container_id;
@@ -403,6 +412,10 @@ Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboa
                 LOG_WARNING("Error trying to drop the items on the cactus");
                 return Status::Failure;
             }
+            for (int i = 0; i < 50; ++i)
+            {
+                client.Yield();
+            }
         }
     }
 
@@ -418,6 +431,10 @@ Status StoreDispenser(BehaviourClient& client)
     {
         LOG_WARNING("Can't open output chest to store crafted dispenser");
         return Status::Failure;
+    }
+    for (int i = 0; i < 100; ++i)
+    {
+        client.Yield();
     }
 
     short container_id;
@@ -527,7 +544,7 @@ Status MineCobblestone(BehaviourClient& client)
         }
     }
 
-    // No stone, trigger the note block!
+    // No stone, trigger the note block
     if (!mining_pos)
     {
         const Position& note_block_pos = blackboard.Get<Position>("DispenserFarmBot.note_block_position");
@@ -535,6 +552,10 @@ Status MineCobblestone(BehaviourClient& client)
         {
             LOG_WARNING("Error trying to activate the stone note block");
             return Status::Failure;
+        }
+        for (int i = 0; i < 50; ++i)
+        {
+            client.Yield();
         }
     }
 
@@ -774,6 +795,10 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
                 LOG_WARNING("Error trying to break a crop");
                 return Status::Failure;
             }
+            for (int i = 0; i < 50; ++i)
+            {
+                client.Yield();
+            }
         }
     }
 
@@ -856,6 +881,11 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
             {
                 LOG_WARNING("Error trying to replant a crop");
                 return Status::Failure;
+            }
+
+            for (int i = 0; i < 50; ++i)
+            {
+                client.Yield();
             }
         }
     }
