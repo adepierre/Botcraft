@@ -24,23 +24,21 @@ Main features are listed below. To see the eveolution of the project, check the 
 Available bot behaviours includes:
 - Path finding
 - Block breaking
-- Inventory managing
+- Inventory managing (including with chest)
 - Block placing
 - Block interaction (button, lever etc...)
+- Villager trading (only for versions 1.14+)
+- Crafting
 
-Example of pathfinding. Right of the screen is the integrated renderer
-![](gifs/video.gif)
+Example with 10 survival bots collaborating on a pixel art build. They are all in survival, so they have to pick the right blocks in the chests, eat food and obviously can't fly. There is no global supervision, and they can't communicate with each other.
 
-Example of entity processing. Only monsters are attacked as soon as they are in range. Passive mobs are ignored.
-![](gifs/entities.gif)
+![](Visuals/mapart.gif)
 
-More complex example with 10 survival bots collaborating on a pixel art build. They are all in survival, so they have to pick the right blocks in the chests, eat food and obviously can't fly. There is no global supervision, and they can't communicate with each other.
-
-![](gifs/mapart.gif)
+Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 
 ## Dependencies
 
-All the libraries are included either directly(\*) or as submodules(†) and are built locally automatically by cmake (if not already found on your system) so you don't have to download/compile/install anything manually.
+All the libraries are included either directly(\*) or as git submodules(†) and are built locally automatically by cmake (if not already found on your system) so you don't have to download/compile/install anything manually. My goal is to keep the number of external libraries very low for the core (this is less true for the rendering part).
 
 - [asio](https://think-async.com/Asio/)† for low-level TCP
 - [nlohmann json](https://github.com/nlohmann/json)\* for JSON support
@@ -56,11 +54,7 @@ Optional dependencies (can be disabled with cmake options)
 - [stb_image](https://github.com/nothings/stb)\* for texture loading
 - [zlib](https://github.com/madler/zlib)† for compression
 
-The code is cross-platform and requires a C++17 compiler.
-
-### ProtocolCraft
-
-ProtocolCraft is a sublibrary of the botcraft repository. It is a full implementation of the minecraft protocol for all supported versions. It's based on the [official source code mapping](https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a) provided by Mojang. I try to keep all the packets and variable names as close as possible to the source code ones. To avoid name conflicts, an underscore is sometimes appended at the end of a variable name.
+The code is cross-platform and requires a C++17 compiler, as well as git.
 
 ## Building
 
@@ -92,16 +86,16 @@ There are several cmake options you can modify:
 
 Examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, sends Hello World! in the chat then disconnect
-- [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI, mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering
-- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Known commands at this point:
-  - pathfinding
-  - disconnecting 
-  - checking its sourroundings for spawnable blocks (useful if you want to check whether or not a perimeter is spawn proof)
-  - placing a block
-  - interacting with a block (lever, button ...)
+- [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI enabled. Mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering.
+- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Please note that non-vanilla servers with other chat format (yes Paper I'm talking about you) are not supported (yet).
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Very leight AFK only bot. Simply connect to a server and stay still doing nothing.
 - [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same (due to concurrent access). Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
 - [5_MobHitterExample](Examples/5_MobHitterExample): Entity processing example. Attack every monster in range, with a per-entity cooldown of 0.5s. /!\ This is only an example about entities, no eating is performed, so would starve to death pretty quickly if used as-is.
+- [6_DispenserFarmExample](Examples/6_DispenserFarmExample): A full example with a real usecase in mind. Fully autonomous dispenser farm. More detailed explanations can be found on the associated [wiki page](https://github.com/adepierre/Botcraft/wiki/Dispensers-example).
+
+## ProtocolCraft
+
+ProtocolCraft is a sublibrary of the botcraft repository. It is a full implementation of the minecraft protocol for all supported versions. It's based on the [official source code mapping](https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a) provided by Mojang. I try to keep all the packets and variable names as close as possible to the source code ones. To avoid name conflicts, an underscore is sometimes appended at the end of a variable name.
 
 ## Clients
 
@@ -113,4 +107,4 @@ Botcraft supports both servers in offline and online mode. If the server is in o
 
 ## License
 
-GPL v3
+GPL v3 (if you wonder why, see [this discussion](https://github.com/adepierre/Botcraft/discussions/51)).
