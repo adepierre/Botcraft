@@ -294,6 +294,7 @@ namespace Botcraft
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             player_pos = local_player->GetPosition();
+            local_player->LookAt(Vector3<double>(0.5) + pos);
         }
 
         // Compute the distance from the hand? Might be from somewhere else
