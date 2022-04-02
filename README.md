@@ -34,6 +34,10 @@ Example with 10 survival bots collaborating on a pixel art build. They are all i
 
 ![](Visuals/mapart.gif)
 
+Example 6: a fully autonomous bot creating dispensers until a shulker box is full.
+
+https://user-images.githubusercontent.com/24371370/161401601-dd838aba-eb93-447e-be66-a9c3348773e3.mp4
+
 Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 
 ## Dependencies
