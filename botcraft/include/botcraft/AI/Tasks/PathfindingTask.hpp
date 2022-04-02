@@ -23,7 +23,7 @@ namespace Botcraft
     /// @return Success if goal is reached, Failure otherwise
     Status GoToBlackboard(BehaviourClient& client);
 
-    /// @brief Turn the camera to look at a given target
+    /// @brief Turn the camera to look at a given target, and wait at least one tick so the server register it
     /// @param client The client performing the action
     /// @param target The target to look at
     /// @param set_pitch If false, only the yaw will be changed

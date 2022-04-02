@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     try
     {
         // Init logging, log everything >= Info, only to console, no file
-        Botcraft::Logger::GetInstance().SetLogLevel(Botcraft::LogLevel::Debug);
+        Botcraft::Logger::GetInstance().SetLogLevel(Botcraft::LogLevel::Info);
         Botcraft::Logger::GetInstance().SetFilename("");
         // Add a name to this thread for logging
         Botcraft::Logger::GetInstance().RegisterThread("main");
@@ -256,6 +256,9 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .leaf(Botcraft::HasItemInInventory, item_name, 64)
                 .leaf(CollectCropsAndReplant, blackboard_crops_location, item_name)
             .end()
+            .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
+            .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
+            .leaf(Botcraft::GoToBlackboard)
         // Sell crops
             .repeater(0)
                 .inverter()

@@ -12,11 +12,11 @@ namespace Botcraft
     template <typename T>
     struct Vector3
     {
-        Vector3()
+        Vector3(const T& v = 0)
         {
-            x = T(0);
-            y = T(0);
-            z = T(0);
+            x = v;
+            y = v;
+            z = v;
         }
 
         Vector3(const T& x_, const T& y_, const T& z_)
@@ -156,7 +156,7 @@ namespace Botcraft
             z /= norm;
         }
 
-        double SqrNorm()
+        const double SqrNorm() const
         {
             return x * x + y * y + z * z;
         }

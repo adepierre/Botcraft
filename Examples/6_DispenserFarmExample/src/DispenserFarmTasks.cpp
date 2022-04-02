@@ -394,7 +394,7 @@ Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboa
             return Status::Failure;
         }
 
-        LookAt(client, Vector3<double>(0.5, 0.5, 0.5) + cactus_pos, false);
+        LookAt(client, Vector3<double>(0.5) + cactus_pos, false);
 
         for (int i = 0; i < trash_inventory_slots.size(); ++i)
         {
@@ -777,39 +777,46 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
         }
     }
 
-    // Wait a couple of seconds in case some created entities are not on the ground yet
-    for (int i = 0; i < 200; ++i)
-    {
-        client.Yield();
-    }
-
     std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
 
     std::map<int, Vector3<double>> entity_positions;
+    
+    bool moving_items = true;
+    while (moving_items)
     {
-        std::lock_guard<std::mutex> entity_manager_lock(entity_manager->GetMutex());
-        for (const auto& e: entity_manager->GetEntities())
+        moving_items = false;
+        entity_positions.clear();
         {
-            if (e.second->GetType() == EntityType::ItemEntity)
+            std::lock_guard<std::mutex> entity_manager_lock(entity_manager->GetMutex());
+            for (const auto& e : entity_manager->GetEntities())
             {
-                std::shared_ptr<ItemEntity> item = std::static_pointer_cast<ItemEntity>(e.second);
-#if PROTOCOL_VERSION < 340
-                if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetBlockID()).at(item->GetDataItem().GetItemDamage())->GetName() == item_name)
-#else
-                if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetItemID())->GetName() == item_name)
-#endif
+                if (e.second->GetType() == EntityType::ItemEntity)
                 {
-                    entity_positions[e.first] = e.second->GetPosition();
+                    std::shared_ptr<ItemEntity> item = std::static_pointer_cast<ItemEntity>(e.second);
+#if PROTOCOL_VERSION < 340
+                    if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetBlockID()).at(item->GetDataItem().GetItemDamage())->GetName() == item_name)
+#else
+                    if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetItemID())->GetName() == item_name)
+#endif
+                    {
+                        entity_positions[e.first] = e.second->GetPosition();
+                        moving_items = e.second->GetSpeed().SqrNorm() > 0.0001;
+                        if (moving_items)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
         }
+        client.Yield();
     }
 
     for (const auto& e : entity_positions)
     {
-        if (GoTo(client, e.second, 3) == Status::Failure)
+        if (GoTo(client, e.second, 2) == Status::Failure)
         {
-            LOG_WARNING("Error trying to pick up a crop item (can't get close enough)");
+            LOG_WARNING("Error trying to pick up a crop item (can't get close enough to " << e.second << ")");
             return Status::Failure;
         }
 
@@ -895,7 +902,7 @@ Status DestroyItems(BehaviourClient& client, const std::string& item_name)
         return Status::Failure;
     }
 
-    LookAt(client, Vector3<double>(0.5, 0.5, 0.5) + cactus_pos, false);
+    LookAt(client, Vector3<double>(0.5) + cactus_pos, false);
 
     for (int i = 0; i < slots_to_remove.size(); ++i)
     {
