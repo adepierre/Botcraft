@@ -23,11 +23,11 @@ namespace Botcraft
         void ChangeBlockstate(const int id_, const int model_id_ = -1, const Position* pos = nullptr);
 #endif
 
-        const std::shared_ptr<Blockstate>& GetBlockstate() const;
+        const Blockstate* GetBlockstate() const;
         const unsigned short GetModelId() const;
 
     private:
-        std::shared_ptr<Blockstate> blockstate;
+        const Blockstate* blockstate;
         unsigned short model_id;
     };
 } // Botcraft

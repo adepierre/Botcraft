@@ -34,7 +34,7 @@ namespace Botcraft
         }
 
         std::shared_ptr<World> world = c.GetWorld();
-        std::shared_ptr<Blockstate> blockstate;
+        const Blockstate* blockstate;
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
             const Block* block = world->GetBlock(pos);

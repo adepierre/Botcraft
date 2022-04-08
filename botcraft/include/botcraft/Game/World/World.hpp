@@ -145,9 +145,9 @@ namespace Botcraft
         * @param[in] max_radius maximum distance of the search, must be > 0
         * @param[out] out_pos the position of the block hit
         * @param[out] out_normal the normal of the face hit
-        * @return the blockstate of the hit cube (or null)
+        * @return a pointer to the blockstate of the hit cube (or nullptr)
         */
-        std::shared_ptr<Blockstate> Raycast(const Vector3<double> &origin, const Vector3<double> &direction,
+        const Blockstate* Raycast(const Vector3<double> &origin, const Vector3<double> &direction,
             const float max_radius, Position &out_pos, Position &out_normal);
 
         // Get the list of chunks

@@ -25,23 +25,23 @@ namespace Botcraft
         void operator=(AssetsManager const&) = delete;
 
 #if PROTOCOL_VERSION < 347
-        const std::unordered_map<int, std::unordered_map<unsigned char, std::shared_ptr<Blockstate> > >& Blockstates() const;
+        const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Blockstate> > >& Blockstates() const;
 #else
-        const std::unordered_map<int, std::shared_ptr<Blockstate> >& Blockstates() const;
+        const std::unordered_map<int, std::unique_ptr<Blockstate> >& Blockstates() const;
 #endif
         
 #if PROTOCOL_VERSION < 358
-        const std::unordered_map<unsigned char, std::shared_ptr<Biome> >& Biomes() const;
-        const std::shared_ptr<Biome> GetBiome(const unsigned char id);
+        const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& Biomes() const;
+        const Biome* GetBiome(const unsigned char id);
 #else
-        const std::unordered_map<int, std::shared_ptr<Biome> >& Biomes() const;
-        const std::shared_ptr<Biome> GetBiome(const int id);
+        const std::unordered_map<int, std::unique_ptr<Biome> >& Biomes() const;
+        const Biome* GetBiome(const int id);
 #endif
 
 #if PROTOCOL_VERSION < 347
-        const std::unordered_map<int, std::unordered_map<unsigned char, std::shared_ptr<Item> > >& Items() const;
+        const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Item> > >& Items() const;
 #else
-        const std::unordered_map<int, std::shared_ptr<Item> >& Items() const;
+        const std::unordered_map<int, std::unique_ptr<Item> >& Items() const;
 #endif
 
 #if PROTOCOL_VERSION < 347
@@ -71,19 +71,19 @@ namespace Botcraft
 
     private:
 #if PROTOCOL_VERSION < 347
-        std::unordered_map<int, std::unordered_map<unsigned char, std::shared_ptr<Blockstate> > > blockstates;
+        std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Blockstate> > > blockstates;
 #else
-        std::unordered_map<int, std::shared_ptr<Blockstate> > blockstates;
+        std::unordered_map<int, std::unique_ptr<Blockstate> > blockstates;
 #endif
 #if PROTOCOL_VERSION < 358
-        std::unordered_map<unsigned char, std::shared_ptr<Biome> > biomes;
+        std::unordered_map<unsigned char, std::unique_ptr<Biome> > biomes;
 #else
-        std::unordered_map<int, std::shared_ptr<Biome> > biomes;
+        std::unordered_map<int, std::unique_ptr<Biome> > biomes;
 #endif
 #if PROTOCOL_VERSION < 347
-        std::unordered_map<int, std::unordered_map<unsigned char, std::shared_ptr<Item> > > items;
+        std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Item> > > items;
 #else
-        std::unordered_map<int, std::shared_ptr<Item> > items;
+        std::unordered_map<int, std::unique_ptr<Item> > items;
 #endif
 #if USE_GUI
         std::unique_ptr<Renderer::Atlas> atlas;

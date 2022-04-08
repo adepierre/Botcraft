@@ -190,7 +190,7 @@ void UserControlledClient::CreateTestWorld()
     int num_biomes = 0;
     for (int i = 0; i < 256; ++i)
     {
-        std::shared_ptr<Biome> biome = AssetsManager::getInstance().GetBiome(i);
+        const Biome* biome = AssetsManager::getInstance().GetBiome(i);
         if (biome)
         {
             num_biomes++;
@@ -211,7 +211,7 @@ void UserControlledClient::CreateTestWorld()
     x = 0;
     for (int i = 0; i < 256; ++i)
     {
-        std::shared_ptr<Biome> biome = AssetsManager::getInstance().GetBiome(i);
+        const Biome* biome = AssetsManager::getInstance().GetBiome(i);
         if (biome)
         {
             Position pos(-(x * biome_spacing) - 1, 0, 0);
@@ -229,7 +229,7 @@ void UserControlledClient::CreateTestWorld()
             pos = Position(-(x * biome_spacing) - 1, 0, 1);
 
             const Block *block = world->GetBlock(pos);
-            std::shared_ptr<Blockstate> previous_blockstate;
+            const Blockstate* previous_blockstate;
             unsigned char previous_model_id;
             if (block != nullptr)
             {
@@ -239,9 +239,9 @@ void UserControlledClient::CreateTestWorld()
             else
             {
 #if PROTOCOL_VERSION < 347
-                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0);
+                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
 #else
-                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0);
+                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
 #endif
                 previous_model_id = 0;
             }
@@ -266,9 +266,9 @@ void UserControlledClient::CreateTestWorld()
             else
             {
 #if PROTOCOL_VERSION < 347
-                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0);
+                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
 #else
-                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0);
+                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
 #endif
                 previous_model_id = 0;
             }

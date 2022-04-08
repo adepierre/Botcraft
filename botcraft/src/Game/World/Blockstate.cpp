@@ -602,10 +602,12 @@ namespace Botcraft
         }
         else
         {
-            random_value = std::hash<Position>{}(*pos) % weights_sum;
+            // Faster pseudo random choice
+            random_value = (pos->x + pos->y + pos->z) % weights_sum;
         }
         
-        for (int i = 0; i < models_weights.size(); ++i)
+        const size_t num_models = models_weights.size();
+        for (int i = 0; i < num_models; ++i)
         {
             if (random_value < models_weights[i])
             {

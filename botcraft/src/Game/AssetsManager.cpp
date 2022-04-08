@@ -47,33 +47,33 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 347
-    const std::unordered_map<int, std::unordered_map<unsigned char, std::shared_ptr<Blockstate> > >& AssetsManager::Blockstates() const
+    const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Blockstate> > >& AssetsManager::Blockstates() const
 #else
-    const std::unordered_map<int, std::shared_ptr<Blockstate> >& AssetsManager::Blockstates() const
+    const std::unordered_map<int, std::unique_ptr<Blockstate> >& AssetsManager::Blockstates() const
 #endif
     {
         return blockstates;
     }
 
 #if PROTOCOL_VERSION < 358
-    const std::unordered_map<unsigned char, std::shared_ptr<Biome> >& AssetsManager::Biomes() const
+    const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& AssetsManager::Biomes() const
 #else
-    const std::unordered_map<int, std::shared_ptr<Biome> >& AssetsManager::Biomes() const
+    const std::unordered_map<int, std::unique_ptr<Biome> >& AssetsManager::Biomes() const
 #endif
     {
         return biomes;
     }
 
 #if PROTOCOL_VERSION < 358
-    const std::shared_ptr<Biome> AssetsManager::GetBiome(const unsigned char id)
+    const Biome* AssetsManager::GetBiome(const unsigned char id)
 #else
-    const std::shared_ptr<Biome> AssetsManager::GetBiome(const int id)
+    const Biome* AssetsManager::GetBiome(const int id)
 #endif
     {
         auto it = biomes.find(id);
         if (it != biomes.end())
         {
-            return biomes[id];
+            return it->second.get();
         }
         else
         {
@@ -82,9 +82,9 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 347
-    const std::unordered_map<int, std::unordered_map<unsigned char, std::shared_ptr<Item> > >& AssetsManager::Items() const
+    const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Item> > >& AssetsManager::Items() const
 #else
-    const std::unordered_map<int, std::shared_ptr<Item>>& AssetsManager::Items() const
+    const std::unordered_map<int, std::unique_ptr<Item>>& AssetsManager::Items() const
 #endif
     {
         return items;
@@ -282,9 +282,9 @@ namespace Botcraft
 
         // Add a default block
 #if PROTOCOL_VERSION < 347
-        blockstates[-1] = std::unordered_map<unsigned char, std::shared_ptr<Blockstate> >({ { 0, std::shared_ptr<Blockstate>(new Blockstate(-1, 0, false, true, false, false, -2.0f, TintType::None, "default", "")) } });
+        blockstates[-1] = std::unordered_map<unsigned char, std::unique_ptr<Blockstate> >({ { 0, std::make_unique<Blockstate>(-1, 0, false, true, false, false, -2.0f, TintType::None, "default", "") } });
 #else
-        blockstates[-1] = std::shared_ptr<Blockstate>(new Blockstate(-1, false, true, false, false, -2.0f, TintType::None, "default", ""));
+        blockstates[-1] = std::make_unique<Blockstate>(-1, false, true, false, false, -2.0f, TintType::None, "default", "");
 #endif
 
         const std::string file_path = ASSETS_PATH + std::string("/custom/Blocks.json");
@@ -344,7 +344,7 @@ namespace Botcraft
 
             if (render == "none")
             {
-                blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, true, false, false, false, -2.0f, TintType::None, blockstate_name, "none"));
+                blockstates[id][0] = std::make_unique<Blockstate>(id, 0, true, false, false, false, -2.0f, TintType::None, blockstate_name, "none");
             }
             else if (render == "block" || render == "fluid" || render == "other")
             {
@@ -391,11 +391,11 @@ namespace Botcraft
                         {
                             if (render == "fluid")
                             {
-                                blockstates[id][metadata] = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name])));
+                                blockstates[id][metadata] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name]));
                             }
                             else
                             {
-                                blockstates[id][metadata] = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables));
+                                blockstates[id][metadata] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables);
                             }
                         }
                         else
@@ -403,14 +403,14 @@ namespace Botcraft
                             // We want to be sure that blockstates[id][0] exists    
                             if (render == "fluid")
                             {
-                                std::shared_ptr<Blockstate> b = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name])));
+                                std::unique_ptr<Blockstate> b = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name]));
                                 blockstates[id];
                                 blockstates[id][0] = b;
                                 blockstates[id][metadata] = b;
                             }
                             else
                             {
-                                std::shared_ptr<Blockstate> b = std::shared_ptr<Blockstate>(new Blockstate(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables));
+                                std::unique_ptr<Blockstate> b = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables);
                                 blockstates[id];
                                 blockstates[id][0] = b;
                                 blockstates[id][metadata] = b;
@@ -423,11 +423,11 @@ namespace Botcraft
                     //If no metadata, set to default block
                     if (render == "fluid")
                     {
-                        blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, false, true, true, -2.0f, TintType::None, "", Model::GetModel(15, "")));
+                        blockstates[id][0] = std::make_unique<Blockstate>(id, 0, false, true, true, -2.0f, TintType::None, "", Model::GetModel(15, ""));
                     }
                     else
                     {
-                        blockstates[id][0] = std::shared_ptr<Blockstate>(new Blockstate(id, 0, false, true, false, false, -2.0f, TintType::None, "", ""));
+                        blockstates[id][0] = std::make_unique<Blockstate>(id, 0, false, true, false, false, -2.0f, TintType::None, "", "");
                     }
                 }
             }
@@ -493,7 +493,7 @@ namespace Botcraft
 
                 if (render == "none")
                 {
-                    blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, true, false, false, false, -2, TintType::None, blockstate_name, "none"));
+                    blockstates[id] = std::make_unique<Blockstate>(id, true, false, false, false, -2, TintType::None, blockstate_name, "none");
                 }
                 else if (render == "fluid")
                 {
@@ -503,20 +503,20 @@ namespace Botcraft
                     }
                     else
                     {
-                        blockstates[id] = std::shared_ptr<Blockstate>(new Blockstate(id, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, Model::GetModel(15 - fluid_level, textures[blockstate_name])));
+                        blockstates[id] = std::make_unique<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, Model::GetModel(15 - fluid_level, textures[blockstate_name]));
                     }
                 }
                 else if (render == "block")
                 {
                     // Remove the minecraft: prefix to get the blockstate name
                     std::string blockstate = blockstate_name.substr(10);
-                    blockstates[id] = std::make_shared<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], false, false, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables);
+                    blockstates[id] = std::make_unique<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], false, false, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables);
                 }
                 else if (render == "other")
                 {
                     // Remove the minecraft: prefix to get the blockstate name
                     std::string blockstate = blockstate_name.substr(10);
-                    blockstates[id] = std::make_shared<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], false, true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables);
+                    blockstates[id] = std::make_unique<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], false, true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables);
                 }
             }
         }
@@ -610,7 +610,7 @@ namespace Botcraft
 #endif
             }
 
-            biomes[id] = std::shared_ptr<Biome>(new Biome(name, temperature, rainfall, biome_type));
+            biomes[id] = std::make_unique<Biome>(name, temperature, rainfall, biome_type);
         }
     }
 
@@ -633,9 +633,9 @@ namespace Botcraft
 
         // Add a default item
 #if PROTOCOL_VERSION < 347
-        items[-1] = { { 0, std::make_shared<Item>(-1, 0, "default", 64) } };
+        items[-1] = { { 0, std::make_unique<Item>(-1, 0, "default", 64) } };
 #else
-        items[-1] = std::make_shared<Item>(-1, "default", 64);
+        items[-1] = std::make_unique<Item>(-1, "default", 64);
 #endif
 
         //Load all the items from JSON file
@@ -664,11 +664,11 @@ namespace Botcraft
             unsigned char damage_id = properties["damage_id"];
             if (items.find(id) == items.end())
             {
-                items[id] = std::unordered_map<unsigned char, std::shared_ptr<Item> >();
+                items[id] = std::unordered_map<unsigned char, std::unique_ptr<Item> >();
             }
-            items[id][damage_id] = std::make_shared<Item>(id, damage_id, item_name, stack_size);
+            items[id][damage_id] = std::make_unique<Item>(id, damage_id, item_name, stack_size);
 #else
-            items[id] = std::make_shared<Item>(id, item_name, stack_size);
+            items[id] = std::make_unique<Item>(id, item_name, stack_size);
 #endif
         }
     }

@@ -986,7 +986,7 @@ namespace Botcraft
     }
 #endif
 
-    std::shared_ptr<Blockstate> World::Raycast(const Vector3<double> &origin, const Vector3<double> &direction,
+    const Blockstate* World::Raycast(const Vector3<double> &origin, const Vector3<double> &direction,
         const float max_radius, Position & out_pos, Position & out_normal)
     {
         // Inspired from https://gist.github.com/dogfuntom/cc881c8fc86ad43d55d8
@@ -1050,7 +1050,7 @@ namespace Botcraft
 
             if (block)
             {
-                std::shared_ptr<Blockstate> blockstate = block->GetBlockstate();
+                const Blockstate* blockstate = block->GetBlockstate();
                 if (!block->GetBlockstate()->IsAir())
                 {
                     const auto& cubes = blockstate->GetModel(block->GetModelId()).GetColliders();

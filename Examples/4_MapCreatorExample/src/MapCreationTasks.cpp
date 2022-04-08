@@ -428,7 +428,7 @@ Status FindNextTask(BehaviourClient& c)
 
             const int target_palette = target[pos.x - start.x][pos.y - start.y][pos.z - start.z];
             const std::string& target_name = palette.at(target_palette);
-            std::shared_ptr<Blockstate> blockstate;
+            const Blockstate* blockstate;
             {
                 std::lock_guard<std::mutex> world_guard(world->GetMutex());
                 const Block* block = world->GetBlock(pos);
@@ -436,9 +436,9 @@ Status FindNextTask(BehaviourClient& c)
                 if (!block)
                 {
 #if PROTOCOL_VERSION < 347
-                    blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0);
+                    blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
 #else
-                    blockstate = AssetsManager::getInstance().Blockstates().at(0);
+                    blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
 #endif
                 }
                 else
@@ -633,7 +633,7 @@ Status CheckCompletion(BehaviourClient& c)
                 target_pos.z = z - start.z;
 
                 const short target_id = target[target_pos.x][target_pos.y][target_pos.z];
-                std::shared_ptr<Blockstate> blockstate;
+                const Blockstate* blockstate;
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
                     const Block* block = world->GetBlock(world_pos);

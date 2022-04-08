@@ -49,7 +49,7 @@ namespace Botcraft
         // For air we know there is no model, so we can optimize this
         if (id_ == 0)
         {
-            static const std::shared_ptr<Blockstate>& air_blockstate = AssetsManager::getInstance().Blockstates().at(0);
+            static const Blockstate* air_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
             blockstate = air_blockstate;
             model_id = model_id_;
             return;
@@ -59,18 +59,18 @@ namespace Botcraft
         auto it = blockstates_map.find(id_);
         if (it != blockstates_map.end())
         {
-            blockstate = it->second;
+            blockstate = it->second.get();
         }
         else
         {
-            blockstate = blockstates_map.at(-1);
+            blockstate = blockstates_map.at(-1).get();
         }
 
         model_id = model_id_ < 0 ? blockstate->GetRandomModelId(pos) : model_id_;
     }
 #endif
 
-    const std::shared_ptr<Blockstate>& Block::GetBlockstate() const
+    const Blockstate* Block::GetBlockstate() const
     {
         return blockstate;
     }
