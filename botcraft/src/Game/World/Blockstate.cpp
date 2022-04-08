@@ -593,14 +593,23 @@ namespace Botcraft
         return models[index];
     }
 
-    const unsigned char Blockstate::GetRandomModelId()
+    const unsigned char Blockstate::GetRandomModelId(const Position* pos) const
     {
-        int random_value = std::uniform_int_distribution<int>(0, weights_sum - 1)(random_generator);
+        int random_value = 0;
+        if (!pos)
+        {
+            random_value = random_distrib(random_generator);
+        }
+        else
+        {
+            random_value = std::hash<Position>{}(*pos) % weights_sum;
+        }
+        
         for (int i = 0; i < models_weights.size(); ++i)
         {
             if (random_value < models_weights[i])
             {
-                return (unsigned char)i;
+                return static_cast<unsigned char>(i);
             }
             random_value -= models_weights[i];
         }

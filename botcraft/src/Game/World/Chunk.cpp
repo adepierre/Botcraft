@@ -627,9 +627,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION < 347
-        block->ChangeBlockstate(id, metadata, model_id);
+        block->ChangeBlockstate(id, metadata, model_id, &pos);
 #else
-        block->ChangeBlockstate(id, model_id);
+        block->ChangeBlockstate(id, model_id, &pos);
 #endif
 
 #if USE_GUI

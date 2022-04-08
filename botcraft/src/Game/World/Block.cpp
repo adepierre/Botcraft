@@ -9,7 +9,7 @@ namespace Botcraft
         ChangeBlockstate(id_, metadata_);
     }
 
-    void Block::ChangeBlockstate(const int id_, const unsigned char metadata_, const int model_id_)
+    void Block::ChangeBlockstate(const int id_, const unsigned char metadata_, const int model_id_, const Position* pos)
     {
         auto &blockstates_map = AssetsManager::getInstance().Blockstates();
         auto it = blockstates_map.find(id_);
@@ -44,7 +44,7 @@ namespace Botcraft
         ChangeBlockstate(id_);
     }
 
-    void Block::ChangeBlockstate(const int id_, const int model_id_)
+    void Block::ChangeBlockstate(const int id_, const int model_id_, const Position* pos)
     {
         // For air we know there is no model, so we can optimize this
         if (id_ == 0)
@@ -66,7 +66,7 @@ namespace Botcraft
             blockstate = blockstates_map.at(-1);
         }
 
-        model_id = model_id_ < 0 ? blockstate->GetRandomModelId() : model_id_;
+        model_id = model_id_ < 0 ? blockstate->GetRandomModelId(pos) : model_id_;
     }
 #endif
 

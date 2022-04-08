@@ -48,7 +48,7 @@ namespace Botcraft
         const unsigned char GetMetadata() const;
 #endif
         const Model &GetModel(const unsigned char index) const;
-        const unsigned char GetRandomModelId();
+        const unsigned char GetRandomModelId(const Position* pos = nullptr) const;
         const int GetNumModels() const;
         const std::string &GetName() const;
         const std::string& GetVariableValue(const std::string& variable) const;
@@ -83,7 +83,8 @@ namespace Botcraft
         std::vector<Model> models;
         std::vector<int> models_weights;
         int weights_sum;
-        std::mt19937 random_generator;
+        mutable std::mt19937 random_generator;
+        std::uniform_int_distribution<int> random_distrib;
 
         std::unordered_map<std::string, std::string> variables;
 
