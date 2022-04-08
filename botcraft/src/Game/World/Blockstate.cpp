@@ -598,7 +598,7 @@ namespace Botcraft
         int random_value = 0;
         if (!pos)
         {
-            random_value = random_distrib(random_generator);
+            random_value = std::uniform_int_distribution<int>(0, weights_sum - 1)(random_generator);
         }
         else
         {

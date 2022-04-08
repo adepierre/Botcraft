@@ -84,7 +84,6 @@ namespace Botcraft
         std::vector<int> models_weights;
         int weights_sum;
         mutable std::mt19937 random_generator;
-        std::uniform_int_distribution<int> random_distrib;
 
         std::unordered_map<std::string, std::string> variables;
 
