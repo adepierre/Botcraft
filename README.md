@@ -8,7 +8,7 @@ This is a "learn-by-doing" code, with some lines dating back to 2017 and never c
 
 ## Features
 
-Main features are listed below. To see the eveolution of the project, check the [changelog](https://github.com/adepierre/Botcraft/wiki/Changelog).
+Main features are listed below. To see the evolution of the project, check the [changelog](https://github.com/adepierre/Botcraft/wiki/Changelog).
 
 - Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
 - DNS server name resolution with and without SRV record
