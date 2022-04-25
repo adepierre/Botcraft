@@ -186,6 +186,8 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Inventory/InventoryManager.hpp
     include/botcraft/Game/Inventory/Item.hpp
     
+    include/botcraft/Game/Physics/PhysicsManager.hpp
+    
     include/botcraft/Network/NetworkManager.hpp
     
     include/botcraft/Utilities/AsyncHandler.hpp
@@ -384,6 +386,8 @@ set(botcraft_SRC
     src/Game/Entities/entities/PathfinderMobEntity.cpp
     src/Game/Entities/entities/monster/PatrollingMonsterEntity.cpp
     src/Game/Entities/entities/projectile/ThrowableProjectileEntity.cpp
+    
+    src/Game/Physics/PhysicsManager.cpp
     
     src/Network/Authentifier.cpp
     src/Network/AESEncrypter.cpp

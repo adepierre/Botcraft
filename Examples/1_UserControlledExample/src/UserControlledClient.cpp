@@ -5,6 +5,7 @@
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Game/World/Chunk.hpp>
+#include <botcraft/Game/Physics/PhysicsManager.hpp>
 #include <botcraft/Network/NetworkManager.hpp>
 #include <botcraft/Utilities/Logger.hpp>
 #include <protocolCraft/enums.hpp>
@@ -44,11 +45,14 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
             rendering_manager->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
             rendering_manager->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
         }
+        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, entity_manager, world, network_manager);
+#else
+        physics_manager = std::make_shared<PhysicsManager>(entity_manager, world, network_manager);
 #endif
 
         // Launch the thread for the position
         entity_manager->GetLocalPlayer()->SetPosition(Vector3<double>(0.0, 0.0, 0.0));
-        m_thread_physics = std::thread(&UserControlledClient::RunSyncPos, this);
+        physics_manager->StartPhysics();
         LOG_INFO("Client created!");
 
         LOG_INFO("Creating world...");

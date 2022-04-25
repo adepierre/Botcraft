@@ -14,6 +14,7 @@ namespace Botcraft
     class World;
     class InventoryManager;
     class EntityManager;
+    class PhysicsManager;
 
 #if USE_GUI
     namespace Renderer
@@ -54,10 +55,6 @@ namespace Botcraft
         const int GetDayTime() const;
 
     protected:
-        void RunSyncPos();
-        void Physics(const bool is_in_fluid);
-
-    protected:
         virtual void Handle(ProtocolCraft::Message &msg) override;
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket &msg) override;
         virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket &msg) override;
@@ -71,6 +68,7 @@ namespace Botcraft
         std::shared_ptr<World> world;
         std::shared_ptr<EntityManager> entity_manager;
         std::shared_ptr<InventoryManager> inventory_manager;
+        std::shared_ptr<PhysicsManager> physics_manager;
 #if USE_GUI
         // If true, opens a window to display the view
         // from the bot. Only one renderer can be active
@@ -92,7 +90,5 @@ namespace Botcraft
 
         bool allow_flying;
         bool creative_mode; // Instant break
-
-        std::thread m_thread_physics;//Thread running to compute position and send it to the server every 50 ms (20 ticks/s)
     };
 } //Botcraft
