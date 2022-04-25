@@ -69,7 +69,7 @@ namespace Botcraft
                 const std::vector<unsigned int>& texture_multipliers_);
 
             // Returns the color modifier (for redstone/leaves/water etc...)
-            const std::vector<unsigned int> GetColorModifier(const int y, const std::shared_ptr<Biome> biome, const std::shared_ptr<Blockstate> blockstate, const std::vector<bool>& use_tintindex) const;
+            const std::vector<unsigned int> GetColorModifier(const int y, const Biome* biome, const Blockstate* blockstate, const std::vector<bool>& use_tintindex) const;
 
             // Returns the distance from the center of the chunk to the camera
             const float DistanceToCamera(const Position& chunk) const;

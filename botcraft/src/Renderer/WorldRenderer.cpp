@@ -198,7 +198,7 @@ namespace Botcraft
             const std::vector<Position> neighbour_positions({ Position(0, -1, 0), Position(0, 0, -1),
                             Position(-1, 0, 0), Position(1, 0, 0), Position(0, 0, 1), Position(0, 1, 0) });
 
-            std::vector<Blockstate*> neighbour_blockstates(6);
+            std::vector<const Blockstate*> neighbour_blockstates(6);
             std::vector<unsigned char> neighbour_model_ids(6);
 
             Position pos;
@@ -231,7 +231,7 @@ namespace Botcraft
                             }
                             else
                             {
-                                neighbour_blockstates[i] = neighbour_block->GetBlockstate().get();
+                                neighbour_blockstates[i] = neighbour_block->GetBlockstate();
                                 neighbour_model_ids[i] = neighbour_block->GetModelId();
                             }
                         }
@@ -262,9 +262,9 @@ namespace Botcraft
                         //Add all faces of the current state
                         const std::vector<FaceDescriptor>& current_faces = this_block->GetBlockstate()->GetModel(this_block->GetModelId()).GetFaces();
 #if PROTOCOL_VERSION < 552
-                        const std::shared_ptr<Biome> current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, z));
+                        const Biome* current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, z));
 #else
-                        const std::shared_ptr<Biome> current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, y, z));
+                        const Biome* current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, y, z));
 #endif
 
                         for (int i = 0; i < current_faces.size(); ++i)
@@ -561,7 +561,7 @@ namespace Botcraft
             }
         }
 
-        const std::vector<unsigned int> WorldRenderer::GetColorModifier(const int y, const std::shared_ptr<Biome> biome, const std::shared_ptr<Blockstate> blockstate, const std::vector<bool>& use_tintindex) const
+        const std::vector<unsigned int> WorldRenderer::GetColorModifier(const int y, const Biome* biome, const Blockstate* blockstate, const std::vector<bool>& use_tintindex) const
         {
             std::vector<unsigned int> texture_modifier(use_tintindex.size(), 0xFFFFFFFF);
             for (int i = 0; i < use_tintindex.size(); ++i)

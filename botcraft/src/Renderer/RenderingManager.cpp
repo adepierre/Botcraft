@@ -153,7 +153,7 @@ namespace Botcraft
                     ImGui::Begin("Targeted cube");
                     Position raycasted_pos;
                     Position raycasted_normal;
-                    std::shared_ptr<Blockstate> raycasted_blockstate;
+                    const Blockstate* raycasted_blockstate;
                     {
                         std::lock_guard<std::mutex> world_guard(world->GetMutex());
                         raycasted_blockstate =
