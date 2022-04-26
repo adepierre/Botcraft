@@ -46,5 +46,7 @@ namespace Botcraft
         void SetDataShoulderLeft(const ProtocolCraft::NBT& data_shoulder_left);
         void SetDataShoulderRight(const ProtocolCraft::NBT& data_shoulder_right);
 
+        virtual bool IsRemotePlayer() const override;
+
     };
 }

@@ -148,4 +148,9 @@ namespace Botcraft
         metadata["data_shoulder_right"] = data_shoulder_right;
     }
 
+    bool PlayerEntity::IsRemotePlayer() const
+    {
+        return true;
+    }
+
 }
