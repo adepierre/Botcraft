@@ -131,6 +131,7 @@ namespace Botcraft
         virtual nlohmann::json Serialize() const;
 
         virtual bool IsLocalPlayer() const;
+        virtual bool IsRemotePlayer() const;
         // Can be used to know if an entity has a certain virtual type as ancestor
         virtual bool IsLivingEntity() const;
         virtual bool IsAbstractArrow() const;

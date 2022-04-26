@@ -192,6 +192,10 @@ namespace Botcraft
         return true;
     }
 
+    bool LocalPlayer::IsRemotePlayer() const
+    {
+        return false;
+    }
 
     void LocalPlayer::LookAt(const Vector3<double>& pos, const bool set_pitch)
     {

@@ -46,6 +46,7 @@ namespace Botcraft
         virtual void SetPitch(const float pitch_) override;
 
         virtual bool IsLocalPlayer() const override;
+        virtual bool IsRemotePlayer() const override;
 
         void LookAt(const Vector3<double>& pos, const bool set_pitch = false);
 

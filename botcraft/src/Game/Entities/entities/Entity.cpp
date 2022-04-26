@@ -815,6 +815,11 @@ namespace Botcraft
         return false;
     }
 
+    bool Entity::IsRemotePlayer() const
+    {
+        return false;
+    }
+
     bool Entity::IsLivingEntity() const
     {
         return false;
