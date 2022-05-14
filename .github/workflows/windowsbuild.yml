@@ -14,7 +14,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -25,7 +25,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{runner.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGAME_VERSION=latest -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF
+      run: cmake $GITHUB_WORKSPACE -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGAME_VERSION=latest -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
