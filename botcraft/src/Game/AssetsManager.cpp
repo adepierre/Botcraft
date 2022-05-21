@@ -282,7 +282,8 @@ namespace Botcraft
 
         // Add a default block
 #if PROTOCOL_VERSION < 347
-        blockstates[-1] = std::unordered_map<unsigned char, std::unique_ptr<Blockstate> >({ { 0, std::make_unique<Blockstate>(-1, 0, false, true, false, false, -2.0f, TintType::None, "default", "") } });
+        blockstates[-1];
+        blockstates[-1][0] = std::make_unique<Blockstate>(-1, 0, false, true, false, false, -2.0f, TintType::None, "default", "");
 #else
         blockstates[-1] = std::make_unique<Blockstate>(-1, false, true, false, false, -2.0f, TintType::None, "default", "");
 #endif
@@ -403,17 +404,15 @@ namespace Botcraft
                             // We want to be sure that blockstates[id][0] exists    
                             if (render == "fluid")
                             {
-                                std::unique_ptr<Blockstate> b = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name]));
                                 blockstates[id];
-                                blockstates[id][0] = b;
-                                blockstates[id][metadata] = b;
+                                blockstates[id][0] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name]));
+                                blockstates[id][metadata] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name]));
                             }
                             else
                             {
-                                std::unique_ptr<Blockstate> b = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables);
                                 blockstates[id];
-                                blockstates[id][0] = b;
-                                blockstates[id][metadata] = b;
+                                blockstates[id][0] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables);
+                                blockstates[id][metadata] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables);
                             }
                         }
                     }
@@ -633,7 +632,8 @@ namespace Botcraft
 
         // Add a default item
 #if PROTOCOL_VERSION < 347
-        items[-1] = { { 0, std::make_unique<Item>(-1, 0, "default", 64) } };
+        items[-1];
+        items[-1][0] = std::make_unique<Item>(-1, 0, "default", 64);
 #else
         items[-1] = std::make_unique<Item>(-1, "default", 64);
 #endif

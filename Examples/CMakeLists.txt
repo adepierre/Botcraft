@@ -4,4 +4,6 @@ add_subdirectory(2_ChatCommandExample)
 add_subdirectory(3_SimpleAFKExample)
 add_subdirectory(4_MapCreatorExample)
 add_subdirectory(5_MobHitterExample)
-add_subdirectory(6_DispenserFarmExample)
+if (PROTOCOL_VERSION STRGREATER "470") # 1.14+
+    add_subdirectory(6_DispenserFarmExample)
+endif()

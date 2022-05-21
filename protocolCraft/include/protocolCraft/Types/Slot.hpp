@@ -44,7 +44,7 @@ namespace ProtocolCraft
             }
 
             // Both are non empty
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
             return block_id == s.GetBlockID() && item_damage == s.GetItemDamage();
 #else
             return item_id == s.GetItemID();

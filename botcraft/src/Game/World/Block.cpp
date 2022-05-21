@@ -18,16 +18,16 @@ namespace Botcraft
             auto it2 = it->second.find(metadata_);
             if (it2 != it->second.end())
             {
-                blockstate = it2->second;
+                blockstate = it2->second.get();
             }
             else
             {
-                blockstate = it->second.at(0);
+                blockstate = it->second.at(0).get();
             }
         }
         else
         {
-            blockstate = blockstates_map.at(-1).at(0);
+            blockstate = blockstates_map.at(-1).at(0).get();
         }
         if (model_id_ < 0)
         {

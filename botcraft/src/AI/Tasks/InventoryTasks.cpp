@@ -852,7 +852,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
     Status Craft(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft)
 #else
     Status Craft(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft)
@@ -879,7 +879,7 @@ namespace Botcraft
             {
                 for (int x = 0; x < 3; ++x)
                 {
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
                     if (inputs[y][x].first != -1)
 #else
                     if (inputs[y][x] != -1)
@@ -958,7 +958,7 @@ namespace Botcraft
                         {
                             continue;
                         }
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
                         if (s.second.GetBlockID() == inputs[y][x].first && s.second.GetItemDamage() == inputs[y][x].second)
 #else
                         if (s.second.GetItemID() == inputs[y][x])
@@ -973,7 +973,7 @@ namespace Botcraft
 
                 if (source_slot == -1)
                 {
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
                     LOG_WARNING("Not enough source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] found in inventory for crafting.");
 #else
                     LOG_WARNING("Not enough source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] found in inventory for crafting.");
@@ -983,7 +983,7 @@ namespace Botcraft
 
                 if (ClickSlotInContainer(client, crafting_container_id, source_slot, 0, 0) == Status::Failure)
                 {
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
                     LOG_WARNING("Error trying to pick source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
 #else
                     LOG_WARNING("Error trying to pick source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
@@ -994,7 +994,7 @@ namespace Botcraft
                 // Right click in the destination slot
                 if (ClickSlotInContainer(client, crafting_container_id, destination_slot, 0, 1) == Status::Failure)
                 {
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
                     LOG_WARNING("Error trying to place source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
 #else
                     LOG_WARNING("Error trying to place source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
@@ -1007,7 +1007,7 @@ namespace Botcraft
                 {
                     if (ClickSlotInContainer(client, crafting_container_id, source_slot, 0, 0) == Status::Failure)
                     {
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
                         LOG_WARNING("Error trying to place back source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
 #else
                         LOG_WARNING("Error trying to place back source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
@@ -1098,7 +1098,7 @@ namespace Botcraft
         Blackboard& blackboard = client.GetBlackboard();
 
         // Mandatory
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
         const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs = blackboard.Get<std::array<std::array<std::pair<int, unsigned char>, 3>, 3>>(variable_names[0]);
 #else
         const std::array<std::array<int, 3>, 3>& inputs = blackboard.Get<std::array<std::array<int, 3>, 3>>(variable_names[0]);
@@ -1113,7 +1113,7 @@ namespace Botcraft
     Status CraftNamed(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         const AssetsManager& assets_manager = AssetsManager::getInstance();
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
         std::array<std::array<std::pair<int, unsigned char>, 3>, 3> inputs_ids;
 #else
         std::array<std::array<int, 3>, 3> inputs_ids;
@@ -1122,8 +1122,8 @@ namespace Botcraft
         {
             for (size_t j = 0; j < 3; ++j)
             {
-#if PROTOCOL_VERSION < 340
-                inputs_ids[i][j] = inputs[i][j] == "" ? {-1, 0} : assets_manager.GetItemID(inputs[i][j]);
+#if PROTOCOL_VERSION < 350
+                inputs_ids[i][j] = inputs[i][j] == "" ? std::pair<int, unsigned char>{ -1, 0 } : assets_manager.GetItemID(inputs[i][j]);
 #else
                 inputs_ids[i][j] = inputs[i][j] == "" ? -1 : assets_manager.GetItemID(inputs[i][j]);
 #endif
@@ -1167,7 +1167,7 @@ namespace Botcraft
                 }
 
                 if (!s.second.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
                     s.second.GetBlockID() == item_id.first && s.second.GetItemDamage() == item_id.second
 #else
                     s.second.GetItemID() == item_id
@@ -1226,7 +1226,7 @@ namespace Botcraft
                     // If this slot is not empty, and not full,
                     // check if "lower" slot with same items that
                     // could fit in it
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
                     const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetBlockID()).at(dst_slot.GetItemDamage())->GetStackSize() - dst_slot.GetItemCount();
 #else
                     const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetItemID())->GetStackSize() - dst_slot.GetItemCount();

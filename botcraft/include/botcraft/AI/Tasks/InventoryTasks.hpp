@@ -169,7 +169,7 @@ namespace Botcraft
     /// @param inputs Input items IDs in a 3x3 grid, inputs[0][1] refers to first line, second column
     /// @param allow_inventory_craft If true, the client will use the inventory small 2x2 grid to craft if possible
     /// @return Success if item is crafted, Failure otherwise
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 350
     Status Craft(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft = true);
 #else
     Status Craft(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft = true);
