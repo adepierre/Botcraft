@@ -467,7 +467,7 @@ namespace Botcraft
                     // Jump
                     {
                         std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                        local_player->SetSpeedY(0.4196141); // Not sure about this. I tried to calculate it in order to get a 1.25 block height jump (reached in 6 ticks)
+                        local_player->Jump();
                     }
 
                     if (std::abs(motion_vector.x) < 1.5 &&
@@ -505,9 +505,9 @@ namespace Botcraft
                     {
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                            local_player->SetSpeedX(target_position.x - local_player->GetX());
+                            local_player->SetPlayerInputsX(target_position.x - local_player->GetX() - local_player->GetSpeedX());
                             local_player->SetY(local_player->GetY() + 0.001);
-                            local_player->SetSpeedZ(target_position.z - local_player->GetZ());
+                            local_player->SetPlayerInputsZ(target_position.z - local_player->GetZ() - local_player->GetSpeedZ());
 
                             // If the target motion requires going down
                             if (motion_vector.y < 0)
@@ -524,9 +524,9 @@ namespace Botcraft
                         Vector3<double> delta_v = motion_vector * delta_t / (1000.0 * motion_norm_xz) * speed;
                         {
                             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                            local_player->SetSpeedX(local_player->GetSpeed().x + delta_v.x);
+                            local_player->AddPlayerInputsX(delta_v.x);
                             local_player->SetY(local_player->GetY() + 0.001);
-                            local_player->SetSpeedZ(local_player->GetSpeed().z + delta_v.z);
+                            local_player->AddPlayerInputsZ(delta_v.z);
                         }
                         previous_step = now;
                     }

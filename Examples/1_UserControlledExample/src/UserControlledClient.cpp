@@ -338,7 +338,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
         {
             // Jump
             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-            local_player->SetSpeedY(0.4196141); // Not sure about this. I tried to calculate it in order to get a 1.25 block height jump (reached in 6 ticks)
+            local_player->Jump();
         }
     }
 
@@ -346,32 +346,32 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::FORWARD])
     {
-        local_player->SetSpeedX(local_player->GetSpeed().x + local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
-        local_player->SetSpeedZ(local_player->GetSpeed().z + local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
+        local_player->AddPlayerInputsX(local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
+        local_player->AddPlayerInputsZ(local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::BACKWARD])
     {
-        local_player->SetSpeedX(local_player->GetSpeed().x - local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
-        local_player->SetSpeedZ(local_player->GetSpeed().z - local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
+        local_player->AddPlayerInputsX(- local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
+        local_player->AddPlayerInputsZ(- local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::RIGHT])
     {
-        local_player->SetSpeedX(local_player->GetSpeed().x + local_player->GetRightVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
-        local_player->SetSpeedZ(local_player->GetSpeed().z + local_player->GetRightVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
+        local_player->AddPlayerInputsX(local_player->GetRightVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
+        local_player->AddPlayerInputsZ(local_player->GetRightVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
     if (is_key_pressed[(int)Renderer::KEY_CODE::LEFT])
     {
-        local_player->SetSpeedX(local_player->GetSpeed().x - local_player->GetRightVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
-        local_player->SetSpeedZ(local_player->GetSpeed().z - local_player->GetRightVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
+        local_player->AddPlayerInputsX(- local_player->GetRightVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
+        local_player->AddPlayerInputsZ(- local_player->GetRightVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }

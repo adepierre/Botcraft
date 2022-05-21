@@ -123,18 +123,7 @@ namespace Botcraft
                             local_player->SetOnGround(true);
                         }
 
-                        // Reset the speed until next frame
-                        // Update the gravity value if needed
-                        local_player->SetSpeedX(0.0);
-                        local_player->SetSpeedZ(0.0);
-                        if (local_player->GetOnGround())
-                        {
-                            local_player->SetSpeedY(0.0);
-                        }
-                        else
-                        {
-                            local_player->SetSpeedY((local_player->GetSpeed().y - 0.08) * 0.98);//TODO replace hardcoded value?
-                        }
+                        UpdatePlayerSpeed();
                     }
 
 #if USE_GUI
@@ -182,11 +171,12 @@ namespace Botcraft
 
         // Player mutex is already locked by calling function
         Position player_position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetX()));
+        Vector3<double> player_movement = local_player->GetSpeed() + local_player->GetPlayerInputs();
         Vector3<double> min_player_collider, max_player_collider;
         for (int i = 0; i < 3; ++i)
         {
-            min_player_collider[i] = std::min(local_player->GetCollider().GetMin()[i], local_player->GetCollider().GetMin()[i] + local_player->GetSpeed()[i]);
-            max_player_collider[i] = std::max(local_player->GetCollider().GetMax()[i], local_player->GetCollider().GetMax()[i] + local_player->GetSpeed()[i]);
+            min_player_collider[i] = std::min(local_player->GetCollider().GetMin()[i], local_player->GetCollider().GetMin()[i] + player_movement[i]);
+            max_player_collider[i] = std::max(local_player->GetCollider().GetMax()[i], local_player->GetCollider().GetMax()[i] + player_movement[i]);
         }
 
         AABB broadphase_collider = AABB((min_player_collider + max_player_collider) / 2.0, (max_player_collider - min_player_collider) / 2.0);
@@ -240,16 +230,16 @@ namespace Botcraft
                         }
 
                         Vector3<double> normal;
-                        const double speed_fraction = local_player->GetCollider().SweptCollide(local_player->GetSpeed(), block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z), normal);
+                        const double speed_fraction = local_player->GetCollider().SweptCollide(player_movement, block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z), normal);
 
                         if (speed_fraction < 1.0)
                         {
-                            const Vector3<double> remaining_speed = local_player->GetSpeed() * (1.0 - speed_fraction);
+                            const Vector3<double> remaining_speed = player_movement * (1.0 - speed_fraction);
 
                             // We remove epsilon to be sure we do not go
                             // through the face due to numerical imprecision
-                            local_player->SetSpeed(local_player->GetSpeed() * (speed_fraction - 1e-6) + // Base speed truncated
-                                (remaining_speed - normal * remaining_speed.dot(normal))); // Remaining speed projected on the plane
+                            player_movement = player_movement * (speed_fraction - 1e-6) + // Base speed truncated
+                                (remaining_speed - normal * remaining_speed.dot(normal)); // Remaining speed projected on the plane
                         }
 
                         if (normal.y == 1.0)
@@ -265,12 +255,39 @@ namespace Botcraft
                 }
             }
         }
-        local_player->SetPosition(local_player->GetPosition() + local_player->GetSpeed());
+        local_player->SetPosition(local_player->GetPosition() + player_movement);
         local_player->SetOnGround(has_hit_down);
         if (has_hit_up)
         {
             local_player->SetSpeedY(0.0);
         }
+    }
+
+    void PhysicsManager::UpdatePlayerSpeed() const
+    {
+        // Player mutex should already locked by calling function
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+
+        local_player->SetSpeed(Vector3<double>(local_player->GetSpeedX() * 0.91, (local_player->GetSpeedY() - 0.08) * 0.98, local_player->GetSpeedZ() * 0.91));
+
+        if (local_player->GetOnGround())
+        {
+            const Vector3<double> ground_drag(0.6, 0.0, 0.6);
+            // TODO: adapt drag depending on blocks (slime, ice)
+            local_player->SetSpeed(local_player->GetSpeed() * ground_drag);
+        }
+
+        if (std::abs(local_player->GetSpeedX()) < 0.003)
+        {
+            local_player->SetSpeedX(0.0);
+        }
+        if (std::abs(local_player->GetSpeedZ()) < 0.003)
+        {
+            local_player->SetSpeedZ(0.0);
+        }
+
+        // Reset player inputs
+        local_player->SetPlayerInputs(Vector3<double>(0.0));
     }
 
 } //Botcraft

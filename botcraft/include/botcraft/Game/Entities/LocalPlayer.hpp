@@ -17,6 +17,11 @@ namespace Botcraft
         const Vector3<double>& GetFrontVector() const;
         const Vector3<double>& GetXZVector() const;
         const Vector3<double>& GetRightVector() const;
+
+        const Vector3<double>& GetPlayerInputs() const;
+        const double GetPlayerInputsX() const;
+        const double GetPlayerInputsY() const;
+        const double GetPlayerInputsZ() const;
         
         float GetFlyingSpeed() const;
         float GetWalkingSpeed() const;
@@ -45,10 +50,20 @@ namespace Botcraft
         virtual void SetYaw(const float yaw_) override;
         virtual void SetPitch(const float pitch_) override;
 
+        void SetPlayerInputs(const Vector3<double>& p);
+        void SetPlayerInputsX(const double x);
+        void SetPlayerInputsY(const double y);
+        void SetPlayerInputsZ(const double z);
+        void AddPlayerInputs(const Vector3<double>& p);
+        void AddPlayerInputsX(const double x);
+        void AddPlayerInputsY(const double y);
+        void AddPlayerInputsZ(const double z);
+
         virtual bool IsLocalPlayer() const override;
         virtual bool IsRemotePlayer() const override;
 
         void LookAt(const Vector3<double>& pos, const bool set_pitch = false);
+        void Jump();
 
     private:
         void UpdateVectors();
@@ -59,6 +74,8 @@ namespace Botcraft
         Vector3<double> frontVector;
         Vector3<double> xzVector;
         Vector3<double> rightVector;
+
+        Vector3<double> player_inputs;
 
         float flying_speed;
         float walking_speed;

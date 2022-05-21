@@ -50,6 +50,26 @@ namespace Botcraft
         return rightVector;
     }
 
+    const Vector3<double>& LocalPlayer::GetPlayerInputs() const
+    {
+        return player_inputs;
+    }
+
+    const double LocalPlayer::GetPlayerInputsX() const
+    {
+        return player_inputs.x;
+    }
+
+    const double LocalPlayer::GetPlayerInputsY() const
+    {
+        return player_inputs.y;
+    }
+
+    const double LocalPlayer::GetPlayerInputsZ() const
+    {
+        return player_inputs.z;
+    }
+
 
     float LocalPlayer::GetFlyingSpeed() const
     {
@@ -187,6 +207,46 @@ namespace Botcraft
         }
     }
 
+    void LocalPlayer::SetPlayerInputs(const Vector3<double>& p)
+    {
+        player_inputs = p;
+    }
+
+    void LocalPlayer::SetPlayerInputsX(const double x)
+    {
+        player_inputs.x = x;
+    }
+
+    void LocalPlayer::SetPlayerInputsY(const double y)
+    {
+        player_inputs.y = y;
+    }
+
+    void LocalPlayer::SetPlayerInputsZ(const double z)
+    {
+        player_inputs.z = z;
+    }
+
+    void LocalPlayer::AddPlayerInputs(const Vector3<double>& p)
+    {
+        player_inputs += p;
+    }
+
+    void LocalPlayer::AddPlayerInputsX(const double x)
+    {
+        player_inputs.x += x;
+    }
+
+    void LocalPlayer::AddPlayerInputsY(const double y)
+    {
+        player_inputs.y += y;
+    }
+
+    void LocalPlayer::AddPlayerInputsZ(const double z)
+    {
+        player_inputs.z += z;
+    }
+
     bool LocalPlayer::IsLocalPlayer() const
     {
         return true;
@@ -220,6 +280,15 @@ namespace Botcraft
             has_moved = true;
             UpdateVectors();
         }
+    }
+
+    void LocalPlayer::Jump()
+    {
+        if (!on_ground)
+        {
+            return;
+        }
+        SetSpeedY(0.42);
     }
 
     void LocalPlayer::UpdateVectors()

@@ -55,6 +55,16 @@ namespace Botcraft
             return Vector3(x - a.x, y - a.y, z - a.z);
         }
 
+        Vector3 operator*(const Vector3& v) const
+        {
+            return Vector3(x * v.x, y * v.y, z * v.z);
+        }
+
+        Vector3 operator/(const Vector3& v) const
+        {
+            return Vector3(x / v.x, y / v.y, z / v.z);
+        }
+
         const bool operator==(const Vector3 &a) const
         {
             return (x == a.x) && (y == a.y) && (z == a.z);
@@ -90,6 +100,22 @@ namespace Botcraft
         Vector3 operator/(const T d) const
         {
             return Vector3(x / d, y / d, z / d);
+        }
+
+        Vector3& operator+= (const Vector3& v)
+        {
+            x += v.x;
+            y += v.y;
+            z += v.z;
+            return *this;
+        }
+
+        Vector3& operator-= (const Vector3& v)
+        {
+            x -= v.x;
+            y -= v.y;
+            z -= v.z;
+            return *this;
         }
 
         const double dot(const Vector3 &v) const
