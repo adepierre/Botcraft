@@ -521,6 +521,9 @@ target_include_directories(botcraft
 
 # Add Asio
 target_link_libraries(botcraft PRIVATE asio)
+if (WIN32)
+    target_link_libraries(botcraft PRIVATE ws2_32) # Stops asio from crying on windows about socket stuff not being defined
+endif()
 target_compile_definitions(botcraft PRIVATE ASIO_STANDALONE)
 
 # Add threads support
