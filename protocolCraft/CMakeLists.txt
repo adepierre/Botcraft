@@ -257,6 +257,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Particles/FallingDustParticle.hpp
     include/protocolCraft/Types/Particles/IconcrackParticle.hpp
     include/protocolCraft/Types/Particles/ItemParticle.hpp
+    include/protocolCraft/Types/Particles/SculkChargeParticle.hpp
+    include/protocolCraft/Types/Particles/ShriekParticle.hpp
     include/protocolCraft/Types/Particles/VibrationParticle.hpp
             
     include/protocolCraft/Types/Recipes/Recipe.hpp
@@ -313,6 +315,8 @@ set(protocolCraft_SRC
     src/Types/Particles/FallingDustParticle.cpp
     src/Types/Particles/IconcrackParticle.cpp
     src/Types/Particles/ItemParticle.cpp
+    src/Types/Particles/SculkChargeParticle.cpp
+    src/Types/Particles/ShriekParticle.cpp
     src/Types/Particles/VibrationParticle.cpp
     
     src/Types/Recipes/RecipeTypeData.cpp

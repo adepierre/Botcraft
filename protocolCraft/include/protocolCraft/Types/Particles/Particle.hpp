@@ -48,10 +48,18 @@ namespace ProtocolCraft
         EntityEffect,
         ExplosionEmitter,
         Explosion,
+#if PROTOCOL_VERSION > 758
+        SonicBoom,
+#endif
         FallingDust,
         Firework,
         Fishing,
         Flame,
+#if PROTOCOL_VERSION > 758
+        SculkSoul,
+        SculkCharge,
+        SculkChargePop,
+#endif
 #if PROTOCOL_VERSION > 734
         SoulFireFlame,
         Soul,
@@ -135,6 +143,9 @@ namespace ProtocolCraft
         WaxOff,
         ElectricSpark,
         Scrape,
+#endif
+#if PROTOCOL_VERSION > 758
+        Shriek,
 #endif
     };
 #else

@@ -13,6 +13,10 @@
 #endif
 #include "protocolCraft/Types/Particles/FallingDustParticle.hpp"
 #include "protocolCraft/Types/Particles/ItemParticle.hpp"
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Types/Particles/SculkChargeParticle.hpp"
+#include "protocolCraft/Types/Particles/ShriekParticle.hpp"
+#endif
 #if PROTOCOL_VERSION > 754
 #include "protocolCraft/Types/Particles/VibrationParticle.hpp"
 #endif
@@ -67,6 +71,14 @@ namespace ProtocolCraft
         case ParticleType::Item:
             output = std::make_shared<ItemParticle>();
             break;
+#if PROTOCOL_VERSION > 758
+        case ParticleType::SculkCharge:
+            output = std::make_shared<SculkChargeParticle>();
+            break;
+        case ParticleType::Shriek:
+            output = std::make_shared<ShriekParticle>();
+            break;
+#endif
 #if PROTOCOL_VERSION > 754
         case ParticleType::Vibration:
             output = std::make_shared<VibrationParticle>();
@@ -102,9 +114,16 @@ namespace ProtocolCraft
         case ParticleType::EntityEffect:
         case ParticleType::ExplosionEmitter:
         case ParticleType::Explosion:
+#if PROTOCOL_VERSION > 758
+        case ParticleType::SonicBoom:
+#endif
         case ParticleType::Firework:
         case ParticleType::Fishing:
         case ParticleType::Flame:
+#if PROTOCOL_VERSION > 758
+        case ParticleType::SculkSoul:
+        case ParticleType::SculkChargePop:
+#endif
 #if PROTOCOL_VERSION > 734
         case ParticleType::SoulFireFlame:
         case ParticleType::Soul:
