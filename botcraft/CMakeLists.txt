@@ -30,10 +30,12 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/World/World.hpp
     
     include/botcraft/Game/Entities/EntityManager.hpp
+    include/botcraft/Game/Entities/GlobalPos.hpp
     include/botcraft/Game/Entities/LocalPlayer.hpp
     include/botcraft/Game/Entities/VillagerData.hpp
     include/botcraft/Game/Entities/entities/UnknownEntity.hpp
     
+    include/botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp
     include/botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp
@@ -42,6 +44,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/BeeEntity.hpp
     include/botcraft/Game/Entities/entities/monster/BlazeEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp
     include/botcraft/Game/Entities/entities/animal/CatEntity.hpp
     include/botcraft/Game/Entities/entities/monster/CaveSpiderEntity.hpp
     include/botcraft/Game/Entities/entities/animal/ChickenEntity.hpp
@@ -64,6 +67,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/item/FallingBlockEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp
     include/botcraft/Game/Entities/entities/animal/FoxEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/frog/FrogEntity.hpp
     include/botcraft/Game/Entities/entities/monster/GhastEntity.hpp
     include/botcraft/Game/Entities/entities/monster/GiantEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/GlowItemFrameEntity.hpp
@@ -136,6 +140,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/npc/VillagerEntity.hpp
     include/botcraft/Game/Entities/entities/monster/VindicatorEntity.hpp
     include/botcraft/Game/Entities/entities/npc/WanderingTraderEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp
     include/botcraft/Game/Entities/entities/monster/WitchEntity.hpp
     include/botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp
     include/botcraft/Game/Entities/entities/monster/WitherSkeletonEntity.hpp
@@ -239,6 +244,7 @@ set(botcraft_SRC
     src/Game/Entities/LocalPlayer.cpp
     src/Game/Entities/entities/UnknownEntity.cpp
     
+    src/Game/Entities/entities/animal/allay/AllayEntity.cpp
     src/Game/Entities/entities/AreaEffectCloudEntity.cpp
     src/Game/Entities/entities/decoration/ArmorStandEntity.cpp
     src/Game/Entities/entities/projectile/ArrowEntity.cpp
@@ -247,6 +253,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/BeeEntity.cpp
     src/Game/Entities/entities/monster/BlazeEntity.cpp
     src/Game/Entities/entities/vehicle/BoatEntity.cpp
+    src/Game/Entities/entities/vehicle/ChestBoatEntity.cpp
     src/Game/Entities/entities/animal/CatEntity.cpp
     src/Game/Entities/entities/monster/CaveSpiderEntity.cpp
     src/Game/Entities/entities/animal/ChickenEntity.cpp
@@ -269,6 +276,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/item/FallingBlockEntity.cpp
     src/Game/Entities/entities/projectile/FireworkRocketEntity.cpp
     src/Game/Entities/entities/animal/FoxEntity.cpp
+    src/Game/Entities/entities/animal/frog/FrogEntity.cpp
     src/Game/Entities/entities/monster/GhastEntity.cpp
     src/Game/Entities/entities/monster/GiantEntity.cpp
     src/Game/Entities/entities/decoration/GlowItemFrameEntity.cpp
@@ -341,6 +349,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/npc/VillagerEntity.cpp
     src/Game/Entities/entities/monster/VindicatorEntity.cpp
     src/Game/Entities/entities/npc/WanderingTraderEntity.cpp
+    src/Game/Entities/entities/monster/warden/WardenEntity.cpp
     src/Game/Entities/entities/monster/WitchEntity.cpp
     src/Game/Entities/entities/boss/wither/WitherBossEntity.cpp
     src/Game/Entities/entities/monster/WitherSkeletonEntity.cpp

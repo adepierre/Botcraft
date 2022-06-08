@@ -7,6 +7,9 @@
 #if PROTOCOL_VERSION > 404
 #include "botcraft/Game/Entities/VillagerData.hpp"
 #endif
+#if PROTOCOL_VERSION > 758
+#include "botcraft/Game/Entities/GlobalPos.hpp"
+#endif
 
 #if USE_GUI
 #include "botcraft/Game/AssetsManager.hpp"
@@ -14,6 +17,9 @@
 #endif
 #include "botcraft/Utilities/Logger.hpp"
 
+#if PROTOCOL_VERSION > 758
+#include "botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp"
@@ -26,6 +32,9 @@
 #endif
 #include "botcraft/Game/Entities/entities/monster/BlazeEntity.hpp"
 #include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
+#if PROTOCOL_VERSION > 758
+#include "botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp"
+#endif
 #if PROTOCOL_VERSION > 404
 #include "botcraft/Game/Entities/entities/animal/CatEntity.hpp"
 #endif
@@ -57,6 +66,9 @@
 #include "botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp"
 #if PROTOCOL_VERSION > 404
 #include "botcraft/Game/Entities/entities/animal/FoxEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 758
+#include "botcraft/Game/Entities/entities/animal/frog/FrogEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/GhastEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/GiantEntity.hpp"
@@ -165,6 +177,9 @@
 #include "botcraft/Game/Entities/entities/monster/VindicatorEntity.hpp"
 #if PROTOCOL_VERSION > 404
 #include "botcraft/Game/Entities/entities/npc/WanderingTraderEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 758
+#include "botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/WitchEntity.hpp"
 #include "botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp"
@@ -421,6 +436,35 @@ namespace Botcraft
             }
             case 18:
                 value = static_cast<Pose>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length)));
+                break;
+#endif
+#if PROTOCOL_VERSION > 758
+            case 19:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+            case 20:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+            case 21:
+                if (ProtocolCraft::ReadData<bool>(iter, length))
+                {
+                    ProtocolCraft::Identifier dimension;
+                    dimension.Read(iter, length);
+                    ProtocolCraft::NetworkPosition pos;
+                    pos.Read(iter, length);
+                    
+                    value = std::optional<GlobalPos>({
+                            dimension,
+                            pos
+                        });
+                }
+                else
+                {
+                    value = std::optional<GlobalPos>();
+                }
+                break;
+            case 22:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
 #endif
             default:
@@ -997,6 +1041,10 @@ namespace Botcraft
         {
         case EntityType::None:
             return nullptr;
+#if PROTOCOL_VERSION > 758
+        case EntityType::Allay:
+            return std::make_shared<AllayEntity>();
+#endif
         case EntityType::AreaEffectCloud:
             return std::make_shared<AreaEffectCloudEntity>();
         case EntityType::ArmorStand:
@@ -1017,6 +1065,10 @@ namespace Botcraft
             return std::make_shared<BlazeEntity>();
         case EntityType::Boat:
             return std::make_shared<BoatEntity>();
+#if PROTOCOL_VERSION > 758
+        case EntityType::ChestBoat:
+            return std::make_shared<ChestBoatEntity>();
+#endif
 #if PROTOCOL_VERSION > 404
         case EntityType::Cat:
             return std::make_shared<CatEntity>();
@@ -1070,6 +1122,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404
         case EntityType::Fox:
             return std::make_shared<FoxEntity>();
+#endif
+#if PROTOCOL_VERSION > 758
+        case EntityType::Frog:
+            return std::make_shared<FrogEntity>();
 #endif
         case EntityType::Ghast:
             return std::make_shared<GhastEntity>();
@@ -1248,6 +1304,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404
         case EntityType::WanderingTrader:
             return std::make_shared<WanderingTraderEntity>();
+#endif
+#if PROTOCOL_VERSION > 758
+        case EntityType::Warden:
+            return std::make_shared<WardenEntity>();
 #endif
         case EntityType::Witch:
             return std::make_shared<WitchEntity>();

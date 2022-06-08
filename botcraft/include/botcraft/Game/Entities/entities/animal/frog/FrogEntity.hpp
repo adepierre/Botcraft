@@ -1,23 +1,20 @@
+#if PROTOCOL_VERSION > 758
 #pragma once
 
-#include "botcraft/Game/Entities/entities/decoration/HangingEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/AnimalEntity.hpp"
 
 namespace Botcraft
 {
-    class PaintingEntity : public HangingEntity
+    class FrogEntity : public AnimalEntity
     {
     protected:
-#if PROTOCOL_VERSION > 758
-        static constexpr int metadata_count = 1;
+        static constexpr int metadata_count = 2;
         static const std::array<std::string, metadata_count> metadata_names;
-#else
-        static constexpr int metadata_count = 0;
-#endif
-        static constexpr int hierarchy_metadata_count = HangingEntity::metadata_count + HangingEntity::hierarchy_metadata_count;
+        static constexpr int hierarchy_metadata_count = AnimalEntity::metadata_count + AnimalEntity::hierarchy_metadata_count;
 
     public:
-        PaintingEntity();
-        virtual ~PaintingEntity();
+        FrogEntity();
+        virtual ~FrogEntity();
 
         // Object related stuff
         virtual std::string GetName() const override;
@@ -29,16 +26,18 @@ namespace Botcraft
         static std::string GetClassName();
         static EntityType GetClassType();
 
-#if PROTOCOL_VERSION > 758
+
         virtual nlohmann::json Serialize() const override;
 
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const int GetDataPaintingVariantId() const;
+        const int GetDataVariantId() const;
+        const std::optional<int>& GetDataTongueTargetId() const;
 
-        void SetDataPaintingVariantId(const int data_painting_variant_id);
-#endif
+        void SetDataVariantId(const int data_variant_id);
+        void SetDataTongueTargetId(const std::optional<int>& data_tongue_target_id);
 
     };
 }
+#endif
