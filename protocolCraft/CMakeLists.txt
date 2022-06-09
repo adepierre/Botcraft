@@ -14,11 +14,13 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Handshaking/Serverbound/ServerboundClientIntentionPacket.hpp
     
     
+    include/protocolCraft/Messages/Login/Clientbound/ClientboundCustomQueryPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundGameProfilePacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundHelloPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundLoginCompressionPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundLoginDisconnectPacket.hpp
     
+    include/protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryPacket.hpp
     include/protocolCraft/Messages/Login/Serverbound/ServerboundHelloPacket.hpp
     include/protocolCraft/Messages/Login/Serverbound/ServerboundKeyPacket.hpp
     
@@ -218,6 +220,9 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/BlockEntityTag.hpp
     include/protocolCraft/Types/Trade.hpp
     
+    include/protocolCraft/Types/GameProfile/GameProfile.hpp
+    include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp
+    include/protocolCraft/Types/GameProfile/ProfilePublicKey.hpp
     
     include/protocolCraft/Types/CommandNode/CommandNode.hpp
     include/protocolCraft/Types/CommandNode/BrigadierProperty.hpp

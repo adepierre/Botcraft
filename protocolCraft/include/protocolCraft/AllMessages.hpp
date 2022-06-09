@@ -7,10 +7,16 @@
 
 
 // Login serverbound
+#if PROTOCOL_VERSION > 340
+#include "protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundHelloPacket.hpp"
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundKeyPacket.hpp"
 
 // Login clientbound
+#if PROTOCOL_VERSION > 340
+#include "protocolCraft/Messages/Login/Clientbound/ClientboundCustomQueryPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundLoginDisconnectPacket.hpp"
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundHelloPacket.hpp"
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundGameProfilePacket.hpp"
@@ -273,10 +279,16 @@ namespace ProtocolCraft
 
 
         // Login serverbound
+#if PROTOCOL_VERSION > 340
+        ServerboundCustomQueryPacket,
+#endif
         ServerboundHelloPacket,
         ServerboundKeyPacket,
 
         // Login clientbound
+#if PROTOCOL_VERSION > 340
+        ClientboundCustomQueryPacket,
+#endif
         ClientboundLoginDisconnectPacket,
         ClientboundHelloPacket,
         ClientboundGameProfilePacket,

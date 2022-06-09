@@ -16,10 +16,16 @@ namespace ProtocolCraft
 
 
     // Login serverbound
+#if PROTOCOL_VERSION > 340
+    template class BaseMessage<ServerboundCustomQueryPacket>;
+#endif
     template class BaseMessage<ServerboundHelloPacket>;
     template class BaseMessage<ServerboundKeyPacket>;
 
     // Login clientbound
+#if PROTOCOL_VERSION > 340
+    template class BaseMessage<ClientboundCustomQueryPacket>;
+#endif
     template class BaseMessage<ClientboundLoginDisconnectPacket>;
     template class BaseMessage<ClientboundHelloPacket>;
     template class BaseMessage<ClientboundGameProfilePacket>;

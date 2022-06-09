@@ -59,6 +59,11 @@ namespace ProtocolCraft
                 case 0x03:
                     return std::shared_ptr<ClientboundLoginCompressionPacket>(new ClientboundLoginCompressionPacket);
                     break;
+#if PROTOCOL_VERSION > 340
+                case 0x04:
+                    return std::shared_ptr<ClientboundCustomQueryPacket>(new ClientboundCustomQueryPacket);
+                    break;
+#endif
                 default:
                     return nullptr;
                     break;
@@ -2369,6 +2374,11 @@ namespace ProtocolCraft
                 case 0x01:
                     return std::shared_ptr<ServerboundKeyPacket>(new ServerboundKeyPacket);
                     break;
+#if PROTOCOL_VERSION > 340
+                case 0x02:
+                    return std::shared_ptr<ServerboundCustomQueryPacket>(new ServerboundCustomQueryPacket);
+                    break;
+#endif
                 default:
                     return nullptr;
                     break;

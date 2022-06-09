@@ -2,6 +2,10 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Types/GameProfile/GameProfile.hpp"
+#endif
+
 namespace ProtocolCraft
 {
     class ClientboundGameProfilePacket : public BaseMessage<ClientboundGameProfilePacket>
@@ -22,6 +26,18 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION > 758
+        void SetGameProfile(const GameProfile& game_profile_)
+        {
+            game_profile = game_profile_;
+        }
+
+
+        const GameProfile& GetGameProfile() const
+        {
+            return game_profile;
+        }
+#else
 #if PROTOCOL_VERSION > 706
         void SetUUID(const UUID& uuid_)
         {
@@ -55,39 +71,55 @@ namespace ProtocolCraft
         {
             return username;
         }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
+#if PROTOCOL_VERSION > 758
+            game_profile.Read(iter, length);
+#else
 #if PROTOCOL_VERSION > 706
             uuid = ReadData<UUID>(iter, length);
 #else
             uuid = ReadData<std::string>(iter, length);
 #endif
             username = ReadData<std::string>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
+#if PROTOCOL_VERSION > 758
+            game_profile.Write(container);
+#else
 #if PROTOCOL_VERSION > 706
             WriteData<UUID>(uuid, container);
 #else
             WriteData<std::string>(uuid, container);
 #endif
             WriteData<std::string>(username, container);
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
         {
             nlohmann::json output;
 
+#if PROTOCOL_VERSION > 758
+            output["game_profile"] = game_profile.Serialize();
+#else
             output["uuid"] = uuid;
             output["username"] = username;
+#endif
 
             return output;
         }
 
     private:
+#if PROTOCOL_VERSION > 758
+        GameProfile game_profile;
+#else
 #if PROTOCOL_VERSION > 706
         UUID uuid;
 #else
@@ -95,5 +127,6 @@ namespace ProtocolCraft
         std::string uuid;
 #endif
         std::string username;
+#endif
     };
 } //ProtocolCraft
