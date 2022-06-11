@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION < 759
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
@@ -72,12 +73,12 @@ namespace ProtocolCraft
 
         void SetYRot(const Angle yRot_)
         {
-            yRot = yRot_;
+            y_rot = yRot_;
         }
 
         void SetXRot(const Angle xRot_)
         {
-            xRot = xRot_;
+            x_rot = xRot_;
         }
 
         void SetYHeadRot(const Angle y_head_rot_)
@@ -140,12 +141,12 @@ namespace ProtocolCraft
 
         const Angle GetYRot() const
         {
-            return yRot;
+            return y_rot;
         }
 
         const Angle GetXRot() const
         {
-            return xRot;
+            return x_rot;
         }
 
         const Angle GetYHeadRot() const
@@ -185,8 +186,8 @@ namespace ProtocolCraft
             x = ReadData<double>(iter, length);
             y = ReadData<double>(iter, length);
             z = ReadData<double>(iter, length);
-            yRot = ReadData<Angle>(iter, length);
-            xRot = ReadData<Angle>(iter, length);
+            y_rot = ReadData<Angle>(iter, length);
+            x_rot = ReadData<Angle>(iter, length);
             y_head_rot = ReadData<Angle>(iter, length);
             xd = ReadData<short>(iter, length);
             yd = ReadData<short>(iter, length);
@@ -204,8 +205,8 @@ namespace ProtocolCraft
             WriteData<double>(x, container);
             WriteData<double>(y, container);
             WriteData<double>(z, container);
-            WriteData<Angle>(yRot, container);
-            WriteData<Angle>(xRot, container);
+            WriteData<Angle>(y_rot, container);
+            WriteData<Angle>(x_rot, container);
             WriteData<Angle>(y_head_rot, container);
             WriteData<short>(xd, container);
             WriteData<short>(yd, container);
@@ -225,8 +226,8 @@ namespace ProtocolCraft
             output["x"] = x;
             output["y"] = y;
             output["z"] = z;
-            output["yRot"] = yRot;
-            output["xRot"] = xRot;
+            output["y_rot"] = y_rot;
+            output["x_rot"] = x_rot;
             output["y_head_rot"] = y_head_rot;
             output["xd"] = xd;
             output["yd"] = yd;
@@ -248,8 +249,8 @@ namespace ProtocolCraft
         short xd;
         short yd;
         short zd;
-        Angle yRot;
-        Angle xRot;
+        Angle y_rot;
+        Angle x_rot;
         Angle y_head_rot;
 #if PROTOCOL_VERSION < 550
         std::vector<unsigned char> raw_metadata;
@@ -257,3 +258,4 @@ namespace ProtocolCraft
 
     };
 } //ProtocolCraft
+#endif

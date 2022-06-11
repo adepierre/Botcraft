@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 759
 #pragma once
 
-#if PROTOCOL_VERSION > 754
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Vibrations/VibrationPath.hpp"
 

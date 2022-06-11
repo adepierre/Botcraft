@@ -1,7 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Chat.hpp"
+#include "protocolCraft/Types/Chat/Chat.hpp"
 
 namespace ProtocolCraft
 {
@@ -26,6 +26,8 @@ namespace ProtocolCraft
             return 0x1A;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x1A;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x17;
 #else
 #error "Protocol version not implemented"
 #endif

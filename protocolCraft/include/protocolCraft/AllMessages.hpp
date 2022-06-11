@@ -107,10 +107,16 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPongPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundChatCommandPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundChatPreviewPacket.hpp"
+#endif
 
 // Play clientbound
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockUpdatePacket.hpp"
+#if PROTOCOL_VERSION < 759
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundChatPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundChangeDifficultyPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSectionBlocksUpdatePacket.hpp"
 #if PROTOCOL_VERSION < 755
@@ -140,7 +146,7 @@
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockEntityDataPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoPacket.hpp"
-#if PROTOCOL_VERSION > 493
+#if PROTOCOL_VERSION > 493 && PROTOCOL_VERSION < 759
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockBreakAckPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetSlotPacket.hpp"
@@ -152,8 +158,10 @@
 #if PROTOCOL_VERSION < 721
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddGlobalEntityPacket.hpp"
 #endif
+#if PROTOCOL_VERSION < 759
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddMobPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddPaintingPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddPlayerPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAnimatePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAwardStatsPacket.hpp"
@@ -248,7 +256,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSoundEntityPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION < 759
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddVibrationSignalPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundClearTitlesPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundInitializeBorderPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPingPacket.hpp"
@@ -268,6 +278,14 @@
 #if PROTOCOL_VERSION > 756
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkWithLightPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetSimulationDistancePacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockChangedAckPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundChatPreviewPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerChatPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundServerDataPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetDisplayChatPreviewPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSystemChatPacket.hpp"
 #endif
 
 
@@ -389,6 +407,10 @@ namespace ProtocolCraft
         ServerboundMovePlayerPacketStatusOnly,
         ServerboundPongPacket,
 #endif
+#if PROTOCOL_VERSION > 758
+        ServerboundChatCommandPacket,
+        ServerboundChatPreviewPacket,
+#endif
 
         // Play clientbound
         ClientboundUpdateAdvancementsPacket,
@@ -469,12 +491,14 @@ namespace ProtocolCraft
         ClientboundTeleportEntityPacket,
         ClientboundPlayerAbilitiesPacket,
         ClientboundSetTimePacket,
+#if PROTOCOL_VERSION < 759
         ClientboundChatPacket,
+#endif
         ClientboundRespawnPacket,
 #if PROTOCOL_VERSION > 404
         ClientboundLightUpdatePacket,
 #endif
-#if PROTOCOL_VERSION > 493
+#if PROTOCOL_VERSION > 493 && PROTOCOL_VERSION < 759
         ClientboundBlockBreakAckPacket,
 #endif
         ClientboundBlockEntityDataPacket,
@@ -494,9 +518,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 721
         ClientboundAddGlobalEntityPacket,
 #endif
+#if PROTOCOL_VERSION < 759
         ClientboundAddMobPacket,
+#endif
         ClientboundAddEntityPacket,
+#if PROTOCOL_VERSION < 759
         ClientboundAddPaintingPacket,
+#endif
         ClientboundAddPlayerPacket,
         ClientboundSetDefaultSpawnPositionPacket,
         ClientboundAwardStatsPacket,
@@ -531,7 +559,9 @@ namespace ProtocolCraft
         ClientboundSetBorderPacket,
 #endif
 #if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION < 759
         ClientboundAddVibrationSignalPacket,
+#endif
         ClientboundClearTitlesPacket,
         ClientboundInitializeBorderPacket,
         ClientboundPingPacket,
@@ -551,6 +581,14 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 756
         ClientboundLevelChunkWithLightPacket,
         ClientboundSetSimulationDistancePacket,
+#endif
+#if PROTOCOL_VERSION > 758
+        ClientboundBlockChangedAckPacket,
+        ClientboundChatPreviewPacket,
+        ClientboundPlayerChatPacket,
+        ClientboundServerDataPacket,
+        ClientboundSetDisplayChatPreviewPacket,
+        ClientboundSystemChatPacket,
 #endif
         ClientboundSetCarriedItemPacket
     > ;

@@ -1,9 +1,9 @@
+#if PROTOCOL_VERSION > 493 && PROTOCOL_VERSION < 759
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
-#if PROTOCOL_VERSION > 493 
 namespace ProtocolCraft
 {
     class ClientboundBlockBreakAckPacket : public BaseMessage<ClientboundBlockBreakAckPacket>

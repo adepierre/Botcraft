@@ -26,6 +26,8 @@ namespace ProtocolCraft
             return 0x1A;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x1A;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x1C;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -57,6 +59,14 @@ namespace ProtocolCraft
             action = action_;
         }
 
+#if PROTOCOL_VERSION > 758
+        void SetSequence(const int sequence_)
+        {
+            sequence = sequence_;
+        }
+#endif
+
+
         const NetworkPosition GetPos() const
         {
             return pos;
@@ -72,12 +82,22 @@ namespace ProtocolCraft
             return action;
         }
 
+#if PROTOCOL_VERSION > 758
+        const int GetSequence() const
+        {
+            return sequence;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             action = ReadData<VarInt>(iter, length);
             pos.Read(iter, length);
             direction = ReadData<char>(iter, length);
+#if PROTOCOL_VERSION > 758
+            sequence = ReadData<VarInt>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -85,6 +105,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(action, container);
             pos.Write(container);
             WriteData<char>(direction, container);
+#if PROTOCOL_VERSION > 758
+            WriteData<VarInt>(sequence, container);
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -94,6 +117,9 @@ namespace ProtocolCraft
             output["pos"] = pos.Serialize();
             output["direction"] = direction;
             output["action"] = action;
+#if PROTOCOL_VERSION > 758
+            output["sequence"] = sequence;
+#endif
 
             return output;
         }
@@ -102,5 +128,8 @@ namespace ProtocolCraft
         NetworkPosition pos;
         char direction;
         int action;
+#if PROTOCOL_VERSION > 758
+        int sequence;
+#endif
     };
 } //ProtocolCraft

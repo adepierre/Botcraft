@@ -1,4 +1,3 @@
-#if PROTOCOL_VERSION > 758
 #pragma once
 
 #include "protocolCraft/NetworkType.hpp"
@@ -101,4 +100,3 @@ namespace ProtocolCraft
         std::string signature;
     };
 } // ProtocolCraft
-#endif

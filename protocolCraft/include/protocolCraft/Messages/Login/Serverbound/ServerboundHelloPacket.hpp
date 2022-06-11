@@ -32,11 +32,6 @@ namespace ProtocolCraft
             name_ = name__;
         }
 
-        void SetHasPublicKey(const bool has_public_key_)
-        {
-            has_public_key = has_public_key_;
-        }
-
         void SetPublicKey(const ProfilePublicKey& public_key_)
         {
             public_key = public_key_;
@@ -45,11 +40,6 @@ namespace ProtocolCraft
         const std::string& GetName_() const
         {
             return name_;
-        }
-
-        const bool GetHasPublicKey() const
-        {
-            return has_public_key;
         }
 
         const ProfilePublicKey& GetPublicKey() const
@@ -73,7 +63,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION > 758
             name_ = ReadData<std::string>(iter, length);
-            has_public_key = ReadData<bool>(iter, length);
+            const bool has_public_key = ReadData<bool>(iter, length);
             if (has_public_key)
             {
                 public_key.Read(iter, length);
@@ -87,8 +77,8 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION > 758
             WriteData<std::string>(name_, container);
-            WriteData<bool>(has_public_key, container);
-            if (has_public_key)
+            WriteData<bool>(!public_key.GetKey().empty(), container);
+            if (!public_key.GetKey().empty())
             {
                 public_key.Write(container);
             }
@@ -103,7 +93,7 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 758
             output["name"] = name_;
-            if (has_public_key)
+            if (!public_key.GetKey().empty())
             {
                 output["public_key"] = public_key.Serialize();
             }
@@ -117,7 +107,6 @@ namespace ProtocolCraft
     private:
 #if PROTOCOL_VERSION > 758
         std::string name_;
-        bool has_public_key;
         ProfilePublicKey public_key;
 #else
         std::string game_profile;

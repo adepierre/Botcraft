@@ -2,6 +2,9 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Types/GlobalPos.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -26,6 +29,8 @@ namespace ProtocolCraft
             return 0x26;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x26;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x23;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -81,8 +86,13 @@ namespace ProtocolCraft
             registry_holder = registry_holder_;
         }
 
-#if PROTOCOL_VERSION > 747
+#if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
         void SetDimensionType(const NBT& dimension_type_)
+        {
+            dimension_type = dimension_type_;
+        }
+#elif PROTOCOL_VERSION > 758
+        void SetDimensionType(const Identifier& dimension_type_)
         {
             dimension_type = dimension_type_;
         }
@@ -162,6 +172,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 758
+        void SetLastDeathLocation(const GlobalPos& last_death_location_)
+        {
+            last_death_location = last_death_location_;
+        }
+#endif
+
 
         const int GetPlayerId() const
         {
@@ -203,8 +220,13 @@ namespace ProtocolCraft
             return registry_holder;
         }
 
-#if PROTOCOL_VERSION > 747
+#if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
         const NBT& GetDimensionType() const
+        {
+            return dimension_type;
+        }
+#elif PROTOCOL_VERSION > 758
+        const Identifier& GetDimensionType() const
         {
             return dimension_type;
         }
@@ -283,6 +305,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 758
+        const GlobalPos& GetLastDeathLocation() const
+        {
+            return last_death_location;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
@@ -334,6 +363,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 718
             is_debug = ReadData<bool>(iter, length);
             is_flat = ReadData<bool>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 758
+            const bool has_last_death_location = ReadData<bool>(iter, length);
+            if (has_last_death_location)
+            {
+                last_death_location.Read(iter, length);
+            }
 #endif
         }
 
@@ -387,6 +423,13 @@ namespace ProtocolCraft
             WriteData<bool>(is_debug, container);
             WriteData<bool>(is_flat, container);
 #endif
+#if PROTOCOL_VERSION > 758
+            WriteData<bool>(!last_death_location.GetDimension().GetFull().empty(), container);
+            if (!last_death_location.GetDimension().GetFull().empty())
+            {
+                last_death_location.Write(container);
+            }
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -436,6 +479,12 @@ namespace ProtocolCraft
             output["is_debug"] = is_debug;
             output["is_flat"] = is_flat;
 #endif
+#if PROTOCOL_VERSION > 758
+            if (!last_death_location.GetDimension().GetFull().empty())
+            {
+                output["last_death_location"] = last_death_location.Serialize();
+            }
+#endif
 
             return output;
         }
@@ -453,8 +502,10 @@ namespace ProtocolCraft
         unsigned char previous_game_type;
         std::vector<Identifier> levels;
         NBT registry_holder;
-#if PROTOCOL_VERSION > 747
+#if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
         NBT dimension_type;
+#elif PROTOCOL_VERSION > 758
+        Identifier dimension_type;
 #endif
         Identifier dimension;
 #else
@@ -482,6 +533,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 718
         bool is_debug;
         bool is_flat;
+#endif
+#if PROTOCOL_VERSION > 758
+        GlobalPos last_death_location;
 #endif
     };
 } //ProtocolCraft

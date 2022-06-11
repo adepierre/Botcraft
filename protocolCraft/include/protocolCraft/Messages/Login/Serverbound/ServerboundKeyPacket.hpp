@@ -2,6 +2,10 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Types/SaltSignature.hpp"
+#endif
+
 namespace ProtocolCraft
 {
     class ServerboundKeyPacket : public BaseMessage<ServerboundKeyPacket>
@@ -33,12 +37,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 758
-        void SetHasSaltSignature(const bool has_salt_signature_)
-        {
-            has_salt_signature = has_salt_signature_;
-        }
-
-        void SetHasSignature(const std::pair<long long int, std::vector<unsigned char> >& salt_signature_)
+        void SetHasSignature(const SaltSignature& salt_signature_)
         {
             salt_signature = salt_signature_;
         }
@@ -55,12 +54,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 758
-        const bool GetHasSaltSignature() const
-        {
-            return has_salt_signature;
-        }
-
-        const std::pair<long long int, std::vector<unsigned char> >& GetSaltSignature() const
+        const SaltSignature& GetSaltSignature() const
         {
             return salt_signature;
         }
@@ -72,11 +66,10 @@ namespace ProtocolCraft
             int key_bytes_length = ReadData<VarInt>(iter, length);
             key_bytes = ReadByteArray(iter, length, key_bytes_length);
 #if PROTOCOL_VERSION > 758
-            has_salt_signature = ReadData<bool>(iter, length);
+            const bool has_salt_signature = ReadData<bool>(iter, length);
             if (has_salt_signature)
             {
-                salt_signature.first = ReadData<long long int>(iter, length);
-                salt_signature.second = ReadByteArray(iter, length, length);
+                salt_signature.Read(iter, length);
             }
             else
             {
@@ -94,11 +87,10 @@ namespace ProtocolCraft
             WriteData<VarInt>(key_bytes.size(), container);
             WriteByteArray(key_bytes, container);
 #if PROTOCOL_VERSION > 758
-            WriteData<bool>(has_salt_signature, container);
-            if (has_salt_signature)
+            WriteData<bool>(!salt_signature.GetSignature().empty(), container);
+            if (!salt_signature.GetSignature().empty())
             {
-                WriteData<long long int>(salt_signature.first, container);
-                WriteByteArray(salt_signature.second, container);
+                salt_signature.Write(container);
             }
             else
             {
@@ -117,9 +109,9 @@ namespace ProtocolCraft
 
             output["key_bytes"] = "vector of " + std::to_string(key_bytes.size()) + " unsigned char";
 #if PROTOCOL_VERSION > 758
-            if (has_salt_signature)
+            if (!salt_signature.GetSignature().empty())
             {
-                output["salt_signature"] = { {"salt", salt_signature.first}, {"signature", "vector of " + std::to_string(salt_signature.second.size()) + " unsigned char"} };
+                output["salt_signature"] = salt_signature.Serialize();
             }
             else
             {
@@ -136,8 +128,7 @@ namespace ProtocolCraft
         std::vector<unsigned char> key_bytes;
         std::vector<unsigned char> nonce;
 #if PROTOCOL_VERSION > 758
-        bool has_salt_signature;
-        std::pair<long long int, std::vector<unsigned char> > salt_signature;
+        SaltSignature salt_signature;
 #endif
     };
 } // Botcraft

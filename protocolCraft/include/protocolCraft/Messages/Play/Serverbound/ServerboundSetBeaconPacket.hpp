@@ -24,6 +24,8 @@ namespace ProtocolCraft
             return 0x24;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x24;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x26;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -64,22 +66,61 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 759
             primary = ReadData<VarInt>(iter, length);
             secondary = ReadData<VarInt>(iter, length);
+#else
+            const bool has_primary = ReadData<bool>(iter, length);
+            primary = 0;
+            if (has_primary)
+            {
+                primary = ReadData<VarInt>(iter, length);
+            }
+            const bool has_secondary = ReadData<bool>(iter, length);
+            secondary = 0;
+            if (has_secondary)
+            {
+                secondary = ReadData<VarInt>(iter, length);
+            }
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 759
             WriteData<VarInt>(primary, container);
             WriteData<VarInt>(secondary, container);
+#else
+            WriteData<bool>(primary > 0, container);
+            if (primary > 0)
+            {
+                WriteData<VarInt>(primary, container);
+            }
+            WriteData<bool>(secondary > 0, container);
+            if (secondary > 0)
+            {
+                WriteData<VarInt>(secondary, container);
+            }
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
         {
             nlohmann::json output;
 
+#if PROTOCOL_VERSION < 759
             output["primary"] = primary;
             output["secondary"] = secondary;
+#else
+            if (primary > 0)
+            {
+                output["primary"] = primary;
+            }
+            if (secondary > 0)
+            {
+                output["secondary"] = secondary;
+            }
+#endif
 
             return output;
         }

@@ -1,5 +1,10 @@
 #pragma once
 
+#if PROTOCOL_VERSION > 758
+#include <string>
+
+#include "protocolCraft/Types/SaltSignature.hpp"
+#endif
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -25,6 +30,8 @@ namespace ProtocolCraft
             return 0x03;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x03;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x04;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -45,20 +52,65 @@ namespace ProtocolCraft
             message = s;
         }
 
+#if PROTOCOL_VERSION > 758
+        void SetTimestamp(const long long int timestamp_)
+        {
+            timestamp = timestamp_;
+        }
+
+        void SetSaltSignature(const SaltSignature& salt_signature_)
+        {
+            salt_signature = salt_signature_;
+        }
+
+        void SetSignedPreview(const bool signed_preview_)
+        {
+            signed_preview = signed_preview_;
+        }
+#endif
+
+
         const std::string& GetMessage() const
         {
             return message;
         }
 
+#if PROTOCOL_VERSION > 758
+        const long long int GetTimestamp() const
+        {
+            return timestamp;
+        }
+
+        const SaltSignature& GetSaltSignature() const
+        {
+            return salt_signature;
+        }
+
+        const bool GetSignedPreview() const
+        {
+            return signed_preview;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             message = ReadData<std::string>(iter, length);
+#if PROTOCOL_VERSION > 758
+            timestamp = ReadData<long long int>(iter, length);
+            salt_signature.Read(iter, length);
+            signed_preview = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<std::string>(message, container);
+#if PROTOCOL_VERSION > 758
+            WriteData<long long int>(timestamp, container);
+            salt_signature.Write(container);
+            WriteData<bool>(signed_preview, container);
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -66,11 +118,21 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["message"] = message;
+#if PROTOCOL_VERSION > 758
+            output["timestamp"] = timestamp;
+            output["salt_signature"] = salt_signature.Serialize();
+            output["signed_preview"] = signed_preview;
+#endif
 
             return output;
         }
 
     private:
         std::string message;
+#if PROTOCOL_VERSION > 758
+        long long int timestamp;
+        SaltSignature salt_signature;
+        bool signed_preview;
+#endif
     };
 } //ProtocolCraft

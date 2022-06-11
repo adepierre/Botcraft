@@ -1,6 +1,9 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Types/NBT/NBT.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -25,6 +28,8 @@ namespace ProtocolCraft
             return 0x64;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x65;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x66;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -72,6 +77,13 @@ namespace ProtocolCraft
             flags = flags_;
         }
 
+#if PROTOCOL_VERSION > 758
+        void SetFactorData(const NBT& factor_data_)
+        {
+            factor_data = factor_data_;
+        }
+#endif
+
 
         const int GetEntityId() const
         {
@@ -105,6 +117,13 @@ namespace ProtocolCraft
             return flags;
         }
 
+#if PROTOCOL_VERSION > 758
+        const NBT& GetFactorData() const
+        {
+            return factor_data;
+        }
+#endif
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -118,6 +137,13 @@ namespace ProtocolCraft
             effect_amplifier = ReadData<char>(iter, length);
             effect_duration_ticks = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
+#if PROTOCOL_VERSION > 758
+            const bool has_factor_data = ReadData<bool>(iter, length);
+            if (has_factor_data)
+            {
+                factor_data.Read(iter, length);
+            }
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -131,6 +157,13 @@ namespace ProtocolCraft
             WriteData<char>(effect_amplifier, container);
             WriteData<VarInt>(effect_duration_ticks, container);
             WriteData<char>(flags, container);
+#if PROTOCOL_VERSION > 758
+            WriteData<bool>(factor_data.HasData(), container);
+            if (factor_data.HasData())
+            {
+                factor_data.Write(container);
+            }
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -142,6 +175,12 @@ namespace ProtocolCraft
             output["effect_amplifier"] = effect_amplifier;
             output["effect_duration_ticks"] = effect_duration_ticks;
             output["flags"] = flags;
+#if PROTOCOL_VERSION > 758
+            if (factor_data.HasData())
+            {
+                output["factor_data"] = factor_data.Serialize();
+            }
+#endif
 
             return output;
         }
@@ -156,6 +195,9 @@ namespace ProtocolCraft
         char effect_amplifier;
         int effect_duration_ticks;
         char flags;
+#if PROTOCOL_VERSION > 758
+        NBT factor_data;
+#endif
 
     };
 } //ProtocolCraft

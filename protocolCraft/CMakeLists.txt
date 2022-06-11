@@ -26,6 +26,7 @@ set(protocolCraft_PUBLIC_HDR
     
     
     include/protocolCraft/Messages/Play/Clientbound/ClientboundBlockBreakAckPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundBlockChangedAckPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateAdvancementsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetEntityLinkPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundBlockEventPacket.hpp
@@ -34,6 +35,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundBossEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetCameraPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundChatPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundChatPreviewPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundGameEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkWithLightPacket.hpp
@@ -87,6 +89,9 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundResourcePackPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetObjectivePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSelectAdvancementsTabPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundServerDataPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSetDisplayChatPreviewPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundSystemChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundChangeDifficultyPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCooldownPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetPassengersPacket.hpp
@@ -125,6 +130,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundClearTitlesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundInitializeBorderPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPingPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatEndPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatEnterPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatKillPacket.hpp
@@ -142,6 +148,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSeenAdvancementsPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSwingPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChatPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundChatCommandPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundChatPreviewPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundContainerClickPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundContainerButtonClickPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundClientInformationPacket.hpp
@@ -204,25 +212,24 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/AdvancementDisplay.hpp
     include/protocolCraft/Types/AdvancementProgress.hpp
     include/protocolCraft/Types/BlockEntityInfo.hpp
-    include/protocolCraft/Types/Chat.hpp
     include/protocolCraft/Types/ClientboundLevelChunkPacketData.hpp
     include/protocolCraft/Types/ClientboundLightUpdatePacketData.hpp
     include/protocolCraft/Types/CriterionProgress.hpp
     include/protocolCraft/Types/EntityModifierData.hpp
     include/protocolCraft/Types/EntityProperty.hpp
+    include/protocolCraft/Types/GlobalPos.hpp
     include/protocolCraft/Types/Identifier.hpp
     include/protocolCraft/Types/MapDecoration.hpp
     include/protocolCraft/Types/NetworkPosition.hpp
-    include/protocolCraft/Types/PlayerProperty.hpp
     include/protocolCraft/Types/PlayerUpdate.hpp
     include/protocolCraft/Types/Record.hpp
+    include/protocolCraft/Types/SaltSignature.hpp
     include/protocolCraft/Types/Slot.hpp
     include/protocolCraft/Types/BlockEntityTag.hpp
     include/protocolCraft/Types/Trade.hpp
     
-    include/protocolCraft/Types/GameProfile/GameProfile.hpp
-    include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp
-    include/protocolCraft/Types/GameProfile/ProfilePublicKey.hpp
+    include/protocolCraft/Types/Chat/Chat.hpp
+    include/protocolCraft/Types/Chat/ChatSender.hpp
     
     include/protocolCraft/Types/CommandNode/CommandNode.hpp
     include/protocolCraft/Types/CommandNode/BrigadierProperty.hpp
@@ -234,6 +241,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/CommandNode/BrigadierPropertyRange.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyScoreHolder.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyString.hpp
+    
+    include/protocolCraft/Types/GameProfile/GameProfile.hpp
+    include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp
+    include/protocolCraft/Types/GameProfile/ProfilePublicKey.hpp
     
     include/protocolCraft/Types/NBT/NBT.hpp
     include/protocolCraft/Types/NBT/Tag.hpp
@@ -289,7 +300,10 @@ set(protocolCraft_PUBLIC_HDR
 set(protocolCraft_SRC 
     src/BaseMessage.cpp
     src/BinaryReadWrite.cpp
-    src/Types/Chat.cpp
+    
+    src/Types/Chat/Chat.cpp
+    
+    src/Types/CommandNode/BrigadierProperty.cpp
     
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp
@@ -306,8 +320,6 @@ set(protocolCraft_SRC
     src/Types/NBT/TagCompound.cpp
     src/Types/NBT/TagIntArray.cpp
     src/Types/NBT/TagLongArray.cpp
-    
-    src/Types/CommandNode/BrigadierProperty.cpp
     
     src/Types/Particles/Particle.cpp
     src/Types/Particles/NoDataTypedParticle.cpp

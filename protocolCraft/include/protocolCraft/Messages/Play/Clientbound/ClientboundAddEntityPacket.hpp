@@ -25,6 +25,8 @@ namespace ProtocolCraft
             return 0x00;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x00;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x00;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -82,13 +84,20 @@ namespace ProtocolCraft
 
         void SetXRot(const Angle xRot_)
         {
-            xRot = xRot_;
+            x_rot = xRot_;
         }
 
         void SetYRot(const Angle yRot_)
         {
-            yRot = yRot_;
+            y_rot = yRot_;
         }
+
+#if PROTOCOL_VERSION > 758
+        void SetYHeadRot(const Angle y_head_rot_)
+        {
+            y_head_rot = y_head_rot_;
+        }
+#endif
 
         void SetType(const char type_)
         {
@@ -142,13 +151,20 @@ namespace ProtocolCraft
 
         const Angle GetXRot() const
         {
-            return xRot;
+            return x_rot;
         }
 
         const Angle GetYRot() const
         {
-            return yRot;
+            return y_rot;
         }
+
+#if PROTOCOL_VERSION > 758
+        const Angle GetYHeadRot() const
+        {
+            return y_head_rot;
+        }
+#endif
 
         const char GetType() const
         {
@@ -173,9 +189,14 @@ namespace ProtocolCraft
             x = ReadData<double>(iter, length);
             y = ReadData<double>(iter, length);
             z = ReadData<double>(iter, length);
-            xRot = ReadData<Angle>(iter, length);
-            yRot = ReadData<Angle>(iter, length);
+            x_rot = ReadData<Angle>(iter, length);
+            y_rot = ReadData<Angle>(iter, length);
+#if PROTOCOL_VERSION > 758
+            y_head_rot = ReadData<Angle>(iter, length);
+            data = ReadData<VarInt>(iter, length);
+#else
             data = ReadData<int>(iter, length);
+#endif
             xa = ReadData<short>(iter, length);
             ya = ReadData<short>(iter, length);
             za = ReadData<short>(iter, length);
@@ -193,9 +214,14 @@ namespace ProtocolCraft
             WriteData<double>(x, container);
             WriteData<double>(y, container);
             WriteData<double>(z, container);
-            WriteData<Angle>(xRot, container);
-            WriteData<Angle>(yRot, container);
+            WriteData<Angle>(x_rot, container);
+            WriteData<Angle>(y_rot, container);
+#if PROTOCOL_VERSION > 758
+            WriteData<Angle>(y_head_rot, container);
+            WriteData<VarInt>(data, container);
+#else
             WriteData<int>(data, container);
+#endif
             WriteData<short>(xa, container);
             WriteData<short>(ya, container);
             WriteData<short>(za, container);
@@ -211,8 +237,11 @@ namespace ProtocolCraft
             output["x"] = x;
             output["y"] = y;
             output["z"] = z;
-            output["xRot"] = xRot;
-            output["yRot"] = yRot;
+            output["x_rot"] = x_rot;
+            output["y_rot"] = y_rot;
+#if PROTOCOL_VERSION > 758
+            output["y_head_rot"] = y_head_rot;
+#endif
             output["data"] = data;
             output["xa"] = xa;
             output["ya"] = ya;
@@ -235,8 +264,11 @@ namespace ProtocolCraft
         short xa;
         short ya;
         short za;
-        Angle xRot;
-        Angle yRot;
+        Angle x_rot;
+        Angle y_rot;
+#if PROTOCOL_VERSION > 758
+        Angle y_head_rot;
+#endif
         int data;
 
     };

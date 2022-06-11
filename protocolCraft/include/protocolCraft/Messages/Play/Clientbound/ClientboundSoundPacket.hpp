@@ -25,6 +25,8 @@ namespace ProtocolCraft
             return 0x5C;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x5D;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x5D;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -75,6 +77,13 @@ namespace ProtocolCraft
             pitch = pitch_;
         }
 
+#if PROTOCOL_VERSION > 758
+        void SetSeed(const long long int seed_)
+        {
+            seed = seed_;
+        }
+#endif
+
 
         const int GetSound() const
         {
@@ -111,6 +120,13 @@ namespace ProtocolCraft
             return pitch;
         }
 
+#if PROTOCOL_VERSION > 758
+        const long long int GetSeed() const
+        {
+            return seed;
+        }
+#endif
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -122,6 +138,9 @@ namespace ProtocolCraft
             z = ReadData<int>(iter, length);
             volume = ReadData<float>(iter, length);
             pitch = ReadData<float>(iter, length);
+#if PROTOCOL_VERSION > 758
+            seed = ReadData<long long int>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -133,6 +152,9 @@ namespace ProtocolCraft
             WriteData<int>(z, container);
             WriteData<float>(volume, container);
             WriteData<float>(pitch, container);
+#if PROTOCOL_VERSION > 758
+            WriteData<long long int>(seed, container);
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -146,6 +168,9 @@ namespace ProtocolCraft
             output["z"] = z;
             output["volume"] = volume;
             output["pitch"] = pitch;
+#if PROTOCOL_VERSION > 758
+            output["seed"] = seed;
+#endif
 
             return output;
         }
@@ -158,6 +183,9 @@ namespace ProtocolCraft
         int z;
         float volume;
         float pitch;
+#if PROTOCOL_VERSION > 758
+        long long int seed;
+#endif
 
     };
 } //ProtocolCraft

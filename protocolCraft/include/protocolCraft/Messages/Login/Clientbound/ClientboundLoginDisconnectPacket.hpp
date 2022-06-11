@@ -1,7 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Chat.hpp"
+#include "protocolCraft/Types/Chat/Chat.hpp"
 
 namespace ProtocolCraft
 {

@@ -3,6 +3,8 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
+#include "protocolCraft/Types/Identifier.hpp"
+
 namespace ProtocolCraft
 {
     class ClientboundCustomQueryPacket : public BaseMessage<ClientboundCustomQueryPacket>

@@ -3,9 +3,11 @@
 #include <string>
 
 #include "protocolCraft/NetworkType.hpp"
-#include "protocolCraft/Types/Chat.hpp"
-#include "protocolCraft/Types/PlayerProperty.hpp"
-
+#include "protocolCraft/Types/Chat/Chat.hpp"
+#include "protocolCraft/Types/GameProfile/GameProfileProperty.hpp"
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Types/GameProfile/ProfilePublicKey.hpp"
+#endif
 
 namespace ProtocolCraft 
 {
@@ -37,10 +39,17 @@ namespace ProtocolCraft
             display_name = c;
         }
 
-        void SetProperties(const std::vector<PlayerProperty>& p)
+        void SetProperties(const std::vector<GameProfileProperty>& p)
         {
             properties = p;
         }
+
+#if PROTOCOL_VERSION > 758
+        void SetProfilePublicKey(const ProfilePublicKey& profile_public_key_)
+        {
+            profile_public_key = profile_public_key_;
+        }
+#endif
 
 
         const std::string& GetName() const
@@ -63,22 +72,29 @@ namespace ProtocolCraft
             return display_name;
         }
 
-        const std::vector<PlayerProperty>& GetProperties() const
+        const std::vector<GameProfileProperty>& GetProperties() const
         {
             return properties;
         }
 
-        std::vector<PlayerProperty>& GetProperties()
+        std::vector<GameProfileProperty>& GetProperties()
         {
             return properties;
         }
+
+#if PROTOCOL_VERSION > 758
+        const ProfilePublicKey& GetProfilePublicKey() const
+        {
+            return profile_public_key;
+        }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             name = ReadData<std::string>(iter, length);
             const int number_of_properties = ReadData<VarInt>(iter, length);
-            properties = std::vector<PlayerProperty>(number_of_properties);
+            properties = std::vector<GameProfileProperty>(number_of_properties);
             for (int i = 0; i < number_of_properties; ++i)
             {
                 properties[i].Read(iter, length);
@@ -86,10 +102,19 @@ namespace ProtocolCraft
             game_mode = ReadData<VarInt>(iter, length);
             latency = ReadData<VarInt>(iter, length);
             const bool has_display_name = ReadData<bool>(iter, length);
+            display_name = Chat();
             if (has_display_name)
             {
                 display_name.Read(iter, length);
             }
+#if PROTOCOL_VERSION > 758
+            const bool has_profile_public_key = ReadData<bool>(iter, length);
+            profile_public_key = ProfilePublicKey();
+            if (has_profile_public_key)
+            {
+                profile_public_key.Read(iter, length);
+            }
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -107,6 +132,13 @@ namespace ProtocolCraft
             {
                 display_name.Write(container);
             }
+#if PROTOCOL_VERSION > 758
+            WriteData<bool>(!profile_public_key.GetKey().empty(), container);
+            if (!profile_public_key.GetKey().empty())
+            {
+                profile_public_key.Write(container);
+            }
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -122,6 +154,13 @@ namespace ProtocolCraft
             {
                 output["properties"].push_back(properties[i].Serialize());
             }
+#if PROTOCOL_VERSION > 758
+            if (!profile_public_key.GetKey().empty())
+            {
+                output["profile_public_key"] = profile_public_key.Serialize();
+            }
+#endif
+
 
             return output;
         }
@@ -131,6 +170,9 @@ namespace ProtocolCraft
         int game_mode;
         int latency;
         Chat display_name;
-        std::vector<PlayerProperty> properties;
+        std::vector<GameProfileProperty> properties;
+#if PROTOCOL_VERSION > 758
+        ProfilePublicKey profile_public_key;
+#endif
     };
 } // Botcraft

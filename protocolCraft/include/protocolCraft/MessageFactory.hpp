@@ -19,7 +19,6 @@ namespace ProtocolCraft
                 {
                 default:
                     return nullptr;
-                    break;
                 }
                 break;
             case ConnectionState::Handshake:
@@ -27,46 +26,36 @@ namespace ProtocolCraft
                 {
                 default:
                     return nullptr;
-                    break;
                 }
                 break;
             case ConnectionState::Status:
                 switch (id)
                 {
                 case 0x00:
-                    return std::shared_ptr<ClientboundStatusResponsePacket>(new ClientboundStatusResponsePacket);
-                    break;
+                    return std::make_shared<ClientboundStatusResponsePacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundPongResponsePacket>(new ClientboundPongResponsePacket);
-                    break;
+                    return std::make_shared<ClientboundPongResponsePacket>();
                 default:
                     return nullptr;
-                    break;
                 }
                 break;
             case ConnectionState::Login: // Login
                 switch (id)
                 {
                 case 0x00:
-                    return std::shared_ptr<ClientboundLoginDisconnectPacket>(new ClientboundLoginDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginDisconnectPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundHelloPacket>(new ClientboundHelloPacket);
-                    break;
+                    return std::make_shared<ClientboundHelloPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundGameProfilePacket>(new ClientboundGameProfilePacket);
-                    break;
+                    return std::make_shared<ClientboundGameProfilePacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundLoginCompressionPacket>(new ClientboundLoginCompressionPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginCompressionPacket>();
 #if PROTOCOL_VERSION > 340
                 case 0x04:
-                    return std::shared_ptr<ClientboundCustomQueryPacket>(new ClientboundCustomQueryPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomQueryPacket>();
 #endif
                 default:
                     return nullptr;
-                    break;
                 }
                 break;
             case ConnectionState::Play:
@@ -74,2257 +63,1723 @@ namespace ProtocolCraft
                 {
 #if PROTOCOL_VERSION == 340 // 1.12.2
                 case 0x00:
-                    return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundAddExperienceOrbPacket>(new ClientboundAddExperienceOrbPacket);
-                    break;
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundAddGlobalEntityPacket>(new ClientboundAddGlobalEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddGlobalEntityPacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundAddMobPacket>(new ClientboundAddMobPacket);
-                    break;
+                    return std::make_shared<ClientboundAddMobPacket>();
                 case 0x04:
-                    return std::shared_ptr<ClientboundAddPaintingPacket>(new ClientboundAddPaintingPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPaintingPacket>();
                 case 0x05:
-                    return std::shared_ptr<ClientboundAddPlayerPacket>(new ClientboundAddPlayerPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPlayerPacket>();
                 case 0x06:
-                    return std::shared_ptr<ClientboundAnimatePacket>(new ClientboundAnimatePacket);
-                    break;
+                    return std::make_shared<ClientboundAnimatePacket>();
                 case 0x07:
-                    return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
-                    break;
+                    return std::make_shared<ClientboundAwardStatsPacket>();
                 case 0x08:
-                    return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
                 case 0x09:
-                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEventPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
                 case 0x0C:
-                    return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBossEventPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-                    break;
+                    return std::make_shared<ClientboundChatPacket>();
                 case 0x10:
-                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
                 case 0x11:
-                    return std::shared_ptr<ClientboundContainerAckPacket>(new ClientboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerAckPacket>();
                 case 0x12:
-                    return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ClientboundContainerClosePacket>();
                 case 0x13:
-                    return std::shared_ptr<ClientboundOpenScreenPacket>(new ClientboundOpenScreenPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenScreenPacket>();
                 case 0x14:
-                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
                 case 0x15:
-                    return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
                 case 0x16:
-                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
                 case 0x17:
-                    return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
-                    break;
+                    return std::make_shared<ClientboundCooldownPacket>();
                 case 0x18:
-                    return std::shared_ptr<ClientboundCustomPayloadPacket>(new ClientboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
                 case 0x19:
-                    return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomSoundPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundDisconnectPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
-                    break;
+                    return std::make_shared<ClientboundEntityEventPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
-                    break;
+                    return std::make_shared<ClientboundExplodePacket>();
                 case 0x1D:
-                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
-                    break;
+                    return std::make_shared<ClientboundGameEventPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ClientboundKeepAlivePacket>();
                 case 0x20:
-                    return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelChunkPacket>();
                 case 0x21:
-                    return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelEventPacket>();
                 case 0x22:
-                    return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
                 case 0x23:
-                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginPacket>();
                 case 0x24:
-                    return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
-                    break;
+                    return std::make_shared<ClientboundMapItemDataPacket>();
                 case 0x25:
-                    return std::shared_ptr<ClientboundMoveEntityPacket>(new ClientboundMoveEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacket>();
                 case 0x26:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPos>(new ClientboundMoveEntityPacketPos);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
                 case 0x27:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPosRot>(new ClientboundMoveEntityPacketPosRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
                 case 0x28:
-                    return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
                 case 0x29:
-                    return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
                 case 0x2A:
-                    return std::shared_ptr<ClientboundOpenSignEditorPacket>(new ClientboundOpenSignEditorPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
                 case 0x2B:
-                    return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
                 case 0x2C:
-                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ClientboundPlayerCombatPacket>(new ClientboundPlayerCombatPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
                 case 0x30:
-                    return std::shared_ptr<ClientboundUseBedPacket>(new ClientboundUseBedPacket);
-                    break;
+                    return std::make_shared<ClientboundUseBedPacket>();
                 case 0x31:
-                    return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundRecipePacket>();
                 case 0x32:
-                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
                 case 0x33:
-                    return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
                 case 0x34:
-                    return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ClientboundResourcePackPacket>();
                 case 0x35:
-                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-                    break;
+                    return std::make_shared<ClientboundRespawnPacket>();
                 case 0x36:
-                    return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
-                    break;
+                    return std::make_shared<ClientboundRotateHeadPacket>();
                 case 0x37:
-                    return std::shared_ptr<ClientboundSelectAdvancementsTabPacket>(new ClientboundSelectAdvancementsTabPacket);
-                    break;
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
                 case 0x38:
-                    return std::shared_ptr<ClientboundSetBorderPacket>(new ClientboundSetBorderPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderPacket>();
                 case 0x39:
-                    return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCameraPacket>();
                 case 0x3A:
-                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
                 case 0x3B:
-                    return std::shared_ptr<ClientboundSetDisplayObjectivePacket>(new ClientboundSetDisplayObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
                 case 0x3C:
-                    return std::shared_ptr<ClientboundSetEntityDataPacket>(new ClientboundSetEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
                 case 0x3D:
-                    return std::shared_ptr<ClientboundSetEntityLinkPacket>(new ClientboundSetEntityLinkPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
                 case 0x3E:
-                    return std::shared_ptr<ClientboundSetEntityMotionPacket>(new ClientboundSetEntityMotionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
                 case 0x3F:
-                    return std::shared_ptr<ClientboundSetEquipmentPacket>(new ClientboundSetEquipmentPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
                 case 0x40:
-                    return std::shared_ptr<ClientboundSetExperiencePacket>(new ClientboundSetExperiencePacket);
-                    break;
+                    return std::make_shared<ClientboundSetExperiencePacket>();
                 case 0x41:
-                    return std::shared_ptr<ClientboundSetHealthPacket>(new ClientboundSetHealthPacket);
-                    break;
+                    return std::make_shared<ClientboundSetHealthPacket>();
                 case 0x42:
-                    return std::shared_ptr<ClientboundSetObjectivePacket>(new ClientboundSetObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetObjectivePacket>();
                 case 0x43:
-                    return std::shared_ptr<ClientboundSetPassengersPacket>(new ClientboundSetPassengersPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPassengersPacket>();
                 case 0x44:
-                    return std::shared_ptr<ClientboundSetPlayerTeamPacket>(new ClientboundSetPlayerTeamPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
                 case 0x45:
-                    return std::shared_ptr<ClientboundSetScorePacket>(new ClientboundSetScorePacket);
-                    break;
+                    return std::make_shared<ClientboundSetScorePacket>();
                 case 0x46:
-                    return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
                 case 0x47:
-                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-                    break;
+                    return std::make_shared<ClientboundSetTimePacket>();
                 case 0x48:
-                    return std::shared_ptr<ClientboundSetTitlesPacket>(new ClientboundSetTitlesPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitlesPacket>();
                 case 0x49:
-                    return std::shared_ptr<ClientboundSoundPacket>(new ClientboundSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundPacket>();
                 case 0x4A:
-                    return std::shared_ptr<ClientboundTabListPacket>(new ClientboundTabListPacket);
-                    break;
+                    return std::make_shared<ClientboundTabListPacket>();
                 case 0x4B:
-                    return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
                 case 0x4C:
-                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
                 case 0x4D:
-                    return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
                 case 0x4E:
-                    return std::shared_ptr<ClientboundUpdateAttributesPacket>(new ClientboundUpdateAttributesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
                 case 0x4F:
-                    return std::shared_ptr<ClientboundUpdateMobEffectPacket>(new ClientboundUpdateMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
 #elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
                 case 0x00:
-                    return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundAddExperienceOrbPacket>(new ClientboundAddExperienceOrbPacket);
-                    break;
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundAddGlobalEntityPacket>(new ClientboundAddGlobalEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddGlobalEntityPacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundAddMobPacket>(new ClientboundAddMobPacket);
-                    break;
+                    return std::make_shared<ClientboundAddMobPacket>();
                 case 0x04:
-                    return std::shared_ptr<ClientboundAddPaintingPacket>(new ClientboundAddPaintingPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPaintingPacket>();
                 case 0x05:
-                    return std::shared_ptr<ClientboundAddPlayerPacket>(new ClientboundAddPlayerPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPlayerPacket>();
                 case 0x06:
-                    return std::shared_ptr<ClientboundAnimatePacket>(new ClientboundAnimatePacket);
-                    break;
+                    return std::make_shared<ClientboundAnimatePacket>();
                 case 0x07:
-                    return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
-                    break;
+                    return std::make_shared<ClientboundAwardStatsPacket>();
                 case 0x08:
-                    return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
                 case 0x09:
-                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEventPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
                 case 0x0C:
-                    return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBossEventPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-                    break;
+                    return std::make_shared<ClientboundChatPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
                 case 0x10:
-                    return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
                 case 0x11:
-                    return std::shared_ptr<ClientboundCommandsPacket>(new ClientboundCommandsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandsPacket>();
                 case 0x12:
-                    return std::shared_ptr<ClientboundContainerAckPacket>(new ClientboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerAckPacket>();
                 case 0x13:
-                    return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ClientboundContainerClosePacket>();
                 case 0x14:
-                    return std::shared_ptr<ClientboundOpenScreenPacket>(new ClientboundOpenScreenPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenScreenPacket>();
                 case 0x15:
-                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
                 case 0x16:
-                    return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
                 case 0x17:
-                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
                 case 0x18:
-                    return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
-                    break;
+                    return std::make_shared<ClientboundCooldownPacket>();
                 case 0x19:
-                    return std::shared_ptr<ClientboundCustomPayloadPacket>(new ClientboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomSoundPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundDisconnectPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
-                    break;
+                    return std::make_shared<ClientboundEntityEventPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ClientboundTagQueryPacket>(new ClientboundTagQueryPacket);
-                    break;
+                    return std::make_shared<ClientboundTagQueryPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
-                    break;
+                    return std::make_shared<ClientboundExplodePacket>();
                 case 0x1F:
-                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
                 case 0x20:
-                    return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
-                    break;
+                    return std::make_shared<ClientboundGameEventPacket>();
                 case 0x21:
-                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ClientboundKeepAlivePacket>();
                 case 0x22:
-                    return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelChunkPacket>();
                 case 0x23:
-                    return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelEventPacket>();
                 case 0x24:
-                    return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
                 case 0x25:
-                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginPacket>();
                 case 0x26:
-                    return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
-                    break;
+                    return std::make_shared<ClientboundMapItemDataPacket>();
                 case 0x27:
-                    return std::shared_ptr<ClientboundMoveEntityPacket>(new ClientboundMoveEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacket>();
                 case 0x28:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPos>(new ClientboundMoveEntityPacketPos);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
                 case 0x29:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPosRot>(new ClientboundMoveEntityPacketPosRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
                 case 0x2A:
-                    return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
                 case 0x2B:
-                    return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
                 case 0x2C:
-                    return std::shared_ptr<ClientboundOpenSignEditorPacket>(new ClientboundOpenSignEditorPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
                 case 0x2E:
-                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ClientboundPlayerCombatPacket>(new ClientboundPlayerCombatPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatPacket>();
                 case 0x30:
-                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
                 case 0x31:
-                    return std::shared_ptr<ClientboundPlayerLookAtPacket>(new ClientboundPlayerLookAtPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
                 case 0x32:
-                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
                 case 0x33:
-                    return std::shared_ptr<ClientboundUseBedPacket>(new ClientboundUseBedPacket);
-                    break;
+                    return std::make_shared<ClientboundUseBedPacket>();
                 case 0x34:
-                    return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundRecipePacket>();
                 case 0x35:
-                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
                 case 0x36:
-                    return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
                 case 0x37:
-                    return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ClientboundResourcePackPacket>();
                 case 0x38:
-                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-                    break;
+                    return std::make_shared<ClientboundRespawnPacket>();
                 case 0x39:
-                    return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
-                    break;
+                    return std::make_shared<ClientboundRotateHeadPacket>();
                 case 0x3A:
-                    return std::shared_ptr<ClientboundSelectAdvancementsTabPacket>(new ClientboundSelectAdvancementsTabPacket);
-                    break;
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
                 case 0x3B:
-                    return std::shared_ptr<ClientboundSetBorderPacket>(new ClientboundSetBorderPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderPacket>();
                 case 0x3C:
-                    return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCameraPacket>();
                 case 0x3D:
-                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
                 case 0x3E:
-                    return std::shared_ptr<ClientboundSetDisplayObjectivePacket>(new ClientboundSetDisplayObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
                 case 0x3F:
-                    return std::shared_ptr<ClientboundSetEntityDataPacket>(new ClientboundSetEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
                 case 0x40:
-                    return std::shared_ptr<ClientboundSetEntityLinkPacket>(new ClientboundSetEntityLinkPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
                 case 0x41:
-                    return std::shared_ptr<ClientboundSetEntityMotionPacket>(new ClientboundSetEntityMotionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
                 case 0x42:
-                    return std::shared_ptr<ClientboundSetEquipmentPacket>(new ClientboundSetEquipmentPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
                 case 0x43:
-                    return std::shared_ptr<ClientboundSetExperiencePacket>(new ClientboundSetExperiencePacket);
-                    break;
+                    return std::make_shared<ClientboundSetExperiencePacket>();
                 case 0x44:
-                    return std::shared_ptr<ClientboundSetHealthPacket>(new ClientboundSetHealthPacket);
-                    break;
+                    return std::make_shared<ClientboundSetHealthPacket>();
                 case 0x45:
-                    return std::shared_ptr<ClientboundSetObjectivePacket>(new ClientboundSetObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetObjectivePacket>();
                 case 0x46:
-                    return std::shared_ptr<ClientboundSetPassengersPacket>(new ClientboundSetPassengersPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPassengersPacket>();
                 case 0x47:
-                    return std::shared_ptr<ClientboundSetPlayerTeamPacket>(new ClientboundSetPlayerTeamPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
                 case 0x48:
-                    return std::shared_ptr<ClientboundSetScorePacket>(new ClientboundSetScorePacket);
-                    break;
+                    return std::make_shared<ClientboundSetScorePacket>();
                 case 0x49:
-                    return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
                 case 0x4A:
-                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-                    break;
+                    return std::make_shared<ClientboundSetTimePacket>();
                 case 0x4B:
-                    return std::shared_ptr<ClientboundSetTitlesPacket>(new ClientboundSetTitlesPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitlesPacket>();
                 case 0x4C:
-                    return std::shared_ptr<ClientboundStopSoundPacket>(new ClientboundStopSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundStopSoundPacket>();
                 case 0x4D:
-                    return std::shared_ptr<ClientboundSoundPacket>(new ClientboundSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundPacket>();
                 case 0x4E:
-                    return std::shared_ptr<ClientboundTabListPacket>(new ClientboundTabListPacket);
-                    break;
+                    return std::make_shared<ClientboundTabListPacket>();
                 case 0x4F:
-                    return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
                 case 0x50:
-                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
                 case 0x51:
-                    return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
                 case 0x52:
-                    return std::shared_ptr<ClientboundUpdateAttributesPacket>(new ClientboundUpdateAttributesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
                 case 0x53:
-                    return std::shared_ptr<ClientboundUpdateMobEffectPacket>(new ClientboundUpdateMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
                 case 0x54:
-                    return std::shared_ptr<ClientboundUpdateRecipesPacket>(new ClientboundUpdateRecipesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x55:
-                    return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
                 case 0x00:
-                    return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundAddExperienceOrbPacket>(new ClientboundAddExperienceOrbPacket);
-                    break;
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundAddGlobalEntityPacket>(new ClientboundAddGlobalEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddGlobalEntityPacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundAddMobPacket>(new ClientboundAddMobPacket);
-                    break;
+                    return std::make_shared<ClientboundAddMobPacket>();
                 case 0x04:
-                    return std::shared_ptr<ClientboundAddPaintingPacket>(new ClientboundAddPaintingPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPaintingPacket>();
                 case 0x05:
-                    return std::shared_ptr<ClientboundAddPlayerPacket>(new ClientboundAddPlayerPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPlayerPacket>();
                 case 0x06:
-                    return std::shared_ptr<ClientboundAnimatePacket>(new ClientboundAnimatePacket);
-                    break;
+                    return std::make_shared<ClientboundAnimatePacket>();
                 case 0x07:
-                    return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
-                    break;
+                    return std::make_shared<ClientboundAwardStatsPacket>();
                 case 0x08:
-                    return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
                 case 0x09:
-                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEventPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
                 case 0x0C:
-                    return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBossEventPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-                    break;
+                    return std::make_shared<ClientboundChatPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
                 case 0x10:
-                    return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
                 case 0x11:
-                    return std::shared_ptr<ClientboundCommandsPacket>(new ClientboundCommandsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandsPacket>();
                 case 0x12:
-                    return std::shared_ptr<ClientboundContainerAckPacket>(new ClientboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerAckPacket>();
                 case 0x13:
-                    return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ClientboundContainerClosePacket>();
                 case 0x14:
-                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
                 case 0x15:
-                    return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
                 case 0x16:
-                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
                 case 0x17:
-                    return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
-                    break;
+                    return std::make_shared<ClientboundCooldownPacket>();
                 case 0x18:
-                    return std::shared_ptr<ClientboundCustomPayloadPacket>(new ClientboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
                 case 0x19:
-                    return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomSoundPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundDisconnectPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
-                    break;
+                    return std::make_shared<ClientboundEntityEventPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
-                    break;
+                    return std::make_shared<ClientboundExplodePacket>();
                 case 0x1D:
-                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
-                    break;
+                    return std::make_shared<ClientboundGameEventPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ClientboundHorseScreenOpenPacket>(new ClientboundHorseScreenOpenPacket);
-                    break;
+                    return std::make_shared<ClientboundHorseScreenOpenPacket>();
                 case 0x20:
-                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ClientboundKeepAlivePacket>();
                 case 0x21:
-                    return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelChunkPacket>();
                 case 0x22:
-                    return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelEventPacket>();
                 case 0x23:
-                    return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
                 case 0x24:
-                    return std::shared_ptr<ClientboundLightUpdatePacket>(new ClientboundLightUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundLightUpdatePacket>();
                 case 0x25:
-                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginPacket>();
                 case 0x26:
-                    return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
-                    break;
+                    return std::make_shared<ClientboundMapItemDataPacket>();
                 case 0x27:
-                    return std::shared_ptr<ClientboundMerchantOffersPacket>(new ClientboundMerchantOffersPacket);
-                    break;
+                    return std::make_shared<ClientboundMerchantOffersPacket>();
                 case 0x28:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPos>(new ClientboundMoveEntityPacketPos);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
                 case 0x29:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPosRot>(new ClientboundMoveEntityPacketPosRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
                 case 0x2A:
-                    return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
                 case 0x2B:
-                    return std::shared_ptr<ClientboundMoveEntityPacket>(new ClientboundMoveEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacket>();
                 case 0x2C:
-                    return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
                 case 0x2D:
-                    return std::shared_ptr<ClientboundOpenBookPacket>(new ClientboundOpenBookPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenBookPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ClientboundOpenScreenPacket>(new ClientboundOpenScreenPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenScreenPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ClientboundOpenSignEditorPacket>(new ClientboundOpenSignEditorPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
                 case 0x30:
-                    return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
                 case 0x31:
-                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
                 case 0x32:
-                    return std::shared_ptr<ClientboundPlayerCombatPacket>(new ClientboundPlayerCombatPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatPacket>();
                 case 0x33:
-                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
                 case 0x34:
-                    return std::shared_ptr<ClientboundPlayerLookAtPacket>(new ClientboundPlayerLookAtPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
                 case 0x35:
-                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
                 case 0x36:
-                    return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundRecipePacket>();
                 case 0x37:
-                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
                 case 0x38:
-                    return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
                 case 0x39:
-                    return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ClientboundResourcePackPacket>();
                 case 0x3A:
-                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-                    break;
+                    return std::make_shared<ClientboundRespawnPacket>();
                 case 0x3B:
-                    return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
-                    break;
+                    return std::make_shared<ClientboundRotateHeadPacket>();
                 case 0x3C:
-                    return std::shared_ptr<ClientboundSelectAdvancementsTabPacket>(new ClientboundSelectAdvancementsTabPacket);
-                    break;
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
                 case 0x3D:
-                    return std::shared_ptr<ClientboundSetBorderPacket>(new ClientboundSetBorderPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderPacket>();
                 case 0x3E:
-                    return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCameraPacket>();
                 case 0x3F:
-                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
                 case 0x40:
-                    return std::shared_ptr<ClientboundSetChunkCacheCenterPacket>(new ClientboundSetChunkCacheCenterPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheCenterPacket>();
                 case 0x41:
-                    return std::shared_ptr<ClientboundSetChunkCacheRadiusPacket>(new ClientboundSetChunkCacheRadiusPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheRadiusPacket>();
                 case 0x42:
-                    return std::shared_ptr<ClientboundSetDisplayObjectivePacket>(new ClientboundSetDisplayObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
                 case 0x43:
-                    return std::shared_ptr<ClientboundSetEntityDataPacket>(new ClientboundSetEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
                 case 0x44:
-                    return std::shared_ptr<ClientboundSetEntityLinkPacket>(new ClientboundSetEntityLinkPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
                 case 0x45:
-                    return std::shared_ptr<ClientboundSetEntityMotionPacket>(new ClientboundSetEntityMotionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
                 case 0x46:
-                    return std::shared_ptr<ClientboundSetEquipmentPacket>(new ClientboundSetEquipmentPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
                 case 0x47:
-                    return std::shared_ptr<ClientboundSetExperiencePacket>(new ClientboundSetExperiencePacket);
-                    break;
+                    return std::make_shared<ClientboundSetExperiencePacket>();
                 case 0x48:
-                    return std::shared_ptr<ClientboundSetHealthPacket>(new ClientboundSetHealthPacket);
-                    break;
+                    return std::make_shared<ClientboundSetHealthPacket>();
                 case 0x49:
-                    return std::shared_ptr<ClientboundSetObjectivePacket>(new ClientboundSetObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetObjectivePacket>();
                 case 0x4A:
-                    return std::shared_ptr<ClientboundSetPassengersPacket>(new ClientboundSetPassengersPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPassengersPacket>();
                 case 0x4B:
-                    return std::shared_ptr<ClientboundSetPlayerTeamPacket>(new ClientboundSetPlayerTeamPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
                 case 0x4C:
-                    return std::shared_ptr<ClientboundSetScorePacket>(new ClientboundSetScorePacket);
-                    break;
+                    return std::make_shared<ClientboundSetScorePacket>();
                 case 0x4D:
-                    return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
                 case 0x4E:
-                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-                    break;
+                    return std::make_shared<ClientboundSetTimePacket>();
                 case 0x4F:
-                    return std::shared_ptr<ClientboundSetTitlesPacket>(new ClientboundSetTitlesPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitlesPacket>();
                 case 0x50:
-                    return std::shared_ptr<ClientboundSoundEntityPacket>(new ClientboundSoundEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundEntityPacket>();
                 case 0x51:
-                    return std::shared_ptr<ClientboundSoundPacket>(new ClientboundSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundPacket>();
                 case 0x52:
-                    return std::shared_ptr<ClientboundStopSoundPacket>(new ClientboundStopSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundStopSoundPacket>();
                 case 0x53:
-                    return std::shared_ptr<ClientboundTabListPacket>(new ClientboundTabListPacket);
-                    break;
+                    return std::make_shared<ClientboundTabListPacket>();
                 case 0x54:
-                    return std::shared_ptr<ClientboundTagQueryPacket>(new ClientboundTagQueryPacket);
-                    break;
+                    return std::make_shared<ClientboundTagQueryPacket>();
                 case 0x55:
-                    return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
                 case 0x56:
-                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
                 case 0x57:
-                    return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
                 case 0x58:
-                    return std::shared_ptr<ClientboundUpdateAttributesPacket>(new ClientboundUpdateAttributesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
                 case 0x59:
-                    return std::shared_ptr<ClientboundUpdateMobEffectPacket>(new ClientboundUpdateMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
                 case 0x5A:
-                    return std::shared_ptr<ClientboundUpdateRecipesPacket>(new ClientboundUpdateRecipesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x5B:
-                    return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
 #if PROTOCOL_VERSION > 493
                 case 0x5C:
-                    return std::shared_ptr<ClientboundBlockBreakAckPacket>(new ClientboundBlockBreakAckPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockBreakAckPacket>();
 #endif
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
                 case 0x00:
-                    return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundAddExperienceOrbPacket>(new ClientboundAddExperienceOrbPacket);
-                    break;
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundAddGlobalEntityPacket>(new ClientboundAddGlobalEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddGlobalEntityPacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundAddMobPacket>(new ClientboundAddMobPacket);
-                    break;
+                    return std::make_shared<ClientboundAddMobPacket>();
                 case 0x04:
-                    return std::shared_ptr<ClientboundAddPaintingPacket>(new ClientboundAddPaintingPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPaintingPacket>();
                 case 0x05:
-                    return std::shared_ptr<ClientboundAddPlayerPacket>(new ClientboundAddPlayerPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPlayerPacket>();
                 case 0x06:
-                    return std::shared_ptr<ClientboundAnimatePacket>(new ClientboundAnimatePacket);
-                    break;
+                    return std::make_shared<ClientboundAnimatePacket>();
                 case 0x07:
-                    return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
-                    break;
+                    return std::make_shared<ClientboundAwardStatsPacket>();
                 case 0x08:
-                    return std::shared_ptr<ClientboundBlockBreakAckPacket>(new ClientboundBlockBreakAckPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockBreakAckPacket>();
                 case 0x09:
-                    return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEventPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
                 case 0x0D:
-                    return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBossEventPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-                    break;
+                    return std::make_shared<ClientboundChatPacket>();
                 case 0x10:
-                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
                 case 0x11:
-                    return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
                 case 0x12:
-                    return std::shared_ptr<ClientboundCommandsPacket>(new ClientboundCommandsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandsPacket>();
                 case 0x13:
-                    return std::shared_ptr<ClientboundContainerAckPacket>(new ClientboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerAckPacket>();
                 case 0x14:
-                    return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ClientboundContainerClosePacket>();
                 case 0x15:
-                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
                 case 0x16:
-                    return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
                 case 0x17:
-                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
                 case 0x18:
-                    return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
-                    break;
+                    return std::make_shared<ClientboundCooldownPacket>();
                 case 0x19:
-                    return std::shared_ptr<ClientboundCustomPayloadPacket>(new ClientboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomSoundPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundDisconnectPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
-                    break;
+                    return std::make_shared<ClientboundEntityEventPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
-                    break;
+                    return std::make_shared<ClientboundExplodePacket>();
                 case 0x1E:
-                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
-                    break;
+                    return std::make_shared<ClientboundGameEventPacket>();
                 case 0x20:
-                    return std::shared_ptr<ClientboundHorseScreenOpenPacket>(new ClientboundHorseScreenOpenPacket);
-                    break;
+                    return std::make_shared<ClientboundHorseScreenOpenPacket>();
                 case 0x21:
-                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ClientboundKeepAlivePacket>();
                 case 0x22:
-                    return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelChunkPacket>();
                 case 0x23:
-                    return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelEventPacket>();
                 case 0x24:
-                    return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
                 case 0x25:
-                    return std::shared_ptr<ClientboundLightUpdatePacket>(new ClientboundLightUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundLightUpdatePacket>();
                 case 0x26:
-                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginPacket>();
                 case 0x27:
-                    return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
-                    break;
+                    return std::make_shared<ClientboundMapItemDataPacket>();
                 case 0x28:
-                    return std::shared_ptr<ClientboundMerchantOffersPacket>(new ClientboundMerchantOffersPacket);
-                    break;
+                    return std::make_shared<ClientboundMerchantOffersPacket>();
                 case 0x29:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPos>(new ClientboundMoveEntityPacketPos);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
                 case 0x2A:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPosRot>(new ClientboundMoveEntityPacketPosRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
                 case 0x2B:
-                    return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
                 case 0x2C:
-                    return std::shared_ptr<ClientboundMoveEntityPacket>(new ClientboundMoveEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
                 case 0x2E:
-                    return std::shared_ptr<ClientboundOpenBookPacket>(new ClientboundOpenBookPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenBookPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ClientboundOpenScreenPacket>(new ClientboundOpenScreenPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenScreenPacket>();
                 case 0x30:
-                    return std::shared_ptr<ClientboundOpenSignEditorPacket>(new ClientboundOpenSignEditorPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
                 case 0x31:
-                    return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
                 case 0x32:
-                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
                 case 0x33:
-                    return std::shared_ptr<ClientboundPlayerCombatPacket>(new ClientboundPlayerCombatPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatPacket>();
                 case 0x34:
-                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
                 case 0x35:
-                    return std::shared_ptr<ClientboundPlayerLookAtPacket>(new ClientboundPlayerLookAtPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
                 case 0x36:
-                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
                 case 0x37:
-                    return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundRecipePacket>();
                 case 0x38:
-                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
                 case 0x39:
-                    return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
                 case 0x3A:
-                    return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ClientboundResourcePackPacket>();
                 case 0x3B:
-                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-                    break;
+                    return std::make_shared<ClientboundRespawnPacket>();
                 case 0x3C:
-                    return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
-                    break;
+                    return std::make_shared<ClientboundRotateHeadPacket>();
                 case 0x3D:
-                    return std::shared_ptr<ClientboundSelectAdvancementsTabPacket>(new ClientboundSelectAdvancementsTabPacket);
-                    break;
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
                 case 0x3E:
-                    return std::shared_ptr<ClientboundSetBorderPacket>(new ClientboundSetBorderPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderPacket>();
                 case 0x3F:
-                    return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCameraPacket>();
                 case 0x40:
-                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
                 case 0x41:
-                    return std::shared_ptr<ClientboundSetChunkCacheCenterPacket>(new ClientboundSetChunkCacheCenterPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheCenterPacket>();
                 case 0x42:
-                    return std::shared_ptr<ClientboundSetChunkCacheRadiusPacket>(new ClientboundSetChunkCacheRadiusPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheRadiusPacket>();
                 case 0x43:
-                    return std::shared_ptr<ClientboundSetDisplayObjectivePacket>(new ClientboundSetDisplayObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
                 case 0x44:
-                    return std::shared_ptr<ClientboundSetEntityDataPacket>(new ClientboundSetEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
                 case 0x45:
-                    return std::shared_ptr<ClientboundSetEntityLinkPacket>(new ClientboundSetEntityLinkPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
                 case 0x46:
-                    return std::shared_ptr<ClientboundSetEntityMotionPacket>(new ClientboundSetEntityMotionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
                 case 0x47:
-                    return std::shared_ptr<ClientboundSetEquipmentPacket>(new ClientboundSetEquipmentPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
                 case 0x48:
-                    return std::shared_ptr<ClientboundSetExperiencePacket>(new ClientboundSetExperiencePacket);
-                    break;
+                    return std::make_shared<ClientboundSetExperiencePacket>();
                 case 0x49:
-                    return std::shared_ptr<ClientboundSetHealthPacket>(new ClientboundSetHealthPacket);
-                    break;
+                    return std::make_shared<ClientboundSetHealthPacket>();
                 case 0x4A:
-                    return std::shared_ptr<ClientboundSetObjectivePacket>(new ClientboundSetObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetObjectivePacket>();
                 case 0x4B:
-                    return std::shared_ptr<ClientboundSetPassengersPacket>(new ClientboundSetPassengersPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPassengersPacket>();
                 case 0x4C:
-                    return std::shared_ptr<ClientboundSetPlayerTeamPacket>(new ClientboundSetPlayerTeamPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
                 case 0x4D:
-                    return std::shared_ptr<ClientboundSetScorePacket>(new ClientboundSetScorePacket);
-                    break;
+                    return std::make_shared<ClientboundSetScorePacket>();
                 case 0x4E:
-                    return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
                 case 0x4F:
-                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-                    break;
+                    return std::make_shared<ClientboundSetTimePacket>();
                 case 0x50:
-                    return std::shared_ptr<ClientboundSetTitlesPacket>(new ClientboundSetTitlesPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitlesPacket>();
                 case 0x51:
-                    return std::shared_ptr<ClientboundSoundEntityPacket>(new ClientboundSoundEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundEntityPacket>();
                 case 0x52:
-                    return std::shared_ptr<ClientboundSoundPacket>(new ClientboundSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundPacket>();
                 case 0x53:
-                    return std::shared_ptr<ClientboundStopSoundPacket>(new ClientboundStopSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundStopSoundPacket>();
                 case 0x54:
-                    return std::shared_ptr<ClientboundTabListPacket>(new ClientboundTabListPacket);
-                    break;
+                    return std::make_shared<ClientboundTabListPacket>();
                 case 0x55:
-                    return std::shared_ptr<ClientboundTagQueryPacket>(new ClientboundTagQueryPacket);
-                    break;
+                    return std::make_shared<ClientboundTagQueryPacket>();
                 case 0x56:
-                    return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
                 case 0x57:
-                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
                 case 0x58:
-                    return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
                 case 0x59:
-                    return std::shared_ptr<ClientboundUpdateAttributesPacket>(new ClientboundUpdateAttributesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
                 case 0x5A:
-                    return std::shared_ptr<ClientboundUpdateMobEffectPacket>(new ClientboundUpdateMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
                 case 0x5B:
-                    return std::shared_ptr<ClientboundUpdateRecipesPacket>(new ClientboundUpdateRecipesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x5C:
-                    return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
 #elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 // 1.16.0 or 1.16.1
                 case 0x00:
-                    return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundAddExperienceOrbPacket>(new ClientboundAddExperienceOrbPacket);
-                    break;
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundAddMobPacket>(new ClientboundAddMobPacket);
-                    break;
+                    return std::make_shared<ClientboundAddMobPacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundAddPaintingPacket>(new ClientboundAddPaintingPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPaintingPacket>();
                 case 0x04:
-                    return std::shared_ptr<ClientboundAddPlayerPacket>(new ClientboundAddPlayerPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPlayerPacket>();
                 case 0x05:
-                    return std::shared_ptr<ClientboundAnimatePacket>(new ClientboundAnimatePacket);
-                    break;
+                    return std::make_shared<ClientboundAnimatePacket>();
                 case 0x06:
-                    return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
-                    break;
+                    return std::make_shared<ClientboundAwardStatsPacket>();
                 case 0x07:
-                    return std::shared_ptr<ClientboundBlockBreakAckPacket>(new ClientboundBlockBreakAckPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockBreakAckPacket>();
                 case 0x08:
-                    return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
                 case 0x09:
-                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEventPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
                 case 0x0C:
-                    return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBossEventPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-                    break;
+                    return std::make_shared<ClientboundChatPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
                 case 0x10:
-                    return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
                 case 0x11:
-                    return std::shared_ptr<ClientboundCommandsPacket>(new ClientboundCommandsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandsPacket>();
                 case 0x12:
-                    return std::shared_ptr<ClientboundContainerAckPacket>(new ClientboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerAckPacket>();
                 case 0x13:
-                    return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ClientboundContainerClosePacket>();
                 case 0x14:
-                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
                 case 0x15:
-                    return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
                 case 0x16:
-                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
                 case 0x17:
-                    return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
-                    break;
+                    return std::make_shared<ClientboundCooldownPacket>();
                 case 0x18:
-                    return std::shared_ptr<ClientboundCustomPayloadPacket>(new ClientboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
                 case 0x19:
-                    return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomSoundPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundDisconnectPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
-                    break;
+                    return std::make_shared<ClientboundEntityEventPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
-                    break;
+                    return std::make_shared<ClientboundExplodePacket>();
                 case 0x1D:
-                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
-                    break;
+                    return std::make_shared<ClientboundGameEventPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ClientboundHorseScreenOpenPacket>(new ClientboundHorseScreenOpenPacket);
-                    break;
+                    return std::make_shared<ClientboundHorseScreenOpenPacket>();
                 case 0x20:
-                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ClientboundKeepAlivePacket>();
                 case 0x21:
-                    return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelChunkPacket>();
                 case 0x22:
-                    return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelEventPacket>();
                 case 0x23:
-                    return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
                 case 0x24:
-                    return std::shared_ptr<ClientboundLightUpdatePacket>(new ClientboundLightUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundLightUpdatePacket>();
                 case 0x25:
-                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginPacket>();
                 case 0x26:
-                    return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
-                    break;
+                    return std::make_shared<ClientboundMapItemDataPacket>();
                 case 0x27:
-                    return std::shared_ptr<ClientboundMerchantOffersPacket>(new ClientboundMerchantOffersPacket);
-                    break;
+                    return std::make_shared<ClientboundMerchantOffersPacket>();
                 case 0x28:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPos>(new ClientboundMoveEntityPacketPos);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
                 case 0x29:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPosRot>(new ClientboundMoveEntityPacketPosRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
                 case 0x2A:
-                    return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
                 case 0x2B:
-                    return std::shared_ptr<ClientboundMoveEntityPacket>(new ClientboundMoveEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacket>();
                 case 0x2C:
-                    return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
                 case 0x2D:
-                    return std::shared_ptr<ClientboundOpenBookPacket>(new ClientboundOpenBookPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenBookPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ClientboundOpenScreenPacket>(new ClientboundOpenScreenPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenScreenPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ClientboundOpenSignEditorPacket>(new ClientboundOpenSignEditorPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
                 case 0x30:
-                    return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
                 case 0x31:
-                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
                 case 0x32:
-                    return std::shared_ptr<ClientboundPlayerCombatPacket>(new ClientboundPlayerCombatPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatPacket>();
                 case 0x33:
-                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
                 case 0x34:
-                    return std::shared_ptr<ClientboundPlayerLookAtPacket>(new ClientboundPlayerLookAtPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
                 case 0x35:
-                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
                 case 0x36:
-                    return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundRecipePacket>();
                 case 0x37:
-                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
                 case 0x38:
-                    return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
                 case 0x39:
-                    return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ClientboundResourcePackPacket>();
                 case 0x3A:
-                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-                    break;
+                    return std::make_shared<ClientboundRespawnPacket>();
                 case 0x3B:
-                    return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
-                    break;
+                    return std::make_shared<ClientboundRotateHeadPacket>();
                 case 0x3C:
-                    return std::shared_ptr<ClientboundSelectAdvancementsTabPacket>(new ClientboundSelectAdvancementsTabPacket);
-                    break;
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
                 case 0x3D:
-                    return std::shared_ptr<ClientboundSetBorderPacket>(new ClientboundSetBorderPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderPacket>();
                 case 0x3E:
-                    return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCameraPacket>();
                 case 0x3F:
-                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
                 case 0x40:
-                    return std::shared_ptr<ClientboundSetChunkCacheCenterPacket>(new ClientboundSetChunkCacheCenterPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheCenterPacket>();
                 case 0x41:
-                    return std::shared_ptr<ClientboundSetChunkCacheRadiusPacket>(new ClientboundSetChunkCacheRadiusPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheRadiusPacket>();
                 case 0x42:
-                    return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
                 case 0x43:
-                    return std::shared_ptr<ClientboundSetDisplayObjectivePacket>(new ClientboundSetDisplayObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
                 case 0x44:
-                    return std::shared_ptr<ClientboundSetEntityDataPacket>(new ClientboundSetEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
                 case 0x45:
-                    return std::shared_ptr<ClientboundSetEntityLinkPacket>(new ClientboundSetEntityLinkPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
                 case 0x46:
-                    return std::shared_ptr<ClientboundSetEntityMotionPacket>(new ClientboundSetEntityMotionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
                 case 0x47:
-                    return std::shared_ptr<ClientboundSetEquipmentPacket>(new ClientboundSetEquipmentPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
                 case 0x48:
-                    return std::shared_ptr<ClientboundSetExperiencePacket>(new ClientboundSetExperiencePacket);
-                    break;
+                    return std::make_shared<ClientboundSetExperiencePacket>();
                 case 0x49:
-                    return std::shared_ptr<ClientboundSetHealthPacket>(new ClientboundSetHealthPacket);
-                    break;
+                    return std::make_shared<ClientboundSetHealthPacket>();
                 case 0x4A:
-                    return std::shared_ptr<ClientboundSetObjectivePacket>(new ClientboundSetObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetObjectivePacket>();
                 case 0x4B:
-                    return std::shared_ptr<ClientboundSetPassengersPacket>(new ClientboundSetPassengersPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPassengersPacket>();
                 case 0x4C:
-                    return std::shared_ptr<ClientboundSetPlayerTeamPacket>(new ClientboundSetPlayerTeamPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
                 case 0x4D:
-                    return std::shared_ptr<ClientboundSetScorePacket>(new ClientboundSetScorePacket);
-                    break;
+                    return std::make_shared<ClientboundSetScorePacket>();
                 case 0x4E:
-                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-                    break;
+                    return std::make_shared<ClientboundSetTimePacket>();
                 case 0x4F:
-                    return std::shared_ptr<ClientboundSetTitlesPacket>(new ClientboundSetTitlesPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitlesPacket>();
                 case 0x50:
-                    return std::shared_ptr<ClientboundSoundEntityPacket>(new ClientboundSoundEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundEntityPacket>();
                 case 0x51:
-                    return std::shared_ptr<ClientboundSoundPacket>(new ClientboundSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundPacket>();
                 case 0x52:
-                    return std::shared_ptr<ClientboundStopSoundPacket>(new ClientboundStopSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundStopSoundPacket>();
                 case 0x53:
-                    return std::shared_ptr<ClientboundTabListPacket>(new ClientboundTabListPacket);
-                    break;
+                    return std::make_shared<ClientboundTabListPacket>();
                 case 0x54:
-                    return std::shared_ptr<ClientboundTagQueryPacket>(new ClientboundTagQueryPacket);
-                    break;
+                    return std::make_shared<ClientboundTagQueryPacket>();
                 case 0x55:
-                    return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
                 case 0x56:
-                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
                 case 0x57:
-                    return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
                 case 0x58:
-                    return std::shared_ptr<ClientboundUpdateAttributesPacket>(new ClientboundUpdateAttributesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
                 case 0x59:
-                    return std::shared_ptr<ClientboundUpdateMobEffectPacket>(new ClientboundUpdateMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
                 case 0x5A:
-                    return std::shared_ptr<ClientboundUpdateRecipesPacket>(new ClientboundUpdateRecipesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x5B:
-                    return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
                 case 0x00:
-                    return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundAddExperienceOrbPacket>(new ClientboundAddExperienceOrbPacket);
-                    break;
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundAddMobPacket>(new ClientboundAddMobPacket);
-                    break;
+                    return std::make_shared<ClientboundAddMobPacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundAddPaintingPacket>(new ClientboundAddPaintingPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPaintingPacket>();
                 case 0x04:
-                    return std::shared_ptr<ClientboundAddPlayerPacket>(new ClientboundAddPlayerPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPlayerPacket>();
                 case 0x05:
-                    return std::shared_ptr<ClientboundAnimatePacket>(new ClientboundAnimatePacket);
-                    break;
+                    return std::make_shared<ClientboundAnimatePacket>();
                 case 0x06:
-                    return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
-                    break;
+                    return std::make_shared<ClientboundAwardStatsPacket>();
                 case 0x07:
-                    return std::shared_ptr<ClientboundBlockBreakAckPacket>(new ClientboundBlockBreakAckPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockBreakAckPacket>();
                 case 0x08:
-                    return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
                 case 0x09:
-                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEventPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
                 case 0x0C:
-                    return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBossEventPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-                    break;
+                    return std::make_shared<ClientboundChatPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
                 case 0x10:
-                    return std::shared_ptr<ClientboundCommandsPacket>(new ClientboundCommandsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandsPacket>();
                 case 0x11:
-                    return std::shared_ptr<ClientboundContainerAckPacket>(new ClientboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerAckPacket>();
                 case 0x12:
-                    return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ClientboundContainerClosePacket>();
                 case 0x13:
-                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
                 case 0x14:
-                    return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
                 case 0x15:
-                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
                 case 0x16:
-                    return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
-                    break;
+                    return std::make_shared<ClientboundCooldownPacket>();
                 case 0x17:
-                    return std::shared_ptr<ClientboundCustomPayloadPacket>(new ClientboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
                 case 0x18:
-                    return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomSoundPacket>();
                 case 0x19:
-                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundDisconnectPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
-                    break;
+                    return std::make_shared<ClientboundEntityEventPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
-                    break;
+                    return std::make_shared<ClientboundExplodePacket>();
                 case 0x1C:
-                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
-                    break;
+                    return std::make_shared<ClientboundGameEventPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ClientboundHorseScreenOpenPacket>(new ClientboundHorseScreenOpenPacket);
-                    break;
+                    return std::make_shared<ClientboundHorseScreenOpenPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ClientboundKeepAlivePacket>();
                 case 0x20:
-                    return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelChunkPacket>();
                 case 0x21:
-                    return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelEventPacket>();
                 case 0x22:
-                    return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
                 case 0x23:
-                    return std::shared_ptr<ClientboundLightUpdatePacket>(new ClientboundLightUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundLightUpdatePacket>();
                 case 0x24:
-                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginPacket>();
                 case 0x25:
-                    return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
-                    break;
+                    return std::make_shared<ClientboundMapItemDataPacket>();
                 case 0x26:
-                    return std::shared_ptr<ClientboundMerchantOffersPacket>(new ClientboundMerchantOffersPacket);
-                    break;
+                    return std::make_shared<ClientboundMerchantOffersPacket>();
                 case 0x27:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPos>(new ClientboundMoveEntityPacketPos);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
                 case 0x28:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPosRot>(new ClientboundMoveEntityPacketPosRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
                 case 0x29:
-                    return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
                 case 0x2A:
-                    return std::shared_ptr<ClientboundMoveEntityPacket>(new ClientboundMoveEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacket>();
                 case 0x2B:
-                    return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
                 case 0x2C:
-                    return std::shared_ptr<ClientboundOpenBookPacket>(new ClientboundOpenBookPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenBookPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ClientboundOpenScreenPacket>(new ClientboundOpenScreenPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenScreenPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ClientboundOpenSignEditorPacket>(new ClientboundOpenSignEditorPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
                 case 0x30:
-                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
                 case 0x31:
-                    return std::shared_ptr<ClientboundPlayerCombatPacket>(new ClientboundPlayerCombatPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatPacket>();
                 case 0x32:
-                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
                 case 0x33:
-                    return std::shared_ptr<ClientboundPlayerLookAtPacket>(new ClientboundPlayerLookAtPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
                 case 0x34:
-                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
                 case 0x35:
-                    return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundRecipePacket>();
                 case 0x36:
-                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
                 case 0x37:
-                    return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
                 case 0x38:
-                    return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ClientboundResourcePackPacket>();
                 case 0x39:
-                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-                    break;
+                    return std::make_shared<ClientboundRespawnPacket>();
                 case 0x3A:
-                    return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
-                    break;
+                    return std::make_shared<ClientboundRotateHeadPacket>();
                 case 0x3B:
-                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
                 case 0x3C:
-                    return std::shared_ptr<ClientboundSelectAdvancementsTabPacket>(new ClientboundSelectAdvancementsTabPacket);
-                    break;
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
                 case 0x3D:
-                    return std::shared_ptr<ClientboundSetBorderPacket>(new ClientboundSetBorderPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderPacket>();
                 case 0x3E:
-                    return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCameraPacket>();
                 case 0x3F:
-                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
                 case 0x40:
-                    return std::shared_ptr<ClientboundSetChunkCacheCenterPacket>(new ClientboundSetChunkCacheCenterPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheCenterPacket>();
                 case 0x41:
-                    return std::shared_ptr<ClientboundSetChunkCacheRadiusPacket>(new ClientboundSetChunkCacheRadiusPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheRadiusPacket>();
                 case 0x42:
-                    return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
                 case 0x43:
-                    return std::shared_ptr<ClientboundSetDisplayObjectivePacket>(new ClientboundSetDisplayObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
                 case 0x44:
-                    return std::shared_ptr<ClientboundSetEntityDataPacket>(new ClientboundSetEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
                 case 0x45:
-                    return std::shared_ptr<ClientboundSetEntityLinkPacket>(new ClientboundSetEntityLinkPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
                 case 0x46:
-                    return std::shared_ptr<ClientboundSetEntityMotionPacket>(new ClientboundSetEntityMotionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
                 case 0x47:
-                    return std::shared_ptr<ClientboundSetEquipmentPacket>(new ClientboundSetEquipmentPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
                 case 0x48:
-                    return std::shared_ptr<ClientboundSetExperiencePacket>(new ClientboundSetExperiencePacket);
-                    break;
+                    return std::make_shared<ClientboundSetExperiencePacket>();
                 case 0x49:
-                    return std::shared_ptr<ClientboundSetHealthPacket>(new ClientboundSetHealthPacket);
-                    break;
+                    return std::make_shared<ClientboundSetHealthPacket>();
                 case 0x4A:
-                    return std::shared_ptr<ClientboundSetObjectivePacket>(new ClientboundSetObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetObjectivePacket>();
                 case 0x4B:
-                    return std::shared_ptr<ClientboundSetPassengersPacket>(new ClientboundSetPassengersPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPassengersPacket>();
                 case 0x4C:
-                    return std::shared_ptr<ClientboundSetPlayerTeamPacket>(new ClientboundSetPlayerTeamPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
                 case 0x4D:
-                    return std::shared_ptr<ClientboundSetScorePacket>(new ClientboundSetScorePacket);
-                    break;
+                    return std::make_shared<ClientboundSetScorePacket>();
                 case 0x4E:
-                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-                    break;
+                    return std::make_shared<ClientboundSetTimePacket>();
                 case 0x4F:
-                    return std::shared_ptr<ClientboundSetTitlesPacket>(new ClientboundSetTitlesPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitlesPacket>();
                 case 0x50:
-                    return std::shared_ptr<ClientboundSoundEntityPacket>(new ClientboundSoundEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundEntityPacket>();
                 case 0x51:
-                    return std::shared_ptr<ClientboundSoundPacket>(new ClientboundSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundPacket>();
                 case 0x52:
-                    return std::shared_ptr<ClientboundStopSoundPacket>(new ClientboundStopSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundStopSoundPacket>();
                 case 0x53:
-                    return std::shared_ptr<ClientboundTabListPacket>(new ClientboundTabListPacket);
-                    break;
+                    return std::make_shared<ClientboundTabListPacket>();
                 case 0x54:
-                    return std::shared_ptr<ClientboundTagQueryPacket>(new ClientboundTagQueryPacket);
-                    break;
+                    return std::make_shared<ClientboundTagQueryPacket>();
                 case 0x55:
-                    return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
                 case 0x56:
-                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
                 case 0x57:
-                    return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
                 case 0x58:
-                    return std::shared_ptr<ClientboundUpdateAttributesPacket>(new ClientboundUpdateAttributesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
                 case 0x59:
-                    return std::shared_ptr<ClientboundUpdateMobEffectPacket>(new ClientboundUpdateMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
                 case 0x5A:
-                    return std::shared_ptr<ClientboundUpdateRecipesPacket>(new ClientboundUpdateRecipesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x5B:
-                    return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
                 case 0x00:
-                    return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundAddExperienceOrbPacket>(new ClientboundAddExperienceOrbPacket);
-                    break;
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundAddMobPacket>(new ClientboundAddMobPacket);
-                    break;
+                    return std::make_shared<ClientboundAddMobPacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundAddPaintingPacket>(new ClientboundAddPaintingPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPaintingPacket>();
                 case 0x04:
-                    return std::shared_ptr<ClientboundAddPlayerPacket>(new ClientboundAddPlayerPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPlayerPacket>();
                 case 0x05:
-                    return std::shared_ptr<ClientboundAddVibrationSignalPacket>(new ClientboundAddVibrationSignalPacket);
-                    break;
+                    return std::make_shared<ClientboundAddVibrationSignalPacket>();
                 case 0x06:
-                    return std::shared_ptr<ClientboundAnimatePacket>(new ClientboundAnimatePacket);
-                    break;
+                    return std::make_shared<ClientboundAnimatePacket>();
                 case 0x07:
-                    return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
-                    break;
+                    return std::make_shared<ClientboundAwardStatsPacket>();
                 case 0x08:
-                    return std::shared_ptr<ClientboundBlockBreakAckPacket>(new ClientboundBlockBreakAckPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockBreakAckPacket>();
                 case 0x09:
-                    return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEventPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
                 case 0x0D:
-                    return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBossEventPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-                    break;
+                    return std::make_shared<ClientboundChatPacket>();
                 case 0x10:
-                    return std::shared_ptr<ClientboundClearTitlesPacket>(new ClientboundClearTitlesPacket);
-                    break;
+                    return std::make_shared<ClientboundClearTitlesPacket>();
                 case 0x11:
-                    return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
                 case 0x12:
-                    return std::shared_ptr<ClientboundCommandsPacket>(new ClientboundCommandsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandsPacket>();
                 case 0x13:
-                    return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ClientboundContainerClosePacket>();
                 case 0x14:
-                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
                 case 0x15:
-                    return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
                 case 0x16:
-                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
                 case 0x17:
-                    return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
-                    break;
+                    return std::make_shared<ClientboundCooldownPacket>();
                 case 0x18:
-                    return std::shared_ptr<ClientboundCustomPayloadPacket>(new ClientboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
                 case 0x19:
-                    return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomSoundPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundDisconnectPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
-                    break;
+                    return std::make_shared<ClientboundEntityEventPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
-                    break;
+                    return std::make_shared<ClientboundExplodePacket>();
                 case 0x1D:
-                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
-                    break;
+                    return std::make_shared<ClientboundGameEventPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ClientboundHorseScreenOpenPacket>(new ClientboundHorseScreenOpenPacket);
-                    break;
+                    return std::make_shared<ClientboundHorseScreenOpenPacket>();
                 case 0x20:
-                    return std::shared_ptr<ClientboundInitializeBorderPacket>(new ClientboundInitializeBorderPacket);
-                    break;
+                    return std::make_shared<ClientboundInitializeBorderPacket>();
                 case 0x21:
-                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ClientboundKeepAlivePacket>();
                 case 0x22:
-                    return std::shared_ptr<ClientboundLevelChunkPacket>(new ClientboundLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelChunkPacket>();
                 case 0x23:
-                    return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelEventPacket>();
                 case 0x24:
-                    return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
                 case 0x25:
-                    return std::shared_ptr<ClientboundLightUpdatePacket>(new ClientboundLightUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundLightUpdatePacket>();
                 case 0x26:
-                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginPacket>();
                 case 0x27:
-                    return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
-                    break;
+                    return std::make_shared<ClientboundMapItemDataPacket>();
                 case 0x28:
-                    return std::shared_ptr<ClientboundMerchantOffersPacket>(new ClientboundMerchantOffersPacket);
-                    break;
+                    return std::make_shared<ClientboundMerchantOffersPacket>();
                 case 0x29:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPos>(new ClientboundMoveEntityPacketPos);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
                 case 0x2A:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPosRot>(new ClientboundMoveEntityPacketPosRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
                 case 0x2B:
-                    return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
                 case 0x2C:
-                    return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
                 case 0x2D:
-                    return std::shared_ptr<ClientboundOpenBookPacket>(new ClientboundOpenBookPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenBookPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ClientboundOpenScreenPacket>(new ClientboundOpenScreenPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenScreenPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ClientboundOpenSignEditorPacket>(new ClientboundOpenSignEditorPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
                 case 0x30:
-                    return std::shared_ptr<ClientboundPingPacket>(new ClientboundPingPacket);
-                    break;
+                    return std::make_shared<ClientboundPingPacket>();
                 case 0x31:
-                    return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
                 case 0x32:
-                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
                 case 0x33:
-                    return std::shared_ptr<ClientboundPlayerCombatEndPacket>(new ClientboundPlayerCombatEndPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatEndPacket>();
                 case 0x34:
-                    return std::shared_ptr<ClientboundPlayerCombatEnterPacket>(new ClientboundPlayerCombatEnterPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatEnterPacket>();
                 case 0x35:
-                    return std::shared_ptr<ClientboundPlayerCombatKillPacket>(new ClientboundPlayerCombatKillPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatKillPacket>();
                 case 0x36:
-                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
                 case 0x37:
-                    return std::shared_ptr<ClientboundPlayerLookAtPacket>(new ClientboundPlayerLookAtPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
                 case 0x38:
-                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
                 case 0x39:
-                    return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundRecipePacket>();
                 case 0x3A:
 #if PROTOCOL_VERSION < 756
-                    return std::shared_ptr<ClientboundRemoveEntityPacket>(new ClientboundRemoveEntityPacket);
+                    return std::make_shared<ClientboundRemoveEntityPacket>();
 #else
-                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
 #endif
-                    break;
                 case 0x3B:
-                    return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
                 case 0x3C:
-                    return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ClientboundResourcePackPacket>();
                 case 0x3D:
-                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-                    break;
+                    return std::make_shared<ClientboundRespawnPacket>();
                 case 0x3E:
-                    return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
-                    break;
+                    return std::make_shared<ClientboundRotateHeadPacket>();
                 case 0x3F:
-                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
                 case 0x40:
-                    return std::shared_ptr<ClientboundSelectAdvancementsTabPacket>(new ClientboundSelectAdvancementsTabPacket);
-                    break;
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
                 case 0x41:
-                    return std::shared_ptr<ClientboundSetActionBarTextPacket>(new ClientboundSetActionBarTextPacket);
-                    break;
+                    return std::make_shared<ClientboundSetActionBarTextPacket>();
                 case 0x42:
-                    return std::shared_ptr<ClientboundSetBorderCenterPacket>(new ClientboundSetBorderCenterPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderCenterPacket>();
                 case 0x43:
-                    return std::shared_ptr<ClientboundSetBorderLerpSizePacket>(new ClientboundSetBorderLerpSizePacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderLerpSizePacket>();
                 case 0x44:
-                    return std::shared_ptr<ClientboundSetBorderSizePacket>(new ClientboundSetBorderSizePacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderSizePacket>();
                 case 0x45:
-                    return std::shared_ptr<ClientboundSetBorderWarningDelayPacket>(new ClientboundSetBorderWarningDelayPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderWarningDelayPacket>();
                 case 0x46:
-                    return std::shared_ptr<ClientboundSetBorderWarningDistancePacket>(new ClientboundSetBorderWarningDistancePacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderWarningDistancePacket>();
                 case 0x47:
-                    return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCameraPacket>();
                 case 0x48:
-                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
                 case 0x49:
-                    return std::shared_ptr<ClientboundSetChunkCacheCenterPacket>(new ClientboundSetChunkCacheCenterPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheCenterPacket>();
                 case 0x4A:
-                    return std::shared_ptr<ClientboundSetChunkCacheRadiusPacket>(new ClientboundSetChunkCacheRadiusPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheRadiusPacket>();
                 case 0x4B:
-                    return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
                 case 0x4C:
-                    return std::shared_ptr<ClientboundSetDisplayObjectivePacket>(new ClientboundSetDisplayObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
                 case 0x4D:
-                    return std::shared_ptr<ClientboundSetEntityDataPacket>(new ClientboundSetEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
                 case 0x4E:
-                    return std::shared_ptr<ClientboundSetEntityLinkPacket>(new ClientboundSetEntityLinkPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
                 case 0x4F:
-                    return std::shared_ptr<ClientboundSetEntityMotionPacket>(new ClientboundSetEntityMotionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
                 case 0x50:
-                    return std::shared_ptr<ClientboundSetEquipmentPacket>(new ClientboundSetEquipmentPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
                 case 0x51:
-                    return std::shared_ptr<ClientboundSetExperiencePacket>(new ClientboundSetExperiencePacket);
-                    break;
+                    return std::make_shared<ClientboundSetExperiencePacket>();
                 case 0x52:
-                    return std::shared_ptr<ClientboundSetHealthPacket>(new ClientboundSetHealthPacket);
-                    break;
+                    return std::make_shared<ClientboundSetHealthPacket>();
                 case 0x53:
-                    return std::shared_ptr<ClientboundSetObjectivePacket>(new ClientboundSetObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetObjectivePacket>();
                 case 0x54:
-                    return std::shared_ptr<ClientboundSetPassengersPacket>(new ClientboundSetPassengersPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPassengersPacket>();
                 case 0x55:
-                    return std::shared_ptr<ClientboundSetPlayerTeamPacket>(new ClientboundSetPlayerTeamPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
                 case 0x56:
-                    return std::shared_ptr<ClientboundSetScorePacket>(new ClientboundSetScorePacket);
-                    break;
+                    return std::make_shared<ClientboundSetScorePacket>();
                 case 0x57:
-                    return std::shared_ptr<ClientboundSetSubtitleTextPacket>(new ClientboundSetSubtitleTextPacket);
-                    break;
+                    return std::make_shared<ClientboundSetSubtitleTextPacket>();
                 case 0x58:
-                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-                    break;
+                    return std::make_shared<ClientboundSetTimePacket>();
                 case 0x59:
-                    return std::shared_ptr<ClientboundSetTitleTextPacket>(new ClientboundSetTitleTextPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitleTextPacket>();
                 case 0x5A:
-                    return std::shared_ptr<ClientboundSetTitlesAnimationPacket>(new ClientboundSetTitlesAnimationPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitlesAnimationPacket>();
                 case 0x5B:
-                    return std::shared_ptr<ClientboundSoundEntityPacket>(new ClientboundSoundEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundEntityPacket>();
                 case 0x5C:
-                    return std::shared_ptr<ClientboundSoundPacket>(new ClientboundSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundPacket>();
                 case 0x5D:
-                    return std::shared_ptr<ClientboundStopSoundPacket>(new ClientboundStopSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundStopSoundPacket>();
                 case 0x5E:
-                    return std::shared_ptr<ClientboundTabListPacket>(new ClientboundTabListPacket);
-                    break;
+                    return std::make_shared<ClientboundTabListPacket>();
                 case 0x5F:
-                    return std::shared_ptr<ClientboundTagQueryPacket>(new ClientboundTagQueryPacket);
-                    break;
+                    return std::make_shared<ClientboundTagQueryPacket>();
                 case 0x60:
-                    return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
                 case 0x61:
-                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
                 case 0x62:
-                    return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
                 case 0x63:
-                    return std::shared_ptr<ClientboundUpdateAttributesPacket>(new ClientboundUpdateAttributesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
                 case 0x64:
-                    return std::shared_ptr<ClientboundUpdateMobEffectPacket>(new ClientboundUpdateMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
                 case 0x65:
-                    return std::shared_ptr<ClientboundUpdateRecipesPacket>(new ClientboundUpdateRecipesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x66:
-                    return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
                 case 0x00:
-                    return std::shared_ptr<ClientboundAddEntityPacket>(new ClientboundAddEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
-                    return std::shared_ptr<ClientboundAddExperienceOrbPacket>(new ClientboundAddExperienceOrbPacket);
-                    break;
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
                 case 0x02:
-                    return std::shared_ptr<ClientboundAddMobPacket>(new ClientboundAddMobPacket);
-                    break;
+                    return std::make_shared<ClientboundAddMobPacket>();
                 case 0x03:
-                    return std::shared_ptr<ClientboundAddPaintingPacket>(new ClientboundAddPaintingPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPaintingPacket>();
                 case 0x04:
-                    return std::shared_ptr<ClientboundAddPlayerPacket>(new ClientboundAddPlayerPacket);
-                    break;
+                    return std::make_shared<ClientboundAddPlayerPacket>();
                 case 0x05:
-                    return std::shared_ptr<ClientboundAddVibrationSignalPacket>(new ClientboundAddVibrationSignalPacket);
-                    break;
+                    return std::make_shared<ClientboundAddVibrationSignalPacket>();
                 case 0x06:
-                    return std::shared_ptr<ClientboundAnimatePacket>(new ClientboundAnimatePacket);
-                    break;
+                    return std::make_shared<ClientboundAnimatePacket>();
                 case 0x07:
-                    return std::shared_ptr<ClientboundAwardStatsPacket>(new ClientboundAwardStatsPacket);
-                    break;
+                    return std::make_shared<ClientboundAwardStatsPacket>();
                 case 0x08:
-                    return std::shared_ptr<ClientboundBlockBreakAckPacket>(new ClientboundBlockBreakAckPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockBreakAckPacket>();
                 case 0x09:
-                    return std::shared_ptr<ClientboundBlockDestructionPacket>(new ClientboundBlockDestructionPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ClientboundBlockEntityDataPacket>(new ClientboundBlockEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ClientboundBlockEventPacket>(new ClientboundBlockEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBlockEventPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ClientboundBlockUpdatePacket>(new ClientboundBlockUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
                 case 0x0D:
-                    return std::shared_ptr<ClientboundBossEventPacket>(new ClientboundBossEventPacket);
-                    break;
+                    return std::make_shared<ClientboundBossEventPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ClientboundChangeDifficultyPacket>(new ClientboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ClientboundChatPacket>(new ClientboundChatPacket);
-                    break;
+                    return std::make_shared<ClientboundChatPacket>();
                 case 0x10:
-                    return std::shared_ptr<ClientboundClearTitlesPacket>(new ClientboundClearTitlesPacket);
-                    break;
+                    return std::make_shared<ClientboundClearTitlesPacket>();
                 case 0x11:
-                    return std::shared_ptr<ClientboundCommandSuggestionsPacket>(new ClientboundCommandSuggestionsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
                 case 0x12:
-                    return std::shared_ptr<ClientboundCommandsPacket>(new ClientboundCommandsPacket);
-                    break;
+                    return std::make_shared<ClientboundCommandsPacket>();
                 case 0x13:
-                    return std::shared_ptr<ClientboundContainerClosePacket>(new ClientboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ClientboundContainerClosePacket>();
                 case 0x14:
-                    return std::shared_ptr<ClientboundContainerSetContentPacket>(new ClientboundContainerSetContentPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
                 case 0x15:
-                    return std::shared_ptr<ClientboundContainerSetDataPacket>(new ClientboundContainerSetDataPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
                 case 0x16:
-                    return std::shared_ptr<ClientboundContainerSetSlotPacket>(new ClientboundContainerSetSlotPacket);
-                    break;
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
                 case 0x17:
-                    return std::shared_ptr<ClientboundCooldownPacket>(new ClientboundCooldownPacket);
-                    break;
+                    return std::make_shared<ClientboundCooldownPacket>();
                 case 0x18:
-                    return std::shared_ptr<ClientboundCustomPayloadPacket>(new ClientboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
                 case 0x19:
-                    return std::shared_ptr<ClientboundCustomSoundPacket>(new ClientboundCustomSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundCustomSoundPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ClientboundDisconnectPacket>(new ClientboundDisconnectPacket);
-                    break;
+                    return std::make_shared<ClientboundDisconnectPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ClientboundEntityEventPacket>(new ClientboundEntityEventPacket);
-                    break;
+                    return std::make_shared<ClientboundEntityEventPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ClientboundExplodePacket>(new ClientboundExplodePacket);
-                    break;
+                    return std::make_shared<ClientboundExplodePacket>();
                 case 0x1D:
-                    return std::shared_ptr<ClientboundForgetLevelChunkPacket>(new ClientboundForgetLevelChunkPacket);
-                    break;
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ClientboundGameEventPacket>(new ClientboundGameEventPacket);
-                    break;
+                    return std::make_shared<ClientboundGameEventPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ClientboundHorseScreenOpenPacket>(new ClientboundHorseScreenOpenPacket);
-                    break;
+                    return std::make_shared<ClientboundHorseScreenOpenPacket>();
                 case 0x20:
-                    return std::shared_ptr<ClientboundInitializeBorderPacket>(new ClientboundInitializeBorderPacket);
-                    break;
+                    return std::make_shared<ClientboundInitializeBorderPacket>();
                 case 0x21:
-                    return std::shared_ptr<ClientboundKeepAlivePacket>(new ClientboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ClientboundKeepAlivePacket>();
                 case 0x22:
-                    return std::shared_ptr<ClientboundLevelChunkWithLightPacket>(new ClientboundLevelChunkWithLightPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelChunkWithLightPacket>();
                 case 0x23:
-                    return std::shared_ptr<ClientboundLevelEventPacket>(new ClientboundLevelEventPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelEventPacket>();
                 case 0x24:
-                    return std::shared_ptr<ClientboundLevelParticlesPacket>(new ClientboundLevelParticlesPacket);
-                    break;
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
                 case 0x25:
-                    return std::shared_ptr<ClientboundLightUpdatePacket>(new ClientboundLightUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundLightUpdatePacket>();
                 case 0x26:
-                    return std::shared_ptr<ClientboundLoginPacket>(new ClientboundLoginPacket);
-                    break;
+                    return std::make_shared<ClientboundLoginPacket>();
                 case 0x27:
-                    return std::shared_ptr<ClientboundMapItemDataPacket>(new ClientboundMapItemDataPacket);
-                    break;
+                    return std::make_shared<ClientboundMapItemDataPacket>();
                 case 0x28:
-                    return std::shared_ptr<ClientboundMerchantOffersPacket>(new ClientboundMerchantOffersPacket);
-                    break;
+                    return std::make_shared<ClientboundMerchantOffersPacket>();
                 case 0x29:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPos>(new ClientboundMoveEntityPacketPos);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
                 case 0x2A:
-                    return std::shared_ptr<ClientboundMoveEntityPacketPosRot>(new ClientboundMoveEntityPacketPosRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
                 case 0x2B:
-                    return std::shared_ptr<ClientboundMoveEntityPacketRot>(new ClientboundMoveEntityPacketRot);
-                    break;
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
                 case 0x2C:
-                    return std::shared_ptr<ClientboundMoveVehiclePacket>(new ClientboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
                 case 0x2D:
-                    return std::shared_ptr<ClientboundOpenBookPacket>(new ClientboundOpenBookPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenBookPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ClientboundOpenScreenPacket>(new ClientboundOpenScreenPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenScreenPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ClientboundOpenSignEditorPacket>(new ClientboundOpenSignEditorPacket);
-                    break;
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
                 case 0x30:
-                    return std::shared_ptr<ClientboundPingPacket>(new ClientboundPingPacket);
-                    break;
+                    return std::make_shared<ClientboundPingPacket>();
                 case 0x31:
-                    return std::shared_ptr<ClientboundPlaceGhostRecipePacket>(new ClientboundPlaceGhostRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
                 case 0x32:
-                    return std::shared_ptr<ClientboundPlayerAbilitiesPacket>(new ClientboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
                 case 0x33:
-                    return std::shared_ptr<ClientboundPlayerCombatEndPacket>(new ClientboundPlayerCombatEndPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatEndPacket>();
                 case 0x34:
-                    return std::shared_ptr<ClientboundPlayerCombatEnterPacket>(new ClientboundPlayerCombatEnterPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatEnterPacket>();
                 case 0x35:
-                    return std::shared_ptr<ClientboundPlayerCombatKillPacket>(new ClientboundPlayerCombatKillPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerCombatKillPacket>();
                 case 0x36:
-                    return std::shared_ptr<ClientboundPlayerInfoPacket>(new ClientboundPlayerInfoPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
                 case 0x37:
-                    return std::shared_ptr<ClientboundPlayerLookAtPacket>(new ClientboundPlayerLookAtPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
                 case 0x38:
-                    return std::shared_ptr<ClientboundPlayerPositionPacket>(new ClientboundPlayerPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
                 case 0x39:
-                    return std::shared_ptr<ClientboundRecipePacket>(new ClientboundRecipePacket);
-                    break;
+                    return std::make_shared<ClientboundRecipePacket>();
                 case 0x3A:
-                    return std::shared_ptr<ClientboundRemoveEntitiesPacket>(new ClientboundRemoveEntitiesPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
                 case 0x3B:
-                    return std::shared_ptr<ClientboundRemoveMobEffectPacket>(new ClientboundRemoveMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
                 case 0x3C:
-                    return std::shared_ptr<ClientboundResourcePackPacket>(new ClientboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ClientboundResourcePackPacket>();
                 case 0x3D:
-                    return std::shared_ptr<ClientboundRespawnPacket>(new ClientboundRespawnPacket);
-                    break;
+                    return std::make_shared<ClientboundRespawnPacket>();
                 case 0x3E:
-                    return std::shared_ptr<ClientboundRotateHeadPacket>(new ClientboundRotateHeadPacket);
-                    break;
+                    return std::make_shared<ClientboundRotateHeadPacket>();
                 case 0x3F:
-                    return std::shared_ptr<ClientboundSectionBlocksUpdatePacket>(new ClientboundSectionBlocksUpdatePacket);
-                    break;
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
                 case 0x40:
-                    return std::shared_ptr<ClientboundSelectAdvancementsTabPacket>(new ClientboundSelectAdvancementsTabPacket);
-                    break;
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
                 case 0x41:
-                    return std::shared_ptr<ClientboundSetActionBarTextPacket>(new ClientboundSetActionBarTextPacket);
-                    break;
+                    return std::make_shared<ClientboundSetActionBarTextPacket>();
                 case 0x42:
-                    return std::shared_ptr<ClientboundSetBorderCenterPacket>(new ClientboundSetBorderCenterPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderCenterPacket>();
                 case 0x43:
-                    return std::shared_ptr<ClientboundSetBorderLerpSizePacket>(new ClientboundSetBorderLerpSizePacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderLerpSizePacket>();
                 case 0x44:
-                    return std::shared_ptr<ClientboundSetBorderSizePacket>(new ClientboundSetBorderSizePacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderSizePacket>();
                 case 0x45:
-                    return std::shared_ptr<ClientboundSetBorderWarningDelayPacket>(new ClientboundSetBorderWarningDelayPacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderWarningDelayPacket>();
                 case 0x46:
-                    return std::shared_ptr<ClientboundSetBorderWarningDistancePacket>(new ClientboundSetBorderWarningDistancePacket);
-                    break;
+                    return std::make_shared<ClientboundSetBorderWarningDistancePacket>();
                 case 0x47:
-                    return std::shared_ptr<ClientboundSetCameraPacket>(new ClientboundSetCameraPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCameraPacket>();
                 case 0x48:
-                    return std::shared_ptr<ClientboundSetCarriedItemPacket>(new ClientboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
                 case 0x49:
-                    return std::shared_ptr<ClientboundSetChunkCacheCenterPacket>(new ClientboundSetChunkCacheCenterPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheCenterPacket>();
                 case 0x4A:
-                    return std::shared_ptr<ClientboundSetChunkCacheRadiusPacket>(new ClientboundSetChunkCacheRadiusPacket);
-                    break;
+                    return std::make_shared<ClientboundSetChunkCacheRadiusPacket>();
                 case 0x4B:
-                    return std::shared_ptr<ClientboundSetDefaultSpawnPositionPacket>(new ClientboundSetDefaultSpawnPositionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
                 case 0x4C:
-                    return std::shared_ptr<ClientboundSetDisplayObjectivePacket>(new ClientboundSetDisplayObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
                 case 0x4D:
-                    return std::shared_ptr<ClientboundSetEntityDataPacket>(new ClientboundSetEntityDataPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
                 case 0x4E:
-                    return std::shared_ptr<ClientboundSetEntityLinkPacket>(new ClientboundSetEntityLinkPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
                 case 0x4F:
-                    return std::shared_ptr<ClientboundSetEntityMotionPacket>(new ClientboundSetEntityMotionPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
                 case 0x50:
-                    return std::shared_ptr<ClientboundSetEquipmentPacket>(new ClientboundSetEquipmentPacket);
-                    break;
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
                 case 0x51:
-                    return std::shared_ptr<ClientboundSetExperiencePacket>(new ClientboundSetExperiencePacket);
-                    break;
+                    return std::make_shared<ClientboundSetExperiencePacket>();
                 case 0x52:
-                    return std::shared_ptr<ClientboundSetHealthPacket>(new ClientboundSetHealthPacket);
-                    break;
+                    return std::make_shared<ClientboundSetHealthPacket>();
                 case 0x53:
-                    return std::shared_ptr<ClientboundSetObjectivePacket>(new ClientboundSetObjectivePacket);
-                    break;
+                    return std::make_shared<ClientboundSetObjectivePacket>();
                 case 0x54:
-                    return std::shared_ptr<ClientboundSetPassengersPacket>(new ClientboundSetPassengersPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPassengersPacket>();
                 case 0x55:
-                    return std::shared_ptr<ClientboundSetPlayerTeamPacket>(new ClientboundSetPlayerTeamPacket);
-                    break;
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
                 case 0x56:
-                    return std::shared_ptr<ClientboundSetScorePacket>(new ClientboundSetScorePacket);
-                    break;
+                    return std::make_shared<ClientboundSetScorePacket>();
                 case 0x57:
-                    return std::shared_ptr<ClientboundSetSimulationDistancePacket>(new ClientboundSetSimulationDistancePacket);
-                    break;
+                    return std::make_shared<ClientboundSetSimulationDistancePacket>();
                 case 0x58:
-                    return std::shared_ptr<ClientboundSetSubtitleTextPacket>(new ClientboundSetSubtitleTextPacket);
-                    break;
+                    return std::make_shared<ClientboundSetSubtitleTextPacket>();
                 case 0x59:
-                    return std::shared_ptr<ClientboundSetTimePacket>(new ClientboundSetTimePacket);
-                    break;
+                    return std::make_shared<ClientboundSetTimePacket>();
                 case 0x5A:
-                    return std::shared_ptr<ClientboundSetTitleTextPacket>(new ClientboundSetTitleTextPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitleTextPacket>();
                 case 0x5B:
-                    return std::shared_ptr<ClientboundSetTitlesAnimationPacket>(new ClientboundSetTitlesAnimationPacket);
-                    break;
+                    return std::make_shared<ClientboundSetTitlesAnimationPacket>();
                 case 0x5C:
-                    return std::shared_ptr<ClientboundSoundEntityPacket>(new ClientboundSoundEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundEntityPacket>();
                 case 0x5D:
-                    return std::shared_ptr<ClientboundSoundPacket>(new ClientboundSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundSoundPacket>();
                 case 0x5E:
-                    return std::shared_ptr<ClientboundStopSoundPacket>(new ClientboundStopSoundPacket);
-                    break;
+                    return std::make_shared<ClientboundStopSoundPacket>();
                 case 0x5F:
-                    return std::shared_ptr<ClientboundTabListPacket>(new ClientboundTabListPacket);
-                    break;
+                    return std::make_shared<ClientboundTabListPacket>();
                 case 0x60:
-                    return std::shared_ptr<ClientboundTagQueryPacket>(new ClientboundTagQueryPacket);
-                    break;
+                    return std::make_shared<ClientboundTagQueryPacket>();
                 case 0x61:
-                    return std::shared_ptr<ClientboundTakeItemEntityPacket>(new ClientboundTakeItemEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
                 case 0x62:
-                    return std::shared_ptr<ClientboundTeleportEntityPacket>(new ClientboundTeleportEntityPacket);
-                    break;
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
                 case 0x63:
-                    return std::shared_ptr<ClientboundUpdateAdvancementsPacket>(new ClientboundUpdateAdvancementsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
                 case 0x64:
-                    return std::shared_ptr<ClientboundUpdateAttributesPacket>(new ClientboundUpdateAttributesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
                 case 0x65:
-                    return std::shared_ptr<ClientboundUpdateMobEffectPacket>(new ClientboundUpdateMobEffectPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
                 case 0x66:
-                    return std::shared_ptr<ClientboundUpdateRecipesPacket>(new ClientboundUpdateRecipesPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x67:
-                    return std::shared_ptr<ClientboundUpdateTagsPacket>(new ClientboundUpdateTagsPacket);
-                    break;
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
+#elif PROTOCOL_VERSION == 759 // 1.19
+                case 0x00:
+                    return std::make_shared<ClientboundAddEntityPacket>();
+                case 0x01:
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
+                case 0x02:
+                    return std::make_shared<ClientboundAddPlayerPacket>();
+                case 0x03:
+                    return std::make_shared<ClientboundAnimatePacket>();
+                case 0x04:
+                    return std::make_shared<ClientboundAwardStatsPacket>();
+                case 0x05:
+                    return std::make_shared<ClientboundBlockChangedAckPacket>();
+                case 0x06:
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
+                case 0x07:
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
+                case 0x08:
+                    return std::make_shared<ClientboundBlockEventPacket>();
+                case 0x09:
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
+                case 0x0A:
+                    return std::make_shared<ClientboundBossEventPacket>();
+                case 0x0B:
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
+                case 0x0C:
+                    return std::make_shared<ClientboundChatPreviewPacket>();
+                case 0x0D:
+                    return std::make_shared<ClientboundClearTitlesPacket>();
+                case 0x0E:
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
+                case 0x0F:
+                    return std::make_shared<ClientboundCommandsPacket>();
+                case 0x10:
+                    return std::make_shared<ClientboundContainerClosePacket>();
+                case 0x11:
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
+                case 0x12:
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
+                case 0x13:
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
+                case 0x14:
+                    return std::make_shared<ClientboundCooldownPacket>();
+                case 0x15:
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
+                case 0x16:
+                    return std::make_shared<ClientboundCustomSoundPacket>();
+                case 0x17:
+                    return std::make_shared<ClientboundDisconnectPacket>();
+                case 0x18:
+                    return std::make_shared<ClientboundEntityEventPacket>();
+                case 0x19:
+                    return std::make_shared<ClientboundExplodePacket>();
+                case 0x1A:
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
+                case 0x1B:
+                    return std::make_shared<ClientboundGameEventPacket>();
+                case 0x1C:
+                    return std::make_shared<ClientboundHorseScreenOpenPacket>();
+                case 0x1D:
+                    return std::make_shared<ClientboundInitializeBorderPacket>();
+                case 0x1E:
+                    return std::make_shared<ClientboundKeepAlivePacket>();
+                case 0x1F:
+                    return std::make_shared<ClientboundLevelChunkWithLightPacket>();
+                case 0x20:
+                    return std::make_shared<ClientboundLevelEventPacket>();
+                case 0x21:
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
+                case 0x22:
+                    return std::make_shared<ClientboundLightUpdatePacket>();
+                case 0x23:
+                    return std::make_shared<ClientboundLoginPacket>();
+                case 0x24:
+                    return std::make_shared<ClientboundMapItemDataPacket>();
+                case 0x25:
+                    return std::make_shared<ClientboundMerchantOffersPacket>();
+                case 0x26:
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
+                case 0x27:
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
+                case 0x28:
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
+                case 0x29:
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
+                case 0x2A:
+                    return std::make_shared<ClientboundOpenBookPacket>();
+                case 0x2B:
+                    return std::make_shared<ClientboundOpenScreenPacket>();
+                case 0x2C:
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
+                case 0x2D:
+                    return std::make_shared<ClientboundPingPacket>();
+                case 0x2E:
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
+                case 0x2F:
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
+                case 0x30:
+                    return std::make_shared<ClientboundPlayerChatPacket>();
+                case 0x31:
+                    return std::make_shared<ClientboundPlayerCombatEndPacket>();
+                case 0x32:
+                    return std::make_shared<ClientboundPlayerCombatEnterPacket>();
+                case 0x33:
+                    return std::make_shared<ClientboundPlayerCombatKillPacket>();
+                case 0x34:
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
+                case 0x35:
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
+                case 0x36:
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
+                case 0x37:
+                    return std::make_shared<ClientboundRecipePacket>();
+                case 0x38:
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
+                case 0x39:
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
+                case 0x3A:
+                    return std::make_shared<ClientboundResourcePackPacket>();
+                case 0x3B:
+                    return std::make_shared<ClientboundRespawnPacket>();
+                case 0x3C:
+                    return std::make_shared<ClientboundRotateHeadPacket>();
+                case 0x3D:
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
+                case 0x3E:
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
+                case 0x3F:
+                    return std::make_shared<ClientboundServerDataPacket>();
+                case 0x40:
+                    return std::make_shared<ClientboundSetActionBarTextPacket>();
+                case 0x41:
+                    return std::make_shared<ClientboundSetBorderCenterPacket>();
+                case 0x42:
+                    return std::make_shared<ClientboundSetBorderLerpSizePacket>();
+                case 0x43:
+                    return std::make_shared<ClientboundSetBorderSizePacket>();
+                case 0x44:
+                    return std::make_shared<ClientboundSetBorderWarningDelayPacket>();
+                case 0x45:
+                    return std::make_shared<ClientboundSetBorderWarningDistancePacket>();
+                case 0x46:
+                    return std::make_shared<ClientboundSetCameraPacket>();
+                case 0x47:
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
+                case 0x48:
+                    return std::make_shared<ClientboundSetChunkCacheCenterPacket>();
+                case 0x49:
+                    return std::make_shared<ClientboundSetChunkCacheRadiusPacket>();
+                case 0x4A:
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
+                case 0x4B:
+                    return std::make_shared<ClientboundSetDisplayChatPreviewPacket>();
+                case 0x4C:
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
+                case 0x4D:
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
+                case 0x4E:
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
+                case 0x4F:
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
+                case 0x50:
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
+                case 0x51:
+                    return std::make_shared<ClientboundSetExperiencePacket>();
+                case 0x52:
+                    return std::make_shared<ClientboundSetHealthPacket>();
+                case 0x53:
+                    return std::make_shared<ClientboundSetObjectivePacket>();
+                case 0x54:
+                    return std::make_shared<ClientboundSetPassengersPacket>();
+                case 0x55:
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
+                case 0x56:
+                    return std::make_shared<ClientboundSetScorePacket>();
+                case 0x57:
+                    return std::make_shared<ClientboundSetSimulationDistancePacket>();
+                case 0x58:
+                    return std::make_shared<ClientboundSetSubtitleTextPacket>();
+                case 0x59:
+                    return std::make_shared<ClientboundSetTimePacket>();
+                case 0x5A:
+                    return std::make_shared<ClientboundSetTitleTextPacket>();
+                case 0x5B:
+                    return std::make_shared<ClientboundSetTitlesAnimationPacket>();
+                case 0x5C:
+                    return std::make_shared<ClientboundSoundEntityPacket>();
+                case 0x5D:
+                    return std::make_shared<ClientboundSoundPacket>();
+                case 0x5E:
+                    return std::make_shared<ClientboundStopSoundPacket>();
+                case 0x5F:
+                    return std::make_shared<ClientboundSystemChatPacket>();
+                case 0x60:
+                    return std::make_shared<ClientboundTabListPacket>();
+                case 0x61:
+                    return std::make_shared<ClientboundTagQueryPacket>();
+                case 0x62:
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
+                case 0x63:
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
+                case 0x64:
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
+                case 0x65:
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
+                case 0x66:
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
+                case 0x67:
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
+                case 0x68:
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
 #else
     #error "Protocol version not implemented"
 #endif
                 default:
                     return nullptr;
-                    break;
                 }
             default:
                 return nullptr;
-                break;
             }
         }
 
@@ -2337,51 +1792,41 @@ namespace ProtocolCraft
                 {
                 default:
                     return nullptr;
-                    break;
                 }
                 break;
             case ConnectionState::Handshake:
                 switch (id)
                 {
                 case 0x00:
-                    return std::shared_ptr<ServerboundClientIntentionPacket>(new ServerboundClientIntentionPacket);
-                    break;
+                    return std::make_shared<ServerboundClientIntentionPacket>();
                 default:
                     return nullptr;
-                    break;
                 }
                 break;
             case ConnectionState::Status:
                 switch (id)
                 {
                 case 0x00:
-                    return std::shared_ptr<ServerboundStatusRequestPacket>(new ServerboundStatusRequestPacket);
-                    break;
+                    return std::make_shared<ServerboundStatusRequestPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundPingRequestPacket>(new ServerboundPingRequestPacket);
-                    break;
+                    return std::make_shared<ServerboundPingRequestPacket>();
                 default:
                     return nullptr;
-                    break;
                 }
                 break;
             case ConnectionState::Login:
                 switch (id)
                 {
                 case 0x00:
-                    return std::shared_ptr<ServerboundHelloPacket>(new ServerboundHelloPacket);
-                    break;
+                    return std::make_shared<ServerboundHelloPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundKeyPacket>(new ServerboundKeyPacket);
-                    break;
+                    return std::make_shared<ServerboundKeyPacket>();
 #if PROTOCOL_VERSION > 340
                 case 0x02:
-                    return std::shared_ptr<ServerboundCustomQueryPacket>(new ServerboundCustomQueryPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomQueryPacket>();
 #endif
                 default:
                     return nullptr;
-                    break;
                 }
                 break;
             case ConnectionState::Play:
@@ -2389,1099 +1834,839 @@ namespace ProtocolCraft
                 {
 #if PROTOCOL_VERSION == 340 // 1.12.2
                 case 0x00:
-                    return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
-                    break;
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundCommandSuggestionPacket>(new ServerboundCommandSuggestionPacket);
-                    break;
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
                 case 0x02:
-                    return std::shared_ptr<ServerboundChatPacket>(new ServerboundChatPacket);
-                    break;
+                    return std::make_shared<ServerboundChatPacket>();
                 case 0x03:
-                    return std::shared_ptr<ServerboundClientCommandPacket>(new ServerboundClientCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundClientCommandPacket>();
                 case 0x04:
-                    return std::shared_ptr<ServerboundClientInformationPacket>(new ServerboundClientInformationPacket);
-                    break;
+                    return std::make_shared<ServerboundClientInformationPacket>();
                 case 0x05:
-                    return std::shared_ptr<ServerboundContainerAckPacket>(new ServerboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerAckPacket>();
                 case 0x06:
-                    return std::shared_ptr<ServerboundEnchantItemPacket>(new ServerboundEnchantItemPacket);
-                    break;
+                    return std::make_shared<ServerboundEnchantItemPacket>();
                 case 0x07:
-                    return std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClickPacket>();
                 case 0x08:
-                    return std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClosePacket>();
                 case 0x09:
-                    return std::shared_ptr<ServerboundCustomPayloadPacket>(new ServerboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ServerboundInteractPacket>(new ServerboundInteractPacket);
-                    break;
+                    return std::make_shared<ServerboundInteractPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ServerboundKeepAlivePacket>(new ServerboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ServerboundKeepAlivePacket>();
                 case 0x0C:
-                    return std::shared_ptr<ServerboundMovePlayerPacket>(new ServerboundMovePlayerPacket);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPos>(new ServerboundMovePlayerPacketPos);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
                 case 0x0E:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPosRot>(new ServerboundMovePlayerPacketPosRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
                 case 0x0F:
-                    return std::shared_ptr<ServerboundMovePlayerPacketRot>(new ServerboundMovePlayerPacketRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
                 case 0x10:
-                    return std::shared_ptr<ServerboundMoveVehiclePacket>(new ServerboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
                 case 0x11:
-                    return std::shared_ptr<ServerboundPaddleBoatPacket>(new ServerboundPaddleBoatPacket);
-                    break;
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
                 case 0x12:
-                    return std::shared_ptr<ServerboundPlaceRecipePacket>(new ServerboundPlaceRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
                 case 0x13:
-                    return std::shared_ptr<ServerboundPlayerAbilitiesPacket>(new ServerboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
                 case 0x14:
-                    return std::shared_ptr<ServerboundPlayerActionPacket>(new ServerboundPlayerActionPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerActionPacket>();
                 case 0x15:
-                    return std::shared_ptr<ServerboundPlayerCommandPacket>(new ServerboundPlayerCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
                 case 0x16:
-                    return std::shared_ptr<ServerboundPlayerInputPacket>(new ServerboundPlayerInputPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerInputPacket>();
                 case 0x17:
-                    return std::shared_ptr<ServerboundRecipeBookUpdatePacket>(new ServerboundRecipeBookUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookUpdatePacket>();
                 case 0x18:
-                    return std::shared_ptr<ServerboundResourcePackPacket>(new ServerboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ServerboundResourcePackPacket>();
                 case 0x19:
-                    return std::shared_ptr<ServerboundSeenAdvancementsPacket>(new ServerboundSeenAdvancementsPacket);
-                    break;
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ServerboundSetCarriedItemPacket>(new ServerboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ServerboundSetCreativeModeSlotPacket>(new ServerboundSetCreativeModeSlotPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ServerboundSignUpdatePacket>(new ServerboundSignUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundSignUpdatePacket>();
                 case 0x1D:
-                    return std::shared_ptr<ServerboundSwingPacket>(new ServerboundSwingPacket);
-                    break;
+                    return std::make_shared<ServerboundSwingPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ServerboundTeleportToEntityPacket>(new ServerboundTeleportToEntityPacket);
-                    break;
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ServerboundUseItemOnPacket>(new ServerboundUseItemOnPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x20:
-                    return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemPacket>();
 #elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
                 case 0x00:
-                    return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
-                    break;
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundBlockEntityTagQuery>(new ServerboundBlockEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
                 case 0x02:
-                    return std::shared_ptr<ServerboundChatPacket>(new ServerboundChatPacket);
-                    break;
+                    return std::make_shared<ServerboundChatPacket>();
                 case 0x03:
-                    return std::shared_ptr<ServerboundClientCommandPacket>(new ServerboundClientCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundClientCommandPacket>();
                 case 0x04:
-                    return std::shared_ptr<ServerboundClientInformationPacket>(new ServerboundClientInformationPacket);
-                    break;
+                    return std::make_shared<ServerboundClientInformationPacket>();
                 case 0x05:
-                    return std::shared_ptr<ServerboundCommandSuggestionPacket>(new ServerboundCommandSuggestionPacket);
-                    break;
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
                 case 0x06:
-                    return std::shared_ptr<ServerboundContainerAckPacket>(new ServerboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerAckPacket>();
                 case 0x07:
-                    return std::shared_ptr<ServerboundEnchantItemPacket>(new ServerboundEnchantItemPacket);
-                    break;
+                    return std::make_shared<ServerboundEnchantItemPacket>();
                 case 0x08:
-                    return std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClickPacket>();
                 case 0x09:
-                    return std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClosePacket>();
                 case 0x0A:
-                    return std::shared_ptr<ServerboundCustomPayloadPacket>(new ServerboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ServerboundEditBookPacket>(new ServerboundEditBookPacket);
-                    break;
+                    return std::make_shared<ServerboundEditBookPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ServerboundEntityTagQuery>(new ServerboundEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundEntityTagQuery>();
                 case 0x0D:
-                    return std::shared_ptr<ServerboundInteractPacket>(new ServerboundInteractPacket);
-                    break;
+                    return std::make_shared<ServerboundInteractPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ServerboundKeepAlivePacket>(new ServerboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ServerboundKeepAlivePacket>();
                 case 0x0F:
-                    return std::shared_ptr<ServerboundMovePlayerPacket>(new ServerboundMovePlayerPacket);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacket>();
                 case 0x10:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPos>(new ServerboundMovePlayerPacketPos);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
                 case 0x11:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPosRot>(new ServerboundMovePlayerPacketPosRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
                 case 0x12:
-                    return std::shared_ptr<ServerboundMovePlayerPacketRot>(new ServerboundMovePlayerPacketRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
                 case 0x13:
-                    return std::shared_ptr<ServerboundMoveVehiclePacket>(new ServerboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
                 case 0x14:
-                    return std::shared_ptr<ServerboundPaddleBoatPacket>(new ServerboundPaddleBoatPacket);
-                    break;
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
                 case 0x15:
-                    return std::shared_ptr<ServerboundPickItemPacket>(new ServerboundPickItemPacket);
-                    break;
+                    return std::make_shared<ServerboundPickItemPacket>();
                 case 0x16:
-                    return std::shared_ptr<ServerboundPlaceRecipePacket>(new ServerboundPlaceRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
                 case 0x17:
-                    return std::shared_ptr<ServerboundPlayerAbilitiesPacket>(new ServerboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
                 case 0x18:
-                    return std::shared_ptr<ServerboundPlayerActionPacket>(new ServerboundPlayerActionPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerActionPacket>();
                 case 0x19:
-                    return std::shared_ptr<ServerboundPlayerCommandPacket>(new ServerboundPlayerCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ServerboundPlayerInputPacket>(new ServerboundPlayerInputPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerInputPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ServerboundRecipeBookUpdatePacket>(new ServerboundRecipeBookUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookUpdatePacket>();
                 case 0x1C:
-                    return std::shared_ptr<ServerboundRenameItemPacket>(new ServerboundRenameItemPacket);
-                    break;
+                    return std::make_shared<ServerboundRenameItemPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ServerboundResourcePackPacket>(new ServerboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ServerboundResourcePackPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ServerboundSeenAdvancementsPacket>(new ServerboundSeenAdvancementsPacket);
-                    break;
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ServerboundSelectTradePacket>(new ServerboundSelectTradePacket);
-                    break;
+                    return std::make_shared<ServerboundSelectTradePacket>();
                 case 0x20:
-                    return std::shared_ptr<ServerboundSetBeaconPacket>(new ServerboundSetBeaconPacket);
-                    break;
+                    return std::make_shared<ServerboundSetBeaconPacket>();
                 case 0x21:
-                    return std::shared_ptr<ServerboundSetCarriedItemPacket>(new ServerboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
                 case 0x22:
-                    return std::shared_ptr<ServerboundSetCommandBlockPacket>(new ServerboundSetCommandBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
                 case 0x23:
-                    return std::shared_ptr<ServerboundSetCommandMinecartPacket>(new ServerboundSetCommandMinecartPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
                 case 0x24:
-                    return std::shared_ptr<ServerboundSetCreativeModeSlotPacket>(new ServerboundSetCreativeModeSlotPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
                 case 0x25:
-                    return std::shared_ptr<ServerboundSetStructureBlockPacket>(new ServerboundSetStructureBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
                 case 0x26:
-                    return std::shared_ptr<ServerboundSignUpdatePacket>(new ServerboundSignUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundSignUpdatePacket>();
                 case 0x27:
-                    return std::shared_ptr<ServerboundSwingPacket>(new ServerboundSwingPacket);
-                    break;
+                    return std::make_shared<ServerboundSwingPacket>();
                 case 0x28:
-                    return std::shared_ptr<ServerboundTeleportToEntityPacket>(new ServerboundTeleportToEntityPacket);
-                    break;
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
                 case 0x29:
-                    return std::shared_ptr<ServerboundUseItemOnPacket>(new ServerboundUseItemOnPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x2A:
-                    return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemPacket>();
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
                 case 0x00:
-                    return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
-                    break;
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundBlockEntityTagQuery>(new ServerboundBlockEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
                 case 0x02:
-                    return std::shared_ptr<ServerboundChangeDifficultyPacket>(new ServerboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundChangeDifficultyPacket>();
                 case 0x03:
-                    return std::shared_ptr<ServerboundChatPacket>(new ServerboundChatPacket);
-                    break;
+                    return std::make_shared<ServerboundChatPacket>();
                 case 0x04:
-                    return std::shared_ptr<ServerboundClientCommandPacket>(new ServerboundClientCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundClientCommandPacket>();
                 case 0x05:
-                    return std::shared_ptr<ServerboundClientInformationPacket>(new ServerboundClientInformationPacket);
-                    break;
+                    return std::make_shared<ServerboundClientInformationPacket>();
                 case 0x06:
-                    return std::shared_ptr<ServerboundCommandSuggestionPacket>(new ServerboundCommandSuggestionPacket);
-                    break;
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
                 case 0x07:
-                    return std::shared_ptr<ServerboundContainerAckPacket>(new ServerboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerAckPacket>();
                 case 0x08:
-                    return std::shared_ptr<ServerboundContainerButtonClickPacket>(new ServerboundContainerButtonClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerButtonClickPacket>();
                 case 0x09:
-                    return std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClickPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClosePacket>();
                 case 0x0B:
-                    return std::shared_ptr<ServerboundCustomPayloadPacket>(new ServerboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ServerboundEditBookPacket>(new ServerboundEditBookPacket);
-                    break;
+                    return std::make_shared<ServerboundEditBookPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ServerboundEntityTagQuery>(new ServerboundEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundEntityTagQuery>();
                 case 0x0E:
-                    return std::shared_ptr<ServerboundInteractPacket>(new ServerboundInteractPacket);
-                    break;
+                    return std::make_shared<ServerboundInteractPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ServerboundKeepAlivePacket>(new ServerboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ServerboundKeepAlivePacket>();
                 case 0x10:
-                    return std::shared_ptr<ServerboundLockDifficultyPacket>(new ServerboundLockDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundLockDifficultyPacket>();
                 case 0x11:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPos>(new ServerboundMovePlayerPacketPos);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
                 case 0x12:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPosRot>(new ServerboundMovePlayerPacketPosRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
                 case 0x13:
-                    return std::shared_ptr<ServerboundMovePlayerPacketRot>(new ServerboundMovePlayerPacketRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
                 case 0x14:
-                    return std::shared_ptr<ServerboundMovePlayerPacket>(new ServerboundMovePlayerPacket);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacket>();
                 case 0x15:
-                    return std::shared_ptr<ServerboundMoveVehiclePacket>(new ServerboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
                 case 0x16:
-                    return std::shared_ptr<ServerboundPaddleBoatPacket>(new ServerboundPaddleBoatPacket);
-                    break;
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
                 case 0x17:
-                    return std::shared_ptr<ServerboundPickItemPacket>(new ServerboundPickItemPacket);
-                    break;
+                    return std::make_shared<ServerboundPickItemPacket>();
                 case 0x18:
-                    return std::shared_ptr<ServerboundPlaceRecipePacket>(new ServerboundPlaceRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
                 case 0x19:
-                    return std::shared_ptr<ServerboundPlayerAbilitiesPacket>(new ServerboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ServerboundPlayerActionPacket>(new ServerboundPlayerActionPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerActionPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ServerboundPlayerCommandPacket>(new ServerboundPlayerCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ServerboundPlayerInputPacket>(new ServerboundPlayerInputPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerInputPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ServerboundRecipeBookUpdatePacket>(new ServerboundRecipeBookUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookUpdatePacket>();
                 case 0x1E:
-                    return std::shared_ptr<ServerboundRenameItemPacket>(new ServerboundRenameItemPacket);
-                    break;
+                    return std::make_shared<ServerboundRenameItemPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ServerboundResourcePackPacket>(new ServerboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ServerboundResourcePackPacket>();
                 case 0x20:
-                    return std::shared_ptr<ServerboundSeenAdvancementsPacket>(new ServerboundSeenAdvancementsPacket);
-                    break;
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
                 case 0x21:
-                    return std::shared_ptr<ServerboundSelectTradePacket>(new ServerboundSelectTradePacket);
-                    break;
+                    return std::make_shared<ServerboundSelectTradePacket>();
                 case 0x22:
-                    return std::shared_ptr<ServerboundSetBeaconPacket>(new ServerboundSetBeaconPacket);
-                    break;
+                    return std::make_shared<ServerboundSetBeaconPacket>();
                 case 0x23:
-                    return std::shared_ptr<ServerboundSetCarriedItemPacket>(new ServerboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
                 case 0x24:
-                    return std::shared_ptr<ServerboundSetCommandBlockPacket>(new ServerboundSetCommandBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
                 case 0x25:
-                    return std::shared_ptr<ServerboundSetCommandMinecartPacket>(new ServerboundSetCommandMinecartPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
                 case 0x26:
-                    return std::shared_ptr<ServerboundSetCreativeModeSlotPacket>(new ServerboundSetCreativeModeSlotPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
                 case 0x27:
-                    return std::shared_ptr<ServerboundSetJigsawBlockPacket>(new ServerboundSetJigsawBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetJigsawBlockPacket>();
                 case 0x28:
-                    return std::shared_ptr<ServerboundSetStructureBlockPacket>(new ServerboundSetStructureBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
                 case 0x29:
-                    return std::shared_ptr<ServerboundSignUpdatePacket>(new ServerboundSignUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundSignUpdatePacket>();
                 case 0x2A:
-                    return std::shared_ptr<ServerboundSwingPacket>(new ServerboundSwingPacket);
-                    break;
+                    return std::make_shared<ServerboundSwingPacket>();
                 case 0x2B:
-                    return std::shared_ptr<ServerboundTeleportToEntityPacket>(new ServerboundTeleportToEntityPacket);
-                    break;
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
                 case 0x2C:
-                    return std::shared_ptr<ServerboundUseItemOnPacket>(new ServerboundUseItemOnPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemPacket>();
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
                 case 0x00:
-                    return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
-                    break;
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundBlockEntityTagQuery>(new ServerboundBlockEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
                 case 0x02:
-                    return std::shared_ptr<ServerboundChangeDifficultyPacket>(new ServerboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundChangeDifficultyPacket>();
                 case 0x03:
-                    return std::shared_ptr<ServerboundChatPacket>(new ServerboundChatPacket);
-                    break;
+                    return std::make_shared<ServerboundChatPacket>();
                 case 0x04:
-                    return std::shared_ptr<ServerboundClientCommandPacket>(new ServerboundClientCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundClientCommandPacket>();
                 case 0x05:
-                    return std::shared_ptr<ServerboundClientInformationPacket>(new ServerboundClientInformationPacket);
-                    break;
+                    return std::make_shared<ServerboundClientInformationPacket>();
                 case 0x06:
-                    return std::shared_ptr<ServerboundCommandSuggestionPacket>(new ServerboundCommandSuggestionPacket);
-                    break;
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
                 case 0x07:
-                    return std::shared_ptr<ServerboundContainerAckPacket>(new ServerboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerAckPacket>();
                 case 0x08:
-                    return std::shared_ptr<ServerboundContainerButtonClickPacket>(new ServerboundContainerButtonClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerButtonClickPacket>();
                 case 0x09:
-                    return std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClickPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClosePacket>();
                 case 0x0B:
-                    return std::shared_ptr<ServerboundCustomPayloadPacket>(new ServerboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ServerboundEditBookPacket>(new ServerboundEditBookPacket);
-                    break;
+                    return std::make_shared<ServerboundEditBookPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ServerboundEntityTagQuery>(new ServerboundEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundEntityTagQuery>();
                 case 0x0E:
-                    return std::shared_ptr<ServerboundInteractPacket>(new ServerboundInteractPacket);
-                    break;
+                    return std::make_shared<ServerboundInteractPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ServerboundKeepAlivePacket>(new ServerboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ServerboundKeepAlivePacket>();
                 case 0x10:
-                    return std::shared_ptr<ServerboundLockDifficultyPacket>(new ServerboundLockDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundLockDifficultyPacket>();
                 case 0x11:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPos>(new ServerboundMovePlayerPacketPos);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
                 case 0x12:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPosRot>(new ServerboundMovePlayerPacketPosRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
                 case 0x13:
-                    return std::shared_ptr<ServerboundMovePlayerPacketRot>(new ServerboundMovePlayerPacketRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
                 case 0x14:
-                    return std::shared_ptr<ServerboundMovePlayerPacket>(new ServerboundMovePlayerPacket);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacket>();
                 case 0x15:
-                    return std::shared_ptr<ServerboundMoveVehiclePacket>(new ServerboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
                 case 0x16:
-                    return std::shared_ptr<ServerboundPaddleBoatPacket>(new ServerboundPaddleBoatPacket);
-                    break;
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
                 case 0x17:
-                    return std::shared_ptr<ServerboundPickItemPacket>(new ServerboundPickItemPacket);
-                    break;
+                    return std::make_shared<ServerboundPickItemPacket>();
                 case 0x18:
-                    return std::shared_ptr<ServerboundPlaceRecipePacket>(new ServerboundPlaceRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
                 case 0x19:
-                    return std::shared_ptr<ServerboundPlayerAbilitiesPacket>(new ServerboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ServerboundPlayerActionPacket>(new ServerboundPlayerActionPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerActionPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ServerboundPlayerCommandPacket>(new ServerboundPlayerCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ServerboundPlayerInputPacket>(new ServerboundPlayerInputPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerInputPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ServerboundRecipeBookUpdatePacket>(new ServerboundRecipeBookUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookUpdatePacket>();
                 case 0x1E:
-                    return std::shared_ptr<ServerboundRenameItemPacket>(new ServerboundRenameItemPacket);
-                    break;
+                    return std::make_shared<ServerboundRenameItemPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ServerboundResourcePackPacket>(new ServerboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ServerboundResourcePackPacket>();
                 case 0x20:
-                    return std::shared_ptr<ServerboundSeenAdvancementsPacket>(new ServerboundSeenAdvancementsPacket);
-                    break;
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
                 case 0x21:
-                    return std::shared_ptr<ServerboundSelectTradePacket>(new ServerboundSelectTradePacket);
-                    break;
+                    return std::make_shared<ServerboundSelectTradePacket>();
                 case 0x22:
-                    return std::shared_ptr<ServerboundSetBeaconPacket>(new ServerboundSetBeaconPacket);
-                    break;
+                    return std::make_shared<ServerboundSetBeaconPacket>();
                 case 0x23:
-                    return std::shared_ptr<ServerboundSetCarriedItemPacket>(new ServerboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
                 case 0x24:
-                    return std::shared_ptr<ServerboundSetCommandBlockPacket>(new ServerboundSetCommandBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
                 case 0x25:
-                    return std::shared_ptr<ServerboundSetCommandMinecartPacket>(new ServerboundSetCommandMinecartPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
                 case 0x26:
-                    return std::shared_ptr<ServerboundSetCreativeModeSlotPacket>(new ServerboundSetCreativeModeSlotPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
                 case 0x27:
-                    return std::shared_ptr<ServerboundSetJigsawBlockPacket>(new ServerboundSetJigsawBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetJigsawBlockPacket>();
                 case 0x28:
-                    return std::shared_ptr<ServerboundSetStructureBlockPacket>(new ServerboundSetStructureBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
                 case 0x29:
-                    return std::shared_ptr<ServerboundSignUpdatePacket>(new ServerboundSignUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundSignUpdatePacket>();
                 case 0x2A:
-                    return std::shared_ptr<ServerboundSwingPacket>(new ServerboundSwingPacket);
-                    break;
+                    return std::make_shared<ServerboundSwingPacket>();
                 case 0x2B:
-                    return std::shared_ptr<ServerboundTeleportToEntityPacket>(new ServerboundTeleportToEntityPacket);
-                    break;
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
                 case 0x2C:
-                    return std::shared_ptr<ServerboundUseItemOnPacket>(new ServerboundUseItemOnPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemPacket>();
 #elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 // 1.16.0 or 1.16.1
                 case 0x00:
-                    return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
-                    break;
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundBlockEntityTagQuery>(new ServerboundBlockEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
                 case 0x02:
-                    return std::shared_ptr<ServerboundChangeDifficultyPacket>(new ServerboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundChangeDifficultyPacket>();
                 case 0x03:
-                    return std::shared_ptr<ServerboundChatPacket>(new ServerboundChatPacket);
-                    break;
+                    return std::make_shared<ServerboundChatPacket>();
                 case 0x04:
-                    return std::shared_ptr<ServerboundClientCommandPacket>(new ServerboundClientCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundClientCommandPacket>();
                 case 0x05:
-                    return std::shared_ptr<ServerboundClientInformationPacket>(new ServerboundClientInformationPacket);
-                    break;
+                    return std::make_shared<ServerboundClientInformationPacket>();
                 case 0x06:
-                    return std::shared_ptr<ServerboundCommandSuggestionPacket>(new ServerboundCommandSuggestionPacket);
-                    break;
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
                 case 0x07:
-                    return std::shared_ptr<ServerboundContainerAckPacket>(new ServerboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerAckPacket>();
                 case 0x08:
-                    return std::shared_ptr<ServerboundContainerButtonClickPacket>(new ServerboundContainerButtonClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerButtonClickPacket>();
                 case 0x09:
-                    return std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClickPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClosePacket>();
                 case 0x0B:
-                    return std::shared_ptr<ServerboundCustomPayloadPacket>(new ServerboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ServerboundEditBookPacket>(new ServerboundEditBookPacket);
-                    break;
+                    return std::make_shared<ServerboundEditBookPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ServerboundEntityTagQuery>(new ServerboundEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundEntityTagQuery>();
                 case 0x0E:
-                    return std::shared_ptr<ServerboundInteractPacket>(new ServerboundInteractPacket);
-                    break;
+                    return std::make_shared<ServerboundInteractPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ServerboundJigsawGeneratePacket>(new ServerboundJigsawGeneratePacket);
-                    break;
+                    return std::make_shared<ServerboundJigsawGeneratePacket>();
                 case 0x10:
-                    return std::shared_ptr<ServerboundKeepAlivePacket>(new ServerboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ServerboundKeepAlivePacket>();
                 case 0x11:
-                    return std::shared_ptr<ServerboundLockDifficultyPacket>(new ServerboundLockDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundLockDifficultyPacket>();
                 case 0x12:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPos>(new ServerboundMovePlayerPacketPos);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
                 case 0x13:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPosRot>(new ServerboundMovePlayerPacketPosRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
                 case 0x14:
-                    return std::shared_ptr<ServerboundMovePlayerPacketRot>(new ServerboundMovePlayerPacketRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
                 case 0x15:
-                    return std::shared_ptr<ServerboundMovePlayerPacket>(new ServerboundMovePlayerPacket);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacket>();
                 case 0x16:
-                    return std::shared_ptr<ServerboundMoveVehiclePacket>(new ServerboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
                 case 0x17:
-                    return std::shared_ptr<ServerboundPaddleBoatPacket>(new ServerboundPaddleBoatPacket);
-                    break;
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
                 case 0x18:
-                    return std::shared_ptr<ServerboundPickItemPacket>(new ServerboundPickItemPacket);
-                    break;
+                    return std::make_shared<ServerboundPickItemPacket>();
                 case 0x19:
-                    return std::shared_ptr<ServerboundPlaceRecipePacket>(new ServerboundPlaceRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
                 case 0x1A:
-                    return std::shared_ptr<ServerboundPlayerAbilitiesPacket>(new ServerboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ServerboundPlayerActionPacket>(new ServerboundPlayerActionPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerActionPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ServerboundPlayerCommandPacket>(new ServerboundPlayerCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ServerboundPlayerInputPacket>(new ServerboundPlayerInputPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerInputPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ServerboundRecipeBookUpdatePacket>(new ServerboundRecipeBookUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookUpdatePacket>();
                 case 0x1F:
-                    return std::shared_ptr<ServerboundRenameItemPacket>(new ServerboundRenameItemPacket);
-                    break;
+                    return std::make_shared<ServerboundRenameItemPacket>();
                 case 0x20:
-                    return std::shared_ptr<ServerboundResourcePackPacket>(new ServerboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ServerboundResourcePackPacket>();
                 case 0x21:
-                    return std::shared_ptr<ServerboundSeenAdvancementsPacket>(new ServerboundSeenAdvancementsPacket);
-                    break;
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
                 case 0x22:
-                    return std::shared_ptr<ServerboundSelectTradePacket>(new ServerboundSelectTradePacket);
-                    break;
+                    return std::make_shared<ServerboundSelectTradePacket>();
                 case 0x23:
-                    return std::shared_ptr<ServerboundSetBeaconPacket>(new ServerboundSetBeaconPacket);
-                    break;
+                    return std::make_shared<ServerboundSetBeaconPacket>();
                 case 0x24:
-                    return std::shared_ptr<ServerboundSetCarriedItemPacket>(new ServerboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
                 case 0x25:
-                    return std::shared_ptr<ServerboundSetCommandBlockPacket>(new ServerboundSetCommandBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
                 case 0x26:
-                    return std::shared_ptr<ServerboundSetCommandMinecartPacket>(new ServerboundSetCommandMinecartPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
                 case 0x27:
-                    return std::shared_ptr<ServerboundSetCreativeModeSlotPacket>(new ServerboundSetCreativeModeSlotPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
                 case 0x28:
-                    return std::shared_ptr<ServerboundSetJigsawBlockPacket>(new ServerboundSetJigsawBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetJigsawBlockPacket>();
                 case 0x29:
-                    return std::shared_ptr<ServerboundSetStructureBlockPacket>(new ServerboundSetStructureBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
                 case 0x2A:
-                    return std::shared_ptr<ServerboundSignUpdatePacket>(new ServerboundSignUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundSignUpdatePacket>();
                 case 0x2B:
-                    return std::shared_ptr<ServerboundSwingPacket>(new ServerboundSwingPacket);
-                    break;
+                    return std::make_shared<ServerboundSwingPacket>();
                 case 0x2C:
-                    return std::shared_ptr<ServerboundTeleportToEntityPacket>(new ServerboundTeleportToEntityPacket);
-                    break;
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ServerboundUseItemOnPacket>(new ServerboundUseItemOnPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemPacket>();
 #elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
                 case 0x00:
-                    return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
-                    break;
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundBlockEntityTagQuery>(new ServerboundBlockEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
                 case 0x02:
-                    return std::shared_ptr<ServerboundChangeDifficultyPacket>(new ServerboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundChangeDifficultyPacket>();
                 case 0x03:
-                    return std::shared_ptr<ServerboundChatPacket>(new ServerboundChatPacket);
-                    break;
+                    return std::make_shared<ServerboundChatPacket>();
                 case 0x04:
-                    return std::shared_ptr<ServerboundClientCommandPacket>(new ServerboundClientCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundClientCommandPacket>();
                 case 0x05:
-                    return std::shared_ptr<ServerboundClientInformationPacket>(new ServerboundClientInformationPacket);
-                    break;
+                    return std::make_shared<ServerboundClientInformationPacket>();
                 case 0x06:
-                    return std::shared_ptr<ServerboundCommandSuggestionPacket>(new ServerboundCommandSuggestionPacket);
-                    break;
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
                 case 0x07:
-                    return std::shared_ptr<ServerboundContainerAckPacket>(new ServerboundContainerAckPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerAckPacket>();
                 case 0x08:
-                    return std::shared_ptr<ServerboundContainerButtonClickPacket>(new ServerboundContainerButtonClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerButtonClickPacket>();
                 case 0x09:
-                    return std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClickPacket>();
                 case 0x0A:
-                    return std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClosePacket>();
                 case 0x0B:
-                    return std::shared_ptr<ServerboundCustomPayloadPacket>(new ServerboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ServerboundEditBookPacket>(new ServerboundEditBookPacket);
-                    break;
+                    return std::make_shared<ServerboundEditBookPacket>();
                 case 0x0D:
-                    return std::shared_ptr<ServerboundEntityTagQuery>(new ServerboundEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundEntityTagQuery>();
                 case 0x0E:
-                    return std::shared_ptr<ServerboundInteractPacket>(new ServerboundInteractPacket);
-                    break;
+                    return std::make_shared<ServerboundInteractPacket>();
                 case 0x0F:
-                    return std::shared_ptr<ServerboundJigsawGeneratePacket>(new ServerboundJigsawGeneratePacket);
-                    break;
+                    return std::make_shared<ServerboundJigsawGeneratePacket>();
                 case 0x10:
-                    return std::shared_ptr<ServerboundKeepAlivePacket>(new ServerboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ServerboundKeepAlivePacket>();
                 case 0x11:
-                    return std::shared_ptr<ServerboundLockDifficultyPacket>(new ServerboundLockDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundLockDifficultyPacket>();
                 case 0x12:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPos>(new ServerboundMovePlayerPacketPos);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
                 case 0x13:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPosRot>(new ServerboundMovePlayerPacketPosRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
                 case 0x14:
-                    return std::shared_ptr<ServerboundMovePlayerPacketRot>(new ServerboundMovePlayerPacketRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
                 case 0x15:
-                    return std::shared_ptr<ServerboundMovePlayerPacket>(new ServerboundMovePlayerPacket);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacket>();
                 case 0x16:
-                    return std::shared_ptr<ServerboundMoveVehiclePacket>(new ServerboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
                 case 0x17:
-                    return std::shared_ptr<ServerboundPaddleBoatPacket>(new ServerboundPaddleBoatPacket);
-                    break;
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
                 case 0x18:
-                    return std::shared_ptr<ServerboundPickItemPacket>(new ServerboundPickItemPacket);
-                    break;
+                    return std::make_shared<ServerboundPickItemPacket>();
                 case 0x19:
-                    return std::shared_ptr<ServerboundPlaceRecipePacket>(new ServerboundPlaceRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
                 case 0x1A:
-                    return std::shared_ptr<ServerboundPlayerAbilitiesPacket>(new ServerboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ServerboundPlayerActionPacket>(new ServerboundPlayerActionPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerActionPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ServerboundPlayerCommandPacket>(new ServerboundPlayerCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ServerboundPlayerInputPacket>(new ServerboundPlayerInputPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerInputPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ServerboundRecipeBookChangeSettingsPacket>(new ServerboundRecipeBookChangeSettingsPacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookChangeSettingsPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ServerboundRecipeBookSeenRecipePacket>(new ServerboundRecipeBookSeenRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookSeenRecipePacket>();
                 case 0x20:
-                    return std::shared_ptr<ServerboundRenameItemPacket>(new ServerboundRenameItemPacket);
-                    break;
+                    return std::make_shared<ServerboundRenameItemPacket>();
                 case 0x21:
-                    return std::shared_ptr<ServerboundResourcePackPacket>(new ServerboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ServerboundResourcePackPacket>();
                 case 0x22:
-                    return std::shared_ptr<ServerboundSeenAdvancementsPacket>(new ServerboundSeenAdvancementsPacket);
-                    break;
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
                 case 0x23:
-                    return std::shared_ptr<ServerboundSelectTradePacket>(new ServerboundSelectTradePacket);
-                    break;
+                    return std::make_shared<ServerboundSelectTradePacket>();
                 case 0x24:
-                    return std::shared_ptr<ServerboundSetBeaconPacket>(new ServerboundSetBeaconPacket);
-                    break;
+                    return std::make_shared<ServerboundSetBeaconPacket>();
                 case 0x25:
-                    return std::shared_ptr<ServerboundSetCarriedItemPacket>(new ServerboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
                 case 0x26:
-                    return std::shared_ptr<ServerboundSetCommandBlockPacket>(new ServerboundSetCommandBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
                 case 0x27:
-                    return std::shared_ptr<ServerboundSetCommandMinecartPacket>(new ServerboundSetCommandMinecartPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
                 case 0x28:
-                    return std::shared_ptr<ServerboundSetCreativeModeSlotPacket>(new ServerboundSetCreativeModeSlotPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
                 case 0x29:
-                    return std::shared_ptr<ServerboundSetJigsawBlockPacket>(new ServerboundSetJigsawBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetJigsawBlockPacket>();
                 case 0x2A:
-                    return std::shared_ptr<ServerboundSetStructureBlockPacket>(new ServerboundSetStructureBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
                 case 0x2B:
-                    return std::shared_ptr<ServerboundSignUpdatePacket>(new ServerboundSignUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundSignUpdatePacket>();
                 case 0x2C:
-                    return std::shared_ptr<ServerboundSwingPacket>(new ServerboundSwingPacket);
-                    break;
+                    return std::make_shared<ServerboundSwingPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ServerboundTeleportToEntityPacket>(new ServerboundTeleportToEntityPacket);
-                    break;
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ServerboundUseItemOnPacket>(new ServerboundUseItemOnPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemPacket>();
 #elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
                 case 0x00:
-                    return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
-                    break;
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundBlockEntityTagQuery>(new ServerboundBlockEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
                 case 0x02:
-                    return std::shared_ptr<ServerboundChangeDifficultyPacket>(new ServerboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundChangeDifficultyPacket>();
                 case 0x03:
-                    return std::shared_ptr<ServerboundChatPacket>(new ServerboundChatPacket);
-                    break;
+                    return std::make_shared<ServerboundChatPacket>();
                 case 0x04:
-                    return std::shared_ptr<ServerboundClientCommandPacket>(new ServerboundClientCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundClientCommandPacket>();
                 case 0x05:
-                    return std::shared_ptr<ServerboundClientInformationPacket>(new ServerboundClientInformationPacket);
-                    break;
+                    return std::make_shared<ServerboundClientInformationPacket>();
                 case 0x06:
-                    return std::shared_ptr<ServerboundCommandSuggestionPacket>(new ServerboundCommandSuggestionPacket);
-                    break;
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
                 case 0x07:
-                    return std::shared_ptr<ServerboundContainerButtonClickPacket>(new ServerboundContainerButtonClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerButtonClickPacket>();
                 case 0x08:
-                    return std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClickPacket>();
                 case 0x09:
-                    return std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClosePacket>();
                 case 0x0A:
-                    return std::shared_ptr<ServerboundCustomPayloadPacket>(new ServerboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ServerboundEditBookPacket>(new ServerboundEditBookPacket);
-                    break;
+                    return std::make_shared<ServerboundEditBookPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ServerboundEntityTagQuery>(new ServerboundEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundEntityTagQuery>();
                 case 0x0D:
-                    return std::shared_ptr<ServerboundInteractPacket>(new ServerboundInteractPacket);
-                    break;
+                    return std::make_shared<ServerboundInteractPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ServerboundJigsawGeneratePacket>(new ServerboundJigsawGeneratePacket);
-                    break;
+                    return std::make_shared<ServerboundJigsawGeneratePacket>();
                 case 0x0F:
-                    return std::shared_ptr<ServerboundKeepAlivePacket>(new ServerboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ServerboundKeepAlivePacket>();
                 case 0x10:
-                    return std::shared_ptr<ServerboundLockDifficultyPacket>(new ServerboundLockDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundLockDifficultyPacket>();
                 case 0x11:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPos>(new ServerboundMovePlayerPacketPos);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
                 case 0x12:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPosRot>(new ServerboundMovePlayerPacketPosRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
                 case 0x13:
-                    return std::shared_ptr<ServerboundMovePlayerPacketRot>(new ServerboundMovePlayerPacketRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
                 case 0x14:
-                    return std::shared_ptr<ServerboundMovePlayerPacketStatusOnly>(new ServerboundMovePlayerPacketStatusOnly);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketStatusOnly>();
                 case 0x15:
-                    return std::shared_ptr<ServerboundMoveVehiclePacket>(new ServerboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
                 case 0x16:
-                    return std::shared_ptr<ServerboundPaddleBoatPacket>(new ServerboundPaddleBoatPacket);
-                    break;
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
                 case 0x17:
-                    return std::shared_ptr<ServerboundPickItemPacket>(new ServerboundPickItemPacket);
-                    break;
+                    return std::make_shared<ServerboundPickItemPacket>();
                 case 0x18:
-                    return std::shared_ptr<ServerboundPlaceRecipePacket>(new ServerboundPlaceRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
                 case 0x19:
-                    return std::shared_ptr<ServerboundPlayerAbilitiesPacket>(new ServerboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ServerboundPlayerActionPacket>(new ServerboundPlayerActionPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerActionPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ServerboundPlayerCommandPacket>(new ServerboundPlayerCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ServerboundPlayerInputPacket>(new ServerboundPlayerInputPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerInputPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ServerboundPongPacket>(new ServerboundPongPacket);
-                    break;
+                    return std::make_shared<ServerboundPongPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ServerboundRecipeBookChangeSettingsPacket>(new ServerboundRecipeBookChangeSettingsPacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookChangeSettingsPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ServerboundRecipeBookSeenRecipePacket>(new ServerboundRecipeBookSeenRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookSeenRecipePacket>();
                 case 0x20:
-                    return std::shared_ptr<ServerboundRenameItemPacket>(new ServerboundRenameItemPacket);
-                    break;
+                    return std::make_shared<ServerboundRenameItemPacket>();
                 case 0x21:
-                    return std::shared_ptr<ServerboundResourcePackPacket>(new ServerboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ServerboundResourcePackPacket>();
                 case 0x22:
-                    return std::shared_ptr<ServerboundSeenAdvancementsPacket>(new ServerboundSeenAdvancementsPacket);
-                    break;
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
                 case 0x23:
-                    return std::shared_ptr<ServerboundSelectTradePacket>(new ServerboundSelectTradePacket);
-                    break;
+                    return std::make_shared<ServerboundSelectTradePacket>();
                 case 0x24:
-                    return std::shared_ptr<ServerboundSetBeaconPacket>(new ServerboundSetBeaconPacket);
-                    break;
+                    return std::make_shared<ServerboundSetBeaconPacket>();
                 case 0x25:
-                    return std::shared_ptr<ServerboundSetCarriedItemPacket>(new ServerboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
                 case 0x26:
-                    return std::shared_ptr<ServerboundSetCommandBlockPacket>(new ServerboundSetCommandBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
                 case 0x27:
-                    return std::shared_ptr<ServerboundSetCommandMinecartPacket>(new ServerboundSetCommandMinecartPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
                 case 0x28:
-                    return std::shared_ptr<ServerboundSetCreativeModeSlotPacket>(new ServerboundSetCreativeModeSlotPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
                 case 0x29:
-                    return std::shared_ptr<ServerboundSetJigsawBlockPacket>(new ServerboundSetJigsawBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetJigsawBlockPacket>();
                 case 0x2A:
-                    return std::shared_ptr<ServerboundSetStructureBlockPacket>(new ServerboundSetStructureBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
                 case 0x2B:
-                    return std::shared_ptr<ServerboundSignUpdatePacket>(new ServerboundSignUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundSignUpdatePacket>();
                 case 0x2C:
-                    return std::shared_ptr<ServerboundSwingPacket>(new ServerboundSwingPacket);
-                    break;
+                    return std::make_shared<ServerboundSwingPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ServerboundTeleportToEntityPacket>(new ServerboundTeleportToEntityPacket);
-                    break;
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ServerboundUseItemOnPacket>(new ServerboundUseItemOnPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemPacket>();
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
                 case 0x00:
-                    return std::shared_ptr<ServerboundAcceptTeleportationPacket>(new ServerboundAcceptTeleportationPacket);
-                    break;
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
-                    return std::shared_ptr<ServerboundBlockEntityTagQuery>(new ServerboundBlockEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
                 case 0x02:
-                    return std::shared_ptr<ServerboundChangeDifficultyPacket>(new ServerboundChangeDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundChangeDifficultyPacket>();
                 case 0x03:
-                    return std::shared_ptr<ServerboundChatPacket>(new ServerboundChatPacket);
-                    break;
+                    return std::make_shared<ServerboundChatPacket>();
                 case 0x04:
-                    return std::shared_ptr<ServerboundClientCommandPacket>(new ServerboundClientCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundClientCommandPacket>();
                 case 0x05:
-                    return std::shared_ptr<ServerboundClientInformationPacket>(new ServerboundClientInformationPacket);
-                    break;
+                    return std::make_shared<ServerboundClientInformationPacket>();
                 case 0x06:
-                    return std::shared_ptr<ServerboundCommandSuggestionPacket>(new ServerboundCommandSuggestionPacket);
-                    break;
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
                 case 0x07:
-                    return std::shared_ptr<ServerboundContainerButtonClickPacket>(new ServerboundContainerButtonClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerButtonClickPacket>();
                 case 0x08:
-                    return std::shared_ptr<ServerboundContainerClickPacket>(new ServerboundContainerClickPacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClickPacket>();
                 case 0x09:
-                    return std::shared_ptr<ServerboundContainerClosePacket>(new ServerboundContainerClosePacket);
-                    break;
+                    return std::make_shared<ServerboundContainerClosePacket>();
                 case 0x0A:
-                    return std::shared_ptr<ServerboundCustomPayloadPacket>(new ServerboundCustomPayloadPacket);
-                    break;
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
                 case 0x0B:
-                    return std::shared_ptr<ServerboundEditBookPacket>(new ServerboundEditBookPacket);
-                    break;
+                    return std::make_shared<ServerboundEditBookPacket>();
                 case 0x0C:
-                    return std::shared_ptr<ServerboundEntityTagQuery>(new ServerboundEntityTagQuery);
-                    break;
+                    return std::make_shared<ServerboundEntityTagQuery>();
                 case 0x0D:
-                    return std::shared_ptr<ServerboundInteractPacket>(new ServerboundInteractPacket);
-                    break;
+                    return std::make_shared<ServerboundInteractPacket>();
                 case 0x0E:
-                    return std::shared_ptr<ServerboundJigsawGeneratePacket>(new ServerboundJigsawGeneratePacket);
-                    break;
+                    return std::make_shared<ServerboundJigsawGeneratePacket>();
                 case 0x0F:
-                    return std::shared_ptr<ServerboundKeepAlivePacket>(new ServerboundKeepAlivePacket);
-                    break;
+                    return std::make_shared<ServerboundKeepAlivePacket>();
                 case 0x10:
-                    return std::shared_ptr<ServerboundLockDifficultyPacket>(new ServerboundLockDifficultyPacket);
-                    break;
+                    return std::make_shared<ServerboundLockDifficultyPacket>();
                 case 0x11:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPos>(new ServerboundMovePlayerPacketPos);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
                 case 0x12:
-                    return std::shared_ptr<ServerboundMovePlayerPacketPosRot>(new ServerboundMovePlayerPacketPosRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
                 case 0x13:
-                    return std::shared_ptr<ServerboundMovePlayerPacketRot>(new ServerboundMovePlayerPacketRot);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
                 case 0x14:
-                    return std::shared_ptr<ServerboundMovePlayerPacketStatusOnly>(new ServerboundMovePlayerPacketStatusOnly);
-                    break;
+                    return std::make_shared<ServerboundMovePlayerPacketStatusOnly>();
                 case 0x15:
-                    return std::shared_ptr<ServerboundMoveVehiclePacket>(new ServerboundMoveVehiclePacket);
-                    break;
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
                 case 0x16:
-                    return std::shared_ptr<ServerboundPaddleBoatPacket>(new ServerboundPaddleBoatPacket);
-                    break;
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
                 case 0x17:
-                    return std::shared_ptr<ServerboundPickItemPacket>(new ServerboundPickItemPacket);
-                    break;
+                    return std::make_shared<ServerboundPickItemPacket>();
                 case 0x18:
-                    return std::shared_ptr<ServerboundPlaceRecipePacket>(new ServerboundPlaceRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
                 case 0x19:
-                    return std::shared_ptr<ServerboundPlayerAbilitiesPacket>(new ServerboundPlayerAbilitiesPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
                 case 0x1A:
-                    return std::shared_ptr<ServerboundPlayerActionPacket>(new ServerboundPlayerActionPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerActionPacket>();
                 case 0x1B:
-                    return std::shared_ptr<ServerboundPlayerCommandPacket>(new ServerboundPlayerCommandPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
                 case 0x1C:
-                    return std::shared_ptr<ServerboundPlayerInputPacket>(new ServerboundPlayerInputPacket);
-                    break;
+                    return std::make_shared<ServerboundPlayerInputPacket>();
                 case 0x1D:
-                    return std::shared_ptr<ServerboundPongPacket>(new ServerboundPongPacket);
-                    break;
+                    return std::make_shared<ServerboundPongPacket>();
                 case 0x1E:
-                    return std::shared_ptr<ServerboundRecipeBookChangeSettingsPacket>(new ServerboundRecipeBookChangeSettingsPacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookChangeSettingsPacket>();
                 case 0x1F:
-                    return std::shared_ptr<ServerboundRecipeBookSeenRecipePacket>(new ServerboundRecipeBookSeenRecipePacket);
-                    break;
+                    return std::make_shared<ServerboundRecipeBookSeenRecipePacket>();
                 case 0x20:
-                    return std::shared_ptr<ServerboundRenameItemPacket>(new ServerboundRenameItemPacket);
-                    break;
+                    return std::make_shared<ServerboundRenameItemPacket>();
                 case 0x21:
-                    return std::shared_ptr<ServerboundResourcePackPacket>(new ServerboundResourcePackPacket);
-                    break;
+                    return std::make_shared<ServerboundResourcePackPacket>();
                 case 0x22:
-                    return std::shared_ptr<ServerboundSeenAdvancementsPacket>(new ServerboundSeenAdvancementsPacket);
-                    break;
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
                 case 0x23:
-                    return std::shared_ptr<ServerboundSelectTradePacket>(new ServerboundSelectTradePacket);
-                    break;
+                    return std::make_shared<ServerboundSelectTradePacket>();
                 case 0x24:
-                    return std::shared_ptr<ServerboundSetBeaconPacket>(new ServerboundSetBeaconPacket);
-                    break;
+                    return std::make_shared<ServerboundSetBeaconPacket>();
                 case 0x25:
-                    return std::shared_ptr<ServerboundSetCarriedItemPacket>(new ServerboundSetCarriedItemPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
                 case 0x26:
-                    return std::shared_ptr<ServerboundSetCommandBlockPacket>(new ServerboundSetCommandBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
                 case 0x27:
-                    return std::shared_ptr<ServerboundSetCommandMinecartPacket>(new ServerboundSetCommandMinecartPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
                 case 0x28:
-                    return std::shared_ptr<ServerboundSetCreativeModeSlotPacket>(new ServerboundSetCreativeModeSlotPacket);
-                    break;
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
                 case 0x29:
-                    return std::shared_ptr<ServerboundSetJigsawBlockPacket>(new ServerboundSetJigsawBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetJigsawBlockPacket>();
                 case 0x2A:
-                    return std::shared_ptr<ServerboundSetStructureBlockPacket>(new ServerboundSetStructureBlockPacket);
-                    break;
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
                 case 0x2B:
-                    return std::shared_ptr<ServerboundSignUpdatePacket>(new ServerboundSignUpdatePacket);
-                    break;
+                    return std::make_shared<ServerboundSignUpdatePacket>();
                 case 0x2C:
-                    return std::shared_ptr<ServerboundSwingPacket>(new ServerboundSwingPacket);
-                    break;
+                    return std::make_shared<ServerboundSwingPacket>();
                 case 0x2D:
-                    return std::shared_ptr<ServerboundTeleportToEntityPacket>(new ServerboundTeleportToEntityPacket);
-                    break;
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
                 case 0x2E:
-                    return std::shared_ptr<ServerboundUseItemOnPacket>(new ServerboundUseItemOnPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x2F:
-                    return std::shared_ptr<ServerboundUseItemPacket>(new ServerboundUseItemPacket);
-                    break;
+                    return std::make_shared<ServerboundUseItemPacket>();
+#elif PROTOCOL_VERSION == 759 // 1.19
+                case 0x00:
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
+                case 0x01:
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
+                case 0x02:
+                    return std::make_shared<ServerboundChangeDifficultyPacket>();
+                case 0x03:
+                    return std::make_shared<ServerboundChatCommandPacket>();
+                case 0x04:
+                    return std::make_shared<ServerboundChatPacket>();
+                case 0x05:
+                    return std::make_shared<ServerboundChatPreviewPacket>();
+                case 0x06:
+                    return std::make_shared<ServerboundClientCommandPacket>();
+                case 0x07:
+                    return std::make_shared<ServerboundClientInformationPacket>();
+                case 0x08:
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
+                case 0x09:
+                    return std::make_shared<ServerboundContainerButtonClickPacket>();
+                case 0x0A:
+                    return std::make_shared<ServerboundContainerClickPacket>();
+                case 0x0B:
+                    return std::make_shared<ServerboundContainerClosePacket>();
+                case 0x0C:
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
+                case 0x0D:
+                    return std::make_shared<ServerboundEditBookPacket>();
+                case 0x0E:
+                    return std::make_shared<ServerboundEntityTagQuery>();
+                case 0x0F:
+                    return std::make_shared<ServerboundInteractPacket>();
+                case 0x10:
+                    return std::make_shared<ServerboundJigsawGeneratePacket>();
+                case 0x11:
+                    return std::make_shared<ServerboundKeepAlivePacket>();
+                case 0x12:
+                    return std::make_shared<ServerboundLockDifficultyPacket>();
+                case 0x13:
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
+                case 0x14:
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
+                case 0x15:
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
+                case 0x16:
+                    return std::make_shared<ServerboundMovePlayerPacketStatusOnly>();
+                case 0x17:
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
+                case 0x18:
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
+                case 0x19:
+                    return std::make_shared<ServerboundPickItemPacket>();
+                case 0x1A:
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
+                case 0x1B:
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
+                case 0x1C:
+                    return std::make_shared<ServerboundPlayerActionPacket>();
+                case 0x1D:
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
+                case 0x1E:
+                    return std::make_shared<ServerboundPlayerInputPacket>();
+                case 0x1F:
+                    return std::make_shared<ServerboundPongPacket>();
+                case 0x20:
+                    return std::make_shared<ServerboundRecipeBookChangeSettingsPacket>();
+                case 0x21:
+                    return std::make_shared<ServerboundRecipeBookSeenRecipePacket>();
+                case 0x22:
+                    return std::make_shared<ServerboundRenameItemPacket>();
+                case 0x23:
+                    return std::make_shared<ServerboundResourcePackPacket>();
+                case 0x24:
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
+                case 0x25:
+                    return std::make_shared<ServerboundSelectTradePacket>();
+                case 0x26:
+                    return std::make_shared<ServerboundSetBeaconPacket>();
+                case 0x27:
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
+                case 0x28:
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
+                case 0x29:
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
+                case 0x2A:
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
+                case 0x2B:
+                    return std::make_shared<ServerboundSetJigsawBlockPacket>();
+                case 0x2C:
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
+                case 0x2D:
+                    return std::make_shared<ServerboundSignUpdatePacket>();
+                case 0x2E:
+                    return std::make_shared<ServerboundSwingPacket>();
+                case 0x2F:
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
+                case 0x30:
+                    return std::make_shared<ServerboundUseItemOnPacket>();
+                case 0x31:
+                    return std::make_shared<ServerboundUseItemPacket>();
 #else
 #error "Protocol version not implemented"
 #endif
                 default:
                     return nullptr;
-                    break;
                 }
             default:
                 return nullptr;
-                break;
             }
         }
     };

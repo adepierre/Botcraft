@@ -3,7 +3,7 @@
 #include "protocolCraft/BaseMessage.hpp"
 
 #if PROTOCOL_VERSION > 356
-#include "protocolCraft/Types/Chat.hpp"
+#include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
 
 namespace ProtocolCraft
@@ -29,6 +29,8 @@ namespace ProtocolCraft
             return 0x11;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x11;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x0E;
 #else
 #error "Protocol version not implemented"
 #endif

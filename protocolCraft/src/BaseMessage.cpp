@@ -128,6 +128,10 @@ namespace ProtocolCraft
 #endif
     template class BaseMessage<ServerboundUseItemPacket>;
     template class BaseMessage<ServerboundMoveVehiclePacket>;
+#if PROTOCOL_VERSION > 758
+    template class BaseMessage<ServerboundChatCommandPacket>;
+    template class BaseMessage<ServerboundChatPreviewPacket>;
+#endif
 
     // Play clientbound
     template class BaseMessage<ClientboundUpdateAdvancementsPacket>;
@@ -208,12 +212,14 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundTeleportEntityPacket>;
     template class BaseMessage<ClientboundPlayerAbilitiesPacket>;
     template class BaseMessage<ClientboundSetTimePacket>;
+#if PROTOCOL_VERSION < 759
     template class BaseMessage<ClientboundChatPacket>;
+#endif
     template class BaseMessage<ClientboundRespawnPacket>;
 #if PROTOCOL_VERSION > 404
     template class BaseMessage<ClientboundLightUpdatePacket>;
 #endif
-#if PROTOCOL_VERSION > 493
+#if PROTOCOL_VERSION > 493 && PROTOCOL_VERSION < 759
     template class BaseMessage<ClientboundBlockBreakAckPacket>;
 #endif
     template class BaseMessage<ClientboundBlockEntityDataPacket>;
@@ -233,9 +239,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 721
     template class BaseMessage<ClientboundAddGlobalEntityPacket>;
 #endif
+#if PROTOCOL_VERSION < 759
     template class BaseMessage<ClientboundAddMobPacket>;
+#endif
     template class BaseMessage<ClientboundAddEntityPacket>;
+#if PROTOCOL_VERSION < 759
     template class BaseMessage<ClientboundAddPaintingPacket>;
+#endif
     template class BaseMessage<ClientboundAddPlayerPacket>;
     template class BaseMessage<ClientboundSetDefaultSpawnPositionPacket>;
     template class BaseMessage<ClientboundAwardStatsPacket>;
@@ -271,7 +281,9 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundSetBorderPacket>;
 #endif
 #if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION < 759
     template class BaseMessage<ClientboundAddVibrationSignalPacket>;
+#endif
     template class BaseMessage<ClientboundClearTitlesPacket>;
     template class BaseMessage<ClientboundInitializeBorderPacket>;
     template class BaseMessage<ClientboundPingPacket>;
@@ -291,5 +303,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 756
     template class BaseMessage<ClientboundLevelChunkWithLightPacket>;
     template class BaseMessage<ClientboundSetSimulationDistancePacket>;
+#endif
+#if PROTOCOL_VERSION > 758
+    template class BaseMessage<ClientboundBlockChangedAckPacket>;
+    template class BaseMessage<ClientboundChatPreviewPacket>;
+    template class BaseMessage<ClientboundPlayerChatPacket>;
+    template class BaseMessage<ClientboundServerDataPacket>;
+    template class BaseMessage<ClientboundSetDisplayChatPreviewPacket>;
+    template class BaseMessage<ClientboundSystemChatPacket>;
 #endif
 }

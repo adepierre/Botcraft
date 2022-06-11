@@ -25,6 +25,8 @@ namespace ProtocolCraft
             return 0x2F;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
             return 0x2F;
+#elif PROTOCOL_VERSION == 759 // 1.19
+            return 0x31;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -45,22 +47,42 @@ namespace ProtocolCraft
             hand = hand_;
         }
 
+#if PROTOCOL_VERSION > 758
+        void SetSequence(const int sequence_)
+        {
+            sequence = sequence_;
+        }
+#endif
+
 
         const int GetHand() const
         {
             return hand;
         }
 
+#if PROTOCOL_VERSION > 758
+        const int GetSequence() const
+        {
+            return sequence;
+        }
+#endif
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             hand = ReadData<VarInt>(iter, length);
+#if PROTOCOL_VERSION > 758
+            sequence = ReadData<VarInt>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(hand, container);
+#if PROTOCOL_VERSION > 758
+            WriteData<VarInt>(sequence, container);
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -68,12 +90,18 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["hand"] = hand;
+#if PROTOCOL_VERSION > 758
+            output["sequence"] = sequence;
+#endif
 
             return output;
         }
 
     private:
         int hand;
+#if PROTOCOL_VERSION > 758
+        int sequence;
+#endif
 
     };
 } //ProtocolCraft
