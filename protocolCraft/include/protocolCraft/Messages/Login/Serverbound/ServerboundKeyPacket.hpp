@@ -63,21 +63,21 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            int key_bytes_length = ReadData<VarInt>(iter, length);
+            const int key_bytes_length = ReadData<VarInt>(iter, length);
             key_bytes = ReadByteArray(iter, length, key_bytes_length);
 #if PROTOCOL_VERSION > 758
-            const bool has_salt_signature = ReadData<bool>(iter, length);
-            if (has_salt_signature)
+            const bool has_nonce = ReadData<bool>(iter, length);
+            if (has_nonce)
             {
-                salt_signature.Read(iter, length);
+                const int nonce_length = ReadData<VarInt>(iter, length);
+                nonce = ReadByteArray(iter, length, nonce_length);
             }
             else
             {
-                int nonce_length = ReadData<VarInt>(iter, length);
-                nonce = ReadByteArray(iter, length, nonce_length);
+                salt_signature.Read(iter, length);
             }
 #else
-            int nonce_length = ReadData<VarInt>(iter, length);
+            const int nonce_length = ReadData<VarInt>(iter, length);
             nonce = ReadByteArray(iter, length, nonce_length);
 #endif
         }
@@ -87,15 +87,15 @@ namespace ProtocolCraft
             WriteData<VarInt>(key_bytes.size(), container);
             WriteByteArray(key_bytes, container);
 #if PROTOCOL_VERSION > 758
-            WriteData<bool>(!salt_signature.GetSignature().empty(), container);
-            if (!salt_signature.GetSignature().empty())
-            {
-                salt_signature.Write(container);
-            }
-            else
+            WriteData<bool>(salt_signature.GetSignature().empty(), container);
+            if (salt_signature.GetSignature().empty())
             {
                 WriteData<VarInt>(nonce.size(), container);
                 WriteByteArray(nonce, container);
+            }
+            else
+            {
+                salt_signature.Write(container);
             }
 #else
             WriteData<VarInt>(nonce.size(), container);
@@ -109,13 +109,13 @@ namespace ProtocolCraft
 
             output["key_bytes"] = "vector of " + std::to_string(key_bytes.size()) + " unsigned char";
 #if PROTOCOL_VERSION > 758
-            if (!salt_signature.GetSignature().empty())
+            if (salt_signature.GetSignature().empty())
             {
-                output["salt_signature"] = salt_signature.Serialize();
+                output["nonce"] = "vector of " + std::to_string(nonce.size()) + " unsigned char";
             }
             else
             {
-                output["nonce"] = "vector of " + std::to_string(nonce.size()) + " unsigned char";
+                output["salt_signature"] = salt_signature.Serialize();
             }
 #else
             output["nonce"] = "vector of " + std::to_string(nonce.size()) + " unsigned char";
