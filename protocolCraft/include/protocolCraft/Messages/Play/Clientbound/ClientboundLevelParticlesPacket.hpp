@@ -184,7 +184,11 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 759
             const ParticleType particle_type = static_cast<ParticleType>(ReadData<int>(iter, length));
+#else
+            const ParticleType particle_type = static_cast<ParticleType>(static_cast<int>(ReadData<VarInt>(iter, length)));
+#endif
             particle = Particle::CreateParticle(particle_type);
             override_limiter = ReadData<bool>(iter, length);
 #if PROTOCOL_VERSION < 569
@@ -206,7 +210,11 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 759
             WriteData<int>(static_cast<int>(particle->GetType()), container);
+#else
+            WriteData<VarInt>(static_cast<int>(particle->GetType()), container);
+#endif
             WriteData<bool>(override_limiter, container);
 #if PROTOCOL_VERSION < 569
             WriteData<float>(x, container);
@@ -230,15 +238,9 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["override_limiter"] = override_limiter;
-#if PROTOCOL_VERSION < 569
             output["x"] = x;
             output["y"] = y;
             output["z"] = z;
-#else
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-#endif
             output["x_dist"] = x_dist;
             output["y_dist"] = y_dist;
             output["z_dist"] = z_dist;
