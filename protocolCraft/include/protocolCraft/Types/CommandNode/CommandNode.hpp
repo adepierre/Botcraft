@@ -43,10 +43,17 @@ namespace ProtocolCraft
             name = name_;
         }
 
+#if PROTOCOL_VERSION < 759
         void SetParser(const Identifier& parser_)
         {
             parser = parser_;
         }
+#else
+        void SetParserId(const int parser_id_)
+        {
+            parser_id = parser_id_;
+        }
+#endif
 
         void SetProperties(const std::shared_ptr<BrigadierProperty> properties_)
         {
@@ -84,10 +91,17 @@ namespace ProtocolCraft
             return name;
         }
 
+#if PROTOCOL_VERSION < 759
         const Identifier& GetParser() const
         {
             return parser;
         }
+#else
+        const int GetParserId() const
+        {
+            return parser_id;
+        }
+#endif
 
         const std::shared_ptr<BrigadierProperty> GetProperties() const
         {
@@ -120,13 +134,18 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
+#if PROTOCOL_VERSION < 759
                 parser.Read(iter, length);
                 properties = BrigadierProperty::CreateProperties(parser);
+#else
+                parser_id = ReadData<VarInt>(iter, length);
+                properties = BrigadierProperty::CreateProperties(parser_id);
+#endif
                 properties->Read(iter, length);
-            }
-            if (flags & 0x10)
-            {
-                suggestions_type.Read(iter, length);
+                if (flags & 0x10)
+                {
+                    suggestions_type.Read(iter, length);
+                }
             }
         }
 
@@ -149,12 +168,16 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
+#if PROTOCOL_VERSION < 759
                 parser.Write(container);
+#else
+                WriteData<VarInt>(parser_id, container);
+#endif
                 properties->Write(container);
-            }
-            if (flags & 0x10)
-            {
-                suggestions_type.Write(container);
+                if (flags & 0x10)
+                {
+                    suggestions_type.Write(container);
+                }
             }
         }
 
@@ -178,12 +201,16 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
+#if PROTOCOL_VERSION < 759
                 output["parser"] = parser.Serialize();
+#else
+                output["parser_id"] = parser_id;
+#endif
                 output["properties"] = properties->Serialize();
-            }
-            if (flags & 0x10)
-            {
-                output["suggestions_type"] = suggestions_type.Serialize();
+                if (flags & 0x10)
+                {
+                    output["suggestions_type"] = suggestions_type.Serialize();
+                }
             }
 
             return output;
@@ -195,7 +222,11 @@ namespace ProtocolCraft
         std::vector<int> children;
         int redirect_node;
         std::string name;
+#if PROTOCOL_VERSION < 759
         Identifier parser;
+#else
+        int parser_id;
+#endif
         std::shared_ptr<BrigadierProperty> properties;
         Identifier suggestions_type;
 

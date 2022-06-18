@@ -14,7 +14,11 @@ namespace ProtocolCraft
     public:
         virtual ~BrigadierProperty() override;
 
+#if PROTOCOL_VERSION < 759
         static std::shared_ptr<BrigadierProperty> CreateProperties(const Identifier& parser_identifier);
+#else
+        static std::shared_ptr<BrigadierProperty> CreateProperties(const int parser_id);
+#endif
     };
 }
 #endif

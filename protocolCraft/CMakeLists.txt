@@ -237,8 +237,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/CommandNode/BrigadierPropertyEntity.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyFloat.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyInteger.hpp
+    include/protocolCraft/Types/CommandNode/BrigadierPropertyLong.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyNone.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyRange.hpp
+    include/protocolCraft/Types/CommandNode/BrigadierPropertyResourceOrTag.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyScoreHolder.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyString.hpp
     

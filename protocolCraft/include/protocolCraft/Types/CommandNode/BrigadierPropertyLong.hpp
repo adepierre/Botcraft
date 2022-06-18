@@ -5,10 +5,10 @@
 
 namespace ProtocolCraft
 {
-    class BrigadierPropertyDouble : public BrigadierProperty
+    class BrigadierPropertyLong : public BrigadierProperty
     {
     public:
-        virtual ~BrigadierPropertyDouble()
+        virtual ~BrigadierPropertyLong()
         {
 
         }
@@ -18,12 +18,12 @@ namespace ProtocolCraft
             flags = flags_;
         }
         
-        void SetMin(const double min_)
+        void SetMin(const long min_)
         {
             min = min_;
         }
         
-        void SetMax(const double max_)
+        void SetMax(const long max_)
         {
             max = max_;
         }
@@ -34,12 +34,12 @@ namespace ProtocolCraft
             return flags;
         }
         
-        const double GetMin() const
+        const long long int GetMin() const
         {
             return min;
         }
         
-        const double GetMax() const
+        const long long int GetMax() const
         {
             return max;
         }
@@ -50,19 +50,19 @@ namespace ProtocolCraft
             flags = ReadData<char>(iter, length);
             if (flags & 0x01)
             {
-                min = ReadData<double>(iter, length);
+                min = ReadData<long long int>(iter, length);
             }
             else
             {
-                min = -std::numeric_limits<double>::max();
+                min = std::numeric_limits<long long int>::min();
             }
             if (flags & 0x02)
             {
-                max = ReadData<double>(iter, length);
+                max = ReadData<long long int>(iter, length);
             }
             else
             {
-                max = std::numeric_limits<double>::max();
+                max = std::numeric_limits<long long int>::max();
             }
         }
 
@@ -71,11 +71,11 @@ namespace ProtocolCraft
             WriteData<char>(flags, container);
             if (flags & 0x01)
             {
-                WriteData<double>(min, container);
+                WriteData<long long int>(min, container);
             }
             if (flags & 0x02)
             {
-                WriteData<double>(max, container);
+                WriteData<long long int>(max, container);
             }
         }
 
@@ -92,8 +92,8 @@ namespace ProtocolCraft
 
     private:
         char flags;
-        double min;
-        double max;
+        long long int min;
+        long long int max;
     };
 }
 #endif
