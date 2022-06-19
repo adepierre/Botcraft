@@ -24,7 +24,7 @@ namespace ProtocolCraft
                 // It *should* be <%s> %s, so we only need with[1]
                 if (raw_json.contains("with") && raw_json["with"].is_array() && raw_json["with"].size() > 1)
                 {
-                    output += ParseChat(raw_json["with"][0]);
+                    output += ParseChat(raw_json["with"][1]);
                 }
             }
             else
