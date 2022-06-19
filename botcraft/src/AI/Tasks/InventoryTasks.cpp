@@ -294,7 +294,6 @@ namespace Botcraft
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             player_pos = local_player->GetPosition();
-            local_player->LookAt(Vector3<double>(0.5) + pos);
         }
 
         // Compute the distance from the hand? Might be from somewhere else
@@ -306,6 +305,11 @@ namespace Botcraft
             {
                 return Status::Failure;
             }
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(local_player->GetMutex());
+            local_player->LookAt(Vector3<double>(0.5) + pos);
         }
 
         // Check if block is air
@@ -390,6 +394,12 @@ namespace Botcraft
         place_block_msg->SetInside(false);
 #endif
         place_block_msg->SetHand((int)Hand::Right);
+#if PROTOCOL_VERSION > 758
+        {
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
+            place_block_msg->SetSequence(world->GetNextWorldInteractionSequenceId());
+        }
+#endif
 
 
         // Place the block
@@ -470,6 +480,13 @@ namespace Botcraft
         const char current_stack_size = inventory_manager->GetOffHand().GetItemCount();
         std::shared_ptr<ServerboundUseItemPacket> use_item_msg(new ServerboundUseItemPacket);
         use_item_msg->SetHand(static_cast<int>(Hand::Left));
+#if PROTOCOL_VERSION > 758
+        {
+            std::shared_ptr<World> world = client.GetWorld();
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
+            use_item_msg->SetSequence(world->GetNextWorldInteractionSequenceId());
+        }
+#endif
         network_manager->Send(use_item_msg);
 
         if (!wait_confirmation)

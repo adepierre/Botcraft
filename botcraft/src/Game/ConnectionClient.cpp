@@ -50,6 +50,9 @@ namespace Botcraft
         {
             std::shared_ptr<ServerboundChatPacket> chat_message(new ServerboundChatPacket);
             chat_message->SetMessage(msg);
+#if PROTOCOL_VERSION > 758
+            chat_message->SetTimestamp(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
+#endif
             network_manager->Send(chat_message);
         }
     }

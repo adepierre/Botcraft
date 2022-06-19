@@ -1,7 +1,7 @@
 #pragma once
 
 #include "botcraft/Game/Entities/entities/vehicle/AbstractMinecartEntity.hpp"
-#include "protocolCraft/Types/Chat.hpp"
+#include "protocolCraft/Types/Chat/Chat.hpp"
 
 namespace Botcraft
 {

@@ -70,7 +70,11 @@ namespace Botcraft
         state = ProtocolCraft::ConnectionState::Login;
 
         std::shared_ptr<ProtocolCraft::ServerboundHelloPacket> loginstart_msg(new ProtocolCraft::ServerboundHelloPacket);
+#if PROTOCOL_VERSION < 759
         loginstart_msg->SetGameProfile(name);
+#else
+        loginstart_msg->SetName(name);
+#endif
         Send(loginstart_msg);
     }
 

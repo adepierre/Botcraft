@@ -677,10 +677,12 @@ namespace Botcraft
             AddEntityToUpdate(msg.GetId_());
         }
 
+#if PROTOCOL_VERSION < 759
         void RenderingManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
         {
             AddEntityToUpdate(msg.GetId_());
         }
+#endif
 
 #if PROTOCOL_VERSION < 721
         void RenderingManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)

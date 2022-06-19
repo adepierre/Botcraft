@@ -67,6 +67,12 @@ namespace Botcraft
         msg_digging->SetAction((int)PlayerDiggingStatus::StartDigging);
         msg_digging->SetPos(pos.ToNetworkPosition());
         msg_digging->SetDirection((int)face);
+#if PROTOCOL_VERSION > 758
+        {
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
+            msg_digging->SetSequence(world->GetNextWorldInteractionSequenceId());
+        }
+#endif
         network_manager->Send(msg_digging);
 
         std::shared_ptr<ServerboundSwingPacket> swing_packet;
@@ -105,6 +111,12 @@ namespace Botcraft
                 msg_finish->SetAction((int)PlayerDiggingStatus::FinishDigging);
                 msg_finish->SetPos(pos.ToNetworkPosition());
                 msg_finish->SetDirection((int)face);
+#if PROTOCOL_VERSION > 758
+                {
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                    msg_finish->SetSequence(world->GetNextWorldInteractionSequenceId());
+                }
+#endif
                 network_manager->Send(msg_finish);
 
                 finished_sent = true;

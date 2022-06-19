@@ -7,8 +7,10 @@
 
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Types/NBT/TagInt.hpp"
-
-#include <fstream>
+#if PROTOCOL_VERSION > 758
+#include "protocolCraft/Types/NBT/TagList.hpp"
+#include "protocolCraft/Types/NBT/TagString.hpp"
+#endif
 
 namespace Botcraft
 {
@@ -29,6 +31,10 @@ namespace Botcraft
         {
             async_handler = nullptr;
         }
+
+#if PROTOCOL_VERSION > 758
+        world_interaction_sequence_id = 0;
+#endif
     }
 
     World::~World()
@@ -775,6 +781,13 @@ namespace Botcraft
         return terrain;
     }
 
+#if PROTOCOL_VERSION > 758
+    const int World::GetNextWorldInteractionSequenceId()
+    {
+        return ++world_interaction_sequence_id;
+    }
+#endif
+
     std::shared_ptr<Chunk> World::GetChunk(const int x, const int z)
     {
         if (!cached || cached_x != x || cached_z != z)
@@ -801,11 +814,24 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 719
         current_dimension = (Dimension)msg.GetDimension();
 #else
-        current_dimension = msg.GetDimension().GetName();
+        current_dimension = msg.GetDimension().GetFull();
 #endif
 #if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION < 759
         dimension_height[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("height"))->GetValue();
         dimension_min_y[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("min_y"))->GetValue();
+#else
+        std::shared_ptr<ProtocolCraft::TagList> dimension_types = std::dynamic_pointer_cast<ProtocolCraft::TagList>(std::dynamic_pointer_cast<ProtocolCraft::TagCompound>(msg.GetRegistryHolder().GetTag("minecraft:dimension_type"))->GetValues().at("value"));
+        for (const auto& d : dimension_types->GetValues())
+        {
+            const std::shared_ptr<ProtocolCraft::TagCompound> dim_entry = std::dynamic_pointer_cast<ProtocolCraft::TagCompound>(d);
+            const std::string& dim_name = std::dynamic_pointer_cast<ProtocolCraft::TagString>(dim_entry->GetValues().at("name"))->GetValue();
+            const std::shared_ptr<ProtocolCraft::TagCompound> dim_element = std::dynamic_pointer_cast<ProtocolCraft::TagCompound>(dim_entry->GetValues().at("element"));
+
+            dimension_height[dim_name] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(dim_element->GetValues().at("height"))->GetValue();
+            dimension_min_y[dim_name] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(dim_element->GetValues().at("min_y"))->GetValue();
+        }
+#endif
 #endif
     }
 
@@ -817,9 +843,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 719
         current_dimension = (Dimension)msg.GetDimension();
 #else
-        current_dimension = msg.GetDimension().GetName();
+        current_dimension = msg.GetDimension().GetFull();
 #endif
-#if PROTOCOL_VERSION > 756
+
+#if PROTOCOL_VERSION > 756 && PROTOCOL_VERSION < 759
         dimension_height[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("height"))->GetValue();
         dimension_min_y[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("min_y"))->GetValue();
 #endif

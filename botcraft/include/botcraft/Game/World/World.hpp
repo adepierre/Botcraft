@@ -153,6 +153,11 @@ namespace Botcraft
         // Get the list of chunks
         const std::map<std::pair<int, int>, std::shared_ptr<Chunk> >& GetAllChunks() const;
 
+
+#if PROTOCOL_VERSION > 758
+        const int GetNextWorldInteractionSequenceId();
+#endif
+
     private:
         std::shared_ptr<Chunk> GetChunk(const int x, const int z);
 
@@ -188,10 +193,14 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 756
         /// @brief Height of the chunks in a given dimension
-        std::map<std::string, int> dimension_height;
+        std::map<std::string, unsigned int> dimension_height;
         /// @brief Height of the lowest block in a given dimension
-        std::map<std::string, unsigned int> dimension_min_y;
+        std::map<std::string, int> dimension_min_y;
 #endif
         std::unique_ptr<AsyncHandler> async_handler;
+
+#if PROTOCOL_VERSION > 758
+        int world_interaction_sequence_id;
+#endif
     };
 } // Botcraft

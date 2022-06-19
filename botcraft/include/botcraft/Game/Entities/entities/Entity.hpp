@@ -8,7 +8,7 @@
 #include <nlohmann/json.hpp>
 
 #if PROTOCOL_VERSION > 340
-#include "protocolCraft/Types/Chat.hpp"
+#include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
 #include "protocolCraft/Types/Slot.hpp"
 

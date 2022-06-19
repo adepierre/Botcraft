@@ -1,7 +1,7 @@
 #include "botcraft/Game/Entities/entities/Entity.hpp"
 
 #include "protocolCraft/Types/Slot.hpp"
-#include "protocolCraft/Types/Chat.hpp"
+#include "protocolCraft/Types/Chat/Chat.hpp"
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #if PROTOCOL_VERSION > 404

@@ -210,6 +210,7 @@ namespace Botcraft
         entities[msg.GetId_()] = entity;
     }
 
+#if PROTOCOL_VERSION < 759
     void EntityManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
@@ -225,6 +226,7 @@ namespace Botcraft
 
         entities[msg.GetId_()] = entity;
     }
+#endif
 
     void EntityManager::Handle(ProtocolCraft::ClientboundAddExperienceOrbPacket& msg)
     {

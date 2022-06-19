@@ -104,6 +104,13 @@ namespace Botcraft
         place_block_msg->SetInside(false);
 #endif
         place_block_msg->SetHand((int)Hand::Right);
+#if PROTOCOL_VERSION > 758
+        {
+            std::shared_ptr<World> world = client.GetWorld();
+            std::lock_guard<std::mutex> world_guard(world->GetMutex());
+            place_block_msg->SetSequence(world->GetNextWorldInteractionSequenceId());
+        }
+#endif
         client.GetNetworkManager()->Send(place_block_msg);
 
         if (animation)
