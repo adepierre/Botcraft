@@ -14,7 +14,14 @@ public:
     ~ChatCommandClient();
 
 protected:
+#if PROTOCOL_VERSION < 759
     virtual void Handle(ProtocolCraft::ClientboundChatPacket &msg) override;
+#else
+    virtual void Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg) override;
+    virtual void Handle(ProtocolCraft::ClientboundSystemChatPacket& msg) override;
+#endif
+
+    void ProcessChatMsg(const std::vector<std::string>& splitted_msg);
 
     // Check for any spawnable blocks in a sphere from pos and prints
     // all the positions into a file

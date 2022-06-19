@@ -29,6 +29,8 @@ ChatCommandClient::ChatCommandClient(const bool use_renderer_) : TemplatedBehavi
     std::cout << "        name die\n";
     std::cout << "    Place a block:\n";
     std::cout << "        name place_block minecraft:item x y z\n";
+    std::cout << "    Break a block:\n";
+    std::cout << "        name dig x y z\n";
     std::cout << "    Interact (right click) a block:\n";
     std::cout << "        name interact x y z\n";
 }
@@ -38,6 +40,7 @@ ChatCommandClient::~ChatCommandClient()
     
 }
 
+#if PROTOCOL_VERSION < 759
 void ChatCommandClient::Handle(ClientboundChatPacket &msg)
 {
     ManagersClient::Handle(msg);
@@ -46,14 +49,45 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
     std::istringstream ss{ msg.GetMessage().GetText() };
     const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
 
-    if (splitted.size() < 2 || splitted[0] != network_manager->GetMyName())
+    // Process it
+    ProcessChatMsg(splitted);
+}
+#else
+void ChatCommandClient::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
+{
+    ManagersClient::Handle(msg);
+
+    // Split the message
+    std::istringstream ss{ msg.GetSignedContent().GetText() };
+    const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
+
+    // Process it
+    ProcessChatMsg(splitted);
+}
+
+void ChatCommandClient::Handle(ProtocolCraft::ClientboundSystemChatPacket& msg)
+{
+    ManagersClient::Handle(msg);
+
+    // Split the message
+    std::istringstream ss{ msg.GetContent().GetText() };
+    const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
+
+    // Process it
+    ProcessChatMsg(splitted);
+}
+#endif
+
+void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_msg)
+{
+    if (splitted_msg.size() < 2 || splitted_msg[0] != network_manager->GetMyName())
     {
         return;
     }
 
-    if (splitted[1] == "goto")
+    if (splitted_msg[1] == "goto")
     {
-        if (splitted.size() < 5)
+        if (splitted_msg.size() < 5)
         {
             SendChatMessage("Usage: [BotName] [goto] [x] [y] [z] [speed]");
             return;
@@ -62,10 +96,10 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         float speed = 4.317f;
         try
         {
-            target_position = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
-            if (splitted.size() > 5)
+            target_position = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
+            if (splitted_msg.size() > 5)
             {
-                speed = std::stof(splitted[5]);
+                speed = std::stof(splitted_msg[5]);
             }
         }
         catch (const std::invalid_argument &e)
@@ -101,55 +135,55 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
 
         SetBehaviourTree(tree);
     }
-    else if (splitted[1] == "stop")
+    else if (splitted_msg[1] == "stop")
     {
         // Stop any running behaviour
         SetBehaviourTree(nullptr);
     }
-    else if (splitted[1] == "check_perimeter")
+    else if (splitted_msg[1] == "check_perimeter")
     {
         float radius = 128.0f;
         Position pos = Position(entity_manager->GetLocalPlayer()->GetPosition().x, entity_manager->GetLocalPlayer()->GetPosition().y, entity_manager->GetLocalPlayer()->GetPosition().z);
         bool check_lighting = true;
 
-        if (splitted.size() == 3)
+        if (splitted_msg.size() == 3)
         {
-            radius = std::stof(splitted[2]);
+            radius = std::stof(splitted_msg[2]);
         }
-        else if (splitted.size() == 4)
+        else if (splitted_msg.size() == 4)
         {
-            radius = std::stof(splitted[2]);
-            check_lighting = std::stoi(splitted[3]);
+            radius = std::stof(splitted_msg[2]);
+            check_lighting = std::stoi(splitted_msg[3]);
         }
-        else if (splitted.size() == 6)
+        else if (splitted_msg.size() == 6)
         {
-            pos = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
-            radius = std::stof(splitted[5]);
+            pos = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
+            radius = std::stof(splitted_msg[5]);
         }
-        else if (splitted.size() == 7)
+        else if (splitted_msg.size() == 7)
         {
-            pos = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
-            radius = std::stof(splitted[5]);
-            check_lighting = std::stoi(splitted[6]);
+            pos = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
+            radius = std::stof(splitted_msg[5]);
+            check_lighting = std::stoi(splitted_msg[6]);
         }
         CheckPerimeter(pos, radius, check_lighting);
     }
-    else if (splitted[1] == "die")
+    else if (splitted_msg[1] == "die")
     {
         should_be_closed = true;
     }
-    else if (splitted[1] == "place_block")
+    else if (splitted_msg[1] == "place_block")
     {
-        if (splitted.size() < 6)
+        if (splitted_msg.size() < 6)
         {
             SendChatMessage("Usage: [BotName] [place_block] [item] [x] [y] [z]");
             return;
         }
-        const std::string item = splitted[2];
+        const std::string& item = splitted_msg[2];
         Position pos;
         try
         {
-            pos = Position(std::stoi(splitted[3]), std::stoi(splitted[4]), std::stoi(splitted[5]));
+            pos = Position(std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]), std::stoi(splitted_msg[5]));
         }
         catch (const std::invalid_argument& e)
         {
@@ -159,22 +193,33 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         {
             return;
         }
+        LOG_INFO("Asked to place a block at " << pos << " (" << item << ")");
 
-        // TODO
-        SendChatMessage("Asked to place a block");
-        //PlaceBlock(item, pos, PlayerDiggingFace::Top, false);
+        auto tree = Builder<ChatCommandClient>()
+            // shortcut for composite<Sequence<ChatCommandClient>>()
+            .sequence()
+                .succeeder()
+                    .leaf(PlaceBlock, item, pos, PlayerDiggingFace::Up, true)
+                .end()
+                // Switch back to empty behaviour
+                .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
+            .end()
+            .build();
+
+        SetBehaviourTree(tree);
     }
-    else if (splitted[1] == "interact")
+    else if (splitted_msg[1] == "dig")
     {
-        if (splitted.size() < 5)
+        if (splitted_msg.size() < 5)
         {
-            SendChatMessage("Usage: [BotName] [interact] [x] [y] [z]");
+            SendChatMessage("Usage: [BotName] [dig] [x] [y] [z]");
             return;
         }
+
         Position pos;
         try
         {
-            pos = Position(std::stoi(splitted[2]), std::stoi(splitted[3]), std::stoi(splitted[4]));
+            pos = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
         }
         catch (const std::invalid_argument& e)
         {
@@ -188,18 +233,56 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
         auto tree = Builder<ChatCommandClient>()
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
-                .leaf(GoTo, pos, 4, 1, 4.317f, true)
-                // Set interaction position in the blackboard
-                .leaf(SetBlackboardData<Position>, "InteractWithBlock.pos", pos)
-                .selector()
-                    // Perform action using the data in the blackboard
-                    .leaf(InteractWithBlockBlackboard)
-                    // Say something if it fails
-                    .leaf(Say, "Interacting failed :(")
+                .succeeder()
+                    .leaf(Dig, pos, false, PlayerDiggingFace::Up, -1.0f)
                 .end()
-                // Remove interaction position in the blackboard because
-                // we don't want to leave a mess (and to show how to do it)
-                .leaf(RemoveBlackboardData, "InteractWithBlock.pos")
+                // Switch back to empty behaviour
+                .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
+            .end()
+            .build();
+
+        SetBehaviourTree(tree);
+    }
+    else if (splitted_msg[1] == "interact")
+    {
+        if (splitted_msg.size() < 5)
+        {
+            SendChatMessage("Usage: [BotName] [interact] [x] [y] [z]");
+            return;
+        }
+        Position pos;
+        try
+        {
+            pos = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
+        }
+        catch (const std::invalid_argument& e)
+        {
+            return;
+        }
+        catch (const std::out_of_range& e)
+        {
+            return;
+        }
+
+        auto tree = Builder<ChatCommandClient>()
+            // shortcut for composite<Sequence<ChatCommandClient>>()
+            .sequence()
+                .succeeder()
+                    .sequence()
+                        .leaf(GoTo, pos, 4, 1, 4.317f, true)
+                        // Set interaction position in the blackboard
+                        .leaf(SetBlackboardData<Position>, "InteractWithBlock.pos", pos)
+                        .selector()
+                            // Perform action using the data in the blackboard
+                            .leaf(InteractWithBlockBlackboard)
+                            // Say something if it fails
+                            .leaf(Say, "Interacting failed :(")
+                        .end()
+                        // Remove interaction position in the blackboard because
+                        // we don't want to leave a mess (and to show how to do it)
+                        .leaf(RemoveBlackboardData, "InteractWithBlock.pos")
+                    .end()
+                .end()
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
             .end()
