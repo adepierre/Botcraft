@@ -4,70 +4,79 @@
 
 namespace ProtocolCraft
 {
-    const std::string Chat::ParseChat(const std::string &json)
+    const std::string Chat::ParseChat(const nlohmann::json& raw_json)
     {
-        nlohmann::json v;
-        v = nlohmann::json::parse(json);
-
-        if (v.is_object())
+        if (raw_json.is_object())
         {
-            if (v.contains("translate") && v["translate"].is_string())
-            {
-                std::string output;
+            std::string output = "";
 
-                // Only deal with other player commands
-                if (v["translate"] == "chat.type.text")
+            if (raw_json.contains("text"))
+            {
+                // It should always be text but just in case
+                if (raw_json["text"].is_string())
                 {
-                    if (v.contains("with") && v["with"].is_array())
-                    {
-                        for (auto& s : v["with"])
-                        {
-                            if (s.is_object() && s.contains("text") && s.at("text").is_string())
-                            {
-                                from += s["text"].get<std::string>();
-                            }
-                            else if (s.is_string())
-                            {
-                                output += s.get<std::string>();
-                            }
-                        }
-                    }
+                    output += raw_json["text"].get<std::string>();
                 }
-                return output;
             }
+            // TODO: deal with other translate types for completeness
+            else if (raw_json.contains("translate") && raw_json["translate"].is_string() && raw_json["translate"].get<std::string>() == "chat.type.text")
+            {
+                // It *should* be <%s> %s, so we only need with[1]
+                if (raw_json.contains("with") && raw_json["with"].is_array() && raw_json["with"].size() > 1)
+                {
+                    output += ParseChat(raw_json["with"][0]);
+                }
+            }
+            else
+            {
+                // TODO: deal with other type of content (NBT, scoreboard, selector, keybind)
+            }
+
+            // Add extra
+            if (raw_json.contains("extra") && raw_json["extra"].is_array())
+            {
+                output += ParseChat(raw_json["extra"]);
+            }
+
+            return output;
         }
 
-        if (v.is_null())
+        if (raw_json.is_null())
         {
             return "";
         }
 
-        if (v.is_string())
+        if (raw_json.is_string())
         {
-            return v.get<std::string>();
+            return raw_json.get<std::string>();
         }
 
-        if (v.is_array())
+        if (raw_json.is_boolean())
         {
-            std::string output;
+            return raw_json.get<bool>() ? "true" : "false";
+        }
 
-            for (auto& s : v)
+        if (raw_json.is_number_integer())
+        {
+            return raw_json.is_number_unsigned() ? std::to_string(raw_json.get<unsigned long long int>()) : std::to_string(raw_json.get<long long int>());
+        }
+
+        if (raw_json.is_number_float())
+        {
+            return std::to_string(raw_json.get<double>());
+        }
+
+        if (raw_json.is_array())
+        {
+            std::string output = "";
+
+            for (const auto& s : raw_json)
             {
-                output += ParseChat(s.dump());
+                output += ParseChat(s);
             }
             return output;
         }
 
         return "";
-    }
-
-    const nlohmann::json Chat::SerializeImpl() const
-    {
-        nlohmann::json value;
-
-        value["from"] = from;
-        value["text"] = text;
-
-        return value;
     }
 }

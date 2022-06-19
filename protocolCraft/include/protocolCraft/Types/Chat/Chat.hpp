@@ -14,16 +14,6 @@ namespace ProtocolCraft
 
         }
 
-        void SetText(const std::string &s)
-        {
-            text = s;
-        }
-
-        void SetFrom(const std::string& s)
-        {
-            from = s;
-        }
-
         void SetRawText(const std::string& s)
         {
             raw_text = s;
@@ -39,18 +29,12 @@ namespace ProtocolCraft
             return raw_text;
         }
 
-        const std::string& GetFrom() const
-        {
-            return from;
-        }
-
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             raw_text = ReadData<std::string>(iter, length);
             
-            from = "";
-            text = ParseChat(raw_text);
+            text = ParseChat(nlohmann::json::parse(raw_text));
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -58,13 +42,19 @@ namespace ProtocolCraft
             WriteData<std::string>(raw_text, container);
         }
 
-        const std::string ParseChat(const std::string &json);
+        const std::string ParseChat(const nlohmann::json& raw_json);
 
-        virtual const nlohmann::json SerializeImpl() const override;
+        virtual const nlohmann::json SerializeImpl() const override
+        {
+            nlohmann::json output;
+
+            output["raw_text"] = raw_text;
+
+            return output;
+        }
 
     private:
         std::string text;
-        std::string from;
         std::string raw_text;
     };
 }
