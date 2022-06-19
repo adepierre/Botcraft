@@ -58,7 +58,7 @@ namespace Botcraft
         nlohmann::json output = AnimalEntity::Serialize();
 
         output["metadata"]["data_variant_id"] = GetDataVariantId();
-        output["metadata"]["data_tongue_target_id"] = GetDataTongueTargetId() ? nlohmann::json(GetDataTongueTargetId().value()) : nullptr;
+        output["metadata"]["data_tongue_target_id"] = GetDataTongueTargetId() ? nlohmann::json(GetDataTongueTargetId().value()) : nlohmann::json();
 
         return output;
     }
