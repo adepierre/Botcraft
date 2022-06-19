@@ -124,7 +124,6 @@ namespace ProtocolCraft
             for (const auto& s: signatures)
             {
                 output["signature"][s.first] = "Vector of " + std::to_string(s.second.size()) + " unsigned char";
-                output.push_back(s);
             }
             output["signed_preview"] = signed_preview;
 
