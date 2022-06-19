@@ -12,7 +12,7 @@ Main features are listed below. To see the evolution of the project, check the [
 
 - Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
 - DNS server name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.18.2 supported
+- All official releases from 1.12.2 to 1.19 supported
 - Compression
 - Physics and collisions
 - World data
@@ -20,6 +20,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system (see [the wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - Bot control with mouse and keyboard
+- ⚠️ For 1.19+, only the default value for enforce-secure-profile (false) server property is supported. Botcraft can't connect to servers with enforce-secure-profile=true (yet) ⚠️
 
 Available bot behaviours includes:
 - Path finding
@@ -91,7 +92,7 @@ There are several cmake options you can modify:
 Examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, sends Hello World! in the chat then disconnect
 - [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI enabled. Mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering.
-- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Please note that non-vanilla servers with other chat format (yes Paper I'm talking about you) are not supported (yet).
+- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Should work with chat from vanilla and non-vanilla servers (paper, forge ...)
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Very leight AFK only bot. Simply connect to a server and stay still doing nothing.
 - [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same (due to concurrent access). Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
 - [5_MobHitterExample](Examples/5_MobHitterExample): Entity processing example. Attack every monster in range, with a per-entity cooldown of 0.5s. /!\ This is only an example about entities, no eating is performed, so would starve to death pretty quickly if used as-is.
