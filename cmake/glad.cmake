@@ -14,10 +14,10 @@ if(NOT TARGET glad)
 	file(MAKE_DIRECTORY "${GLAD_BUILD_PATH}")
 
 	execute_process(
-		COMMAND "cmake" "${GLAD_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_INSTALL_PREFIX=install" "-DCMAKE_POSITION_INDEPENDENT_CODE=ON" 
+		COMMAND "${CMAKE_COMMAND}" "${GLAD_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}" "-DCMAKE_INSTALL_PREFIX=install" "-DCMAKE_POSITION_INDEPENDENT_CODE=ON" 
         WORKING_DIRECTORY "${GLAD_BUILD_PATH}")
 
-	execute_process(COMMAND "cmake" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY "${GLAD_BUILD_PATH}")
+	execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY "${GLAD_BUILD_PATH}")
 
 	# Find the freshly built library
 	find_package(glad QUIET PATHS "${GLAD_BUILD_PATH}/install")

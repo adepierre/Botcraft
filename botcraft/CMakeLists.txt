@@ -556,6 +556,16 @@ if(BOTCRAFT_ENCRYPTION)
     target_compile_definitions(botcraft PRIVATE USE_ENCRYPTION=1)
 endif(BOTCRAFT_ENCRYPTION)
 
+if(WIN32 AND MINGW)
+    target_link_libraries(botcraft PRIVATE ws2_32 crypt32)
+    # Copy dll from the compiler folder
+    get_filename_component(COMPILER_FOLDER ${CMAKE_CXX_COMPILER} DIRECTORY)
+    add_custom_command(TARGET botcraft POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${COMPILER_FOLDER}/libstdc++-6.dll"
+            $<TARGET_FILE_DIR:botcraft>)
+endif()
+
 # Installation stuff
 include(GNUInstallDirs)
 
@@ -608,3 +618,11 @@ export(EXPORT botcraft-targets
 install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}"
     DESTINATION "${CMAKE_INSTALL_BINDIR}/Assets"
 )
+
+# Copy Mingw libstdc++ dll
+if(WIN32 AND MINGW)
+    install(FILES 
+        "${BOTCRAFT_OUTPUT_DIR}/bin/libstdc++-6.dll"
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    )
+endif()

@@ -20,10 +20,10 @@ if(NOT TARGET ZLIB::ZLIB)
 	file(MAKE_DIRECTORY "${ZLIB_BUILD_PATH}")
 
 	execute_process(
-		COMMAND "cmake" "${ZLIB_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_INSTALL_PREFIX=install" "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+		COMMAND "${CMAKE_COMMAND}" "${ZLIB_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}" "-DCMAKE_INSTALL_PREFIX=install" "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
 		WORKING_DIRECTORY "${ZLIB_BUILD_PATH}")
 
-	execute_process(COMMAND "cmake" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY "${ZLIB_BUILD_PATH}")
+	execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY "${ZLIB_BUILD_PATH}")
 
 	# Find the freshly built library
     
@@ -35,8 +35,11 @@ if(NOT TARGET ZLIB::ZLIB)
     else()
         set(ZLIB_USE_STATIC_LIBS "ON")
     endif()
+    
 	set(ZLIB_ROOT "${ZLIB_BUILD_PATH}/install")
 	find_package(ZLIB QUIET)
+    
+    # Revert library suffix to what they were
     if(${CMAKE_VERSION} VERSION_LESS "3.24.0")
         set(CMAKE_FIND_LIBRARY_SUFFIXES ${_CMAKE_FIND_LIBRARY_SUFFIXES}) 
         unset(_CMAKE_FIND_LIBRARY_SUFFIXES)
