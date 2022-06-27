@@ -75,7 +75,7 @@ namespace Botcraft
 
     void ConnectionClient::Handle(ClientboundLoginDisconnectPacket &msg)
     {
-        LOG_INFO("Disconnect during login with reason: " << msg.GetReason().GetText());
+        LOG_INFO("Disconnect during login with reason: " << msg.GetReason().GetRawText());
 
         should_be_closed = true;
     }
