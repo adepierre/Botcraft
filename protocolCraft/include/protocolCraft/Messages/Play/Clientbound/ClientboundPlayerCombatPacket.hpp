@@ -2,7 +2,7 @@
 
 #if PROTOCOL_VERSION < 755 //1.17
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Chat.hpp"
+#include "protocolCraft/Types/Chat/Chat.hpp"
 
 namespace ProtocolCraft
 {
