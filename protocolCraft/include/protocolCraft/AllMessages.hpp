@@ -60,11 +60,11 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerAbilitiesPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerCommandPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerInputPacket.hpp"
-#if PROTOCOL_VERSION < 737
-#include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookUpdatePacket.hpp"
-#else
+#if PROTOCOL_VERSION > 736
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp"
+#else
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookUpdatePacket.hpp"
 #endif
 
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundResourcePackPacket.hpp"
@@ -371,11 +371,11 @@ namespace ProtocolCraft
         ServerboundBlockEntityTagQuery,
         ServerboundEntityTagQuery,
 #endif
-#if PROTOCOL_VERSION < 736
-        ServerboundRecipeBookUpdatePacket,
-#else
+#if PROTOCOL_VERSION > 736
         ServerboundRecipeBookSeenRecipePacket,
         ServerboundRecipeBookChangeSettingsPacket,
+#else
+        ServerboundRecipeBookUpdatePacket,
 #endif
         ServerboundResourcePackPacket,
 #if PROTOCOL_VERSION > 385

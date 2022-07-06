@@ -93,11 +93,11 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundBlockEntityTagQuery>;
     template class BaseMessage<ServerboundEntityTagQuery>;
 #endif
-#if PROTOCOL_VERSION < 736
-    template class BaseMessage<ServerboundRecipeBookUpdatePacket>;
-#else
+#if PROTOCOL_VERSION > 736
     template class BaseMessage<ServerboundRecipeBookSeenRecipePacket>;
     template class BaseMessage<ServerboundRecipeBookChangeSettingsPacket>;
+#else
+    template class BaseMessage<ServerboundRecipeBookUpdatePacket>;
 #endif
     template class BaseMessage<ServerboundResourcePackPacket>;
 #if PROTOCOL_VERSION > 385
