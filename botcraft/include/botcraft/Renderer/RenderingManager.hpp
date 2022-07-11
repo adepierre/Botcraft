@@ -45,6 +45,7 @@ namespace Botcraft
             SHIFT,
             ESC,
             MOUSE_LEFT,
+            INVENTORY,
             NUMBER_OF_KEYS
         };
 
@@ -138,6 +139,8 @@ namespace Botcraft
             std::shared_ptr<World> world;
             std::shared_ptr<InventoryManager> inventory_manager;
             std::shared_ptr<EntityManager> entity_manager;
+
+            std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS> isKeyPressed;
 
 #if USE_IMGUI
             bool inventory_open;
