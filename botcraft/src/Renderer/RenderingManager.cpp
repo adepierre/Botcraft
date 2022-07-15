@@ -59,7 +59,6 @@ namespace Botcraft
             }
 #if USE_IMGUI
             inventory_open = false;
-            last_time_inventory_changed = 0;
 #endif
 
             mouse_last_x = window_width / 2.0f;
@@ -74,7 +73,7 @@ namespace Botcraft
             has_proj_changed = true;
 
             MouseCallback = [](double, double) {};
-            KeyboardCallback = [](std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, float) {};
+            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, float) {};
 
             world_renderer = std::make_unique<WorldRenderer>(section_height_);
 
@@ -91,7 +90,7 @@ namespace Botcraft
         RenderingManager::~RenderingManager()
         {
             MouseCallback = [](double, double) {};
-            KeyboardCallback = [](std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, float) {};
+            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, float) {};
 
             running = false;
 
@@ -334,7 +333,7 @@ namespace Botcraft
             MouseCallback = callback;
         }
 
-        void RenderingManager::SetKeyboardCallback(std::function<void(std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, double)> callback)
+        void RenderingManager::SetKeyboardCallback(std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> callback)
         {
             KeyboardCallback = callback;
         }
@@ -446,20 +445,20 @@ namespace Botcraft
 
         void RenderingManager::InternalProcessInput(GLFWwindow *window)
         {
-            isKeyPressed[(int)KEY_CODE::ESC] = (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS);
-            isKeyPressed[(int)KEY_CODE::SPACE] = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
-            isKeyPressed[(int)KEY_CODE::SHIFT] = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
-            isKeyPressed[(int)KEY_CODE::FORWARD] = (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS);
-            isKeyPressed[(int)KEY_CODE::BACKWARD] = (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS);
-            isKeyPressed[(int)KEY_CODE::LEFT] = (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS);
-            isKeyPressed[(int)KEY_CODE::RIGHT] = (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS);
-            isKeyPressed[(int)KEY_CODE::MOUSE_LEFT] = (glfwGetKey(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
+            isKeyPressed[static_cast<int>(KEY_CODE::ESC)] = (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS);
+            isKeyPressed[static_cast<int>(KEY_CODE::SPACE)] = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
+            isKeyPressed[static_cast<int>(KEY_CODE::SHIFT)] = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
+            isKeyPressed[static_cast<int>(KEY_CODE::FORWARD)] = (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS);
+            isKeyPressed[static_cast<int>(KEY_CODE::BACKWARD)] = (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS);
+            isKeyPressed[static_cast<int>(KEY_CODE::LEFT)] = (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS);
+            isKeyPressed[static_cast<int>(KEY_CODE::RIGHT)] = (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS);
+            isKeyPressed[static_cast<int>(KEY_CODE::MOUSE_LEFT)] = (glfwGetKey(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
             bool isInventoryKeyPressed = (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS);
 
             // Toggle Inventory one time when key was not pressed and now it is
-            bool toggleInventory = (!isKeyPressed[(int)KEY_CODE::INVENTORY] && isInventoryKeyPressed);
+            bool toggleInventory = (!isKeyPressed[static_cast<int>(KEY_CODE::INVENTORY)] && isInventoryKeyPressed);
             // Save current value just like others
-            isKeyPressed[(int)KEY_CODE::INVENTORY] = isInventoryKeyPressed;
+            isKeyPressed[static_cast<int>(KEY_CODE::INVENTORY)] = isInventoryKeyPressed;
 
 
 #ifdef USE_IMGUI

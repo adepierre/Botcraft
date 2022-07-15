@@ -67,7 +67,7 @@ namespace Botcraft
 
             // Set mouse and keyboard callbacks to handle user inputs
             void SetMouseCallback(std::function<void(double, double)> callback);
-            void SetKeyboardCallback(std::function<void(std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, double)> callback);
+            void SetKeyboardCallback(std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> callback);
             void AddChunkToUpdate(const int x, const int z);
             void AddEntityToUpdate(const int id);
 
@@ -140,11 +140,10 @@ namespace Botcraft
             std::shared_ptr<InventoryManager> inventory_manager;
             std::shared_ptr<EntityManager> entity_manager;
 
-            std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS> isKeyPressed;
+            std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)> isKeyPressed;
 
 #if USE_IMGUI
             bool inventory_open;
-            unsigned long long int last_time_inventory_changed;
 #endif
 
             std::thread rendering_thread;// OpenGL thread
@@ -169,7 +168,7 @@ namespace Botcraft
             std::unique_ptr<WorldRenderer> world_renderer;
 
             std::function<void(double, double)> MouseCallback;
-            std::function<void(std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, double)> KeyboardCallback;
+            std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> KeyboardCallback;
 
             std::string screenshot_path;
             bool take_screenshot;
