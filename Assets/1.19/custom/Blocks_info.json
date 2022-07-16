@@ -189,7 +189,8 @@
         "solid": false,
         "texture": "block/water_still",
         "tintType": "water",
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 100,
@@ -197,7 +198,8 @@
         "render": "fluid",
         "solid": false,
         "texture": "block/lava_still",
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 0.5,
@@ -1150,8 +1152,9 @@
         "hardness": 0.4,
         "name": "minecraft:ladder",
         "render": "block",
-        "solid": true,
-        "transparent": true
+        "solid": false,
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 0.7,
@@ -1766,9 +1769,10 @@
         "hardness": 0.2,
         "name": "minecraft:vine",
         "render": "block",
-        "solid": true,
+        "solid": false,
         "tintType": "leaves",
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 2,
@@ -4683,8 +4687,9 @@
         "hardness": 0.0,
         "name": "minecraft:scaffolding",
         "render": "block",
-        "solid": true,
-        "transparent": true
+        "solid": false,
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 2.5,
@@ -4915,28 +4920,32 @@
         "name": "minecraft:weeping_vines",
         "render": "block",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 0.0,
         "name": "minecraft:weeping_vines_plant",
         "render": "block",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 0.0,
         "name": "minecraft:twisting_vines",
         "render": "block",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 0.0,
         "name": "minecraft:twisting_vines_plant",
         "render": "block",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 0.0,
@@ -6042,14 +6051,16 @@
         "name": "minecraft:cave_vines",
         "render": "block",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 0.0,
         "name": "minecraft:cave_vines_plant",
         "render": "block",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 0.0,

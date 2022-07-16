@@ -459,6 +459,10 @@ namespace Botcraft
             {
                 isKeyPressed[(int)KEY_CODE::SHIFT] = true;
             }
+            if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+            {
+                isKeyPressed[(int)KEY_CODE::CTRL] = true;
+            }
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             {
                 isKeyPressed[(int)KEY_CODE::FORWARD] = true;

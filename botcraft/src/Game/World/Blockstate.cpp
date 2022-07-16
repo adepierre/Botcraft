@@ -241,17 +241,17 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 347
     Blockstate::Blockstate(const int id_, const unsigned char metadata_, 
-                           const bool transparent_, const bool solid_, const bool fluid_, const bool custom,
+                           const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_, const bool custom,
                            const float hardness_, const TintType tint_type_, const std::string &name_,
                            const std::string &path, const std::vector<std::string> &variables_) :
-                           id(id_), metadata(metadata_), transparent(transparent_), solid(solid_), fluid(fluid_),
+                           id(id_), metadata(metadata_), transparent(transparent_), solid(solid_), fluid(fluid_), climbable(climbable_),
                            hardness(hardness_), tint_type(tint_type_), m_name(name_)
 #else
     Blockstate::Blockstate(const int id_,
-                           const bool transparent_, const bool solid_, const bool fluid_, const bool custom,
+                           const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_, const bool custom,
                            const float hardness_, const TintType tint_type_, const std::string &name_,
                            const std::string &path, const std::vector<std::string> &variables_) :
-                           id(id_), transparent(transparent_), solid(solid_), fluid(fluid_),
+                           id(id_), transparent(transparent_), solid(solid_), fluid(fluid_), climbable(climbable_),
                            hardness(hardness_), tint_type(tint_type_), m_name(name_)
 #endif
     {
@@ -555,17 +555,17 @@ namespace Botcraft
     
 #if PROTOCOL_VERSION < 347
     Blockstate::Blockstate(const int id_, const unsigned char metadata_,
-                           const bool transparent_, const bool solid_, const bool fluid_,
+                           const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_,
                            const float hardness_, const TintType tint_type_, const std::string &name_,
                            const Model &model_) :
-                           id(id_), metadata(metadata_), transparent(transparent_),solid(solid_),
+                           id(id_), metadata(metadata_), transparent(transparent_),solid(solid_), climbable(climbable_),
                            hardness(hardness_), fluid(fluid_), tint_type(tint_type_), m_name(name_)
 #else
     Blockstate::Blockstate(const int id_,
-                           const bool transparent_, const bool solid_, const bool fluid_,
+                           const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_,
                            const float hardness_, const TintType tint_type_, const std::string &name_,
                            const Model &model_) :
-                           id(id_), transparent(transparent_), solid(solid_), 
+                           id(id_), transparent(transparent_), solid(solid_), climbable(climbable_),
                            hardness(hardness_), fluid(fluid_), tint_type(tint_type_), m_name(name_)
 #endif
     {
@@ -647,6 +647,11 @@ namespace Botcraft
     const bool Blockstate::IsFluid() const
     {
         return fluid;
+    }
+
+    const bool Blockstate::IsClimbable() const
+    {
+        return climbable;
     }
 
     const float Blockstate::GetHardness() const

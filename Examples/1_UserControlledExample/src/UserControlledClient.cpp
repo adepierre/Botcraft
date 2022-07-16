@@ -29,9 +29,9 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
 
     if (!online)
     {
-        network_manager = std::shared_ptr<NetworkManager>(new NetworkManager(ConnectionState::Play));
-        world = std::shared_ptr<World>(new World(false, false));
-        entity_manager = std::shared_ptr<EntityManager>(new EntityManager);
+        network_manager = std::make_shared<NetworkManager>(ConnectionState::Play);
+        world = std::make_shared<World>(false, false);
+        entity_manager = std::make_shared<EntityManager>();
 
         should_be_closed = false;
         creative_mode = true;
@@ -181,7 +181,7 @@ void UserControlledClient::CreateTestWorld()
 #ifdef USE_GUI
     if (use_renderer)
     {
-        for (int i = 0; i < (int)floor(x / CHUNK_WIDTH) + 1; ++i)
+        for (int i = 0; i < static_cast<int>(floor(x / CHUNK_WIDTH)) + 1; ++i)
         {
             rendering_manager->AddChunkToUpdate(i, 0);
             rendering_manager->AddChunkToUpdate(i, 1);
@@ -323,16 +323,17 @@ void UserControlledClient::MouseCallback(const double &xoffset, const double &yo
     rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
 }
 
-void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer::KEY_CODE::NUMBER_OF_KEYS> &is_key_pressed, const double &delta_time)
+void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<int>(Renderer::KEY_CODE::NUMBER_OF_KEYS)> &is_key_pressed, const double &delta_time)
 {
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+
     bool pos_has_changed = false;
-    if (is_key_pressed[(int)Renderer::KEY_CODE::ESC])
+    if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::ESC)])
     {
         should_be_closed = true;
     }
 
-    if (is_key_pressed[(int)Renderer::KEY_CODE::SPACE])
+    if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::SPACE)])
     {
         if (local_player->GetOnGround())
         {
@@ -342,34 +343,47 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, (int)Renderer
         }
     }
 
-    local_player->SetIsRunning(is_key_pressed[(int)Renderer::KEY_CODE::SHIFT]);
-
-    if (is_key_pressed[(int)Renderer::KEY_CODE::FORWARD])
+    if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::CTRL)])
     {
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+        local_player->AddPlayerInputsY(-0.1);
+    }
+
+    {
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+        local_player->SetIsRunning(is_key_pressed[static_cast<int>(Renderer::KEY_CODE::SHIFT)]);
+    }
+
+    if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::FORWARD)])
+    {
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsX(local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
         local_player->AddPlayerInputsZ(local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
-    if (is_key_pressed[(int)Renderer::KEY_CODE::BACKWARD])
+    if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::BACKWARD)])
     {
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsX(- local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
         local_player->AddPlayerInputsZ(- local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
-    if (is_key_pressed[(int)Renderer::KEY_CODE::RIGHT])
+    if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::RIGHT)])
     {
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsX(local_player->GetRightVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
         local_player->AddPlayerInputsZ(local_player->GetRightVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 
         pos_has_changed = true;
     }
 
-    if (is_key_pressed[(int)Renderer::KEY_CODE::LEFT])
+    if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::LEFT)])
     {
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsX(- local_player->GetRightVector().x * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);//TODO replace hardcoded values?
         local_player->AddPlayerInputsZ(- local_player->GetRightVector().z * (local_player->GetIsRunning() ? 5.612 : 4.317) * delta_time);
 

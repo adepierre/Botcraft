@@ -63,7 +63,8 @@
         "render": "fluid",
         "texture": "blocks/water_flow",
         "tintType": "water",
-        "hardness": 100
+        "hardness": 100,
+        "climbable": true
     },
     {
         "name": "minecraft:water",
@@ -72,7 +73,8 @@
         "render": "fluid",
         "texture": "blocks/water_still",
         "tintType": "water",
-        "hardness": 100
+        "hardness": 100,
+        "climbable": true
     },
     {
         "name": "minecraft:flowing_lava",
@@ -80,7 +82,8 @@
         "solid": false,
         "render": "fluid",
         "texture": "blocks/lava_flow",
-        "hardness": 100
+        "hardness": 100,
+        "climbable": true
     },
     {
         "name": "minecraft:lava",
@@ -88,7 +91,8 @@
         "solid": false,
         "render": "fluid",
         "texture": "blocks/lava_still",
-        "hardness": 100
+        "hardness": 100,
+        "climbable": true
     },
     {
         "name": "minecraft:sand",
@@ -467,9 +471,10 @@
     {
         "name": "minecraft:ladder",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "block",
-        "hardness": 0.4
+        "hardness": 0.4,
+        "climbable": true
     },
     {
         "name": "minecraft:rail",
@@ -754,10 +759,11 @@
     {
         "name": "minecraft:vine",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "block",
         "tintType": "leaves",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "climbable": true
     },
     {
         "name": "minecraft:fence_gate",

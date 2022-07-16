@@ -36,7 +36,7 @@ namespace Botcraft
 
     private:
         void RunSyncPos();
-        void Physics(const bool is_in_fluid);
+        void Physics();
         void UpdatePlayerSpeed() const;
 
     private:

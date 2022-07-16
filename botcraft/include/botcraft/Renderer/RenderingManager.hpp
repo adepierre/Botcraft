@@ -43,6 +43,7 @@ namespace Botcraft
             LEFT,
             SPACE,
             SHIFT,
+            CTRL,
             ESC,
             MOUSE_LEFT,
             NUMBER_OF_KEYS

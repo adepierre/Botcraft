@@ -24,22 +24,22 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 347
         Blockstate(const int id_, const unsigned char metadata_,
-                   const bool transparent_, const bool solid_,  const bool fluid_, const bool custom,
+                   const bool transparent_, const bool solid_,  const bool fluid_, const bool climbable_, const bool custom,
                    const float hardness_, const TintType tint_type_, const std::string &name_,
                    const std::string &path = "", const std::vector<std::string> &variables_ = std::vector<std::string>());
 
         Blockstate(const int id_, const unsigned char metadata_,
-                   const bool transparent_, const bool solid_, const bool fluid_,
+                   const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_,
                    const float hardness_, const TintType tint_type_, const std::string &name_,
                    const Model &model_);
 #else
         Blockstate(const int id_,
-                   const bool transparent_, const bool solid_, const bool fluid_, const bool custom,
+                   const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_, const bool custom,
                    const float hardness_, const TintType tint_type_, const std::string &name_,
                    const std::string &path = "", const std::vector<std::string> &variables_ = std::vector<std::string>());
         
         Blockstate(const int id_,
-                   const bool transparent_, const bool solid_, const bool fluid_,
+                   const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_,
                    const float hardness_, const TintType tint_type_, const std::string &name_,
                    const Model &model_);
 #endif
@@ -57,6 +57,7 @@ namespace Botcraft
         const bool IsSolid() const;
         const bool IsTransparent() const;
         const bool IsFluid() const;
+        const bool IsClimbable() const;
         const float GetHardness() const;
         const TintType GetTintType() const;
 
@@ -76,6 +77,7 @@ namespace Botcraft
         bool transparent;
         bool solid;
         bool fluid;
+        bool climbable;
         float hardness;
         TintType tint_type;
         std::string m_name;

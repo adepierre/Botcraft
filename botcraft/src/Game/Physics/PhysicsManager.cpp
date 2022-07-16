@@ -9,6 +9,8 @@
 #include "botcraft/Renderer/RenderingManager.hpp"
 #endif
 
+#include <iostream>
+
 using namespace ProtocolCraft;
 
 namespace Botcraft
@@ -81,25 +83,18 @@ namespace Botcraft
                 if (local_player && local_player->GetPosition().y < 1000.0)
                 {
                     bool is_loaded = false;
-                    bool is_in_fluid = false;
                     std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
                     {
                         std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
                         const Position player_position = Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ()));
 
                         is_loaded = world->IsLoaded(player_position);
-
-                        if (is_loaded)
-                        {
-                            const Block* block_ptr = world->GetBlock(player_position);
-                            is_in_fluid = block_ptr && block_ptr->GetBlockstate()->IsFluid();
-                        }
                     }
 
                     if (is_loaded)
                     {
                         //Check that we did not go through a block
-                        Physics(is_in_fluid);
+                        Physics();
 
                         if (local_player->GetHasMoved() ||
                             std::abs(local_player->GetSpeed().x) > 1e-3 ||
@@ -150,7 +145,7 @@ namespace Botcraft
         }
     }
 
-    void PhysicsManager::Physics(const bool is_in_fluid)
+    void PhysicsManager::Physics()
     {
         if (!entity_manager)
         {
@@ -171,7 +166,8 @@ namespace Botcraft
 
         // Player mutex is already locked by calling function
         Position player_position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetX()));
-        Vector3<double> player_movement = local_player->GetSpeed() + local_player->GetPlayerInputs();
+        const Vector3<double>& player_inputs = local_player->GetPlayerInputs();
+        Vector3<double> player_movement = local_player->GetSpeed() + player_inputs;
         Vector3<double> min_player_collider, max_player_collider;
         for (int i = 0; i < 3; ++i)
         {
@@ -185,13 +181,13 @@ namespace Botcraft
         bool has_hit_up = false;
 
         Position cube_pos;
-        for (int x = (int)std::floor(min_player_collider.x); x < (int)std::ceil(max_player_collider.x); ++x)
+        for (int x = static_cast<int>(std::floor(min_player_collider.x)); x < static_cast<int>(std::ceil(max_player_collider.x)); ++x)
         {
             cube_pos.x = x;
-            for (int y = (int)std::floor(min_player_collider.y); y < (int)std::ceil(max_player_collider.y); ++y)
+            for (int y = static_cast<int>(std::floor(min_player_collider.y)); y < static_cast<int>(std::ceil(max_player_collider.y)); ++y)
             {
                 cube_pos.y = y;
-                for (int z = (int)std::floor(min_player_collider.z); z < (int)std::ceil(max_player_collider.z); ++z)
+                for (int z = static_cast<int>(std::floor(min_player_collider.z)); z < static_cast<int>(std::ceil(max_player_collider.z)); ++z)
                 {
                     cube_pos.z = z;
 
@@ -207,15 +203,10 @@ namespace Botcraft
                         block = *block_ptr;
                     }
 
-                    if (!is_in_fluid && !block.GetBlockstate()->IsSolid())
-                    {
-                        continue;
-                    }
-
-                    if (is_in_fluid &&
-                        !block.GetBlockstate()->IsSolid() &&
-                        (!block.GetBlockstate()->IsFluid() ||
-                            cube_pos.y >= player_position.y))
+                    // If the block is not solid and it's not a climbable block below us,
+                    // it doesn't collide so ignore it
+                    if (!block.GetBlockstate()->IsSolid()
+                        && (!block.GetBlockstate()->IsClimbable() || cube_pos.y >= player_position.y))
                     {
                         continue;
                     }
@@ -232,7 +223,14 @@ namespace Botcraft
                         Vector3<double> normal;
                         const double speed_fraction = local_player->GetCollider().SweptCollide(player_movement, block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z), normal);
 
-                        if (speed_fraction < 1.0)
+                        // If we collide with the bottom block due to user input
+                        // and it's a climbable block, then we should pass through
+                        const bool pass_through = normal.y == 1.0
+                            && block.GetBlockstate()->IsClimbable()
+                            && (std::abs(player_inputs.y) > std::abs(player_movement.y * speed_fraction));
+
+                        // If we collide with the bottom block and we shouldn't pass through
+                        if (speed_fraction < 1.0 && !pass_through) 
                         {
                             const Vector3<double> remaining_speed = player_movement * (1.0 - speed_fraction);
 
@@ -242,7 +240,7 @@ namespace Botcraft
                                 (remaining_speed - normal * remaining_speed.dot(normal)); // Remaining speed projected on the plane
                         }
 
-                        if (normal.y == 1.0)
+                        if (normal.y == 1.0 && !pass_through)
                         {
                             has_hit_down = true;
                         }
@@ -250,7 +248,6 @@ namespace Botcraft
                         {
                             has_hit_up = true;
                         }
-
                     }
                 }
             }
