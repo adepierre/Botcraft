@@ -39,6 +39,9 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundHelloPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg) override;
+#if PROTOCOL_VERSION > 340
+        virtual void Handle(ProtocolCraft::ClientboundCustomQueryPacket& msg) override;
+#endif
 
     private:
         std::vector<ProtocolCraft::Handler*> subscribed;

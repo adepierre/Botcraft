@@ -294,4 +294,23 @@ namespace Botcraft
         keep_alive_msg->SetId_(msg.GetId_());
         Send(keep_alive_msg);
     }
+
+#if PROTOCOL_VERSION > 340
+    void NetworkManager::Handle(ProtocolCraft::ClientboundCustomQueryPacket& msg)
+    {
+        // Vanilla like response when asked by fabric API
+        // Not implemented in fabric before December 05 2020,
+        // so not necessary before version 1.16.4
+#if PROTOCOL_VERSION > 753
+        if (msg.GetIdentifier().GetFull() == "fabric-networking-api-v1:early_registration")
+        {
+            std::shared_ptr<ProtocolCraft::ServerboundCustomQueryPacket> custom_query_response = std::make_shared<ProtocolCraft::ServerboundCustomQueryPacket>();
+            custom_query_response->SetTransactionId(msg.GetTransactionId());
+            custom_query_response->SetData({});
+            Send(custom_query_response);
+            return;
+        }
+#endif
+    }
+#endif
 }
