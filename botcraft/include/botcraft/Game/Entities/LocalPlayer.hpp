@@ -27,6 +27,7 @@ namespace Botcraft
         float GetWalkingSpeed() const;
         bool GetIsFlying() const;
         bool GetIsRunning() const;
+        bool GetIsClimbing() const;
         bool GetIsInvulnerable() const;
         float GetHealth() const;
         int GetFood() const;
@@ -37,6 +38,7 @@ namespace Botcraft
         void SetWalkingSpeed(const float walking_speed_);
         void SetIsFlying(const bool b);
         void SetIsRunning(const bool b);
+        void SetIsClimbing(const bool b);
         void SetIsInvulnerable(const bool b);
         void SetHealth(const float health_);
         void SetFood(const int food_);
@@ -81,6 +83,7 @@ namespace Botcraft
         float walking_speed;
         bool is_flying;
         bool is_running;
+        bool is_climbing;
 
         bool is_invulnerable;
         float health;

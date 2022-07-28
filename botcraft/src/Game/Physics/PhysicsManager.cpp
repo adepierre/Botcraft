@@ -9,8 +9,6 @@
 #include "botcraft/Renderer/RenderingManager.hpp"
 #endif
 
-#include <iostream>
-
 using namespace ProtocolCraft;
 
 namespace Botcraft
@@ -154,25 +152,31 @@ namespace Botcraft
 
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
-        //If the player did not move we assume it does not collide
-        /*if (!local_player->GetHasMoved() &&
-            abs(local_player->GetSpeed().x) < 1e-3 &&
-            abs(local_player->GetSpeed().y) < 1e-3 &&
-            abs(local_player->GetSpeed().z) < 1e-3)
-        {
-            // We could return if we were sure that we have a block under our feet
-            return;
-        }*/
-
         // Player mutex is already locked by calling function
-        Position player_position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetX()));
+        const Vector3<double>& player_position = local_player->GetPosition();
         const Vector3<double>& player_inputs = local_player->GetPlayerInputs();
-        Vector3<double> player_movement = local_player->GetSpeed() + player_inputs;
+
+        Vector3<double> player_movement_speed = local_player->GetSpeed();
+        Vector3<double> player_movement_inputs = player_inputs;
+
+        // If gravity applies, you can't decide to go up with player inputs
+        // (jump is applied to speed not inputs)
+        bool has_pass_through;
+        if (!local_player->GetIsClimbing())
+        {
+            player_movement_inputs.y = std::min(player_movement_inputs.y, 0.0);
+            has_pass_through = false;
+        }
+        else
+        {
+            has_pass_through = true;
+        }
+
         Vector3<double> min_player_collider, max_player_collider;
         for (int i = 0; i < 3; ++i)
         {
-            min_player_collider[i] = std::min(local_player->GetCollider().GetMin()[i], local_player->GetCollider().GetMin()[i] + player_movement[i]);
-            max_player_collider[i] = std::max(local_player->GetCollider().GetMax()[i], local_player->GetCollider().GetMax()[i] + player_movement[i]);
+            min_player_collider[i] = std::min(local_player->GetCollider().GetMin()[i], local_player->GetCollider().GetMin()[i] + player_movement_speed[i] + player_movement_inputs[i]);
+            max_player_collider[i] = std::max(local_player->GetCollider().GetMax()[i], local_player->GetCollider().GetMax()[i] + player_movement_speed[i] + player_movement_inputs[i]);
         }
 
         AABB broadphase_collider = AABB((min_player_collider + max_player_collider) / 2.0, (max_player_collider - min_player_collider) / 2.0);
@@ -206,7 +210,7 @@ namespace Botcraft
                     // If the block is not solid and it's not a climbable block below us,
                     // it doesn't collide so ignore it
                     if (!block.GetBlockstate()->IsSolid()
-                        && (!block.GetBlockstate()->IsClimbable() || cube_pos.y >= player_position.y))
+                        && (!block.GetBlockstate()->IsClimbable() || cube_pos.y >= std::floor(player_position.y)))
                     {
                         continue;
                     }
@@ -221,25 +225,41 @@ namespace Botcraft
                         }
 
                         Vector3<double> normal;
-                        const double speed_fraction = local_player->GetCollider().SweptCollide(player_movement, block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z), normal);
+                        const double speed_fraction = local_player->GetCollider().SweptCollide(player_movement_speed + player_movement_inputs, block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z), normal);
 
-                        // If we collide with the bottom block due to user input
+                        // If we collide with the bottom block with go down user input
                         // and it's a climbable block, then we should pass through
                         const bool pass_through = normal.y == 1.0
                             && block.GetBlockstate()->IsClimbable()
-                            && (std::abs(player_inputs.y) > std::abs(player_movement.y * speed_fraction));
+                            && player_inputs.y < 0;
 
                         // If we collide with the bottom block and we shouldn't pass through
                         if (speed_fraction < 1.0 && !pass_through) 
                         {
-                            const Vector3<double> remaining_speed = player_movement * (1.0 - speed_fraction);
+                            const Vector3<double> remaining_speed = player_movement_speed * (1.0 - speed_fraction);
+                            const Vector3<double> remaining_inputs = player_movement_inputs * (1.0 - speed_fraction);
 
                             // We remove epsilon to be sure we do not go
                             // through the face due to numerical imprecision
-                            player_movement = player_movement * (speed_fraction - 1e-6) + // Base speed truncated
+                            player_movement_speed = player_movement_speed * (speed_fraction - 1e-6) + // Base speed truncated
                                 (remaining_speed - normal * remaining_speed.dot(normal)); // Remaining speed projected on the plane
+                            player_movement_inputs = player_movement_inputs * (speed_fraction - 1e-6) + // Base speed truncated
+                                (remaining_inputs - normal * remaining_inputs.dot(normal)); // Remaining speed projected on the plane
+
+                        }
+                        // If we collide with the bottom block and should pass through,
+                        // only remove the y component of the speed that makes going
+                        // through the block
+                        else if (speed_fraction < 1.0 && pass_through)
+                        {
+                            const double block_top_y = (block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z)).GetMax().y;
+                            player_movement_speed.y = std::max(player_movement_speed.y, block_top_y - player_position.y);
                         }
 
+                        if (pass_through)
+                        {
+                            has_pass_through = true;
+                        }
                         if (normal.y == 1.0 && !pass_through)
                         {
                             has_hit_down = true;
@@ -252,8 +272,21 @@ namespace Botcraft
                 }
             }
         }
-        local_player->SetPosition(local_player->GetPosition() + player_movement);
+
+        // if we didn't went through a block, ignore down player input
+        if (!has_pass_through)
+        {
+            player_movement_inputs.y = std::max(0.0, player_movement_inputs.y);
+        }
+
+        local_player->SetPosition(local_player->GetPosition() + player_movement_speed + player_movement_inputs);
         local_player->SetOnGround(has_hit_down);
+        // Update climbing state
+        {
+            std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
+            const Block* block_ptr = world->GetBlock(Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ())));
+            local_player->SetIsClimbing(block_ptr && block_ptr->GetBlockstate()->IsClimbable());
+        }
         if (has_hit_up)
         {
             local_player->SetSpeedY(0.0);
@@ -265,7 +298,8 @@ namespace Botcraft
         // Player mutex should already locked by calling function
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
-        local_player->SetSpeed(Vector3<double>(local_player->GetSpeedX() * 0.91, (local_player->GetSpeedY() - 0.08) * 0.98, local_player->GetSpeedZ() * 0.91));
+        // If currently climbing, then no gravity and just remove Y speed
+        local_player->SetSpeed(Vector3<double>(local_player->GetSpeedX() * 0.91, local_player->GetIsClimbing() ? 0.0 : (local_player->GetSpeedY() - 0.08) * 0.98, local_player->GetSpeedZ() * 0.91));
 
         if (local_player->GetOnGround())
         {

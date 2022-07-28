@@ -335,18 +335,23 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::SPACE)])
     {
-        if (local_player->GetOnGround())
+        if (local_player->GetOnGround() && !local_player->GetIsClimbing())
         {
             // Jump
             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
             local_player->Jump();
+        }
+        else if (local_player->GetIsClimbing())
+        {
+            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+            local_player->AddPlayerInputsY(2.0 * delta_time);
         }
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::CTRL)])
     {
         std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-        local_player->AddPlayerInputsY(-0.1);
+        local_player->AddPlayerInputsY(-2.0 * delta_time);
     }
 
     {

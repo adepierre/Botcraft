@@ -14,6 +14,7 @@ namespace Botcraft
         walking_speed = 1.0f;
         is_flying = false;
         is_running = false;
+        is_climbing = false;
 
         is_invulnerable = false;
         health = 0.0f;
@@ -91,6 +92,11 @@ namespace Botcraft
         return is_running;
     }
 
+    bool LocalPlayer::GetIsClimbing() const
+    {
+        return is_climbing;
+    }
+
     bool LocalPlayer::GetIsInvulnerable() const
     {
         return is_invulnerable;
@@ -135,6 +141,11 @@ namespace Botcraft
     void LocalPlayer::SetIsRunning(const bool b)
     {
         is_running = b;
+    }
+
+    void LocalPlayer::SetIsClimbing(const bool b)
+    {
+        is_climbing = b;
     }
 
     void LocalPlayer::SetIsInvulnerable(const bool b)
