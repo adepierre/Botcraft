@@ -52,9 +52,13 @@ namespace Botcraft
             world = world_;
             inventory_manager = inventory_manager_;
             entity_manager = entity_manager_;
+
+            for (int i = 0; i < isKeyPressed.size(); ++i)
+            {
+                isKeyPressed[i] = false;
+            }
 #if USE_IMGUI
             inventory_open = false;
-            last_time_inventory_changed = 0;
 #endif
 
             mouse_last_x = window_width / 2.0f;
@@ -69,7 +73,7 @@ namespace Botcraft
             has_proj_changed = true;
 
             MouseCallback = [](double, double) {};
-            KeyboardCallback = [](std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, float) {};
+            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, float) {};
 
             world_renderer = std::make_unique<WorldRenderer>(section_height_);
 
@@ -86,7 +90,7 @@ namespace Botcraft
         RenderingManager::~RenderingManager()
         {
             MouseCallback = [](double, double) {};
-            KeyboardCallback = [](std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, float) {};
+            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, float) {};
 
             running = false;
 
@@ -329,7 +333,7 @@ namespace Botcraft
             MouseCallback = callback;
         }
 
-        void RenderingManager::SetKeyboardCallback(std::function<void(std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS>, double)> callback)
+        void RenderingManager::SetKeyboardCallback(std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> callback)
         {
             KeyboardCallback = callback;
         }
@@ -441,48 +445,21 @@ namespace Botcraft
 
         void RenderingManager::InternalProcessInput(GLFWwindow *window)
         {
-            std::array<bool, (int)KEY_CODE::NUMBER_OF_KEYS> isKeyPressed;
-            for (int i = 0; i < isKeyPressed.size(); ++i)
-            {
-                isKeyPressed[i] = false;
-            }
+            isKeyPressed[static_cast<int>(KEY_CODE::FORWARD)] = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+            isKeyPressed[static_cast<int>(KEY_CODE::BACKWARD)] = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+            isKeyPressed[static_cast<int>(KEY_CODE::RIGHT)] = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+            isKeyPressed[static_cast<int>(KEY_CODE::LEFT)] = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+            isKeyPressed[static_cast<int>(KEY_CODE::SPACE)] = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
+            isKeyPressed[static_cast<int>(KEY_CODE::SHIFT)] = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
+            isKeyPressed[static_cast<int>(KEY_CODE::CTRL)] = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS;
+            isKeyPressed[static_cast<int>(KEY_CODE::ESC)] = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+            isKeyPressed[static_cast<int>(KEY_CODE::MOUSE_LEFT)] = glfwGetKey(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+            const bool isInventoryKeyPressed = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
 
-            if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::ESC] = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::SPACE] = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::SHIFT] = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::CTRL] = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::FORWARD] = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::BACKWARD] = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::LEFT] = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::RIGHT] = true;
-            }
-            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-            {
-                isKeyPressed[(int)KEY_CODE::MOUSE_LEFT] = true;
-            }
+            // Toggle inventory if E was not pressed during previous frame and is during this one
+            const bool toggleInventory = (!isKeyPressed[static_cast<int>(KEY_CODE::INVENTORY)] && isInventoryKeyPressed);
+            // Save current value just like others
+            isKeyPressed[static_cast<int>(KEY_CODE::INVENTORY)] = isInventoryKeyPressed;
 
 #ifdef USE_IMGUI
             if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
@@ -490,10 +467,8 @@ namespace Botcraft
                 imgui_demo = !imgui_demo;
             }
 
-            if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS &&
-                std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() - last_time_inventory_changed > 1000)
+            if (toggleInventory)
             {
-                last_time_inventory_changed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
                 inventory_open = !inventory_open;
                 if (inventory_open)
                 {
