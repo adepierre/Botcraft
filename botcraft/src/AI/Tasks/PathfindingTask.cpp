@@ -764,7 +764,7 @@ namespace Botcraft
             // now adjust Y position to target
             {
                 std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                local_player->SetPlayerInputsY(target_position.y + 0.01 - local_player->GetY() - local_player->GetSpeedY());
+                local_player->SetPlayerInputsY(target_position.y + 0.001 - local_player->GetY() - local_player->GetSpeedY());
             }
 
             // Wait for physics thread to update position
@@ -778,7 +778,7 @@ namespace Botcraft
                 }
                 {
                     std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    if (std::abs(local_player->GetY() - target_position.y) <= 0.01)
+                    if (std::abs(local_player->GetY() - target_position.y) <= 1e-2)
                     {
                         break;
                     }
@@ -807,15 +807,23 @@ namespace Botcraft
             {
                 auto now = std::chrono::steady_clock::now();
                 long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+                // Something went wrong
+                if (time_count > 1000 + 1000 * std::abs(player_movement.y) / climbing_speed)
+                {
+                    return false;
+                }
                 // We climb/go down at climbing_speed block/s
                 // Set the input to adjust position
-                if (time_count > 1000 * std::abs(player_movement.y) / climbing_speed)
+                else if (time_count > 1000 * std::abs(player_movement.y) / climbing_speed)
                 {
+                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                    // If the physics thread has updated the position to the target, we're good
+                    if (std::abs(local_player->GetY() - (initial_position.y + player_movement.y)) <= 1e-2)
                     {
-                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                        local_player->SetPlayerInputsY(initial_position.y + player_movement.y + 0.01 - local_player->GetY() - local_player->GetSpeedY());
+                        break;
                     }
-                    break;
+                    // Else adjust the position to reach it on the next physics update
+                    local_player->SetPlayerInputsY(initial_position.y + player_movement.y + 0.001 - local_player->GetY() - local_player->GetSpeedY());
                 }
                 // Otherwise just move partially toward the goal
                 else
@@ -827,26 +835,6 @@ namespace Botcraft
                         local_player->AddPlayerInputsY(delta_y);
                     }
                     previous_step = now;
-                }
-                client.Yield();
-            }
-
-            // Wait for physics thread to update position or falling on the desired block
-            start = std::chrono::steady_clock::now();
-            while (true)
-            {
-                // Something went wrong
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 1000)
-                {
-                    return false;
-                }
-
-                {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    if (std::abs(local_player->GetY() - (initial_position.y + player_movement.y)) <= 1e-2)
-                    {
-                        break;
-                    }
                 }
                 client.Yield();
             }
@@ -956,25 +944,36 @@ namespace Botcraft
             {
                 auto now = std::chrono::steady_clock::now();
                 long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-                // If we are over the time we have at speed to travel one block
-                if (time_count > 1000 * motion_norm_xz / speed)
+                // If we are way over the time we have to travel one block, something went wrong
+                if (time_count > 1000 * motion_norm_xz / speed + 500)
                 {
-                    {
-                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                    return false;
+                }
+                // We should be arrived
+                else if (time_count > 1000 * motion_norm_xz / speed)
+                {
+                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                    const Vector3<double> diff = local_player->GetPosition() - target_position;
 
-                        local_player->SetPlayerInputsX(target_position.x - local_player->GetX() - local_player->GetSpeedX());
-                        // if we only move horizontally, directly set the target pos
-                        if (target_pos.y == initial_block_pos.y && motion_norm_xz < 1.5)
-                        {
-                            local_player->SetY(target_pos.y + 0.001);
-                        }
-                        else
-                        {
-                            local_player->SetY(local_player->GetY() + 0.001);
-                        }
-                        local_player->SetPlayerInputsZ(target_position.z - local_player->GetZ() - local_player->GetSpeedZ());
+                    // We are at X/Z destination
+                    if (std::abs(diff.x) + std::abs(diff.z) < 1e-2)
+                    {
+                        local_player->SetOnGround(false);
+                        break;
                     }
-                    break;
+
+                    // Otherwise, set X and Z inputs to reach the goal
+                    local_player->SetPlayerInputsX(target_position.x - local_player->GetX() - local_player->GetSpeedX());
+                    // if we only move horizontally, directly set the target pos
+                    if (target_pos.y == initial_block_pos.y && motion_norm_xz < 1.5)
+                    {
+                        local_player->SetY(target_pos.y + 0.001);
+                    }
+                    else
+                    {
+                        local_player->SetY(local_player->GetY() + 0.001);
+                    }
+                    local_player->SetPlayerInputsZ(target_position.z - local_player->GetZ() - local_player->GetSpeedZ());
                 }
                 // Otherwise just move partially toward the goal
                 else
@@ -996,28 +995,6 @@ namespace Botcraft
                         local_player->AddPlayerInputsZ(delta_v.z);
                     }
                     previous_step = now;
-                }
-                client.Yield();
-            }
-
-            // Wait for the confirmation that we arrived at the X/Y destination
-            start = std::chrono::steady_clock::now();
-            while (true)
-            {
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 500)
-                {
-                    return false;
-                }
-
-                {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    const Vector3<double> diff = local_player->GetPosition() - target_position;
-
-                    if (std::abs(diff.x) + std::abs(diff.z) < 1e-2)
-                    {
-                        local_player->SetOnGround(false);
-                        break;
-                    }
                 }
                 client.Yield();
             }
