@@ -84,14 +84,215 @@ namespace Botcraft
             }
 
             // Get the state around the player in the given location
-            std::array<BlockGoThroughState, 18> vertical_surroundings = {
-                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
-                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
-                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
-                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
+            std::array<BlockGoThroughState, 6> vertical_surroundings = {
                 BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
                 BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid
             };
+
+            // Assuming the player is standing on 3 (feeet on 2 and head on 1)
+            // 0
+            // 1
+            // 2
+            // 3
+            // 4
+            // 5
+            {
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
+
+                const Block* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
+                vertical_surroundings[0] = GetBlockGoThroughState(block);
+                block = world->GetBlock(current_node.pos + Position(0, 1, 0));
+                vertical_surroundings[1] = GetBlockGoThroughState(block);
+                // Our feet block (should be climbable or empty)
+                block = world->GetBlock(current_node.pos);
+                vertical_surroundings[2] = GetBlockGoThroughState(block);
+
+                // if 3 is solid, no down pathfinding is possible,
+                // so we can skip a few checks
+                block = world->GetBlock(current_node.pos + Position(0, -1, 0));
+                vertical_surroundings[3] = GetBlockGoThroughState(block);
+
+                // If we can move down, we need 4 and 5
+                if (vertical_surroundings[3] != BlockGoThroughState::Solid)
+                {
+                    block = world->GetBlock(current_node.pos + Position(0, -2, 0));
+                    vertical_surroundings[4] = GetBlockGoThroughState(block);
+                    block = world->GetBlock(current_node.pos + Position(0, -3, 0));
+                    vertical_surroundings[5] = GetBlockGoThroughState(block);
+                }
+            }
+
+
+            // Check all vertical cases that would allow the bot to pass
+            // -
+            // x
+            // ^
+            // ?
+            // ?
+            // ?
+            if (vertical_surroundings[2] == BlockGoThroughState::Climbable
+                && vertical_surroundings[1] != BlockGoThroughState::Solid
+                && vertical_surroundings[0] != BlockGoThroughState::Solid
+                )
+            {
+                const float new_cost = cost[current_node.pos] + 1.0f;
+                const Position new_pos = current_node.pos + Position(0, 1, 0);
+                auto it = cost.find(new_pos);
+                // If we don't already know this node with a better path, add it
+                if (it == cost.end() ||
+                    new_cost < it->second)
+                {
+                    cost[new_pos] = new_cost;
+                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    came_from[new_pos] = current_node.pos;
+                }
+            }
+
+            // -
+            // ^
+            //  
+            // o
+            // ?
+            // ?
+            if (vertical_surroundings[3] == BlockGoThroughState::Solid
+                && vertical_surroundings[2] == BlockGoThroughState::Empty
+                && vertical_surroundings[1] == BlockGoThroughState::Climbable
+                && vertical_surroundings[0] != BlockGoThroughState::Solid
+                )
+            {
+                const float new_cost = cost[current_node.pos] + 1.5f;
+                const Position new_pos = current_node.pos + Position(0, 1, 0);
+                auto it = cost.find(new_pos);
+                // If we don't already know this node with a better path, add it
+                if (it == cost.end() ||
+                    new_cost < it->second)
+                {
+                    cost[new_pos] = new_cost;
+                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    came_from[new_pos] = current_node.pos;
+                }
+            }
+
+            // ?
+            // x
+            // x
+            // -
+            // ?
+            // ?
+            if (vertical_surroundings[3] == BlockGoThroughState::Climbable)
+            {
+                const float new_cost = cost[current_node.pos] + 1.0f;
+                const Position new_pos = current_node.pos + Position(0, -1, 0);
+                auto it = cost.find(new_pos);
+                // If we don't already know this node with a better path, add it
+                if (it == cost.end() ||
+                    new_cost < it->second)
+                {
+                    cost[new_pos] = new_cost;
+                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    came_from[new_pos] = current_node.pos;
+                }
+            }
+
+            // ?
+            // x
+            // x
+            // -
+            //  
+            // o
+            if (vertical_surroundings[3] == BlockGoThroughState::Climbable
+                && vertical_surroundings[4] == BlockGoThroughState::Empty
+                && vertical_surroundings[5] != BlockGoThroughState::Empty
+                )
+            {
+                const float new_cost = cost[current_node.pos] + 2.0f;
+                const Position new_pos = current_node.pos + Position(0, -2, 0);
+                auto it = cost.find(new_pos);
+                // If we don't already know this node with a better path, add it
+                if (it == cost.end() ||
+                    new_cost < it->second)
+                {
+                    cost[new_pos] = new_cost;
+                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    came_from[new_pos] = current_node.pos;
+                }
+            }
+
+
+
+            // ?
+            // x
+            // ^
+            //  
+            //  
+            // o
+            if (vertical_surroundings[2] == BlockGoThroughState::Climbable
+                && vertical_surroundings[3] == BlockGoThroughState::Empty
+                && vertical_surroundings[4] == BlockGoThroughState::Empty
+                && vertical_surroundings[5] != BlockGoThroughState::Empty
+                )
+            {
+                const float new_cost = cost[current_node.pos] + 2.0f;
+                const Position new_pos = current_node.pos + Position(0, -2, 0);
+                auto it = cost.find(new_pos);
+                // If we don't already know this node with a better path, add it
+                if (it == cost.end() ||
+                    new_cost < it->second)
+                {
+                    cost[new_pos] = new_cost;
+                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    came_from[new_pos] = current_node.pos;
+                }
+            }
+
+
+            // ?
+            // x
+            // x
+            // -
+            //  
+            //  
+            // Special case here, we can drop down
+            // if there is a climbable at the bottom
+            if (vertical_surroundings[3] == BlockGoThroughState::Climbable
+                && vertical_surroundings[4] == BlockGoThroughState::Empty
+                && vertical_surroundings[5] == BlockGoThroughState::Empty
+                )
+            {
+                std::lock_guard<std::mutex> world_guard(world->GetMutex());
+
+                const Block* block;
+
+                for (int y = -4; current_node.pos.y + y >= world->GetMinY(); --y)
+                {
+                    block = world->GetBlock(current_node.pos + Position(0, y, 0));
+
+                    if (block && block->GetBlockstate()->IsSolid())
+                    {
+                        break;
+                    }
+
+                    if (block
+                        && block->GetBlockstate()->IsClimbable()
+                        )
+                    {
+                        const float new_cost = cost[current_node.pos] + std::abs(y);
+                        const Position new_pos = current_node.pos + Position(0, y + 1, 0);
+                        auto it = cost.find(new_pos);
+                        // If we don't already know this node with a better path, add it
+                        if (it == cost.end() ||
+                            new_cost < it->second)
+                        {
+                            cost[new_pos] = new_cost;
+                            nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                            came_from[new_pos] = current_node.pos;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
 
             // For each neighbour, check if it's reachable
             // and add it to the search list if it is
@@ -101,9 +302,7 @@ namespace Botcraft
                 const Position next_next_location = next_location + neighbour_offsets[i];
 
                 // Get the state around the player in the given location
-                std::array<BlockGoThroughState, 18> surroundings = {
-                    BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
-                    BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
+                std::array<BlockGoThroughState, 12> horizontal_surroundings = {
                     BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
                     BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
                     BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
@@ -111,252 +310,57 @@ namespace Botcraft
                 };
 
                 // Assuming the player is standing on 3 (feeet on 2 and head on 1)
-                // 0   6   12 --> ?  ?  ?
-                // 1   7   13 --> x  ?  ?
-                // 2   8   14 --> x  ?  ?
-                // 3   9   15 --> ?  ?  ?
-                // 4   10  16 --> ?  ?  ?
-                // 5   11  17 --> ?  ?  ?
+                // v0   0   6 --> ?  ?  ?
+                // v1   1   7 --> x  ?  ?
+                // v2   2   8 --> x  ?  ?
+                // v3   3   9 --> ?  ?  ?
+                // v4   4  10 --> ?  ?  ?
+                // v5   5  11 --> ?  ?  ?
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
 
-                    const Block* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
-                    surroundings[0] = GetBlockGoThroughState(block);
-                    block = world->GetBlock(current_node.pos + Position(0, 1, 0));
-                    surroundings[1] = GetBlockGoThroughState(block);
-                    // Our feet block (should be climbable or empty)
-                    block = world->GetBlock(current_node.pos);
-                    surroundings[2] = GetBlockGoThroughState(block);
-
-                    // if 7 is solid, no horizontal pathfinding is possible,
+                    // if 1 is solid, no horizontal pathfinding is possible,
                     // so we can skip a lot of checks
-                    block = world->GetBlock(next_location + Position(0, 1, 0));
-                    surroundings[7] = GetBlockGoThroughState(block);
-                    const bool horizontal_movement = surroundings[7] != BlockGoThroughState::Solid;
-                    // if 3 is solid, no down pathfinding is possible,
-                    // so we can skip a few checks
-                    block = world->GetBlock(current_node.pos + Position(0, -1, 0));
-                    surroundings[3] = GetBlockGoThroughState(block);
+                    const Block* block = world->GetBlock(next_location + Position(0, 1, 0));
+                    horizontal_surroundings[1] = GetBlockGoThroughState(block);
+                    const bool horizontal_movement = horizontal_surroundings[1] != BlockGoThroughState::Solid;
 
-                    // If we can move down, we need 4 and 5
-                    if (surroundings[3] != BlockGoThroughState::Solid)
-                    {
-                        block = world->GetBlock(current_node.pos + Position(0, -2, 0));
-                        surroundings[4] = GetBlockGoThroughState(block);
-                        block = world->GetBlock(current_node.pos + Position(0, -3, 0));
-                        surroundings[5] = GetBlockGoThroughState(block);
-                    }
-
-                    // If we can move horizontally, we need the full second column
+                    // If we can move horizontally, we need the full column
                     if (horizontal_movement)
                     {
                         block = world->GetBlock(next_location + Position(0, 2, 0));
-                        surroundings[6] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[0] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_location);
-                        surroundings[8] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[2] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_location + Position(0, -1, 0));
-                        surroundings[9] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[3] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_location + Position(0, -2, 0));
-                        surroundings[10] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[4] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_location + Position(0, -3, 0));
-                        surroundings[11] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[5] = GetBlockGoThroughState(block);
                     }
 
                     // You can't make large jumps if your feet are in a climbable block
                     // If we can jump, then we need the third column
-                    if (allow_jump && surroundings[2] != BlockGoThroughState::Climbable)
+                    if (allow_jump && vertical_surroundings[2] != BlockGoThroughState::Climbable)
                     {
                         block = world->GetBlock(next_next_location + Position(0, 2, 0));
-                        surroundings[12] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[6] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_next_location + Position(0, 1, 0));
-                        surroundings[13] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[7] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_next_location);
-                        surroundings[14] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[8] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_next_location + Position(0, -1, 0));
-                        surroundings[15] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[9] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_next_location + Position(0, -2, 0));
-                        surroundings[16] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[10] = GetBlockGoThroughState(block);
                         block = world->GetBlock(next_next_location + Position(0, -3, 0));
-                        surroundings[17] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[11] = GetBlockGoThroughState(block);
                     }
                 }
 
                 // Now that we know the surroundings, we can check all
-                // cases that would allow the bot to pass
-
-
-                /************* VERTICAL ***************/
-
-                // -
-                // x
-                // ^
-                // ?
-                // ?
-                // ?
-                if (surroundings[2] == BlockGoThroughState::Climbable
-                    && surroundings[1] != BlockGoThroughState::Solid
-                    && surroundings[0] != BlockGoThroughState::Solid
-                    )
-                {
-                    const float new_cost = cost[current_node.pos] + 1.0f;
-                    const Position new_pos = current_node.pos + Position(0, 1, 0);
-                    auto it = cost.find(new_pos);
-                    // If we don't already know this node with a better path, add it
-                    if (it == cost.end() ||
-                        new_cost < it->second)
-                    {
-                        cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
-                        came_from[new_pos] = current_node.pos;
-                    }
-                }
-
-                // -
-                // ^
-                //  
-                // o
-                // ?
-                // ?
-                if (surroundings[3] == BlockGoThroughState::Solid
-                    && surroundings[2] == BlockGoThroughState::Empty
-                    && surroundings[1] == BlockGoThroughState::Climbable
-                    && surroundings[0] != BlockGoThroughState::Solid
-                    )
-                {
-                    const float new_cost = cost[current_node.pos] + 1.5f;
-                    const Position new_pos = current_node.pos + Position(0, 1, 0);
-                    auto it = cost.find(new_pos);
-                    // If we don't already know this node with a better path, add it
-                    if (it == cost.end() ||
-                        new_cost < it->second)
-                    {
-                        cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
-                        came_from[new_pos] = current_node.pos;
-                    }
-                }
-
-                // ?
-                // x
-                // x
-                // -
-                // ?
-                // ?
-                if (surroundings[3] == BlockGoThroughState::Climbable)
-                {
-                    const float new_cost = cost[current_node.pos] + 1.0f;
-                    const Position new_pos = current_node.pos + Position(0, -1, 0);
-                    auto it = cost.find(new_pos);
-                    // If we don't already know this node with a better path, add it
-                    if (it == cost.end() ||
-                        new_cost < it->second)
-                    {
-                        cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
-                        came_from[new_pos] = current_node.pos;
-                    }
-                }
-
-                // ?
-                // x
-                // x
-                // -
-                //  
-                // o
-                if (surroundings[3] == BlockGoThroughState::Climbable
-                    && surroundings[4] == BlockGoThroughState::Empty
-                    && surroundings[5] != BlockGoThroughState::Empty
-                    )
-                {
-                    const float new_cost = cost[current_node.pos] + 2.0f;
-                    const Position new_pos = current_node.pos + Position(0, -2, 0);
-                    auto it = cost.find(new_pos);
-                    // If we don't already know this node with a better path, add it
-                    if (it == cost.end() ||
-                        new_cost < it->second)
-                    {
-                        cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
-                        came_from[new_pos] = current_node.pos;
-                    }
-                }
-
-
-
-                // ?
-                // x
-                // ^
-                //  
-                //  
-                // o
-                if (surroundings[2] == BlockGoThroughState::Climbable
-                    && surroundings[3] == BlockGoThroughState::Empty
-                    && surroundings[4] == BlockGoThroughState::Empty
-                    && surroundings[5] != BlockGoThroughState::Empty
-                    )
-                {
-                    const float new_cost = cost[current_node.pos] + 2.0f;
-                    const Position new_pos = current_node.pos + Position(0, -2, 0);
-                    auto it = cost.find(new_pos);
-                    // If we don't already know this node with a better path, add it
-                    if (it == cost.end() ||
-                        new_cost < it->second)
-                    {
-                        cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
-                        came_from[new_pos] = current_node.pos;
-                    }
-                }
-
-
-                // ?
-                // x
-                // x
-                // -
-                //  
-                //  
-                // Special case here, we can drop down
-                // if there is a climbable at the bottom
-                if (surroundings[3] == BlockGoThroughState::Climbable
-                    && surroundings[4] == BlockGoThroughState::Empty
-                    && surroundings[5] == BlockGoThroughState::Empty
-                    )
-                {
-                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
-
-                    const Block* block;
-
-                    for (int y = -4; current_node.pos.y + y >= world->GetMinY(); --y)
-                    {
-                        block = world->GetBlock(current_node.pos + Position(0, y, 0));
-
-                        if (block && block->GetBlockstate()->IsSolid())
-                        {
-                            break;
-                        }
-
-                        if (block
-                            && block->GetBlockstate()->IsClimbable()
-                            )
-                        {
-                            const float new_cost = cost[current_node.pos] + std::abs(y);
-                            const Position new_pos = current_node.pos + Position(0, y + 1, 0);
-                            auto it = cost.find(new_pos);
-                            // If we don't already know this node with a better path, add it
-                            if (it == cost.end() ||
-                                new_cost < it->second)
-                            {
-                                cost[new_pos] = new_cost;
-                                nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
-                                came_from[new_pos] = current_node.pos;
-                            }
-
-                            break;
-                        }
-                    }
-                }
-
-
+                // horizontal cases that would allow the bot to pass
 
                 /************ HORIZONTAL **************/
 
@@ -366,9 +370,9 @@ namespace Botcraft
                 //--- o  ?
                 //    ?  ?
                 //    ?  ?
-                if (surroundings[7] != BlockGoThroughState::Solid
-                    && surroundings[8] != BlockGoThroughState::Solid
-                    && surroundings[9] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[1] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[2] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[3] != BlockGoThroughState::Empty
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 1.0f;
@@ -390,12 +394,12 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (surroundings[0] != BlockGoThroughState::Solid
-                    && surroundings[1] == BlockGoThroughState::Empty
-                    && surroundings[2] == BlockGoThroughState::Empty
-                    && surroundings[3] == BlockGoThroughState::Solid
-                    && surroundings[6] != BlockGoThroughState::Solid
-                    && surroundings[7] == BlockGoThroughState::Climbable
+                if (vertical_surroundings[0] != BlockGoThroughState::Solid
+                    && vertical_surroundings[1] == BlockGoThroughState::Empty
+                    && vertical_surroundings[2] == BlockGoThroughState::Empty
+                    && vertical_surroundings[3] == BlockGoThroughState::Solid
+                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[1] == BlockGoThroughState::Climbable
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -417,13 +421,13 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (surroundings[0] != BlockGoThroughState::Solid
-                    && surroundings[1] == BlockGoThroughState::Empty
-                    && surroundings[2] == BlockGoThroughState::Empty
-                    && surroundings[3] == BlockGoThroughState::Solid
-                    && surroundings[6] != BlockGoThroughState::Solid
-                    && surroundings[7] != BlockGoThroughState::Solid
-                    && surroundings[8] != BlockGoThroughState::Empty
+                if (vertical_surroundings[0] != BlockGoThroughState::Solid
+                    && vertical_surroundings[1] == BlockGoThroughState::Empty
+                    && vertical_surroundings[2] == BlockGoThroughState::Empty
+                    && vertical_surroundings[3] == BlockGoThroughState::Solid
+                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[1] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[2] != BlockGoThroughState::Empty
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -445,10 +449,10 @@ namespace Botcraft
                 //---    ?
                 //    o  ?
                 //    ?  ?
-                if (surroundings[7] != BlockGoThroughState::Solid
-                    && surroundings[8] == BlockGoThroughState::Empty
-                    && surroundings[9] == BlockGoThroughState::Empty
-                    && surroundings[10] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[1] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[3] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[4] != BlockGoThroughState::Empty
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -470,11 +474,11 @@ namespace Botcraft
                 //---    ?
                 //       ?
                 //    o  ?
-                if (surroundings[7] != BlockGoThroughState::Solid
-                    && surroundings[8] == BlockGoThroughState::Empty
-                    && surroundings[9] == BlockGoThroughState::Empty
-                    && surroundings[10] == BlockGoThroughState::Empty
-                    && surroundings[11] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[1] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[3] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[4] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[5] != BlockGoThroughState::Empty
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 3.5f;
@@ -498,11 +502,11 @@ namespace Botcraft
                 //       ?
                 // Special case here, we can drop down
                 // if there is a climbable at the bottom
-                if (surroundings[7] != BlockGoThroughState::Solid
-                    && surroundings[8] == BlockGoThroughState::Empty
-                    && surroundings[9] == BlockGoThroughState::Empty
-                    && surroundings[10] == BlockGoThroughState::Empty
-                    && surroundings[11] == BlockGoThroughState::Empty
+                if (horizontal_surroundings[1] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[3] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[4] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[5] == BlockGoThroughState::Empty
                     )
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
@@ -541,7 +545,7 @@ namespace Botcraft
 
                 // If we can't make jumps, don't bother explore the rest
                 // of the cases
-                if (!allow_jump || surroundings[2] == BlockGoThroughState::Climbable)
+                if (!allow_jump || vertical_surroundings[2] == BlockGoThroughState::Climbable)
                 {
                     continue;
                 }
@@ -553,15 +557,17 @@ namespace Botcraft
                 //---    ?
                 //    ?  ?
                 //    ?  ?
-                if (surroundings[0] != BlockGoThroughState::Solid
-                    && surroundings[1] == BlockGoThroughState::Empty
-                    && surroundings[6] != BlockGoThroughState::Solid
-                    && surroundings[7] == BlockGoThroughState::Empty
-                    && surroundings[12] != BlockGoThroughState::Solid
-                    && surroundings[13] == BlockGoThroughState::Empty
-                    && surroundings[8] == BlockGoThroughState::Empty
-                    && surroundings[9] == BlockGoThroughState::Empty
-                    && surroundings[14] != BlockGoThroughState::Empty
+                if (vertical_surroundings[0] != BlockGoThroughState::Solid
+                    && vertical_surroundings[1] == BlockGoThroughState::Empty
+                    && vertical_surroundings[2] == BlockGoThroughState::Empty
+                    && vertical_surroundings[3] == BlockGoThroughState::Solid
+                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[1] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[6] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[7] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[3] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[8] != BlockGoThroughState::Empty
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 3.5f;
@@ -583,15 +589,17 @@ namespace Botcraft
                 //--- ?  o
                 //    ?  ?
                 //    ?  ?
-                if (surroundings[0] != BlockGoThroughState::Solid
-                    && surroundings[1] == BlockGoThroughState::Empty
-                    && surroundings[6] != BlockGoThroughState::Solid
-                    && surroundings[7] == BlockGoThroughState::Empty
-                    && surroundings[8] == BlockGoThroughState::Empty
-                    && surroundings[12] != BlockGoThroughState::Solid
-                    && surroundings[13] == BlockGoThroughState::Empty
-                    && surroundings[14] == BlockGoThroughState::Empty
-                    && surroundings[15] != BlockGoThroughState::Empty
+                if (vertical_surroundings[0] != BlockGoThroughState::Solid
+                    && vertical_surroundings[1] == BlockGoThroughState::Empty
+                    && vertical_surroundings[2] == BlockGoThroughState::Empty
+                    && vertical_surroundings[3] == BlockGoThroughState::Solid
+                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[1] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[6] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[7] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[8] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[9] != BlockGoThroughState::Empty
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -612,17 +620,19 @@ namespace Botcraft
                 //--- ?   
                 //    ?  o
                 //    ?  ?
-                if (surroundings[0] != BlockGoThroughState::Solid
-                    && surroundings[1] == BlockGoThroughState::Empty
-                    && surroundings[6] != BlockGoThroughState::Solid
-                    && surroundings[7] == BlockGoThroughState::Empty
-                    && surroundings[8] == BlockGoThroughState::Empty
-                    && surroundings[10] == BlockGoThroughState::Empty
-                    && surroundings[12] != BlockGoThroughState::Solid
-                    && surroundings[13] == BlockGoThroughState::Empty
-                    && surroundings[14] == BlockGoThroughState::Empty
-                    && surroundings[15] == BlockGoThroughState::Empty
-                    && surroundings[16] != BlockGoThroughState::Empty
+                if (vertical_surroundings[0] != BlockGoThroughState::Solid
+                    && vertical_surroundings[1] == BlockGoThroughState::Empty
+                    && vertical_surroundings[2] == BlockGoThroughState::Empty
+                    && vertical_surroundings[3] == BlockGoThroughState::Solid
+                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[1] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[4] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[6] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[7] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[8] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[9] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[10] != BlockGoThroughState::Empty
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 4.5f;
@@ -644,17 +654,19 @@ namespace Botcraft
                 //--- ?   
                 //    ?   
                 //    ?  o
-                if (surroundings[0] != BlockGoThroughState::Solid
-                    && surroundings[1] == BlockGoThroughState::Empty
-                    && surroundings[6] != BlockGoThroughState::Solid
-                    && surroundings[7] == BlockGoThroughState::Empty
-                    && surroundings[8] == BlockGoThroughState::Empty
-                    && surroundings[12] != BlockGoThroughState::Solid
-                    && surroundings[13] == BlockGoThroughState::Empty
-                    && surroundings[14] == BlockGoThroughState::Empty
-                    && surroundings[15] == BlockGoThroughState::Empty
-                    && surroundings[16] == BlockGoThroughState::Empty
-                    && surroundings[17] != BlockGoThroughState::Empty
+                if (vertical_surroundings[0] != BlockGoThroughState::Solid
+                    && vertical_surroundings[1] == BlockGoThroughState::Empty
+                    && vertical_surroundings[2] == BlockGoThroughState::Empty
+                    && vertical_surroundings[3] == BlockGoThroughState::Solid
+                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[1] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[6] != BlockGoThroughState::Solid
+                    && horizontal_surroundings[7] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[8] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[9] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[10] == BlockGoThroughState::Empty
+                    && horizontal_surroundings[11] != BlockGoThroughState::Empty
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 5.5f;
@@ -1073,7 +1085,7 @@ namespace Botcraft
                 {
                     auto now = std::chrono::steady_clock::now();
 
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() >= std::abs(motion_vector.y) * 1000)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() >= std::max(1000, static_cast<int>(std::abs(motion_vector.y) * 1000)))
                     {
                         return false;
                     }
@@ -1207,257 +1219,6 @@ namespace Botcraft
                     // Get the position, we add 0.25 to Y in case we are at X.97 instead of X+1
                     current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y + 0.25), std::floor(local_player->GetPosition().z));
                 }
-
-
-                //// If we need to climb up/down a climbable block
-                //if (std::abs(path[i].y - current_position.y) > 0.5 &&
-                //    std::abs(motion_vector.x) < 0.5 &&
-                //    std::abs(motion_vector.z) < 0.5)
-                //{
-                //    auto start = std::chrono::steady_clock::now();
-                //    auto previous_step = start;
-                //    const double motion_norm_y = std::abs(motion_vector.y);
-
-                //    {
-                //        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //        local_player->SetOnGround(false);
-                //    }
-
-                //    while (true)
-                //    {
-                //        auto now = std::chrono::steady_clock::now();
-                //        long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-                //        // If we are over the time we have at speed to travel one block
-                //        if (time_count > 1000 * motion_norm_y / 2.0)
-                //        {
-                //            {
-                //                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //                local_player->SetPlayerInputsY(target_position.y - local_player->GetY() - local_player->GetSpeedY());
-                //            }
-                //            break;
-                //        }
-                //        // Otherwise just move partially toward the goal
-                //        else
-                //        {
-                //            long long int delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count();
-                //            const double delta_y = motion_vector.y * delta_t / 500.0;
-                //            {
-                //                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //                local_player->AddPlayerInputsY(delta_y);
-                //            }
-                //            previous_step = now;
-                //        }
-                //        client.Yield();
-                //    }
-                //}
-                //// If we have to jump to get to the next position
-                //else if (path[i].y - initial_position.y > 0.25 ||
-                //    std::abs(motion_vector.x) > 1.5 ||
-                //    std::abs(motion_vector.z) > 1.5)
-                //{
-                //    // Jump
-                //    {
-                //        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //        local_player->Jump();
-                //    }
-
-                //    if (std::abs(motion_vector.x) < 1.5 &&
-                //        std::abs(motion_vector.z) < 1.5)
-                //    {
-                //        auto now = std::chrono::steady_clock::now();
-                //        bool has_timeout = false;
-                //        while (local_player->GetY() - initial_position.y < 1.0f)
-                //        {
-                //            // This indicates that a jump we wanted to make is not possible anymore
-                //            // recalculating the path
-                //            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - now).count() >= 3000)
-                //            {
-                //                has_timeout = true;
-                //                break;
-                //            }
-                //            client.Yield();
-                //        }
-                //        if (has_timeout)
-                //        {
-                //            break;
-                //        }
-                //    }
-                //}
-
-                //auto start = std::chrono::steady_clock::now();
-                //auto previous_step = start;
-                //const double motion_norm_xz = std::abs(motion_vector.x) + std::abs(motion_vector.z);
-
-                //// Don't do this loop if we are only moving vertically
-                //while (motion_norm_xz > 1e-3)
-                //{
-                //    auto now = std::chrono::steady_clock::now();
-                //    long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-                //    // If we are over the time we have at speed to travel one block
-                //    if (time_count > 1000 * motion_norm_xz / speed)
-                //    {
-                //        {
-                //            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-
-                //            local_player->SetPlayerInputsX(target_position.x - local_player->GetX() - local_player->GetSpeedX());
-                //            local_player->SetY(local_player->GetY() + 0.001);
-                //            local_player->SetPlayerInputsZ(target_position.z - local_player->GetZ() - local_player->GetSpeedZ());
-
-                //            // If the target motion requires going down
-                //            if (motion_vector.y < 0)
-                //            {
-                //                local_player->SetOnGround(false);
-                //            }
-                //        }
-                //        break;
-                //    }
-                //    // Otherwise just move partially toward the goal
-                //    else
-                //    {
-                //        long long int delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count();
-                //        Vector3<double> delta_v = motion_vector * delta_t / (1000.0 * motion_norm_xz) * speed;
-                //        {
-                //            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //            local_player->AddPlayerInputsX(delta_v.x);
-                //            local_player->SetY(local_player->GetY() + 0.001);
-                //            local_player->AddPlayerInputsZ(delta_v.z);
-                //        }
-                //        previous_step = now;
-                //    }
-                //    client.Yield();
-                //}
-
-                //// Wait for the confirmation that we arrived at the X/Y destination
-                //start = std::chrono::steady_clock::now();
-                //bool has_timeout = false;
-                //while (true)
-                //{
-                //    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
-                //    {
-                //        has_timeout = true;
-                //        break;
-                //    }
-
-                //    {
-                //        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //        const Vector3<double> diff = local_player->GetPosition() - target_position;
-
-                //        if (std::abs(diff.x) + std::abs(diff.z) < 1e-2)
-                //        {
-                //            break;
-                //        }
-                //    }
-                //    client.Yield();
-                //}
-
-                //// If it wasn't a long fall
-                //if (motion_vector.y >= -2 || has_timeout)
-                //{
-                //    // Wait until we are on the ground or in a climbable block
-                //    while (true)
-                //    {
-                //        if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                //        {
-                //            break;
-                //        }
-                //        client.Yield();
-                //    }
-
-                //    // Update current position
-                //    {
-                //        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //        current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
-                //    }
-
-                //    // Something went wrong during the movement,
-                //    // replanning the path is safer
-                //    if (has_timeout)
-                //    {
-                //        break;
-                //    }
-                //}
-                //// This means we are currently falling on a climbable block, we need to
-                //// penetrate a little bit inside to avoid fall damage
-                //else
-                //{
-                //    has_timeout = false;
-                //    start = std::chrono::steady_clock::now();
-                //    while (true)
-                //    {
-                //        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= -motion_vector.y * 500)
-                //        {
-                //            has_timeout = true;
-                //            break;
-                //        }
-
-                //        {
-                //            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //            const Vector3<double> diff = local_player->GetPosition() - target_position;
-
-                //            // If we are getting close to impact, try to crouch to pass through the 
-                //            // climbable block below
-                //            if (diff.y > 0 && diff.y < 10.0)
-                //            {
-                //                local_player->SetPlayerInputsY(-0.005);
-                //            }
-                //            // We passed through
-                //            else if (diff.y < 0)
-                //            {
-                //                break;
-                //            }
-                //        }
-                //        client.Yield();
-                //    }
-
-                //    if (!has_timeout)
-                //    {
-                //        start = std::chrono::steady_clock::now();
-                //        // Now we are inside the climbable block, we need to get back on top of it
-                //        while (true)
-                //        {
-                //            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
-                //            {
-                //                has_timeout = true;
-                //                break;
-                //            }
-
-                //            {
-                //                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //                const Vector3<double> diff = local_player->GetPosition() - target_position;
-
-                //                if (diff.y < 0)
-                //                {
-                //                    local_player->SetPlayerInputsY(0.1);
-                //                }
-                //                // We passed through
-                //                else
-                //                {
-                //                    break;
-                //                }
-                //            }
-                //            client.Yield();
-                //        }
-                //    }
-
-                //    // Wait until we are on the ground
-                //    while (!local_player->GetOnGround() && !local_player->GetIsClimbing())
-                //    {
-                //        client.Yield();
-                //    }
-
-                //    // Update current position
-                //    {
-                //        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                //        current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y), std::floor(local_player->GetPosition().z));
-                //    }
-
-                //    // Something went wrong during the movement,
-                //    // replanning the path is safer
-                //    if (has_timeout)
-                //    {
-                //        break;
-                //    }
-                //}
             }
         } while (current_position != goal);
 
