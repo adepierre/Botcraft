@@ -572,7 +572,7 @@ namespace Botcraft
 
                 while (!entities_to_update.empty())
                 {
-                    int entity_id;
+                    int entity_id = -1;
                     mutex_updating.lock();
                     if (!entities_to_update.empty())
                     {
