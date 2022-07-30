@@ -789,9 +789,10 @@ namespace Botcraft
                 {
                     return false;
                 }
+
                 {
                     std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    if (std::abs(local_player->GetY() - (initial_position.y + player_movement.y)) <= 0.01)
+                    if (std::abs(local_player->GetY() - (initial_position.y + player_movement.y)) <= 1e-2)
                     {
                         break;
                     }
@@ -807,6 +808,10 @@ namespace Botcraft
             // If we are here, it means we need to
             // free fall into a climbable block
             start = std::chrono::steady_clock::now();
+            {
+                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                local_player->SetOnGround(false);
+            }
             while (true)
             {
                 // It took more than fall height * 500 ms to
@@ -820,9 +825,11 @@ namespace Botcraft
                 {
                     std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                     const double diff = local_player->GetPosition().y - target_position.y;
-                    local_player->SetPlayerInputsY(-0.1);
-
-                    if (diff < 0 || local_player->GetOnGround())
+                    if (diff > 0)
+                    {
+                        local_player->SetPlayerInputsY(-0.1);
+                    }
+                    else if (local_player->GetOnGround() || local_player->GetIsClimbing())
                     {
                         break;
                     }
@@ -878,6 +885,7 @@ namespace Botcraft
                     {
                         return false;
                     }
+
                     {
                         std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                         if (local_player->GetY() >= target_pos.y)
@@ -956,6 +964,7 @@ namespace Botcraft
 
                     if (std::abs(diff.x) + std::abs(diff.z) < 1e-2)
                     {
+                        local_player->SetOnGround(false);
                         break;
                     }
                 }
@@ -966,7 +975,7 @@ namespace Botcraft
             // Wait until not falling anymore
             while (true)
             {
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= std::abs(motion_vector.y) * 500)
+                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= std::max(1000, static_cast<int>(std::abs(motion_vector.y) * 500)))
                 {
                     return false;
                 }
@@ -991,6 +1000,7 @@ namespace Botcraft
             if (motion_vector.y < -2.5)
             {
                 // Now we are inside the climbable block, we need to get back on top of it
+                start = std::chrono::steady_clock::now();
                 while (true)
                 {
                     if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 1000)
@@ -1007,7 +1017,7 @@ namespace Botcraft
                             local_player->SetPlayerInputsY(0.1);
                         }
                         // We are on top
-                        else if (local_player->GetOnGround() || local_player->GetIsClimbing())
+                        else
                         {
                             break;
                         }
