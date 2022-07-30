@@ -23,7 +23,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - ⚠️ For 1.19+, only the default value for enforce-secure-profile (false) server property is supported. Botcraft can't connect to servers with enforce-secure-profile=true (yet) ⚠️
 
 Available bot behaviours includes:
-- Path finding
+- Path finding (including ladder/scaffholding climbing)
 - Block breaking
 - Inventory managing (including with chest)
 - Block placing
@@ -35,9 +35,9 @@ Example with 10 survival bots collaborating on a pixel art build. They are all i
 
 ![](Visuals/mapart.gif)
 
-Example 6: a fully autonomous bot creating dispensers until a shulker box is full.
+Complex pathfinding example. The bot has to climb through various blocks as well as fall in water or vines.
 
-https://user-images.githubusercontent.com/24371370/161401601-dd838aba-eb93-447e-be66-a9c3348773e3.mp4
+![](Visuals/pathfinding_climb.gif)
 
 Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 
@@ -59,7 +59,7 @@ Optional dependencies (can be disabled with cmake options)
 - [stb_image](https://github.com/nothings/stb)\* for texture loading
 - [zlib](https://github.com/madler/zlib)† for compression
 
-The code is cross-platform and requires a C++17 compiler, as well as git.
+The code is cross-platform and requires a C++17 compiler, as well as git. ProtocolCraft only requires a C++11 compiler.
 
 ## Building
 
@@ -91,9 +91,9 @@ There are several cmake options you can modify:
 
 Examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, sends Hello World! in the chat then disconnect
-- [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI enabled. Mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering.
-- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obey commands sent through vanilla chat. Should work with chat from vanilla and non-vanilla servers (paper, forge ...)
-- [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Very leight AFK only bot. Simply connect to a server and stay still doing nothing.
+- [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI enabled. Mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering, or in a real server.
+- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obeys commands sent through vanilla chat. Should work with chat from vanilla and non-vanilla servers (paper, forge ...)
+- [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Highly CPU/RAM efficient AFK only bot. Simply connect to a server and stay still doing nothing.
 - [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same (due to concurrent access). Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
 - [5_MobHitterExample](Examples/5_MobHitterExample): Entity processing example. Attack every monster in range, with a per-entity cooldown of 0.5s. /!\ This is only an example about entities, no eating is performed, so would starve to death pretty quickly if used as-is.
 - [6_DispenserFarmExample](Examples/6_DispenserFarmExample): A full example with a real usecase in mind. Fully autonomous dispenser farm. More detailed explanations can be found on the associated [wiki page](https://github.com/adepierre/Botcraft/wiki/Dispensers-example).
