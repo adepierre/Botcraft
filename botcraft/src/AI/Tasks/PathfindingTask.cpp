@@ -83,6 +83,16 @@ namespace Botcraft
                 break;
             }
 
+            // Get the state around the player in the given location
+            std::array<BlockGoThroughState, 18> vertical_surroundings = {
+                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
+                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
+                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
+                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
+                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
+                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid
+            };
+
             // For each neighbour, check if it's reachable
             // and add it to the search list if it is
             for (int i = 0; i < neighbour_offsets.size(); ++i)
@@ -129,7 +139,7 @@ namespace Botcraft
                     surroundings[3] = GetBlockGoThroughState(block);
 
                     // If we can move down, we need 4 and 5
-                    if (surroundings[3] == BlockGoThroughState::Climbable)
+                    if (surroundings[3] != BlockGoThroughState::Solid)
                     {
                         block = world->GetBlock(current_node.pos + Position(0, -2, 0));
                         surroundings[4] = GetBlockGoThroughState(block);
@@ -254,6 +264,33 @@ namespace Botcraft
                 //  
                 // o
                 if (surroundings[3] == BlockGoThroughState::Climbable
+                    && surroundings[4] == BlockGoThroughState::Empty
+                    && surroundings[5] != BlockGoThroughState::Empty
+                    )
+                {
+                    const float new_cost = cost[current_node.pos] + 2.0f;
+                    const Position new_pos = current_node.pos + Position(0, -2, 0);
+                    auto it = cost.find(new_pos);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                        came_from[new_pos] = current_node.pos;
+                    }
+                }
+
+
+
+                // ?
+                // x
+                // ^
+                //  
+                //  
+                // o
+                if (surroundings[2] == BlockGoThroughState::Climbable
+                    && surroundings[3] == BlockGoThroughState::Empty
                     && surroundings[4] == BlockGoThroughState::Empty
                     && surroundings[5] != BlockGoThroughState::Empty
                     )
@@ -746,9 +783,10 @@ namespace Botcraft
             // Get the real movement that has to be done
             // (without the optional free fall after)
             Vector3<double> player_movement = motion_vector;
-            if (player_movement.y < -1.05)
+
+            if (player_movement.y < -2.05)
             {
-                player_movement.y = -1.0;
+                player_movement.y = -2.0;
             }
 
             auto start = std::chrono::steady_clock::now();
@@ -758,6 +796,7 @@ namespace Botcraft
                 auto now = std::chrono::steady_clock::now();
                 long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
                 // We climb/go down at climbing_speed block/s
+                // Set the input to adjust position
                 if (time_count > 1000 * std::abs(player_movement.y) / climbing_speed)
                 {
                     {
@@ -780,7 +819,7 @@ namespace Botcraft
                 client.Yield();
             }
 
-            // Wait for physics thread to update position
+            // Wait for physics thread to update position or falling on the desired block
             start = std::chrono::steady_clock::now();
             while (true)
             {
@@ -800,7 +839,7 @@ namespace Botcraft
                 client.Yield();
             }
 
-            if (motion_vector.y > -1.05)
+            if (motion_vector.y > -2.05)
             {
                 return true;
             }
