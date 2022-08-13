@@ -132,6 +132,9 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundChatCommandPacket>;
     template class BaseMessage<ServerboundChatPreviewPacket>;
 #endif
+#if PROTOCOL_VERSION > 759
+    template class BaseMessage<ServerboundChatAckPacket>;
+#endif
 
     // Play clientbound
     template class BaseMessage<ClientboundUpdateAdvancementsPacket>;
@@ -311,5 +314,10 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundServerDataPacket>;
     template class BaseMessage<ClientboundSetDisplayChatPreviewPacket>;
     template class BaseMessage<ClientboundSystemChatPacket>;
+#endif
+#if PROTOCOL_VERSION > 759
+    template class BaseMessage<ClientboundCustomChatCompletionsPacket>;
+    template class BaseMessage<ClientboundDeleteChatPacket>;
+    template class BaseMessage<ClientboundPlayerChatHeaderPacket>;
 #endif
 }

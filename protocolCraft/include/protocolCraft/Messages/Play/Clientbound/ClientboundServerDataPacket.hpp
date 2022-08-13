@@ -15,6 +15,8 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION == 759 // 1.19
             return 0x3F;
+#elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
+            return 0x42;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -44,7 +46,15 @@ namespace ProtocolCraft
         void SetPreviewsChat(const bool previews_chat_)
         {
             previews_chat = previews_chat_;
+
         }
+
+#if PROTOCOL_VERSION > 759
+        void SetEnforcesSecureChat(const bool enforces_secure_chat_)
+        {
+            enforces_secure_chat = enforces_secure_chat_;
+        }
+#endif
 
 
         const Chat& GetMotd() const
@@ -61,6 +71,13 @@ namespace ProtocolCraft
         {
             return previews_chat;
         }
+
+#if PROTOCOL_VERSION > 759
+        const bool GetEnforcesSecureChat() const
+        {
+            return enforces_secure_chat;
+        }
+#endif
 
 
     protected:
@@ -79,6 +96,9 @@ namespace ProtocolCraft
                 icon_base_64 = ReadData<std::string>(iter, length);
             }
             previews_chat = ReadData<bool>(iter, length);
+#if PROTOCOL_VERSION > 759
+            enforces_secure_chat = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -94,6 +114,9 @@ namespace ProtocolCraft
                 WriteData<std::string>(icon_base_64, container);
             }
             WriteData<bool>(previews_chat, container);
+#if PROTOCOL_VERSION > 759
+            WriteData<bool>(enforces_secure_chat, container);
+#endif
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -109,6 +132,9 @@ namespace ProtocolCraft
                 output["icon_base_64"] = icon_base_64;
             }
             output["previews_chat"] = previews_chat;
+#if PROTOCOL_VERSION > 759
+            output["enforces_secure_chat"] = enforces_secure_chat;
+#endif
 
 
             return output;
@@ -118,6 +144,9 @@ namespace ProtocolCraft
         Chat motd;
         std::string icon_base_64;
         bool previews_chat;
+#if PROTOCOL_VERSION > 759
+        bool enforces_secure_chat;
+#endif
 
     };
 } //ProtocolCraft

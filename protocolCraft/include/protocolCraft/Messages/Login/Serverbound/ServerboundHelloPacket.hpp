@@ -37,6 +37,13 @@ namespace ProtocolCraft
             public_key = public_key_;
         }
 
+#if PROTOCOL_VERSION > 759
+        void SetProfileId(const UUID& profile_id_)
+        {
+            profile_id = profile_id_;
+        }
+#endif
+
         const std::string& GetName_() const
         {
             return name_;
@@ -46,6 +53,13 @@ namespace ProtocolCraft
         {
             return public_key;
         }
+
+#if PROTOCOL_VERSION > 759
+        const UUID& GetProfileId() const
+        {
+            return profile_id;
+        }
+#endif
 #else
         void SetGameProfile(const std::string &n)
         {
@@ -68,6 +82,13 @@ namespace ProtocolCraft
             {
                 public_key.Read(iter, length);
             }
+#if PROTOCOL_VERSION > 759
+            const bool has_profile_id = ReadData<bool>(iter, length);
+            if (has_profile_id)
+            {
+                profile_id = ReadData<UUID>(iter, length);
+            }
+#endif
 #else
             game_profile = ReadData<std::string>(iter, length);
 #endif
@@ -82,6 +103,23 @@ namespace ProtocolCraft
             {
                 public_key.Write(container);
             }
+#if PROTOCOL_VERSION > 759
+            bool has_profile_id = false;
+            for (int i = 0; i < profile_id.size(); ++i)
+            {
+                if (profile_id[i] != 0)
+                {
+                    has_profile_id = true;
+                    break;
+                }
+            }
+
+            WriteData<bool>(has_profile_id, container);
+            if (has_profile_id)
+            {
+                WriteData<UUID>(profile_id, container);
+            }
+#endif
 #else
             WriteData<std::string>(game_profile, container);
 #endif
@@ -97,6 +135,21 @@ namespace ProtocolCraft
             {
                 output["public_key"] = public_key.Serialize();
             }
+#if PROTOCOL_VERSION > 759
+            bool has_profile_id = false;
+            for (int i = 0; i < profile_id.size(); ++i)
+            {
+                if (profile_id[i] != 0)
+                {
+                    has_profile_id = true;
+                    break;
+                }
+            }
+            if (has_profile_id)
+            {
+                output["profile_id"] = profile_id;
+            }
+#endif
 #else
             output["game_profile"] = game_profile;
 #endif
@@ -108,6 +161,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758
         std::string name_;
         ProfilePublicKey public_key;
+#if PROTOCOL_VERSION > 759
+        UUID profile_id;
+#endif
 #else
         std::string game_profile;
 #endif

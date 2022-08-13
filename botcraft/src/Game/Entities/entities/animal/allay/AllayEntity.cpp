@@ -3,9 +3,19 @@
 
 namespace Botcraft
 {
+#if PROTOCOL_VERSION > 759
+    const std::array<std::string, AllayEntity::metadata_count> AllayEntity::metadata_names{ {
+        "data_dancing",
+        "data_can_duplicate",
+    } };
+#endif
     AllayEntity::AllayEntity()
     {
-
+#if PROTOCOL_VERSION > 759
+        // Initialize all metadata with default values
+        SetDataDancing(true);
+        SetDataCanDuplicate(true);
+#endif
     }
 
     AllayEntity::~AllayEntity()
@@ -44,6 +54,53 @@ namespace Botcraft
     {
         return EntityType::Allay;
     }
+
+
+#if PROTOCOL_VERSION > 759
+    nlohmann::json AllayEntity::Serialize() const
+    {
+        nlohmann::json output = PathfinderMobEntity::Serialize();
+
+        output["metadata"]["data_dancing"] = GetDataDancing();
+        output["metadata"]["data_can_duplicate"] = GetDataCanDuplicate();
+
+        return output;
+    }
+
+
+    void AllayEntity::SetMetadataValue(const int index, const std::any& value)
+    {
+        if (index < hierarchy_metadata_count)
+        {
+            PathfinderMobEntity::SetMetadataValue(index, value);
+        }
+        else if (index - hierarchy_metadata_count < metadata_count)
+        {
+            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
+        }
+    }
+
+    bool AllayEntity::GetDataDancing() const
+    {
+        return std::any_cast<bool>(metadata.at("data_dancing"));
+    }
+
+    bool AllayEntity::GetDataCanDuplicate() const
+    {
+        return std::any_cast<bool>(metadata.at("data_can_duplicate"));
+    }
+
+
+    void AllayEntity::SetDataDancing(const bool data_dancing)
+    {
+        metadata["data_dancing"] = data_dancing;
+    }
+
+    void AllayEntity::SetDataCanDuplicate(const bool data_can_duplicate)
+    {
+        metadata["data_can_duplicate"] = data_can_duplicate;
+    }
+#endif
 
 }
 #endif

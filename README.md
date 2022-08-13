@@ -6,13 +6,24 @@ Botcraft is a cross-platform C++ library to connect and interact with Minecraft 
 
 This is a "learn-by-doing" code, with some lines dating back to 2017 and never changed since. A lot of things should be improved or refactored. I only code this on my free time, when I feel like it, so don't expect it to be a fully-featured commercial grade library. I share the code because I think it can be interesting for other people, but the goal is not to make it a widely adopted library, or even a useful one. I just do it for fun, it's more a shared private repo than a real team open source project. If you're looking for more features, there are alternative libraries by people with much more time (and probably talent) than myself.
 
+## Content
+
+  * [Features](#features)
+  * [Dependencies](#dependencies)
+  * [Building](#building)
+  * [Examples](#examples)
+  * [ProtocolCraft](#protocolcraft)
+  * [Clients](#clients)
+  * [Connection](#connection)
+  * [License](#license)
+
 ## Features
 
 Main features are listed below. To see the evolution of the project, check the [changelog](https://github.com/adepierre/Botcraft/wiki/Changelog).
 
 - Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
 - DNS server name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.19 supported
+- All official releases from 1.12.2 to 1.19.2 supported
 - Compression
 - Physics and collisions
 - World data
@@ -20,7 +31,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system (see [the wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - Bot control with mouse and keyboard
-- ⚠️ For 1.19+, only the default value for enforce-secure-profile (false) server property is supported. Botcraft can't connect to servers with enforce-secure-profile=true (yet) ⚠️
+- ⚠️ For 1.19+, botcraft can only connect to servers with property enforce-secure-profile set to false. Connection to servers with enforce-secure-profile=true is not supported (yet). ⚠️
 
 Available bot behaviours includes:
 - Path finding (including ladder/scaffholding climbing)

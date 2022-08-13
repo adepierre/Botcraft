@@ -771,7 +771,7 @@ namespace ProtocolCraft
                     return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x5C:
                     return std::make_shared<ClientboundUpdateTagsPacket>();
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 // 1.16.0 or 1.16.1
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 // 1.16 or 1.16.1
                 case 0x00:
                     return std::make_shared<ClientboundAddEntityPacket>();
                 case 0x01:
@@ -1772,6 +1772,331 @@ namespace ProtocolCraft
                     return std::make_shared<ClientboundUpdateRecipesPacket>();
                 case 0x68:
                     return std::make_shared<ClientboundUpdateTagsPacket>();
+#elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
+                case 0x00:
+                    return std::make_shared<ClientboundAddEntityPacket>();
+                    break;
+                case 0x01:
+                    return std::make_shared<ClientboundAddExperienceOrbPacket>();
+                    break;
+                case 0x02:
+                    return std::make_shared<ClientboundAddPlayerPacket>();
+                    break;
+                case 0x03:
+                    return std::make_shared<ClientboundAnimatePacket>();
+                    break;
+                case 0x04:
+                    return std::make_shared<ClientboundAwardStatsPacket>();
+                    break;
+                case 0x05:
+                    return std::make_shared<ClientboundBlockChangedAckPacket>();
+                    break;
+                case 0x06:
+                    return std::make_shared<ClientboundBlockDestructionPacket>();
+                    break;
+                case 0x07:
+                    return std::make_shared<ClientboundBlockEntityDataPacket>();
+                    break;
+                case 0x08:
+                    return std::make_shared<ClientboundBlockEventPacket>();
+                    break;
+                case 0x09:
+                    return std::make_shared<ClientboundBlockUpdatePacket>();
+                    break;
+                case 0x0A:
+                    return std::make_shared<ClientboundBossEventPacket>();
+                    break;
+                case 0x0B:
+                    return std::make_shared<ClientboundChangeDifficultyPacket>();
+                    break;
+                case 0x0C:
+                    return std::make_shared<ClientboundChatPreviewPacket>();
+                    break;
+                case 0x0D:
+                    return std::make_shared<ClientboundClearTitlesPacket>();
+                    break;
+                case 0x0E:
+                    return std::make_shared<ClientboundCommandSuggestionsPacket>();
+                    break;
+                case 0x0F:
+                    return std::make_shared<ClientboundCommandsPacket>();
+                    break;
+                case 0x10:
+                    return std::make_shared<ClientboundContainerClosePacket>();
+                    break;
+                case 0x11:
+                    return std::make_shared<ClientboundContainerSetContentPacket>();
+                    break;
+                case 0x12:
+                    return std::make_shared<ClientboundContainerSetDataPacket>();
+                    break;
+                case 0x13:
+                    return std::make_shared<ClientboundContainerSetSlotPacket>();
+                    break;
+                case 0x14:
+                    return std::make_shared<ClientboundCooldownPacket>();
+                    break;
+                case 0x15:
+                    return std::make_shared<ClientboundCustomChatCompletionsPacket>();
+                    break;
+                case 0x16:
+                    return std::make_shared<ClientboundCustomPayloadPacket>();
+                    break;
+                case 0x17:
+                    return std::make_shared<ClientboundCustomSoundPacket>();
+                    break;
+                case 0x18:
+                    return std::make_shared<ClientboundDeleteChatPacket>();
+                    break;
+                case 0x19:
+                    return std::make_shared<ClientboundDisconnectPacket>();
+                    break;
+                case 0x1A:
+                    return std::make_shared<ClientboundEntityEventPacket>();
+                    break;
+                case 0x1B:
+                    return std::make_shared<ClientboundExplodePacket>();
+                    break;
+                case 0x1C:
+                    return std::make_shared<ClientboundForgetLevelChunkPacket>();
+                    break;
+                case 0x1D:
+                    return std::make_shared<ClientboundGameEventPacket>();
+                    break;
+                case 0x1E:
+                    return std::make_shared<ClientboundHorseScreenOpenPacket>();
+                    break;
+                case 0x1F:
+                    return std::make_shared<ClientboundInitializeBorderPacket>();
+                    break;
+                case 0x20:
+                    return std::make_shared<ClientboundKeepAlivePacket>();
+                    break;
+                case 0x21:
+                    return std::make_shared<ClientboundLevelChunkWithLightPacket>();
+                    break;
+                case 0x22:
+                    return std::make_shared<ClientboundLevelEventPacket>();
+                    break;
+                case 0x23:
+                    return std::make_shared<ClientboundLevelParticlesPacket>();
+                    break;
+                case 0x24:
+                    return std::make_shared<ClientboundLightUpdatePacket>();
+                    break;
+                case 0x25:
+                    return std::make_shared<ClientboundLoginPacket>();
+                    break;
+                case 0x26:
+                    return std::make_shared<ClientboundMapItemDataPacket>();
+                    break;
+                case 0x27:
+                    return std::make_shared<ClientboundMerchantOffersPacket>();
+                    break;
+                case 0x28:
+                    return std::make_shared<ClientboundMoveEntityPacketPos>();
+                    break;
+                case 0x29:
+                    return std::make_shared<ClientboundMoveEntityPacketPosRot>();
+                    break;
+                case 0x2A:
+                    return std::make_shared<ClientboundMoveEntityPacketRot>();
+                    break;
+                case 0x2B:
+                    return std::make_shared<ClientboundMoveVehiclePacket>();
+                    break;
+                case 0x2C:
+                    return std::make_shared<ClientboundOpenBookPacket>();
+                    break;
+                case 0x2D:
+                    return std::make_shared<ClientboundOpenScreenPacket>();
+                    break;
+                case 0x2E:
+                    return std::make_shared<ClientboundOpenSignEditorPacket>();
+                    break;
+                case 0x2F:
+                    return std::make_shared<ClientboundPingPacket>();
+                    break;
+                case 0x30:
+                    return std::make_shared<ClientboundPlaceGhostRecipePacket>();
+                    break;
+                case 0x31:
+                    return std::make_shared<ClientboundPlayerAbilitiesPacket>();
+                    break;
+                case 0x32:
+                    return std::make_shared<ClientboundPlayerChatHeaderPacket>();
+                    break;
+                case 0x33:
+                    return std::make_shared<ClientboundPlayerChatPacket>();
+                    break;
+                case 0x34:
+                    return std::make_shared<ClientboundPlayerCombatEndPacket>();
+                    break;
+                case 0x35:
+                    return std::make_shared<ClientboundPlayerCombatEnterPacket>();
+                    break;
+                case 0x36:
+                    return std::make_shared<ClientboundPlayerCombatKillPacket>();
+                    break;
+                case 0x37:
+                    return std::make_shared<ClientboundPlayerInfoPacket>();
+                    break;
+                case 0x38:
+                    return std::make_shared<ClientboundPlayerLookAtPacket>();
+                    break;
+                case 0x39:
+                    return std::make_shared<ClientboundPlayerPositionPacket>();
+                    break;
+                case 0x3A:
+                    return std::make_shared<ClientboundRecipePacket>();
+                    break;
+                case 0x3B:
+                    return std::make_shared<ClientboundRemoveEntitiesPacket>();
+                    break;
+                case 0x3C:
+                    return std::make_shared<ClientboundRemoveMobEffectPacket>();
+                    break;
+                case 0x3D:
+                    return std::make_shared<ClientboundResourcePackPacket>();
+                    break;
+                case 0x3E:
+                    return std::make_shared<ClientboundRespawnPacket>();
+                    break;
+                case 0x3F:
+                    return std::make_shared<ClientboundRotateHeadPacket>();
+                    break;
+                case 0x40:
+                    return std::make_shared<ClientboundSectionBlocksUpdatePacket>();
+                    break;
+                case 0x41:
+                    return std::make_shared<ClientboundSelectAdvancementsTabPacket>();
+                    break;
+                case 0x42:
+                    return std::make_shared<ClientboundServerDataPacket>();
+                    break;
+                case 0x43:
+                    return std::make_shared<ClientboundSetActionBarTextPacket>();
+                    break;
+                case 0x44:
+                    return std::make_shared<ClientboundSetBorderCenterPacket>();
+                    break;
+                case 0x45:
+                    return std::make_shared<ClientboundSetBorderLerpSizePacket>();
+                    break;
+                case 0x46:
+                    return std::make_shared<ClientboundSetBorderSizePacket>();
+                    break;
+                case 0x47:
+                    return std::make_shared<ClientboundSetBorderWarningDelayPacket>();
+                    break;
+                case 0x48:
+                    return std::make_shared<ClientboundSetBorderWarningDistancePacket>();
+                    break;
+                case 0x49:
+                    return std::make_shared<ClientboundSetCameraPacket>();
+                    break;
+                case 0x4A:
+                    return std::make_shared<ClientboundSetCarriedItemPacket>();
+                    break;
+                case 0x4B:
+                    return std::make_shared<ClientboundSetChunkCacheCenterPacket>();
+                    break;
+                case 0x4C:
+                    return std::make_shared<ClientboundSetChunkCacheRadiusPacket>();
+                    break;
+                case 0x4D:
+                    return std::make_shared<ClientboundSetDefaultSpawnPositionPacket>();
+                    break;
+                case 0x4E:
+                    return std::make_shared<ClientboundSetDisplayChatPreviewPacket>();
+                    break;
+                case 0x4F:
+                    return std::make_shared<ClientboundSetDisplayObjectivePacket>();
+                    break;
+                case 0x50:
+                    return std::make_shared<ClientboundSetEntityDataPacket>();
+                    break;
+                case 0x51:
+                    return std::make_shared<ClientboundSetEntityLinkPacket>();
+                    break;
+                case 0x52:
+                    return std::make_shared<ClientboundSetEntityMotionPacket>();
+                    break;
+                case 0x53:
+                    return std::make_shared<ClientboundSetEquipmentPacket>();
+                    break;
+                case 0x54:
+                    return std::make_shared<ClientboundSetExperiencePacket>();
+                    break;
+                case 0x55:
+                    return std::make_shared<ClientboundSetHealthPacket>();
+                    break;
+                case 0x56:
+                    return std::make_shared<ClientboundSetObjectivePacket>();
+                    break;
+                case 0x57:
+                    return std::make_shared<ClientboundSetPassengersPacket>();
+                    break;
+                case 0x58:
+                    return std::make_shared<ClientboundSetPlayerTeamPacket>();
+                    break;
+                case 0x59:
+                    return std::make_shared<ClientboundSetScorePacket>();
+                    break;
+                case 0x5A:
+                    return std::make_shared<ClientboundSetSimulationDistancePacket>();
+                    break;
+                case 0x5B:
+                    return std::make_shared<ClientboundSetSubtitleTextPacket>();
+                    break;
+                case 0x5C:
+                    return std::make_shared<ClientboundSetTimePacket>();
+                    break;
+                case 0x5D:
+                    return std::make_shared<ClientboundSetTitleTextPacket>();
+                    break;
+                case 0x5E:
+                    return std::make_shared<ClientboundSetTitlesAnimationPacket>();
+                    break;
+                case 0x5F:
+                    return std::make_shared<ClientboundSoundEntityPacket>();
+                    break;
+                case 0x60:
+                    return std::make_shared<ClientboundSoundPacket>();
+                    break;
+                case 0x61:
+                    return std::make_shared<ClientboundStopSoundPacket>();
+                    break;
+                case 0x62:
+                    return std::make_shared<ClientboundSystemChatPacket>();
+                    break;
+                case 0x63:
+                    return std::make_shared<ClientboundTabListPacket>();
+                    break;
+                case 0x64:
+                    return std::make_shared<ClientboundTagQueryPacket>();
+                    break;
+                case 0x65:
+                    return std::make_shared<ClientboundTakeItemEntityPacket>();
+                    break;
+                case 0x66:
+                    return std::make_shared<ClientboundTeleportEntityPacket>();
+                    break;
+                case 0x67:
+                    return std::make_shared<ClientboundUpdateAdvancementsPacket>();
+                    break;
+                case 0x68:
+                    return std::make_shared<ClientboundUpdateAttributesPacket>();
+                    break;
+                case 0x69:
+                    return std::make_shared<ClientboundUpdateMobEffectPacket>();
+                    break;
+                case 0x6A:
+                    return std::make_shared<ClientboundUpdateRecipesPacket>();
+                    break;
+                case 0x6B:
+                    return std::make_shared<ClientboundUpdateTagsPacket>();
+                    break;
 #else
     #error "Protocol version not implemented"
 #endif
@@ -2172,7 +2497,7 @@ namespace ProtocolCraft
                     return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x2D:
                     return std::make_shared<ServerboundUseItemPacket>();
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 // 1.16.0 or 1.16.1
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 // 1.16 or 1.16.1
                 case 0x00:
                     return std::make_shared<ServerboundAcceptTeleportationPacket>();
                 case 0x01:
@@ -2659,6 +2984,160 @@ namespace ProtocolCraft
                     return std::make_shared<ServerboundUseItemOnPacket>();
                 case 0x31:
                     return std::make_shared<ServerboundUseItemPacket>();
+#elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
+                case 0x00:
+                    return std::make_shared<ServerboundAcceptTeleportationPacket>();
+                    break;
+                case 0x01:
+                    return std::make_shared<ServerboundBlockEntityTagQuery>();
+                    break;
+                case 0x02:
+                    return std::make_shared<ServerboundChangeDifficultyPacket>();
+                    break;
+                case 0x03:
+                    return std::make_shared<ServerboundChatAckPacket>();
+                    break;
+                case 0x04:
+                    return std::make_shared<ServerboundChatCommandPacket>();
+                    break;
+                case 0x05:
+                    return std::make_shared<ServerboundChatPacket>();
+                    break;
+                case 0x06:
+                    return std::make_shared<ServerboundChatPreviewPacket>();
+                    break;
+                case 0x07:
+                    return std::make_shared<ServerboundClientCommandPacket>();
+                    break;
+                case 0x08:
+                    return std::make_shared<ServerboundClientInformationPacket>();
+                    break;
+                case 0x09:
+                    return std::make_shared<ServerboundCommandSuggestionPacket>();
+                    break;
+                case 0x0A:
+                    return std::make_shared<ServerboundContainerButtonClickPacket>();
+                    break;
+                case 0x0B:
+                    return std::make_shared<ServerboundContainerClickPacket>();
+                    break;
+                case 0x0C:
+                    return std::make_shared<ServerboundContainerClosePacket>();
+                    break;
+                case 0x0D:
+                    return std::make_shared<ServerboundCustomPayloadPacket>();
+                    break;
+                case 0x0E:
+                    return std::make_shared<ServerboundEditBookPacket>();
+                    break;
+                case 0x0F:
+                    return std::make_shared<ServerboundEntityTagQuery>();
+                    break;
+                case 0x10:
+                    return std::make_shared<ServerboundInteractPacket>();
+                    break;
+                case 0x11:
+                    return std::make_shared<ServerboundJigsawGeneratePacket>();
+                    break;
+                case 0x12:
+                    return std::make_shared<ServerboundKeepAlivePacket>();
+                    break;
+                case 0x13:
+                    return std::make_shared<ServerboundLockDifficultyPacket>();
+                    break;
+                case 0x14:
+                    return std::make_shared<ServerboundMovePlayerPacketPos>();
+                    break;
+                case 0x15:
+                    return std::make_shared<ServerboundMovePlayerPacketPosRot>();
+                    break;
+                case 0x16:
+                    return std::make_shared<ServerboundMovePlayerPacketRot>();
+                    break;
+                case 0x17:
+                    return std::make_shared<ServerboundMovePlayerPacketStatusOnly>();
+                    break;
+                case 0x18:
+                    return std::make_shared<ServerboundMoveVehiclePacket>();
+                    break;
+                case 0x19:
+                    return std::make_shared<ServerboundPaddleBoatPacket>();
+                    break;
+                case 0x1A:
+                    return std::make_shared<ServerboundPickItemPacket>();
+                    break;
+                case 0x1B:
+                    return std::make_shared<ServerboundPlaceRecipePacket>();
+                    break;
+                case 0x1C:
+                    return std::make_shared<ServerboundPlayerAbilitiesPacket>();
+                    break;
+                case 0x1D:
+                    return std::make_shared<ServerboundPlayerActionPacket>();
+                    break;
+                case 0x1E:
+                    return std::make_shared<ServerboundPlayerCommandPacket>();
+                    break;
+                case 0x1F:
+                    return std::make_shared<ServerboundPlayerInputPacket>();
+                    break;
+                case 0x20:
+                    return std::make_shared<ServerboundPongPacket>();
+                    break;
+                case 0x21:
+                    return std::make_shared<ServerboundRecipeBookChangeSettingsPacket>();
+                    break;
+                case 0x22:
+                    return std::make_shared<ServerboundRecipeBookSeenRecipePacket>();
+                    break;
+                case 0x23:
+                    return std::make_shared<ServerboundRenameItemPacket>();
+                    break;
+                case 0x24:
+                    return std::make_shared<ServerboundResourcePackPacket>();
+                    break;
+                case 0x25:
+                    return std::make_shared<ServerboundSeenAdvancementsPacket>();
+                    break;
+                case 0x26:
+                    return std::make_shared<ServerboundSelectTradePacket>();
+                    break;
+                case 0x27:
+                    return std::make_shared<ServerboundSetBeaconPacket>();
+                    break;
+                case 0x28:
+                    return std::make_shared<ServerboundSetCarriedItemPacket>();
+                    break;
+                case 0x29:
+                    return std::make_shared<ServerboundSetCommandBlockPacket>();
+                    break;
+                case 0x2A:
+                    return std::make_shared<ServerboundSetCommandMinecartPacket>();
+                    break;
+                case 0x2B:
+                    return std::make_shared<ServerboundSetCreativeModeSlotPacket>();
+                    break;
+                case 0x2C:
+                    return std::make_shared<ServerboundSetJigsawBlockPacket>();
+                    break;
+                case 0x2D:
+                    return std::make_shared<ServerboundSetStructureBlockPacket>();
+                    break;
+                case 0x2E:
+                    return std::make_shared<ServerboundSignUpdatePacket>();
+                    break;
+                case 0x2F:
+                    return std::make_shared<ServerboundSwingPacket>();
+                    break;
+                case 0x30:
+                    return std::make_shared<ServerboundTeleportToEntityPacket>();
+                    break;
+                case 0x31:
+                    return std::make_shared<ServerboundUseItemOnPacket>();
+                    break;
+                case 0x32:
+                    return std::make_shared<ServerboundUseItemPacket>();
+                    break;
 #else
 #error "Protocol version not implemented"
 #endif
