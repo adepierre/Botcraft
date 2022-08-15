@@ -402,7 +402,7 @@ namespace Botcraft
 
     const bool Authentifier::IsTokenExpired(const long long int& t) const
     {
-        return t < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+        return t < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     }
 
     void Authentifier::WriteCacheFile(const nlohmann::json& profiles) const
@@ -628,7 +628,7 @@ namespace Botcraft
 
             UpdateCachedMSA(login, response["access_token"].get<std::string>(),
                 response["refresh_token"].get<std::string>(),
-                response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count()
+                response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
             );
 
             LOG_INFO("Cached Microsoft token refreshed");
@@ -759,7 +759,7 @@ namespace Botcraft
                 UpdateCachedMSA(login,
                     status_response["access_token"].get<std::string>(),
                     status_response["refresh_token"].get<std::string>(),
-                    status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count()
+                    status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
                 );
 
                 LOG_INFO("Newly obtained Microsoft token stored in cache");
@@ -885,7 +885,7 @@ namespace Botcraft
 
         UpdateCachedMCToken(login,
             response["access_token"].get<std::string>(),
-            response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count()
+            response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
         );
 
         return response["access_token"].get<std::string>();
