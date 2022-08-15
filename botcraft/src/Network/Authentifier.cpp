@@ -38,7 +38,7 @@ namespace Botcraft
 
     Authentifier::Authentifier()
     {
-
+        mc_player_uuid_bytes.fill(0);
     }
 
     Authentifier::~Authentifier()
@@ -65,6 +65,7 @@ namespace Botcraft
 
             UpdateCachedMC(login, player_display_name,
                 mc_player_uuid, mc_access_token);
+            UpdateUUIDBytes();
 
             if (!mc_access_token.empty())
             {
@@ -77,8 +78,9 @@ namespace Botcraft
         else
         {
             mc_access_token = cached["mc_token"].get<std::string>();
-            mc_player_uuid = cached["id"].get<std::string>();
             player_display_name = cached["name"].get<std::string>();
+            mc_player_uuid = cached["id"].get<std::string>();
+            UpdateUUIDBytes();
             LOG_INFO("Cached Minecraft token for login <" << login << "> still valid.");
             return true;
         }
@@ -114,6 +116,7 @@ namespace Botcraft
         std::tie(mc_access_token, player_display_name, mc_player_uuid) = ExtractMCFromResponse(post_response.response);
         UpdateCachedMC(login, player_display_name,
             mc_player_uuid, mc_access_token);
+        UpdateUUIDBytes();
 
         if (mc_access_token.empty())
         {
@@ -147,8 +150,9 @@ namespace Botcraft
         else
         {
             mc_access_token = cached["mc_token"].get<std::string>();
-            mc_player_uuid = cached["id"].get<std::string>();
             player_display_name = cached["name"].get<std::string>();
+            mc_player_uuid = cached["id"].get<std::string>();
+            UpdateUUIDBytes();
             LOG_INFO("Cached Minecraft token for Microsoft account still valid.");
 
 #if PROTOCOL_VERSION > 758
@@ -215,6 +219,7 @@ namespace Botcraft
             LOG_ERROR("Unable to get a MC profile");
             return false;
         }
+        UpdateUUIDBytes();
         LOG_INFO("MC profile obtained!");
 
 #if PROTOCOL_VERSION > 758
@@ -329,6 +334,11 @@ namespace Botcraft
         return player_display_name;
     }
 
+    const std::array<unsigned char, 16>& Authentifier::GetPlayerUUID() const
+    {
+        return mc_player_uuid_bytes;
+    }
+
 #if PROTOCOL_VERSION > 758
     const std::string& Authentifier::GetPrivateKey() const
     {
@@ -340,6 +350,15 @@ namespace Botcraft
         return public_key;
     }
 #endif
+
+    void Authentifier::UpdateUUIDBytes()
+    {
+        for (int i = 0; i < 32; i += 2)
+        {
+            const std::string byte_str = mc_player_uuid.substr(i, 2);
+            mc_player_uuid_bytes[i / 2] = static_cast<unsigned char>(std::strtol(byte_str.c_str(), nullptr, 16));
+        }
+    }
 
 #ifdef USE_ENCRYPTION
     nlohmann::json Authentifier::GetCachedProfiles() const

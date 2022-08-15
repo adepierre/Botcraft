@@ -2,6 +2,7 @@
 #include <nlohmann/json.hpp>
 
 #include <string>
+#include <array>
 
 namespace Botcraft
 {
@@ -34,6 +35,7 @@ namespace Botcraft
         const bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const;
 
         const std::string& GetPlayerDisplayName() const;
+        const std::array<unsigned char, 16>& GetPlayerUUID() const;
 
 #if PROTOCOL_VERSION > 758
         const std::string& GetPrivateKey() const;
@@ -41,6 +43,9 @@ namespace Botcraft
 #endif
 
     private:
+        /// @brief Compute the UUID bytes from the string one
+        void UpdateUUIDBytes();
+
 #ifdef USE_ENCRYPTION
         /// @brief Get the content of the whole cache file
         /// @return The content in JSON
@@ -203,6 +208,7 @@ namespace Botcraft
         std::string player_display_name;
         std::string mc_access_token;
         std::string mc_player_uuid;
+        std::array<unsigned char, 16> mc_player_uuid_bytes;
 
 #if PROTOCOL_VERSION > 758
         std::string private_key;
