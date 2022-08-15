@@ -161,8 +161,8 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION > 758
             LOG_INFO("Getting player certificates...");
-            std::tie(private_key, public_key, signature) = GetPlayerCertificates(login, mc_access_token);
-            if (private_key.empty() || public_key.empty() || signature.empty())
+            std::tie(private_key, public_key, key_signature, key_timestamp) = GetPlayerCertificates(login, mc_access_token);
+            if (private_key.empty() || public_key.empty() || key_signature.empty())
             {
                 LOG_ERROR("Unable to get player certificates");
                 return false;
@@ -228,8 +228,8 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION > 758
         LOG_INFO("Getting player certificates...");
-        std::tie(private_key, public_key, signature) = GetPlayerCertificates(login, mc_access_token);
-        if (private_key.empty() || public_key.empty() || signature.empty())
+        std::tie(private_key, public_key, key_signature, key_timestamp) = GetPlayerCertificates(login, mc_access_token);
+        if (private_key.empty() || public_key.empty() || key_signature.empty())
         {
             LOG_ERROR("Unable to get player certificates");
             return false;
@@ -354,9 +354,14 @@ namespace Botcraft
         return public_key;
     }
 
-    const std::string& Authentifier::GetSignature() const
+    const std::string& Authentifier::GetKeySignature() const
     {
-        return signature;
+        return key_signature;
+    }
+
+    const long long int Authentifier::GetKeyTimestamp() const
+    {
+        return key_timestamp;
     }
 #endif
 
@@ -1064,7 +1069,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 758
-    const std::tuple<std::string, std::string, std::string> Authentifier::GetPlayerCertificates(const std::string& login,
+    const std::tuple<std::string, std::string, std::string, long long int> Authentifier::GetPlayerCertificates(const std::string& login,
         const std::string& mc_token) const
     {
         // Retrieve cached certificates
@@ -1106,7 +1111,7 @@ namespace Botcraft
                 LOG_ERROR("Response returned with status code " << post_response.status_code
                     << " (" << post_response.status_message << ") during player certificates acquisition:\n"
                     << post_response.response.dump(4));
-                return { "", "", ""};
+                return { "", "", "", 0};
             }
 
             const nlohmann::json& response = post_response.response;
@@ -1114,37 +1119,37 @@ namespace Botcraft
             if (!response.contains("keyPair"))
             {
                 LOG_ERROR("Error trying to get player certificates, no keyPair in response");
-                return { "", "", ""};
+                return { "", "", "", 0};
             }
 
             if (!response["keyPair"].contains("privateKey"))
             {
                 LOG_ERROR("Error trying to get player certificates, no privateKey in response");
-                return { "", "", "" };
+                return { "", "", "", 0 };
             }
 
             if (!response["keyPair"].contains("publicKey"))
             {
                 LOG_ERROR("Error trying to get player certificates, no publicKey in response");
-                return { "", "", "" };
+                return { "", "", "", 0 };
             }
 
             if (!response.contains("publicKeySignature"))
             {
                 LOG_ERROR("Error trying to get player certificates, no publicKeySignature in response");
-                return { "", "", "" };
+                return { "", "", "", 0 };
             }
 
             if (!response.contains("publicKeySignatureV2"))
             {
                 LOG_ERROR("Error trying to get player certificates, no publicKeySignatureV2 in response");
-                return { "", "", "" };
+                return { "", "", "", 0 };
             }
 
             if (!response.contains("expiresAt"))
             {
                 LOG_ERROR("Error trying to get player certificates, no expiresAt in response");
-                return { "", "", "" };
+                return { "", "", "", 0 };
             }
 
             // Convert expires date in ISO8601 to ms since epoch
@@ -1155,7 +1160,7 @@ namespace Botcraft
             if (s.fail())
             {
                 LOG_ERROR("Error trying to get player certificates, can't parse expiresAt value");
-                return { "", "", "" };
+                return { "", "", "", 0 };
             }
             const long long int expires_sec = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::from_time_t(std::mktime(&t)).time_since_epoch()).count();
             
@@ -1174,10 +1179,11 @@ namespace Botcraft
             return { response["keyPair"]["privateKey"].get<std::string>(),
                 response["keyPair"]["publicKey"].get<std::string>(),
 #if PROTOCOL_VERSION == 759
-                response["publicKeySignature"].get<std::string>()
+                response["publicKeySignature"].get<std::string>(),
 #else
-                response["publicKeySignatureV2"].get<std::string>()
+                response["publicKeySignatureV2"].get<std::string>(),
 #endif
+                expires_sec * 1000 + expires_ms
             };
         }
 
@@ -1185,10 +1191,11 @@ namespace Botcraft
         return { cached["certificates"]["private_key"].get<std::string>(),
             cached["certificates"]["public_key"].get<std::string>(),
         #if PROTOCOL_VERSION == 759
-            cached["certificates"]["signature_v1"].get<std::string>()
+            cached["certificates"]["signature_v1"].get<std::string>(),
 #else
-            cached["certificates"]["signature_v2"].get<std::string>()
+            cached["certificates"]["signature_v2"].get<std::string>(),
 #endif
+            cached["certificates"]["expires_date"].get<long long int>(),
         };
     }
 #endif

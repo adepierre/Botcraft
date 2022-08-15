@@ -40,7 +40,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758
         const std::string& GetPrivateKey() const;
         const std::string& GetPublicKey() const;
-        const std::string& GetSignature() const;
+        const std::string& GetKeySignature() const;
+        const long long int GetKeyTimestamp() const;
 #endif
 
     private:
@@ -164,8 +165,8 @@ namespace Botcraft
         /// @brief Try to get player certificates from Minecraft token
         /// @param login Login used to store credentials in cache
         /// @param mc_token Minecraft token
-        /// @return Tuple of {private key, public key, signature}, empty if failed
-        const std::tuple<std::string, std::string, std::string> GetPlayerCertificates(const std::string& login,
+        /// @return Tuple of {private key, public key, signature, timestamp }, empty if failed
+        const std::tuple<std::string, std::string, std::string, long long int> GetPlayerCertificates(const std::string& login,
             const std::string& mc_token) const;
 #endif
 
@@ -215,7 +216,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758
         std::string private_key;
         std::string public_key;
-        std::string signature;
+        std::string key_signature;
+        long long int key_timestamp;
 #endif
         
     };
