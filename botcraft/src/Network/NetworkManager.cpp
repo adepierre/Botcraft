@@ -28,6 +28,10 @@ namespace Botcraft
                 throw std::runtime_error("Error trying to authenticate on Mojang server using Microsoft auth flow");
             }
             name = authentifier->GetPlayerDisplayName();
+#if PROTOCOL_VERSION > 758
+            chat_private_key = authentifier->GetPrivateKey();
+            chat_public_key = authentifier->GetPublicKey();
+#endif
         }
         // Online mode with Mojang Account
         else if (!password.empty())
@@ -43,7 +47,11 @@ namespace Botcraft
         else
         {
             authentifier = nullptr;
-            name = login;
+            name = login; 
+#if PROTOCOL_VERSION > 758
+            chat_private_key = "";
+            chat_public_key = "";
+#endif
         }
 
         compression = -1;
@@ -152,6 +160,17 @@ namespace Botcraft
         return name;
     }
 
+#if PROTOCOL_VERSION > 758
+    const std::string& NetworkManager::GetChatPublicKey() const
+    {
+        return chat_public_key;
+    }
+
+    const std::string& NetworkManager::GetChatPrivateKey() const
+    {
+        return chat_private_key;
+    }
+#endif
     void NetworkManager::WaitForNewPackets()
     {
         Logger::GetInstance().RegisterThread("NetworkPacketProcessing");

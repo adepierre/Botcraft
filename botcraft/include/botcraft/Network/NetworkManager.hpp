@@ -27,6 +27,10 @@ namespace Botcraft
         void Send(const std::shared_ptr<ProtocolCraft::Message> msg);
         const ProtocolCraft::ConnectionState GetConnectionState() const;
         const std::string& GetMyName() const;
+#if PROTOCOL_VERSION > 758
+        const std::string& GetChatPublicKey() const;
+        const std::string& GetChatPrivateKey() const;
+#endif
 
     private:
         void WaitForNewPackets();
@@ -60,6 +64,10 @@ namespace Botcraft
         std::mutex mutex_send;
 
         std::string name;
+#if PROTOCOL_VERSION > 758
+        std::string chat_private_key;
+        std::string chat_public_key;
+#endif
 
     };
 }

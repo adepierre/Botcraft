@@ -18,15 +18,22 @@ namespace Botcraft
     const std::string Authentifier::cached_credentials_path = "botcraft_cached_credentials.json";
     const std::string Authentifier::botcraft_app_id = "a0ad834d-e78a-4881-87f6-390aa0f4b283";
     const nlohmann::json Authentifier::defaultCachedCredentials = {
-        {"msa", {
-            {"access_token", nullptr},
-            {"expires_date", nullptr},
-            {"refresh_token", nullptr}
+        { "msa", {
+            { "access_token", nullptr },
+            { "expires_date", nullptr },
+            { "refresh_token", nullptr }
         }},
-        {"name", nullptr},
-        {"id", nullptr},
-        {"mc_token", nullptr},
-        {"expires_date", nullptr}
+        { "name", nullptr },
+        { "id", nullptr },
+        { "mc_token", nullptr },
+        { "expires_date", nullptr },
+#if PROTOCOL_VERSION > 758
+        { "certificates", {
+            { "private_key", nullptr },
+            { "public_key", nullptr },
+            { "expires_date", nullptr }
+        }}
+#endif
     };
 
     Authentifier::Authentifier()
@@ -90,7 +97,8 @@ namespace Botcraft
             { "clientToken", "botcraft" } // clientToken should be a "randomly generated identifier". This is totally random.
         };
 
-        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/authenticate", "application/json; charset=utf-8", "*/*", data.dump());
+        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/authenticate",
+            "application/json; charset=utf-8", "*/*", "", data.dump());
 
         if (post_response.status_code != 200)
         {
@@ -142,6 +150,17 @@ namespace Botcraft
             mc_player_uuid = cached["id"].get<std::string>();
             player_display_name = cached["name"].get<std::string>();
             LOG_INFO("Cached Minecraft token for Microsoft account still valid.");
+
+#if PROTOCOL_VERSION > 758
+            LOG_INFO("Getting player certificates...");
+            std::tie(private_key, public_key) = GetPlayerCertificates(login, mc_access_token);
+            if (private_key.empty() || public_key.empty())
+            {
+                LOG_ERROR("Unable to get player certificates");
+                return false;
+            }
+            LOG_INFO("Player certificates obtained!")
+#endif
             return true;
         }
 
@@ -197,6 +216,17 @@ namespace Botcraft
             return false;
         }
         LOG_INFO("MC profile obtained!");
+
+#if PROTOCOL_VERSION > 758
+        LOG_INFO("Getting player certificates...");
+        std::tie(private_key, public_key) = GetPlayerCertificates(login, mc_access_token);
+        if (private_key.empty() || public_key.empty())
+        {
+            LOG_ERROR("Unable to get player certificates");
+            return false;
+        }
+        LOG_INFO("Player certificates obtained!")
+#endif
 
         LOG_INFO("Authentication completed!");
 
@@ -279,7 +309,8 @@ namespace Botcraft
             { "serverId", server_hash}
         };
 
-        const WebRequestResponse post_response = POSTRequest("sessionserver.mojang.com", "/session/minecraft/join", "application/json; charset=utf-8", "*/*", data.dump());
+        const WebRequestResponse post_response = POSTRequest("sessionserver.mojang.com", "/session/minecraft/join",
+            "application/json; charset=utf-8", "*/*", "", data.dump());
 
         if (post_response.status_code != 204)
         {
@@ -297,6 +328,18 @@ namespace Botcraft
     {
         return player_display_name;
     }
+
+#if PROTOCOL_VERSION > 758
+    const std::string& Authentifier::GetPrivateKey() const
+    {
+        return private_key;
+    }
+
+    const std::string& Authentifier::GetPublicKey() const
+    {
+        return public_key;
+    }
+#endif
 
 #ifdef USE_ENCRYPTION
     nlohmann::json Authentifier::GetCachedProfiles() const
@@ -371,7 +414,8 @@ namespace Botcraft
                { "clientToken", "botcraft" }
         };
 
-        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/validate", "application/json; charset=utf-8", "*/*", data.dump());
+        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/validate",
+            "application/json; charset=utf-8", "*/*", "", data.dump());
 
         if (post_response.status_code != 204)
         {
@@ -388,7 +432,8 @@ namespace Botcraft
                { "clientToken", "botcraft" }
         };
 
-        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/refresh", "application/json; charset=utf-8", "*/*", data.dump());
+        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/refresh",
+            "application/json; charset=utf-8", "*/*", "", data.dump());
 
         if (post_response.status_code != 200)
         {
@@ -559,6 +604,48 @@ namespace Botcraft
         WriteCacheFile(profiles);
     }
 
+#if PROTOCOL_VERSION > 758
+    void Authentifier::UpdateCachedPlayerCertificates(const std::string& login, const std::string& private_k,
+        const std::string& public_k, const long long int& expiration) const
+    {
+        nlohmann::json profiles = GetCachedProfiles();
+
+        if (!profiles.contains(login))
+        {
+            profiles[login] = defaultCachedCredentials;
+        }
+
+        if (private_k.empty())
+        {
+            profiles[login]["certificates"]["private_key"] = nullptr;
+        }
+        else
+        {
+            profiles[login]["certificates"]["private_key"] = private_k;
+        }
+
+        if (public_k.empty())
+        {
+            profiles[login]["certificates"]["public_key"] = nullptr;
+        }
+        else
+        {
+            profiles[login]["certificates"]["public_key"] = private_k;
+        }
+
+        if (expiration == -1)
+        {
+            profiles[login]["certificates"]["expires_date"] = nullptr;
+        }
+        else
+        {
+            profiles[login]["certificates"]["expires_date"] = expiration;
+        }
+
+        WriteCacheFile(profiles);
+    }
+#endif
+
     const std::string Authentifier::GetMSAToken(const std::string& login) const
     {
         // Retrieve cached microsoft credentials
@@ -586,7 +673,7 @@ namespace Botcraft
             refresh_data += "&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient";
 
             const WebRequestResponse post_response = POSTRequest("login.live.com", "/oauth20_token.srf",
-                "application/x-www-form-urlencoded", "*/*", refresh_data);
+                "application/x-www-form-urlencoded", "*/*", "", refresh_data);
 
             // If refresh fails, remove the cache
             // file and restart the whole auth flow
@@ -648,7 +735,7 @@ namespace Botcraft
         auth_data += "&scope=XboxLive.signin%20offline_access";
 
         const WebRequestResponse post_response = POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/devicecode",
-            "application/x-www-form-urlencoded", "*/*", auth_data);
+            "application/x-www-form-urlencoded", "*/*", "", auth_data);
 
         if (post_response.status_code != 200)
         {
@@ -694,7 +781,7 @@ namespace Botcraft
             check_auth_status_data += "&device_code=" + auth_response["device_code"].get<std::string>();
 
             const WebRequestResponse post_response = POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/token",
-                "application/x-www-form-urlencoded", "*/*", check_auth_status_data);
+                "application/x-www-form-urlencoded", "*/*", "", check_auth_status_data);
 
             const nlohmann::json& status_response = post_response.response;
 
@@ -788,7 +875,7 @@ namespace Botcraft
         };
 
         const WebRequestResponse post_response = POSTRequest("user.auth.xboxlive.com", "/user/authenticate",
-            "application/json", "application/json", request_data.dump());
+            "application/json", "application/json", "", request_data.dump());
 
         if (post_response.status_code != 200)
         {
@@ -822,7 +909,7 @@ namespace Botcraft
         };
 
         const WebRequestResponse post_response = POSTRequest("xsts.auth.xboxlive.com", "/xsts/authorize",
-            "application/json", "application/json", request_data.dump());
+            "application/json", "application/json", "", request_data.dump());
 
         if (post_response.status_code != 200)
         {
@@ -858,7 +945,7 @@ namespace Botcraft
         };
 
         const WebRequestResponse post_response = POSTRequest("api.minecraftservices.com", "/authentication/login_with_xbox",
-            "application/json", "application/json", request_data.dump());
+            "application/json", "application/json", "", request_data.dump());
 
         if (post_response.status_code != 200)
         {
@@ -928,6 +1015,95 @@ namespace Botcraft
         );
         return { response["id"].get<std::string>(), response["name"].get<std::string>() };
     }
+
+#if PROTOCOL_VERSION > 758
+    const std::pair<std::string, std::string> Authentifier::GetPlayerCertificates(const std::string& login,
+        const std::string& mc_token) const
+    {
+        // Retrieve cached certificates
+        nlohmann::json cached = GetCachedCredentials(login);
+        
+        const bool invalid_cached_values = !cached.contains("certificates") || !cached["certificates"].is_object() ||
+            !cached["certificates"].contains("private_key") || !cached["certificates"]["private_key"].is_string() ||
+            !cached["certificates"].contains("public_key") || !cached["certificates"]["public_key"].is_string() ||
+            !cached["certificates"].contains("expires_date") || !cached["certificates"]["expires_date"].is_number();
+
+        if (invalid_cached_values)
+        {
+            LOG_INFO("Invalid player certificates cached data");
+        }
+
+        const bool expired = !invalid_cached_values && IsTokenExpired(cached["certificates"]["expires_date"].get<long long int>());
+
+        if (expired)
+        {
+            LOG_INFO("Player certificates expired");
+        }
+
+        // In case there is something wrong in the cached data
+        if (invalid_cached_values || expired)
+        {
+            LOG_INFO("Starting player certificates acquisition process...");
+
+            const WebRequestResponse post_response = POSTRequest("api.minecraftservices.com", "/player/certificates",
+                "application/json", "application/json", "Bearer " + mc_token, "");
+
+            if (post_response.status_code != 200)
+            {
+                LOG_ERROR("Response returned with status code " << post_response.status_code
+                    << " (" << post_response.status_message << ") during player certificates acquisition:\n"
+                    << post_response.response.dump(4));
+                return { "", "" };
+            }
+
+            const nlohmann::json& response = post_response.response;
+
+            if (!response.contains("keyPair"))
+            {
+                LOG_ERROR("Error trying to get player certificates, no keyPair in response");
+                return { "", "" };
+            }
+
+            if (!response["keyPair"].contains("privateKey"))
+            {
+                LOG_ERROR("Error trying to get player certificates, no privateKey in response");
+                return { "", "" };
+            }
+
+            if (!response["keyPair"].contains("publicKey"))
+            {
+                LOG_ERROR("Error trying to get player certificates, no publicKey in response");
+                return { "", "" };
+            }
+
+            if (!response.contains("expiresAt"))
+            {
+                LOG_ERROR("Error trying to get player certificates, no expiresAt in response");
+                return { "", "" };
+            }
+
+            std::tm t{};
+            std::stringstream s(response["expiresAt"].get<std::string>());
+            s >> std::get_time(&t, "%Y-%m-%dT%H:%M:%S");
+            if (s.fail())
+            {
+                LOG_ERROR("Error trying to get player certificates, can't parse expiresAt value");
+                return { "", "" };
+            }
+            const long long int expires_at = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::from_time_t(std::mktime(&t)).time_since_epoch()).count();
+
+            UpdateCachedPlayerCertificates(login, response["keyPair"]["privateKey"].get<std::string>(),
+                response["keyPair"]["publicKey"].get<std::string>(), expires_at
+            );
+
+            return { response["keyPair"]["privateKey"].get<std::string>(),
+                response["keyPair"]["publicKey"].get<std::string>() };
+        }
+
+        LOG_INFO("Cached player certificates still valid!");
+        return { cached["certificates"]["private_key"].get<std::string>(), cached["certificates"]["public_key"].get<std::string>()};
+    }
+#endif
 
     const WebRequestResponse Authentifier::WebRequest(const std::string& host, const std::string& raw_request) const
     {
@@ -1032,7 +1208,8 @@ namespace Botcraft
     }
 
     const WebRequestResponse Authentifier::POSTRequest(const std::string& host, const std::string& endpoint,
-        const std::string& content_type, const std::string& accept, const std::string& data) const
+        const std::string& content_type, const std::string& accept,
+        const std::string& authorization, const std::string& data) const
     {
         // Form the request. We specify the "Connection: close" header so that the
         // server will close the socket after transmitting the response. This will
@@ -1043,6 +1220,10 @@ namespace Botcraft
         raw_request += "User-Agent: C/1.0\r\n";
         raw_request += "Content-Type: " + content_type + " \r\n";
         raw_request += "Accept: " + accept + "\r\n";
+        if (!authorization.empty())
+        {
+            raw_request += "Authorization: " + authorization + "\r\n";
+        }
         raw_request += "Content-Length: " + std::to_string(data.length()) + "\r\n";
         raw_request += "Connection: close\r\n\r\n";
         raw_request += data;

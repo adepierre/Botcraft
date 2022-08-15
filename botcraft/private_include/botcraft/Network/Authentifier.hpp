@@ -35,6 +35,11 @@ namespace Botcraft
 
         const std::string& GetPlayerDisplayName() const;
 
+#if PROTOCOL_VERSION > 758
+        const std::string& GetPrivateKey() const;
+        const std::string& GetPublicKey() const;
+#endif
+
     private:
 #ifdef USE_ENCRYPTION
         /// @brief Get the content of the whole cache file
@@ -101,6 +106,16 @@ namespace Botcraft
         void UpdateCachedMC(const std::string& login, const std::string& name,
             const std::string& id, const std::string& token);
 
+#if PROTOCOL_VERSION > 758
+        /// @brief Update the cached player certificates for the given login
+        /// @param login The login we want to update the data for 
+        /// @param private_k New private key
+        /// @param public_k New public key
+        /// @param expiration New keys expiration date
+        void UpdateCachedPlayerCertificates(const std::string& login, const std::string& private_k,
+            const std::string& public_k, const long long int& expiration) const;
+#endif
+
         /// @brief Check if there is a saved credentials file and
         /// if the token is still valid. Refresh it if not.
         /// If file doesn't exist, launch auth device flow
@@ -138,6 +153,15 @@ namespace Botcraft
         const std::pair<std::string, std::string> GetMCProfile(const std::string& login, 
             const std::string& mc_token) const;
 
+#if PROTOCOL_VERSION > 758
+        /// @brief Try to get player certificates from Minecraft token
+        /// @param login Login used to store credentials in cache
+        /// @param mc_token Minecraft token
+        /// @return Pair of {private key, public key}, empty if failed
+        const std::pair<std::string, std::string> GetPlayerCertificates(const std::string& login,
+            const std::string& mc_token) const;
+#endif
+
         /// @brief Send a web request with ssl stuff
         /// @param host The host address
         /// @param raw_request The full request (header + content) as it should be sent
@@ -150,9 +174,11 @@ namespace Botcraft
         /// @param content_type Data type
         /// @param accept Accept header value
         /// @param data Actual data to send
+        /// @param authorization Optional authorization header, only if not empty
         /// @return A WebRequestResponse returned by the server
         const WebRequestResponse POSTRequest(const std::string& host, const std::string& endpoint,
-            const std::string& content_type, const std::string& accept, const std::string& data) const;
+            const std::string& content_type, const std::string& accept,
+            const std::string& authorization, const std::string& data) const;
 
         /// @brief Send a GET request with ssl stuff
         /// @param host The host address (after https:// and before the first /)
@@ -177,6 +203,11 @@ namespace Botcraft
         std::string player_display_name;
         std::string mc_access_token;
         std::string mc_player_uuid;
+
+#if PROTOCOL_VERSION > 758
+        std::string private_key;
+        std::string public_key;
+#endif
         
     };
 }
