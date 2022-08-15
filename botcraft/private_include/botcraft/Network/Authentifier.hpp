@@ -9,7 +9,7 @@ namespace Botcraft
     struct WebRequestResponse
     {
         nlohmann::json response;
-        unsigned int status_code;
+        unsigned int status_code = 0;
         std::string status_message;
     };
 
@@ -40,6 +40,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758
         const std::string& GetPrivateKey() const;
         const std::string& GetPublicKey() const;
+        const std::string& GetSignature() const;
 #endif
 
     private:
@@ -118,7 +119,8 @@ namespace Botcraft
         /// @param public_k New public key
         /// @param expiration New keys expiration date
         void UpdateCachedPlayerCertificates(const std::string& login, const std::string& private_k,
-            const std::string& public_k, const long long int& expiration) const;
+            const std::string& public_k, const std::string& signature_v1,
+            const std::string& signature_v2, const long long int& expiration) const;
 #endif
 
         /// @brief Check if there is a saved credentials file and
@@ -162,8 +164,8 @@ namespace Botcraft
         /// @brief Try to get player certificates from Minecraft token
         /// @param login Login used to store credentials in cache
         /// @param mc_token Minecraft token
-        /// @return Pair of {private key, public key}, empty if failed
-        const std::pair<std::string, std::string> GetPlayerCertificates(const std::string& login,
+        /// @return Tuple of {private key, public key, signature}, empty if failed
+        const std::tuple<std::string, std::string, std::string> GetPlayerCertificates(const std::string& login,
             const std::string& mc_token) const;
 #endif
 
@@ -213,6 +215,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758
         std::string private_key;
         std::string public_key;
+        std::string signature;
 #endif
         
     };
