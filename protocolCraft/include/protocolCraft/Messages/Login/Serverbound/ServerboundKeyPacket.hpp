@@ -37,7 +37,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 758
-        void SetHasSignature(const SaltSignature& salt_signature_)
+        void SetSaltSignature(const SaltSignature& salt_signature_)
         {
             salt_signature = salt_signature_;
         }

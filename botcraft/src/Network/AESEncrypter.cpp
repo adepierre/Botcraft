@@ -9,6 +9,12 @@
 #include <random>
 #include <chrono>
 
+#if PROTOCOL_VERSION > 758
+#include <openssl/pem.h>
+
+#include <array>
+#endif
+
 namespace Botcraft
 {
     AESEncrypter::AESEncrypter()
@@ -30,8 +36,15 @@ namespace Botcraft
         }
     }
 
-    void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_token,
-        std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_token, std::vector<unsigned char>& encrypted_shared_secret)
+
+#if PROTOCOL_VERSION < 759
+    void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce,
+        std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_nonce, std::vector<unsigned char>& encrypted_shared_secret)
+#else
+    void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce, const std::string& private_key,
+        std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_shared_secret,
+        long long int& salt, std::vector<unsigned char>& salted_nonce_signature)
+#endif
     {
         const unsigned char* pub_key_ptr = pub_key.data();
 
@@ -50,11 +63,43 @@ namespace Botcraft
         int rsa_size = RSA_size(rsa);
 
         encrypted_shared_secret = std::vector<unsigned char>(rsa_size);
-        encrypted_token = std::vector<unsigned char>(rsa_size);
-
         RSA_public_encrypt(AES_BLOCK_SIZE, raw_shared_secret.data(), encrypted_shared_secret.data(), rsa, RSA_PKCS1_PADDING);
-        RSA_public_encrypt(input_token.size(), input_token.data(), encrypted_token.data(), rsa, RSA_PKCS1_PADDING);
+#if PROTOCOL_VERSION < 759
+        // Pre-1.19 behaviour, compute encrypted nonce
+        encrypted_nonce = std::vector<unsigned char>(rsa_size);
+        RSA_public_encrypt(input_nonce.size(), input_nonce.data(), encrypted_nonce.data(), rsa, RSA_PKCS1_PADDING);
+#else
+        // 1.19+ behaviour, signature of salted nonce
+        // Generate random salt
+        salt = std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(random_gen);
+        std::array<unsigned char, 8> salt_bytes;
+        for (int i = 7; i >= 0; --i)
+        {
+            salt_bytes[i] = static_cast<unsigned char>((salt >> (8 * (7 - i))) & 0xFF);
+        }
+        // Compute salted nonce hash
+        std::array<unsigned char, SHA256_DIGEST_LENGTH> salted_hash;
+        SHA256_CTX sha256;
+        SHA256_Init(&sha256);
+        SHA256_Update(&sha256, input_nonce.data(), input_nonce.size());
+        SHA256_Update(&sha256, salt_bytes.data(), salt_bytes.size());
+        SHA256_Final(salted_hash.data(), &sha256);
 
+        // Extract signature from PEM string
+        RSA* rsa_signature = nullptr;
+        const char* c_string = private_key.c_str();
+        BIO* keybio = BIO_new_mem_buf((void*)c_string, -1);
+        rsa_signature = PEM_read_bio_RSAPrivateKey(keybio, &rsa_signature, NULL, NULL);
+        BIO_free(keybio);
+
+        // Compute signature
+        const int rsa_signature_size = RSA_size(rsa_signature);
+        salted_nonce_signature = std::vector<unsigned char>(rsa_signature_size);
+        unsigned int salted_nonce_signature_size;
+        RSA_sign(NID_sha256, salted_hash.data(), salted_hash.size(), salted_nonce_signature.data(), &salted_nonce_signature_size, rsa_signature);
+        RSA_free(rsa_signature);
+        salted_nonce_signature.resize(salted_nonce_signature_size);
+#endif
         RSA_free(rsa);
 
         encryption_context = EVP_CIPHER_CTX_new();

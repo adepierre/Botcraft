@@ -27,11 +27,11 @@ constexpr const char* file_name(const char* path)
     Botcraft::Logger& logger = Botcraft::Logger::GetInstance(); \
     if (level < logger.GetLogLevel()) \
         break; \
-    std::ostringstream s; \
-    s << logger.GetDate().rdbuf() << ' ' << Botcraft::Logger::level_strings.at(level) \
+    std::ostringstream logger_ostringstream; \
+    logger_ostringstream << logger.GetDate().rdbuf() << ' ' << Botcraft::Logger::level_strings.at(level) \
     << " [" << logger.GetThreadName(std::this_thread::get_id()) << "(" << std::this_thread::get_id() << ")] " \
     << file_name(__FILE__) << '(' << __LINE__ << "): " << osstream << '\n'; \
-    logger.Log(s.str()); \
+    logger.Log(logger_ostringstream.str()); \
 } while(0);
 
 #define LOG_TRACE(osstream) LOG(osstream, Botcraft::LogLevel::Trace)

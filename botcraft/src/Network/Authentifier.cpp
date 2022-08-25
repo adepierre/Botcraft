@@ -1091,6 +1091,7 @@ namespace Botcraft
         }
 
         // Divided by 1000 because this one is stored in ms
+        // TODO: saved in UTC, so check that comparison is not done with local time
         const bool expired = !invalid_cached_values && IsTokenExpired(cached["certificates"]["expires_date"].get<long long int>() / 1000);
 
         if (expired)
@@ -1152,28 +1153,12 @@ namespace Botcraft
                 return { "", "", "", 0 };
             }
 
-            // Convert expires date in ISO8601 to ms since epoch
-            const std::string expires_iso8601 = response["expiresAt"].get<std::string>();
-            std::tm t{};
-            std::stringstream s(expires_iso8601);
-            s >> std::get_time(&t, "%Y-%m-%dT%H:%M:%S");
-            if (s.fail())
-            {
-                LOG_ERROR("Error trying to get player certificates, can't parse expiresAt value");
-                return { "", "", "", 0 };
-            }
-            const long long int expires_sec = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::from_time_t(std::mktime(&t)).time_since_epoch()).count();
+            // Convert expires date in ISO8601 to ms since UNIX epoch
+            const long long int expires_timestamp = TimestampMilliFromISO8601(response["expiresAt"].get<std::string>());
             
-            std::vector<std::string> splitted_expires = SplitString(expires_iso8601, '.');
-            if (EndsWith(splitted_expires.back(), "Z"))
-            {
-                splitted_expires.back() = splitted_expires.back().substr(0, splitted_expires.back().size() - 1);
-            }
-            const long long int expires_ms = std::stol(splitted_expires.back()) / 1000;
-
             UpdateCachedPlayerCertificates(login, response["keyPair"]["privateKey"].get<std::string>(),
                 response["keyPair"]["publicKey"].get<std::string>(), response["publicKeySignature"].get<std::string>(),
-                response["publicKeySignatureV2"].get<std::string>(), expires_sec * 1000 + expires_ms
+                response["publicKeySignatureV2"].get<std::string>(), expires_timestamp
             );
 
             return { response["keyPair"]["privateKey"].get<std::string>(),
@@ -1183,7 +1168,7 @@ namespace Botcraft
 #else
                 response["publicKeySignatureV2"].get<std::string>(),
 #endif
-                expires_sec * 1000 + expires_ms
+                expires_timestamp
             };
         }
 

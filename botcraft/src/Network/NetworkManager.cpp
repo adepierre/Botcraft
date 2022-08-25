@@ -4,11 +4,14 @@
 #include "botcraft/Network/TCP_Com.hpp"
 #include "botcraft/Network/Authentifier.hpp"
 #include "botcraft/Network/AESEncrypter.hpp"
-#include "botcraft/Utilities/Logger.hpp"
-
 #if USE_COMPRESSION
 #include "botcraft/Network/Compression.hpp"
 #endif
+#include "botcraft/Utilities/Logger.hpp"
+#if PROTOCOL_VERSION > 758
+#include "botcraft/Utilities/StringUtilities.hpp"
+#endif
+
 
 #include "protocolCraft/BinaryReadWrite.hpp"
 #include "protocolCraft/MessageFactory.hpp"
@@ -28,10 +31,6 @@ namespace Botcraft
                 throw std::runtime_error("Error trying to authenticate on Mojang server using Microsoft auth flow");
             }
             name = authentifier->GetPlayerDisplayName();
-#if PROTOCOL_VERSION > 758
-            chat_private_key = authentifier->GetPrivateKey();
-            chat_public_key = authentifier->GetPublicKey();
-#endif
         }
         // Online mode with Mojang Account
         else if (!password.empty())
@@ -47,11 +46,7 @@ namespace Botcraft
         else
         {
             authentifier = nullptr;
-            name = login; 
-#if PROTOCOL_VERSION > 758
-            chat_private_key = "";
-            chat_public_key = "";
-#endif
+            name = login;
         }
 
         compression = -1;
@@ -77,11 +72,23 @@ namespace Botcraft
 
         state = ProtocolCraft::ConnectionState::Login;
 
-        std::shared_ptr<ProtocolCraft::ServerboundHelloPacket> loginstart_msg(new ProtocolCraft::ServerboundHelloPacket);
+        std::shared_ptr<ProtocolCraft::ServerboundHelloPacket> loginstart_msg = std::make_shared<ProtocolCraft::ServerboundHelloPacket>();
 #if PROTOCOL_VERSION < 759
         loginstart_msg->SetGameProfile(name);
 #else
         loginstart_msg->SetName(name);
+        if (authentifier)
+        {
+            ProtocolCraft::ProfilePublicKey key;
+            key.SetTimestamp(authentifier->GetKeyTimestamp());
+            key.SetKey(RSAToBytes(authentifier->GetPublicKey()));
+            key.SetSignature(DecodeBase64(authentifier->GetKeySignature()));
+
+            loginstart_msg->SetPublicKey(key);
+#if PROTOCOL_VERSION > 759
+            loginstart_msg->SetProfileId(authentifier->GetPlayerUUID());
+#endif
+        }
 #endif
         Send(loginstart_msg);
     }
@@ -89,6 +96,7 @@ namespace Botcraft
     NetworkManager::NetworkManager(const ProtocolCraft::ConnectionState constant_connection_state)
     {
         state = constant_connection_state;
+        compression = -1;
     }
 
     NetworkManager::~NetworkManager()
@@ -160,17 +168,6 @@ namespace Botcraft
         return name;
     }
 
-#if PROTOCOL_VERSION > 758
-    const std::string& NetworkManager::GetChatPublicKey() const
-    {
-        return chat_public_key;
-    }
-
-    const std::string& NetworkManager::GetChatPrivateKey() const
-    {
-        return chat_private_key;
-    }
-#endif
     void NetworkManager::WaitForNewPackets()
     {
         Logger::GetInstance().RegisterThread("NetworkPacketProcessing");
@@ -283,20 +280,38 @@ namespace Botcraft
         }
 
 #ifdef USE_ENCRYPTION
-        std::shared_ptr<AESEncrypter> encrypter = std::shared_ptr<AESEncrypter>(new AESEncrypter());
+        std::shared_ptr<AESEncrypter> encrypter = std::make_shared<AESEncrypter>();
 
-        std::vector<unsigned char> encrypted_token;
-        std::vector<unsigned char> encrypted_shared_secret;
         std::vector<unsigned char> raw_shared_secret;
+        std::vector<unsigned char> encrypted_shared_secret;
 
+#if PROTOCOL_VERSION < 759
+        std::vector<unsigned char> encrypted_nonce;
         encrypter->Init(msg.GetPublicKey(), msg.GetNonce(),
-            raw_shared_secret, encrypted_token, encrypted_shared_secret);
+            raw_shared_secret, encrypted_nonce, encrypted_shared_secret);
+#else
+        std::vector<unsigned char> salted_nonce_signature;
+        long long int salt;
+        encrypter->Init(msg.GetPublicKey(), msg.GetNonce(), authentifier->GetPrivateKey(),
+            raw_shared_secret, encrypted_shared_secret,
+            salt, salted_nonce_signature);
+#endif
 
         authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());
 
-        std::shared_ptr<ProtocolCraft::ServerboundKeyPacket> response_msg(new ProtocolCraft::ServerboundKeyPacket);
+        std::shared_ptr<ProtocolCraft::ServerboundKeyPacket> response_msg = std::make_shared<ProtocolCraft::ServerboundKeyPacket>();
         response_msg->SetKeyBytes(encrypted_shared_secret);
-        response_msg->SetNonce(encrypted_token);
+
+#if PROTOCOL_VERSION < 759
+        // Pre-1.19 behaviour, send encrypted nonce
+        response_msg->SetNonce(encrypted_nonce);
+#else
+        // 1.19+ behaviour, send salted nonce signature
+        ProtocolCraft::SaltSignature salt_signature;
+        salt_signature.SetSalt(salt);
+        salt_signature.SetSignature(salted_nonce_signature);
+        response_msg->SetSaltSignature(salt_signature);
+#endif
 
         Send(response_msg);
 

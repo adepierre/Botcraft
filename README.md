@@ -31,7 +31,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system (see [the wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - Bot control with mouse and keyboard
-- ⚠️ For 1.19+, botcraft can only connect to servers with property enforce-secure-profile set to false. Connection to servers with enforce-secure-profile=true is not supported (yet). ⚠️
+- ⚠️ For 1.19+, botcraft can connect to servers with enforce-secure-profile=true, but you'll be kicked if you send a chat message (signed chat is not implemented yet). ⚠️
 
 Available bot behaviours includes:
 - Path finding (including ladder/scaffholding climbing)
