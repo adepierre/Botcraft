@@ -168,6 +168,37 @@ namespace Botcraft
         return name;
     }
 
+    void NetworkManager::SendChatMessage(const std::string& message)
+    {
+        std::shared_ptr<ProtocolCraft::ServerboundChatPacket> chat_message = std::make_shared<ProtocolCraft::ServerboundChatPacket>();
+        chat_message->SetMessage(message);
+#if PROTOCOL_VERSION > 758
+        chat_message->SetSignedPreview(false);
+        if (authentifier)
+        {
+            long long int salt, timestamp;
+            const std::vector<unsigned char> signature = authentifier->GetMessageSignature(message, salt, timestamp);
+            if (signature.empty())
+            {
+                throw std::runtime_error("Empty chat message signature.");
+            }
+            chat_message->SetTimestamp(timestamp);
+
+            ProtocolCraft::SaltSignature salt_signature;
+            salt_signature.SetSalt(salt);
+            salt_signature.SetSignature(signature);
+
+            chat_message->SetSaltSignature(salt_signature);
+        }
+        // Offline mode, empty signature
+        else
+        {
+            chat_message->SetTimestamp(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+        }
+#endif
+        Send(chat_message);
+    }
+
     void NetworkManager::WaitForNewPackets()
     {
         Logger::GetInstance().RegisterThread("NetworkPacketProcessing");

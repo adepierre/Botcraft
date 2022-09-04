@@ -21,7 +21,7 @@ This is a "learn-by-doing" code, with some lines dating back to 2017 and never c
 
 Main features are listed below. To see the evolution of the project, check the [changelog](https://github.com/adepierre/Botcraft/wiki/Changelog).
 
-- Connection to minecraft server (both offline mode and online connection with Mojang or Microsoft account)
+- Connection to minecraft server (both offline "cracked" mode and online connection with Mojang or Microsoft account)
 - DNS server name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.19.2 supported
 - Compression
@@ -31,7 +31,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system (see [the wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - Bot control with mouse and keyboard
-- ⚠️ For 1.19+, botcraft can connect to servers with enforce-secure-profile=true, but you'll be kicked if you send a chat message (signed chat is not implemented yet). ⚠️
+- ⚠️ For 1.19.1+, botcraft can connect to servers with enforce-secure-profile=true, but you'll be kicked if you send a chat message (signed chat is only implemented on 1.19 yet). ⚠️
 
 Available bot behaviours includes:
 - Path finding (including ladder/scaffholding climbing)

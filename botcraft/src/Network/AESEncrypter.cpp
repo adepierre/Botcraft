@@ -19,6 +19,9 @@ namespace Botcraft
 {
     AESEncrypter::AESEncrypter()
     {
+        blocksize = 0;
+        encryption_context = nullptr;
+        decryption_context = nullptr;
     }
 
     AESEncrypter::~AESEncrypter()
@@ -73,7 +76,7 @@ namespace Botcraft
         // Generate random salt
         salt = std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(random_gen);
         std::array<unsigned char, 8> salt_bytes;
-        for (int i = 7; i >= 0; --i)
+        for (int i = 0; i < 8; ++i)
         {
             salt_bytes[i] = static_cast<unsigned char>((salt >> (8 * (7 - i))) & 0xFF);
         }
@@ -85,7 +88,7 @@ namespace Botcraft
         SHA256_Update(&sha256, salt_bytes.data(), salt_bytes.size());
         SHA256_Final(salted_hash.data(), &sha256);
 
-        // Extract signature from PEM string
+        // Extract signature key from PEM string
         RSA* rsa_signature = nullptr;
         const char* c_string = private_key.c_str();
         BIO* keybio = BIO_new_mem_buf((void*)c_string, -1);

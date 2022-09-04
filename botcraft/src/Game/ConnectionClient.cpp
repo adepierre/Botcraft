@@ -48,12 +48,7 @@ namespace Botcraft
     {
         if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
-            std::shared_ptr<ServerboundChatPacket> chat_message(new ServerboundChatPacket);
-            chat_message->SetMessage(msg);
-#if PROTOCOL_VERSION > 758
-            chat_message->SetTimestamp(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
-#endif
-            network_manager->Send(chat_message);
+            network_manager->SendChatMessage(msg);
         }
     }
 
@@ -61,7 +56,7 @@ namespace Botcraft
     {
         if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
         {
-            std::shared_ptr<ServerboundClientCommandPacket> status_message(new ServerboundClientCommandPacket);
+            std::shared_ptr<ServerboundClientCommandPacket> status_message = std::make_shared<ServerboundClientCommandPacket>();
             status_message->SetAction(0);
             network_manager->Send(status_message);
         }
@@ -87,7 +82,7 @@ namespace Botcraft
         // else it's processed in InventoryManager
         if (!msg.GetAccepted())
         {
-            std::shared_ptr<ServerboundContainerAckPacket> apologize_msg(new ServerboundContainerAckPacket);
+            std::shared_ptr<ServerboundContainerAckPacket> apologize_msg = std::make_shared<ServerboundContainerAckPacket>();
             apologize_msg->SetContainerId(msg.GetContainerId());
             apologize_msg->SetUid(msg.GetUid());
             apologize_msg->SetAccepted(msg.GetAccepted());
@@ -108,7 +103,7 @@ namespace Botcraft
     {
         // Confirmations have to be sent from here, as there is no
         // EntityManager with only a ConnectionClient
-        std::shared_ptr<ServerboundAcceptTeleportationPacket> confirm_msg(new ServerboundAcceptTeleportationPacket);
+        std::shared_ptr<ServerboundAcceptTeleportationPacket> confirm_msg = std::make_shared<ServerboundAcceptTeleportationPacket>();
         confirm_msg->SetId_(msg.GetId_());
 
         network_manager->Send(confirm_msg);

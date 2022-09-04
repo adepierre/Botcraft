@@ -43,6 +43,10 @@ namespace Botcraft
     Authentifier::Authentifier()
     {
         mc_player_uuid_bytes.fill(0);
+#if PROTOCOL_VERSION > 758
+        key_timestamp = 0;
+        rnd = std::mt19937(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+#endif
     }
 
     Authentifier::~Authentifier()
@@ -362,6 +366,66 @@ namespace Botcraft
     const long long int Authentifier::GetKeyTimestamp() const
     {
         return key_timestamp;
+    }
+
+    const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
+        long long int& salt, long long int& timestamp)
+    {
+#ifndef USE_ENCRYPTION
+        LOG_ERROR("Trying to compute message signature while botcraft was compiled without USE_ENCRYPTION.");
+        return {};
+#else
+        if (mc_player_uuid.empty() || private_key.empty())
+        {
+            LOG_ERROR("Trying to join a server before authentication");
+            return {};
+        }
+
+        // Generate random salt and timestamp
+        salt = std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(rnd);
+        timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        std::array<unsigned char, 8> salt_bytes;
+        std::array<unsigned char, 8> timestamp_bytes;
+
+        for (int i = 0; i < 8; ++i)
+        {
+            salt_bytes[i] = static_cast<unsigned char>((salt >> (8 * (7 - i))) & 0xFF);
+            // Signature is computed with seconds not milliseconds
+            timestamp_bytes[i] = static_cast<unsigned char>(((timestamp / 1000) >> (8 * (7 - i))) & 0xFF);
+        }
+
+        // Signature is computed with a dumb json instead of the actual string
+        const std::string jsoned_message = "{\"text\":\"" + message + "\"}";
+
+        // Compute hash
+        std::array<unsigned char, SHA256_DIGEST_LENGTH> hash;
+        SHA256_CTX sha256;
+        SHA256_Init(&sha256);
+        SHA256_Update(&sha256, salt_bytes.data(), salt_bytes.size());
+        SHA256_Update(&sha256, mc_player_uuid_bytes.data(), mc_player_uuid_bytes.size());
+        SHA256_Update(&sha256, timestamp_bytes.data(), timestamp_bytes.size());
+        SHA256_Update(&sha256, jsoned_message.data(), jsoned_message.size());
+        SHA256_Final(hash.data(), &sha256);
+
+        // Extract signature key from PEM string
+        // TODO: store RSA key so we don't have to extract it every chat message?
+        // it's not that important as you're not supposed to spam chat every ms anyway
+        RSA* rsa_signature = nullptr;
+        const char* c_string = private_key.c_str();
+        BIO* keybio = BIO_new_mem_buf((void*)c_string, -1);
+        rsa_signature = PEM_read_bio_RSAPrivateKey(keybio, &rsa_signature, NULL, NULL);
+        BIO_free(keybio);
+
+        // Compute signature
+        const int rsa_signature_size = RSA_size(rsa_signature);
+        std::vector<unsigned char> signature(rsa_signature_size);
+        unsigned int signature_size;
+        RSA_sign(NID_sha256, hash.data(), hash.size(), signature.data(), &signature_size, rsa_signature);
+        RSA_free(rsa_signature);
+        signature.resize(signature_size);
+
+        return signature;
+#endif
     }
 #endif
 

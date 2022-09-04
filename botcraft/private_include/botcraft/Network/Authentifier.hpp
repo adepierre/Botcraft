@@ -4,6 +4,10 @@
 #include <string>
 #include <array>
 
+#if PROTOCOL_VERSION > 758
+#include <random>
+#endif
+
 namespace Botcraft
 {
     struct WebRequestResponse
@@ -42,6 +46,14 @@ namespace Botcraft
         const std::string& GetPublicKey() const;
         const std::string& GetKeySignature() const;
         const long long int GetKeyTimestamp() const;
+
+        /// @brief Compute the signature of a message
+        /// @param message Message to send
+        /// @param salt Output salt used to generate the signature
+        /// @param timestamp Output timestamp in seconds used to generate the signature
+        /// @return The message signature
+        const std::vector<unsigned char> GetMessageSignature(const std::string& message,
+            long long int& salt, long long int& timestamp);
 #endif
 
     private:
@@ -218,6 +230,8 @@ namespace Botcraft
         std::string public_key;
         std::string key_signature;
         long long int key_timestamp;
+
+        std::mt19937 rnd;
 #endif
         
     };

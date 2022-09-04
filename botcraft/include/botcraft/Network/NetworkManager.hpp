@@ -28,6 +28,8 @@ namespace Botcraft
         const ProtocolCraft::ConnectionState GetConnectionState() const;
         const std::string& GetMyName() const;
 
+        void SendChatMessage(const std::string& message);
+
     private:
         void WaitForNewPackets();
         void ProcessPacket(const std::vector<unsigned char>& packet);
