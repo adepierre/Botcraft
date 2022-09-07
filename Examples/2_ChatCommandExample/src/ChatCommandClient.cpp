@@ -61,7 +61,7 @@ void ChatCommandClient::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
 #if PROTOCOL_VERSION < 760
     std::istringstream ss{ msg.GetSignedContent().GetText() };
 #else
-    std::istringstream ss{ msg.GetMessage().GetSignedBody().GetContent().GetPlain() };
+    std::istringstream ss{ msg.GetMessage_().GetSignedBody().GetContent().GetPlain() };
 #endif
     const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
 
