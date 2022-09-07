@@ -26,12 +26,6 @@ namespace Botcraft
         Authentifier();
         ~Authentifier();
 
-        /// @brief Authentication using a legacy Mojang account (login + password).
-        /// @param login Valid Mojang login
-        /// @param password Valid Mojang password
-        /// @return True if successfully authenticated, false otherwise
-        const bool AuthMojang(const std::string& login, const std::string& password);
-
         /// @brief Authentication using a Microsoft account. If
         /// login is set, use it to identify the cached credentials.
         /// @param login Login is used as key to identify the credentials in cache file
@@ -92,16 +86,6 @@ namespace Botcraft
         /// @return A tuple containing <the new token, the new name, the new uuid>, all empty if failed
         const std::tuple<std::string, std::string, std::string> ExtractMCFromResponse(const nlohmann::json& response) const;
 
-        /// @brief Check whether or not a minecraft token is still valid
-        /// @param token The token to check
-        /// @return True if token is valid, false otherwise
-        const bool IsMCTokenValid(const std::string& token) const;
-
-        /// @brief Refresh an unvalid MC token
-        /// @param token The token to refresh
-        /// @return A tuple containing <the new token, the new name, the new uuid>, all empty if failed
-        const std::tuple<std::string, std::string, std::string> RefreshMCToken(const std::string& token) const;
-
         /// @brief Check if a validity time is in the present or in the future
         /// @param t The expiration timestamp
         /// @return True if expired, false if valid
@@ -132,14 +116,6 @@ namespace Botcraft
         /// @param id New MC uuid
         void UpdateCachedMCProfile(const std::string& login, const std::string& name,
             const std::string& id) const;
-
-        /// @brief Update the cached MC data for the given login
-        /// @param login The login we want to update the data for
-        /// @param name New MC name
-        /// @param id New MC uuid
-        /// @param token New MC token
-        void UpdateCachedMC(const std::string& login, const std::string& name,
-            const std::string& id, const std::string& token);
 
 #if PROTOCOL_VERSION > 758
         /// @brief Update the cached player certificates for the given login

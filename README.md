@@ -21,7 +21,7 @@ This is a "learn-by-doing" code, with some lines dating back to 2017 and never c
 
 Main features are listed below. To see the evolution of the project, check the [changelog](https://github.com/adepierre/Botcraft/wiki/Changelog).
 
-- Connection to minecraft server (both offline "cracked" mode and online connection with Mojang or Microsoft account)
+- Connection to minecraft server (both offline "cracked" mode and online connection with ~~Mojang~~ or Microsoft account)
 - DNS server name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.19.2 supported
 - Compression
@@ -119,7 +119,7 @@ Botcraft has multiple ``XXXClient`` classes you can inherit from depending on wh
 
 ## Connection
 
-Botcraft supports both servers in offline and online mode. If the server is in online mode, a valid account (Mojang while they still work or Microsoft) owning the game is required. Detailed information about how to connect with Mojang or Microsoft accounts can be found in the [wiki page](https://github.com/adepierre/Botcraft/wiki/Connection).
+Botcraft supports both servers in offline ("cracked") and online mode. If the server is in online mode, a valid Microsoft account (Mojang account are not valid anymore) owning the game is required. Detailed information about how to connect with offline or  Microsoft accounts can be found in the [wiki page](https://github.com/adepierre/Botcraft/wiki/Connection).
 
 ## License
 

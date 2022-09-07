@@ -54,90 +54,6 @@ namespace Botcraft
 
     }
 
-    const bool Authentifier::AuthMojang(const std::string& login, const std::string& password)
-    {
-#ifndef USE_ENCRYPTION
-        return false;
-#else
-        const nlohmann::json cached = GetCachedCredentials(login);
-        if (!cached.contains("mc_token") || !cached["mc_token"].is_string() ||
-            !cached.contains("name") || !cached["name"].is_string() ||
-            !cached.contains("id") || !cached["id"].is_string())
-        {
-            LOG_WARNING("Missing or malformed cached credentials for Mojang account with login <" << login << ">, sending credentials to get a new one...");
-        }
-        else if (!IsMCTokenValid(cached["mc_token"]))
-        {
-            LOG_INFO("Minecraft token for Mojang account with login <" << login << "> not valid. Refreshing it...");
-            std::tie(mc_access_token, player_display_name, mc_player_uuid) = RefreshMCToken(cached["mc_token"]);
-
-            UpdateCachedMC(login, player_display_name,
-                mc_player_uuid, mc_access_token);
-            UpdateUUIDBytes();
-
-            if (!mc_access_token.empty())
-            {
-                LOG_INFO("Cached Minecraft token for Mojang login <" << login << "> refreshed.");
-                return true;
-            }
-
-            LOG_WARNING("Refreshing cached Minecraft token for Mojang login <" << login << "> failed.");
-        }
-        else
-        {
-            mc_access_token = cached["mc_token"].get<std::string>();
-            player_display_name = cached["name"].get<std::string>();
-            mc_player_uuid = cached["id"].get<std::string>();
-            UpdateUUIDBytes();
-            LOG_INFO("Cached Minecraft token for login <" << login << "> still valid.");
-            return true;
-        }
-
-        LOG_INFO("Sending credentials to Mojang authentication server...");
-
-        const nlohmann::json data = {
-            {
-                "agent", {
-                    { "name", "Minecraft" },
-                    { "version", 1 }
-                }
-            },
-            { "username", login },
-            { "password", password },
-            { "clientToken", "botcraft" } // clientToken should be a "randomly generated identifier". This is totally random.
-        };
-
-        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/authenticate",
-            "application/json; charset=utf-8", "*/*", "", data.dump());
-
-        if (post_response.status_code != 200)
-        {
-            LOG_ERROR("Error during authentication, returned status code " << post_response.status_code 
-                << " (" << post_response.status_message << "):\n" 
-                << post_response.response.dump(4));
-            UpdateCachedMC(login, "", "", "");
-            return false;
-        }
-
-        const nlohmann::json& response = post_response.response;
-
-        std::tie(mc_access_token, player_display_name, mc_player_uuid) = ExtractMCFromResponse(post_response.response);
-        UpdateCachedMC(login, player_display_name,
-            mc_player_uuid, mc_access_token);
-        UpdateUUIDBytes();
-
-        if (mc_access_token.empty())
-        {
-            return false;
-        }
-        else
-        {
-            LOG_INFO("Authentication completed!");
-            return true;
-        }
-#endif
-    }
-
     const bool Authentifier::AuthMicrosoft(const std::string& login)
     {
 #ifndef USE_ENCRYPTION
@@ -542,44 +458,6 @@ namespace Botcraft
         return { response["accessToken"].get<std::string>(), profile["name"].get<std::string>(), profile["id"].get<std::string>() };
     }
 
-    const bool Authentifier::IsMCTokenValid(const std::string& token) const
-    {
-        const nlohmann::json data = {
-               { "accessToken", token },
-               { "clientToken", "botcraft" }
-        };
-
-        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/validate",
-            "application/json; charset=utf-8", "*/*", "", data.dump());
-
-        if (post_response.status_code != 204)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    const std::tuple<std::string, std::string, std::string> Authentifier::RefreshMCToken(const std::string& token) const
-    {
-        const nlohmann::json data = {
-               { "accessToken", token },
-               { "clientToken", "botcraft" }
-        };
-
-        const WebRequestResponse post_response = POSTRequest("authserver.mojang.com", "/refresh",
-            "application/json; charset=utf-8", "*/*", "", data.dump());
-
-        if (post_response.status_code != 200)
-        {
-            LOG_ERROR("Error during refreshing, returned status code " << post_response.status_code << " (" << post_response.status_message << ")\n"
-                << "Error message: " << post_response.response.dump(4));
-            return { "", "", "" };
-        }
-
-        return ExtractMCFromResponse(post_response.response);
-    }
-
     const bool Authentifier::IsTokenExpired(const long long int& t) const
     {
         return t < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -693,47 +571,6 @@ namespace Botcraft
         else
         {
             profiles[login]["id"] = id;
-        }
-
-        WriteCacheFile(profiles);
-    }
-
-    void Authentifier::UpdateCachedMC(const std::string& login,
-        const std::string& name, const std::string& id,
-        const std::string& token)
-    {
-        nlohmann::json profiles = GetCachedProfiles();
-
-        if (!profiles.contains(login))
-        {
-            profiles[login] = defaultCachedCredentials;
-        }
-
-        if (name.empty())
-        {
-            profiles[login]["name"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["name"] = name;
-        }
-
-        if (id.empty())
-        {
-            profiles[login]["id"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["id"] = id;
-        }
-
-        if (token.empty())
-        {
-            profiles[login]["mc_token"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["mc_token"] = token;
         }
 
         WriteCacheFile(profiles);

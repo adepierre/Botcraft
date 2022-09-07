@@ -17,9 +17,9 @@ namespace Botcraft
         Disconnect();
     }
 
-    void ConnectionClient::Connect(const std::string& address, const std::string& login, const std::string& password, const bool force_microsoft_account)
+    void ConnectionClient::Connect(const std::string& address, const std::string& login, const bool force_microsoft_account)
     {
-        network_manager = std::make_shared<NetworkManager>(address, login, password, force_microsoft_account);
+        network_manager = std::make_shared<NetworkManager>(address, login, force_microsoft_account);
         network_manager->AddHandler(this);
     }
 

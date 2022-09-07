@@ -18,7 +18,7 @@
 
 namespace Botcraft
 {
-    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const std::string& password, const bool force_microfost_auth)
+    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const bool force_microfost_auth)
     {
         com = nullptr;
 
@@ -29,16 +29,6 @@ namespace Botcraft
             if (!authentifier->AuthMicrosoft(login))
             {
                 throw std::runtime_error("Error trying to authenticate on Mojang server using Microsoft auth flow");
-            }
-            name = authentifier->GetPlayerDisplayName();
-        }
-        // Online mode with Mojang Account
-        else if (!password.empty())
-        {
-            authentifier = std::make_shared<Authentifier>();
-            if (!authentifier->AuthMojang(login, password))
-            {
-                throw std::runtime_error("Error trying to authenticate on Mojang server using login and password");
             }
             name = authentifier->GetPlayerDisplayName();
         }

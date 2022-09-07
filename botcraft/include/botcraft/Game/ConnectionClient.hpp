@@ -19,9 +19,8 @@ namespace Botcraft
         /// @brief Connect the client to the server at address
         /// @param address Address to connect to, as written in minecraft multiplayer window
         /// @param login If login is empty, will try to connect with a Microsoft account
-        /// @param password If password is empty and login is not, will be in offline mode. If password is given, will connect with a Mojang account.
-        /// @param force_microsoft_account If true, then Microsoft auth flow will be used, no matter what login/password are set to
-        void Connect(const std::string& address, const std::string& login, const std::string& password, const bool force_microsoft_account = false);
+        /// @param force_microsoft_account If true, then Microsoft auth flow will be used. In this case, login is used as key to cache the credentials
+        void Connect(const std::string& address, const std::string& login, const bool force_microsoft_account = false);
         virtual void Disconnect();
 
         const bool GetShouldBeClosed() const;

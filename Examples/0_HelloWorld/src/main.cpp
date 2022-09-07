@@ -12,8 +12,7 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--login\t\tPlayer name in offline mode, login for Mojang account, empty for Microsoft account, default: BCHelloWorld\n"
-        << "\t--password\tMojang account password, empty for servers in offline mode or Microsoft account, default: empty\n"
+        << "\t--login\t\tPlayer name in offline mode, empty for Microsoft account, default: BCHelloWorld\n"
         << std::endl;
 }
 
@@ -29,7 +28,6 @@ int main(int argc, char* argv[])
 
         std::string address = "127.0.0.1:25565";
         std::string login = "BCHelloWorld";
-        std::string password = "";
 
         if (argc == 1)
         {
@@ -69,24 +67,12 @@ int main(int argc, char* argv[])
                     return 1;
                 }
             }
-            else if (arg == "--password")
-            {
-                if (i + 1 < argc)
-                {
-                    password = argv[++i];
-                }
-                else
-                {
-                    LOG_FATAL("--password requires an argument");
-                    return 1;
-                }
-            }
         }
 
         Botcraft::ConnectionClient client;
 
         LOG_INFO("Starting connection process");
-        client.Connect(address, login, password);
+        client.Connect(address, login);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         client.SendChatMessage("Hello world!");
