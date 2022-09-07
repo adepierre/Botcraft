@@ -368,8 +368,14 @@ namespace Botcraft
         return key_timestamp;
     }
 
+#if PROTOCOL_VERSION < 760
     const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
         long long int& salt, long long int& timestamp)
+#else
+    const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
+        const std::vector<unsigned char>& previous_signature, const std::vector<ProtocolCraft::LastSeenMessagesEntry>& last_seen,
+        long long int& salt, long long int& timestamp)
+#endif
     {
 #ifndef USE_ENCRYPTION
         LOG_ERROR("Trying to compute message signature while botcraft was compiled without USE_ENCRYPTION.");
@@ -394,22 +400,54 @@ namespace Botcraft
             timestamp_bytes[i] = static_cast<unsigned char>(((timestamp / 1000) >> (8 * (7 - i))) & 0xFF);
         }
 
+        std::array<unsigned char, SHA256_DIGEST_LENGTH> signature_hash;
+#if PROTOCOL_VERSION < 760
         // Signature is computed with a dumb json instead of the actual string
         const std::string jsoned_message = "{\"text\":\"" + message + "\"}";
 
         // Compute hash
-        std::array<unsigned char, SHA256_DIGEST_LENGTH> hash;
         SHA256_CTX sha256;
         SHA256_Init(&sha256);
         SHA256_Update(&sha256, salt_bytes.data(), salt_bytes.size());
         SHA256_Update(&sha256, mc_player_uuid_bytes.data(), mc_player_uuid_bytes.size());
         SHA256_Update(&sha256, timestamp_bytes.data(), timestamp_bytes.size());
         SHA256_Update(&sha256, jsoned_message.data(), jsoned_message.size());
-        SHA256_Final(hash.data(), &sha256);
+        SHA256_Final(signature_hash.data(), &sha256);
+#else
+        const unsigned char const_byte_70 = 70;
 
+        // Body hash
+        std::array<unsigned char, SHA256_DIGEST_LENGTH> body_hash;
+        SHA256_CTX body_sha256;
+        SHA256_Init(&body_sha256);
+        SHA256_Update(&body_sha256, salt_bytes.data(), salt_bytes.size());
+        SHA256_Update(&body_sha256, timestamp_bytes.data(), timestamp_bytes.size());
+        SHA256_Update(&body_sha256, message.data(), message.size());
+        SHA256_Update(&body_sha256, &const_byte_70, 1);
+        // All previously seen messages
+        for (int i = 0; i < last_seen.size(); ++i)
+        {
+            SHA256_Update(&body_sha256, &const_byte_70, 1);
+            SHA256_Update(&body_sha256, last_seen[i].GetProfileId().data(), last_seen[i].GetProfileId().size());
+            SHA256_Update(&body_sha256, last_seen[i].GetLastSignature().data(), last_seen[i].GetLastSignature().size());
+        }
+        SHA256_Final(body_hash.data(), &body_sha256);
+
+
+        // Signature hash
+        SHA256_CTX sha256;
+        SHA256_Init(&sha256);
+        if (!previous_signature.empty())
+        {
+            SHA256_Update(&sha256, previous_signature.data(), previous_signature.size());
+        }
+        SHA256_Update(&sha256, mc_player_uuid_bytes.data(), mc_player_uuid_bytes.size());
+        SHA256_Update(&sha256, body_hash.data(), body_hash.size());
+        SHA256_Final(signature_hash.data(), &sha256);
+#endif
         // Extract signature key from PEM string
         // TODO: store RSA key so we don't have to extract it every chat message?
-        // it's not that important as you're not supposed to spam chat every ms anyway
+        // it's not that important as you're not supposed to spam chat hundreds of times per second anyway
         RSA* rsa_signature = nullptr;
         const char* c_string = private_key.c_str();
         BIO* keybio = BIO_new_mem_buf((void*)c_string, -1);
@@ -420,7 +458,7 @@ namespace Botcraft
         const int rsa_signature_size = RSA_size(rsa_signature);
         std::vector<unsigned char> signature(rsa_signature_size);
         unsigned int signature_size;
-        RSA_sign(NID_sha256, hash.data(), hash.size(), signature.data(), &signature_size, rsa_signature);
+        RSA_sign(NID_sha256, signature_hash.data(), signature_hash.size(), signature.data(), &signature_size, rsa_signature);
         RSA_free(rsa_signature);
         signature.resize(signature_size);
 

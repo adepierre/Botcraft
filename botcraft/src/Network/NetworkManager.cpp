@@ -177,18 +177,36 @@ namespace Botcraft
         if (authentifier)
         {
             long long int salt, timestamp;
-            const std::vector<unsigned char> signature = authentifier->GetMessageSignature(message, salt, timestamp);
+            std::vector<unsigned char> signature;
+#if PROTOCOL_VERSION < 760
+            signature = authentifier->GetMessageSignature(message, salt, timestamp);
+#else
+            ProtocolCraft::LastSeenMessagesUpdate last_seen_update;
+            {
+                std::lock_guard<std::mutex> lock_messages(mutex_chat);
+                last_seen_update.SetLastSeen({ last_seen.begin(), last_seen.begin() + std::min(static_cast<int>(last_seen.size()), 5) });
+                signature = authentifier->GetMessageSignature(message, last_signature_sent, last_seen_update.GetLastSeen(), salt, timestamp);
+                // Update last signature with current one for the next message
+                last_signature_sent = signature;
+            }
+#endif
             if (signature.empty())
             {
                 throw std::runtime_error("Empty chat message signature.");
             }
             chat_message->SetTimestamp(timestamp);
 
+#if PROTOCOL_VERSION < 760
             ProtocolCraft::SaltSignature salt_signature;
             salt_signature.SetSalt(salt);
             salt_signature.SetSignature(signature);
 
             chat_message->SetSaltSignature(salt_signature);
+#else
+            chat_message->SetSalt(salt);
+            chat_message->SetSignature(signature);
+            chat_message->SetLastSeenMessages(last_seen_update);
+#endif
         }
         // Offline mode, empty signature
         else
@@ -287,6 +305,31 @@ namespace Botcraft
         process_condition.notify_all();
     }
 
+#if PROTOCOL_VERSION > 759
+    void NetworkManager::NewMessageSeen(const ProtocolCraft::LastSeenMessagesEntry& header)
+    {
+        std::lock_guard<std::mutex> lock_messages(mutex_chat);
+
+        // Push new header in front
+        last_seen.push_front(header);
+
+        // Remove old messages from the same player
+        for (int i = 1; i < last_seen.size(); ++i)
+        {
+            if (last_seen[i].GetProfileId() == header.GetProfileId())
+            {
+                last_seen.erase(last_seen.begin() + i);
+            }
+        }
+
+        // Limit the size to 5 messages
+        while (last_seen.size() > 5)
+        {
+            last_seen.pop_back();
+        }
+    }
+#endif
+
     void NetworkManager::Handle(ProtocolCraft::Message& msg)
     {
 
@@ -376,6 +419,24 @@ namespace Botcraft
             return;
         }
 #endif
+    }
+#endif
+
+#if PROTOCOL_VERSION > 759
+    void NetworkManager::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
+    {
+        ProtocolCraft::LastSeenMessagesEntry last_seen;
+        last_seen.SetLastSignature(msg.GetMessage_().GetHeaderSignature());
+        last_seen.SetProfileId(msg.GetMessage_().GetSignedHeader().GetSender());
+        NewMessageSeen(last_seen);
+    }
+
+    void NetworkManager::Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& msg)
+    {
+        ProtocolCraft::LastSeenMessagesEntry last_seen;
+        last_seen.SetLastSignature(msg.GetHeaderSignature());
+        last_seen.SetProfileId(msg.GetHeader().GetSender());
+        NewMessageSeen(last_seen);
     }
 #endif
 }

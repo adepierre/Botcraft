@@ -95,7 +95,7 @@ namespace ProtocolCraft
             output["last_seen"] = nlohmann::json::array();
             for (int i = 0; i < last_seen.size(); ++i)
             {
-                output.push_back(last_seen[i].Serialize());
+                output["last_seen"].push_back(last_seen[i].Serialize());
             }
 
 

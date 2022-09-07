@@ -25,13 +25,13 @@ Main features are listed below. To see the evolution of the project, check the [
 - DNS server name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.19.2 supported
 - Compression
+- Signed chat system for 1.19+ versions
 - Physics and collisions
 - World data
 - Full entity support (type, data and metadata)
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system (see [the wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - Bot control with mouse and keyboard
-- ⚠️ For 1.19.1+, botcraft can connect to servers with enforce-secure-profile=true, but you'll be kicked if you send a chat message (signed chat is only implemented on 1.19 yet). ⚠️
 
 Available bot behaviours includes:
 - Path finding (including ladder/scaffholding climbing)

@@ -34,6 +34,9 @@ namespace Botcraft
         void WaitForNewPackets();
         void ProcessPacket(const std::vector<unsigned char>& packet);
         void OnNewRawData(const std::vector<unsigned char>& packet);
+#if PROTOCOL_VERSION > 759
+        void NewMessageSeen(const ProtocolCraft::LastSeenMessagesEntry& header);
+#endif
 
 
         virtual void Handle(ProtocolCraft::Message& msg) override;
@@ -43,6 +46,10 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg) override;
 #if PROTOCOL_VERSION > 340
         virtual void Handle(ProtocolCraft::ClientboundCustomQueryPacket& msg) override;
+#endif
+#if PROTOCOL_VERSION > 759
+        virtual void Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& msg) override;
 #endif
 
     private:
@@ -62,6 +69,12 @@ namespace Botcraft
         std::mutex mutex_send;
 
         std::string name;
+
+#if PROTOCOL_VERSION > 759
+        std::mutex mutex_chat;
+        std::vector<unsigned char> last_signature_sent;
+        std::deque<ProtocolCraft::LastSeenMessagesEntry> last_seen;
+#endif
 
     };
 }

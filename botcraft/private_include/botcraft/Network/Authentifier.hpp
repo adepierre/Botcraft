@@ -7,6 +7,9 @@
 #if PROTOCOL_VERSION > 758
 #include <random>
 #endif
+#if PROTOCOL_VERSION > 759
+#include "protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp"
+#endif
 
 namespace Botcraft
 {
@@ -47,13 +50,26 @@ namespace Botcraft
         const std::string& GetKeySignature() const;
         const long long int GetKeyTimestamp() const;
 
+#if PROTOCOL_VERSION < 760
         /// @brief Compute the signature of a message
         /// @param message Message to send
         /// @param salt Output salt used to generate the signature
-        /// @param timestamp Output timestamp in seconds used to generate the signature
+        /// @param timestamp Output timestamp in ms used to generate the signature
         /// @return The message signature
         const std::vector<unsigned char> GetMessageSignature(const std::string& message,
             long long int& salt, long long int& timestamp);
+#else
+        /// @brief Compute the signature of a message
+        /// @param message Message to send
+        /// @param previous_signature Signature of the previous message sent
+        /// @param last_seen Vector of previously received messages from players
+        /// @param salt Output salt used to generate the signature
+        /// @param timestamp Output timestamp in ms used to generate the signature
+        /// @return The message signature
+        const std::vector<unsigned char> GetMessageSignature(const std::string& message,
+            const std::vector<unsigned char>& previous_signature, const std::vector<ProtocolCraft::LastSeenMessagesEntry>& last_seen,
+            long long int& salt, long long int& timestamp);
+#endif
 #endif
 
     private:

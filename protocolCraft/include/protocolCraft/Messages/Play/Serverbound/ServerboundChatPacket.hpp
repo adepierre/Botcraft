@@ -71,7 +71,17 @@ namespace ProtocolCraft
         }
 
 #else
+        void SetSalt(const long long int salt_)
+        {
+            salt = salt_;
+        }
+
+        void SetSignature(const std::vector<unsigned char>& signature_)
+        {
+            signature = signature_;
+        }
 #endif
+
         void SetSignedPreview(const bool signed_preview_)
         {
             signed_preview = signed_preview_;
@@ -103,7 +113,17 @@ namespace ProtocolCraft
             return salt_signature;
         }
 #else
+        const long long int GetSalt() const
+        {
+            return salt;
+        }
+
+        const std::vector<unsigned char>& GetSignature() const
+        {
+            return signature;
+        }
 #endif
+
         const bool GetSignedPreview() const
         {
             return signed_preview;

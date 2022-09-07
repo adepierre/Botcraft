@@ -114,7 +114,7 @@ namespace ProtocolCraft
         }
 
 
-        const PlayerChatMessage& GetMessage() const
+        const PlayerChatMessage& GetMessage_() const
         {
             return message;
         }
