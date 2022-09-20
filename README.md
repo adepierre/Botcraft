@@ -1,4 +1,6 @@
-![Linux](https://github.com/adepierre/Botcraft/workflows/Linux/badge.svg) ![Windows](https://github.com/adepierre/Botcraft/workflows/Windows/badge.svg)
+![Linux](https://github.com/adepierre/Botcraft/workflows/Linux/badge.svg)
+![Windows](https://github.com/adepierre/Botcraft/workflows/Windows/badge.svg)
+[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/wECVsTbjA9)
 
 # Botcraft
 
@@ -86,7 +88,7 @@ make all
 
 At this point, you should have all the examples compiled and ready to run. Plese note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual.
 
-You can check [this discussion](https://github.com/adepierre/Botcraft/discussions/45#discussioncomment-1142555) for an example of how to use botcraft with your own code.
+You can check [this discussion](https://github.com/adepierre/Botcraft/discussions/45#discussioncomment-1142555) for an example of how to use botcraft with your own code. In case you need help, you can try to ask on the [community discord server](https://discord.gg/wECVsTbjA9).
 
 There are several cmake options you can modify:
 - GAME_VERSION [1.XX.X or latest]
