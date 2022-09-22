@@ -26,7 +26,7 @@ if(NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/custom/")
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/custom/")
         file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/custom/" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/custom/")
     endif()
-    
+
     file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/previous_custom_files.txt" previous_custom_files)
     foreach(previous_file IN LISTS previous_custom_files)
         string(REGEX MATCH "^[^\\]+" file_version "${previous_file}")
@@ -59,7 +59,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
         message(STATUS "Copying minecraft block textures...")
         file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/block" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures")
     endif()
-    
+
     # Entities
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft/textures/entity" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/textures/entity")
         message(STATUS "Copying minecraft entity textures...")

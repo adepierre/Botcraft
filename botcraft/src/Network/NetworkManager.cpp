@@ -47,13 +47,13 @@ namespace Botcraft
         //Start the thread to process the incoming packets
         m_thread_process = std::thread(&NetworkManager::WaitForNewPackets, this);
 
-        com = std::shared_ptr<TCP_Com>(new TCP_Com(address, std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1)));
+        com = std::make_shared<TCP_Com>(address, std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1));
 
         //Let some time to initialize the communication before actually send data
         // TODO: make this in a cleaner way?
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        std::shared_ptr<ProtocolCraft::ServerboundClientIntentionPacket> handshake_msg(new ProtocolCraft::ServerboundClientIntentionPacket);
+        std::shared_ptr<ProtocolCraft::ServerboundClientIntentionPacket> handshake_msg = std::make_shared<ProtocolCraft::ServerboundClientIntentionPacket>();
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
         handshake_msg->SetHostName(com->GetIp());
         handshake_msg->SetPort(com->GetPort());
@@ -388,7 +388,7 @@ namespace Botcraft
 
     void NetworkManager::Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg)
     {
-        std::shared_ptr<ProtocolCraft::ServerboundKeepAlivePacket> keep_alive_msg(new ProtocolCraft::ServerboundKeepAlivePacket);
+        std::shared_ptr<ProtocolCraft::ServerboundKeepAlivePacket> keep_alive_msg = std::make_shared<ProtocolCraft::ServerboundKeepAlivePacket>();
         keep_alive_msg->SetId_(msg.GetId_());
         Send(keep_alive_msg);
     }
