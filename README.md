@@ -1,5 +1,4 @@
-![Linux](https://github.com/adepierre/Botcraft/workflows/Linux/badge.svg)
-![Windows](https://github.com/adepierre/Botcraft/workflows/Windows/badge.svg)
+![Build status](https://github.com/adepierre/Botcraft/workflows/build/badge.svg)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/wECVsTbjA9)
 
 # Botcraft

@@ -41,8 +41,8 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Install GLFW deps
+        if: ${{ matrix.config.name == 'Linux' }}
         run: sudo apt install -y xorg-dev
-        if: ${{ matrix.config.os }} == 'ubuntu-latest'
 
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
