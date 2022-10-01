@@ -7,6 +7,8 @@ Botcraft is a cross-platform C++ library to connect and interact with Minecraft 
 
 This is a "learn-by-doing" code, with some lines dating back to 2017 and never changed since. A lot of things should be improved or refactored. I only code this on my free time, when I feel like it, so don't expect it to be a fully-featured commercial grade library. I share the code because I think it can be interesting for other people, but the goal is not to make it a widely adopted library, or even a useful one. I just do it for fun, it's more a shared private repo than a real team open source project. If you're looking for more features, there are alternative libraries by people with much more time (and probably talent) than myself.
 
+Precompiled binaries for the latest game version can be found in the [latest release](https://github.com/adepierre/Botcraft/releases/tag/latest) for both Windows and Linux. To compile it yourself, you can check the [Building](#building) section.
+
 ## Content
 
   * [Features](#features)
@@ -74,8 +76,6 @@ Optional dependencies (can be disabled with cmake options)
 The code is cross-platform and requires a C++17 compiler, as well as git. ProtocolCraft only requires a C++11 compiler.
 
 ## Building
-
-Precompiled binaries for the latest game version can be found in the [latest release](https://github.com/adepierre/Botcraft/releases/tag/latest) for both Windows and Linux.
 
 To build the library yourself, with both encryption and compression support, but without OpenGL rendering support:
 ```
