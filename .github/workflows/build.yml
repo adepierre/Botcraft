@@ -138,7 +138,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: linux/botcraft.zip
-          asset_name: botcraft-linux-${{ needs.build.outputs.Linux }}
+          asset_name: botcraft-linux-${{ needs.build.outputs.Linux }}.zip
           tag: latest
 
       - name: Download Windows artifact
