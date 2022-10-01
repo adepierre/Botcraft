@@ -1,7 +1,9 @@
 #Add zlib library
 
 # We first try to find zlib in the system
-find_package(ZLIB QUIET)
+if (NOT BOTCRAFT_FORCE_LOCAL_ZLIB)
+    find_package(ZLIB QUIET)
+endif()
 
 # If not found, build from sources
 if(NOT TARGET ZLIB::ZLIB)
@@ -23,7 +25,7 @@ if(NOT TARGET ZLIB::ZLIB)
         COMMAND "${CMAKE_COMMAND}" "${ZLIB_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=install" "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
         WORKING_DIRECTORY "${ZLIB_BUILD_PATH}")
 
-    execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY "${ZLIB_BUILD_PATH}")
+    execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--parallel" "2" "--config" "Release" WORKING_DIRECTORY "${ZLIB_BUILD_PATH}")
 
     # Find the freshly built library
 

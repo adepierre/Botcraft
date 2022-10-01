@@ -1,5 +1,6 @@
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/Block.hpp"
@@ -23,6 +24,12 @@ namespace Botcraft
 
     AssetsManager::AssetsManager()
     {
+        std::filesystem::path expected_mc_path = ASSETS_PATH + std::string("/minecraft");
+        if (!std::filesystem::is_directory(expected_mc_path))
+        {
+            LOG_FATAL("Minecraft assets folder expected at " << std::filesystem::absolute(expected_mc_path) << " but not found");
+            throw std::runtime_error("Minecraft assets not found");
+        }
         LOG_INFO("Loading blocks from file...");
         LoadBlocksFile();
         LOG_INFO("Done!");

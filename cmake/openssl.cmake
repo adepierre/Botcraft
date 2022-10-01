@@ -1,5 +1,7 @@
 # We first try to find OpenSSL in the system
-find_package(OpenSSL QUIET)
+if(NOT BOTCRAFT_FORCE_LOCAL_OPENSSL)
+    find_package(OpenSSL QUIET)
+endif()
 
 set(OPENSSL_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/openssl")
 set(OPENSSL_BUILD_PATH "${CMAKE_CURRENT_BINARY_DIR}/3rdparty/openssl")
@@ -24,7 +26,7 @@ if (NOT OPENSSL_FOUND AND RES_LEN EQUAL 0)
         COMMAND "${CMAKE_COMMAND}" "${OPENSSL_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=install" "-DWITH_APPS=OFF" "-DCPACK_SOURCE_7Z=OFF" "-DCPACK_SOURCE_ZIP=OFF" "-DMSVC_RUNTIME=dynamic" "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
         WORKING_DIRECTORY "${OPENSSL_BUILD_PATH}")
 
-    execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY "${OPENSSL_BUILD_PATH}")
+    execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--parallel" "2" "--config" "Release" WORKING_DIRECTORY "${OPENSSL_BUILD_PATH}")
     set(OPENSSL_FOUND ON CACHE INTERNAL "")
 endif()
 

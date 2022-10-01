@@ -1,0 +1,157 @@
+name: Build
+
+on: 
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.md'
+      - 'Assets/'
+      - 'Visuals/'
+      - '.gitignore'
+      - 'LICENSE'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      matrix:
+        config:
+        - {
+            name: "Windows",
+            os: windows-latest,
+            generator: "Visual Studio 17 2022"
+            
+          }
+        - {
+            name: "Linux",
+            os: ubuntu-latest,
+            generator: "Unix Makefiles"
+          }
+
+    outputs:
+      Windows: ${{ steps.update-output.outputs.Windows }}
+      Linux: ${{ steps.update-output.outputs.Linux }}
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install GLFW deps
+        run: sudo apt install -y xorg-dev
+        if: ${{ matrix.config.os }} == 'ubuntu-latest'
+
+      - name: Create build folder
+        run: cmake -E make_directory ${{ runner.workspace }}/build
+
+      - name: Configure cmake
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: >
+          cmake -G "${{ matrix.config.generator }}"
+          -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+          -DGAME_VERSION=latest
+          -DBOTCRAFT_USE_OPENGL_GUI=ON
+          -DBOTCRAFT_USE_IMGUI=ON
+          -DBOTCRAFT_COMPRESSION=ON
+          -DBOTCRAFT_ENCRYPTION=ON
+          -DBOTCRAFT_BUILD_EXAMPLES=ON
+          -DBOTCRAFT_WINDOWS_BETTER_SLEEP=ON
+          -DBOTCRAFT_FORCE_LOCAL_ZLIB=ON
+          -DBOTCRAFT_FORCE_LOCAL_OPENSSL=ON
+          -DBOTCRAFT_FORCE_LOCAL_GLFW=ON
+          -DBOTCRAFT_FORCE_LOCAL_GLAD=ON
+          -DBOTCRAFT_DONWLOAD_MC_ASSETS=OFF
+          -DCMAKE_INSTALL_PREFIX=install/botcraft
+          -S $GITHUB_WORKSPACE
+          -B .
+
+      - name: Build
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --build . --config $BUILD_TYPE --parallel 2 --target install
+
+      - name: Create artifact archive
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build/install
+        run: cmake -E tar "cf" "botcraft.zip" --format=zip botcraft/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: botcraft-${{ matrix.config.name }}
+          path: ${{ runner.workspace }}/build/install/botcraft.zip
+          retention-days: 1
+
+      - name: Retrieve MC game version
+        id: mc-version
+        uses: juliangruber/read-file-action@v1
+        with:
+          path:
+            ${{ runner.workspace }}/build/version.txt
+
+      - name: Set output version
+        id: update-output
+        run: echo "::set-output name=${{ matrix.config.name }}::${{ steps.mc-version.outputs.content }}"
+
+  update_latest:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Remove old latest release
+        uses: cb80/delrel@latest
+        with:
+          tag: latest
+
+      - name: Update latest tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create new latest release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            Automatically built library with the latest version of the code for Minecraft ${{ needs.build.outputs.Windows }} and all options enabled. Examples are in ``bin`` folder. If you want to run any example other than 0_HelloWorld and 3_SimpleAFKExample, you first need to run the provided ``download_mc_assets`` script to automatically populate the ``Assets`` folder by downloading and extracting the official Minecraft client.
+            
+            If you're on Windows < 10, the script wont work and you'll have to do it manually as curl and tar commands have only been added recently.
+            Linux version is compiled using Ubuntu with all dependencies included and should work on other distributions. You might have to install the unzip command to run the script though.
+          draft: false
+          prerelease: false
+          name: Latest
+          tag_name: latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: botcraft-Linux
+          path: linux
+
+      - name: Upload Linux file to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: linux/botcraft.zip
+          asset_name: botcraft-linux-${{ needs.build.outputs.Linux }}
+          tag: latest
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: botcraft-Windows
+          path: windows
+
+      - name: Upload Windows file to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: windows/botcraft.zip
+          asset_name: botcraft-windows-${{ needs.build.outputs.Windows }}.zip
+          tag: latest
+

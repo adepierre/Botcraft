@@ -76,7 +76,9 @@ The code is cross-platform and requires a C++17 compiler, as well as git. Protoc
 
 ## Building
 
-To build the library for the latest version of the game with both encryption and compression support, but without OpenGL rendering support:
+Precompiled binaries for the latest game version can be found in the [latest release](https://github.com/adepierre/Botcraft/releases/tag/latest) for both Windows and Linux.
+
+To build the library yourself, with both encryption and compression support, but without OpenGL rendering support:
 ```
 git clone https://github.com/adepierre/Botcraft.git
 cd Botcraft

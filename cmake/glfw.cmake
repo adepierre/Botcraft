@@ -1,7 +1,9 @@
 #Add GLFW library
 
 # We first try to find glfw in the system
-find_package(glfw3 3.3 QUIET)
+if(NOT BOTCRAFT_FORCE_LOCAL_GLFW)
+    find_package(glfw3 3.3 QUIET)
+endif()
 
 # If not found, build from sources
 if(NOT TARGET glfw)
@@ -24,7 +26,7 @@ if(NOT TARGET glfw)
         COMMAND "${CMAKE_COMMAND}" "${GLFW_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}" "-DCMAKE_BUILD_TYPE=Release" "-DGLFW_BUILD_EXAMPLES=OFF" "-DGLFW_BUILD_TESTS=OFF" "-DGLFW_BUILD_DOCS=OFF" "-DGLFW_INSTALL=ON" "-DCMAKE_INSTALL_PREFIX=install" 
         WORKING_DIRECTORY "${GLFW_BUILD_PATH}")
 
-    execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--config" "Release" WORKING_DIRECTORY "${GLFW_BUILD_PATH}")
+    execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--parallel" "2" "--config" "Release" WORKING_DIRECTORY "${GLFW_BUILD_PATH}")
 
     # Find the freshly built library
     find_package(glfw3 3.3 REQUIRED PATHS "${GLFW_BUILD_PATH}/install/lib/cmake/glfw3")

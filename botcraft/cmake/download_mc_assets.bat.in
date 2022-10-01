@@ -1,0 +1,16 @@
+if exist Assets\${GAME_VERSION}\minecraft\ (
+    echo Minecraft ${GAME_VERSION} assets already downloaded
+) else (
+    echo Downloading Minecraft ${GAME_VERSION} assets...
+    mkdir Assets\${GAME_VERSION}\minecraft\
+    mkdir tmp
+    Rem Download ${GAME_VERSION} client file
+    curl.exe --output tmp\client.jar --url ${VERSION_CLIENTURL}
+    Rem Extract the following folders from the jar file: assets/minecraft/blockstates assets/minecraft/models/block assets/minecraft/textures/block assets/minecraft/textures/entity
+    tar.exe -x -f tmp\client.jar -C tmp assets/minecraft/blockstates assets/minecraft/models/block assets/minecraft/textures/block assets/minecraft/textures/entity
+    Rem copy the folders to correct destination
+    xcopy /s tmp\assets\minecraft\ Assets\${GAME_VERSION}\minecraft\
+    Rem clean
+    rmdir /s /q tmp
+    echo Done!
+)

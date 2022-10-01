@@ -499,6 +499,12 @@ endif(MSVC)
 # Set version header
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/include/botcraft/Version.hpp")
 
+if (WIN32)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/download_mc_assets.bat.in" "${CMAKE_CURRENT_BINARY_DIR}/download_mc_assets.bat")
+else()
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/download_mc_assets.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/download_mc_assets.sh")
+endif (WIN32)
+
 # Add include folders
 target_include_directories(botcraft 
     PUBLIC 
@@ -575,7 +581,21 @@ install(TARGETS botcraft
     LIBRARY DESTINATION "${CMAKE_INSTALL_BINDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
-    
+
+if (NOT BOTCRAFT_DONWLOAD_MC_ASSETS)
+    if (WIN32)
+        install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/download_mc_assets.bat"
+            DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        )
+    else()
+        install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/download_mc_assets.sh"
+            DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        )
+    endif (WIN32)
+endif(NOT BOTCRAFT_DONWLOAD_MC_ASSETS)
+
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/botcraft"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
@@ -615,9 +635,16 @@ export(EXPORT botcraft-targets
 )
 
 # Copy asset files into install binary folder
-install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}"
-    DESTINATION "${CMAKE_INSTALL_BINDIR}/Assets"
-)
+if (BOTCRAFT_DONWLOAD_MC_ASSETS)
+    install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}"
+        DESTINATION "${CMAKE_INSTALL_BINDIR}/Assets"
+    )
+else()
+    install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}"
+        DESTINATION "${CMAKE_INSTALL_BINDIR}/Assets"
+        PATTERN "minecraft" EXCLUDE
+    )
+endif(BOTCRAFT_DONWLOAD_MC_ASSETS)
 
 # Copy Mingw libstdc++ dll
 if(WIN32 AND MINGW)

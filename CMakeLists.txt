@@ -17,6 +17,12 @@ option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in onlin
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
 option(BOTCRAFT_WINDOWS_BETTER_SLEEP "Set to use better thread sleep on Windows" OFF)
 
+option(BOTCRAFT_FORCE_LOCAL_ZLIB "Set to true to force using a local install of zlib even if already present on the system" OFF)
+option(BOTCRAFT_FORCE_LOCAL_OPENSSL "Set to true to force using a local install of openssl even if already present on the system" OFF)
+option(BOTCRAFT_FORCE_LOCAL_GLFW "Set to true to force using a local install of glfw even if already present on the system" OFF)
+option(BOTCRAFT_FORCE_LOCAL_GLAD "Set to true to force using a local install of glad even if already present on the system" OFF)
+option(BOTCRAFT_DONWLOAD_MC_ASSETS "Download Minecraft client and copy assets next to custom ones" ON)
+
 set(BOTCRAFT_OUTPUT_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Base output build path")
 
 # Version selection stuffs
@@ -29,9 +35,13 @@ set_property(CACHE GAME_VERSION PROPERTY STRINGS ${GameVersionValues})
 if(GAME_VERSION STREQUAL "latest")
     list(GET GameVersionValues -2 GAME_VERSION)
 endif()
-    list(FIND GameVersionValues ${GAME_VERSION} game_version_index)
-    list(GET ProtocolVersionValues ${game_version_index} PROTOCOL_VERSION)
+list(FIND GameVersionValues ${GAME_VERSION} game_version_index)
+list(GET ProtocolVersionValues ${game_version_index} PROTOCOL_VERSION)
+list(GET ClientURLs "${game_version_index}" VERSION_CLIENTURL)
 message(STATUS "Selected game version: " ${GAME_VERSION} " || Protocol: " ${PROTOCOL_VERSION})
+
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/version.txt" ${GAME_VERSION})
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/protocol.txt" ${PROTOCOL_VERSION})
 
 # Do all the asset related stuffs
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/assets.cmake")
