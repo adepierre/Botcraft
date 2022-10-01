@@ -1,4 +1,4 @@
-![Build status](https://github.com/adepierre/Botcraft/workflows/build.yml/badge.svg)
+![Build status](https://github.com/adepierre/Botcraft/actions/workflows/build.yml/badge.svg)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/wECVsTbjA9)
 
 # Botcraft
