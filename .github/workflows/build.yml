@@ -97,7 +97,7 @@ jobs:
       - name: Download version artifact
         uses: actions/download-artifact@v3
         with:
-          name: version
+          name: MC-version
           path: version
 
       - name: Retrieve MC game version
