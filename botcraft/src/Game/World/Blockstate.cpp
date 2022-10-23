@@ -239,26 +239,24 @@ namespace Botcraft
     // Blockstate implementation starts here
     std::map<std::string, nlohmann::json> Blockstate::cached_jsons;
 
-#if PROTOCOL_VERSION < 347
-    Blockstate::Blockstate(const int id_, const unsigned char metadata_, 
-                           const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_, const bool custom,
-                           const float hardness_, const TintType tint_type_, const std::string &name_,
-                           const std::string &path, const std::vector<std::string> &variables_) :
-                           id(id_), metadata(metadata_), transparent(transparent_), solid(solid_), fluid(fluid_), climbable(climbable_),
-                           hardness(hardness_), tint_type(tint_type_), m_name(name_)
-#else
-    Blockstate::Blockstate(const int id_,
-                           const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_, const bool custom,
-                           const float hardness_, const TintType tint_type_, const std::string &name_,
-                           const std::string &path, const std::vector<std::string> &variables_) :
-                           id(id_), transparent(transparent_), solid(solid_), fluid(fluid_), climbable(climbable_),
-                           hardness(hardness_), tint_type(tint_type_), m_name(name_)
-#endif
+    Blockstate::Blockstate(const BlockstateProperties& properties)
     {
+        id = properties.id;
+#if PROTOCOL_VERSION < 347
+        metadata = properties.metadata;
+#endif
+        transparent = properties.transparent;
+        solid = properties.solid;
+        fluid = properties.fluid;
+        climbable = properties.climbable;
+        hardness = properties.hardness;
+        tint_type = properties.tint_type;
+        m_name = properties.name;
+
         weights_sum = 0;
         random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
 
-        if (path == "none")
+        if (properties.path == "none")
         {
             models.push_back(Model());
             models_weights.push_back(1);
@@ -266,7 +264,7 @@ namespace Botcraft
             return;
         }
 
-        if (path.empty())
+        if (properties.path.empty())
         {
             models.push_back(Model::GetModel("", false));
             models_weights.push_back(1);
@@ -277,13 +275,13 @@ namespace Botcraft
 
         std::string full_filepath;
         
-        if (custom)
+        if (properties.custom)
         {
-            full_filepath = ASSETS_PATH + std::string("/custom/blockstates/") + path + ".json";
+            full_filepath = ASSETS_PATH + std::string("/custom/blockstates/") + properties.path + ".json";
         }
         else
         {
-            full_filepath = ASSETS_PATH + std::string("/minecraft/blockstates/") + path + ".json";
+            full_filepath = ASSETS_PATH + std::string("/minecraft/blockstates/") + properties.path + ".json";
         }
 
         try
@@ -298,7 +296,7 @@ namespace Botcraft
         }
         catch (const nlohmann::json::exception& e)
         {
-            if (custom)
+            if (properties.custom)
             {
                 LOG_ERROR("Missing custom definition for " << full_filepath << '\n' << e.what());
             }
@@ -319,9 +317,9 @@ namespace Botcraft
         // We store the models in a deque for efficiency
         std::deque<Model> models_deque;
 
-        for (int i = 0; i < variables_.size(); ++i)
+        for (int i = 0; i < properties.variables.size(); ++i)
         {
-            std::vector<std::string> splitted = SplitString(variables_[i], '=');
+            std::vector<std::string> splitted = SplitString(properties.variables[i], '=');
             variables[splitted[0]] = splitted[1];
         }
 
@@ -343,7 +341,7 @@ namespace Botcraft
 
             //This case means we have to check the variables to find
             //the right variant
-            if (variables_.size() > 0 && variant_value.is_null())
+            if (properties.variables.size() > 0 && variant_value.is_null())
             {
                 int max_match = 0;
 
@@ -352,11 +350,11 @@ namespace Botcraft
                     const std::vector<std::string> variables_values = SplitString(it.key(), ',');
                     
                     int num_match = 0;
-                    for (int i = 0; i < variables_.size(); ++i)
+                    for (int i = 0; i < properties.variables.size(); ++i)
                     {
                         for (int j = 0; j < variables_values.size(); ++j)
                         {
-                            if (variables_[i] == variables_values[j])
+                            if (properties.variables[i] == variables_values[j])
                             {
                                 num_match++;
                             }
@@ -378,7 +376,7 @@ namespace Botcraft
                     for (auto& model : variant_value)
                     {
                         const int weight = WeightFromJson(model);
-                        models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(model), custom), model));
+                        models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(model), properties.custom), model));
                         models_weights.push_back(weight);
                         weights_sum += weight;
                     }
@@ -386,7 +384,7 @@ namespace Botcraft
                 else
                 {
                     const int weight = WeightFromJson(variant_value);
-                    models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(variant_value), custom), variant_value));
+                    models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(variant_value), properties.custom), variant_value));
                     models_weights.push_back(weight);
                     weights_sum += weight;
                 }
@@ -422,7 +420,7 @@ namespace Botcraft
                             const std::string model_name = ModelNameFromJson(m);
                             for (int k = 0; k < num_models; ++k)
                             {
-                                models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), m));
+                                models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, properties.custom), m));
                                 models_weights.push_back(models_weights[k] * WeightFromJson(m));
                             }
                         }
@@ -434,7 +432,7 @@ namespace Botcraft
                         const std::string model_name = ModelNameFromJson(part["apply"]);
                         for (int k = 0; k < models_deque.size(); ++k)
                         {
-                            models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, custom), part["apply"]);
+                            models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, properties.custom), part["apply"]);
                             models_weights[k] *= WeightFromJson(part["apply"]);
                         }
                     }
@@ -467,7 +465,7 @@ namespace Botcraft
                                     condition_value = std::to_string(condition_it.value().get<double>());
                                 }
 
-                                condition = CheckCondition(condition_name, condition_value, variables_);
+                                condition = CheckCondition(condition_name, condition_value, properties.variables);
                                 //If one condition in the list is not verified,
                                 //the whole condition is not
                                 if (!condition)
@@ -501,7 +499,7 @@ namespace Botcraft
                                 condition_value = std::to_string(condition_it.value().get<double>());
                             }
 
-                            condition = CheckCondition(condition_it.key(), condition_value, variables_);
+                            condition = CheckCondition(condition_it.key(), condition_value, properties.variables);
                             //If one condition in the list is not verified,
                             //the whole condition is not
                             if (!condition)
@@ -524,7 +522,7 @@ namespace Botcraft
                                 const int model_weight = WeightFromJson(m);
                                 for (int k = 0; k < num_models; ++k)
                                 {
-                                    models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, custom), m));
+                                    models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, properties.custom), m));
                                     models_weights.push_back(models_weights[k] * model_weight);
                                 }
                             }
@@ -537,7 +535,7 @@ namespace Botcraft
                             const int model_weight = WeightFromJson(part["apply"]);
                             for (int k = 0; k < models_deque.size(); ++k)
                             {
-                                models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, custom), part["apply"]);
+                                models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, properties.custom), part["apply"]);
                                 models_weights[k] *= model_weight;
                             }
                         }
@@ -552,23 +550,21 @@ namespace Botcraft
         }
         models = std::vector<Model>(std::make_move_iterator(models_deque.begin()), std::make_move_iterator(models_deque.end()));
     }
-    
-#if PROTOCOL_VERSION < 347
-    Blockstate::Blockstate(const int id_, const unsigned char metadata_,
-                           const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_,
-                           const float hardness_, const TintType tint_type_, const std::string &name_,
-                           const Model &model_) :
-                           id(id_), metadata(metadata_), transparent(transparent_),solid(solid_), climbable(climbable_),
-                           hardness(hardness_), fluid(fluid_), tint_type(tint_type_), m_name(name_)
-#else
-    Blockstate::Blockstate(const int id_,
-                           const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_,
-                           const float hardness_, const TintType tint_type_, const std::string &name_,
-                           const Model &model_) :
-                           id(id_), transparent(transparent_), solid(solid_), climbable(climbable_),
-                           hardness(hardness_), fluid(fluid_), tint_type(tint_type_), m_name(name_)
-#endif
+
+    Blockstate::Blockstate(const BlockstateProperties& properties, const Model &model_)
     {
+        id = properties.id;
+#if PROTOCOL_VERSION < 347
+        metadata = properties.metadata;
+#endif
+        transparent = properties.transparent;
+        solid = properties.solid;
+        climbable = properties.climbable;
+        hardness = properties.hardness;
+        fluid = properties.fluid;
+        tint_type = properties.tint_type;
+        m_name = properties.name;
+
         weights_sum = 1;
         random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
 

@@ -18,31 +18,38 @@ namespace Botcraft
     }
 #endif
 
+    struct BlockstateProperties
+    {
+#if PROTOCOL_VERSION < 347
+        int id = -1;
+        unsigned char metadata = 0;
+#else
+        int id = -1;
+#endif
+        bool transparent = false;//
+        bool solid = false;//
+        bool fluid = false;
+        bool climbable = false;//
+        bool custom = false;
+        float hardness = -2.0f;//
+        TintType tint_type = TintType::None;
+        std::string name = "";//
+        std::string path = "";
+        std::vector<std::string> variables = std::vector<std::string>(0);
+    };
+
     class Blockstate
     {
     public:
+        /// @brief Create a blockstate reading files from properties path
+        /// @param properties The properties of this blockstate
+        Blockstate(const BlockstateProperties& properties);
 
-#if PROTOCOL_VERSION < 347
-        Blockstate(const int id_, const unsigned char metadata_,
-                   const bool transparent_, const bool solid_,  const bool fluid_, const bool climbable_, const bool custom,
-                   const float hardness_, const TintType tint_type_, const std::string &name_,
-                   const std::string &path = "", const std::vector<std::string> &variables_ = std::vector<std::string>());
+        /// @brief Create a blockstate from a given model, ignoring path in properties
+        /// @param properties The properties of this blockstate
+        /// @param model_ The model of this blockstate
+        Blockstate(const BlockstateProperties& properties, const Model &model_);
 
-        Blockstate(const int id_, const unsigned char metadata_,
-                   const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_,
-                   const float hardness_, const TintType tint_type_, const std::string &name_,
-                   const Model &model_);
-#else
-        Blockstate(const int id_,
-                   const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_, const bool custom,
-                   const float hardness_, const TintType tint_type_, const std::string &name_,
-                   const std::string &path = "", const std::vector<std::string> &variables_ = std::vector<std::string>());
-        
-        Blockstate(const int id_,
-                   const bool transparent_, const bool solid_, const bool fluid_, const bool climbable_,
-                   const float hardness_, const TintType tint_type_, const std::string &name_,
-                   const Model &model_);
-#endif
         const unsigned int GetId() const;
 #if PROTOCOL_VERSION < 347
         const unsigned char GetMetadata() const;

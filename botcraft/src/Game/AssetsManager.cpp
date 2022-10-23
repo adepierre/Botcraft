@@ -135,10 +135,7 @@ namespace Botcraft
 
     void AssetsManager::LoadBlocksFile()
     {
-        std::unordered_map<std::string, bool> solidity;
-        std::unordered_map<std::string, bool> transparency;
-        std::unordered_map<std::string, bool> climbability;
-        std::unordered_map<std::string, float> hardness;
+        std::unordered_map<std::string, BlockstateProperties> blockstate_properties;
         std::unordered_map<std::string, std::string> textures;
         std::unordered_map<std::string, std::string> rendering;
 #if PROTOCOL_VERSION < 347
@@ -174,33 +171,22 @@ namespace Botcraft
             else
             {
                 name = info["name"];
+                blockstate_properties[name].name = name;
             }
 
-            if (!info.contains("transparent") || !info["transparent"].is_boolean())
+            if (info.contains("transparent") && info["transparent"].is_boolean())
             {
-                transparency[name] = false;
-            }
-            else
-            {
-                transparency[name] = info["transparent"];
+                blockstate_properties[name].transparent = info["transparent"];
             }
 
-            if (!info.contains("solid") || !info["solid"].is_boolean())
+            if (info.contains("solid") && info["solid"].is_boolean())
             {
-                solidity[name] = false;
-            }
-            else
-            {
-                solidity[name] = info["solid"];
+                blockstate_properties[name].solid = info["solid"];
             }
 
-            if (!info.contains("hardness") || !info["hardness"].is_number())
+            if (info.contains("hardness") && info["hardness"].is_number())
             {
-                hardness[name] = -2.0f;
-            }
-            else
-            {
-                hardness[name] = info["hardness"];
+                blockstate_properties[name].hardness = info["hardness"];
             }
 
             if (!info.contains("render") || !info["render"].is_string())
@@ -212,13 +198,9 @@ namespace Botcraft
                 rendering[name] = info["render"];
             }
 
-            if (!info.contains("climbable") || !info["climbable"].is_boolean())
+            if (info.contains("climbable") && info["climbable"].is_boolean())
             {
-                climbability[name] = false;
-            }
-            else
-            {
-                climbability[name] = info["climbable"];
+                blockstate_properties[name].climbable = info["climbable"];
             }
 
             // Get texture info (used for fluids)
@@ -300,9 +282,34 @@ namespace Botcraft
         // Add a default block
 #if PROTOCOL_VERSION < 347
         blockstates[-1];
-        blockstates[-1][0] = std::make_unique<Blockstate>(-1, 0, false, true, false, false, false, -2.0f, TintType::None, "default", "");
+        blockstates[-1][0] = std::make_unique<Blockstate>(
+            BlockstateProperties{
+                -1, //id
+                0, //metadata
+                false, //transparent
+                true, //solid
+                false, //fluid
+                false, //climbable
+                false, //custom
+                -2.0f, //hardness
+                TintType::None, //tint_type
+                "default", //name
+            }
+        );
 #else
-        blockstates[-1] = std::make_unique<Blockstate>(-1, false, true, false, false, false, -2.0f, TintType::None, "default", "");
+        blockstates[-1] = std::make_unique<Blockstate>(
+            BlockstateProperties{
+                -1, //id
+                false, //transparent
+                true, //solid
+                false, //fluid
+                false, //climbable
+                false, //custom
+                -2.0f, //hardness
+                TintType::None, //tint_type
+                "default", //name
+            }
+        );
 #endif
 
         const std::string file_path = ASSETS_PATH + std::string("/custom/Blocks.json");
@@ -330,120 +337,108 @@ namespace Botcraft
         //Load all the blockstates from JSON file
         for (auto& element : json)
         {
-            int id = -1;
-            std::string blockstate_display_name = "";
-            std::string blockstate_name = "";
+            const std::string& blockstate_name = element["name"].get<std::string>();
 
-            if (element.contains("id"))
+            if (rendering.find(blockstate_name) == rendering.end() ||
+                blockstate_properties.find(blockstate_name) == blockstate_properties.end() ||
+                tint_types.find(blockstate_name) == tint_types.end())
             {
-                id = element["id"];
-            }
-
-            if (element.contains("display_name"))
-            {
-                blockstate_display_name = element["display_name"];
-            }
-
-            if (element.contains("name"))
-            {
-                blockstate_name = element["name"];
-            }
-
-            std::string render = "block";
-            if (rendering.find(blockstate_name) == rendering.end())
-            {
-                LOG_ERROR("Error trying to get rendering information for blockstate " << blockstate_name);
+                LOG_ERROR("Error trying to get information for blockstate " << blockstate_name);
                 continue;
             }
-            else
+
+            BlockstateProperties& props = blockstate_properties[blockstate_name];
+            props.id = -1;
+            props.metadata = 0;
+            props.variables = std::vector<std::string>();
+
+            if (element.contains("id") && element["id"].is_number())
             {
-                render = rendering[blockstate_name];
+                props.id = element["id"];
             }
+
+            const std::string render = rendering[blockstate_name];
 
             if (render == "none")
             {
-                blockstates[id][0] = std::make_unique<Blockstate>(id, 0, true, false, false, false, false, -2.0f, TintType::None, blockstate_name, "none");
+                props.fluid = false;
+                props.tint_type = TintType::None;
+                props.custom = false;
+                props.path = "none";
+                blockstates[props.id][0] = std::make_unique<Blockstate>(props);
             }
             else if (render == "block" || render == "fluid" || render == "other")
             {
-                if(render == "fluid" && textures.find(blockstate_name) == textures.end())
+                if (render == "fluid" && textures.find(blockstate_name) == textures.end())
                 {
                     LOG_ERROR("Error, blockstate " << blockstate_name << " is a fluid, but it does not have a texture file specified in Blocks_info.json");
                 }
-                if (element.contains("metadata"))
+
+                if (!element.contains("metadata"))
                 {
-                    for (auto& metadata_obj : element["metadata"])
+                    LOG_ERROR("Error, no metadata found for block " << blockstate_name);
+                }
+
+                for (auto& metadata_obj : element["metadata"])
+                {
+                    props.metadata = metadata_obj["value"];
+                    props.path = metadata_obj["blockstate"];
+                    props.variables = std::vector<std::string>();
+                    if (metadata_obj.contains("variables"))
                     {
-                        unsigned char metadata;
-                        std::vector<std::string> variables;
-                        std::string blockstate;
-
-                        metadata = metadata_obj["value"];
-
-                        if (metadata_obj.contains("variables"))
+                        for (auto& s : metadata_obj["variables"])
                         {
-                            for (auto& s : metadata_obj["variables"])
-                            {
-                                variables.push_back(s);
-                            }
+                            props.variables.push_back(s);
                         }
+                    }
 
-                        blockstate = metadata_obj["blockstate"];
-                        
-                        TintType tint_type = TintType::None;
-
-                        if (tint_types.find(blockstate_name) != tint_types.end())
+                    props.tint_type = TintType::None;
+                    if (tint_types.find(blockstate_name) != tint_types.end())
+                    {
+                        if (tint_types[blockstate_name].find(-1) != tint_types[blockstate_name].end())
                         {
-                            if (tint_types[blockstate_name].find(-1) != tint_types[blockstate_name].end())
-                            {
-                                tint_type = tint_types[blockstate_name][-1];
-                            }
-                            else if (tint_types[blockstate_name].find(metadata) != tint_types[blockstate_name].end())
-                            {
-                                tint_type = tint_types[blockstate_name][metadata];
-                            }
+                            props.tint_type = tint_types[blockstate_name][-1];
                         }
-
-                        auto check_it = blockstates.find(id);
-                        if (check_it != blockstates.end())
+                        else if (tint_types[blockstate_name].find(props.metadata) != tint_types[blockstate_name].end())
                         {
-                            if (render == "fluid")
-                            {
-                                blockstates[id][metadata] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, climbability[blockstate_name], hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name]));
-                            }
-                            else
-                            {
-                                blockstates[id][metadata] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, climbability[blockstate_name], render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables);
-                            }
+                            props.tint_type = tint_types[blockstate_name][props.metadata];
+                        }
+                    }
+
+                    auto check_it = blockstates.find(props.id);
+                    if (check_it != blockstates.end())
+                    {
+                        if (render == "fluid")
+                        {
+                            props.fluid = true;
+                            props.custom = false;
+                            blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props, Model::GetModel(15 - props.metadata, textures[blockstate_name]));
                         }
                         else
                         {
-                            // We want to be sure that blockstates[id][0] exists    
-                            if (render == "fluid")
-                            {
-                                blockstates[id];
-                                blockstates[id][0] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, climbability[blockstate_name], hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name]));
-                                blockstates[id][metadata] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], true, climbability[blockstate_name], hardness[blockstate_name], tint_type, blockstate_name, Model::GetModel(15 - metadata, textures[blockstate_name]));
-                            }
-                            else
-                            {
-                                blockstates[id];
-                                blockstates[id][0] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, climbability[blockstate_name], render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables);
-                                blockstates[id][metadata] = std::make_unique<Blockstate>(id, metadata, transparency[blockstate_name], solidity[blockstate_name], false, climbability[blockstate_name], render == "other", hardness[blockstate_name], tint_type, blockstate_name, blockstate, variables);
-                            }
+                            props.fluid = false;
+                            props.custom = render == "other";
+                            blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props);
                         }
-                    }
-                }
-                else
-                {
-                    //If no metadata, set to default block
-                    if (render == "fluid")
-                    {
-                        blockstates[id][0] = std::make_unique<Blockstate>(id, 0, false, true, true, false, -2.0f, TintType::None, "", Model::GetModel(15, ""));
                     }
                     else
                     {
-                        blockstates[id][0] = std::make_unique<Blockstate>(id, 0, false, true, false, false, false, -2.0f, TintType::None, "", "");
+                        // We want to be sure that blockstates[id][0] exists    
+                        if (render == "fluid")
+                        {
+                            props.fluid = true;
+                            blockstates[props.id];
+                            blockstates[props.id][0] = std::make_unique<Blockstate>(props, Model::GetModel(15 - props.metadata, textures[blockstate_name]));
+                            blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props, Model::GetModel(15 - props.metadata, textures[blockstate_name]));
+                        }
+                        else
+                        {
+                            props.fluid = false;
+                            props.custom = render == "other";
+                            blockstates[props.id];
+                            blockstates[props.id][0] = std::make_unique<Blockstate>(props);
+                            blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props);
+                        }
                     }
                 }
             }
@@ -457,7 +452,6 @@ namespace Botcraft
 
         for (nlohmann::json::const_iterator blockstates_it = json.begin(); blockstates_it != json.end(); ++blockstates_it)
         {
-            int id = -1;
             std::string blockstate_name = blockstates_it.key();
 
             const nlohmann::json& element = blockstates_it.value();
@@ -469,26 +463,25 @@ namespace Botcraft
 
             for (auto& blockstate : element["states"])
             {
-                int id = -1;
-                std::vector<std::string> variables;
+                if (rendering.find(blockstate_name) == rendering.end() ||
+                    blockstate_properties.find(blockstate_name) == blockstate_properties.end() ||
+                    tint_types.find(blockstate_name) == tint_types.end())
+                {
+                    LOG_ERROR("Error trying to get information for blockstate " << blockstate_name);
+                    continue;
+                }
+
+                BlockstateProperties& props = blockstate_properties[blockstate_name];
+                props.id = -1;
+                props.variables = std::vector<std::string>();
 
                 if (blockstate.contains("id") && blockstate["id"].is_number())
                 {
-                    id = blockstate["id"];
+                    props.id = blockstate["id"];
                 }
                 else
                 {
                     LOG_ERROR("Error trying to read the id of block " << blockstate_name);
-                    continue;
-                }
-
-                if (rendering.find(blockstate_name) == rendering.end() ||
-                    solidity.find(blockstate_name) == solidity.end() ||
-                    transparency.find(blockstate_name) == transparency.end() ||
-                    climbability.find(blockstate_name) == climbability.end() ||
-                    tint_types.find(blockstate_name) == tint_types.end())
-                {
-                    LOG_ERROR("Error trying to get information for blockstate " << blockstate_name);
                     continue;
                 }
 
@@ -500,7 +493,7 @@ namespace Botcraft
                 {
                     for (nlohmann::json::const_iterator prop = blockstate["properties"].begin(); prop != blockstate["properties"].end(); ++prop)
                     {
-                        variables.push_back(prop.key() + "=" + prop.value().get<std::string>());
+                        props.variables.push_back(prop.key() + "=" + prop.value().get<std::string>());
                         if (render == "fluid" && prop.key() == "level")
                         {
                             fluid_level = std::stoi(prop.value().get<std::string>());
@@ -510,7 +503,11 @@ namespace Botcraft
 
                 if (render == "none")
                 {
-                    blockstates[id] = std::make_unique<Blockstate>(id, true, false, false, false, false, -2, TintType::None, blockstate_name, "none");
+                    props.fluid = false;
+                    props.tint_type = TintType::None;
+                    props.custom = false;
+                    props.path = "none";
+                    blockstates[props.id] = std::make_unique<Blockstate>(props);
                 }
                 else if (render == "fluid")
                 {
@@ -520,20 +517,18 @@ namespace Botcraft
                     }
                     else
                     {
-                        blockstates[id] = std::make_unique<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], true, climbability[blockstate_name],  hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, Model::GetModel(15 - fluid_level, textures[blockstate_name]));
+                        props.fluid = true;
+                        props.tint_type = tint_types[blockstate_name];
+                        blockstates[props.id] = std::make_unique<Blockstate>(props, Model::GetModel(15 - fluid_level, textures[blockstate_name]));
                     }
                 }
-                else if (render == "block")
+                else if (render == "block" || render == "other")
                 {
-                    // Remove the minecraft: prefix to get the blockstate name
-                    std::string blockstate = blockstate_name.substr(10);
-                    blockstates[id] = std::make_unique<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], false, climbability[blockstate_name], false, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables);
-                }
-                else if (render == "other")
-                {
-                    // Remove the minecraft: prefix to get the blockstate name
-                    std::string blockstate = blockstate_name.substr(10);
-                    blockstates[id] = std::make_unique<Blockstate>(id, transparency[blockstate_name], solidity[blockstate_name], false, climbability[blockstate_name], true, hardness[blockstate_name], tint_types[blockstate_name], blockstate_name, blockstate, variables);
+                    props.fluid = false;
+                    props.custom = render == "other";
+                    props.tint_type = tint_types[blockstate_name];
+                    props.path = blockstate_name.substr(10);
+                    blockstates[props.id] = std::make_unique<Blockstate>(props);
                 }
             }
         }
