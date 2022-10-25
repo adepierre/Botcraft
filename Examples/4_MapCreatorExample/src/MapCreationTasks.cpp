@@ -586,7 +586,7 @@ Status ExecuteNextTask(BehaviourClient& c)
     else if (action == "Place")
     {
         const std::string& item_name = b.Get<std::string>("NextTask.item");
-        return PlaceBlock(c, item_name, block_position, face, true);
+        return PlaceBlock(c, item_name, block_position, face, true, false);
     }
 
     LOG_WARNING("Unknown task in ExecuteNextTask");

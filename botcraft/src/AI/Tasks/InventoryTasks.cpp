@@ -282,7 +282,7 @@ namespace Botcraft
         return SetItemInHand(client, item_name, hand);
     }
 
-    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const PlayerDiggingFace face, const bool wait_confirmation)
+    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const PlayerDiggingFace face, const bool wait_confirmation, const bool allow_midair_placing)
     {
         std::shared_ptr<World> world = client.GetWorld();
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
@@ -312,7 +312,14 @@ namespace Botcraft
             local_player->LookAt(Vector3<double>(0.5) + pos);
         }
 
+        const std::vector<Position> neighbour_offsets({
+            Position(0, 1, 0), Position(0, -1, 0),
+            Position(0, 0, 1), Position(0, 0, -1),
+            Position(1, 0, 0), Position(-1, 0, 0)
+            });
+
         // Check if block is air
+        bool midair_placing = true;
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
 
@@ -320,6 +327,15 @@ namespace Botcraft
 
             if (block && !block->GetBlockstate()->IsAir())
             {
+                return Status::Failure;
+            }
+
+            const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[static_cast<int>(face)]);
+            midair_placing = !neighbour_block || neighbour_block->GetBlockstate()->IsAir();
+
+            if (!allow_midair_placing && midair_placing)
+            {
+                LOG_WARNING("Can't place a block in midair at " << pos);
                 return Status::Failure;
             }
         }
@@ -352,8 +368,11 @@ namespace Botcraft
             num_item_in_hand = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()).GetItemCount();
         }
 
-        std::shared_ptr<ServerboundUseItemOnPacket> place_block_msg(new ServerboundUseItemOnPacket);
-        place_block_msg->SetLocation(pos.ToNetworkPosition());
+        // If cheating is not allowed, adjust the placing position to the block containing the face we're placing against
+        const Position placing_pos = (allow_midair_placing && midair_placing) ? pos : (pos + neighbour_offsets[static_cast<int>(face)]);
+
+        std::shared_ptr<ServerboundUseItemOnPacket> place_block_msg = std::make_shared<ServerboundUseItemOnPacket>();
+        place_block_msg->SetLocation(placing_pos.ToNetworkPosition());
         place_block_msg->SetDirection(static_cast<int>(face));
         switch (face)
         {
@@ -393,7 +412,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 452
         place_block_msg->SetInside(false);
 #endif
-        place_block_msg->SetHand((int)Hand::Right);
+        place_block_msg->SetHand(static_cast<int>(Hand::Right));
 #if PROTOCOL_VERSION > 758
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
@@ -451,7 +470,7 @@ namespace Botcraft
     Status PlaceBlockBlackboard(BehaviourClient& client)
     {
         const std::vector<std::string> variable_names = {
-               "PlaceBlock.item_name", "PlaceBlock.pos", "PlaceBlock.face", "PlaceBlock.wait_confirmation" };
+               "PlaceBlock.item_name", "PlaceBlock.pos", "PlaceBlock.face", "PlaceBlock.wait_confirmation", "PlaceBlock.allow_midair_placing" };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -462,9 +481,10 @@ namespace Botcraft
         // Optional
         const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[2], PlayerDiggingFace::Up);
         const bool wait_confirmation = blackboard.Get<bool>(variable_names[3], false);
+        const bool allow_midair_placing = blackboard.Get<bool>(variable_names[4], false);
 
 
-        return PlaceBlock(client, item_name, pos, face, wait_confirmation);
+        return PlaceBlock(client, item_name, pos, face, wait_confirmation, allow_midair_placing);
     }
 
     Status Eat(BehaviourClient& client, const std::string& food_name, const bool wait_confirmation)

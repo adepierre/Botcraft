@@ -203,7 +203,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
                 .succeeder()
-                    .leaf(PlaceBlock, item, pos, PlayerDiggingFace::Up, true)
+                    .leaf(PlaceBlock, item, pos, PlayerDiggingFace::Up, true, true)
                 .end()
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
