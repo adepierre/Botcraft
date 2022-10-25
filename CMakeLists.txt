@@ -21,7 +21,7 @@ option(BOTCRAFT_FORCE_LOCAL_ZLIB "Set to true to force using a local install of 
 option(BOTCRAFT_FORCE_LOCAL_OPENSSL "Set to true to force using a local install of openssl even if already present on the system" OFF)
 option(BOTCRAFT_FORCE_LOCAL_GLFW "Set to true to force using a local install of glfw even if already present on the system" OFF)
 option(BOTCRAFT_FORCE_LOCAL_GLAD "Set to true to force using a local install of glad even if already present on the system" OFF)
-option(BOTCRAFT_DONWLOAD_MC_ASSETS "Download Minecraft client and copy assets next to custom ones" ON)
+option(BOTCRAFT_DOWNLOAD_MC_ASSETS "Download Minecraft client and copy assets next to custom ones" ON)
 
 set(BOTCRAFT_OUTPUT_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Base output build path")
 

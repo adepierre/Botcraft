@@ -1,6 +1,6 @@
 # Check if the minecraft assets folder already exists for the current version
 # If not, download the client and extract the assets
-if(BOTCRAFT_DONWLOAD_MC_ASSETS AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft")
+if(BOTCRAFT_DOWNLOAD_MC_ASSETS AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/minecraft")
     message(STATUS "Downloading assets for version " ${GAME_VERSION} " from " ${VERSION_CLIENTURL} "...")
     file(DOWNLOAD "${VERSION_CLIENTURL}" "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${GAME_VERSION}/client.jar")
     message(STATUS "Extracting assets...")
@@ -36,7 +36,7 @@ if(NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/custom/")
 endif()
 
 # Copying Minecraft assets
-if (BOTCRAFT_DONWLOAD_MC_ASSETS)
+if (BOTCRAFT_DOWNLOAD_MC_ASSETS)
     # Blockstates
     if(NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}/minecraft/blockstates")
         message(STATUS "Copying minecraft blockstates...")
@@ -67,7 +67,7 @@ if (BOTCRAFT_DONWLOAD_MC_ASSETS)
         endif()
 
     endif()
-endif(BOTCRAFT_DONWLOAD_MC_ASSETS)
+endif(BOTCRAFT_DOWNLOAD_MC_ASSETS)
     
     
     
