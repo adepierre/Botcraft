@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
             clients[i] = std::make_shared<SimpleBehaviourClient>(false);
             clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
             clients[i]->SetAutoRespawn(true);
-            clients[i]->Connect(address, names[i], "");
+            clients[i]->Connect(address, names[i], false);
             clients[i]->StartBehaviour();
             clients[i]->SetBehaviourTree(i == 0 ? map_art_detailed_behaviour_tree : map_art_behaviour_tree);
         }
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
                     clients[i] = std::make_shared<SimpleBehaviourClient>(false);
                     clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
                     clients[i]->SetAutoRespawn(true);
-                    clients[i]->Connect(address, names[i], "");
+                    clients[i]->Connect(address, names[i], false);
 
                     // Restart client[i] in 10 seconds
                     LOG_INFO(names[i] << " has been stopped. Scheduling a restart in 10 seconds...");
