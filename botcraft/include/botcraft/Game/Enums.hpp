@@ -156,4 +156,30 @@ namespace Botcraft
         ChestPlate,
         Helmet
     };
+
+    enum class ToolMaterial
+    {
+        None = 0,
+        Wood,
+        Gold,
+        Stone,
+        Iron,
+        Diamond,
+#if PROTOCOL_VERSION > 578 // > 1.15.2
+        Netherite,
+#endif
+        NUM_TOOL_MATERIAL
+    };
+
+    enum class ToolType
+    {
+        None = 0,
+        Axe,
+        Hoe,
+        Pickaxe,
+        Shears,
+        Shovel,
+        Sword,
+        NUM_TOOL_TYPE
+    };
 } // Botcraft

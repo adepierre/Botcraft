@@ -644,19 +644,26 @@ namespace Botcraft
         }
 
         // Add a default item
+        ItemProperties props{
+                -1, //id
+#if PROTOCOL_VERSION < 347
+                0, //damage_id
+#endif
+                "default", //name
+                64, //stack_size
+        };
 #if PROTOCOL_VERSION < 347
         items[-1];
-        items[-1][0] = std::make_unique<Item>(-1, 0, "default", 64);
+        items[-1][0] = std::make_unique<Item>(props);
 #else
-        items[-1] = std::make_unique<Item>(-1, "default", 64);
+        items[-1] = std::make_unique<Item>(props);
 #endif
 
         //Load all the items from JSON file
         for (nlohmann::json::const_iterator items_it = json.begin(); items_it != json.end(); ++items_it)
         {
-            int id = -1;
-            unsigned char stack_size = 64;
-            std::string item_name = items_it.key();
+            // Read name
+            props.name = items_it.key();
 
             const nlohmann::json& properties = items_it.value();
 
@@ -664,24 +671,31 @@ namespace Botcraft
             {
                 continue;
             }
-            id = properties["id"];
-            if (properties.contains("stack_size"))
+            props.id = properties["id"];
+
+            if (properties.contains("stack_size") && properties["stack_size"].is_number())
             {
-                stack_size = properties["stack_size"];
+                props.stack_size = properties["stack_size"];
             }
+            // Default value
+            else
+            {
+                props.stack_size = 64;
+            }
+
 #if PROTOCOL_VERSION < 347
             if (!properties.contains("damage_id") || !properties["damage_id"].is_number())
             {
                 continue;
             }
-            unsigned char damage_id = properties["damage_id"];
-            if (items.find(id) == items.end())
+            props.damage_id = properties["damage_id"];
+            if (items.find(props.id) == items.end())
             {
-                items[id] = std::unordered_map<unsigned char, std::unique_ptr<Item> >();
+                items[props.id];
             }
-            items[id][damage_id] = std::make_unique<Item>(id, damage_id, item_name, stack_size);
+            items[props.id][props.damage_id] = std::make_unique<Item>(props);
 #else
-            items[id] = std::make_unique<Item>(id, item_name, stack_size);
+            items[props.id] = std::make_unique<Item>(props);
 #endif
         }
     }
