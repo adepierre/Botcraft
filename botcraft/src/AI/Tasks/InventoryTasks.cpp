@@ -346,9 +346,14 @@ namespace Botcraft
 
             std::lock_guard<std::mutex> entity_manager_guard(entity_manager->GetMutex());
             const std::unordered_map<int, std::shared_ptr<Entity> >& entities = entity_manager->GetEntities();
-            // TODO, check entity type, xp orbs and items don't collide
             for (auto it = entities.begin(); it != entities.end(); ++it)
             {
+                // xp orbs and items don't prevent block placing
+                if (it->second->GetType() == EntityType::ExperienceOrb ||
+                    it->second->GetType() == EntityType::ItemEntity)
+                {
+                    continue;
+                }
                 if (this_box_collider.Collide(it->second->GetCollider()))
                 {
                     return Status::Failure;
