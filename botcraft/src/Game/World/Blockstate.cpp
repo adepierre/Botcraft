@@ -252,6 +252,8 @@ namespace Botcraft
         hardness = properties.hardness;
         tint_type = properties.tint_type;
         m_name = properties.name;
+        any_tool_harvest = properties.any_tool_harvest;
+        best_tools = properties.best_tools;
 
         weights_sum = 0;
         random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
@@ -564,6 +566,8 @@ namespace Botcraft
         fluid = properties.fluid;
         tint_type = properties.tint_type;
         m_name = properties.name;
+        any_tool_harvest = properties.any_tool_harvest;
+        best_tools = properties.best_tools;
 
         weights_sum = 1;
         random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
@@ -658,6 +662,69 @@ namespace Botcraft
     const TintType Blockstate::GetTintType() const
     {
         return tint_type;
+    }
+
+    float Blockstate::GetMiningTimeSeconds(const ToolType tool_type, const ToolMaterial tool_material,
+        const unsigned char tool_efficiency, const unsigned char haste, const unsigned char fatigue,
+        const bool on_ground, const bool head_in_fluid_wo_aqua_affinity) const
+    {
+        static const std::array<float, static_cast<int>(ToolMaterial::NUM_TOOL_MATERIAL)> material_multipliers{ {
+                1.0f,
+                2.0f,
+                12.0f,
+                4.0f,
+                6.0f,
+                8.0f,
+                9.0f
+        } };
+
+        float speed_multiplier = 1.0f;
+        bool can_harvest = any_tool_harvest;
+
+        for (const auto& t : best_tools)
+        {
+            // If this is not the tool we use, just skip to next one
+            if (t.tool_type != tool_type)
+            {
+                continue;
+            }
+
+            switch (tool_type)
+            {
+            case ToolType::Shears:
+            case ToolType::Sword:
+                speed_multiplier = t.multiplier;
+                can_harvest = true;
+                break;
+            case ToolType::Axe:
+            case ToolType::Hoe:
+            case ToolType::Pickaxe:
+            case ToolType::Shovel:
+                speed_multiplier = t.multiplier * material_multipliers[static_cast<int>(tool_material)];
+                can_harvest |= tool_material >= t.min_material;
+                break;
+            default:
+                LOG_WARNING("Unknown tool type: " << static_cast<int>(tool_type));
+                break;
+            }
+            // If we are here we already found and processed the current tool
+            break;
+        }
+
+        speed_multiplier += (tool_efficiency > 0) * 1.0f + tool_efficiency * tool_efficiency;
+        speed_multiplier *= 1.0f + 0.2f * haste;
+        speed_multiplier *= std::pow(0.3f, std::min(static_cast<int>(fatigue), 4));
+        speed_multiplier *= head_in_fluid_wo_aqua_affinity ? 0.2f : 1.0f;
+        speed_multiplier *= on_ground ? 1.0f : 0.2f;
+
+        const float damage_per_ticks = speed_multiplier / std::max(hardness, 0.0000001f) / (can_harvest ? 30.0f : 100.0f);
+
+        if (damage_per_ticks > 1.0f)
+        {
+            return 0.0f;
+        }
+
+        return std::ceilf(1.0f / damage_per_ticks) / 20.0f;
     }
 
 #if PROTOCOL_VERSION < 347

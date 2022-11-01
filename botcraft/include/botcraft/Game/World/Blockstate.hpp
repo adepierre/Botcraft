@@ -18,6 +18,13 @@ namespace Botcraft
     }
 #endif
 
+    struct BestTool
+    {
+        ToolType tool_type;
+        ToolMaterial min_material;
+        float multiplier;
+    };
+
     struct BlockstateProperties
     {
 #if PROTOCOL_VERSION < 347
@@ -36,6 +43,8 @@ namespace Botcraft
         std::string name = "";//
         std::string path = "";
         std::vector<std::string> variables = std::vector<std::string>(0);
+        bool any_tool_harvest = false;
+        std::vector<BestTool> best_tools = std::vector<BestTool>(0);
     };
 
     class Blockstate
@@ -68,6 +77,19 @@ namespace Botcraft
         const float GetHardness() const;
         const TintType GetTintType() const;
 
+        /// @brief Compute the amount of time (in s) required to mine this block
+        /// @param tool_type The tool used to mine
+        /// @param tool_material The material the tool is made of
+        /// @param tool_efficiency Level of efficiency enchantment on the tool
+        /// @param haste Level of haste applied to the player
+        /// @param fatigue Level of mining fatigue applied to the player
+        /// @param not_on_ground Boolean indicating whether or not the player is currently on the ground
+        /// @param head_in_fluid_wo_aqua_affinity Boolean indicating whether or not the player head is currently in fluid without aqua affinity enchantment
+        /// @return The time required to mine this block in these conditions
+        float GetMiningTimeSeconds(const ToolType tool_type, const ToolMaterial tool_material,
+            const unsigned char tool_efficiency = 0, const unsigned char haste = 0, const unsigned char fatigue = 0,
+            const bool on_ground = true, const bool head_in_fluid_wo_aqua_affinity = false) const;
+
 #if PROTOCOL_VERSION < 347
         const static unsigned int IdMetadataToId(const unsigned int id_, const unsigned char metadata_);
         static void IdToIdMetadata(const unsigned int input_id, unsigned int &output_id, unsigned char &output_metadata);
@@ -93,6 +115,9 @@ namespace Botcraft
         std::vector<int> models_weights;
         int weights_sum;
         mutable std::mt19937 random_generator;
+
+        bool any_tool_harvest;
+        std::vector<BestTool> best_tools;
 
         std::unordered_map<std::string, std::string> variables;
 
