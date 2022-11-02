@@ -72,6 +72,7 @@ Optional dependencies (can be disabled with cmake options)
 - [rectpack2D](https://github.com/TeamHypersomnia/rectpack2D)† for texture packing
 - [stb_image](https://github.com/nothings/stb)\* for texture loading
 - [zlib](https://github.com/madler/zlib)† for compression
+- [catch2](https://github.com/catchorg/Catch2)† for tests
 
 The code is cross-platform and requires a C++17 compiler, as well as git. ProtocolCraft only requires a C++11 compiler.
 
@@ -94,6 +95,7 @@ You can check [this discussion](https://github.com/adepierre/Botcraft/discussion
 There are several cmake options you can modify:
 - GAME_VERSION [1.XX.X or latest]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
+- BOTCRAFT_BUILD_TESTS [ON/OFF]
 - BOTCRAFT_OUTPUT_DIR [PATH] Base output build path. Binaries, assets and libs will be created in subfolders of this path (default: top project dir)
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
 - BOTCRAFT_ENCRYPTION [ON/OFF] Add encryption ability, must be ON to connect to a server in online mode

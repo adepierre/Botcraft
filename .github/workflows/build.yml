@@ -55,17 +55,28 @@ jobs:
           -DBOTCRAFT_COMPRESSION=ON
           -DBOTCRAFT_ENCRYPTION=ON
           -DBOTCRAFT_BUILD_EXAMPLES=ON
+          -DBOTCRAFT_BUILD_TESTS=ON
           -DBOTCRAFT_WINDOWS_BETTER_SLEEP=ON
           -DBOTCRAFT_FORCE_LOCAL_ZLIB=ON
           -DBOTCRAFT_FORCE_LOCAL_OPENSSL=ON
           -DBOTCRAFT_FORCE_LOCAL_GLFW=ON
           -DBOTCRAFT_FORCE_LOCAL_GLAD=ON
+          -DBOTCRAFT_FORCE_LOCAL_CATCH=ON
           -DBOTCRAFT_DOWNLOAD_MC_ASSETS=OFF
           -DCMAKE_INSTALL_PREFIX=install/botcraft
           -S $GITHUB_WORKSPACE
           -B .
 
-      - name: Build
+      - name: Build all
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --build . --config $BUILD_TYPE --parallel 2
+      
+      - name: Run tests
+        working-directory: ${{ runner.workspace }}/build
+        run: ctest -C $BUILD_TYPE
+
+      - name: Create install
         shell: bash
         working-directory: ${{ runner.workspace }}/build
         run: cmake --build . --config $BUILD_TYPE --parallel 2 --target install
