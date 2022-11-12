@@ -300,17 +300,22 @@ namespace Botcraft
     {
         std::lock_guard<std::mutex> lock_messages(mutex_chat);
 
-        // Push new header in front
-        last_seen.push_front(header);
-
         // Remove old messages from the same player
-        for (int i = 1; i < last_seen.size(); ++i)
+        int index = 0;
+        while (index < last_seen.size())
         {
-            if (last_seen[i].GetProfileId() == header.GetProfileId())
+            if (last_seen[index].GetProfileId() == header.GetProfileId())
             {
-                last_seen.erase(last_seen.begin() + i);
+                last_seen.erase(last_seen.begin() + index);
+            }
+            else
+            {
+                index += 1;
             }
         }
+
+        // Push new header in front
+        last_seen.push_front(header);
 
         // Limit the size to 5 messages
         while (last_seen.size() > 5)
