@@ -85,7 +85,7 @@ namespace Botcraft
         /// @param fatigue Level of mining fatigue applied to the player
         /// @param not_on_ground Boolean indicating whether or not the player is currently on the ground
         /// @param head_in_fluid_wo_aqua_affinity Boolean indicating whether or not the player head is currently in fluid without aqua affinity enchantment
-        /// @return The time required to mine this block in these conditions
+        /// @return The time required to mine this block in these conditions, or -1 if can't be mined
         float GetMiningTimeSeconds(const ToolType tool_type, const ToolMaterial tool_material,
             const unsigned char tool_efficiency = 0, const unsigned char haste = 0, const unsigned char fatigue = 0,
             const bool on_ground = true, const bool head_in_fluid_wo_aqua_affinity = false) const;

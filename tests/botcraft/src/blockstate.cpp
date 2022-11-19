@@ -9,6 +9,37 @@ TEST_CASE("Testing mining time calculation")
 {
     BlockstateProperties blockstate_properties;
 
+    SECTION("air")
+    {
+        blockstate_properties.hardness = -1.0f;
+        blockstate_properties.any_tool_harvest = false;
+        blockstate_properties.best_tools = {
+
+        };
+        Blockstate blockstate(blockstate_properties);
+
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::None, ToolMaterial::None), Catch::Matchers::WithinAbs(-1.0, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Axe, ToolMaterial::Wood), Catch::Matchers::WithinAbs(-1.0, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Shears, ToolMaterial::None), Catch::Matchers::WithinAbs(-1.0, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Sword, ToolMaterial::Diamond), Catch::Matchers::WithinAbs(-1.0, 0.04));
+    }
+
+    SECTION("water")
+    {
+        blockstate_properties.hardness = 100.0f;
+        blockstate_properties.any_tool_harvest = false;
+        blockstate_properties.fluid = true;
+        blockstate_properties.best_tools = {
+
+        };
+        Blockstate blockstate(blockstate_properties);
+
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::None, ToolMaterial::None), Catch::Matchers::WithinAbs(-1.0, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Axe, ToolMaterial::Wood), Catch::Matchers::WithinAbs(-1.0, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Shears, ToolMaterial::None), Catch::Matchers::WithinAbs(-1.0, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Sword, ToolMaterial::Diamond), Catch::Matchers::WithinAbs(-1.0, 0.04));
+    }
+
     SECTION("obsidian")
     {
         blockstate_properties.hardness = 50.0f;

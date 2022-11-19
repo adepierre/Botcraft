@@ -668,6 +668,11 @@ namespace Botcraft
         const unsigned char tool_efficiency, const unsigned char haste, const unsigned char fatigue,
         const bool on_ground, const bool head_in_fluid_wo_aqua_affinity) const
     {
+        if (hardness < 0.0f || fluid)
+        {
+            return -1.0f;
+        }
+
         static const std::array<float, static_cast<int>(ToolMaterial::NUM_TOOL_MATERIAL)> material_multipliers{ {
                 1.0f,
                 2.0f,
