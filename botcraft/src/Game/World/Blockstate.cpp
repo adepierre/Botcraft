@@ -680,7 +680,9 @@ namespace Botcraft
                 4.0f,
                 6.0f,
                 8.0f,
-                9.0f
+#if PROTOCOL_VERSION > 578 // > 1.15.2
+                9.0f,
+#endif
         } };
 
         float speed_multiplier = 1.0f;
