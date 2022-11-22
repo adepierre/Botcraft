@@ -11,7 +11,10 @@
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.5
+        "hardness": 1.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:grass",
@@ -19,35 +22,53 @@
         "solid": true,
         "render": "block",
         "tintType": "grass",
-        "hardness": 0.6
+        "hardness": 0.6,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:dirt",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:cobblestone",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:planks",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:sapling",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:bedrock",
@@ -99,42 +120,69 @@
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:gravel",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:gold_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "iron"
+            }
+        ]
     },
     {
         "name": "minecraft:iron_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "stone"
+            }
+        ]
     },
     {
         "name": "minecraft:coal_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:log",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:leaves",
@@ -142,91 +190,155 @@
         "solid": true,
         "render": "block",
         "tintType": "leaves",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "any",
+            {
+                "tool": "shears",
+                "multiplier": 15.0
+            },
+            {
+                "tool": "sword",
+                "multiplier": 1.5
+            }
+        ]
     },
     {
         "name": "minecraft:sponge",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.6
+        "hardness": 0.6,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:glass",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.3
+        "hardness": 0.3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:lapis_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "stone"
+            }
+        ]
     },
     {
         "name": "minecraft:lapis_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "stone"
+            }
+        ]
     },
     {
         "name": "minecraft:dispenser",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3.5
+        "hardness": 3.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:sandstone",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:noteblock",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:bed",
         "transparent": true,
         "solid": true,
         "render": "other",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:golden_rail",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0.7
+        "hardness": 0.7,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:detector_rail",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0.7
+        "hardness": 0.7,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:sticky_piston",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:web",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 4
+        "hardness": 4,
+        "tools": [
+            {
+                "tool": "sword",
+                "multiplier": 15.0
+            },
+            {
+                "tool": "shears",
+                "multiplier": 15.0
+            }
+        ]
     },
     {
         "name": "minecraft:tallgrass",
@@ -234,35 +346,55 @@
         "solid": false,
         "render": "block",
         "tintType": "grass",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:deadbush",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:piston",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:piston_head",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": -1
+        "hardness": -1,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:wool",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "any",
+            {
+                "tool": "shears",
+                "multiplier": 5.0
+            }
+        ]
     },
     {
         "name": "minecraft:piston_extension",
@@ -276,126 +408,192 @@
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:red_flower",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:brown_mushroom",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:red_mushroom",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:gold_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "iron"
+            }
+        ]
     },
     {
         "name": "minecraft:iron_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "stone"
+            }
+        ]
     },
     {
         "name": "minecraft:double_stone_slab",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:stone_slab",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:brick_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:tnt",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:bookshelf",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.5
+        "hardness": 1.5,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:mossy_cobblestone",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:obsidian",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 50
+        "hardness": 50,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "diamond"
+            }
+        ]
     },
     {
         "name": "minecraft:torch",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:fire",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": -1
+        "hardness": -1,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:mob_spawner",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:oak_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:chest",
         "transparent": true,
         "solid": true,
         "render": "other",
-        "hardness": 2.5
+        "hardness": 2.5,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:redstone_wire",
@@ -403,70 +601,110 @@
         "solid": false,
         "render": "block",
         "tintType": "redstone",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:diamond_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "iron"
+            }
+        ]
     },
     {
         "name": "minecraft:diamond_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "iron"
+            }
+        ]
     },
     {
         "name": "minecraft:crafting_table",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2.5
+        "hardness": 2.5,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:wheat",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:farmland",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.6
+        "hardness": 0.6,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:furnace",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3.5
+        "hardness": 3.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:lit_furnace",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3.5
+        "hardness": 3.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:standing_sign",
         "transparent": true,
         "solid": false,
         "render": "other",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:wooden_door",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:ladder",
@@ -474,175 +712,267 @@
         "solid": false,
         "render": "block",
         "hardness": 0.4,
-        "climbable": true
+        "climbable": true,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:rail",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0.7
+        "hardness": 0.7,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:stone_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 1.5
+        "hardness": 1.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:wall_sign",
         "transparent": true,
         "solid": false,
         "render": "other",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:lever",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:stone_pressure_plate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:iron_door",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:wooden_pressure_plate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:redstone_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "iron"
+            }
+        ]
     },
     {
         "name": "minecraft:lit_redstone_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "iron"
+            }
+        ]
     },
     {
         "name": "minecraft:unlit_redstone_torch",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:redstone_torch",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:stone_button",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:snow_layer",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.1
+        "hardness": 0.1,
+        "tools": [
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:ice",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:snow",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:cactus",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.4
+        "hardness": 0.4,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:clay",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.6
+        "hardness": 0.6,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:reeds",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:jukebox",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:fence",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:pumpkin",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:netherrack",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.4
+        "hardness": 0.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:soul_sand",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:glowstone",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.3
+        "hardness": 0.3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:portal",
@@ -656,42 +986,62 @@
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:cake",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:unpowered_repeater",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:powered_repeater",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:stained_glass",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.3
+        "hardness": 0.3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:trapdoor",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:monster_egg",
@@ -705,56 +1055,83 @@
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.5
+        "hardness": 1.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:brown_mushroom_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:red_mushroom_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:iron_bars",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:glass_pane",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.3
+        "hardness": 0.3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:melon_block",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:pumpkin_stem",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:melon_stem",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:vine",
@@ -763,35 +1140,61 @@
         "render": "block",
         "tintType": "leaves",
         "hardness": 0.2,
-        "climbable": true
+        "climbable": true,
+        "tools": [
+            "any",
+            {
+                "tool": "shears",
+                "multiplier": 1.0
+            },
+            {
+                "tool": "sword",
+                "multiplier": 1.5
+            },
+            "axe"
+        ]
     },
     {
         "name": "minecraft:fence_gate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:brick_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:stone_brick_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 1.5
+        "hardness": 1.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:mycelium",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.6
+        "hardness": 0.6,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:waterlily",
@@ -799,56 +1202,80 @@
         "solid": true,
         "render": "block",
         "tintType": "grass",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:nether_brick",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:nether_brick_fence",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:nether_brick_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:nether_wart",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:enchanting_table",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:brewing_stand",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:cauldron",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:end_portal",
@@ -869,112 +1296,172 @@
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:dragon_egg",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:redstone_lamp",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:lit_redstone_lamp",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:double_wooden_slab",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:wooden_slab",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:cocoa",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:sandstone_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:emerald_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "iron"
+            }
+        ]
     },
     {
         "name": "minecraft:ender_chest",
         "transparent": true,
         "solid": true,
         "render": "other",
-        "hardness": 22.5
+        "hardness": 22.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:tripwire_hook",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:tripwire",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:emerald_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            {
+                "tool": "pickaxe",
+                "min_material": "iron"
+            }
+        ]
     },
     {
         "name": "minecraft:spruce_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:birch_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:jungle_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:command_block",
@@ -988,161 +1475,234 @@
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:cobblestone_wall",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:flower_pot",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:carrots",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:potatoes",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:wooden_button",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:skull",
         "transparent": true,
         "solid": true,
         "render": "other",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:anvil",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:trapped_chest",
         "transparent": true,
         "solid": true,
         "render": "other",
-        "hardness": 2.5
+        "hardness": 2.5,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:light_weighted_pressure_plate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:heavy_weighted_pressure_plate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:unpowered_comparator",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:powered_comparator",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:daylight_sensor",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:redstone_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:quartz_ore",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:hopper",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:quartz_block",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:quartz_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:activator_rail",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0.7
+        "hardness": 0.7,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:dropper",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3.5
+        "hardness": 3.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:stained_hardened_clay",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.25
+        "hardness": 1.25,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:stained_glass_pane",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.3
+        "hardness": 0.3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:leaves2",
@@ -1150,35 +1710,61 @@
         "solid": true,
         "render": "block",
         "tintType": "leaves",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "any",
+            {
+                "tool": "shears",
+                "multiplier": 15.0
+            },
+            {
+                "tool": "sword",
+                "multiplier": 1.5
+            }
+        ]
     },
     {
         "name": "minecraft:log2",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:acacia_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:dark_oak_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:slime",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:barrier",
@@ -1192,56 +1778,81 @@
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:prismarine",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.5
+        "hardness": 1.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:sea_lantern",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.3
+        "hardness": 0.3,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:hay_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:carpet",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.1
+        "hardness": 0.1,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:hardened_clay",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.25
+        "hardness": 1.25,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:coal_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 5
+        "hardness": 5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:packed_ice",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:double_plant",
@@ -1252,238 +1863,361 @@
             "2": "grass",
             "3": "grass"
         },
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:standing_banner",
         "transparent": true,
         "solid": false,
         "render": "other",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:wall_banner",
         "transparent": true,
         "solid": false,
         "render": "other",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:daylight_detector_inverted",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.2
+        "hardness": 0.2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:red_sandstone",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:red_sandstone_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:double_stone_slab2",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:stone_slab2",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:spruce_fence_gate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:birch_fence_gate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:jungle_fence_gate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:dark_oak_fence_gate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:acacia_fence_gate",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:spruce_fence",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:birch_fence",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:jungle_fence",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:dark_oak_fence",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:acacia_fence",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:spruce_door",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:birch_door",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:jungle_door",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:acacia_door",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:dark_oak_door",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 3
+        "hardness": 3,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:end_rod",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:chorus_plant",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.4
+        "hardness": 0.4,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:chorus_flower",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.4
+        "hardness": 0.4,
+        "tools": [
+            "any",
+            "axe"
+        ]
     },
     {
         "name": "minecraft:purpur_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.5
+        "hardness": 1.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:purpur_pillar",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.5
+        "hardness": 1.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:purpur_stairs",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:purpur_double_slab",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:purpur_slab",
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:end_bricks",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.8
+        "hardness": 0.8,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:beetroots",
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": 0
+        "hardness": 0,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:grass_path",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.6
+        "hardness": 0.6,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:end_gateway",
@@ -1511,35 +2245,51 @@
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:magma",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:nether_wart_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1
+        "hardness": 1,
+        "tools": [
+            "any"
+        ]
     },
     {
         "name": "minecraft:red_nether_brick",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:bone_block",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 2
+        "hardness": 2,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:structure_void",
@@ -1553,245 +2303,367 @@
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 3.5
+        "hardness": 3.5,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:white_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:orange_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:magenta_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:light_blue_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:yellow_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:lime_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:pink_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:gray_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:silver_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:cyan_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:purple_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:blue_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:brown_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:green_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:red_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:black_shulker_box",
         "transparent": false,
         "solid": true,
         "render": "other",
-        "hardness": 6
+        "hardness": 6,
+        "tools": [
+            "any",
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:white_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:orange_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:magenta_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:light_blue_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:yellow_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:lime_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:pink_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:gray_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:silver_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:cyan_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:purple_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:blue_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:brown_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:green_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:red_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:black_glazed_terracotta",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.4
+        "hardness": 1.4,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:concrete",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 1.8
+        "hardness": 1.8,
+        "tools": [
+            "pickaxe"
+        ]
     },
     {
         "name": "minecraft:concrete_powder",
         "transparent": false,
         "solid": true,
         "render": "block",
-        "hardness": 0.5
+        "hardness": 0.5,
+        "tools": [
+            "any",
+            "shovel"
+        ]
     },
     {
         "name": "minecraft:structure_block",
