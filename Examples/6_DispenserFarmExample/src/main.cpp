@@ -14,7 +14,7 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--login\t\tPlayer name in offline mode, empty for Microsoft account, default: BCChatCommand\n"
+        << "\t--login\t\tPlayer name in offline mode, empty for Microsoft account, default: BCDispenserGuy\n"
         << std::endl;
 }
 
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         Botcraft::Logger::GetInstance().RegisterThread("main");
 
         std::string address = "127.0.0.1:25565";
-        std::string login = "BotAuFeu";
+        std::string login = "BCDispenserGuy";
 
         if (argc == 1)
         {
