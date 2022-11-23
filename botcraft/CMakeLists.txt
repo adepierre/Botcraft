@@ -553,7 +553,7 @@ endif(BOTCRAFT_USE_OPENGL_GUI)
 
 if(BOTCRAFT_COMPRESSION)
     target_link_libraries(botcraft PRIVATE ZLIB::ZLIB)
-    target_compile_definitions(botcraft PUBLIC USE_COMPRESSION=1)
+    target_compile_definitions(botcraft PRIVATE USE_COMPRESSION=1)
 endif(BOTCRAFT_COMPRESSION)
 
 if(BOTCRAFT_ENCRYPTION)
