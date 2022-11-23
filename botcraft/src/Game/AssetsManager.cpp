@@ -133,6 +133,66 @@ namespace Botcraft
     }
 #endif
 
+    ToolMaterial GetToolMaterialFromString(const std::string& s)
+    {
+        if (s == "wood")
+        {
+            return ToolMaterial::Wood;
+        }
+        else if (s == "gold")
+        {
+            return ToolMaterial::Gold;
+        }
+        else if (s == "stone")
+        {
+            return ToolMaterial::Stone;
+        }
+        else if (s == "iron")
+        {
+            return ToolMaterial::Iron;
+        }
+        else if (s == "diamond")
+        {
+            return ToolMaterial::Diamond;
+        }
+#if PROTOCOL_VERSION > 578 // > 1.15.2
+        else if (s == "netherite")
+        {
+            return ToolMaterial::Netherite;
+        }
+#endif
+        return ToolMaterial::None;
+    }
+
+    ToolType GetToolTypeFromString(const std::string& s)
+    {
+        if (s == "axe")
+        {
+            return ToolType::Axe;
+        }
+        else if (s == "hoe")
+        {
+            return ToolType::Hoe;
+        }
+        else if (s == "pickaxe")
+        {
+            return ToolType::Pickaxe;
+        }
+        else if (s == "shears")
+        {
+            return ToolType::Shears;
+        }
+        else if (s == "shovel")
+        {
+            return ToolType::Shovel;
+        }
+        else if (s == "sword")
+        {
+            return ToolType::Sword;
+        }
+        return ToolType::None;
+    }
+
     void AssetsManager::LoadBlocksFile()
     {
         std::unordered_map<std::string, BlockstateProperties> blockstate_properties;
@@ -201,6 +261,62 @@ namespace Botcraft
             if (info.contains("climbable") && info["climbable"].is_boolean())
             {
                 blockstate_properties[name].climbable = info["climbable"];
+            }
+
+            // Get breaking tools info
+            if (info.contains("tools") && info["tools"].is_array())
+            {
+                for (const auto& tool : info["tools"])
+                {
+                    if (tool.is_string())
+                    {
+                        const std::string tool_name = tool.get<std::string>();
+                        if (tool_name == "any")
+                        {
+                            blockstate_properties[name].any_tool_harvest = true;
+                        }
+                        else
+                        {
+                            ToolType tool_type = GetToolTypeFromString(tool_name);
+                            ToolMaterial min_material = (tool_type == ToolType::Shears || tool_type == ToolType::Sword) ? ToolMaterial::None : ToolMaterial::Wood;
+                            blockstate_properties[name].best_tools.push_back(
+                                BestTool{
+                                    tool_type,
+                                    min_material,
+                                    1.0f
+                                });
+                        }
+                    }
+                    else if (tool.is_object())
+                    {
+                        if (tool.contains("tool") && tool["tool"].is_string())
+                        {
+                            BestTool best_tool;
+                            best_tool.tool_type = GetToolTypeFromString(tool["tool"].get<std::string>());
+                            
+                            if (tool.contains("min_material") && tool["min_material"].is_string())
+                            {
+                                best_tool.min_material = GetToolMaterialFromString(tool["min_material"].get<std::string>());
+                            }
+                            else
+                            {
+                                // Default min material
+                                best_tool.min_material = (best_tool.tool_type == ToolType::Shears || best_tool.tool_type == ToolType::Sword) ? ToolMaterial::None : ToolMaterial::Wood;
+                            }
+
+                            if (tool.contains("multiplier") && tool["multiplier"].is_number())
+                            {
+                                best_tool.multiplier = tool["multiplier"].get<float>();
+                            }
+                            else
+                            {
+                                // Default multiplier
+                                best_tool.multiplier = 1.0f;
+                            }
+                            blockstate_properties[name].best_tools.push_back(best_tool);
+                        }
+                    }
+                }
             }
 
             // Get texture info (used for fluids)
