@@ -155,6 +155,9 @@
 #if PROTOCOL_VERSION > 578
 #include "botcraft/Game/Entities/entities/monster/StriderEntity.hpp"
 #endif
+#if PROTOCOL_VERSION > 758
+#include "botcraft/Game/Entities/entities/animal/frog/TadpoleEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/projectile/ThrownEggEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ThrownEnderpearlEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.hpp"
@@ -1270,6 +1273,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578
         case EntityType::Strider:
             return std::make_shared<StriderEntity>();
+#endif
+#if PROTOCOL_VERSION > 758
+        case EntityType::Tadpole:
+            return std::make_shared<TadpoleEntity>();
 #endif
         case EntityType::ThrownEgg:
             return std::make_shared<ThrownEggEntity>();

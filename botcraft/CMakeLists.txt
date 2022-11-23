@@ -128,6 +128,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/SquidEntity.hpp
     include/botcraft/Game/Entities/entities/monster/StrayEntity.hpp
     include/botcraft/Game/Entities/entities/monster/StriderEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/frog/TadpoleEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrownEggEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrownEnderpearlEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.hpp
@@ -337,6 +338,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/SquidEntity.cpp
     src/Game/Entities/entities/monster/StrayEntity.cpp
     src/Game/Entities/entities/monster/StriderEntity.cpp
+    src/Game/Entities/entities/animal/frog/TadpoleEntity.cpp
     src/Game/Entities/entities/projectile/ThrownEggEntity.cpp
     src/Game/Entities/entities/projectile/ThrownEnderpearlEntity.cpp
     src/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.cpp
