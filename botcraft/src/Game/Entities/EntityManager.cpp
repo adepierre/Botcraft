@@ -400,7 +400,6 @@ namespace Botcraft
     void EntityManager::Handle(ProtocolCraft::ClientboundSetEquipmentPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
-#if PROTOCOL_VERSION > 730
         auto it = entities.find(msg.GetEntityId());
         if (it == entities.end())
         {
@@ -408,23 +407,15 @@ namespace Botcraft
         }
         else
         {
+#if PROTOCOL_VERSION > 730
             for (auto& p : msg.GetSlots())
             {
                 it->second->SetEquipment(static_cast<EquipmentSlot>(p.first), p.second);
             }
-        }
 #else
-        auto it = entities.find(msg.GetEntityId());
-        if (it == entities.end())
-        {
-            LOG_WARNING("Trying to set equipment of an unexisting entity");
-        }
-        else
-        {
-            // Packet data is in 1/8000 of block per tick, so convert it back to block/s
             it->second->SetEquipment(static_cast<EquipmentSlot>(msg.GetSlot().first), msg.GetSlot().second);
-        }
 #endif
+        }
     }
 
     void EntityManager::Handle(ProtocolCraft::ClientboundUpdateAttributesPacket& msg)
@@ -434,6 +425,34 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundUpdateMobEffectPacket& msg)
     {
-        // TODO
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        auto it = entities.find(msg.GetEntityId());
+        if (it == entities.end())
+        {
+            LOG_WARNING("Trying to set effect of an unexisting entity");
+        }
+        else
+        {
+            it->second->AddEffect(EntityEffect
+                {
+                    static_cast<EntityEffectType>(msg.GetEffectId()), // type
+                    static_cast<unsigned char>(msg.GetEffectAmplifier()), //amplifier
+                    std::chrono::steady_clock::now() + std::chrono::milliseconds(50 * msg.GetEffectDurationTicks()) // end
+                });
+        }
+    }
+
+    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveMobEffectPacket& msg)
+    {
+        std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
+        auto it = entities.find(msg.GetEntityId());
+        if (it == entities.end())
+        {
+            LOG_WARNING("Trying to remove effect of an unexisting entity");
+        }
+        else
+        {
+            it->second->RemoveEffect(static_cast<EntityEffectType>(msg.GetEffect()));
+        }
     }
 }

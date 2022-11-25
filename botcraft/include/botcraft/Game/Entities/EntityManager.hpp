@@ -63,6 +63,7 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundSetEquipmentPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundUpdateAttributesPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundUpdateMobEffectPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundRemoveMobEffectPacket& msg) override;
 
 
     private:

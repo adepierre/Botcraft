@@ -659,6 +659,11 @@ namespace Botcraft
         return equipments.at(slot);
     }
 
+    const std::vector<EntityEffect>& Entity::GetEffects() const
+    {
+        return effects;
+    }
+
 #if USE_GUI
     const std::vector<Renderer::Face>& Entity::GetFaces()
     {
@@ -809,6 +814,35 @@ namespace Botcraft
     void Entity::SetEquipment(const EquipmentSlot slot, const ProtocolCraft::Slot& item)
     {
         equipments.at(slot) = item;
+    }
+
+    void Entity::SetEffects(const std::vector<EntityEffect>& effects_)
+    {
+        effects = effects_;
+    }
+
+    void Entity::RemoveEffect(const EntityEffectType type)
+    {
+        for (auto it = effects.begin(); it != effects.end();)
+        {
+            if (it->type == type)
+            {
+                it = effects.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+
+    void Entity::AddEffect(const EntityEffect& effect)
+    {
+        // First, remove any instance of this type of effect on the entity
+        RemoveEffect(effect.type);
+
+        // Then add the new one
+        effects.push_back(effect);
     }
 
 #if USE_GUI

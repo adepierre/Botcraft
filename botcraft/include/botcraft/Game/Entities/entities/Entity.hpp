@@ -4,6 +4,7 @@
 #include <map>
 #include <optional>
 #include <any>
+#include <chrono>
 
 #include <nlohmann/json.hpp>
 
@@ -26,6 +27,13 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 458
     enum class ObjectEntityType;
 #endif
+
+    struct EntityEffect
+    {
+        EntityEffectType type;
+        unsigned char amplifier;
+        std::chrono::steady_clock::time_point end;
+    };
 
     class Entity
     {
@@ -104,6 +112,7 @@ namespace Botcraft
         bool GetOnGround() const;
         const std::map<EquipmentSlot, ProtocolCraft::Slot>& GetEquipments() const;
         const ProtocolCraft::Slot& GetEquipment(const EquipmentSlot slot) const;
+        const std::vector<EntityEffect>& GetEffects() const;
 #if USE_GUI
         const std::vector<Renderer::Face>& GetFaces();
         bool GetAreRenderedFacesUpToDate() const;
@@ -123,6 +132,9 @@ namespace Botcraft
         void SetSpeedZ(const double speed_z_);
         void SetOnGround(const bool on_ground_);
         void SetEquipment(const EquipmentSlot slot, const ProtocolCraft::Slot& item);
+        void SetEffects(const std::vector<EntityEffect>& effects_);
+        void AddEffect(const EntityEffect& effect);
+        void RemoveEffect(const EntityEffectType type);
 #if USE_GUI
         void SetAreRenderedFacesUpToDate(const bool are_rendered_faces_up_to_date_);
 #endif
@@ -195,6 +207,7 @@ namespace Botcraft
         Vector3<double> speed;
         bool on_ground;
         std::map<EquipmentSlot, ProtocolCraft::Slot> equipments;
+        std::vector<EntityEffect> effects;
 
         std::map<std::string, std::any> metadata;
 
