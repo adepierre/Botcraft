@@ -38,7 +38,9 @@ jobs:
       
       - name: Install GLFW deps
         if: ${{ matrix.config.name == 'Linux' }}
-        run: sudo apt install -y xorg-dev
+        run: |
+          sudo apt update
+          sudo apt install -y xorg-dev
 
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
