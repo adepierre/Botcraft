@@ -731,7 +731,7 @@ namespace Botcraft
             return 0.0f;
         }
 
-        return std::ceilf(1.0f / damage_per_ticks) / 20.0f;
+        return std::ceil(1.0f / damage_per_ticks) / 20.0f;
     }
 
 #if PROTOCOL_VERSION < 347
