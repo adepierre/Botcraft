@@ -162,9 +162,9 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
         auto start = std::chrono::steady_clock::now();
         while (
 #if PROTOCOL_VERSION < 347
-            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetBlockID()).at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemDamage())->GetName() != food_name
+            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetBlockID()).at(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemDamage())->GetName() != food_name
 #else
-            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(/*Window::INVENTORY_HOTBAR_START*/36).GetItemID())->GetName() != food_name
+            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemID())->GetName() != food_name
 #endif
             )
         {
@@ -192,8 +192,8 @@ Status GetBlocksAvailableInInventory(BehaviourClient& c)
     const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
     for (auto it = slots.begin(); it != slots.end(); ++it)
     {
-        if (it->first >= 9/*Window::INVENTORY_STORAGE_START*/ &&
-            it->first < 45 /*Window::INVENTORY_OFFHAND_INDEX*/ &&
+        if (it->first >= Window::INVENTORY_STORAGE_START &&
+            it->first < Window::INVENTORY_OFFHAND_INDEX &&
             !it->second.IsEmptySlot())
         {
 #if PROTOCOL_VERSION < 347
@@ -350,7 +350,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
 
         // Wait for the confirmation from the server
         auto start = std::chrono::steady_clock::now();
-        const short checked_slot_index = (take_from_chest ? slots_dst[dst_index] : slots_src[src_index]) - first_player_index + 9; /*Window::INVENTORY_STORAGE_START*/
+        const short checked_slot_index = (take_from_chest ? slots_dst[dst_index] : slots_src[src_index]) - first_player_index + Window::INVENTORY_STORAGE_START;
         while (true)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)

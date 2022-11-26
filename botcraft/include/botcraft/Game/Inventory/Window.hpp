@@ -9,14 +9,18 @@ namespace Botcraft
     class Window
     {
     public:
-        static const short PLAYER_INVENTORY_INDEX;
+        static constexpr short PLAYER_INVENTORY_INDEX = 0;
 
-        static const short INVENTORY_CRAFTING_OUTPUT_INDEX;
-        static const short INVENTORY_CRAFTING_INPUT_START;
-        static const short INVENTORY_ARMOR_START;
-        static const short INVENTORY_STORAGE_START;
-        static const short INVENTORY_HOTBAR_START;
-        static const short INVENTORY_OFFHAND_INDEX;
+        static constexpr short INVENTORY_CRAFTING_OUTPUT_INDEX = 0;
+        static constexpr short INVENTORY_CRAFTING_INPUT_START = 1;
+        static constexpr short INVENTORY_ARMOR_START = 5;
+        static constexpr short INVENTORY_HEAD_ARMOR = INVENTORY_ARMOR_START + 0;
+        static constexpr short INVENTORY_CHEST_ARMOR = INVENTORY_ARMOR_START + 1;
+        static constexpr short INVENTORY_LEGS_ARMOR = INVENTORY_ARMOR_START + 2;
+        static constexpr short INVENTORY_FEET_ARMOR = INVENTORY_ARMOR_START + 3;
+        static constexpr short INVENTORY_STORAGE_START = 9;
+        static constexpr short INVENTORY_HOTBAR_START = 36;
+        static constexpr short INVENTORY_OFFHAND_INDEX = 45;
 
         static const ProtocolCraft::Slot EMPTY_SLOT;
 
