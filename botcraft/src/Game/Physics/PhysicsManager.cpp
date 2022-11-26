@@ -157,6 +157,11 @@ namespace Botcraft
         const Vector3<double>& player_inputs = local_player->GetPlayerInputs();
 
         Vector3<double> player_movement_speed = local_player->GetSpeed();
+        // Add negative epsilon speed to still trigger collisions and get on_ground correctly
+        if (player_movement_speed.y == 0.0)
+        {
+            player_movement_speed.y -= 1e-7;
+        }
         Vector3<double> player_movement_inputs = player_inputs;
 
         // If gravity applies, you can't decide to go up with player inputs
