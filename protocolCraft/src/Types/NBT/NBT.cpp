@@ -79,16 +79,7 @@ namespace ProtocolCraft
 
     const std::shared_ptr<Tag> NBT::GetTag(const std::string &s) const
     {
-        const std::map<std::string, std::shared_ptr<Tag> > &tags = root_tag.GetValues();
-
-        auto it = tags.find(s);
-
-        if (it == tags.end())
-        {
-            return nullptr;
-        }
-
-        return it->second;
+        return root_tag.GetValue(s);
     }
         
     const bool NBT::HasData() const

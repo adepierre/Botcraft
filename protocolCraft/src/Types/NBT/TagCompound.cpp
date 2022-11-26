@@ -17,6 +17,18 @@ namespace ProtocolCraft
         return tags;
     }
 
+    const std::shared_ptr<Tag> TagCompound::GetValue(const std::string& name) const
+    {
+        auto it = tags.find(name);
+
+        if (it == tags.end())
+        {
+            return nullptr;
+        }
+
+        return it->second;
+    }
+
     void TagCompound::SetValues(const std::map<std::string, std::shared_ptr<Tag> > &v)
     {
         tags = v;
