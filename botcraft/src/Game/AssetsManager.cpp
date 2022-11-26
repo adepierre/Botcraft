@@ -72,9 +72,9 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 358
-    const Biome* AssetsManager::GetBiome(const unsigned char id)
+    const Biome* AssetsManager::GetBiome(const unsigned char id) const
 #else
-    const Biome* AssetsManager::GetBiome(const int id)
+    const Biome* AssetsManager::GetBiome(const int id) const
 #endif
     {
         auto it = biomes.find(id);
@@ -96,6 +96,42 @@ namespace Botcraft
     {
         return items;
     }
+
+#if PROTOCOL_VERSION < 347
+    const Item* AssetsManager::GetItem(const int id, const unsigned char damage) const
+    {
+        auto it = items.find(id);
+        if (it != items.end())
+        {
+            auto it2 = it->second.find(damage);
+            if (it2 != it->second.end())
+            {
+                return it2->second.get();
+            }
+            else
+            {
+                return nullptr;
+            }
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+#else
+    const Item* AssetsManager::GetItem(const int id) const
+    {
+        auto it = items.find(id);
+        if (it != items.end())
+        {
+            return it->second.get();
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+#endif
 
 #if PROTOCOL_VERSION < 347
     const std::pair<int, unsigned char> AssetsManager::GetItemID(const std::string& item_name) const

@@ -32,16 +32,18 @@ namespace Botcraft
         
 #if PROTOCOL_VERSION < 358
         const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& Biomes() const;
-        const Biome* GetBiome(const unsigned char id);
+        const Biome* GetBiome(const unsigned char id) const;
 #else
         const std::unordered_map<int, std::unique_ptr<Biome> >& Biomes() const;
-        const Biome* GetBiome(const int id);
+        const Biome* GetBiome(const int id) const;
 #endif
 
 #if PROTOCOL_VERSION < 347
         const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Item> > >& Items() const;
+        const Item* GetItem(const int id, const unsigned char damage) const;
 #else
         const std::unordered_map<int, std::unique_ptr<Item> >& Items() const;
+        const Item* GetItem(const int id) const;
 #endif
 
 #if PROTOCOL_VERSION < 347
