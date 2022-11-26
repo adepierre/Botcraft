@@ -13,7 +13,7 @@ Precompiled binaries for the latest game version can be found in the [latest rel
 
   * [Features](#features)
   * [Dependencies](#dependencies)
-  * [Building](#building)
+  * [Building and testing](#building-and-testing)
   * [Examples](#examples)
   * [ProtocolCraft](#protocolcraft)
   * [Clients](#clients)
@@ -24,7 +24,7 @@ Precompiled binaries for the latest game version can be found in the [latest rel
 
 Main features are listed below. To see the evolution of the project, check the [changelog](https://github.com/adepierre/Botcraft/wiki/Changelog).
 
-- Connection to minecraft server (both offline "cracked" mode and online connection with ~~Mojang~~ or Microsoft account)
+- Connection to minecraft server (both offline "cracked" mode and online connection with ~~Mojang or~~ Microsoft account)
 - DNS server name resolution with and without SRV record
 - All official releases from 1.12.2 to 1.19.2 supported
 - Compression
@@ -57,26 +57,31 @@ Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 
 ## Dependencies
 
-All the libraries are included either directly(\*) or as git submodules(†) and are built locally automatically by cmake (if not already found on your system) so you don't have to download/compile/install anything manually. My goal is to keep the number of external libraries very low for the core (this is less true for the rendering part).
+The code is cross-platform and requires a C++17 compiler, as well as git. ProtocolCraft only requires a C++11 compiler. I try to keep the number of external libraries for the core part of the library very low. This is less true for the rendering part or testing.
+Dependencies are included either directly(\*) or as git submodules(†). All libraries marked as optional can be disabled using cmake options.
+
+You *don't* have to clone recursively, download nor install any of them, as the cmake build system is made to do that for you automatically for each dependency that is not already found on your system.
 
 - [asio](https://think-async.com/Asio/)† for low-level TCP
 - [nlohmann json](https://github.com/nlohmann/json)\* for JSON support
 
+Optional dependencies (additional features support):
+- [openssl](https://www.openssl.org/)† for encryption
+- [zlib](https://github.com/madler/zlib)† for compression
 
-Optional dependencies (can be disabled with cmake options)
+Optional dependencies (rendering):
 - [glad](https://glad.dav1d.de/)\* for OpenGL stuff
 - [glfw](https://github.com/glfw/glfw)† for OpenGL window creation
 - [glm](https://github.com/g-truc/glm)† for math stuff
 - [imgui](https://github.com/ocornut/imgui)† for additional UI display
-- [openssl](https://www.openssl.org/)† for encryption
 - [rectpack2D](https://github.com/TeamHypersomnia/rectpack2D)† for texture packing
 - [stb_image](https://github.com/nothings/stb)\* for texture loading
-- [zlib](https://github.com/madler/zlib)† for compression
+
+Optional dependencies (testing)
 - [catch2](https://github.com/catchorg/Catch2)† for tests
 
-The code is cross-platform and requires a C++17 compiler, as well as git. ProtocolCraft only requires a C++11 compiler.
 
-## Building
+## Building and testing
 
 To build the library yourself, with both encryption and compression support, but without OpenGL rendering support:
 ```
@@ -84,11 +89,12 @@ git clone https://github.com/adepierre/Botcraft.git
 cd Botcraft
 mkdir build
 cd build
-cmake -DGAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
-make all
+cmake -DGAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_BUILD_TESTS=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
+cmake --build . --config Release
+ctest -C Release
 ```
 
-At this point, you should have all the examples compiled and ready to run. Plese note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual.
+At this point, you should have all the examples compiled and ready to run and the tests performed. Plese note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual. For a detailed Windows building tutorial, see this [wiki](https://github.com/adepierre/Botcraft/wiki/Detailed-installation-guide) page.
 
 You can check [this discussion](https://github.com/adepierre/Botcraft/discussions/45#discussioncomment-1142555) for an example of how to use botcraft with your own code. In case you need help, you can try to ask on the [community discord server](https://discord.gg/wECVsTbjA9).
 
@@ -101,7 +107,7 @@ There are several cmake options you can modify:
 - BOTCRAFT_ENCRYPTION [ON/OFF] Add encryption ability, must be ON to connect to a server in online mode
 - BOTCRAFT_USE_OPENGL_GUI [ON/OFF] If ON, botcraft will be compiled with the OpenGL GUI enabled
 - BOTCRAFT_USE_IMGUI [ON/OFF] If ON, additional information will be displayed on the GUI (need BOTCRAFT_USE_OPENGL_GUI to be ON)
-- BOTCRAFT_WINDOWS_BETTER_SLEEP [ON/OFF] If ON, thread sleep durations will be more precise (only for Windows 10/11, no effect on other OS)
+- BOTCRAFT_WINDOWS_BETTER_SLEEP [ON/OFF] If ON, thread sleep durations will be more accurate (only for Windows 10/11, no effect on other OS)
 
 ## Examples
 
