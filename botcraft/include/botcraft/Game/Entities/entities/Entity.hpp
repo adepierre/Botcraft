@@ -206,6 +206,9 @@ namespace Botcraft
         float pitch;
         Vector3<double> speed;
         bool on_ground;
+        /// @brief Items on this entity. Note that for the local player
+        /// this will **NOT** be populated. Check corresponding
+        /// player inventory slots instead.
         std::map<EquipmentSlot, ProtocolCraft::Slot> equipments;
         std::vector<EntityEffect> effects;
 
