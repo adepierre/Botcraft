@@ -522,23 +522,15 @@ Status MineCobblestone(BehaviourClient& client)
     const std::vector<Position>& stone_positions = blackboard.Get<std::vector<Position>>("DispenserFarmBot.stone_positions");
 
     const Position* mining_pos = nullptr;
-    float mining_time = 0.0f;
     {
         std::lock_guard<std::mutex> world_lock(world->GetMutex());
         for (int i = 0; i < stone_positions.size(); ++i)
         {
             const Block* block = world->GetBlock(stone_positions[i]);
-            if (block && block->GetBlockstate()->GetName() == "minecraft:stone")
-            {
-                mining_pos = stone_positions.data() + i;
-                mining_time = 0.6f;
-                break;
-            }
             // Depending on the tick on which lava flows we could also get some cobble
-            else if (block && block->GetBlockstate()->GetName() == "minecraft:cobblestone")
+            if (block && (block->GetBlockstate()->GetName() == "minecraft:stone" || block->GetBlockstate()->GetName() == "minecraft:cobblestone"))
             {
                 mining_pos = stone_positions.data() + i;
-                mining_time = 0.75f;
                 break;
             }
         }
@@ -574,17 +566,10 @@ Status MineCobblestone(BehaviourClient& client)
             for (int i = 0; i < stone_positions.size(); ++i)
             {
                 const Block* block = world->GetBlock(stone_positions[i]);
-                if (block && block->GetBlockstate()->GetName() == "minecraft:stone")
-                {
-                    mining_pos = stone_positions.data() + i;
-                    mining_time = 0.6f;
-                    break;
-                }
                 // Depending on the tick on which lava flows we could also get some cobble
-                else if (block && block->GetBlockstate()->GetName() == "minecraft:cobblestone")
+                if (block && (block->GetBlockstate()->GetName() == "minecraft:stone" || block->GetBlockstate()->GetName() == "minecraft:cobblestone"))
                 {
                     mining_pos = stone_positions.data() + i;
-                    mining_time = 0.75f;
                     break;
                 }
             }
@@ -596,7 +581,7 @@ Status MineCobblestone(BehaviourClient& client)
         }
     }
 
-    if (Dig(client, *mining_pos, true, Direction::North, mining_time) == Status::Failure)
+    if (Dig(client, *mining_pos, true, Direction::North) == Status::Failure)
     {
         LOG_WARNING("Error digging stone.");
         return Status::Failure;
