@@ -52,6 +52,14 @@ namespace Botcraft
         }
     }
 
+    void ConnectionClient::SendChatCommand(const std::string& command)
+    {
+        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
+        {
+            network_manager->SendChatCommand(command);
+        }
+    }
+
     void ConnectionClient::Respawn()
     {
         if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)

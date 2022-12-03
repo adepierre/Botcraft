@@ -160,6 +160,13 @@ namespace Botcraft
 
     void NetworkManager::SendChatMessage(const std::string& message)
     {
+#if PROTOCOL_VERSION > 758
+        if (message[0] == '/')
+        {
+            LOG_INFO("You're trying to send a message starting with '/'. Use SendChatCommand instead if you want the server to interprete it as a command.");
+        }
+#endif
+
         std::shared_ptr<ProtocolCraft::ServerboundChatPacket> chat_message = std::make_shared<ProtocolCraft::ServerboundChatPacket>();
         chat_message->SetMessage(message);
 #if PROTOCOL_VERSION > 758
@@ -205,6 +212,35 @@ namespace Botcraft
         }
 #endif
         Send(chat_message);
+    }
+
+    void NetworkManager::SendChatCommand(const std::string& command)
+    {
+#if PROTOCOL_VERSION > 758
+        std::shared_ptr<ProtocolCraft::ServerboundChatCommandPacket> chat_command = std::make_shared<ProtocolCraft::ServerboundChatCommandPacket>();
+        chat_command->SetCommand(command);
+        chat_command->SetTimestamp(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+#if PROTOCOL_VERSION > 759
+        std::mt19937 rnd(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+        chat_command->SetSalt(std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(rnd));
+#endif
+        // TODO: when this shouldn't be empty? Can"t find a situation where it's filled with something
+        chat_command->SetArgumentSignatures({});
+        chat_command->SetSignedPreview(false);
+#if PROTOCOL_VERSION > 759
+        ProtocolCraft::LastSeenMessagesUpdate last_seen_update;
+        if (authentifier)
+        {
+            std::lock_guard<std::mutex> lock_messages(mutex_chat);
+            last_seen_update.SetLastSeen({ last_seen.begin(), last_seen.begin() + std::min(static_cast<int>(last_seen.size()), 5) });
+        }
+        chat_command->SetLastSeenMessages(last_seen_update);
+#endif
+#else
+        std::shared_ptr<ProtocolCraft::ServerboundChatPacket> chat_command = std::make_shared<ProtocolCraft::ServerboundChatPacket>();
+        chat_command->SetMessage("/" + command);
+#endif
+        Send(chat_command);
     }
 
     void NetworkManager::WaitForNewPackets()

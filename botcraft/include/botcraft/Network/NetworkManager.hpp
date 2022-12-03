@@ -29,6 +29,7 @@ namespace Botcraft
         const std::string& GetMyName() const;
 
         void SendChatMessage(const std::string& message);
+        void SendChatCommand(const std::string& command);
 
     private:
         void WaitForNewPackets();

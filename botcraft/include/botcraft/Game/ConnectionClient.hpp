@@ -31,6 +31,10 @@ namespace Botcraft
         /// @brief Send a message in the game chat
         /// @param msg The message to send
         void SendChatMessage(const std::string& msg);
+
+        /// @brief Send a command in the game chat
+        /// @param command The command to send (with no / at start)
+        void SendChatCommand(const std::string& command);
         
         /// @brief Ask to respawn when dead
         void Respawn();
