@@ -156,10 +156,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759
             output["salt"] = salt;
 #endif
-            output["argument_signatures"] = nlohmann::json();
+            output["argument_signatures"] = nlohmann::json::object();
             for (const auto& s: argument_signatures)
             {
-                output["signature"][s.first] = "Vector of " + std::to_string(s.second.size()) + " unsigned char";
+                output["argument_signatures"][s.first] = "Vector of " + std::to_string(s.second.size()) + " unsigned char";
             }
             output["signed_preview"] = signed_preview;
 #if PROTOCOL_VERSION > 759
