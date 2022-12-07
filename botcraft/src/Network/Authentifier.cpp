@@ -1030,8 +1030,8 @@ namespace Botcraft
         }
 
         // Divided by 1000 because this one is stored in ms
-        // TODO: saved in UTC, so check that comparison is not done with local time
-        const bool expired = !invalid_cached_values && IsTokenExpired(cached["certificates"]["expires_date"].get<long long int>() / 1000);
+        // TODO: investigate why it sometimes wrongly detects expired keys as still valid
+        const bool expired = !invalid_cached_values;//&& IsTokenExpired(cached["certificates"]["expires_date"].get<long long int>() / 1000);
 
         if (expired)
         {
