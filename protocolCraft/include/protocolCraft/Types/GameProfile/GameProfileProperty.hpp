@@ -88,7 +88,10 @@ namespace ProtocolCraft
 
             output["name"] = name;
             output["value"] = value;
-            output["signature"] = signature;
+            if (!signature.empty())
+            {
+                output["signature"] = signature;
+            }
 
 
             return output;

@@ -109,10 +109,15 @@
 #endif
 #if PROTOCOL_VERSION > 758
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatCommandPacket.hpp"
+#if PROTOCOL_VERSION < 761
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatPreviewPacket.hpp"
+#endif
 #endif
 #if PROTOCOL_VERSION > 759
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatAckPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 760
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundChatSessionUpdatePacket.hpp"
 #endif
 
 // Play clientbound
@@ -148,7 +153,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundLightUpdatePacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockEntityDataPacket.hpp"
+#if PROTOCOL_VERSION < 761
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 493 && PROTOCOL_VERSION < 759
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockBreakAckPacket.hpp"
 #endif
@@ -176,7 +183,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetDataPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundCooldownPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundCustomPayloadPacket.hpp"
+#if PROTOCOL_VERSION < 761
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundCustomSoundPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundEntityEventPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundExplodePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundGameEventPacket.hpp"
@@ -284,16 +293,28 @@
 #endif
 #if PROTOCOL_VERSION > 758
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockChangedAckPacket.hpp"
+#if PROTOCOL_VERSION < 761
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundChatPreviewPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerChatPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundServerDataPacket.hpp"
+#if PROTOCOL_VERSION < 761
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetDisplayChatPreviewPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSystemChatPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 759
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundCustomChatCompletionsPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundDeleteChatPacket.hpp"
+#if PROTOCOL_VERSION < 761
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerChatHeaderPacket.hpp"
+#endif
+#endif
+#if PROTOCOL_VERSION > 760
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundDisguisedChatPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoRemovePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoUpdatePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
 #endif
 
 
@@ -417,10 +438,15 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
         ServerboundChatCommandPacket,
+#if PROTOCOL_VERSION < 761
         ServerboundChatPreviewPacket,
+#endif
 #endif
 #if PROTOCOL_VERSION > 759
         ServerboundChatAckPacket,
+#endif
+#if PROTOCOL_VERSION > 760
+        ServerboundChatSessionUpdatePacket,
 #endif
 
         // Play clientbound
@@ -462,7 +488,9 @@ namespace ProtocolCraft
         ClientboundSetDisplayObjectivePacket,
         ClientboundForgetLevelChunkPacket,
         ClientboundKeepAlivePacket,
+#if PROTOCOL_VERSION < 761
         ClientboundCustomSoundPacket,
+#endif
 #if PROTOCOL_VERSION > 388
         ClientboundTagQueryPacket,
 #endif
@@ -513,7 +541,9 @@ namespace ProtocolCraft
         ClientboundBlockBreakAckPacket,
 #endif
         ClientboundBlockEntityDataPacket,
+#if PROTOCOL_VERSION < 761
         ClientboundPlayerInfoPacket,
+#endif
         ClientboundTabListPacket,
         ClientboundCustomPayloadPacket,
         ClientboundRemoveMobEffectPacket,
@@ -595,16 +625,28 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
         ClientboundBlockChangedAckPacket,
+#if PROTOCOL_VERSION < 761
         ClientboundChatPreviewPacket,
+#endif
         ClientboundPlayerChatPacket,
         ClientboundServerDataPacket,
+#if PROTOCOL_VERSION < 761
         ClientboundSetDisplayChatPreviewPacket,
+#endif
         ClientboundSystemChatPacket,
 #endif
 #if PROTOCOL_VERSION > 759
         ClientboundCustomChatCompletionsPacket,
         ClientboundDeleteChatPacket,
+#if PROTOCOL_VERSION < 761
         ClientboundPlayerChatHeaderPacket,
+#endif
+#endif
+#if PROTOCOL_VERSION > 760
+        ClientboundDisguisedChatPacket,
+        ClientboundPlayerInfoRemovePacket,
+        ClientboundPlayerInfoUpdatePacket,
+        ClientboundUpdateEnabledFeaturesPacket,
 #endif
         ClientboundSetCarriedItemPacket
     > ;

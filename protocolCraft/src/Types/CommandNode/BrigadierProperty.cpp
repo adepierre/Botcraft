@@ -86,6 +86,10 @@ namespace ProtocolCraft
             return std::make_shared<BrigadierPropertyEntity>();
         case 29:
             return std::make_shared<BrigadierPropertyScoreHolder>();
+#if PROTOCOL_VERSION > 760
+        case 41:
+        case 42:
+#endif
         case 43:
         case 44:
             return std::make_shared<BrigadierPropertyResourceOrTag>();

@@ -130,10 +130,15 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundMoveVehiclePacket>;
 #if PROTOCOL_VERSION > 758
     template class BaseMessage<ServerboundChatCommandPacket>;
+#if PROTOCOL_VERSION < 761
     template class BaseMessage<ServerboundChatPreviewPacket>;
+#endif
 #endif
 #if PROTOCOL_VERSION > 759
     template class BaseMessage<ServerboundChatAckPacket>;
+#endif
+#if PROTOCOL_VERSION > 760
+    template class BaseMessage<ServerboundChatSessionUpdatePacket>;
 #endif
 
     // Play clientbound
@@ -175,7 +180,9 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundSetDisplayObjectivePacket>;
     template class BaseMessage<ClientboundForgetLevelChunkPacket>;
     template class BaseMessage<ClientboundKeepAlivePacket>;
+#if PROTOCOL_VERSION < 761
     template class BaseMessage<ClientboundCustomSoundPacket>;
+#endif
 #if PROTOCOL_VERSION > 388
     template class BaseMessage<ClientboundTagQueryPacket>;
 #endif
@@ -226,7 +233,9 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundBlockBreakAckPacket>;
 #endif
     template class BaseMessage<ClientboundBlockEntityDataPacket>;
+#if PROTOCOL_VERSION < 761
     template class BaseMessage<ClientboundPlayerInfoPacket>;
+#endif
     template class BaseMessage<ClientboundTabListPacket>;
     template class BaseMessage<ClientboundCustomPayloadPacket>;
     template class BaseMessage<ClientboundRemoveMobEffectPacket>;
@@ -309,15 +318,27 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
     template class BaseMessage<ClientboundBlockChangedAckPacket>;
+#if PROTOCOL_VERSION < 761
     template class BaseMessage<ClientboundChatPreviewPacket>;
+#endif
     template class BaseMessage<ClientboundPlayerChatPacket>;
     template class BaseMessage<ClientboundServerDataPacket>;
+#if PROTOCOL_VERSION < 761
     template class BaseMessage<ClientboundSetDisplayChatPreviewPacket>;
+#endif
     template class BaseMessage<ClientboundSystemChatPacket>;
 #endif
 #if PROTOCOL_VERSION > 759
     template class BaseMessage<ClientboundCustomChatCompletionsPacket>;
     template class BaseMessage<ClientboundDeleteChatPacket>;
+#if PROTOCOL_VERSION < 761
     template class BaseMessage<ClientboundPlayerChatHeaderPacket>;
+#endif
+#endif
+#if PROTOCOL_VERSION > 760
+    template class BaseMessage<ClientboundDisguisedChatPacket>;
+    template class BaseMessage<ClientboundPlayerInfoRemovePacket>;
+    template class BaseMessage<ClientboundPlayerInfoUpdatePacket>;
+    template class BaseMessage<ClientboundUpdateEnabledFeaturesPacket>;
 #endif
 }

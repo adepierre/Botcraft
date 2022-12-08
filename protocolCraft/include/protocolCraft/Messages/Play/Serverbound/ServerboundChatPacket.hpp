@@ -38,6 +38,8 @@ namespace ProtocolCraft
             return 0x04;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
             return 0x05;
+#elif PROTOCOL_VERSION == 761 // 1.19.3
+            return 0x05;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -82,10 +84,12 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 761
         void SetSignedPreview(const bool signed_preview_)
         {
             signed_preview = signed_preview_;
         }
+#endif
 #endif
 
 #if PROTOCOL_VERSION > 759
@@ -124,10 +128,12 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 761
         const bool GetSignedPreview() const
         {
             return signed_preview;
         }
+#endif
 #endif
 #if PROTOCOL_VERSION > 759
         const LastSeenMessagesUpdate& GetLastSeenMessages() const
@@ -146,10 +152,20 @@ namespace ProtocolCraft
             salt_signature.Read(iter, length);
 #else
             salt = ReadData<long long int>(iter, length);
+#if PROTOCOL_VERSION < 761
             const int signature_size = ReadData<VarInt>(iter, length);
             signature = ReadByteArray(iter, length, signature_size);
+#else
+            const bool has_signature = ReadData<bool>(iter, length);
+            if (has_signature)
+            {
+                signature = ReadByteArray(iter, length, 256);
+            }
 #endif
+#endif
+#if PROTOCOL_VERSION < 761
             signed_preview = ReadData<bool>(iter, length);
+#endif
 #endif
 #if PROTOCOL_VERSION > 759
             last_seen_messages.Read(iter, length);
@@ -165,10 +181,21 @@ namespace ProtocolCraft
             salt_signature.Write(container);
 #else
             WriteData<long long int>(salt, container);
+
+#if PROTOCOL_VERSION < 761
             WriteData<VarInt>(signature.size(), container);
             WriteByteArray(signature, container);
+#else
+            WriteData<bool>(signature.size() > 0, container);
+            if (signature.size() > 0)
+            {
+                WriteByteArray(signature, container);
+            }
 #endif
+#endif
+#if PROTOCOL_VERSION < 761
             WriteData<bool>(signed_preview, container);
+#endif
 #endif
 #if PROTOCOL_VERSION > 759
             last_seen_messages.Write(container);
@@ -186,9 +213,18 @@ namespace ProtocolCraft
             output["salt_signature"] = salt_signature.Serialize();
 #else
             output["salt"] = salt;
+#if PROTOCOL_VERSION < 761
             output["signature"] = "Vector of " + std::to_string(signature.size()) + " unsigned char";
+#else
+            if (signature.size() > 0)
+            {
+                output["signature"] = "Vector of " + std::to_string(signature.size()) + " unsigned char";
+            }
 #endif
+#endif
+#if PROTOCOL_VERSION < 761
             output["signed_preview"] = signed_preview;
+#endif
 #endif
 #if PROTOCOL_VERSION > 759
             output["last_seen_messages"] = last_seen_messages.Serialize();
@@ -207,7 +243,9 @@ namespace ProtocolCraft
         long long int salt;
         std::vector<unsigned char> signature;
 #endif
+#if PROTOCOL_VERSION < 761
         bool signed_preview;
+#endif
 #endif
 #if PROTOCOL_VERSION > 759
         LastSeenMessagesUpdate last_seen_messages;

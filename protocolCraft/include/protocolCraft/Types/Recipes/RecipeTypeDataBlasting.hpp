@@ -20,6 +20,13 @@ namespace ProtocolCraft
             group = group_;
         }
 
+#if PROTOCOL_VERSION > 760
+        void SetCookingBookCategory(const int cooking_book_category_)
+        {
+            cooking_book_category = cooking_book_category_;
+        }
+#endif
+
         void SetIngredient(const Ingredient& ingredient_)
         {
             ingredient = ingredient_;
@@ -46,6 +53,13 @@ namespace ProtocolCraft
             return group;
         }
 
+#if PROTOCOL_VERSION > 760
+        const int GetCookingBookCategory() const
+        {
+            return cooking_book_category;
+        }
+#endif
+
         const Ingredient& GetIngredient() const
         {
             return ingredient;
@@ -70,6 +84,9 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             group = ReadData<std::string>(iter, length);
+#if PROTOCOL_VERSION > 760
+            cooking_book_category = ReadData<VarInt>(iter, length);
+#endif
             ingredient.Read(iter, length);
             result.Read(iter, length);
             experience = ReadData<float>(iter, length);
@@ -79,6 +96,9 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(group, container);
+#if PROTOCOL_VERSION > 760
+            WriteData<VarInt>(cooking_book_category, container);
+#endif
             ingredient.Write(container);
             result.Write(container);
             WriteData<float>(experience, container);
@@ -90,6 +110,9 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["group"] = group;
+#if PROTOCOL_VERSION > 760
+            output["cooking_book_category"] = cooking_book_category;
+#endif
             output["ingredient"] = ingredient.Serialize();
             output["result"] = result.Serialize();
             output["experience"] = experience;
@@ -100,6 +123,9 @@ namespace ProtocolCraft
 
     private:
         std::string group;
+#if PROTOCOL_VERSION > 760
+        int cooking_book_category;
+#endif
         Ingredient ingredient;
         Slot result;
         float experience;

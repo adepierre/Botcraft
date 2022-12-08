@@ -29,6 +29,13 @@ namespace ProtocolCraft
         {
             group = group_;
         }
+
+#if PROTOCOL_VERSION > 760
+        void SetCookingBookCategory(const int cooking_book_category_)
+        {
+            cooking_book_category = cooking_book_category_;
+        }
+#endif
         
         void SetIngredients(const std::vector<Ingredient>& ingredients_)
         {
@@ -56,6 +63,13 @@ namespace ProtocolCraft
             return group;
         }
 
+#if PROTOCOL_VERSION > 760
+        const int GetCookingBookCategory() const
+        {
+            return cooking_book_category;
+        }
+#endif
+
         const std::vector<Ingredient>& GetIngredients() const
         {
             return ingredients;
@@ -73,6 +87,9 @@ namespace ProtocolCraft
             width = ReadData<VarInt>(iter, length);
             height = ReadData<VarInt>(iter, length);
             group = ReadData<std::string>(iter, length);
+#if PROTOCOL_VERSION > 760
+            cooking_book_category = ReadData<VarInt>(iter, length);
+#endif
             ingredients = std::vector<Ingredient>(width * height);
             for (int i = 0; i < width * height; ++i)
             {
@@ -86,6 +103,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(width, container);
             WriteData<VarInt>(height, container);
             WriteData<std::string>(group, container);
+#if PROTOCOL_VERSION > 760
+            WriteData<VarInt>(cooking_book_category, container);
+#endif
             for (int i = 0; i < width * height; ++i)
             {
                 ingredients[i].Write(container);
@@ -100,6 +120,9 @@ namespace ProtocolCraft
             output["width"] = width;
             output["height"] = height;
             output["group"] = group;
+#if PROTOCOL_VERSION > 760
+            output["cooking_book_category"] = cooking_book_category;
+#endif
             output["ingredients"] = nlohmann::json::array();
             for (int i = 0; i < width * height; ++i)
             {
@@ -114,6 +137,9 @@ namespace ProtocolCraft
         int width;
         int height;
         std::string group;
+#if PROTOCOL_VERSION > 760
+        int cooking_book_category;
+#endif
         std::vector<Ingredient> ingredients;
         Slot result;
     };

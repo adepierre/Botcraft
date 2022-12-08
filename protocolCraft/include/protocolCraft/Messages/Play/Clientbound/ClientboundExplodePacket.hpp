@@ -30,6 +30,8 @@ namespace ProtocolCraft
             return 0x19;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
             return 0x1B;
+#elif PROTOCOL_VERSION == 761 // 1.19.3
+            return 0x1A;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -45,6 +47,7 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION < 761
         void SetX(const float x_)
         {
             x = x_;
@@ -59,6 +62,22 @@ namespace ProtocolCraft
         {
             z = z_;
         }
+#else
+        void SetX(const double x_)
+        {
+            x = x_;
+        }
+
+        void SetY(const double y_)
+        {
+            y = y_;
+        }
+
+        void SetZ(const double z_)
+        {
+            z = z_;
+        }
+#endif
 
         void SetPower(const float power_)
         {
@@ -85,7 +104,7 @@ namespace ProtocolCraft
             knockback_z = knockback_z_;
         }
 
-
+#if PROTOCOL_VERSION < 761
         const float GetX() const
         {
             return x;
@@ -100,6 +119,23 @@ namespace ProtocolCraft
         {
             return z;
         }
+#else
+
+        const double GetX() const
+        {
+            return x;
+        }
+
+        const double GetY() const
+        {
+            return y;
+        }
+
+        const double GetZ() const
+        {
+            return z;
+        }
+#endif
 
         const float GetPower() const
         {
@@ -130,9 +166,15 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 761
             x = ReadData<float>(iter, length);
             y = ReadData<float>(iter, length);
             z = ReadData<float>(iter, length);
+#else
+            x = ReadData<double>(iter, length);
+            y = ReadData<double>(iter, length);
+            z = ReadData<double>(iter, length);
+#endif
             power = ReadData<float>(iter, length);
 #if PROTOCOL_VERSION < 755
             const int to_blow_size = ReadData<int>(iter, length);
@@ -153,9 +195,15 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 761
             WriteData<float>(x, container);
             WriteData<float>(y, container);
             WriteData<float>(z, container);
+#else
+            WriteData<double>(x, container);
+            WriteData<double>(y, container);
+            WriteData<double>(z, container);
+#endif
             WriteData<float>(power, container);
 #if PROTOCOL_VERSION < 755
             WriteData<int>(to_blow.size(), container);
@@ -194,9 +242,15 @@ namespace ProtocolCraft
         }
 
     private:
+#if PROTOCOL_VERSION < 761
         float x;
         float y;
         float z;
+#else
+        double x;
+        double y;
+        double z;
+#endif
         float power;
         std::vector<NetworkPosition> to_blow;
         float knockback_x;

@@ -63,7 +63,7 @@ namespace ProtocolCraft
             name = ReadData<std::string>(iter, length);
             properties.clear();
             const int properties_length = ReadData<VarInt>(iter, length);
-            for (int i = 0; i < properties_length; ++i)
+            for (size_t i = 0; i < properties_length; ++i)
             {
                 GameProfileProperty prop;
                 prop.Read(iter, length);

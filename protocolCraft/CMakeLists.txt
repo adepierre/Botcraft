@@ -58,6 +58,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomSoundPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDeleteChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDisconnectPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundDisguisedChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundEntityEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundExplodePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundForgetLevelChunkPacket.hpp
@@ -91,6 +92,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatKillPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerCombatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoRemovePacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoUpdatePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerLookAtPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerPositionPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundRecipePacket.hpp
@@ -143,6 +146,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTeleportEntityPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateAdvancementsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateAttributesPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateMobEffectPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateRecipesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateTagsPacket.hpp
@@ -155,6 +159,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChatCommandPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChatPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChatPreviewPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundChatSessionUpdatePacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundClientCommandPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundClientInformationPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundCommandSuggestionPacket.hpp
@@ -215,6 +220,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Advancement.hpp
     include/protocolCraft/Types/AdvancementDisplay.hpp
     include/protocolCraft/Types/AdvancementProgress.hpp
+    include/protocolCraft/Types/Bitset.hpp
     include/protocolCraft/Types/BlockEntityInfo.hpp
     include/protocolCraft/Types/BlockEntityTag.hpp
     include/protocolCraft/Types/ClientboundLevelChunkPacketData.hpp
@@ -240,6 +246,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp
     include/protocolCraft/Types/Chat/LastSeenMessagesUpdate.hpp
     include/protocolCraft/Types/Chat/PlayerChatMessage.hpp
+    include/protocolCraft/Types/Chat/RemoteChatSessionData.hpp
     include/protocolCraft/Types/Chat/SignedMessageHeader.hpp
     include/protocolCraft/Types/Chat/SignedMessageBody.hpp
     
@@ -304,6 +311,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmithing.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp
+    
+    include/protocolCraft/Types/Sound/SoundEvent.hpp
     
     include/protocolCraft/Types/Vibrations/BlockPositionSource.hpp
     include/protocolCraft/Types/Vibrations/EntityPositionSource.hpp

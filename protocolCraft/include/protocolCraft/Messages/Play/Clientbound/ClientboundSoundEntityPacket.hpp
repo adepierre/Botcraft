@@ -3,6 +3,10 @@
 #if PROTOCOL_VERSION > 440
 #include "protocolCraft/BaseMessage.hpp"
 
+#if PROTOCOL_VERSION > 760
+#include "protocolCraft/Types/Sound/SoundEvent.hpp"
+#endif
+
 namespace ProtocolCraft
 {
     class ClientboundSoundEntityPacket : public BaseMessage<ClientboundSoundEntityPacket>
@@ -27,6 +31,8 @@ namespace ProtocolCraft
             return 0x5C;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
             return 0x5F;
+#elif PROTOCOL_VERSION == 761 // 1.19.3
+            return 0x5D;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -42,10 +48,17 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION < 761
         void SetSound(const int sound_)
         {
             sound = sound_;
         }
+#else
+        void SetSound(const SoundEvent& sound_)
+        {
+            sound = sound_;
+        }
+#endif
 
         void SetSource(const int source_)
         {
@@ -75,10 +88,17 @@ namespace ProtocolCraft
 #endif
 
 
+#if PROTOCOL_VERSION < 761
         const int GetSound() const
         {
             return sound;
         }
+#else
+        const SoundEvent& GetSound() const
+        {
+            return sound;
+        }
+#endif
 
         const int GetSource() const
         {
@@ -111,7 +131,11 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 761
             sound = ReadData<VarInt>(iter, length);
+#else
+            sound.Read(iter, length);
+#endif
             source = ReadData<VarInt>(iter, length);
             id_ = ReadData<VarInt>(iter, length);
             volume = ReadData<float>(iter, length);
@@ -123,7 +147,11 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 761
             WriteData<VarInt>(sound, container);
+#else
+            sound.Write(container);
+#endif
             WriteData<VarInt>(source, container);
             WriteData<VarInt>(id_, container);
             WriteData<float>(volume, container);
@@ -137,7 +165,11 @@ namespace ProtocolCraft
         {
             nlohmann::json output;
 
+#if PROTOCOL_VERSION < 761
             output["sound"] = sound;
+#else
+            output["sound"] = sound.Serialize();
+#endif
             output["source"] = source;
             output["id_"] = id_;
             output["volume"] = volume;
@@ -150,7 +182,11 @@ namespace ProtocolCraft
         }
 
     private:
+#if PROTOCOL_VERSION < 761
         int sound;
+#else
+        SoundEvent sound;
+#endif
         int source;
         int id_;
         float volume;

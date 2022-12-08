@@ -22,43 +22,43 @@ namespace ProtocolCraft
     {
         if (recipe_type.GetFull() == "minecraft:crafting_shapeless")
         {
-            return std::shared_ptr<RecipeTypeDataShapeless>(new RecipeTypeDataShapeless);
+            return std::make_shared<RecipeTypeDataShapeless>();
         }
         else if (recipe_type.GetFull() == "minecraft:crafting_shaped")
         {
-            return std::shared_ptr<RecipeTypeDataShaped>(new RecipeTypeDataShaped);
+            return std::make_shared<RecipeTypeDataShaped>();
         }
         else if (recipe_type.GetFull() == "minecraft:smelting")
         {
-            return std::shared_ptr<RecipeTypeDataSmelting>(new RecipeTypeDataSmelting);
+            return std::make_shared<RecipeTypeDataSmelting>();
         }
 #if PROTOCOL_VERSION > 452
         else if (recipe_type.GetFull() == "minecraft:blasting")
         {
-            return std::shared_ptr<RecipeTypeDataBlasting>(new RecipeTypeDataBlasting);
+            return std::make_shared<RecipeTypeDataBlasting>();
         }
         else if (recipe_type.GetFull() == "minecraft:smoking")
         {
-            return std::shared_ptr<RecipeTypeDataSmoking>(new RecipeTypeDataSmoking);
+            return std::make_shared<RecipeTypeDataSmoking>();
         }
         else if (recipe_type.GetFull() == "minecraft:campfire_cooking")
         {
-            return std::shared_ptr<RecipeTypeDataCampfireCooking>(new RecipeTypeDataCampfireCooking);
+            return std::make_shared<RecipeTypeDataCampfireCooking>();
         }
         else if (recipe_type.GetFull() == "minecraft:stonecutting")
         {
-            return std::shared_ptr<RecipeTypeDataStoneCutting>(new RecipeTypeDataStoneCutting);
+            return std::make_shared<RecipeTypeDataStoneCutting>();
         }
 #endif
 #if PROTOCOL_VERSION > 732
         else if (recipe_type.GetFull() == "minecraft:smithing")
         {
-            return std::shared_ptr<RecipeTypeDataSmithing>(new RecipeTypeDataSmithing);
+            return std::make_shared<RecipeTypeDataSmithing>();
         }
 #endif
         else
         {
-            return std::shared_ptr<RecipeTypeDataNone>(new RecipeTypeDataNone);
+            return std::make_shared<RecipeTypeDataNone>();
         }
     }
 }

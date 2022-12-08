@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION < 761
 #pragma once
 
 #include <string>
@@ -175,4 +176,5 @@ namespace ProtocolCraft
         ProfilePublicKey profile_public_key;
 #endif
     };
-} // Botcraft
+} // ProtocolCraft
+#endif

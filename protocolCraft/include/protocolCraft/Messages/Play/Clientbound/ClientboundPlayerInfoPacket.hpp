@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION < 761
 #pragma once
 
 #include <string>
@@ -6,7 +7,6 @@
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #include "protocolCraft/Types/PlayerUpdate.hpp"
-#include "protocolCraft/enums.hpp"
 
 namespace ProtocolCraft
 {
@@ -239,3 +239,4 @@ namespace ProtocolCraft
         std::map<UUID, PlayerUpdate> entries;
     };
 } //ProtocolCraft
+#endif

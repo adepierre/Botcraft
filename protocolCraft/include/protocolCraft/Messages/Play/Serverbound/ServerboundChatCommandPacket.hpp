@@ -22,6 +22,8 @@ namespace ProtocolCraft
             return 0x03;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
             return 0x04;
+#elif PROTOCOL_VERSION == 761 // 1.19.3
+            return 0x04;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -59,10 +61,12 @@ namespace ProtocolCraft
             argument_signatures = argument_signatures_;
         }
 
+#if PROTOCOL_VERSION < 761
         void SetSignedPreview(const bool signed_preview_)
         {
             signed_preview = signed_preview_;
         }
+#endif
 
 #if PROTOCOL_VERSION > 759
         void SetLastSeenMessages(const LastSeenMessagesUpdate& last_seen_messages_)
@@ -94,10 +98,12 @@ namespace ProtocolCraft
             return argument_signatures;
         }
 
+#if PROTOCOL_VERSION < 761
         const bool GetSignedPreview() const
         {
             return signed_preview;
         }
+#endif
 
 #if PROTOCOL_VERSION > 759
         const LastSeenMessagesUpdate& GetLastSeenMessages() const
@@ -121,7 +127,9 @@ namespace ProtocolCraft
                 const int value_size = ReadData<VarInt>(iter, length);
                 argument_signatures[key] = ReadByteArray(iter, length, value_size);
             }
+#if PROTOCOL_VERSION < 761
             signed_preview = ReadData<bool>(iter, length);
+#endif
 #if PROTOCOL_VERSION > 759
             last_seen_messages.Read(iter, length);
 #endif
@@ -141,7 +149,9 @@ namespace ProtocolCraft
                 WriteData<VarInt>(s.second.size(), container);
                 WriteByteArray(s.second, container);
             }
+#if PROTOCOL_VERSION < 761
             WriteData<bool>(signed_preview, container);
+#endif
 #if PROTOCOL_VERSION > 759
             last_seen_messages.Write(container);
 #endif
@@ -161,7 +171,9 @@ namespace ProtocolCraft
             {
                 output["argument_signatures"][s.first] = "Vector of " + std::to_string(s.second.size()) + " unsigned char";
             }
+#if PROTOCOL_VERSION < 761
             output["signed_preview"] = signed_preview;
+#endif
 #if PROTOCOL_VERSION > 759
             output["last_seen_messages"] = last_seen_messages.Serialize();
 #endif
@@ -177,7 +189,9 @@ namespace ProtocolCraft
         long long int salt;
 #endif
         std::map<std::string, std::vector<unsigned char> > argument_signatures;
+#if PROTOCOL_VERSION < 761
         bool signed_preview;
+#endif
 #if PROTOCOL_VERSION > 759
         LastSeenMessagesUpdate last_seen_messages;
 #endif

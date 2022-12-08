@@ -17,6 +17,8 @@ namespace ProtocolCraft
             return 0x3F;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
             return 0x42;
+#elif PROTOCOL_VERSION == 761 // 1.19.3
+            return 0x41;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -43,11 +45,12 @@ namespace ProtocolCraft
             icon_base_64 = icon_base_64_;
         }
 
+#if PROTOCOL_VERSION < 761
         void SetPreviewsChat(const bool previews_chat_)
         {
             previews_chat = previews_chat_;
-
         }
+#endif
 
 #if PROTOCOL_VERSION > 759
         void SetEnforcesSecureChat(const bool enforces_secure_chat_)
@@ -67,10 +70,12 @@ namespace ProtocolCraft
             return icon_base_64;
         }
 
+#if PROTOCOL_VERSION < 761
         const bool GetPreviewsChat() const
         {
             return previews_chat;
         }
+#endif
 
 #if PROTOCOL_VERSION > 759
         const bool GetEnforcesSecureChat() const
@@ -95,7 +100,9 @@ namespace ProtocolCraft
             {
                 icon_base_64 = ReadData<std::string>(iter, length);
             }
+#if PROTOCOL_VERSION < 761
             previews_chat = ReadData<bool>(iter, length);
+#endif
 #if PROTOCOL_VERSION > 759
             enforces_secure_chat = ReadData<bool>(iter, length);
 #endif
@@ -113,7 +120,9 @@ namespace ProtocolCraft
             {
                 WriteData<std::string>(icon_base_64, container);
             }
+#if PROTOCOL_VERSION < 761
             WriteData<bool>(previews_chat, container);
+#endif
 #if PROTOCOL_VERSION > 759
             WriteData<bool>(enforces_secure_chat, container);
 #endif
@@ -131,7 +140,9 @@ namespace ProtocolCraft
             {
                 output["icon_base_64"] = icon_base_64;
             }
+#if PROTOCOL_VERSION < 761
             output["previews_chat"] = previews_chat;
+#endif
 #if PROTOCOL_VERSION > 759
             output["enforces_secure_chat"] = enforces_secure_chat;
 #endif
@@ -143,7 +154,9 @@ namespace ProtocolCraft
     private:
         Chat motd;
         std::string icon_base_64;
+#if PROTOCOL_VERSION < 761
         bool previews_chat;
+#endif
 #if PROTOCOL_VERSION > 759
         bool enforces_secure_chat;
 #endif

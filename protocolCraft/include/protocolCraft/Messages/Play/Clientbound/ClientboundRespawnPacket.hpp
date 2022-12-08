@@ -34,6 +34,8 @@ namespace ProtocolCraft
             return 0x3B;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
             return 0x3E;
+#elif PROTOCOL_VERSION == 761 // 1.19.3
+            return 0x3D;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -113,10 +115,17 @@ namespace ProtocolCraft
             is_flat = is_flat_;
         }
 
+#if PROTOCOL_VERSION < 761
         void SetKeepAllPlayerData(const bool keep_all_player_data_)
         {
             keep_all_player_data = keep_all_player_data_;
         }
+#else
+        void SetDataToKeep(const unsigned char data_to_keep_)
+        {
+            data_to_keep = data_to_keep_;
+        }
+#endif
 #endif
 #if PROTOCOL_VERSION > 758
         void SetLastDeathLocation(const GlobalPos& last_death_location_)
@@ -189,10 +198,17 @@ namespace ProtocolCraft
             return is_flat;
         }
 
+#if PROTOCOL_VERSION < 761
         const bool GetKeepAllPlayerData() const
         {
             return keep_all_player_data;
         }
+#else
+        const unsigned char GetDataToKeep() const
+        {
+            return data_to_keep;
+        }
+#endif
 #endif
 
 #if PROTOCOL_VERSION > 758
@@ -226,7 +242,11 @@ namespace ProtocolCraft
             previous_player_game_type = ReadData<unsigned char>(iter, length);
             is_debug = ReadData<bool>(iter, length);
             is_flat = ReadData<bool>(iter, length);
+#if PROTOCOL_VERSION < 761
             keep_all_player_data = ReadData<bool>(iter, length);
+#else
+            data_to_keep = ReadData<unsigned char>(iter, length);
+#endif
 #endif
 #if PROTOCOL_VERSION > 758
             const bool has_last_death_location = ReadData<bool>(iter, length);
@@ -260,7 +280,11 @@ namespace ProtocolCraft
             WriteData<unsigned char>((unsigned char)previous_player_game_type, container);
             WriteData<bool>(is_debug, container);
             WriteData<bool>(is_flat, container);
+#if PROTOCOL_VERSION < 761
             WriteData<bool>(keep_all_player_data, container);
+#else
+            WriteData<unsigned char>(data_to_keep, container);
+#endif
 #endif
 #if PROTOCOL_VERSION > 758
             WriteData<bool>(!last_death_location.GetDimension().GetFull().empty(), container);
@@ -296,7 +320,11 @@ namespace ProtocolCraft
             output["previous_player_game_type"] = previous_player_game_type;
             output["is_debug"] = is_debug;
             output["is_flat"] = is_flat;
+#if PROTOCOL_VERSION < 761
             output["keep_all_player_data"] = keep_all_player_data;
+#else
+            output["data_to_keep"] = data_to_keep;
+#endif
 #endif
 #if PROTOCOL_VERSION > 758
             if (!last_death_location.GetDimension().GetFull().empty())
@@ -332,7 +360,11 @@ namespace ProtocolCraft
         int previous_player_game_type;
         bool is_debug;
         bool is_flat;
+#if PROTOCOL_VERSION < 761
         bool keep_all_player_data;
+#else
+        unsigned char data_to_keep;
+#endif
 #endif
 #if PROTOCOL_VERSION > 758
         GlobalPos last_death_location;

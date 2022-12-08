@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 && PROTOCOL_VERSION < 761
 #pragma once
 
 #include <string>
