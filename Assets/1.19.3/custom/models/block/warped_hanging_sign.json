@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_hanging_sign_0",
+	"textures": {
+		"all": "entity/signs/hanging/warped"
+	},
+	"textures_base_size": {
+		"entity/signs/hanging/warped": [64, 32]
+	}
+}

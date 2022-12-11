@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_hanging_sign_0",
+	"textures": {
+		"all": "entity/signs/hanging/acacia"
+	},
+	"textures_base_size": {
+		"entity/signs/hanging/acacia": [64, 32]
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_hanging_sign_0",
+	"textures": {
+		"all": "entity/signs/hanging/mangrove"
+	},
+	"textures_base_size": {
+		"entity/signs/hanging/mangrove": [64, 32]
+	}
+}

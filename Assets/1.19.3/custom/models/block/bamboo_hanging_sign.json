@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_hanging_sign_0",
+	"textures": {
+		"all": "entity/signs/hanging/bamboo"
+	},
+	"textures_base_size": {
+		"entity/signs/hanging/bamboo": [64, 32]
+	}
+}

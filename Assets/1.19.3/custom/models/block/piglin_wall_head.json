@@ -1,0 +1,23 @@
+{
+	"textures": {
+		"all": "entity/piglin/piglin"
+	},
+	"textures_base_size": {
+		"entity/piglin/piglin": [64, 64]
+	},
+	"elements": [
+		{
+			"__comment": "Head",
+			"from": [3, 4, 8],
+			"to": [13, 12, 16],
+			"faces": {
+				"down":  { "uv": [ 18, 0, 28, 8 ], "texture": "#all" },
+                "up":    { "uv": [ 8, 0, 18, 8 ], "texture": "#all" },
+                "south": { "uv": [ 28, 8, 36, 16 ], "texture": "#all", "cullface": "south" },
+                "west":  { "uv": [ 18, 8, 28, 16 ], "texture": "#all" },
+                "north":  { "uv": [ 8, 8, 18, 16 ], "texture": "#all" },
+                "east":  { "uv": [ 0, 8, 8, 16 ], "texture": "#all" }
+			}
+		}
+	]
+}

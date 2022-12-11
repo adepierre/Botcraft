@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_wall_hanging_sign",
+	"textures": {
+		"all": "entity/signs/hanging/spruce"
+	},
+	"textures_base_size": {
+		"entity/signs/hanging/spruce": [64, 32]
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"textures": {
+		"all": "#all"
+	},
+	"elements": [
+		{
+			"__comment": "Chains",
+			"from": [2, 9, 8],
+			"to": [14, 16, 8],
+			"faces": {
+                "south": { "uv": [ 14, 6, 26, 12 ], "texture": "#all" },
+                "north":  { "uv": [ 14, 6, 26, 12 ], "texture": "#all" }
+			}
+		},
+		{
+			"__comment": "Bottom part",
+			"from": [1, 0, 7],
+			"to": [15, 9, 9],
+			"faces": {
+				"down":  { "uv": [ 16, 12, 30, 14 ], "texture": "#all" },
+                "up":    { "uv": [ 2, 12, 16, 14 ], "texture": "#all" },
+                "south": { "uv": [ 18, 14, 32, 24 ], "texture": "#all" },
+                "west":  { "uv": [ 16, 14, 18, 24 ], "texture": "#all" },
+                "north":  { "uv": [ 2, 14, 16, 24 ], "texture": "#all" },
+                "east":  { "uv": [ 0, 14, 2, 24 ], "texture": "#all" }
+			}
+		}
+	]
+}

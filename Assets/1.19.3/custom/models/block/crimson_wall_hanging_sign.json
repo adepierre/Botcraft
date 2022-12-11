@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_wall_hanging_sign",
+	"textures": {
+		"all": "entity/signs/hanging/crimson"
+	},
+	"textures_base_size": {
+		"entity/signs/hanging/crimson": [64, 32]
+	}
+}
