@@ -284,12 +284,17 @@ namespace Botcraft
         return key_timestamp;
     }
 
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION == 759
     const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
+        long long int& salt, long long int& timestamp)
+#elif PROTOCOL_VERSION == 760
+    const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
+        const std::vector<unsigned char>& previous_signature, const std::vector<ProtocolCraft::LastSeenMessagesEntry>& last_seen,
         long long int& salt, long long int& timestamp)
 #else
     const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
-        const std::vector<unsigned char>& previous_signature, const std::vector<ProtocolCraft::LastSeenMessagesEntry>& last_seen,
+        const int message_sent_index, const ProtocolCraft::UUID& chat_session_uuid,
+        const std::vector<std::vector<unsigned char>>& last_seen,
         long long int& salt, long long int& timestamp)
 #endif
     {
@@ -317,7 +322,7 @@ namespace Botcraft
         }
 
         std::array<unsigned char, SHA256_DIGEST_LENGTH> signature_hash;
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION == 759
         // Signature is computed with a dumb json instead of the actual string
         const std::string jsoned_message = "{\"text\":\"" + message + "\"}";
 
@@ -328,8 +333,7 @@ namespace Botcraft
         SHA256_Update(&sha256, mc_player_uuid_bytes.data(), mc_player_uuid_bytes.size());
         SHA256_Update(&sha256, timestamp_bytes.data(), timestamp_bytes.size());
         SHA256_Update(&sha256, jsoned_message.data(), jsoned_message.size());
-        SHA256_Final(signature_hash.data(), &sha256);
-#else
+#elif PROTOCOL_VERSION == 760
         const unsigned char const_byte_70 = 70;
 
         // Body hash
@@ -359,8 +363,43 @@ namespace Botcraft
         }
         SHA256_Update(&sha256, mc_player_uuid_bytes.data(), mc_player_uuid_bytes.size());
         SHA256_Update(&sha256, body_hash.data(), body_hash.size());
-        SHA256_Final(signature_hash.data(), &sha256);
+#else
+        std::array<unsigned char, 4> bytes_1_big_endian;
+        std::array<unsigned char, 4> message_sent_index_bytes;
+        std::array<unsigned char, 4> message_size_bytes;
+        std::array<unsigned char, 4> last_seen_size_bytes;
+
+        for (int i = 0; i < 4; ++i)
+        {
+            bytes_1_big_endian[i] = static_cast<unsigned char>((1 >> (4 * (3 - i))) & 0xFF);
+            message_sent_index_bytes[i] = static_cast<unsigned char>((message_sent_index >> (4 * (3 - i))) & 0xFF);
+            message_size_bytes[i] = static_cast<unsigned char>((static_cast<int>(message.size()) >> (4 * (3 - i))) & 0xFF);
+            last_seen_size_bytes[i] = static_cast<unsigned char>((static_cast<int>(last_seen.size()) >> (4 * (3 - i))) & 0xFF);
+        }
+
+        // Compute hash
+        SHA256_CTX sha256;
+        SHA256_Init(&sha256);
+        SHA256_Init(&sha256);
+        // Big endian (int)1
+        SHA256_Update(&sha256, bytes_1_big_endian.data(), bytes_1_big_endian.size());
+        // signed message link
+        SHA256_Update(&sha256, mc_player_uuid_bytes.data(), mc_player_uuid_bytes.size());
+        SHA256_Update(&sha256, chat_session_uuid.data(), chat_session_uuid.size());
+        SHA256_Update(&sha256, message_sent_index_bytes.data(), message_sent_index_bytes.size());
+        // signed message body
+        SHA256_Update(&sha256, salt_bytes.data(), salt_bytes.size());
+        SHA256_Update(&sha256, timestamp_bytes.data(), timestamp_bytes.size());
+        SHA256_Update(&sha256, message_size_bytes.data(), message_size_bytes.size());
+        SHA256_Update(&sha256, message.data(), message.size());
+        SHA256_Update(&sha256, last_seen_size_bytes.data(), last_seen_size_bytes.size());
+        for (size_t i = 0; i < last_seen.size(); ++i)
+        {
+            SHA256_Update(&sha256, last_seen[i].data(), last_seen[i].size());
+        }
 #endif
+        SHA256_Final(signature_hash.data(), &sha256);
+
         // Extract signature key from PEM string
         // TODO: store RSA key so we don't have to extract it every chat message?
         // it's not that important as you're not supposed to spam chat hundreds of times per second anyway
@@ -1031,7 +1070,7 @@ namespace Botcraft
 
         // Divided by 1000 because this one is stored in ms
         // TODO: investigate why it sometimes wrongly detects expired keys as still valid
-        const bool expired = !invalid_cached_values;//&& IsTokenExpired(cached["certificates"]["expires_date"].get<long long int>() / 1000);
+        const bool expired = !invalid_cached_values && IsTokenExpired(cached["certificates"]["expires_date"].get<long long int>() / 1000);
 
         if (expired)
         {

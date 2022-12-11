@@ -38,6 +38,9 @@
 #if PROTOCOL_VERSION > 404
 #include "botcraft/Game/Entities/entities/animal/CatEntity.hpp"
 #endif
+#if PROTOCOL_VERSION > 760
+#include "botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/monster/CaveSpiderEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/ChickenEntity.hpp"
 #if PROTOCOL_VERSION > 340
@@ -298,26 +301,69 @@ namespace Botcraft
             const int type = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length);
             std::any value;
 
+            enum EntityMetadataTypes
+            {
+                Char = 0,
+                Int,
+#if PROTOCOL_VERSION > 760
+                Long,
+#endif
+                Float,
+                String,
+                Chat,
+#if PROTOCOL_VERSION > 340
+                OptionalChat,
+#endif
+                Slot,
+                Bool,
+                Rotations,
+                BlockPosition,
+                OptionalBlockPosition,
+                DirectionType,
+                OptionalUUID,
+                BlockstateType,
+                NBT,
+#if PROTOCOL_VERSION > 340
+                Particle,
+#endif
+#if PROTOCOL_VERSION > 404
+                VillagerDataTYpe,
+                OptionalUint,
+                PoseType,
+#endif
+#if PROTOCOL_VERSION > 758
+                CatVariant,
+                FrogVariant,
+                OptionalGlobalPos,
+                PaintingVariant,
+#endif
+            };
+
             switch (type)
             {
-            case 0:
+            case EntityMetadataTypes::Char:
                 value = ProtocolCraft::ReadData<char>(iter, length);
                 break;
-            case 1:
+            case EntityMetadataTypes::Int:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
-            case 2:
+#if PROTOCOL_VERSION > 760
+            case EntityMetadataTypes::Long:
+                value = static_cast<long long int>(ProtocolCraft::ReadData<ProtocolCraft::VarLong>(iter, length));
+                break;
+#endif
+            case EntityMetadataTypes::Float:
                 value = ProtocolCraft::ReadData<float>(iter, length);
                 break;
-            case 3:
+            case EntityMetadataTypes::String:
                 value = ProtocolCraft::ReadData<std::string>(iter, length);
                 break;
-            case 4:
+            case EntityMetadataTypes::Chat:
                 value = ProtocolCraft::Chat();
                 std::any_cast<ProtocolCraft::Chat&>(value).Read(iter, length);
                 break;
 #if PROTOCOL_VERSION > 340
-            case 5:
+            case EntityMetadataTypes::OptionalChat:
                 if (ProtocolCraft::ReadData<bool>(iter, length))
                 {
                     value = std::optional<ProtocolCraft::Chat>(ProtocolCraft::Chat());
@@ -329,47 +375,27 @@ namespace Botcraft
                 }
                 break;
 #endif
-#if PROTOCOL_VERSION > 340
-            case 6:
-#else
-            case 5:
-#endif
+            case EntityMetadataTypes::Slot:
                 value = ProtocolCraft::Slot();
                 std::any_cast<ProtocolCraft::Slot&>(value).Read(iter, length);
                 break;
-#if PROTOCOL_VERSION > 340
-            case 7:
-#else
-            case 6:
-#endif
+            case EntityMetadataTypes::Bool:
                 value = ProtocolCraft::ReadData<bool>(iter, length);
                 break;
-#if PROTOCOL_VERSION > 340
-            case 8:
-#else
-            case 7:
-#endif
+            case EntityMetadataTypes::Rotations:
             {
                 std::vector<float> rotation = ProtocolCraft::ReadArrayData<float>(iter, length, 3);
                 value = Vector3<float>(rotation[0], rotation[1], rotation[2]);
                 break;
             }
-#if PROTOCOL_VERSION > 340
-            case 9:
-#else
-            case 8:
-#endif
+            case EntityMetadataTypes::BlockPosition:
             {
                 ProtocolCraft::NetworkPosition position;
                 position.Read(iter, length);
                 value = Position(position);
                 break;
             }
-#if PROTOCOL_VERSION > 340
-            case 10:
-#else
-            case 9:
-#endif
+            case EntityMetadataTypes::OptionalBlockPosition:
                 if (ProtocolCraft::ReadData<bool>(iter, length))
                 {
                     ProtocolCraft::NetworkPosition position;
@@ -381,18 +407,10 @@ namespace Botcraft
                     value = std::optional<Position>();
                 }
                 break;
-#if PROTOCOL_VERSION > 340
-            case 11:
-#else
-            case 10:
-#endif
+            case EntityMetadataTypes::DirectionType:
                 value = static_cast<Direction>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length)));
                 break;
-#if PROTOCOL_VERSION > 340
-            case 12:
-#else
-            case 11:
-#endif
+            case EntityMetadataTypes::OptionalUUID:
                 if (ProtocolCraft::ReadData<bool>(iter, length))
                 {
                     value = std::optional<ProtocolCraft::UUID>(ProtocolCraft::ReadData<ProtocolCraft::UUID>(iter, length));
@@ -402,53 +420,45 @@ namespace Botcraft
                     value = std::optional<ProtocolCraft::UUID>();
                 }
                 break;
-#if PROTOCOL_VERSION > 340
-            case 13:
-#else
-            case 12:
-#endif
+            case EntityMetadataTypes::BlockstateType:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
-#if PROTOCOL_VERSION > 340
-            case 14:
-#else
-            case 13:
-#endif
+            case EntityMetadataTypes::NBT:
                 value = ProtocolCraft::NBT();
                 std::any_cast<ProtocolCraft::NBT&>(value).Read(iter, length);
                 break;
 #if PROTOCOL_VERSION > 340
-            case 15:
+            case EntityMetadataTypes::Particle:
                 value = ProtocolCraft::Particle::CreateParticle(static_cast<ProtocolCraft::ParticleType>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length))));
                 std::any_cast<std::shared_ptr<ProtocolCraft::Particle>&>(value)->Read(iter, length);
                 break;
 #endif
 #if PROTOCOL_VERSION > 404
-            case 16:
+            case EntityMetadataTypes::VillagerDataTYpe:
                 value = VillagerData{
                     ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length), // villager_type
                     ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length), // villager_profession
                     ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length) // level
                 };
                 break;
-            case 17:
+            case EntityMetadataTypes::OptionalUint:
             {
                 const int val = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length);
                 value = val > 0 ? std::optional<int>(val - 1) : std::optional<int>();
                 break;
             }
-            case 18:
+            case EntityMetadataTypes::PoseType:
                 value = static_cast<Pose>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length)));
                 break;
 #endif
 #if PROTOCOL_VERSION > 758
-            case 19:
+            case EntityMetadataTypes::CatVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
-            case 20:
+            case EntityMetadataTypes::FrogVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
-            case 21:
+            case EntityMetadataTypes::OptionalGlobalPos:
                 if (ProtocolCraft::ReadData<bool>(iter, length))
                 {
                     ProtocolCraft::Identifier dimension;
@@ -466,7 +476,7 @@ namespace Botcraft
                     value = std::optional<GlobalPos>();
                 }
                 break;
-            case 22:
+            case EntityMetadataTypes::PaintingVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
 #endif
@@ -1109,6 +1119,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404
         case EntityType::Cat:
             return std::make_shared<CatEntity>();
+#endif
+#if PROTOCOL_VERSION > 760
+        case EntityType::Camel:
+            return std::make_shared<CamelEntity>();
 #endif
         case EntityType::CaveSpider:
             return std::make_shared<CaveSpiderEntity>();

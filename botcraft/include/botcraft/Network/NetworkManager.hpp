@@ -9,6 +9,13 @@
 #include <mutex>
 #include <condition_variable>
 
+#if PROTOCOL_VERSION > 759
+#include "botcraft/Network/LastSeenMessagesTracker.hpp"
+#endif
+#if PROTOCOL_VERSION > 760
+#include <atomic>
+#endif
+
 namespace Botcraft
 {
     class TCP_Com;
@@ -35,9 +42,6 @@ namespace Botcraft
         void WaitForNewPackets();
         void ProcessPacket(const std::vector<unsigned char>& packet);
         void OnNewRawData(const std::vector<unsigned char>& packet);
-#if PROTOCOL_VERSION > 759
-        void NewMessageSeen(const ProtocolCraft::LastSeenMessagesEntry& header);
-#endif
 
 
         virtual void Handle(ProtocolCraft::Message& msg) override;
@@ -50,7 +54,12 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 759
         virtual void Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg) override;
+#if PROTOCOL_VERSION < 761
         virtual void Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& msg) override;
+#endif
+#endif
+#if PROTOCOL_VERSION > 760
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
 #endif
 
     private:
@@ -72,9 +81,11 @@ namespace Botcraft
         std::string name;
 
 #if PROTOCOL_VERSION > 759
-        std::mutex mutex_chat;
-        std::vector<unsigned char> last_signature_sent;
-        std::deque<ProtocolCraft::LastSeenMessagesEntry> last_seen;
+        LastSeenMessagesTracker chat_context;
+#endif
+#if PROTOCOL_VERSION > 760
+        ProtocolCraft::UUID chat_session_uuid;
+        std::atomic<int> message_sent_index;
 #endif
 
     };

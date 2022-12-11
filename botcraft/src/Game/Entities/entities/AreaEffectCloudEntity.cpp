@@ -16,7 +16,11 @@ namespace Botcraft
     AreaEffectCloudEntity::AreaEffectCloudEntity()
     {
         // Initialize all metadata with default values
+#if PROTOCOL_VERSION < 761
         SetDataRadius(0.5f);
+#else
+        SetDataRadius(3.0f);
+#endif
         SetDataColor(0);
         SetDataWaiting(false);
 #if PROTOCOL_VERSION > 340

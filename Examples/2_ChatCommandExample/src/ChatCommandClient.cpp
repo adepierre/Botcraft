@@ -53,15 +53,17 @@ void ChatCommandClient::Handle(ClientboundChatPacket &msg)
     ProcessChatMsg(splitted);
 }
 #else
-void ChatCommandClient::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
+void ChatCommandClient::Handle(ClientboundPlayerChatPacket& msg)
 {
     ManagersClient::Handle(msg);
 
     // Split the message
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION == 759
     std::istringstream ss{ msg.GetSignedContent().GetText() };
-#else
+#elif PROTOCOL_VERSION == 760
     std::istringstream ss{ msg.GetMessage_().GetSignedBody().GetContent().GetPlain() };
+#else
+    std::istringstream ss{ msg.GetBody().GetContent() };
 #endif
     const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
 
@@ -69,7 +71,7 @@ void ChatCommandClient::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
     ProcessChatMsg(splitted);
 }
 
-void ChatCommandClient::Handle(ProtocolCraft::ClientboundSystemChatPacket& msg)
+void ChatCommandClient::Handle(ClientboundSystemChatPacket& msg)
 {
     ManagersClient::Handle(msg);
 

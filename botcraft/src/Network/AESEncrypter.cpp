@@ -43,10 +43,14 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 759
     void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce,
         std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_nonce, std::vector<unsigned char>& encrypted_shared_secret)
-#else
+#elif PROTOCOL_VERSION < 761
     void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce, const std::string& private_key,
         std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_shared_secret,
         long long int& salt, std::vector<unsigned char>& salted_nonce_signature)
+#else
+    void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_challenge,
+        std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_shared_secret,
+        std::vector<unsigned char>& encrypted_challenge)
 #endif
     {
         const unsigned char* pub_key_ptr = pub_key.data();
@@ -71,8 +75,8 @@ namespace Botcraft
         // Pre-1.19 behaviour, compute encrypted nonce
         encrypted_nonce = std::vector<unsigned char>(rsa_size);
         RSA_public_encrypt(input_nonce.size(), input_nonce.data(), encrypted_nonce.data(), rsa, RSA_PKCS1_PADDING);
-#else
-        // 1.19+ behaviour, signature of salted nonce
+#elif PROTOCOL_VERSION < 761
+        // 1.19, 1.19.1 and 1.19.2 behaviour, signature of salted nonce
         // Generate random salt
         salt = std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(random_gen);
         std::array<unsigned char, 8> salt_bytes;
@@ -102,6 +106,10 @@ namespace Botcraft
         RSA_sign(NID_sha256, salted_hash.data(), salted_hash.size(), salted_nonce_signature.data(), &salted_nonce_signature_size, rsa_signature);
         RSA_free(rsa_signature);
         salted_nonce_signature.resize(salted_nonce_signature_size);
+#else
+        // 1.19.3 behaviour, back to compute encrypted challenge
+        encrypted_challenge = std::vector<unsigned char>(rsa_size);
+        RSA_public_encrypt(input_challenge.size(), input_challenge.data(), encrypted_challenge.data(), rsa, RSA_PKCS1_PADDING);
 #endif
         RSA_free(rsa);
 

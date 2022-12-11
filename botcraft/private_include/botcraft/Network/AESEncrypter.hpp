@@ -26,7 +26,7 @@ namespace Botcraft
         /// @param encrypted_shared_secret Shared secret encrypted using server public key
         void Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce,
             std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_nonce, std::vector<unsigned char>& encrypted_shared_secret);
-#else
+#elif PROTOCOL_VERSION < 761
         /// @brief Initialize the encryption context for this connection
         /// @param pub_key Server public key
         /// @param input_nonce Server input nonce
@@ -38,6 +38,16 @@ namespace Botcraft
         void Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce, const std::string& private_key,
             std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_shared_secret,
             long long int& salt, std::vector<unsigned char>& salted_nonce_signature);
+#else
+        /// @brief Initialize the encryption context for this connection
+        /// @param pub_key Server public key
+        /// @param input_challenge Server input challenge
+        /// @param raw_shared_secret Output shared secret
+        /// @param encrypted_shared_secret Shared secret encrypted using server public key
+        /// @param encrypted_challenge Output encrypted challenge
+        void Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce,
+            std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_shared_secret,
+            std::vector<unsigned char>& encrypted_challenge);
 #endif
         std::vector<unsigned char> Encrypt(const std::vector<unsigned char>& in);
         std::vector<unsigned char> Decrypt(const std::vector<unsigned char>& in);

@@ -46,6 +46,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp
     include/botcraft/Game/Entities/entities/animal/CatEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp
     include/botcraft/Game/Entities/entities/monster/CaveSpiderEntity.hpp
     include/botcraft/Game/Entities/entities/animal/ChickenEntity.hpp
     include/botcraft/Game/Entities/entities/animal/CodEntity.hpp
@@ -195,6 +196,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Physics/PhysicsManager.hpp
     
     include/botcraft/Network/NetworkManager.hpp
+    include/botcraft/Network/LastSeenMessagesTracker.hpp
     
     include/botcraft/Utilities/AsyncHandler.hpp
     include/botcraft/Utilities/Logger.hpp
@@ -257,6 +259,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/vehicle/BoatEntity.cpp
     src/Game/Entities/entities/vehicle/ChestBoatEntity.cpp
     src/Game/Entities/entities/animal/CatEntity.cpp
+    src/Game/Entities/entities/animal/camel/CamelEntity.cpp
     src/Game/Entities/entities/monster/CaveSpiderEntity.cpp
     src/Game/Entities/entities/animal/ChickenEntity.cpp
     src/Game/Entities/entities/animal/CodEntity.cpp
@@ -404,6 +407,7 @@ set(botcraft_SRC
     src/Network/Authentifier.cpp
     src/Network/AESEncrypter.cpp
     src/Network/Compression.cpp
+    src/Network/LastSeenMessagesTracker.cpp
     src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
     

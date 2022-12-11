@@ -57,7 +57,7 @@ namespace Botcraft
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
         handshake_msg->SetHostName(com->GetIp());
         handshake_msg->SetPort(com->GetPort());
-        handshake_msg->SetIntention((int)ProtocolCraft::ConnectionState::Login);
+        handshake_msg->SetIntention(static_cast<int>(ProtocolCraft::ConnectionState::Login));
         Send(handshake_msg);
 
         state = ProtocolCraft::ConnectionState::Login;
@@ -69,12 +69,16 @@ namespace Botcraft
         loginstart_msg->SetName(name);
         if (authentifier)
         {
+#if PROTOCOL_VERSION < 761
             ProtocolCraft::ProfilePublicKey key;
             key.SetTimestamp(authentifier->GetKeyTimestamp());
             key.SetKey(RSAToBytes(authentifier->GetPublicKey()));
             key.SetSignature(DecodeBase64(authentifier->GetKeySignature()));
 
             loginstart_msg->SetPublicKey(key);
+#else
+            message_sent_index = 0;
+#endif
 #if PROTOCOL_VERSION > 759
             loginstart_msg->SetProfileId(authentifier->GetPlayerUUID());
 #endif
@@ -170,22 +174,33 @@ namespace Botcraft
         std::shared_ptr<ProtocolCraft::ServerboundChatPacket> chat_message = std::make_shared<ProtocolCraft::ServerboundChatPacket>();
         chat_message->SetMessage(message);
 #if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION < 761
         chat_message->SetSignedPreview(false);
+#endif
         if (authentifier)
         {
             long long int salt, timestamp;
             std::vector<unsigned char> signature;
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION == 759
+            // 1.19
             signature = authentifier->GetMessageSignature(message, salt, timestamp);
-#else
+#elif PROTOCOL_VERSION == 760
+            // 1.19.1 and 1.19.2
             ProtocolCraft::LastSeenMessagesUpdate last_seen_update;
             {
-                std::lock_guard<std::mutex> lock_messages(mutex_chat);
-                last_seen_update.SetLastSeen({ last_seen.begin(), last_seen.begin() + std::min(static_cast<int>(last_seen.size()), 5) });
-                signature = authentifier->GetMessageSignature(message, last_signature_sent, last_seen_update.GetLastSeen(), salt, timestamp);
+                std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
+                last_seen_update = chat_context.GetLastSeenMessagesUpdate();
+                signature = authentifier->GetMessageSignature(message, chat_context.GetLastSignature(), last_seen_update.GetLastSeen(), salt, timestamp);
                 // Update last signature with current one for the next message
-                last_signature_sent = signature;
+                chat_context.SetLastSignature(signature);
             }
+            chat_message->SetLastSeenMessages(last_seen_update);
+#else
+            // 1.19.3+
+            const auto [signatures, updates] = chat_context.GetLastSeenMessagesUpdate();
+            const int current_message_sent_index = message_sent_index++;
+            signature = authentifier->GetMessageSignature(message, current_message_sent_index, chat_session_uuid, signatures, salt, timestamp);
+            chat_message->SetLastSeenMessages(updates);
 #endif
             if (signature.empty())
             {
@@ -202,7 +217,6 @@ namespace Botcraft
 #else
             chat_message->SetSalt(salt);
             chat_message->SetSignature(signature);
-            chat_message->SetLastSeenMessages(last_seen_update);
 #endif
         }
         // Offline mode, empty signature
@@ -224,18 +238,23 @@ namespace Botcraft
         std::mt19937 rnd(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
         chat_command->SetSalt(std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(rnd));
 #endif
-        // TODO: when this shouldn't be empty? Can"t find a situation where it's filled with something
-        chat_command->SetArgumentSignatures({});
+#if PROTOCOL_VERSION < 761
         chat_command->SetSignedPreview(false);
-#if PROTOCOL_VERSION > 759
+#endif
+#if PROTOCOL_VERSION == 760
         ProtocolCraft::LastSeenMessagesUpdate last_seen_update;
         if (authentifier)
         {
-            std::lock_guard<std::mutex> lock_messages(mutex_chat);
-            last_seen_update.SetLastSeen({ last_seen.begin(), last_seen.begin() + std::min(static_cast<int>(last_seen.size()), 5) });
+            std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
+            last_seen_update = chat_context.GetLastSeenMessagesUpdate();
         }
         chat_command->SetLastSeenMessages(last_seen_update);
+#elif PROTOCOL_VERSION > 760
+        const auto [signatures, updates] = chat_context.GetLastSeenMessagesUpdate();
+        chat_command->SetLastSeenMessages(updates);
 #endif
+        // TODO: when this shouldn't be empty? Can't find a situation where it's filled with something
+        chat_command->SetArgumentSignatures({});
 #else
         std::shared_ptr<ProtocolCraft::ServerboundChatPacket> chat_command = std::make_shared<ProtocolCraft::ServerboundChatPacket>();
         chat_command->SetMessage("/" + command);
@@ -331,36 +350,6 @@ namespace Botcraft
         process_condition.notify_all();
     }
 
-#if PROTOCOL_VERSION > 759
-    void NetworkManager::NewMessageSeen(const ProtocolCraft::LastSeenMessagesEntry& header)
-    {
-        std::lock_guard<std::mutex> lock_messages(mutex_chat);
-
-        // Remove old messages from the same player
-        int index = 0;
-        while (index < last_seen.size())
-        {
-            if (last_seen[index].GetProfileId() == header.GetProfileId())
-            {
-                last_seen.erase(last_seen.begin() + index);
-            }
-            else
-            {
-                index += 1;
-            }
-        }
-
-        // Push new header in front
-        last_seen.push_front(header);
-
-        // Limit the size to 5 messages
-        while (last_seen.size() > 5)
-        {
-            last_seen.pop_back();
-        }
-    }
-#endif
-
     void NetworkManager::Handle(ProtocolCraft::Message& msg)
     {
 
@@ -395,11 +384,18 @@ namespace Botcraft
         encrypter->Init(msg.GetPublicKey(), msg.GetNonce(),
             raw_shared_secret, encrypted_nonce, encrypted_shared_secret);
 #else
+#if PROTOCOL_VERSION < 761
         std::vector<unsigned char> salted_nonce_signature;
         long long int salt;
         encrypter->Init(msg.GetPublicKey(), msg.GetNonce(), authentifier->GetPrivateKey(),
             raw_shared_secret, encrypted_shared_secret,
             salt, salted_nonce_signature);
+#else
+        std::vector<unsigned char> encrypted_challenge;
+        encrypter->Init(msg.GetPublicKey(), msg.GetChallenge(),
+            raw_shared_secret, encrypted_shared_secret,
+            encrypted_challenge);
+#endif
 #endif
 
         authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());
@@ -410,12 +406,15 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 759
         // Pre-1.19 behaviour, send encrypted nonce
         response_msg->SetNonce(encrypted_nonce);
-#else
-        // 1.19+ behaviour, send salted nonce signature
+#elif PROTOCOL_VERSION < 761
+        // 1.19, 1.19.1, 1.19.2 behaviour, send salted nonce signature
         ProtocolCraft::SaltSignature salt_signature;
         salt_signature.SetSalt(salt);
         salt_signature.SetSignature(salted_nonce_signature);
         response_msg->SetSaltSignature(salt_signature);
+#else
+        // 1.19.3+ behaviour, send encrypted challenge
+        response_msg->SetEncryptedChallenge(encrypted_challenge);
 #endif
 
         Send(response_msg);
@@ -456,18 +455,59 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 759
     void NetworkManager::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
     {
-        ProtocolCraft::LastSeenMessagesEntry last_seen;
-        last_seen.SetLastSignature(msg.GetMessage_().GetHeaderSignature());
-        last_seen.SetProfileId(msg.GetMessage_().GetSignedHeader().GetSender());
-        NewMessageSeen(last_seen);
+#if PROTOCOL_VERSION < 761
+        chat_context.AddSeenMessage(msg.GetMessage_().GetHeaderSignature(), msg.GetMessage_().GetSignedHeader().GetSender());
+#else
+        if (!msg.GetSignature().empty())
+        {
+            std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
+
+            chat_context.AddSeenMessage(msg.GetSignature());
+
+            if (chat_context.GetOffset() > 64)
+            {
+                std::shared_ptr<ProtocolCraft::ServerboundChatAckPacket> ack_msg = std::make_shared<ProtocolCraft::ServerboundChatAckPacket>();
+                ack_msg->SetOffset(chat_context.GetAndResetOffset());
+                Send(ack_msg);
+            }
+        }
+#endif
     }
 
+#if PROTOCOL_VERSION < 761
     void NetworkManager::Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& msg)
     {
-        ProtocolCraft::LastSeenMessagesEntry last_seen;
-        last_seen.SetLastSignature(msg.GetHeaderSignature());
-        last_seen.SetProfileId(msg.GetHeader().GetSender());
-        NewMessageSeen(last_seen);
+        chat_context.AddSeenMessage(msg.GetHeaderSignature(), msg.GetHeader().GetSender());
+    }
+#endif
+#endif
+
+#if PROTOCOL_VERSION > 760
+    void NetworkManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
+    {
+        if (authentifier)
+        {
+            std::shared_ptr<ProtocolCraft::ServerboundChatSessionUpdatePacket> chat_session_msg = std::make_shared<ProtocolCraft::ServerboundChatSessionUpdatePacket>();
+            ProtocolCraft::RemoteChatSessionData chat_session_data;
+
+            ProtocolCraft::ProfilePublicKey key;
+            key.SetTimestamp(authentifier->GetKeyTimestamp());
+            key.SetKey(RSAToBytes(authentifier->GetPublicKey()));
+            key.SetSignature(DecodeBase64(authentifier->GetKeySignature()));
+
+            chat_session_data.SetProfilePublicKey(key);
+            chat_session_uuid = ProtocolCraft::UUID();
+            std::mt19937 rnd = std::mt19937(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+            std::uniform_int_distribution<int> distrib(std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max());
+            for (size_t i = 0; i < chat_session_uuid.size(); ++i)
+            {
+                chat_session_uuid[i] = static_cast<unsigned char>(distrib(rnd));
+            }
+            chat_session_data.SetUUID(chat_session_uuid);
+
+            chat_session_msg->SetChatSession(chat_session_data);
+            Send(chat_session_msg);
+        }
     }
 #endif
 }

@@ -44,7 +44,7 @@ namespace Botcraft
         const std::string& GetKeySignature() const;
         const long long int GetKeyTimestamp() const;
 
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION == 759
         /// @brief Compute the signature of a message
         /// @param message Message to send
         /// @param salt Output salt used to generate the signature
@@ -52,7 +52,7 @@ namespace Botcraft
         /// @return The message signature
         const std::vector<unsigned char> GetMessageSignature(const std::string& message,
             long long int& salt, long long int& timestamp);
-#else
+#elif PROTOCOL_VERSION == 760
         /// @brief Compute the signature of a message
         /// @param message Message to send
         /// @param previous_signature Signature of the previous message sent
@@ -62,6 +62,19 @@ namespace Botcraft
         /// @return The message signature
         const std::vector<unsigned char> GetMessageSignature(const std::string& message,
             const std::vector<unsigned char>& previous_signature, const std::vector<ProtocolCraft::LastSeenMessagesEntry>& last_seen,
+            long long int& salt, long long int& timestamp);
+#else
+        /// @brief Compute the signature of a message
+        /// @param message Message to send
+        /// @param message_sent_index Index of the message in this message chain
+        /// @param chat_session_uuid UUID of the chat session, as sent in ServerboundChatSessionUpdatePacket
+        /// @param last_seen Vector of signatures of previously received messages
+        /// @param salt Output salt used to generate the signature
+        /// @param timestamp Output timestamp in ms used to generate the signature
+        /// @return The message signature
+        const std::vector<unsigned char> GetMessageSignature(const std::string& message,
+            const int message_sent_index, const ProtocolCraft::UUID& chat_session_uuid,
+            const std::vector<std::vector<unsigned char>>& last_seen,
             long long int& salt, long long int& timestamp);
 #endif
 #endif

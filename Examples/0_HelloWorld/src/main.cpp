@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
         client.Connect(address, login);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-        client.SendChatMessage("Hello world!");
+        client.SendChatMessage(u8"Hello, World!");
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
         client.Disconnect();
