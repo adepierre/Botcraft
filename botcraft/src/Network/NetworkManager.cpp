@@ -383,8 +383,7 @@ namespace Botcraft
         std::vector<unsigned char> encrypted_nonce;
         encrypter->Init(msg.GetPublicKey(), msg.GetNonce(),
             raw_shared_secret, encrypted_nonce, encrypted_shared_secret);
-#else
-#if PROTOCOL_VERSION < 761
+#elif PROTOCOL_VERSION < 761
         std::vector<unsigned char> salted_nonce_signature;
         long long int salt;
         encrypter->Init(msg.GetPublicKey(), msg.GetNonce(), authentifier->GetPrivateKey(),
@@ -395,7 +394,6 @@ namespace Botcraft
         encrypter->Init(msg.GetPublicKey(), msg.GetChallenge(),
             raw_shared_secret, encrypted_shared_secret,
             encrypted_challenge);
-#endif
 #endif
 
         authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());

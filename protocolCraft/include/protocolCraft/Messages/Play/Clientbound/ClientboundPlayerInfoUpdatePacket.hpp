@@ -87,8 +87,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             // Get the number of bits to encode all possible actions in a bitset
-            constexpr int enum_set_length = static_cast<int>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION) / 8 + (static_cast<int>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION) % 8 != 0);
-            Bitset<enum_set_length> bitset;
+            Bitset<static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION)> bitset;
             bitset.Read(iter, length);
             actions.clear();
             for (size_t i = 0; i < static_cast<int>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION); ++i)
@@ -159,8 +158,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            constexpr int enum_set_length = static_cast<int>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION) / 8 + (static_cast<int>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION) % 8 != 0);
-            Bitset<enum_set_length> bitset;
+            Bitset<static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION)> bitset;
             for (size_t i = 0; i < actions.size(); ++i)
             {
                 bitset.bitset.set(static_cast<int>(actions[i]), true);

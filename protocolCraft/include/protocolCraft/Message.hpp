@@ -37,4 +37,4 @@ namespace ProtocolCraft
     protected:
         virtual void DispatchImpl(Handler *handler) = 0;
     };
-} // Botcraft
+} // ProtocolCraft

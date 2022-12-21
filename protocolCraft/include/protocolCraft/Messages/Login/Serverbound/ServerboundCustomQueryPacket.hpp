@@ -82,5 +82,5 @@ namespace ProtocolCraft
         int transaction_id;
         std::vector<unsigned char> data;
     };
-} // Botcraft
+} // ProtocolCraft
 #endif

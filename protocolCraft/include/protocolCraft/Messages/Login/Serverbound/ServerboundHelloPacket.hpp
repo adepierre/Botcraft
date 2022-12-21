@@ -180,4 +180,4 @@ namespace ProtocolCraft
         std::string game_profile;
 #endif
     };
-} // Botcraft
+} // ProtocolCraft

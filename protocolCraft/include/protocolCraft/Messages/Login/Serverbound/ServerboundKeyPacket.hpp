@@ -163,4 +163,4 @@ namespace ProtocolCraft
         std::vector<unsigned char> encrypted_challenge;
 #endif
     };
-} // Botcraft
+} // ProtocolCraft
