@@ -109,7 +109,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(owner, container);
-            WriteData<char>((char)method, container);
+            WriteData<char>(static_cast<char>(method), container);
             WriteData<std::string>(objective_name, container);
             if (method != SetScoreMethod::Remove)
             {

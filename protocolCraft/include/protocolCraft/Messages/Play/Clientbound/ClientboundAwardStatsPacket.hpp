@@ -97,7 +97,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(stats.size(), container);
+            WriteData<VarInt>(static_cast<int>(stats.size()), container);
             for (auto it = stats.begin(); it != stats.end(); ++it)
             {
 #if PROTOCOL_VERSION < 346

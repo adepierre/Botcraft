@@ -72,7 +72,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(recipes.size(), container);
+            WriteData<VarInt>(static_cast<int>(recipes.size()), container);
             for (int i = 0; i < recipes.size(); ++i)
             {
                 recipes[i].Write(container);

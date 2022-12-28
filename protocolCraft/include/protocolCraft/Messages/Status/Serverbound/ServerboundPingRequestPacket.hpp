@@ -40,7 +40,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<VarInt>(time, container);
+            WriteData<long long int>(time, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

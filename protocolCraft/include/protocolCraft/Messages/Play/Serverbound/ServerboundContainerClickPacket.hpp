@@ -198,7 +198,7 @@ namespace ProtocolCraft
 #endif
             WriteData<VarInt>(click_type, container);
 #if PROTOCOL_VERSION > 754
-            WriteData<VarInt>(changed_slots.size(), container);
+            WriteData<VarInt>(static_cast<int>(changed_slots.size()), container);
             for (auto it = changed_slots.begin(); it != changed_slots.end(); ++it)
             {
                 WriteData<short>(it->first, container);

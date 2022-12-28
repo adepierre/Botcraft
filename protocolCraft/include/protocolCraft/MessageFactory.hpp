@@ -15,19 +15,9 @@ namespace ProtocolCraft
             switch (state)
             {
             case ConnectionState::None:
-                switch (id)
-                {
-                default:
-                    return nullptr;
-                }
-                break;
+                return nullptr;
             case ConnectionState::Handshake:
-                switch (id)
-                {
-                default:
-                    return nullptr;
-                }
-                break;
+                return nullptr;
             case ConnectionState::Status:
                 switch (id)
                 {
@@ -38,7 +28,6 @@ namespace ProtocolCraft
                 default:
                     return nullptr;
                 }
-                break;
             case ConnectionState::Login: // Login
                 switch (id)
                 {
@@ -57,7 +46,6 @@ namespace ProtocolCraft
                 default:
                     return nullptr;
                 }
-                break;
             case ConnectionState::Play:
                 switch (id)
                 {
@@ -2328,12 +2316,7 @@ namespace ProtocolCraft
             switch (state)
             {
             case ConnectionState::None:
-                switch (id)
-                {
-                default:
-                    return nullptr;
-                }
-                break;
+                return nullptr;
             case ConnectionState::Handshake:
                 switch (id)
                 {
@@ -2342,7 +2325,6 @@ namespace ProtocolCraft
                 default:
                     return nullptr;
                 }
-                break;
             case ConnectionState::Status:
                 switch (id)
                 {
@@ -2353,7 +2335,6 @@ namespace ProtocolCraft
                 default:
                     return nullptr;
                 }
-                break;
             case ConnectionState::Login:
                 switch (id)
                 {
@@ -2368,7 +2349,6 @@ namespace ProtocolCraft
                 default:
                     return nullptr;
                 }
-                break;
             case ConnectionState::Play:
                 switch (id)
                 {

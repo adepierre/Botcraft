@@ -94,7 +94,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755
             WriteData<int>(attributes.size(), container);
 #else
-            WriteData<VarInt>(attributes.size(), container);
+            WriteData<VarInt>(static_cast<int>(attributes.size()), container);
 #endif
             for (int i = 0; i < attributes.size(); ++i)
             {

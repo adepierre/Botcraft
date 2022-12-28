@@ -240,7 +240,7 @@ namespace ProtocolCraft
             
             if (method == 0 || method == 3 || method == 4)
             {
-                WriteData<VarInt>(players.size(), container);
+                WriteData<VarInt>(static_cast<int>(players.size()), container);
                 for (int i = 0; i < players.size(); ++i)
                 {
                     WriteData<std::string>(players[i], container);

@@ -161,7 +161,7 @@ namespace ProtocolCraft
     template<>
     void WriteData(const std::string& value, WriteContainer& container)
     {
-        WriteData<VarInt>(value.size(), container);
+        WriteData<VarInt>(static_cast<int>(value.size()), container);
         container.insert(container.end(), value.begin(), value.end());
     }
 

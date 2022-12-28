@@ -82,7 +82,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            action = (PlayerInfoAction)(int)ReadData<VarInt>(iter, length);
+            action = static_cast<PlayerInfoAction>(static_cast<int>(ReadData<VarInt>(iter, length)));
             const int number_of_entries = ReadData<VarInt>(iter, length);
             for (int i = 0; i < number_of_entries; ++i)
             {
@@ -122,11 +122,11 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<VarInt>((int)action, container);
+            WriteData<VarInt>(static_cast<int>(action), container);
             switch (action)
             {
             case PlayerInfoAction::AddPlayer:
-                WriteData<VarInt>(entries.size(), container);
+                WriteData<VarInt>(static_cast<int>(entries.size()), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
                     WriteData<UUID>(it->first, container);
@@ -134,23 +134,23 @@ namespace ProtocolCraft
                 }
                 break;
             case PlayerInfoAction::UpdateGameMode:
-                WriteData<VarInt>(entries.size(), container);
+                WriteData<VarInt>(static_cast<int>(entries.size()), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
                     WriteData<UUID>(it->first, container);
-                    WriteData<VarInt>((int)it->second.GetGameMode(), container);
+                    WriteData<VarInt>(static_cast<int>(it->second.GetGameMode()), container);
                 }
                 break;
             case PlayerInfoAction::UpdateLatency:
-                WriteData<VarInt>(entries.size(), container);
+                WriteData<VarInt>(static_cast<int>(entries.size()), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
                     WriteData<UUID>(it->first, container);
-                    WriteData<VarInt>((int)it->second.GetLatency(), container);
+                    WriteData<VarInt>(static_cast<int>(it->second.GetLatency()), container);
                 }
                 break;
             case PlayerInfoAction::UpdateDisplayName:
-                WriteData<VarInt>(entries.size(), container);
+                WriteData<VarInt>(static_cast<int>(entries.size()), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
                     WriteData<UUID>(it->first, container);
@@ -162,7 +162,7 @@ namespace ProtocolCraft
                 }
                 break;
             case PlayerInfoAction::RemovePlayer:
-                WriteData<VarInt>(entries.size(), container);
+                WriteData<VarInt>(static_cast<int>(entries.size()), container);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
                     WriteData<UUID>(it->first, container);

@@ -78,7 +78,7 @@ namespace ProtocolCraft
                 WriteByteArray(message_signature, container);
             }
 #else
-            WriteData<VarInt>(message_signature.size(), container);
+            WriteData<VarInt>(static_cast<int>(message_signature.size()), container);
             WriteByteArray(message_signature, container);
 #endif
         }

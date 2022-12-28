@@ -3,6 +3,8 @@
 #if PROTOCOL_VERSION > 344
 #include "protocolCraft/Types/CommandNode/BrigadierProperty.hpp"
 
+#include <limits>
+
 namespace ProtocolCraft
 {
     class BrigadierPropertyInteger : public BrigadierProperty
@@ -54,7 +56,7 @@ namespace ProtocolCraft
             }
             else
             {
-                min = -2147483648;
+                min = std::numeric_limits<int>().min();
             }
             if (flags & 0x02)
             {
@@ -62,7 +64,7 @@ namespace ProtocolCraft
             }
             else
             {
-                max = 2147483647;
+                max = std::numeric_limits<int>().max();
             }
         }
 

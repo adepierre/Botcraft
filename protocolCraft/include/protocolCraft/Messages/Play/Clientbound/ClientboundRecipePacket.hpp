@@ -116,7 +116,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            state = (RecipeState)(int)ReadData<VarInt>(iter, length);
+            state = static_cast<RecipeState>(static_cast<int>(ReadData<VarInt>(iter, length)));
             book_settings.Read(iter, length);
             int recipes_size = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 348
@@ -153,9 +153,9 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>((int)state, container);
+            WriteData<VarInt>(static_cast<int>(state), container);
             book_settings.Write(container);
-            WriteData<VarInt>(recipes.size(), container);
+            WriteData<VarInt>(static_cast<int>(recipes.size()), container);
             for (int i = 0; i < recipes.size(); ++i)
             {
 #if PROTOCOL_VERSION > 348
@@ -166,7 +166,7 @@ namespace ProtocolCraft
             }
             if (state == RecipeState::Init)
             {
-                WriteData<VarInt>(to_highlight.size(), container);
+                WriteData<VarInt>(static_cast<int>(to_highlight.size()), container);
                 for (int i = 0; i < to_highlight.size(); ++i)
                 {
 #if PROTOCOL_VERSION > 348

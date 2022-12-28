@@ -84,13 +84,13 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<std::string>(server_ID, container);
-            WriteData<VarInt>(public_key.size(), container);
+            WriteData<VarInt>(static_cast<int>(public_key.size()), container);
             WriteByteArray(public_key, container);
 #if PROTOCOL_VERSION < 761
-            WriteData<VarInt>(nonce.size(), container);
+            WriteData<VarInt>(static_cast<int>(nonce.size()), container);
             WriteByteArray(nonce, container);
 #else
-            WriteData<VarInt>(challenge.size(), container);
+            WriteData<VarInt>(static_cast<int>(challenge.size()), container);
             WriteByteArray(challenge, container);
 #endif
         }

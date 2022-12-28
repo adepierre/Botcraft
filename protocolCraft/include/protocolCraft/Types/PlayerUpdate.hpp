@@ -121,7 +121,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(name, container);
-            WriteData<VarInt>(properties.size(), container);
+            WriteData<VarInt>(static_cast<int>(properties.size()), container);
             for (int i = 0; i < properties.size(); ++i)
             {
                 properties[i].Write(container);

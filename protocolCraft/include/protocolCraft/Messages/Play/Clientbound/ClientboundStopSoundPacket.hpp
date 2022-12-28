@@ -87,7 +87,7 @@ namespace ProtocolCraft
             WriteData<char>(((!name_.GetName().empty()) << 1) | (source != -1), container);
             if (source != -1)
             {
-                WriteData<VarInt>((int)source, container);
+                WriteData<VarInt>(source, container);
             }
             if (!name_.GetName().empty())
             {

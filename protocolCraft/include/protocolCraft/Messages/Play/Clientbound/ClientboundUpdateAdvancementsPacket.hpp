@@ -124,18 +124,18 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<bool>(reset, container);
-            WriteData<VarInt>(added.size(), container);
+            WriteData<VarInt>(static_cast<int>(added.size()), container);
             for (auto it = added.begin(); it != added.end(); it++)
             {
                 it->first.Write(container);
                 it->second.Write(container);
             }
-            WriteData<VarInt>(removed.size(), container);
+            WriteData<VarInt>(static_cast<int>(removed.size()), container);
             for (int i = 0; i < removed.size(); ++i)
             {
                 removed[i].Write(container);
             }
-            WriteData<VarInt>(progress.size(), container);
+            WriteData<VarInt>(static_cast<int>(progress.size()), container);
             for (auto it = progress.begin(); it != progress.end(); it++)
             {
                 it->first.Write(container);

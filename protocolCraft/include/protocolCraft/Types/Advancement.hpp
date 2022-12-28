@@ -147,7 +147,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(array_length, container);
             for (int i = 0; i < array_length; ++i)
             {
-                WriteData<VarInt>(requirements[i].size(), container);
+                WriteData<VarInt>(static_cast<int>(requirements[i].size()), container);
                 for (int j = 0; j < requirements[i].size(); ++j)
                 {
                     WriteData<std::string>(requirements[i][j], container);

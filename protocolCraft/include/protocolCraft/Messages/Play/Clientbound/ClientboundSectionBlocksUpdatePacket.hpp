@@ -151,14 +151,14 @@ namespace ProtocolCraft
 #else
             section_pos = ReadData<long long int>(iter, length);
             suppress_light_updates = ReadData<bool>(iter, length);
-            int data_size = ReadData<VarInt>(iter, length);
+            const int data_size = ReadData<VarInt>(iter, length);
             positions = std::vector<short>(data_size);
             states = std::vector<int>(data_size);
             for (int i = 0; i < data_size; ++i)
             {
                 long long int data = ReadData<VarLong>(iter, length);
                 positions[i] = data & 0xFFFl;
-                states[i] = data >> 12;
+                states[i] = static_cast<int>(data >> 12);
             }
 #endif
         }
@@ -176,7 +176,7 @@ namespace ProtocolCraft
 #else
             WriteData<long long int>(section_pos, container);
             WriteData<bool>(suppress_light_updates, container);
-            WriteData<VarInt>(positions.size(), container);
+            WriteData<VarInt>(static_cast<int>(positions.size()), container);
             for (int i = 0; i < positions.size(); ++i)
             {
                 WriteData<VarLong>((states[i] << 12) | positions[i], container);

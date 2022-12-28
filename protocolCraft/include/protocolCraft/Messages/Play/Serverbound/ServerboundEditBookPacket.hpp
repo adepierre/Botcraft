@@ -147,7 +147,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(slot, container);
 #endif
 #if PROTOCOL_VERSION > 755
-            WriteData<VarInt>(pages.size(), container);
+            WriteData<VarInt>(static_cast<int>(pages.size()), container);
             for (int i = 0; i < pages.size(); ++i)
             {
                 WriteData<std::string>(pages[i], container);

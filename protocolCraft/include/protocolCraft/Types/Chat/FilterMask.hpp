@@ -51,7 +51,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(type, container);
             if (type == 2)
             {
-                WriteData<VarInt>(mask.size(), container);
+                WriteData<VarInt>(static_cast<int>(mask.size()), container);
                 WriteArrayData<long long int>(mask, container);
             }
         }

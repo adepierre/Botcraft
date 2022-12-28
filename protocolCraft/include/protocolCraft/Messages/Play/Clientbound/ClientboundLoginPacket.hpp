@@ -386,7 +386,7 @@ namespace ProtocolCraft
             WriteData<unsigned char>(game_type, container);
 #if PROTOCOL_VERSION > 718
             WriteData<unsigned char>(previous_game_type, container);
-            WriteData<VarInt>(levels.size(), container);
+            WriteData<VarInt>(static_cast<int>(levels.size()), container);
             for (int i = 0; i < levels.size(); ++i)
             {
                 levels[i].Write(container);

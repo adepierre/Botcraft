@@ -125,7 +125,7 @@ namespace ProtocolCraft
             }
 #else
             WriteData<VarInt>(state_id, container);
-            WriteData<VarInt>(items.size(), container);
+            WriteData<VarInt>(static_cast<int>(items.size()), container);
             for (int i = 0; i < items.size(); ++i)
             {
                 items[i].Write(container);

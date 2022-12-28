@@ -135,38 +135,38 @@ namespace ProtocolCraft
         {
             WriteData<bool>(trust_edges, container);
 
-            WriteData<VarInt>(sky_Y_mask.size(), container);
+            WriteData<VarInt>(static_cast<int>(sky_Y_mask.size()), container);
             for (int i = 0; i < sky_Y_mask.size(); ++i)
             {
                 WriteData<unsigned long long int>(sky_Y_mask[i], container);
             }
-            WriteData<VarInt>(block_Y_mask.size(), container);
+            WriteData<VarInt>(static_cast<int>(block_Y_mask.size()), container);
             for (int i = 0; i < block_Y_mask.size(); ++i)
             {
                 WriteData<unsigned long long int>(block_Y_mask[i], container);
             }
-            WriteData<VarInt>(empty_sky_Y_mask.size(), container);
+            WriteData<VarInt>(static_cast<int>(empty_sky_Y_mask.size()), container);
             for (int i = 0; i < empty_sky_Y_mask.size(); ++i)
             {
                 WriteData<unsigned long long int>(empty_sky_Y_mask[i], container);
             }
-            WriteData<VarInt>(empty_block_Y_mask.size(), container);
+            WriteData<VarInt>(static_cast<int>(empty_block_Y_mask.size()), container);
             for (int i = 0; i < empty_block_Y_mask.size(); ++i)
             {
                 WriteData<unsigned long long int>(empty_block_Y_mask[i], container);
             }
 
-            WriteData<VarInt>(sky_updates.size(), container);
+            WriteData<VarInt>(static_cast<int>(sky_updates.size()), container);
             for (int i = 0; i < sky_updates.size(); ++i)
             {
-                WriteData<VarInt>(sky_updates[i].size(), container);
+                WriteData<VarInt>(static_cast<int>(sky_updates[i].size()), container);
                 WriteArrayData(sky_updates[i], container);
             }
 
-            WriteData<VarInt>(block_updates.size(), container);
+            WriteData<VarInt>(static_cast<int>(block_updates.size()), container);
             for (int i = 0; i < block_updates.size(); ++i)
             {
-                WriteData<VarInt>(block_updates[i].size(), container);
+                WriteData<VarInt>(static_cast<int>(block_updates[i].size()), container);
                 WriteArrayData(block_updates[i], container);
             }
         }

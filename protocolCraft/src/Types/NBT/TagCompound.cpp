@@ -72,10 +72,10 @@ namespace ProtocolCraft
         for (auto it = tags.begin(); it != tags.end(); ++it)
         {
             // Write type
-            WriteData<char>((char)it->second->GetType(), container);
+            WriteData<char>(static_cast<char>(it->second->GetType()), container);
             
             // Write name size
-            WriteData<unsigned short>(it->first.size(), container);
+            WriteData<unsigned short>(static_cast<unsigned short>(it->first.size()), container);
             
             // Write name
             WriteRawString(it->first, container);
@@ -85,7 +85,7 @@ namespace ProtocolCraft
         }
 
         // Add TAG_End
-        WriteData<char>((char)TagType::End, container);
+        WriteData<char>(static_cast<char>(TagType::End), container);
     }
     
     const nlohmann::json TagCompound::SerializeImpl() const

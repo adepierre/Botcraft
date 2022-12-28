@@ -265,7 +265,7 @@ namespace ProtocolCraft
 #endif
             dimension.Write(container);
 #else
-            WriteData<int>((int)dimension, container);
+            WriteData<int>(dimension, container);
 #endif
 #if PROTOCOL_VERSION > 551
             WriteData<long long int>(seed, container);

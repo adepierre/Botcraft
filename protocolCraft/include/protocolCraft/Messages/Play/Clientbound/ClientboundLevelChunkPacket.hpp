@@ -223,7 +223,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755
             WriteData<VarInt>(available_sections, container);
 #else
-            WriteData<VarInt>(available_sections.size(), container);
+            WriteData<VarInt>(static_cast<int>(available_sections.size()), container);
             for (int i = 0; i < available_sections.size(); ++i)
             {
                 WriteData<unsigned long long int>(available_sections[i], container);
@@ -238,7 +238,7 @@ namespace ProtocolCraft
             {
 #endif
 #if PROTOCOL_VERSION > 738
-                WriteData<VarInt>(biomes.size(), container);
+                WriteData<VarInt>(static_cast<int>(biomes.size()), container);
                 for (int i = 0; i < biomes.size(); ++i)
                 {
                     WriteData<VarInt>(biomes[i], container);
@@ -250,9 +250,9 @@ namespace ProtocolCraft
             }
 #endif
 #endif
-            WriteData<VarInt>(buffer.size(), container);
+            WriteData<VarInt>(static_cast<int>(buffer.size()), container);
             WriteByteArray(buffer, container);
-            WriteData<VarInt>(block_entities_tags.size(), container);
+            WriteData<VarInt>(static_cast<int>(block_entities_tags.size()), container);
             for (int i = 0; i < block_entities_tags.size(); ++i)
             {
                 block_entities_tags[i].Write(container);

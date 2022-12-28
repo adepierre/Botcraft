@@ -86,7 +86,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             signed_header.Write(container);
-            WriteData<VarInt>(header_signature.size(), container);
+            WriteData<VarInt>(static_cast<int>(header_signature.size()), container);
             WriteByteArray(header_signature, container);
             signed_body.Write(container);
             WriteData<bool>(!unsigned_content.GetRawText().empty(), container);

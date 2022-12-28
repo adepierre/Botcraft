@@ -75,7 +75,7 @@ namespace ProtocolCraft
         {
             WriteData<UUID>(uuid, container);
             WriteData<std::string>(name, container);
-            WriteData<VarInt>(properties.size(), container);
+            WriteData<VarInt>(static_cast<int>(properties.size()), container);
             for (const auto& p : properties)
             {
                 p.second.Write(container);

@@ -53,7 +53,7 @@ namespace ProtocolCraft
             WriteData<bool>(previous_signature.size() > 0, container);
             if (previous_signature.size() > 0)
             {
-                WriteData<VarInt>(previous_signature.size(), container);
+                WriteData<VarInt>(static_cast<int>(previous_signature.size()), container);
                 WriteByteArray(previous_signature, container);
             }
             WriteData<UUID>(sender, container);

@@ -83,7 +83,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(vehicle, container);
-            WriteData<VarInt>(passengers.size(), container);
+            WriteData<VarInt>(static_cast<int>(passengers.size()), container);
             for (int i = 0; i < passengers.size(); ++i)
             {
                 WriteData<VarInt>(passengers[i], container);

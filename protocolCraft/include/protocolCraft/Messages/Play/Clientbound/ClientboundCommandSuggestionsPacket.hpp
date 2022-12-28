@@ -142,7 +142,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(start, container);
             WriteData<VarInt>(length_, container);
 #endif
-            WriteData<VarInt>(suggestions.size(), container);
+            WriteData<VarInt>(static_cast<int>(suggestions.size()), container);
             for (int i = 0; i < suggestions.size(); ++i)
             {
                 WriteData<std::string>(suggestions[i], container);

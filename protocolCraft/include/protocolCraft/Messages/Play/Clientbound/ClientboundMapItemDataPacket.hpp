@@ -209,7 +209,7 @@ namespace ProtocolCraft
             if (decorations.size() > 0)
             {
 #endif
-                WriteData<VarInt>(decorations.size(), container);
+                WriteData<VarInt>(static_cast<int>(decorations.size()), container);
                 for (int i = 0; i < decorations.size(); ++i)
                 {
                     decorations[i].Write(container);
@@ -224,7 +224,7 @@ namespace ProtocolCraft
                 WriteData<unsigned char>(height, container);
                 WriteData<unsigned char>(start_x, container);
                 WriteData<unsigned char>(start_z, container);
-                WriteData<VarInt>(map_colors.size(), container);
+                WriteData<VarInt>(static_cast<int>(map_colors.size()), container);
                 WriteByteArray(map_colors, container);
             }
         }

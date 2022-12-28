@@ -160,34 +160,34 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 755
-            WriteData<VarInt>(block_tags.size(), container);
+            WriteData<VarInt>(static_cast<int>(block_tags.size()), container);
             for (int i = 0; i < block_tags.size(); ++i)
             {
                 block_tags[i].Write(container);
             }
-            WriteData<VarInt>(item_tags.size(), container);
+            WriteData<VarInt>(static_cast<int>(item_tags.size()), container);
             for (int i = 0; i < item_tags.size(); ++i)
             {
                 item_tags[i].Write(container);
             }
-            WriteData<VarInt>(fluid_tags.size(), container);
+            WriteData<VarInt>(static_cast<int>(fluid_tags.size()), container);
             for (int i = 0; i < fluid_tags.size(); ++i)
             {
                 fluid_tags[i].Write(container);
             }
 #if PROTOCOL_VERSION > 440
-            WriteData<VarInt>(entity_tags.size(), container);
+            WriteData<VarInt>(static_cast<int>(entity_tags.size()), container);
             for (int i = 0; i < entity_tags.size(); ++i)
             {
                 entity_tags[i].Write(container);
             }
 #endif
 #else
-            WriteData<VarInt>(tags.size(), container);
+            WriteData<VarInt>(static_cast<int>(tags.size()), container);
             for (auto it = tags.begin(); it != tags.end(); ++it)
             {
                 it->first.Write(container);
-                WriteData<VarInt>(it->second.size(), container);
+                WriteData<VarInt>(static_cast<int>(it->second.size()), container);
                 for (int j = 0; j < it->second.size(); ++j)
                 {
                     it->second[j].Write(container);

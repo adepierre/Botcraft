@@ -72,9 +72,9 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             header.Write(container);
-            WriteData<VarInt>(header_signature.size(), container);
+            WriteData<VarInt>(static_cast<int>(header_signature.size()), container);
             WriteByteArray(header_signature, container);
-            WriteData<VarInt>(body_digest.size(), container);
+            WriteData<VarInt>(static_cast<int>(body_digest.size()), container);
             WriteByteArray(body_digest, container);
         }
 

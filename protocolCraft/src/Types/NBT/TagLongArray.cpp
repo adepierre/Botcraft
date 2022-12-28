@@ -35,7 +35,7 @@ namespace ProtocolCraft
 
     void TagLongArray::WriteImpl(WriteContainer &container) const
     {
-        WriteData<int>(values.size(), container);
+        WriteData<int>(static_cast<int>(values.size()), container);
         WriteArrayData<long long int>(values, container);
     }
 

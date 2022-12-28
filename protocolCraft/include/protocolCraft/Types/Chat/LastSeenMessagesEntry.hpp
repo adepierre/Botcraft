@@ -75,7 +75,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 761
             WriteData<UUID>(profile_id, container);
-            WriteData<VarInt>(last_signature.size(), container);
+            WriteData<VarInt>(static_cast<int>(last_signature.size()), container);
             WriteByteArray(last_signature, container);
 #else
             WriteData<VarInt>(id + 1, container);

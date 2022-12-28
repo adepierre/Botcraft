@@ -103,14 +103,14 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<VarInt>(key_bytes.size(), container);
+            WriteData<VarInt>(static_cast<int>(key_bytes.size()), container);
             WriteByteArray(key_bytes, container);
 #if PROTOCOL_VERSION < 761
 #if PROTOCOL_VERSION > 758
             WriteData<bool>(salt_signature.GetSignature().empty(), container);
             if (salt_signature.GetSignature().empty())
             {
-                WriteData<VarInt>(nonce.size(), container);
+                WriteData<VarInt>(static_cast<int>(nonce.size()), container);
                 WriteByteArray(nonce, container);
             }
             else
@@ -118,11 +118,11 @@ namespace ProtocolCraft
                 salt_signature.Write(container);
             }
 #else
-            WriteData<VarInt>(nonce.size(), container);
+            WriteData<VarInt>(static_cast<int>(nonce.size()), container);
             WriteByteArray(nonce, container);
 #endif
 #else
-            WriteData<VarInt>(encrypted_challenge.size(), container);
+            WriteData<VarInt>(static_cast<int>(encrypted_challenge.size()), container);
             WriteByteArray(encrypted_challenge, container);
 #endif
         }

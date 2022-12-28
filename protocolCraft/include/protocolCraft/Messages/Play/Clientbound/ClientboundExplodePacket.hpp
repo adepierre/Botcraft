@@ -184,9 +184,9 @@ namespace ProtocolCraft
             to_blow = std::vector<NetworkPosition>(to_blow_size);
             for (int i = 0; i < to_blow_size; ++i)
             {
-                to_blow[i].SetX((int)ReadData<char>(iter, length));
-                to_blow[i].SetY((int)ReadData<char>(iter, length));
-                to_blow[i].SetZ((int)ReadData<char>(iter, length));
+                to_blow[i].SetX(static_cast<int>(ReadData<char>(iter, length)));
+                to_blow[i].SetY(static_cast<int>(ReadData<char>(iter, length)));
+                to_blow[i].SetZ(static_cast<int>(ReadData<char>(iter, length)));
             }
             knockback_x = ReadData<float>(iter, length);
             knockback_y = ReadData<float>(iter, length);
@@ -208,7 +208,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755
             WriteData<int>(to_blow.size(), container);
 #else
-            WriteData<VarInt>(to_blow.size(), container);
+            WriteData<VarInt>(static_cast<int>(to_blow.size()), container);
 #endif
             for (int i = 0; i < to_blow.size(); ++i)
             {

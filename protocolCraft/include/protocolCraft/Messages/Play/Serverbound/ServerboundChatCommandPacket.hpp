@@ -142,11 +142,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759
             WriteData<long long int>(salt, container);
 #endif
-            WriteData<VarInt>(argument_signatures.size(), container);
+            WriteData<VarInt>(static_cast<int>(argument_signatures.size()), container);
             for (const auto& s: argument_signatures)
             {
                 WriteData<std::string>(s.first, container);
-                WriteData<VarInt>(s.second.size(), container);
+                WriteData<VarInt>(static_cast<int>(s.second.size()), container);
                 WriteByteArray(s.second, container);
             }
 #if PROTOCOL_VERSION < 761

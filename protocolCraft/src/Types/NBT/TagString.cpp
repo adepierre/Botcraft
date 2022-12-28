@@ -35,7 +35,7 @@ namespace ProtocolCraft
 
     void TagString::WriteImpl(WriteContainer &container) const
     {
-        WriteData<unsigned short>(value.size(), container);
+        WriteData<unsigned short>(static_cast<unsigned short>(value.size()), container);
         WriteRawString(value, container);
     }
 

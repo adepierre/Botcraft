@@ -56,7 +56,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(features.size(), container);
+            WriteData<VarInt>(static_cast<int>(features.size()), container);
             for (size_t i = 0; i < features.size(); ++i)
             {
                 features[i].Write(container);

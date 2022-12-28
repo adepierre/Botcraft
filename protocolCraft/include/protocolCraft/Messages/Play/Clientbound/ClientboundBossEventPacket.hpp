@@ -156,7 +156,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<UUID>(id_, container);
-            WriteData<VarInt>((int)operation, container);
+            WriteData<VarInt>(operation, container);
             switch (operation)
             {
             case 0:

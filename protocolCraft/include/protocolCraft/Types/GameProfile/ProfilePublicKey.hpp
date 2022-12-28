@@ -67,9 +67,9 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<long long int>(timestamp, container);
-            WriteData<VarInt>(key.size(), container);
+            WriteData<VarInt>(static_cast<int>(key.size()), container);
             WriteByteArray(key, container);
-            WriteData<VarInt>(signature.size(), container);
+            WriteData<VarInt>(static_cast<int>(signature.size()), container);
             WriteByteArray(signature, container);
         }
 

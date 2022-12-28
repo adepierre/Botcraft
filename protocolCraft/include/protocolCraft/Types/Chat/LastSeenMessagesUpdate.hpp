@@ -90,7 +90,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
 #if PROTOCOL_VERSION < 761
-            WriteData<VarInt>(last_seen.size(), container);
+            WriteData<VarInt>(static_cast<int>(last_seen.size()), container);
             for (int i = 0; i < last_seen.size(); ++i)
             {
                 last_seen[i].Write(container);

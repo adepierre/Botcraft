@@ -57,10 +57,10 @@ namespace ProtocolCraft
     void TagList::WriteImpl(WriteContainer &container) const
     {
         // Write type
-        WriteData<char>((char)tags_type, container);
+        WriteData<char>(static_cast<char>(tags_type), container);
 
         // Write size
-        WriteData<int>((int)tags.size(), container);
+        WriteData<int>(static_cast<int>(tags.size()), container);
 
         for (int i = 0; i < tags.size(); ++i)
         {

@@ -175,7 +175,7 @@ namespace ProtocolCraft
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
                         WriteData<std::string>(it->second.game_profile.GetName(), container);
-                        WriteData<VarInt>(it->second.game_profile.GetProperties().size(), container);
+                        WriteData<VarInt>(static_cast<int>(it->second.game_profile.GetProperties().size()), container);
                         for (auto it2 = it->second.game_profile.GetProperties().begin(); it2 != it->second.game_profile.GetProperties().end(); ++it)
                         {
                             it2->second.Write(container);

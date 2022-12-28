@@ -183,7 +183,7 @@ namespace ProtocolCraft
             WriteData<long long int>(salt, container);
 
 #if PROTOCOL_VERSION < 761
-            WriteData<VarInt>(signature.size(), container);
+            WriteData<VarInt>(static_cast<int>(signature.size()), container);
             WriteByteArray(signature, container);
 #else
             WriteData<bool>(signature.size() > 0, container);

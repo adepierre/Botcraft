@@ -65,9 +65,9 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             heightmaps.Write(container);
-            WriteData<VarInt>(buffer.size(), container);
+            WriteData<VarInt>(static_cast<int>(buffer.size()), container);
             WriteByteArray(buffer, container);
-            WriteData<VarInt>(block_entities_data.size(), container);
+            WriteData<VarInt>(static_cast<int>(block_entities_data.size()), container);
             for (int i = 0; i < block_entities_data.size(); ++i)
             {
                 block_entities_data[i].Write(container);

@@ -297,22 +297,22 @@ namespace ProtocolCraft
             WriteData<VarInt>(empty_sky_Y_mask, container);
             WriteData<VarInt>(empty_block_Y_mask, container);
 #else
-            WriteData<VarInt>(sky_Y_mask.size(), container);
+            WriteData<VarInt>(static_cast<int>(sky_Y_mask.size()), container);
             for (int i = 0; i < sky_Y_mask.size(); ++i)
             {
                  WriteData<unsigned long long int>(sky_Y_mask[i], container);
             }
-            WriteData<VarInt>(block_Y_mask.size(), container);
+            WriteData<VarInt>(static_cast<int>(block_Y_mask.size()), container);
             for (int i = 0; i < block_Y_mask.size(); ++i)
             {
                 WriteData<unsigned long long int>(block_Y_mask[i], container);
             }
-            WriteData<VarInt>(empty_sky_Y_mask.size(), container);
+            WriteData<VarInt>(static_cast<int>(empty_sky_Y_mask.size()), container);
             for (int i = 0; i < empty_sky_Y_mask.size(); ++i)
             {
                 WriteData<unsigned long long int>(empty_sky_Y_mask[i], container);
             }
-            WriteData<VarInt>(empty_block_Y_mask.size(), container);
+            WriteData<VarInt>(static_cast<int>(empty_block_Y_mask.size()), container);
             for (int i = 0; i < empty_block_Y_mask.size(); ++i)
             {
                 WriteData<unsigned long long int>(empty_block_Y_mask[i], container);
@@ -320,7 +320,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 754
-            WriteData<VarInt>(sky_updates.size(), container);
+            WriteData<VarInt>(static_cast<int>(sky_updates.size()), container);
 #endif
             for (int i = 0; i < sky_updates.size(); ++i)
             {
@@ -329,7 +329,7 @@ namespace ProtocolCraft
             }
 
 #if PROTOCOL_VERSION > 754
-            WriteData<VarInt>(block_updates.size(), container);
+            WriteData<VarInt>(static_cast<int>(block_updates.size()), container);
 #endif
             for (int i = 0; i < block_updates.size(); ++i)
             {

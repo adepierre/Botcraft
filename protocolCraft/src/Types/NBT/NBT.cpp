@@ -55,14 +55,14 @@ namespace ProtocolCraft
     {
         if (has_data)
         {
-            WriteData<char>((char)TagType::Compound, container);
-            WriteData<unsigned short>(root_name.size(), container);
+            WriteData<char>(static_cast<char>(TagType::Compound), container);
+            WriteData<unsigned short>(static_cast<unsigned short>(root_name.size()), container);
             WriteRawString(root_name, container);
             root_tag.Write(container);
         }
         else
         {
-            WriteData<char>((char)TagType::End, container);
+            WriteData<char>(static_cast<char>(TagType::End), container);
         }
     }
 

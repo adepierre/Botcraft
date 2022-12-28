@@ -102,7 +102,7 @@ namespace ProtocolCraft
 #endif
             WriteData<long long int>(timestamp, container);
             WriteData<long long int>(salt, container);
-            WriteData<VarInt>(last_seen.size(), container);
+            WriteData<VarInt>(static_cast<int>(last_seen.size()), container);
             for (int i = 0; i < last_seen.size(); ++i)
             {
                 last_seen[i].Write(container);
