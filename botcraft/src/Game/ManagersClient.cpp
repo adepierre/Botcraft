@@ -214,10 +214,10 @@ namespace Botcraft
         std::shared_ptr<ServerboundClientInformationPacket> settings_msg = std::make_shared<ServerboundClientInformationPacket>();
         settings_msg->SetLanguage("fr_FR");
         settings_msg->SetViewDistance(10);
-        settings_msg->SetChatVisibility((int)ChatMode::Enabled);
+        settings_msg->SetChatVisibility(static_cast<int>(ChatMode::Enabled));
         settings_msg->SetChatColors(true);
         settings_msg->SetModelCustomisation(0xFF);
-        settings_msg->SetMainHand((int)Hand::Right);
+        settings_msg->SetMainHand(static_cast<int>(Hand::Right));
 
         network_manager->Send(settings_msg);
     }

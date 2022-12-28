@@ -25,7 +25,7 @@ namespace Botcraft
             {
                 GenerateOpenGLBuffer();
                 std::vector<Face> faces_data(faces.begin(), faces.end());
-                face_number = faces_data.size();
+                face_number = static_cast<unsigned int>(faces_data.size());
                 glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Face) * face_number, faces_data.data(), GL_DYNAMIC_DRAW);
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -35,7 +35,7 @@ namespace Botcraft
             case BufferStatus::Updated:
             {
                 std::vector<Face> faces_data(faces.begin(), faces.end());
-                face_number = faces_data.size();
+                face_number = static_cast<unsigned int>(faces_data.size());
                 glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Face) * face_number, faces_data.data(), GL_DYNAMIC_DRAW);
                 glBindBuffer(GL_ARRAY_BUFFER, 0);

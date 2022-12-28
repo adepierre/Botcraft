@@ -46,7 +46,7 @@ namespace Botcraft
     void TCP_Com::SendPacket(const std::vector<unsigned char>& msg)
     {
         std::vector<unsigned char> sized_packet;
-        ProtocolCraft::WriteData<ProtocolCraft::VarInt>(msg.size(), sized_packet);
+        ProtocolCraft::WriteData<ProtocolCraft::VarInt>(static_cast<int>(msg.size()), sized_packet);
         sized_packet.insert(sized_packet.end(), msg.begin(), msg.end());
 
 #ifdef USE_ENCRYPTION
@@ -139,11 +139,11 @@ namespace Botcraft
                 {
                     packet_length = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(read_iter, max_length);
                 }
-                catch (const std::runtime_error &e)
+                catch (const std::runtime_error)
                 {
                     break;
                 }
-                int bytes_read = std::distance<std::vector<unsigned char>::const_iterator>(input_msg.begin(), read_iter);
+                const int bytes_read = static_cast<int>(std::distance<std::vector<unsigned char>::const_iterator>(input_msg.begin(), read_iter));
                 std::vector<unsigned char> data_packet;
 
                 if (packet_length > 0 && input_msg.size() >= bytes_read + packet_length)

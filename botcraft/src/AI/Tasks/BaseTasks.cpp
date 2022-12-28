@@ -64,7 +64,7 @@ namespace Botcraft
 
         std::shared_ptr<ProtocolCraft::ServerboundUseItemOnPacket> place_block_msg = std::make_shared<ProtocolCraft::ServerboundUseItemOnPacket>();
         place_block_msg->SetLocation(pos.ToNetworkPosition());
-        place_block_msg->SetDirection((int)face);
+        place_block_msg->SetDirection(static_cast<int>(face));
         switch (face)
         {
         case PlayerDiggingFace::Down:
@@ -103,7 +103,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 452
         place_block_msg->SetInside(false);
 #endif
-        place_block_msg->SetHand((int)Hand::Right);
+        place_block_msg->SetHand(static_cast<int>(Hand::Right));
 #if PROTOCOL_VERSION > 758
         {
             std::shared_ptr<World> world = client.GetWorld();

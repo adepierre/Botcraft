@@ -140,7 +140,7 @@ namespace Botcraft
                 else
                 {
                     std::vector<unsigned char> compressed_msg;
-                    ProtocolCraft::WriteData<ProtocolCraft::VarInt>(msg_data.size(), compressed_msg);
+                    ProtocolCraft::WriteData<ProtocolCraft::VarInt>(static_cast<int>(msg_data.size()), compressed_msg);
                     std::vector<unsigned char> compressed_data = Compress(msg_data);
                     compressed_msg.insert(compressed_msg.end(), compressed_data.begin(), compressed_data.end());
                     com->SendPacket(compressed_msg);
@@ -235,7 +235,7 @@ namespace Botcraft
         chat_command->SetCommand(command);
         chat_command->SetTimestamp(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 #if PROTOCOL_VERSION > 759
-        std::mt19937 rnd(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+        std::mt19937 rnd(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
         chat_command->SetSalt(std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(rnd));
 #endif
 #if PROTOCOL_VERSION < 761
@@ -305,7 +305,7 @@ namespace Botcraft
                         //Packet compressed
                         else
                         {
-                            int size_varint = packet.size() - length;
+                            const int size_varint = static_cast<int>(packet.size() - length);
 
                             std::vector<unsigned char> uncompressed_msg = Decompress(packet, size_varint);
                             ProcessPacket(uncompressed_msg);
@@ -495,7 +495,7 @@ namespace Botcraft
 
             chat_session_data.SetProfilePublicKey(key);
             chat_session_uuid = ProtocolCraft::UUID();
-            std::mt19937 rnd = std::mt19937(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+            std::mt19937 rnd = std::mt19937(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
             std::uniform_int_distribution<int> distrib(std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max());
             for (size_t i = 0; i < chat_session_uuid.size(); ++i)
             {

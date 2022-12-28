@@ -9,7 +9,7 @@ namespace Botcraft
         Entity::Entity(const std::vector<Face>& faces_)
         {
             faces = std::deque<Face>(faces_.begin(), faces_.end());
-            face_number = faces.size();
+            face_number = static_cast<unsigned int>(faces.size());
         }
 
         Entity::~Entity()
@@ -26,7 +26,7 @@ namespace Botcraft
             {
                 GenerateOpenGLBuffer();
                 std::vector<Face> faces_data(faces.begin(), faces.end());
-                face_number = faces_data.size();
+                face_number = static_cast<unsigned int>(faces_data.size());
                 glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
                 glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Face) * face_number, faces_data.data());
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -36,7 +36,7 @@ namespace Botcraft
             case BufferStatus::Updated:
             {
                 std::vector<Face> faces_data(faces.begin(), faces.end());
-                face_number = faces_data.size();
+                face_number = static_cast<unsigned int>(faces_data.size());
                 glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
                 glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Face) * face_number, faces_data.data());
                 glBindBuffer(GL_ARRAY_BUFFER, 0);

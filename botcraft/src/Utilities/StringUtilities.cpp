@@ -61,7 +61,7 @@ namespace Botcraft
             return {};
         }
 
-        int output_size = s.size() / 4 * 3;
+        const size_t output_size = s.size() / 4 * 3;
 
         std::vector<unsigned char> output;
         output.reserve(output_size);

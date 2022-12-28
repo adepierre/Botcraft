@@ -53,7 +53,7 @@ namespace Botcraft
 
             static const float Heuristic(const Position& a, const Position& b)
             {
-                return std::abs(a.x - b.x) + std::abs(a.y - b.y) + std::abs(a.z - b.z);
+                return static_cast<float>(std::abs(a.x - b.x) + std::abs(a.y - b.y) + std::abs(a.z - b.z));
             }
         };
 
@@ -692,7 +692,7 @@ namespace Botcraft
         for (auto it = came_from.begin(); it != came_from.end(); ++it)
         {
             const Position diff = it->first - end;
-            const float distXZ = std::abs(diff.x) + std::abs(diff.z);
+            const float distXZ = static_cast<float>(std::abs(diff.x) + std::abs(diff.z));
             const float d = std::abs(diff.y) + distXZ;
             if (d < best_float_dist && distXZ >= min_end_dist)
             {
@@ -723,7 +723,11 @@ namespace Botcraft
             std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
             is_climbing = local_player->GetIsClimbing();
             initial_position = local_player->GetPosition();
-            initial_block_pos = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y + 0.25), std::floor(local_player->GetPosition().z));
+            initial_block_pos = Position(
+                static_cast<int>(std::floor(local_player->GetPosition().x)),
+                static_cast<int>(std::floor(local_player->GetPosition().y + 0.25)),
+                static_cast<int>(std::floor(local_player->GetPosition().z))
+            );
             local_player->LookAt(target_position + Vector3<double>(0.0, 1.62, 0.0), true);
         }
         const Vector3<double> motion_vector = target_position - initial_position;
@@ -978,7 +982,7 @@ namespace Botcraft
                 // Otherwise just move partially toward the goal
                 else
                 {
-                    long long int delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count();
+                    const double delta_t = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count());
                     Vector3<double> delta_v = motion_vector * delta_t / (1000.0 * motion_norm_xz) * speed;
                     {
                         std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
@@ -1132,7 +1136,11 @@ namespace Botcraft
             }
 
             // Get the position, we add 0.25 to Y in case we are at X.97 instead of X+1
-            current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y + 0.25), std::floor(local_player->GetPosition().z));
+            current_position = Position(
+                static_cast<int>(std::floor(local_player->GetPosition().x)),
+                static_cast<int>(std::floor(local_player->GetPosition().y + 0.25)),
+                static_cast<int>(std::floor(local_player->GetPosition().z))
+            );
 
             std::vector<Position> path;
             bool is_goal_loaded;
@@ -1148,7 +1156,11 @@ namespace Botcraft
                 Vector3<double> goal_direction(goal.x - current_position.x, goal.y - current_position.y, goal.z - current_position.z);
                 goal_direction.Normalize();
                 path = FindPath(client, current_position,
-                    current_position + Position(goal_direction.x * 32, goal_direction.y * 32, goal_direction.z * 32), min_end_dist, allow_jump);
+                    current_position + Position(
+                        static_cast<int>(goal_direction.x * 32.0),
+                        static_cast<int>(goal_direction.y * 32.0),
+                        static_cast<int>(goal_direction.z * 32.0)
+                    ), min_end_dist, allow_jump);
             }
             else
             {
@@ -1194,7 +1206,11 @@ namespace Botcraft
                 {
                     std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                     // Get the position, we add 0.25 to Y in case we are at X.97 instead of X+1
-                    current_position = Position(std::floor(local_player->GetPosition().x), std::floor(local_player->GetPosition().y + 0.25), std::floor(local_player->GetPosition().z));
+                    current_position = Position(
+                        static_cast<int>(std::floor(local_player->GetPosition().x)),
+                        static_cast<int>(std::floor(local_player->GetPosition().y + 0.25)),
+                        static_cast<int>(std::floor(local_player->GetPosition().z))
+                    );
                 }
             }
         } while (current_position != goal);

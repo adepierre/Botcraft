@@ -102,7 +102,12 @@ namespace Botcraft
                 model_matrix[i] = model_ptr[i];
             }
 
-            texture_coords = { (float)transformations.offset_x1 , (float)transformations.offset_y2, (float)transformations.offset_x2, (float)transformations.offset_y1 };
+            texture_coords = { 
+                static_cast<float>(transformations.offset_x1),
+                static_cast<float>(transformations.offset_y2),
+                static_cast<float>(transformations.offset_x2),
+                static_cast<float>(transformations.offset_y1)
+            };
             texture_coords_overlay = texture_coords;
 
             texture_data = 0;

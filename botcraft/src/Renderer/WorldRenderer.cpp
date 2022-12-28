@@ -199,7 +199,6 @@ namespace Botcraft
                             Position(-1, 0, 0), Position(1, 0, 0), Position(0, 0, 1), Position(0, 1, 0) });
 
             std::vector<const Blockstate*> neighbour_blockstates(6);
-            std::vector<unsigned char> neighbour_model_ids(6);
 
             Position pos;
             for (int y = chunk->GetMinY(); y < chunk->GetHeight() + chunk->GetMinY(); ++y)
@@ -227,12 +226,10 @@ namespace Botcraft
                             if (neighbour_block == nullptr)
                             {
                                 neighbour_blockstates[i] = nullptr;
-                                neighbour_model_ids[i] = 0;
                             }
                             else
                             {
                                 neighbour_blockstates[i] = neighbour_block->GetBlockstate();
-                                neighbour_model_ids[i] = neighbour_block->GetModelId();
                             }
                         }
 
@@ -273,9 +270,9 @@ namespace Botcraft
                             // We also remove the faces between two transparent blocks with the same names
                             // (example: faces between two water blocks)
                             if (current_faces[i].cullface_direction == Orientation::None ||
-                                !neighbour_blockstates[(int)current_faces[i].cullface_direction] ||
-                                (neighbour_blockstates[(int)current_faces[i].cullface_direction]->IsTransparent() &&
-                                    neighbour_blockstates[(int)current_faces[i].cullface_direction]->GetName() != this_block->GetBlockstate()->GetName())
+                                !neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)] ||
+                                (neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)]->IsTransparent() &&
+                                    neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)]->GetName() != this_block->GetBlockstate()->GetName())
                                 )
                             {
                                 AddFace(pos.x + CHUNK_WIDTH * x_, pos.y, pos.z + CHUNK_WIDTH * z_,
@@ -352,7 +349,11 @@ namespace Botcraft
             if (camera)
             {
                 std::lock_guard<std::mutex> lock(m_mutex_camera);
-                camera->SetPosition((float)x_, (float)y_, (float)z_);
+                camera->SetPosition(
+                    static_cast<float>(x_),
+                    static_cast<float>(y_),
+                    static_cast<float>(z_)
+                );
                 camera->SetRotation(pitch_, yaw_);
             }
         }
@@ -382,7 +383,7 @@ namespace Botcraft
                 num_faces += it->second->GetNumFace();
             }
             transparent_chunks_mutex.unlock();
-            const int num_chunks = all_loaded_chunks.size();
+            const int num_chunks = static_cast<int>(all_loaded_chunks.size());
 
             // Apply frustum culling to render only the visible ones
             std::vector<Position> chunks_to_render;
@@ -393,12 +394,12 @@ namespace Botcraft
             {
                 FrustumResult result = FrustumResult::Inside;
 
-                const float min_x = CHUNK_WIDTH * (*it).x;
-                const float max_x = CHUNK_WIDTH * ((*it).x + 1);
-                const float min_y = (int)section_height * (*it).y;
-                const float max_y = (int)section_height * ((*it).y + 1);
-                const float min_z = CHUNK_WIDTH * (*it).z;
-                const float max_z = CHUNK_WIDTH * ((*it).z + 1);
+                const float min_x = static_cast<float>(CHUNK_WIDTH * (*it).x);
+                const float max_x = static_cast<float>(CHUNK_WIDTH * ((*it).x + 1));
+                const float min_y = static_cast<float>(static_cast<int>(section_height) * (*it).y);
+                const float max_y = static_cast<float>(static_cast<int>(section_height) * ((*it).y + 1));
+                const float min_z = static_cast<float>(CHUNK_WIDTH * (*it).z);
+                const float max_z = static_cast<float>(CHUNK_WIDTH * ((*it).z + 1));
 
                 for (int i = 0; i < 6; ++i)
                 {
@@ -435,7 +436,7 @@ namespace Botcraft
             m_mutex_camera.unlock();
 
             // Render all non partially transparent faces
-            const int num_rendered_chunks = chunks_to_render.size();
+            const int num_rendered_chunks = static_cast<int>(chunks_to_render.size());
             int num_rendered_faces = 0;
             chunks_mutex.lock();
             for (int i = 0; i < num_rendered_chunks; ++i)
@@ -453,7 +454,7 @@ namespace Botcraft
             const std::vector<Position> neighbouring_positions({ Position(0, 0, 0), Position(0, -1, 0), Position(0, 0, -1),
                             Position(-1, 0, 0), Position(1, 0, 0), Position(0, 0, 1), Position(0, 1, 0) });
             entities_mutex.lock();
-            const int num_entities = entities.size();
+            const int num_entities = static_cast<int>(entities.size());
             int num_rendered_entities = 0;
             for (auto& e : entities)
             {

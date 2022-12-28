@@ -22,7 +22,7 @@ namespace Botcraft
 
         std::shared_ptr<ServerboundContainerClickPacket> click_window_msg = std::make_shared<ServerboundContainerClickPacket>();
 
-        click_window_msg->SetContainerId(container_id);
+        click_window_msg->SetContainerId(static_cast<unsigned char>(container_id));
         click_window_msg->SetSlotNum(slot_id);
         click_window_msg->SetButtonNum(button_num);
         click_window_msg->SetClickType(click_type);
@@ -601,7 +601,7 @@ namespace Botcraft
             std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
             true_container_id = inventory_manager->GetFirstOpenedWindowId();
         }
-        close_container_msg->SetContainerId(true_container_id);
+        close_container_msg->SetContainerId(static_cast<unsigned char>(true_container_id));
         network_manager->Send(close_container_msg);
 
         // There is no confirmation from the server, so we

@@ -187,6 +187,8 @@ namespace Botcraft
                 return Status::Success;
             case Status::Success:
                 return Status::Failure;
+            default: // Never happens
+                return Status::Failure;
             }
         }
     };
@@ -203,13 +205,7 @@ namespace Botcraft
         {
             Status child_status = this->child->Tick(context);
 
-            switch (child_status)
-            {
-            case Status::Failure:
-                return Status::Success;
-            case Status::Success:
-                return Status::Success;
-            }
+            return Status::Success;
         }
     };
 

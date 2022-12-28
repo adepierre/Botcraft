@@ -202,8 +202,8 @@ namespace Botcraft
     bool World::SetBlock(const Position &pos, const unsigned int id, const int model_id)
 #endif
     {
-        int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
-        int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
+        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
 
         if (!cached || cached_x != chunk_x || cached_z != chunk_z)
         {
@@ -261,8 +261,8 @@ namespace Botcraft
 
     bool World::SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT& data)
     {
-        int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
-        int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
+        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
 
         if (!cached || cached_x != chunk_x || cached_z != chunk_z)
         {
@@ -297,7 +297,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 358
     bool World::SetBiome(const int x, const int z, const unsigned char biome)
     {
-        auto it = terrain.find({ floor(x / (double)CHUNK_WIDTH), floor(z / (double)CHUNK_WIDTH) });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(z / static_cast<double>(CHUNK_WIDTH)))
+        });
 
         if (it != terrain.end())
         {
@@ -310,7 +313,10 @@ namespace Botcraft
 #elif PROTOCOL_VERSION < 552
     bool World::SetBiome(const int x, const int z, const int biome)
     {
-        auto it = terrain.find({ floor(x / (double)CHUNK_WIDTH), floor(z / (double)CHUNK_WIDTH) });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(z / static_cast<double>(CHUNK_WIDTH)))
+        });
 
         if (it != terrain.end())
         {
@@ -323,7 +329,10 @@ namespace Botcraft
 #else
     bool World::SetBiome(const int x, const int y, const int z, const int biome)
     {
-        auto it = terrain.find({ floor(x / (double)CHUNK_WIDTH), floor(z / (double)CHUNK_WIDTH) });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(z / static_cast<double>(CHUNK_WIDTH)))
+        });
 
         if (it != terrain.end())
         {
@@ -337,7 +346,10 @@ namespace Botcraft
 
     bool World::SetSkyLight(const Position &pos, const unsigned char skylight)
     {
-        auto it = terrain.find({ floor(pos.x / (double)CHUNK_WIDTH), floor(pos.z / (double)CHUNK_WIDTH) });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
+        });
 
         if (it != terrain.end() &&
 #if PROTOCOL_VERSION < 719
@@ -355,7 +367,10 @@ namespace Botcraft
 
     bool World::SetBlockLight(const Position &pos, const unsigned char blocklight)
     {
-        auto it = terrain.find({ floor(pos.x / (double)CHUNK_WIDTH), floor(pos.z / (double)CHUNK_WIDTH) });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
+        });
 
         if (it != terrain.end())
         {
@@ -578,8 +593,8 @@ namespace Botcraft
 
     const Block* World::GetBlock(const Position &pos)
     {
-        int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
-        int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
+        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
 
         if (!cached || cached_x != chunk_x || cached_z != chunk_z)
         {
@@ -601,8 +616,8 @@ namespace Botcraft
 
     const bool World::IsLoaded(const Position& pos) const
     {
-        const int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
-        const int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
+        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
 
         return terrain.find({ chunk_x, chunk_z }) != terrain.end();
     }
@@ -627,8 +642,8 @@ namespace Botcraft
 
     std::shared_ptr<ProtocolCraft::NBT> World::GetBlockEntityData(const Position &pos)
     {
-        int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
-        int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
+        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
 
         if (cached && cached_x == chunk_x && cached_z == chunk_z)
         {
@@ -657,8 +672,8 @@ namespace Botcraft
     const int World::GetBiome(const Position &pos)
 #endif
     {
-        int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
-        int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
+        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
 
         if (!cached || cached_x != chunk_x || cached_z != chunk_z)
         {
@@ -684,8 +699,8 @@ namespace Botcraft
 
     const unsigned char World::GetSkyLight(const Position &pos)
     {
-        int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
-        int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
+        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
 
         if (!cached || cached_x != chunk_x || cached_z != chunk_z)
         {
@@ -708,8 +723,8 @@ namespace Botcraft
 
     const unsigned char World::GetBlockLight(const Position &pos)
     {
-        int chunk_x = (int)floor(pos.x / (double)CHUNK_WIDTH);
-        int chunk_z = (int)floor(pos.z / (double)CHUNK_WIDTH);
+        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
+        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
 
         if (!cached || cached_x != chunk_x || cached_z != chunk_z)
         {
@@ -946,7 +961,7 @@ namespace Botcraft
                 LOG_ERROR("Error adding chunk in pos : " 
                     << msg.GetX() << ", "
                     << msg.GetZ() << " in dimension "
-                    << (int)current_dimension);
+                    << static_cast<int>(current_dimension));
 #else
                 LOG_ERROR("Error adding chunk in pos : "
                     << msg.GetX() << ", "
@@ -1020,7 +1035,11 @@ namespace Botcraft
         // Searching along origin + t * direction line
 
         // Position of the current cube examined
-        out_pos = Position(std::floor(origin.x), std::floor(origin.y), std::floor(origin.z));
+        out_pos = Position(
+            static_cast<int>(std::floor(origin.x)),
+            static_cast<int>(std::floor(origin.y)),
+            static_cast<int>(std::floor(origin.z))
+        );
 
         // Increment on each axis
         Vector3<double> step((0.0 < direction.x) - (direction.x < 0.0), (0.0 < direction.y) - (direction.y < 0.0), (0.0 < direction.z) - (direction.z < 0.0));
@@ -1069,7 +1088,7 @@ namespace Botcraft
             throw(std::runtime_error("Raycasting with null direction"));
         }
 
-        const float radius = max_radius / std::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+        const float radius = max_radius / static_cast<float>(std::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z));
 
         while (true)
         {
@@ -1101,9 +1120,9 @@ namespace Botcraft
                     return nullptr;
                 }
 
-                out_pos.x += step.x;
+                out_pos.x += static_cast<int>(std::round(step.x));
                 tMax.x += tDelta.x;
-                out_normal.x = -step.x;
+                out_normal.x = -static_cast<int>(std::round(step.x));
                 out_normal.y = 0;
                 out_normal.z = 0;
             }
@@ -1113,10 +1132,10 @@ namespace Botcraft
                 {
                     return nullptr;
                 }
-                out_pos.y += step.y;
+                out_pos.y += static_cast<int>(std::round(step.y));
                 tMax.y += tDelta.y;
                 out_normal[0] = 0;
-                out_normal[1] = -step.y;
+                out_normal[1] = -static_cast<int>(std::round(step.y));
                 out_normal[2] = 0;
             }
             else // tMax.z < tMax.x && tMax.z < tMax.y
@@ -1126,11 +1145,11 @@ namespace Botcraft
                     return nullptr;
                 }
 
-                out_pos.z += step.z;
+                out_pos.z += static_cast<int>(std::round(step.z));
                 tMax.z += tDelta.z;
                 out_normal.x = 0;
                 out_normal.x = 0;
-                out_normal.x = -step.z;
+                out_normal.x = -static_cast<int>(std::round(step.z));
             }
         }
     }

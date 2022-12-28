@@ -8,3 +8,6 @@ endif()
 
 add_library(asio INTERFACE IMPORTED)
 set_property(TARGET asio PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/asio/asio/include")
+if (WIN32)
+	target_compile_definitions(asio INTERFACE _WIN32_WINNT=0x0501)
+endif(WIN32)

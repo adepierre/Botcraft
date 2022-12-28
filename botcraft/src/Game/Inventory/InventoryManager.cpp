@@ -125,7 +125,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 451
         if (window_id == trading_container_id)
         {
-            trading_container_id == -1;
+            trading_container_id = -1;
             available_trades.clear();
         }
 #endif
@@ -541,10 +541,10 @@ namespace Botcraft
     void InventoryManager::Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        int count = msg.GetSlotData().size();
-        for (int i = 0; i < count; ++i)
+        const size_t count = msg.GetSlotData().size();
+        for (size_t i = 0; i < count; ++i)
         {
-            SetSlot(msg.GetContainerId(), i, msg.GetSlotData()[i]);
+            SetSlot(msg.GetContainerId(), static_cast<short>(i), msg.GetSlotData()[i]);
         }
 #if PROTOCOL_VERSION > 755
         if (msg.GetContainerId() >= 0)

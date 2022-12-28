@@ -85,9 +85,9 @@ namespace Botcraft
         are_rendered_faces_up_to_date = false;
         for (size_t i = 0; i < faces.size(); ++i)
         {
-            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_x = GetWidth() / 2.0;
-            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_y = GetHeight() / 2.0;
-            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_z = GetWidth() / 2.0;
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_x = static_cast<float>(GetWidth() / 2.0);
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_y = static_cast<float>(GetHeight() / 2.0);
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_z = static_cast<float>(GetWidth() / 2.0);
         }
 #endif
     }

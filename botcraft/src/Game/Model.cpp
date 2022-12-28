@@ -198,8 +198,8 @@ namespace Botcraft
 
                     //Add the rotation to global transformations
 
-                    const float angle = (float)element["rotation"]["angle"];
-                    element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Translation(-((start_x + end_x) / 2.0 - origin_x) / 16.0f, -((start_y + end_y) / 2.0 - origin_y) / 16.0f, -((start_z + end_z) / 2.0 - origin_z) / 16.0f)));
+                    const float angle = element["rotation"]["angle"].get<float>();
+                    element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Translation(-((start_x + end_x) / 2.0f - origin_x) / 16.0f, -((start_y + end_y) / 2.0f - origin_y) / 16.0f, -((start_z + end_z) / 2.0f - origin_z) / 16.0f)));
                     if (element["rotation"]["axis"] == "x")
                     {
                         element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Rotation(1.0f, 0.0f, 0.0f, angle)));
@@ -212,7 +212,7 @@ namespace Botcraft
                     {
                         element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 0.0f, 1.0f, angle)));
                     }
-                    element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Translation(((start_x + end_x) / 2.0 - origin_x) / 16.0f, ((start_y + end_y) / 2.0 - origin_y) / 16.0f, ((start_z + end_z) / 2.0 - origin_z) / 16.0f)));
+                    element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Translation(((start_x + end_x) / 2.0f - origin_x) / 16.0f, ((start_y + end_y) / 2.0f - origin_y) / 16.0f, ((start_z + end_z) / 2.0f - origin_z) / 16.0f)));
 
                     bool rescale = false;
                     if (element["rotation"].contains("rescale"))
@@ -288,40 +288,40 @@ namespace Botcraft
                             switch (current_face.orientation)
                             {
                             case Orientation::Bottom:
-                                current_face.transformations.offset_x1 = start_x;
-                                current_face.transformations.offset_y1 = start_z;
-                                current_face.transformations.offset_x2 = end_x;
-                                current_face.transformations.offset_y2 = end_z;
+                                current_face.transformations.offset_x1 = static_cast<float>(start_x);
+                                current_face.transformations.offset_y1 = static_cast<float>(start_z);
+                                current_face.transformations.offset_x2 = static_cast<float>(end_x);
+                                current_face.transformations.offset_y2 = static_cast<float>(end_z);
                                 break;
                             case Orientation::Top:
-                                current_face.transformations.offset_x1 = start_x;
-                                current_face.transformations.offset_y1 = start_z;
-                                current_face.transformations.offset_x2 = end_x;
-                                current_face.transformations.offset_y2 = end_z;
+                                current_face.transformations.offset_x1 = static_cast<float>(start_x);
+                                current_face.transformations.offset_y1 = static_cast<float>(start_z);
+                                current_face.transformations.offset_x2 = static_cast<float>(end_x);
+                                current_face.transformations.offset_y2 = static_cast<float>(end_z);
                                 break;
                             case Orientation::East:
-                                current_face.transformations.offset_x1 = start_z;
-                                current_face.transformations.offset_y1 = 16 - end_y;
-                                current_face.transformations.offset_x2 = end_z;
-                                current_face.transformations.offset_y2 = 16 - start_y;
+                                current_face.transformations.offset_x1 = static_cast<float>(start_z);
+                                current_face.transformations.offset_y1 = static_cast<float>(16 - end_y);
+                                current_face.transformations.offset_x2 = static_cast<float>(end_z);
+                                current_face.transformations.offset_y2 = static_cast<float>(16 - start_y);
                                 break;
                             case Orientation::West:
-                                current_face.transformations.offset_x1 = start_z;
-                                current_face.transformations.offset_y1 = 16 - end_y;
-                                current_face.transformations.offset_x2 = end_z;
-                                current_face.transformations.offset_y2 = 16 - start_y;
+                                current_face.transformations.offset_x1 = static_cast<float>(start_z);
+                                current_face.transformations.offset_y1 = static_cast<float>(16 - end_y);
+                                current_face.transformations.offset_x2 = static_cast<float>(end_z);
+                                current_face.transformations.offset_y2 = static_cast<float>(16 - start_y);
                                 break;
                             case Orientation::South:
-                                current_face.transformations.offset_x1 = start_x;
-                                current_face.transformations.offset_y1 = 16 - end_y;
-                                current_face.transformations.offset_x2 = end_x;
-                                current_face.transformations.offset_y2 = 16 - start_y;
+                                current_face.transformations.offset_x1 = static_cast<float>(start_x);
+                                current_face.transformations.offset_y1 = static_cast<float>(16 - end_y);
+                                current_face.transformations.offset_x2 = static_cast<float>(end_x);
+                                current_face.transformations.offset_y2 = static_cast<float>(16 - start_y);
                                 break;
                             case Orientation::North:
-                                current_face.transformations.offset_x1 = start_x;
-                                current_face.transformations.offset_y1 = 16 - end_y;
-                                current_face.transformations.offset_x2 = end_x;
-                                current_face.transformations.offset_y2 = 16 - start_y;
+                                current_face.transformations.offset_x1 = static_cast<float>(start_x);
+                                current_face.transformations.offset_y1 = static_cast<float>(16 - end_y);
+                                current_face.transformations.offset_x2 = static_cast<float>(end_x);
+                                current_face.transformations.offset_y2 = static_cast<float>(16 - start_y);
                                 break;
                             default:
                                 break;
@@ -437,7 +437,7 @@ namespace Botcraft
         {
             has_changed = false;
             // Replace all the textures variables with their identifiers
-            for (int i = faces.size() - 1; i > -1; --i)
+            for (int i = static_cast<int>(faces.size()) - 1; i > -1; --i)
             {
                 // Treat #overlay as special cases
                 if (faces[i].texture_names[0].rfind("#overlay", 0) == 0)
@@ -514,7 +514,7 @@ namespace Botcraft
             faces[i].cullface_direction = (Orientation)i;
             faces[i].use_tintindexes = { false };
 
-            faces[i].transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(0.5f, (height + 1.0) / 32.0f, 0.5f)));
+            faces[i].transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(0.5f, (height + 1.0f) / 32.0f, 0.5f)));
             faces[i].transformations.translations.push_back(Renderer::TransformationPtr(new Renderer::Translation(0.0f, ((height + 1) / 2.0f - 8) / 16.0f, 0.0f)));
 
             faces[i].transformations.rotation = 0;
@@ -522,40 +522,40 @@ namespace Botcraft
             switch (faces[i].orientation)
             {
             case Orientation::Bottom:
-                faces[i].transformations.offset_x1 = 0;
-                faces[i].transformations.offset_y1 = 0;
-                faces[i].transformations.offset_x2 = 16;
-                faces[i].transformations.offset_y2 = 16;
+                faces[i].transformations.offset_x1 = 0.0f;
+                faces[i].transformations.offset_y1 = 0.0f;
+                faces[i].transformations.offset_x2 = 16.0f;
+                faces[i].transformations.offset_y2 = 16.0f;
                 break;
             case Orientation::Top:
-                faces[i].transformations.offset_x1 = 0;
-                faces[i].transformations.offset_y1 = 0;
-                faces[i].transformations.offset_x2 = 16;
-                faces[i].transformations.offset_y2 = 16;
+                faces[i].transformations.offset_x1 = 0.0f;
+                faces[i].transformations.offset_y1 = 0.0f;
+                faces[i].transformations.offset_x2 = 16.0f;
+                faces[i].transformations.offset_y2 = 16.0f;
                 break;
             case Orientation::East:
-                faces[i].transformations.offset_x1 = 0;
-                faces[i].transformations.offset_y1 = 16 - height - 1;
-                faces[i].transformations.offset_x2 = 16;
-                faces[i].transformations.offset_y2 = 16;
+                faces[i].transformations.offset_x1 = 0.0f;
+                faces[i].transformations.offset_y1 = 16.0f - height - 1.0f;
+                faces[i].transformations.offset_x2 = 16.0f;
+                faces[i].transformations.offset_y2 = 16.0f;
                 break;
             case Orientation::West:
-                faces[i].transformations.offset_x1 = 0;
-                faces[i].transformations.offset_y1 = 16 - height - 1;
-                faces[i].transformations.offset_x2 = 16;
-                faces[i].transformations.offset_y2 = 16;
+                faces[i].transformations.offset_x1 = 0.0f;
+                faces[i].transformations.offset_y1 = 16.0f - height - 1.0f;
+                faces[i].transformations.offset_x2 = 16.0f;
+                faces[i].transformations.offset_y2 = 16.0f;
                 break;
             case Orientation::South:
-                faces[i].transformations.offset_x1 = 0;
-                faces[i].transformations.offset_y1 = 16 - height - 1;
-                faces[i].transformations.offset_x2 = 16;
-                faces[i].transformations.offset_y2 = 16;
+                faces[i].transformations.offset_x1 = 0.0f;
+                faces[i].transformations.offset_y1 = 16.0f - height - 1.0f;
+                faces[i].transformations.offset_x2 = 16.0f;
+                faces[i].transformations.offset_y2 = 16.0f;
                 break;
             case Orientation::North:
-                faces[i].transformations.offset_x1 = 0;
-                faces[i].transformations.offset_y1 = 16 - height - 1;
-                faces[i].transformations.offset_x2 = 16;
-                faces[i].transformations.offset_y2 = 16;
+                faces[i].transformations.offset_x1 = 0.0f;
+                faces[i].transformations.offset_y1 = 16.0f - height - 1.0f;
+                faces[i].transformations.offset_x2 = 16.0f;
+                faces[i].transformations.offset_y2 = 16.0f;
                 break;
             default:
                 break;

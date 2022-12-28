@@ -1,4 +1,5 @@
 #include "botcraft/Game/Inventory/Window.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 using namespace ProtocolCraft;
 
@@ -102,6 +103,9 @@ namespace Botcraft
         case InventoryType::Generic9x4:
         case InventoryType::Generic9x6:
             return (static_cast<short>(type) + 1) * 9;
+        default:
+            LOG_WARNING("First slot asked for unknown InventoryType " << static_cast<int>(type));
+            return 9;
         }
     }
 

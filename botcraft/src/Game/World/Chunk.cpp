@@ -76,7 +76,11 @@ namespace Botcraft
 
     const Position Chunk::BlockCoordsToChunkCoords(const Position& pos)
     {
-        return Position(static_cast<int>(floor(pos.x / (double)CHUNK_WIDTH)), 0, static_cast<int>(floor(pos.z / (double)CHUNK_WIDTH)));
+        return Position(
+            static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
+            0,
+            static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
+        );
     }
 
     const int Chunk::GetMinY() const

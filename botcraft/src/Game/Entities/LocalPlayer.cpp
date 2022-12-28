@@ -274,11 +274,11 @@ namespace Botcraft
         // We want to set the orientation from the eyes, not the feet
         direction.y -= 1.62;
         direction.Normalize();
-        const double new_pitch = -asin(direction.y) * 180.0 / PI;
-        double new_yaw = -atan2(direction.x, direction.z) * 180.0 / PI;
+        const float new_pitch = static_cast<float>(-std::asin(direction.y) * 180.0 / PI);
+        float new_yaw = static_cast<float>(-std::atan2(direction.x, direction.z) * 180.0 / PI);
         if (new_yaw < 0)
         {
-            new_yaw += 360;
+            new_yaw += 360.0f;
         }
         if (new_yaw != yaw ||
             (set_pitch && new_pitch != pitch))

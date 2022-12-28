@@ -108,11 +108,11 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                 speed = std::stof(splitted_msg[5]);
             }
         }
-        catch (const std::invalid_argument &e)
+        catch (const std::invalid_argument &)
         {
             return;
         }
-        catch (const std::out_of_range &e)
+        catch (const std::out_of_range &)
         {
             return;
         }
@@ -149,7 +149,11 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
     else if (splitted_msg[1] == "check_perimeter")
     {
         float radius = 128.0f;
-        Position pos = Position(entity_manager->GetLocalPlayer()->GetPosition().x, entity_manager->GetLocalPlayer()->GetPosition().y, entity_manager->GetLocalPlayer()->GetPosition().z);
+        Position pos = Position(
+            static_cast<int>(std::floor(entity_manager->GetLocalPlayer()->GetPosition().x)),
+            static_cast<int>(std::floor(entity_manager->GetLocalPlayer()->GetPosition().y)),
+            static_cast<int>(std::floor(entity_manager->GetLocalPlayer()->GetPosition().z))
+        );
         bool check_lighting = true;
 
         if (splitted_msg.size() == 3)
@@ -191,11 +195,11 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
         {
             pos = Position(std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]), std::stoi(splitted_msg[5]));
         }
-        catch (const std::invalid_argument& e)
+        catch (const std::invalid_argument&)
         {
             return;
         }
-        catch (const std::out_of_range& e)
+        catch (const std::out_of_range&)
         {
             return;
         }
@@ -227,11 +231,11 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
         {
             pos = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
         }
-        catch (const std::invalid_argument& e)
+        catch (const std::invalid_argument&)
         {
             return;
         }
-        catch (const std::out_of_range& e)
+        catch (const std::out_of_range&)
         {
             return;
         }
@@ -261,11 +265,11 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
         {
             pos = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
         }
-        catch (const std::invalid_argument& e)
+        catch (const std::invalid_argument&)
         {
             return;
         }
-        catch (const std::out_of_range& e)
+        catch (const std::out_of_range&)
         {
             return;
         }
@@ -307,13 +311,13 @@ void ChatCommandClient::CheckPerimeter(const Position &pos, const float radius, 
     std::vector<Position> found_positions;
 
     Position current_position;
-    for (int y = -radius - 1; y < radius + 1; ++y)
+    for (int y = static_cast<int>(-radius - 1); y < radius + 1; ++y)
     {
         current_position.y = pos.y + y;
-        for (int x = -radius - 1; x < radius + 1; ++x)
+        for (int x = static_cast<int>(-radius - 1); x < radius + 1; ++x)
         {
             current_position.x = pos.x + x;
-            for (int z = -radius - 1; z < radius + 1; ++z)
+            for (int z = static_cast<int>(-radius - 1); z < radius + 1; ++z)
             {
                 current_position.z = pos.z + z;
 

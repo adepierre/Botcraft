@@ -29,7 +29,11 @@ Status GetAllChestsAround(BehaviourClient& c)
     std::shared_ptr<LocalPlayer> local_player = c.GetEntityManager()->GetLocalPlayer();
     std::shared_ptr<World> world = c.GetWorld();
 
-    const Position player_position(local_player->GetX(), local_player->GetY(), local_player->GetZ());
+    const Position player_position(
+        static_cast<int>(std::floor(local_player->GetX())),
+        static_cast<int>(std::floor(local_player->GetY())),
+        static_cast<int>(std::floor(local_player->GetZ()))
+    );
 
     Position checked_position;
     {
@@ -78,7 +82,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
         chests_indices[i] = i;
     }
 
-    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
+    std::mt19937 random_engine = std::mt19937(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()));
 
     std::shuffle(chests_indices.begin(), chests_indices.end(), random_engine);
 
@@ -135,7 +139,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
             if (slots_src.size() > 0)
             {
                 // Select a random slot in both src and dst
-                int src_index = slots_src.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, slots_src.size() - 1)(random_engine);
+                const int src_index = slots_src.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, static_cast<int>(slots_src.size()) - 1)(random_engine);
 
                 // Try to swap the items
                 if (SwapItemsInContainer(c, container_id, slots_src[src_index], player_dst) == Status::Success)
@@ -222,7 +226,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
         chest_indices[i] = i;
     }
 
-    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
+    std::mt19937 random_engine(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()));
 
     while (true)
     {
@@ -233,7 +237,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
         }
 
         // Select a chest
-        size_t chest_index_index = chest_indices.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, chest_indices.size() - 1)(random_engine);
+        size_t chest_index_index = chest_indices.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, static_cast<int>(chest_indices.size()) - 1)(random_engine);
         size_t chest_index = chest_indices[chest_index_index];
 
         // If we can't open this chest for a reason
@@ -319,8 +323,8 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
             slots_dst.size() > 0)
         {
             // Select a random slot in both src and dst
-            dst_index = slots_dst.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, slots_dst.size() - 1)(random_engine);
-            src_index = slots_src.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, slots_src.size() - 1)(random_engine);
+            dst_index = slots_dst.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, static_cast<int>(slots_dst.size()) - 1)(random_engine);
+            src_index = slots_src.size() == 1 ? 0 : std::uniform_int_distribution<int>(0, static_cast<int>(slots_src.size()) - 1)(random_engine);
 
             // Try to swap the items
             swap_success = SwapItemsInContainer(c, container_id, slots_src[src_index], slots_dst[dst_index]);
@@ -387,13 +391,13 @@ Status FindNextTask(BehaviourClient& c)
 
     const std::set<std::string>& available = blackboard.Get<std::set<std::string> >("Inventory.block_list");
 
-    std::mt19937 random_engine = std::mt19937(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
+    std::mt19937 random_engine(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()));
 
     Position start_pos;
 
-    start_pos.x = std::min(end.x, std::max(start.x, (int)std::floor(entity_manager->GetLocalPlayer()->GetX())));
-    start_pos.y = std::min(end.y, std::max(start.y, (int)std::floor(entity_manager->GetLocalPlayer()->GetY())));
-    start_pos.z = std::min(end.z, std::max(start.z, (int)std::floor(entity_manager->GetLocalPlayer()->GetZ())));
+    start_pos.x = std::min(end.x, std::max(start.x, static_cast<int>(std::floor(entity_manager->GetLocalPlayer()->GetX()))));
+    start_pos.y = std::min(end.y, std::max(start.y, static_cast<int>(std::floor(entity_manager->GetLocalPlayer()->GetY()))));
+    start_pos.z = std::min(end.z, std::max(start.z, static_cast<int>(std::floor(entity_manager->GetLocalPlayer()->GetZ()))));
 
     std::unordered_set<Position> explored;
     std::unordered_set<Position> to_explore;
@@ -529,7 +533,7 @@ Status FindNextTask(BehaviourClient& c)
             }
 
             // Select one randomly if multiple possibilities
-            int selected_index = max_dist_indices.size() == 1 ? 0 : max_dist_indices[std::uniform_int_distribution<int>(0, max_dist_indices.size() - 1)(random_engine)];
+            int selected_index = max_dist_indices.size() == 1 ? 0 : max_dist_indices[std::uniform_int_distribution<int>(0, static_cast<int>(max_dist_indices.size()) - 1)(random_engine)];
 
             blackboard.Set<std::string>("NextTask.action", item_candidates[selected_index].empty() ? "Dig" : "Place");
             blackboard.Set("NextTask.block_position", pos_candidates[selected_index]);

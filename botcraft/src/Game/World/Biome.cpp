@@ -134,9 +134,9 @@ namespace Botcraft
             }
         }
 
-        const unsigned char r = std::max(0.0f, std::min(255.0f, color[0]));
-        const unsigned char g = std::max(0.0f, std::min(255.0f, color[1]));
-        const unsigned char b = std::max(0.0f, std::min(255.0f, color[2]));
+        const unsigned char r = static_cast<unsigned char>(std::max(0.0f, std::min(255.0f, color[0])));
+        const unsigned char g = static_cast<unsigned char>(std::max(0.0f, std::min(255.0f, color[1])));
+        const unsigned char b = static_cast<unsigned char>(std::max(0.0f, std::min(255.0f, color[2])));
         const unsigned char a = 255;
 
         return ((a << 24) | (b << 16) | (g << 8) | r);

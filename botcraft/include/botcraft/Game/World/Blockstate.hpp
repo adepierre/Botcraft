@@ -63,7 +63,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 347
         const unsigned char GetMetadata() const;
 #endif
-        const Model &GetModel(const unsigned char index) const;
+        const Model &GetModel(const unsigned short index) const;
         const unsigned char GetRandomModelId(const Position* pos = nullptr) const;
         const int GetNumModels() const;
         const std::string &GetName() const;

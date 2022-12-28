@@ -234,11 +234,9 @@ void UserControlledClient::CreateTestWorld()
 
             const Block *block = world->GetBlock(pos);
             const Blockstate* previous_blockstate;
-            unsigned char previous_model_id;
             if (block != nullptr)
             {
                 previous_blockstate = block->GetBlockstate();
-                previous_model_id = block->GetModelId();
             }
             else
             {
@@ -247,7 +245,6 @@ void UserControlledClient::CreateTestWorld()
 #else
                 previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
 #endif
-                previous_model_id = 0;
             }
 #if PROTOCOL_VERSION < 347
             world->SetBlock(pos, 18, 0);
@@ -265,7 +262,6 @@ void UserControlledClient::CreateTestWorld()
             if (block != nullptr)
             {
                 previous_blockstate = block->GetBlockstate();
-                previous_model_id = block->GetModelId();
             }
             else
             {
@@ -274,7 +270,6 @@ void UserControlledClient::CreateTestWorld()
 #else
                 previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
 #endif
-                previous_model_id = 0;
             }
 
 #if PROTOCOL_VERSION < 347
@@ -307,7 +302,7 @@ void UserControlledClient::CreateTestWorld()
 void UserControlledClient::MouseCallback(const double &xoffset, const double &yoffset)
 {
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
-    float pitch = local_player->GetPitch() - yoffset * mouse_sensitivity;
+    float pitch = static_cast<float>(local_player->GetPitch() - yoffset * mouse_sensitivity);
 
     if (pitch > 89.0f)
     {
@@ -318,7 +313,7 @@ void UserControlledClient::MouseCallback(const double &xoffset, const double &yo
         pitch = -89.0f;
     }
     local_player->SetPitch(pitch);
-    local_player->SetYaw(local_player->GetYaw() + xoffset * mouse_sensitivity);
+    local_player->SetYaw(static_cast<float>(local_player->GetYaw() + xoffset * mouse_sensitivity));
 
     rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
 }

@@ -84,7 +84,11 @@ namespace Botcraft
                     std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
                     {
                         std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
-                        const Position player_position = Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ()));
+                        const Position player_position = Position(
+                            static_cast<int>(std::floor(local_player->GetX())),
+                            static_cast<int>(std::floor(local_player->GetY())),
+                            static_cast<int>(std::floor(local_player->GetZ()))
+                        );
 
                         is_loaded = world->IsLoaded(player_position);
                     }
@@ -289,7 +293,11 @@ namespace Botcraft
         // Update climbing state
         {
             std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
-            const Block* block_ptr = world->GetBlock(Position(std::floor(local_player->GetX()), std::floor(local_player->GetY()), std::floor(local_player->GetZ())));
+            const Block* block_ptr = world->GetBlock(Position(
+                static_cast<int>(std::floor(local_player->GetX())),
+                static_cast<int>(std::floor(local_player->GetY())),
+                static_cast<int>(std::floor(local_player->GetZ())))
+            );
             local_player->SetIsClimbing(block_ptr && block_ptr->GetBlockstate()->IsClimbable());
         }
         if (has_hit_up)

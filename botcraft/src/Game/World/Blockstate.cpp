@@ -126,7 +126,7 @@ namespace Botcraft
             {
                 //We want to add this transformation after the local translations,
                 //Just before the global translation to final position
-                faces[f].transformations.translations.insert(faces[f].transformations.translations.begin(), Renderer::TransformationPtr(new Renderer::Rotation(1.0f, 0.0f, 0.0f, -rotation_x)));
+                faces[f].transformations.translations.insert(faces[f].transformations.translations.begin(), Renderer::TransformationPtr(new Renderer::Rotation(1.0f, 0.0f, 0.0f, -static_cast<float>(rotation_x))));
 
                 const auto it_cullface = std::find(rotated_orientations.begin(), rotated_orientations.end(), faces[f].cullface_direction);
 
@@ -157,7 +157,7 @@ namespace Botcraft
             {
                 //We want to add this transformation after the local translations,
                 //Just before the global translation to final position
-                faces[f].transformations.translations.insert(faces[f].transformations.translations.begin(), Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 1.0f, 0.0f, -rotation_y)));
+                faces[f].transformations.translations.insert(faces[f].transformations.translations.begin(), Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 1.0f, 0.0f, -static_cast<float>(rotation_y))));
 
                 const auto it_cullface = std::find(rotated_orientations.begin(), rotated_orientations.end(), faces[f].cullface_direction);
 
@@ -256,7 +256,7 @@ namespace Botcraft
         best_tools = properties.best_tools;
 
         weights_sum = 0;
-        random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
+        random_generator = std::mt19937(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
 
         if (properties.path == "none")
         {
@@ -570,7 +570,7 @@ namespace Botcraft
         best_tools = properties.best_tools;
 
         weights_sum = 1;
-        random_generator = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
+        random_generator = std::mt19937(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
 
         models_weights = { 1 };
         models = { model_ };
@@ -588,7 +588,7 @@ namespace Botcraft
     }
 #endif
 
-    const Model &Blockstate::GetModel(const unsigned char index) const
+    const Model &Blockstate::GetModel(const unsigned short index) const
     {
         return models[index];
     }
@@ -803,6 +803,6 @@ namespace Botcraft
 
     const int Blockstate::GetNumModels() const
     {
-        return models.size();
+        return static_cast<int>(models.size());
     }
 } //Botcraft

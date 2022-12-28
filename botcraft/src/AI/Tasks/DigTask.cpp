@@ -29,7 +29,11 @@ namespace Botcraft
             // (unsure about the 1.0 distance, might be from the eyes or somewhere else)
             hand_pos = local_player->GetPosition();
             hand_pos.y += 1.0;
-            eyes_block = Position(std::floor(local_player->GetX()), std::floor(local_player->GetY() + 1.6), std::floor(local_player->GetZ()));
+            eyes_block = Position(
+                static_cast<int>(std::floor(local_player->GetX())),
+                static_cast<int>(std::floor(local_player->GetY() + 1.6)),
+                static_cast<int>(std::floor(local_player->GetZ()))
+            );
             is_on_ground = local_player->GetOnGround();
         }
 
@@ -97,7 +101,7 @@ namespace Botcraft
                     current_tool_type = item->GetToolType();
                     current_tool_material = item->GetToolMaterial();
                 }
-                current_tool_efficiency = GetEnchantmentLvl(main_hand.GetNBT(), "minecraft:efficiency");
+                current_tool_efficiency = static_cast<unsigned char>(GetEnchantmentLvl(main_hand.GetNBT(), "minecraft:efficiency"));
             }
         }
 
@@ -174,9 +178,9 @@ namespace Botcraft
                 && !finished_sent)
             {
                 std::shared_ptr<ServerboundPlayerActionPacket> msg_finish(new ServerboundPlayerActionPacket);
-                msg_finish->SetAction((int)PlayerDiggingStatus::FinishDigging);
+                msg_finish->SetAction(static_cast<int>(PlayerDiggingStatus::FinishDigging));
                 msg_finish->SetPos(pos.ToNetworkPosition());
-                msg_finish->SetDirection((int)face);
+                msg_finish->SetDirection(static_cast<int>(face));
 #if PROTOCOL_VERSION > 758
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());

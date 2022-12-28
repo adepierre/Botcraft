@@ -107,7 +107,7 @@ namespace Botcraft
         void Shader::SetBool(const std::string &name, const bool value) const
         {
             unsigned int loc = glGetUniformLocation(program, name.c_str());
-            glUniform1i(loc, (int)value);
+            glUniform1i(loc, static_cast<int>(value));
         }
 
         void Shader::SetInt(const std::string &name, const int value) const
@@ -137,13 +137,13 @@ namespace Botcraft
         void Shader::SetMat4xN(const std::string & name, const std::vector<glm::mat4> &value) const
         {
             unsigned int loc = glGetUniformLocation(program, name.c_str());
-            glUniformMatrix4fv(loc, (int)value.size(), GL_FALSE, glm::value_ptr(value[0]));
+            glUniformMatrix4fv(loc, static_cast<int>(value.size()), GL_FALSE, glm::value_ptr(value[0]));
         }
 
         void Shader::SetMat3xN(const std::string &name, const std::vector<glm::mat3> &value) const
         {
             unsigned int loc = glGetUniformLocation(program, name.c_str());
-            glUniformMatrix3fv(loc, (int)value.size(), GL_FALSE, glm::value_ptr(value[0]));
+            glUniformMatrix3fv(loc, static_cast<int>(value.size()), GL_FALSE, glm::value_ptr(value[0]));
         }
 
         void Shader::SetVec3(const std::string &name, const glm::vec3 &value) const

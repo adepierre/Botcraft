@@ -65,8 +65,8 @@ Botcraft::Status CopyRandomFromVectorBlackboardData(Botcraft::BehaviourClient& c
         return Botcraft::Status::Success;
     }
 
-    std::mt19937 random_engine(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    blackboard.Set<T>(dst, source[std::uniform_int_distribution<>(0, source.size() - 1)(random_engine)]);
+    std::mt19937 random_engine(static_cast<unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
+    blackboard.Set<T>(dst, source[std::uniform_int_distribution<>(0, static_cast<int>(source.size()) - 1)(random_engine)]);
 
     return Botcraft::Status::Success;
 }

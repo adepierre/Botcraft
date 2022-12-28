@@ -712,9 +712,9 @@ namespace Botcraft
             for (size_t i = 0; i < faces.size(); ++i)
             {
                 std::shared_ptr<Renderer::Translation> f = std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back());
-                f->x = position_.x;
-                f->y = position_.y;
-                f->z = position_.z;
+                f->x = static_cast<float>(position_.x);
+                f->y = static_cast<float>(position_.y);
+                f->z = static_cast<float>(position_.z);
             }
         }
 #endif
@@ -729,7 +729,7 @@ namespace Botcraft
             are_rendered_faces_up_to_date = false;
             for (size_t i = 0; i < faces.size(); ++i)
             {
-                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->x = x_;
+                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->x = static_cast<float>(x_);
             }
         }
 #endif
@@ -744,7 +744,7 @@ namespace Botcraft
             are_rendered_faces_up_to_date = false;
             for (size_t i = 0; i < faces.size(); ++i)
             {
-                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->y = y_;
+                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->y = static_cast<float>(y_);
             }
         }
 #endif
@@ -759,7 +759,7 @@ namespace Botcraft
             are_rendered_faces_up_to_date = false;
             for (size_t i = 0; i < faces.size(); ++i)
             {
-                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->z = z_;
+                std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.back())->z = static_cast<float>(z_);
             }
         }
 #endif
@@ -1487,11 +1487,19 @@ namespace Botcraft
             face_descriptors[i].use_tintindexes = { false };
 
             // Base entity scale
-            face_descriptors[i].transformations.scales.push_back(std::make_shared<Renderer::Scale>(GetWidth() / 2.0f, GetHeight() / 2.0f, GetWidth() / 2.0f));
+            face_descriptors[i].transformations.scales.push_back(std::make_shared<Renderer::Scale>(
+                static_cast<float>(GetWidth()) / 2.0f,
+                static_cast<float>(GetHeight()) / 2.0f,
+                static_cast<float>(GetWidth()) / 2.0f)
+            );
             // Base translation
-            face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(0.0f, GetHeight() / 2.0f, 0.0f));
+            face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(0.0f, static_cast<float>(GetHeight()) / 2.0f, 0.0f));
             // Entity pos translation
-            face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(position.x, position.y, position.z));
+            face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(
+                static_cast<float>(position.x),
+                static_cast<float>(position.y),
+                static_cast<float>(position.z))
+            );
             // Entity yaw/pitch rotation
             face_descriptors[i].transformations.rotations.push_back(std::make_shared<Renderer::Rotation>(0.0f, 1.0f, 0.0f, yaw));
             face_descriptors[i].transformations.rotations.push_back(std::make_shared<Renderer::Rotation>(1.0f, 0.0f, 0.0f, pitch));

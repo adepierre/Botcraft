@@ -45,7 +45,7 @@ namespace Botcraft
         mc_player_uuid_bytes.fill(0);
 #if PROTOCOL_VERSION > 758
         key_timestamp = 0;
-        rnd = std::mt19937(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+        rnd = std::mt19937(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
 #endif
     }
 
@@ -198,7 +198,7 @@ namespace Botcraft
             }
 
             // add 1
-            int position = digest.size() - 1;
+            int position = static_cast<int>(digest.size()) - 1;
             while (digest[position] == 255 && position > 0)
             {
                 digest[position] = 0;
@@ -211,12 +211,12 @@ namespace Botcraft
         std::stringstream ss;
         for (int i = 0; i < digest.size(); ++i)
         {
-            ss << std::hex << std::setfill('0') << std::setw(2) << (int)(digest[i] & 0xFF);
+            ss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(digest[i] & 0xFF);
         }
 
         std::string server_hash = ss.str();
         // Remove leading 0
-        int start = server_hash.find_first_not_of('0');
+        const size_t start = server_hash.find_first_not_of('0');
         if (start != std::string::npos)
         {
             server_hash = server_hash.substr(start);
@@ -413,7 +413,7 @@ namespace Botcraft
         const int rsa_signature_size = RSA_size(rsa_signature);
         std::vector<unsigned char> signature(rsa_signature_size);
         unsigned int signature_size;
-        RSA_sign(NID_sha256, signature_hash.data(), signature_hash.size(), signature.data(), &signature_size, rsa_signature);
+        RSA_sign(NID_sha256, signature_hash.data(), static_cast<unsigned int>(signature_hash.size()), signature.data(), &signature_size, rsa_signature);
         RSA_free(rsa_signature);
         signature.resize(signature_size);
 

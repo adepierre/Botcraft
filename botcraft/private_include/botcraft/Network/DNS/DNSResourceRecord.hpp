@@ -109,7 +109,7 @@ namespace Botcraft
             // We don't support compression for write (it shouldn't been called in this program anyway)
             for (int i = 0; i < name_labels.size(); ++i)
             {
-                WriteData<unsigned char>(name_labels[i].size(), container);
+                WriteData<unsigned char>(static_cast<unsigned char>(name_labels[i].size()), container);
                 WriteRawString(name_labels[i], container);
             }
             WriteData<unsigned char>(0, container);

@@ -55,9 +55,9 @@ namespace Botcraft
     {
         const unsigned char* pub_key_ptr = pub_key.data();
 
-        RSA* rsa = d2i_RSA_PUBKEY(nullptr, &pub_key_ptr, pub_key.size());
+        RSA* rsa = d2i_RSA_PUBKEY(nullptr, &pub_key_ptr, static_cast<long>(pub_key.size()));
 
-        std::mt19937 random_gen(std::chrono::steady_clock::now().time_since_epoch().count());
+        std::mt19937 random_gen(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
         std::uniform_int_distribution<unsigned int> random_dist(0, 255);
 
         raw_shared_secret = std::vector<unsigned char>(AES_BLOCK_SIZE);
@@ -109,7 +109,7 @@ namespace Botcraft
 #else
         // 1.19.3 behaviour, back to compute encrypted challenge
         encrypted_challenge = std::vector<unsigned char>(rsa_size);
-        RSA_public_encrypt(input_challenge.size(), input_challenge.data(), encrypted_challenge.data(), rsa, RSA_PKCS1_PADDING);
+        RSA_public_encrypt(static_cast<int>(input_challenge.size()), input_challenge.data(), encrypted_challenge.data(), rsa, RSA_PKCS1_PADDING);
 #endif
         RSA_free(rsa);
 
@@ -134,7 +134,7 @@ namespace Botcraft
         int size = 0;
 
         output.resize(in.size() + blocksize);
-        EVP_EncryptUpdate(encryption_context, output.data(), &size, in.data(), in.size());
+        EVP_EncryptUpdate(encryption_context, output.data(), &size, in.data(), static_cast<int>(in.size()));
         output.resize(size);
 
         return output;
@@ -152,7 +152,7 @@ namespace Botcraft
         int size = 0;
 
         output.resize(in.size() + blocksize);
-        EVP_DecryptUpdate(decryption_context, output.data(), &size, in.data(), in.size());
+        EVP_DecryptUpdate(decryption_context, output.data(), &size, in.data(), static_cast<int>(in.size()));
         output.resize(size);
 
         return output;

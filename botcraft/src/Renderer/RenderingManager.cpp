@@ -73,7 +73,7 @@ namespace Botcraft
             has_proj_changed = true;
 
             MouseCallback = [](double, double) {};
-            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, float) {};
+            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double) {};
 
             world_renderer = std::make_unique<WorldRenderer>(section_height_);
 
@@ -90,7 +90,7 @@ namespace Botcraft
         RenderingManager::~RenderingManager()
         {
             MouseCallback = [](double, double) {};
-            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, float) {};
+            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double) {};
 
             running = false;
 
@@ -192,7 +192,7 @@ namespace Botcraft
 
                 if (has_proj_changed)
                 {
-                    glm::mat4 projection = glm::perspective(glm::radians(45.0f), current_window_width / (float)current_window_height, 0.1f, 200.0f);
+                    glm::mat4 projection = glm::perspective(glm::radians(45.0f), current_window_width / static_cast<float>(current_window_height), 0.1f, 200.0f);
                     my_shader->SetMat4("projection", projection);
                     world_renderer->SetCameraProjection(projection);
                     has_proj_changed = false;
@@ -302,7 +302,7 @@ namespace Botcraft
                     take_screenshot = false;
                 }
 
-                real_fps = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count() / 1e6;
+                real_fps = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count() / 1e6);
                 
                 //Wait to have 60 FPS
                 SleepUntil(end);
