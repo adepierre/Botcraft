@@ -13,30 +13,31 @@ namespace Botcraft
     std::vector<unsigned char> Compress(const std::vector<unsigned char> &raw, const int &start, const int &size)
     {
         unsigned long size_to_compress = size > 0 ? size : raw.size() - start;
-        unsigned long compressedSize = compressBound(size_to_compress);
+        unsigned long compressed_size = compressBound(size_to_compress);
 
-        if (compressedSize > MAX_COMPRESSED_PACKET_LEN)
+        if (compressed_size > MAX_COMPRESSED_PACKET_LEN)
         {
             throw(std::runtime_error("Incoming packet is too big"));
         }
 
-        std::vector<unsigned char> compressedData(compressedSize);
-        int status = compress2(compressedData.data(), &compressedSize, raw.data() + start, size_to_compress, Z_DEFAULT_COMPRESSION);
+        std::vector<unsigned char> compressed_data(compressed_size);
+        int status = compress2(compressed_data.data(), &compressed_size, raw.data() + start, size_to_compress, Z_DEFAULT_COMPRESSION);
 
         if (status != Z_OK)
         {
             throw(std::runtime_error("Error compressing packet"));
         }
 
-        return std::vector<unsigned char>(compressedData.begin(), compressedData.begin() + compressedSize);
+        compressed_data.resize(compressed_size);
+        return compressed_data;
     }
 
     std::vector<unsigned char> Decompress(const std::vector<unsigned char> &compressed, const int &start, const int &size)
     {
         unsigned long size_to_decompress = size > 0 ? size : compressed.size() - start;
 
-        std::vector<unsigned char> decompressedData;
-        decompressedData.reserve(size_to_decompress);
+        std::vector<unsigned char> decompressed_data;
+        decompressed_data.reserve(size_to_decompress);
 
         std::vector<unsigned char> buffer(64 * 1024);
 
@@ -59,19 +60,19 @@ namespace Botcraft
             switch (res)
             {
             case Z_OK:
-                decompressedData.insert(decompressedData.end(), buffer.begin(), buffer.end() - strm.avail_out);
+                decompressed_data.insert(decompressed_data.end(), buffer.begin(), buffer.end() - strm.avail_out);
                 strm.next_out = buffer.data();
                 strm.avail_out = buffer.size();
                 if (strm.avail_in == 0)
                 {
                     inflateEnd(&strm);
-                    return decompressedData;
+                    return decompressed_data;
                 }
                 break;
             case Z_STREAM_END:
-                decompressedData.insert(decompressedData.end(), buffer.begin(), buffer.end() - strm.avail_out);
+                decompressed_data.insert(decompressed_data.end(), buffer.begin(), buffer.end() - strm.avail_out);
                 inflateEnd(&strm);
-                return decompressedData;
+                return decompressed_data;
                 break;
             default:
                 inflateEnd(&strm);
