@@ -168,7 +168,7 @@ namespace Botcraft
                     if (raycasted_blockstate)
                     {
                         ImGui::Text("Watching block at %i, %i, %i", raycasted_pos.x, raycasted_pos.y, raycasted_pos.z);
-                        ImGui::Text((std::string("Block: ") + raycasted_blockstate->GetName()).c_str());
+                        ImGui::Text("Block: %s", raycasted_blockstate->GetName().c_str());
                     }
                     else
                     {
