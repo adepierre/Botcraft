@@ -8,8 +8,6 @@
 #include <vector>
 
 #include "protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp"
-#else
-#include "protocolCraft/Types/Bitset.hpp"
 #endif
 
 namespace ProtocolCraft
@@ -39,7 +37,7 @@ namespace ProtocolCraft
             offset = offset_;
         }
 
-        void SetAcknowledged(const Bitset<20>& acknowledged_)
+        void SetAcknowledged(const std::bitset<20>& acknowledged_)
         {
             acknowledged = acknowledged_;
         }
@@ -62,7 +60,7 @@ namespace ProtocolCraft
             return offset;
         }
 
-        const Bitset<20>& GetAcknowledged() const
+        const std::bitset<20>& GetAcknowledged() const
         {
             return acknowledged;
         }
@@ -85,7 +83,7 @@ namespace ProtocolCraft
             }
 #else
             offset = ReadData<VarInt>(iter, length);
-            acknowledged.Read(iter, length);
+            acknowledged = ReadBitset<20>(iter, length);
 #endif
         }
 
@@ -113,7 +111,7 @@ namespace ProtocolCraft
             }
 #else
             WriteData<VarInt>(offset, container);
-            acknowledged.Write(container);
+            WriteBitset<20>(acknowledged, container);
 #endif
         }
 
@@ -142,7 +140,7 @@ namespace ProtocolCraft
             }
 #else
             output["offset"] = offset;
-            output["acknowledged"] = acknowledged.Serialize();
+            output["acknowledged"] = acknowledged.to_string();
 #endif
 
             return output;
@@ -154,7 +152,7 @@ namespace ProtocolCraft
         LastSeenMessagesEntry last_received;
 #else
         int offset;
-        Bitset<20> acknowledged;
+        std::bitset<20> acknowledged;
 #endif
     };
 } // ProtocolCraft

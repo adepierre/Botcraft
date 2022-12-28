@@ -10,7 +10,6 @@
 #include "protocolCraft/Types/GameProfile/GameProfile.hpp"
 #include "protocolCraft/Types/GameProfile/GameProfileProperty.hpp"
 #include "protocolCraft/Types/Chat/RemoteChatSessionData.hpp"
-#include "protocolCraft/Types/Bitset.hpp"
 
 namespace ProtocolCraft
 {
@@ -87,12 +86,12 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             // Get the number of bits to encode all possible actions in a bitset
-            Bitset<static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION)> bitset;
-            bitset.Read(iter, length);
+            constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
+            std::bitset<bitset_size> bitset = ReadBitset<bitset_size>(iter, length);
             actions.clear();
-            for (size_t i = 0; i < static_cast<int>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION); ++i)
+            for (size_t i = 0; i < bitset_size; ++i)
             {
-                if (bitset.bitset[i])
+                if (bitset[i])
                 {
                     actions.push_back(static_cast<PlayerInfoUpdateAction>(i));
                 }
@@ -158,12 +157,13 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            Bitset<static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION)> bitset;
+            constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
+            std::bitset<bitset_size> bitset;
             for (size_t i = 0; i < actions.size(); ++i)
             {
-                bitset.bitset.set(static_cast<int>(actions[i]), true);
+                bitset.set(static_cast<size_t>(actions[i]), true);
             }
-            bitset.Write(container);
+            WriteBitset<bitset_size>(bitset, container);
 
             WriteData<VarInt>(static_cast<int>(entries.size()), container);
             for (auto it = entries.begin(); it != entries.end(); ++it)

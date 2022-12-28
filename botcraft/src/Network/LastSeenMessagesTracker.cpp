@@ -79,7 +79,7 @@ namespace Botcraft
         output.second.SetOffset(GetAndResetOffset());
 
         output.first.reserve(last_seen_signatures.size());
-        ProtocolCraft::Bitset<20> bitset;
+        std::bitset<20> bitset;
         for (size_t i = 0; i < last_seen_signatures.size(); ++i)
         {
             const size_t index = (tail + i) % last_seen_signatures.size();
@@ -87,7 +87,7 @@ namespace Botcraft
             {
                 continue;
             }
-            bitset.bitset.set(i, true);
+            bitset.set(i, true);
             output.first.push_back(last_seen_signatures[index]);
         }
         output.second.SetAcknowledged(bitset);

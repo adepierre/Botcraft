@@ -6,6 +6,9 @@
 #include <cstring>
 #include <algorithm>
 #include <stdexcept>
+#if PROTOCOL_VERSION > 760
+#include <bitset>
+#endif
 
 namespace ProtocolCraft
 {
@@ -201,4 +204,34 @@ namespace ProtocolCraft
             container.insert(container.end(), bytes.begin(), bytes.end());
         }
     }
+
+#if PROTOCOL_VERSION > 760
+    template<size_t N>
+    std::bitset<N> ReadBitset(ReadIterator& iter, size_t& length)
+    {
+        std::bitset<N> output;
+        const std::vector<unsigned char> bytes = ReadByteArray(iter, length, N / 8 + (N % 8 != 0));
+        for (size_t i = 0; i < N; ++i)
+        {
+            output.set(i, (bytes[i / 8] << (i % 8)) & 0x01);
+        }
+
+        return output;
+    }
+
+    template<size_t N>
+    void WriteBitset(const std::bitset<N>& values, WriteContainer& container)
+    {
+        std::vector<unsigned char> bytes(N / 8 + (N % 8 != 0), 0);
+        for (size_t i = 0; i < N; ++i)
+        {
+            if (values[i])
+            {
+                bytes[i / 8] |= 1 << (i % 8);
+            }
+        }
+        WriteByteArray(bytes, container);
+    }
+
+#endif
 } // ProtocolCraft

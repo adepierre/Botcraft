@@ -220,7 +220,6 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Advancement.hpp
     include/protocolCraft/Types/AdvancementDisplay.hpp
     include/protocolCraft/Types/AdvancementProgress.hpp
-    include/protocolCraft/Types/Bitset.hpp
     include/protocolCraft/Types/BlockEntityInfo.hpp
     include/protocolCraft/Types/BlockEntityTag.hpp
     include/protocolCraft/Types/ClientboundLevelChunkPacketData.hpp
