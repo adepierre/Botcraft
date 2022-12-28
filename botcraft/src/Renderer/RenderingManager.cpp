@@ -209,8 +209,8 @@ namespace Botcraft
                 int num_chunks, num_rendered_chunks, num_entities, num_rendered_entities, num_faces, num_rendered_faces;
                 world_renderer->RenderFaces(&num_chunks, &num_rendered_chunks, &num_entities, &num_rendered_entities, &num_faces, &num_rendered_faces);
                 {
-                    ImGui::SetNextWindowPos(ImVec2(current_window_width, 0), 0, ImVec2(1.0f, 0.0f));
-                    ImGui::SetNextWindowSize(ImVec2(180, 170));
+                    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), 0.0f), 0, ImVec2(1.0f, 0.0f));
+                    ImGui::SetNextWindowSize(ImVec2(180.0f, 170.0f));
                     ImGui::Begin("Rendering");
                     ImGui::Text("Lim. FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
                     ImGui::Text("Real FPS: %.1f (%.2fms)", 1.0 / real_fps, real_fps * 1000.0);
@@ -233,8 +233,8 @@ namespace Botcraft
                 // Draw the inventory if it's open
                 if (inventory_open)
                 {
-                    ImGui::SetNextWindowPos(ImVec2(current_window_width, current_window_height), 0, ImVec2(1.0f, 1.0f));
-                    ImGui::SetNextWindowSize(ImVec2(300, 450));
+                    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), static_cast<float>(current_window_height)), 0, ImVec2(1.0f, 1.0f));
+                    ImGui::SetNextWindowSize(ImVec2(300.0f, 450.0f));
                     ImGui::Begin("Inventory");
                     if (inventory_manager && inventory_manager->GetPlayerInventory())
                     {
