@@ -213,7 +213,7 @@ namespace ProtocolCraft
         const std::vector<unsigned char> bytes = ReadByteArray(iter, length, N / 8 + (N % 8 != 0));
         for (size_t i = 0; i < N; ++i)
         {
-            output.set(i, (bytes[i / 8] << (i % 8)) & 0x01);
+            output.set(i, (bytes[i / 8] >> (i % 8)) & 0x01);
         }
 
         return output;
