@@ -14,22 +14,13 @@ namespace ProtocolCraft
 
         }
 
-        void SetHasParent(const bool has_parent_)
-        {
-            has_parent = has_parent_;
-        }
 
-        void SetParentId(const Identifier& parent_id_)
+        void SetParentId(const std::optional<Identifier>& parent_id_)
         {
             parent_id = parent_id_;
         }
 
-        void SetHasDisplay(const bool has_display_)
-        {
-            has_display = has_display_;
-        }
-
-        void SetDisplayData(const AdvancementDisplay& display_data_)
+        void SetDisplayData(const std::optional<AdvancementDisplay>& display_data_)
         {
             display_data = display_data_;
         }
@@ -55,22 +46,12 @@ namespace ProtocolCraft
         }
 
 
-        const bool GetHasParent() const
-        {
-            return has_parent;
-        }
-
-        const Identifier& GetParentId() const
+        const std::optional<Identifier>& GetParentId() const
         {
             return parent_id;
         }
 
-        const bool GetHasDisplay() const
-        {
-            return has_display;
-        }
-
-        const AdvancementDisplay& GetDisplayData() const
+        const std::optional<AdvancementDisplay>& GetDisplayData() const
         {
             return display_data;
         }
@@ -98,16 +79,8 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            has_parent = ReadData<bool>(iter, length);
-            if (has_parent)
-            {
-                parent_id = ReadData<Identifier>(iter, length);
-            }
-            has_display = ReadData<bool>(iter, length);
-            if (has_display)
-            {
-                display_data = ReadData<AdvancementDisplay>(iter, length);
-            }
+            parent_id = ReadOptional<Identifier>(iter, length);
+            display_data = ReadOptional<AdvancementDisplay>(iter, length);
             number_of_criteria = ReadData<VarInt>(iter, length);
             criteria = std::vector<Identifier>(number_of_criteria);
             for (int i = 0; i < number_of_criteria; ++i)
@@ -129,16 +102,8 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<bool>(has_parent, container);
-            if (has_parent)
-            {
-                WriteData<Identifier>(parent_id, container);
-            }
-            WriteData<bool>(has_display, container);
-            if (has_display)
-            {
-                WriteData<AdvancementDisplay>(display_data, container);
-            }
+            WriteOptional<Identifier>(parent_id, container);
+            WriteOptional<AdvancementDisplay>(display_data, container);
             WriteData<VarInt>(number_of_criteria, container);
             for (int i = 0; i < number_of_criteria; ++i)
             {
@@ -159,15 +124,14 @@ namespace ProtocolCraft
         {
             nlohmann::json output;
 
-            output["has_parent"] = has_parent;
-            if (has_parent)
+            if (parent_id.has_value())
             {
-                output["parent_id"] = parent_id.Serialize();
+                output["parent_id"] = parent_id.value().Serialize();
             }
-            output["has_display"] = has_display;
-            if (has_display)
+
+            if (display_data.has_value())
             {
-                output["display_data"] = display_data.Serialize();
+                output["display_data"] = display_data.value().Serialize();
             }
             output["number_of_criteria"] = number_of_criteria;
             
@@ -189,10 +153,8 @@ namespace ProtocolCraft
         }
 
     private:
-        bool has_parent;
-        Identifier parent_id;
-        bool has_display;
-        AdvancementDisplay display_data;
+        std::optional<Identifier> parent_id;
+        std::optional<AdvancementDisplay> display_data;
         int number_of_criteria;
         std::vector<Identifier> criteria;
         int array_length;

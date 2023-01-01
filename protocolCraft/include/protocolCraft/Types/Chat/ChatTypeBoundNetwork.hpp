@@ -24,7 +24,7 @@ namespace ProtocolCraft
             name = name_;
         }
 
-        void SetTargetName(const Chat& target_name_)
+        void SetTargetName(const std::optional<Chat>& target_name_)
         {
             target_name = target_name_;
         }
@@ -40,7 +40,7 @@ namespace ProtocolCraft
             return name;
         }
 
-        const Chat& GetTargetName() const
+        const std::optional<Chat>& GetTargetName() const
         {
             return target_name;
         }
@@ -50,22 +50,14 @@ namespace ProtocolCraft
         {
             chat_type = ReadData<VarInt>(iter, length);
             name = ReadData<Chat>(iter, length);
-            const bool has_target_name = ReadData<bool>(iter, length);
-            if (has_target_name)
-            {
-                target_name = ReadData<Chat>(iter, length);
-            }
+            target_name = ReadOptional<Chat>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<VarInt>(chat_type, container);
             WriteData<Chat>(name, container);
-            WriteData<bool>(!target_name.GetRawText().empty(), container);
-            if (!target_name.GetRawText().empty())
-            {
-                WriteData<Chat>(target_name, container);
-            }
+            WriteOptional<Chat>(target_name, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -74,9 +66,9 @@ namespace ProtocolCraft
 
             output["chat_type"] = chat_type;
             output["name"] = name.Serialize();
-            if (!target_name.GetRawText().empty())
+            if (target_name.has_value())
             {
-                output["target_name"] = target_name.Serialize();
+                output["target_name"] = target_name.value().Serialize();
             }
 
 
@@ -86,7 +78,7 @@ namespace ProtocolCraft
     private:
         int chat_type;
         Chat name;
-        Chat target_name;
+        std::optional<Chat> target_name;
     };
 }
 #endif

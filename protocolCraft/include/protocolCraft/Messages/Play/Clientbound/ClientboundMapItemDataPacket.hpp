@@ -71,10 +71,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 754
+        void SetDecorations(const std::optional<std::vector<MapDecoration>>& decorations_)
+        {
+            decorations = decorations_;
+        }
+#else
         void SetDecorations(const std::vector<MapDecoration>& decorations_)
         {
             decorations = decorations_;
         }
+#endif
 
         void SetStartX(const unsigned char start_x_)
         {
@@ -126,10 +133,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 754
+        const std::optional<std::vector<MapDecoration>>& GetDecorations() const
+        {
+            return decorations;
+        }
+#else
         const std::vector<MapDecoration>& GetDecorations() const
         {
             return decorations;
         }
+#endif
 
         const unsigned char GetStartX() const
         {
@@ -169,17 +183,18 @@ namespace ProtocolCraft
             locked = ReadData<bool>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 754
-            const bool has_decorations = ReadData<bool>(iter, length);
-            if (has_decorations)
-            {
-#endif
-                int decorations_count = ReadData<VarInt>(iter, length);
-                decorations = std::vector<MapDecoration>(decorations_count);
-                for (int i = 0; i < decorations_count; ++i)
+            decorations = ReadOptional<std::vector<MapDecoration>>(iter, length,
+                [](ReadIterator& i, size_t& l)
                 {
-                    decorations[i].Read(iter, length);
+                    return ReadCollection<MapDecoration>(i, l);
                 }
-#if PROTOCOL_VERSION > 754
+            );
+#else
+            const int decorations_count = ReadData<VarInt>(iter, length);
+            decorations = std::vector<MapDecoration>(decorations_count);
+            for (int i = 0; i < decorations_count; ++i)
+            {
+                decorations[i].Read(iter, length);
             }
 #endif
 
@@ -194,7 +209,7 @@ namespace ProtocolCraft
             }
         }
 
-        virtual void WriteImpl(WriteContainer& container) const override
+        virtual void WriteImpl(WriteContainer & container) const override
         {
             WriteData<VarInt>(map_id, container);
             WriteData<char>(scale, container);
@@ -205,16 +220,17 @@ namespace ProtocolCraft
             WriteData<bool>(locked, container);
 #endif
 #if PROTOCOL_VERSION > 754
-            WriteData<bool>(decorations.size() > 0, container);
-            if (decorations.size() > 0)
-            {
-#endif
-                WriteData<VarInt>(static_cast<int>(decorations.size()), container);
-                for (int i = 0; i < decorations.size(); ++i)
+            WriteOptional<std::vector<MapDecoration>>(decorations, container,
+                [](const std::vector<MapDecoration>& v, WriteContainer& c)
                 {
-                    decorations[i].Write(container);
+                    WriteCollection<MapDecoration>(v, c);
                 }
-#if PROTOCOL_VERSION > 754
+            );
+#else
+            WriteData<VarInt>(static_cast<int>(decorations.size()), container);
+            for (int i = 0; i < decorations.size(); ++i)
+            {
+                decorations[i].Write(container);
             }
 #endif
 
@@ -241,11 +257,23 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451
             output["locked"] = locked;
 #endif
+
+#if PROTOCOL_VERSION > 754
+            if (decorations.has_value())
+            {
+                output["decorations"] = nlohmann::json::array();
+                for (int i = 0; i < decorations.value().size(); ++i)
+                {
+                    output["decorations"].push_back(decorations.value()[i].Serialize());
+                }
+            }
+#else
             output["decorations"] = nlohmann::json::array();
             for (int i = 0; i < decorations.size(); ++i)
             {
                 output["decorations"].push_back(decorations[i].Serialize());
             }
+#endif
             output["width"] = width;
             if (width > 0)
             {
@@ -267,7 +295,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451
         bool locked;
 #endif
+#if PROTOCOL_VERSION > 754
+        std::optional<std::vector<MapDecoration>> decorations;
+#else
         std::vector<MapDecoration> decorations;
+#endif
         unsigned char start_x;
         unsigned char start_z;
         unsigned char width;

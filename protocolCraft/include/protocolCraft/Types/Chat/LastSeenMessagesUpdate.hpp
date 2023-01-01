@@ -27,7 +27,7 @@ namespace ProtocolCraft
             last_seen = last_seen_;
         }
 
-        void SetLastReceived(const LastSeenMessagesEntry& last_received_)
+        void SetLastReceived(const std::optional<LastSeenMessagesEntry>& last_received_)
         {
             last_received = last_received_;
         }
@@ -50,7 +50,7 @@ namespace ProtocolCraft
             return last_seen;
         }
 
-        const LastSeenMessagesEntry& GetLastReceived() const
+        const std::optional<LastSeenMessagesEntry>& GetLastReceived() const
         {
             return last_received;
         }
@@ -76,11 +76,7 @@ namespace ProtocolCraft
             {
                 last_seen[i].Read(iter, length);
             }
-            const bool has_last_received = ReadData<bool>(iter, length);
-            if (has_last_received)
-            {
-                last_received = ReadData<LastSeenMessagesEntry>(iter, length);
-            }
+            last_received = ReadOptional<LastSeenMessagesEntry>(iter, length);
 #else
             offset = ReadData<VarInt>(iter, length);
             acknowledged = ReadBitset<20>(iter, length);
@@ -95,20 +91,7 @@ namespace ProtocolCraft
             {
                 last_seen[i].Write(container);
             }
-            bool has_last_received = false;
-            for (int i = 0; i < last_received.GetLastSignature().size(); ++i)
-            {
-                if (last_received.GetLastSignature()[i] != 0)
-                {
-                    has_last_received = true;
-                    break;
-                }
-            }
-            WriteData<bool>(has_last_received, container);
-            if (has_last_received)
-            {
-                WriteData<LastSeenMessagesEntry>(last_received, container);
-            }
+            WriteOptional<LastSeenMessagesEntry>(last_received, container);
 #else
             WriteData<VarInt>(offset, container);
             WriteBitset<20>(acknowledged, container);
@@ -125,18 +108,9 @@ namespace ProtocolCraft
             {
                 output["last_seen"].push_back(last_seen[i].Serialize());
             };
-            bool has_last_received = false;
-            for (int i = 0; i < last_received.GetLastSignature().size(); ++i)
+            if (last_received.has_value())
             {
-                if (last_received.GetLastSignature()[i] != 0)
-                {
-                    has_last_received = true;
-                    break;
-                }
-            }
-            if (has_last_received)
-            {
-                output["last_received"] = last_received.Serialize();
+                output["last_received"] = last_received.value().Serialize();
             }
 #else
             output["offset"] = offset;
@@ -149,7 +123,7 @@ namespace ProtocolCraft
     private:
 #if PROTOCOL_VERSION < 761
         std::vector<LastSeenMessagesEntry> last_seen;
-        LastSeenMessagesEntry last_received;
+        std::optional<LastSeenMessagesEntry> last_received;
 #else
         int offset;
         std::bitset<20> acknowledged;

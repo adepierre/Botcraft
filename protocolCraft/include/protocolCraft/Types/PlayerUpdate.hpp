@@ -35,7 +35,7 @@ namespace ProtocolCraft
             latency = i;
         }
 
-        void SetDisplayName(const Chat& c)
+        void SetDisplayName(const std::optional<Chat>& c)
         {
             display_name = c;
         }
@@ -46,7 +46,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 758
-        void SetProfilePublicKey(const ProfilePublicKey& profile_public_key_)
+        void SetProfilePublicKey(const std::optional<ProfilePublicKey>& profile_public_key_)
         {
             profile_public_key = profile_public_key_;
         }
@@ -68,7 +68,7 @@ namespace ProtocolCraft
             return latency;
         }
 
-        const Chat& GetDisplayName() const
+        const std::optional<Chat>& GetDisplayName() const
         {
             return display_name;
         }
@@ -84,7 +84,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 758
-        const ProfilePublicKey& GetProfilePublicKey() const
+        const std::optional<ProfilePublicKey>& GetProfilePublicKey() const
         {
             return profile_public_key;
         }
@@ -102,19 +102,9 @@ namespace ProtocolCraft
             }
             game_mode = ReadData<VarInt>(iter, length);
             latency = ReadData<VarInt>(iter, length);
-            const bool has_display_name = ReadData<bool>(iter, length);
-            display_name = Chat();
-            if (has_display_name)
-            {
-                display_name = ReadData<Chat>(iter, length);
-            }
+            display_name = ReadOptional<Chat>(iter, length);
 #if PROTOCOL_VERSION > 758
-            const bool has_profile_public_key = ReadData<bool>(iter, length);
-            profile_public_key = ProfilePublicKey();
-            if (has_profile_public_key)
-            {
-                profile_public_key = ReadData<ProfilePublicKey>(iter, length);
-            }
+            profile_public_key = ReadOptional<ProfilePublicKey>(iter, length);
 #endif
         }
 
@@ -128,17 +118,9 @@ namespace ProtocolCraft
             }
             WriteData<VarInt>(game_mode, container);
             WriteData<VarInt>(latency, container);
-            WriteData<bool>(!display_name.GetText().empty() , container);
-            if (!display_name.GetText().empty())
-            {
-                WriteData<Chat>(display_name, container);
-            }
+            WriteOptional<Chat>(display_name, container);
 #if PROTOCOL_VERSION > 758
-            WriteData<bool>(!profile_public_key.GetKey().empty(), container);
-            if (!profile_public_key.GetKey().empty())
-            {
-                WriteData<ProfilePublicKey>(profile_public_key, container);
-            }
+            WriteOptional<ProfilePublicKey>(profile_public_key, container);
 #endif
         }
 
@@ -149,16 +131,19 @@ namespace ProtocolCraft
             output["name"] = name;
             output["game_mode"] = game_mode;
             output["latency"] = latency;
-            output["display_name"] = display_name.Serialize();
+            if (display_name.has_value())
+            {
+                output["display_name"] = display_name.value().Serialize();
+            }
             output["properties"] = nlohmann::json::array();
             for (int i = 0; i < properties.size(); ++i)
             {
                 output["properties"].push_back(properties[i].Serialize());
             }
 #if PROTOCOL_VERSION > 758
-            if (!profile_public_key.GetKey().empty())
+            if (profile_public_key.has_value())
             {
-                output["profile_public_key"] = profile_public_key.Serialize();
+                output["profile_public_key"] = profile_public_key.value().Serialize();
             }
 #endif
 
@@ -170,10 +155,10 @@ namespace ProtocolCraft
         std::string name;
         int game_mode;
         int latency;
-        Chat display_name;
+        std::optional<Chat> display_name;
         std::vector<GameProfileProperty> properties;
 #if PROTOCOL_VERSION > 758
-        ProfilePublicKey profile_public_key;
+        std::optional<ProfilePublicKey> profile_public_key;
 #endif
     };
 } // ProtocolCraft

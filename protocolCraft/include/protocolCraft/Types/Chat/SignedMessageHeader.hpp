@@ -15,7 +15,7 @@ namespace ProtocolCraft
 
         }
 
-        void SetPreviousSignature(const std::vector<unsigned char>& previous_signature_)
+        void SetPreviousSignature(const std::optional<std::vector<unsigned char>>& previous_signature_)
         {
             previous_signature = previous_signature_;
         }
@@ -26,7 +26,7 @@ namespace ProtocolCraft
         }
     
 
-        const std::vector<unsigned char>& GetPreviousSignature() const
+        const std::optional<std::vector<unsigned char>>& GetPreviousSignature() const
         {
             return previous_signature;
         }
@@ -39,23 +39,23 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            const bool has_previous_signature = ReadData<bool>(iter, length);
-            if (has_previous_signature)
-            {
-                const int size = ReadData<VarInt>(iter, length);
-                previous_signature = ReadByteArray(iter, length, size);
-            }
+            previous_signature = ReadOptional<std::vector<unsigned char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadCollection<unsigned char>(i, l);
+                }
+            );
             sender = ReadData<UUID>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<bool>(previous_signature.size() > 0, container);
-            if (previous_signature.size() > 0)
-            {
-                WriteData<VarInt>(static_cast<int>(previous_signature.size()), container);
-                WriteByteArray(previous_signature, container);
-            }
+            WriteOptional<std::vector<unsigned char>>(previous_signature, container,
+                [](const std::vector<unsigned char>& v, WriteContainer& c)
+                {
+                    WriteCollection<unsigned char>(v, c);
+                }
+            );
             WriteData<UUID>(sender, container);
         }
 
@@ -63,7 +63,10 @@ namespace ProtocolCraft
         {
             nlohmann::json output;
 
-            output["previous_signature"] = "Vector of " + std::to_string(previous_signature.size()) + " unsigned char";
+            if (previous_signature.has_value())
+            {
+                output["previous_signature"] = "Vector of " + std::to_string(previous_signature.value().size()) + " unsigned char";
+            }
             output["sender"] = sender;
 
 
@@ -71,7 +74,7 @@ namespace ProtocolCraft
         }
 
     private:
-        std::vector<unsigned char> previous_signature;
+        std::optional<std::vector<unsigned char>> previous_signature;
         UUID sender;
     };
 } // ProtocolCraft

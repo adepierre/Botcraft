@@ -32,7 +32,7 @@ namespace ProtocolCraft
             signed_body = signed_body_;
         }
 
-        void SetUnsignedContent(const Chat& unsigned_content_)
+        void SetUnsignedContent(const std::optional<Chat>& unsigned_content_)
         {
             unsigned_content = unsigned_content_;
         }
@@ -58,7 +58,7 @@ namespace ProtocolCraft
             return signed_body;
         }
 
-        const Chat& GetUnsignedContent() const
+        const std::optional<Chat>& GetUnsignedContent() const
         {
             return unsigned_content;
         }
@@ -75,11 +75,7 @@ namespace ProtocolCraft
             const int header_signature_size = ReadData<VarInt>(iter, length);
             header_signature = ReadByteArray(iter, length, header_signature_size);
             signed_body = ReadData<SignedMessageBody>(iter, length);
-            const bool has_unsigned_content = ReadData<bool>(iter, length);
-            if (has_unsigned_content)
-            {
-                unsigned_content = ReadData<Chat>(iter, length);
-            }
+            unsigned_content = ReadOptional<Chat>(iter, length);
             filter_mask = ReadData<FilterMask>(iter, length);
         }
 
@@ -89,11 +85,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(static_cast<int>(header_signature.size()), container);
             WriteByteArray(header_signature, container);
             WriteData<SignedMessageBody>(signed_body, container);
-            WriteData<bool>(!unsigned_content.GetRawText().empty(), container);
-            if (!unsigned_content.GetRawText().empty())
-            {
-                WriteData<Chat>(unsigned_content, container);
-            }
+            WriteOptional<Chat>(unsigned_content, container);
             WriteData<FilterMask>(filter_mask, container);
         }
 
@@ -104,9 +96,9 @@ namespace ProtocolCraft
             output["signed_header"] = signed_header.Serialize();
             output["header_signature"] = "Vector of " + std::to_string(header_signature.size()) + " unsigned char";
             output["signed_body"] = signed_body.Serialize();
-            if (!unsigned_content.GetRawText().empty())
+            if (unsigned_content.has_value())
             {
-                output["unsigned_content"] = unsigned_content.Serialize();
+                output["unsigned_content"] = unsigned_content.value().Serialize();
             }
             output["filter_mask"] = filter_mask.Serialize();
 
@@ -118,7 +110,7 @@ namespace ProtocolCraft
         SignedMessageHeader signed_header;
         std::vector<unsigned char> header_signature;
         SignedMessageBody signed_body;
-        Chat unsigned_content;
+        std::optional<Chat> unsigned_content;
         FilterMask filter_mask;
     };
 }

@@ -65,7 +65,7 @@ namespace ProtocolCraft
             required = required_;
         }
 
-        void SetPrompt(const Chat& prompt_)
+        void SetPrompt(const std::optional<Chat>& prompt_)
         {
             prompt = prompt_;
         }
@@ -88,7 +88,7 @@ namespace ProtocolCraft
             return required;
         }
 
-        const Chat& GetPrompt() const
+        const std::optional<Chat>& GetPrompt() const
         {
             return prompt;
         }
@@ -101,11 +101,7 @@ namespace ProtocolCraft
             hash = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 754
             required = ReadData<bool>(iter, length);
-            const bool has_prompt = ReadData<bool>(iter, length);
-            if (has_prompt)
-            {
-                prompt = ReadData<Chat>(iter, length);
-            }
+            prompt = ReadOptional<Chat>(iter, length);
 #endif
         }
 
@@ -115,15 +111,7 @@ namespace ProtocolCraft
             WriteData<std::string>(hash, container);
 #if PROTOCOL_VERSION > 754
             WriteData<bool>(required, container);
-            if (prompt.GetRawText().empty())
-            {
-                WriteData<bool>(false, container);
-            }
-            else
-            {
-                WriteData<bool>(true, container);
-                WriteData<Chat>(prompt, container);
-            }
+            WriteOptional<Chat>(prompt, container);
 #endif
         }
 
@@ -135,7 +123,10 @@ namespace ProtocolCraft
             output["hash"] = hash;
 #if PROTOCOL_VERSION > 754
             output["required"] = required;
-            output["prompt"] = prompt.Serialize();
+            if (prompt.has_value())
+            {
+                output["prompt"] = prompt.value().Serialize();
+            }
 #endif
 
             return output;
@@ -146,7 +137,7 @@ namespace ProtocolCraft
         std::string hash;
 #if PROTOCOL_VERSION > 754
         bool required;
-        Chat prompt;
+        std::optional<Chat> prompt;
 #endif
 
     };

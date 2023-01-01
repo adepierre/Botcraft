@@ -65,12 +65,7 @@ namespace ProtocolCraft
             assume_command = assume_command_;
         }
 
-        void SetHasPosition(const bool has_position_)
-        {
-            has_position = has_position_;
-        }
-
-        void SetLookedAtBlock(const NetworkPosition& looked_at_block_)
+        void SetLookedAtBlock(const std::optional<NetworkPosition>& looked_at_block_)
         {
             looked_at_block = looked_at_block_;
         }
@@ -95,12 +90,7 @@ namespace ProtocolCraft
             return assume_command;
         }
 
-        const bool GetHasPosition() const
-        {
-            return has_position;
-        }
-
-        const NetworkPosition& GetLookedAtBlock() const
+        const std::optional<NetworkPosition>& GetLookedAtBlock() const
         {
             return looked_at_block;
         }
@@ -117,11 +107,7 @@ namespace ProtocolCraft
             command = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION < 345
             assume_command = ReadData<bool>(iter, length);
-            has_position = ReadData<bool>(iter, length); 
-            if (has_position)
-            {
-                looked_at_block = ReadData<NetworkPosition>(iter, length);
-            }
+            looked_at_block = ReadOptional<NetworkPosition>(iter, length);
 #endif
         }
 
@@ -133,11 +119,7 @@ namespace ProtocolCraft
             WriteData<std::string>(command, container);
 #if PROTOCOL_VERSION < 345
             WriteData<bool>(assume_command, container);
-            WriteData<bool>(has_position, container);
-            if (has_position)
-            {
-                WriteData<NetworkPosition>(looked_at_block, container);
-            }
+            WriteOptional<NetworkPosition>(looked_at_block, container);
 #endif
         }
 
@@ -151,10 +133,9 @@ namespace ProtocolCraft
             output["command"] = command;
 #if PROTOCOL_VERSION < 345
             output["assume_command"] = assume_command;
-            output["has_position"] = has_position;
-            if (has_position)
+            if (looked_at_block.has_value())
             {
-                output["looked_at_block"] = looked_at_block.Serialize();
+                output["looked_at_block"] = looked_at_block.value().Serialize();
             }
 #endif
 
@@ -168,8 +149,7 @@ namespace ProtocolCraft
         std::string command;
 #if PROTOCOL_VERSION < 345
         bool assume_command;
-        bool has_position;
-        NetworkPosition looked_at_block;
+        std::optional<NetworkPosition> looked_at_block;
 #endif
 
     };

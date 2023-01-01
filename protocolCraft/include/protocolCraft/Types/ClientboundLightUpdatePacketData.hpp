@@ -114,21 +114,19 @@ namespace ProtocolCraft
                 empty_block_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
             }
 
-            const int sky_updates_size = ReadData<VarInt>(iter, length);
-            sky_updates = std::vector<std::vector<char> >(sky_updates_size);
-            for (int i = 0; i < sky_updates_size; ++i)
-            {
-                const int array_length = ReadData<VarInt>(iter, length); // Should be 2048
-                sky_updates[i] = ReadArrayData<char>(iter, length, 2048);
-            }
+            sky_updates = ReadCollection<std::vector<char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadCollection<char>(i, l);
+                }
+            );
 
-            const int block_updates_size = ReadData<VarInt>(iter, length);
-            block_updates = std::vector<std::vector<char> >(block_updates_size);
-            for (int i = 0; i < block_updates_size; ++i)
-            {
-                const int array_length = ReadData<VarInt>(iter, length); // Should be 2048
-                block_updates[i] = ReadArrayData<char>(iter, length, 2048);
-            }
+            block_updates = ReadCollection<std::vector<char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadCollection<char>(i, l);
+                }
+            );
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -156,19 +154,19 @@ namespace ProtocolCraft
                 WriteData<unsigned long long int>(empty_block_Y_mask[i], container);
             }
 
-            WriteData<VarInt>(static_cast<int>(sky_updates.size()), container);
-            for (int i = 0; i < sky_updates.size(); ++i)
-            {
-                WriteData<VarInt>(static_cast<int>(sky_updates[i].size()), container);
-                WriteArrayData(sky_updates[i], container);
-            }
+            WriteCollection<std::vector<char>>(sky_updates, container,
+                [](const std::vector<char>& v, WriteContainer& c)
+                {
+                    WriteCollection<char>(v, c);
+                }
+            );
 
-            WriteData<VarInt>(static_cast<int>(block_updates.size()), container);
-            for (int i = 0; i < block_updates.size(); ++i)
-            {
-                WriteData<VarInt>(static_cast<int>(block_updates[i].size()), container);
-                WriteArrayData(block_updates[i], container);
-            }
+            WriteCollection<std::vector<char>>(block_updates, container,
+                [](const std::vector<char>& v, WriteContainer& c)
+                {
+                    WriteCollection<char>(v, c);
+                }
+            );
         }
 
         virtual const nlohmann::json SerializeImpl() const override

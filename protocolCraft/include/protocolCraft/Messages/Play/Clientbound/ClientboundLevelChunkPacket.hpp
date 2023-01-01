@@ -194,7 +194,11 @@ namespace ProtocolCraft
                     biomes[i] = ReadData<VarInt>(iter, length);
                 }
 #else
-                biomes = ReadArrayData<int>(iter, length, 1024);
+                biomes = std::vector<int>(1024);
+                for (size_t i = 0; i < biomes.size(); ++i)
+                {
+                    biomes[i] = ReadData<int>(iter, length);
+                }
 #endif
 #if PROTOCOL_VERSION < 755
             }
@@ -244,7 +248,10 @@ namespace ProtocolCraft
                     WriteData<VarInt>(biomes[i], container);
                 }
 #else
-                WriteArrayData(biomes, container);
+                for (size_t i = 0; i < biomes.size(); ++i)
+                {
+                    WriteData<int>(biomes[i], container);
+                }
 #endif
 #if PROTOCOL_VERSION < 755
             }

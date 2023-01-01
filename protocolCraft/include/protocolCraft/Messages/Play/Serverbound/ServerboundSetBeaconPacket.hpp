@@ -45,6 +45,7 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION < 759
         void SetPrimary(const int primary_)
         {
             primary = primary_;
@@ -54,8 +55,20 @@ namespace ProtocolCraft
         {
             secondary = secondary_;
         }
+#else
+        void SetPrimary(const std::optional<int>& primary_)
+        {
+            primary = primary_;
+        }
+
+        void SetSecondary(const std::optional<int>& secondary_)
+        {
+            secondary = secondary_;
+        }
+#endif
 
 
+#if PROTOCOL_VERSION < 759
         const int GetPrimary() const
         {
             return primary;
@@ -65,6 +78,17 @@ namespace ProtocolCraft
         {
             return secondary;
         }
+#else
+        const std::optional<int>& GetPrimary() const
+        {
+            return primary;
+        }
+
+        const std::optional<int>& GetSecondary() const
+        {
+            return secondary;
+        }
+#endif
 
 
     protected:
@@ -74,18 +98,8 @@ namespace ProtocolCraft
             primary = ReadData<VarInt>(iter, length);
             secondary = ReadData<VarInt>(iter, length);
 #else
-            const bool has_primary = ReadData<bool>(iter, length);
-            primary = 0;
-            if (has_primary)
-            {
-                primary = ReadData<VarInt>(iter, length);
-            }
-            const bool has_secondary = ReadData<bool>(iter, length);
-            secondary = 0;
-            if (has_secondary)
-            {
-                secondary = ReadData<VarInt>(iter, length);
-            }
+            primary = ReadOptional<VarInt>(iter, length);
+            secondary = ReadOptional<VarInt>(iter, length);
 #endif
         }
 
@@ -95,16 +109,8 @@ namespace ProtocolCraft
             WriteData<VarInt>(primary, container);
             WriteData<VarInt>(secondary, container);
 #else
-            WriteData<bool>(primary > 0, container);
-            if (primary > 0)
-            {
-                WriteData<VarInt>(primary, container);
-            }
-            WriteData<bool>(secondary > 0, container);
-            if (secondary > 0)
-            {
-                WriteData<VarInt>(secondary, container);
-            }
+            WriteOptional<VarInt>(primary, container);
+            WriteOptional<VarInt>(secondary, container);
 #endif
         }
 
@@ -116,13 +122,13 @@ namespace ProtocolCraft
             output["primary"] = primary;
             output["secondary"] = secondary;
 #else
-            if (primary > 0)
+            if (primary.has_value())
             {
-                output["primary"] = primary;
+                output["primary"] = primary.value();
             }
-            if (secondary > 0)
+            if (secondary.has_value())
             {
-                output["secondary"] = secondary;
+                output["secondary"] = secondary.value();
             }
 #endif
 
@@ -130,8 +136,13 @@ namespace ProtocolCraft
         }
 
     private:
+#if PROTOCOL_VERSION < 759
         int primary;
         int secondary;
+#else
+        std::optional<int> primary;
+        std::optional<int> secondary;
+#endif
 
     };
 } //ProtocolCraft

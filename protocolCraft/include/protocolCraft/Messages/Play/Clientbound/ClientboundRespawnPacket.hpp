@@ -128,7 +128,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 758
-        void SetLastDeathLocation(const GlobalPos& last_death_location_)
+        void SetLastDeathLocation(const std::optional<GlobalPos>& last_death_location_)
         {
             last_death_location = last_death_location_;
         }
@@ -212,7 +212,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 758
-        const GlobalPos& GetLastDeathLocation() const
+        const std::optional<GlobalPos>& GetLastDeathLocation() const
         {
             return last_death_location;
         }
@@ -253,11 +253,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 758
-            const bool has_last_death_location = ReadData<bool>(iter, length);
-            if (has_last_death_location)
-            {
-                last_death_location = ReadData<GlobalPos>(iter, length);
-            }
+            last_death_location = ReadOptional<GlobalPos>(iter, length);
 #endif
         }
 
@@ -295,11 +291,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 758
-            WriteData<bool>(!last_death_location.GetDimension().GetFull().empty(), container);
-            if (!last_death_location.GetDimension().GetFull().empty())
-            {
-                WriteData<GlobalPos>(last_death_location, container);
-            }
+            WriteOptional<GlobalPos>(last_death_location, container);
 #endif
         }
 
@@ -335,9 +327,9 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 758
-            if (!last_death_location.GetDimension().GetFull().empty())
+            if (last_death_location.has_value())
             {
-                output["last_death_location"] = last_death_location.Serialize();
+                output["last_death_location"] = last_death_location.value().Serialize();
             }
 #endif
 
@@ -375,7 +367,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 758
-        GlobalPos last_death_location;
+        std::optional<GlobalPos> last_death_location;
 #endif
     };
 } //ProtocolCraft

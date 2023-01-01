@@ -57,7 +57,7 @@ Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 
 ## Dependencies
 
-The code is cross-platform and requires a C++17 compiler, as well as git. ProtocolCraft only requires a C++11 compiler. I try to keep the number of external libraries for the core part of the library very low. This is less true for the rendering part or testing.
+The code is cross-platform and requires a C++17 compiler, as well as git and CMake. I try to keep the number of external libraries for the core part of the library very low. This is less true for the rendering part or testing.
 Dependencies are included either directly(\*) or as git submodules(†). All libraries marked as optional can be disabled using cmake options.
 
 You *don't* have to clone recursively, download nor install any of them, as the cmake build system is made to do that for you automatically for each dependency that is not already found on your system.

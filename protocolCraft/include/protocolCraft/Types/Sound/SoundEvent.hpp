@@ -25,7 +25,7 @@ namespace ProtocolCraft
             location = location_;
         }
 
-        void SetRange(const float range_)
+        void SetRange(const std::optional<float>& range_)
         {
             range = range_;
         }
@@ -41,7 +41,7 @@ namespace ProtocolCraft
             return location;
         }
 
-        const float GetRange() const
+        const std::optional<float>& GetRange() const
         {
             return range;
         }
@@ -53,15 +53,7 @@ namespace ProtocolCraft
             if (sound_id == 0)
             {
                 location = ReadData<Identifier>(iter, length);
-                const bool has_range = ReadData<bool>(iter, length);
-                if (has_range)
-                {
-                    range = ReadData<float>(iter, length);
-                }
-                else
-                {
-                    range = 0.0f;
-                }
+                range = ReadOptional<float>(iter, length);
             }
             else
             {
@@ -79,11 +71,7 @@ namespace ProtocolCraft
             {
                 WriteData<VarInt>(0, container);
                 WriteData<Identifier>(location, container);
-                WriteData<bool>(range != 0.0f, container);
-                if (range != 0.0f)
-                {
-                    WriteData<float>(range, container);
-                }
+                WriteOptional<float>(range, container);
             }
         }
 
@@ -94,9 +82,9 @@ namespace ProtocolCraft
             if (location.GetFull().empty())
             {
                 output["location"] = location.Serialize();
-                if (range != 0.0f)
+                if (range.has_value())
                 {
-                    output["range"] = range;
+                    output["range"] = range.value();
                 }
             }
             else
@@ -110,7 +98,7 @@ namespace ProtocolCraft
     private:
         int sound_id;
         Identifier location;
-        float range;
+        std::optional<float> range;
     };
 } // ProtocolCraft
 #endif

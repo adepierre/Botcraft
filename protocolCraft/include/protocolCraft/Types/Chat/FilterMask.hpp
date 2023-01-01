@@ -41,8 +41,7 @@ namespace ProtocolCraft
             type = ReadData<VarInt>(iter, length);
             if (type == 2)
             {
-                const int mask_size = ReadData<VarInt>(iter, length);
-                mask = ReadArrayData<long long int>(iter, length, mask_size);
+                mask = ReadCollection<long long int>(iter, length);
             }
         }
 
@@ -51,8 +50,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(type, container);
             if (type == 2)
             {
-                WriteData<VarInt>(static_cast<int>(mask.size()), container);
-                WriteArrayData<long long int>(mask, container);
+                WriteCollection<long long int>(mask, container);
             }
         }
 

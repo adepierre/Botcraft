@@ -28,7 +28,7 @@ namespace ProtocolCraft
             transaction_id = transaction_id_;
         }
 
-        void SetData(const std::vector<unsigned char>& data_)
+        void SetData(const std::optional<std::vector<unsigned char>>& data_)
         {
             data = data_;
         }
@@ -38,7 +38,7 @@ namespace ProtocolCraft
             return transaction_id;
         }
 
-        const std::vector<unsigned char>& GetData() const
+        const std::optional<std::vector<unsigned char>>& GetData() const
         {
             return data;
         }
@@ -47,25 +47,23 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             transaction_id = ReadData<VarInt>(iter, length);
-            data.clear();
-            if (ReadData<bool>(iter, length))
-            {
-                data = ReadByteArray(iter, length, length);
-            }
+            data = ReadOptional<std::vector<unsigned char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadByteArray(i, l, l);
+                }
+            );
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<VarInt>(transaction_id, container);
-            if (data.size())
-            {
-                WriteData<bool>(true, container);
-                WriteByteArray(data, container);
-            }
-            else
-            {
-                WriteData<bool>(false, container);
-            }
+            WriteOptional<std::vector<unsigned char>>(data, container,
+                [](const std::vector<unsigned char>& v, WriteContainer& c)
+                {
+                    WriteByteArray(v, c);
+                }
+            );
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -73,14 +71,17 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["transaction_id"] = transaction_id;
-            output["data"] = "Vector of " + std::to_string(data.size()) + " unsigned char";
+            if (data.has_value())
+            {
+                output["data"] = "Vector of " + std::to_string(data.value().size()) + " unsigned char";
+            }
 
             return output;
         }
 
     private:
         int transaction_id;
-        std::vector<unsigned char> data;
+        std::optional<std::vector<unsigned char>> data;
     };
 } // ProtocolCraft
 #endif

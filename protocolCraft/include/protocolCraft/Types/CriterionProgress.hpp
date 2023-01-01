@@ -12,23 +12,14 @@ namespace ProtocolCraft
 
         }
 
-        void SetAchieved(const bool achieved_)
-        {
-            achieved = achieved_;
-        }
         
-        void SetDateOfAchieving(const long long int date_of_achieving_)
+        void SetDateOfAchieving(const std::optional<long long int>& date_of_achieving_)
         {
             date_of_achieving = date_of_achieving_;
         }
-    
 
-        const bool GetAchieved() const
-        {
-            return achieved;
-        }
-        
-        const long long int GetDateOfAchieving() const
+
+        const std::optional<long long int>& GetDateOfAchieving() const
         {
             return date_of_achieving;
         }
@@ -36,37 +27,27 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            achieved = ReadData<bool>(iter, length);
-            if (achieved)
-            {
-                date_of_achieving = ReadData<long long int>(iter, length);
-            }
+            date_of_achieving = ReadOptional<long long int>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<bool>(achieved, container);
-            if (achieved)
-            {
-                WriteData<long long int>(date_of_achieving, container);
-            }
+            WriteOptional<long long int>(date_of_achieving, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
         {
             nlohmann::json output;
 
-            output["achieved"] = achieved;
-            if (achieved)
+            if (date_of_achieving.has_value())
             {
-                output["date_of_achieving"] = date_of_achieving;
+                output["date_of_achieving"] = date_of_achieving.value();
             }
 
             return output;
         }
 
     private:
-        bool achieved;
-        long long int date_of_achieving;
+        std::optional<long long int> date_of_achieving;
     };
 }

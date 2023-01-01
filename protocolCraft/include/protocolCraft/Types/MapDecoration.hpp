@@ -44,7 +44,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 363
-        const Chat& GetDisplayName() const
+        const std::optional<Chat>& GetDisplayName() const
         {
             return display_name;
         }
@@ -81,7 +81,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 363
-        void SetDisplayName(const Chat& display_name_)
+        void SetDisplayName(const std::optional<Chat>& display_name_)
         {
             display_name = display_name_;
         }
@@ -103,11 +103,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 363
-            const bool has_display_name = ReadData<bool>(iter, length);
-            if (has_display_name)
-            {
-                display_name = ReadData<Chat>(iter, length);
-            }
+            display_name = ReadOptional<Chat>(iter, length);
 #endif
         }
 
@@ -125,11 +121,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 363
-            WriteData<bool>(!display_name.GetText().empty(), container);
-            if (!display_name.GetText().empty())
-            {
-                WriteData<Chat>(display_name, container);
-            }
+            WriteOptional<Chat>(display_name, container);
 #endif
         }
 
@@ -149,9 +141,9 @@ namespace ProtocolCraft
             output["rot"] = rot;
 #endif
 #if PROTOCOL_VERSION > 363
-            if (!display_name.GetText().empty())
+            if (display_name.has_value())
             {
-                output["display_name"] = display_name.Serialize();
+                output["display_name"] = display_name.value().Serialize();
             }
 #endif
 
@@ -170,7 +162,7 @@ namespace ProtocolCraft
         char rot;
 #endif
 #if PROTOCOL_VERSION > 363
-        Chat display_name;
+        std::optional<Chat> display_name;
 #endif
     };
 }

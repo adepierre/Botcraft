@@ -25,12 +25,7 @@ namespace ProtocolCraft
             output_item = output_item_;
         }
 
-        void SetHasSecondItem(const bool has_second_item_)
-        {
-            has_second_item = has_second_item_;
-        }
-
-        void SetInputItem2(const Slot& input_item_2_)
+        void SetInputItem2(const std::optional<Slot>& input_item_2_)
         {
             input_item_2 = input_item_2_;
         }
@@ -81,12 +76,7 @@ namespace ProtocolCraft
             return output_item;
         }
 
-        const bool GetHasSecondItem() const
-        {
-            return has_second_item;
-        }
-
-        const Slot& GetInputItem2() const
+        const std::optional<Slot>& GetInputItem2() const
         {
             return input_item_2;
         }
@@ -131,11 +121,7 @@ namespace ProtocolCraft
         {
             input_item_1 = ReadData<Slot>(iter, length);
             output_item = ReadData<Slot>(iter, length);
-            has_second_item = ReadData<bool>(iter, length);
-            if (has_second_item)
-            {
-                input_item_2 = ReadData<Slot>(iter, length);
-            }
+            input_item_2 = ReadOptional<Slot>(iter, length);
             trade_disabled = ReadData<bool>(iter, length);
             number_of_trades_uses = ReadData<int>(iter, length);
             maximum_number_of_trade_uses = ReadData<int>(iter, length);
@@ -149,11 +135,7 @@ namespace ProtocolCraft
         {
             WriteData<Slot>(input_item_1, container);
             WriteData<Slot>(output_item, container);
-            WriteData<bool>(has_second_item, container);
-            if (has_second_item)
-            {
-                WriteData<Slot>(input_item_2, container);
-            }
+            WriteOptional<Slot>(input_item_2, container);
             WriteData<bool>(trade_disabled, container);
             WriteData<int>(number_of_trades_uses, container);
             WriteData<int>(maximum_number_of_trade_uses, container);
@@ -169,10 +151,9 @@ namespace ProtocolCraft
 
             output["input_item_1"] = input_item_1.Serialize();
             output["output_item"] = output_item.Serialize();
-            output["has_second_item"] = has_second_item;
-            if (has_second_item)
+            if (input_item_2.has_value())
             {
-                output["input_item_2"] = input_item_2.Serialize();
+                output["input_item_2"] = input_item_2.value().Serialize();
             }
             output["trade_disabled"] = trade_disabled;
             output["number_of_trades_uses"] = number_of_trades_uses;
@@ -188,8 +169,7 @@ namespace ProtocolCraft
     private:
         Slot input_item_1;
         Slot output_item;
-        bool has_second_item;
-        Slot input_item_2;
+        std::optional<Slot> input_item_2;
         bool trade_disabled;
         int number_of_trades_uses;
         int maximum_number_of_trade_uses;

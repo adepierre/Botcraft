@@ -35,12 +35,12 @@ namespace ProtocolCraft
         }
 
 
-        void SetMotd(const Chat& motd_)
+        void SetMotd(const std::optional<Chat>& motd_)
         {
             motd = motd_;
         }
 
-        void SetIconBase64(const std::string& icon_base_64_)
+        void SetIconBase64(const std::optional<std::string>& icon_base_64_)
         {
             icon_base_64 = icon_base_64_;
         }
@@ -60,12 +60,12 @@ namespace ProtocolCraft
 #endif
 
 
-        const Chat& GetMotd() const
+        const std::optional<Chat>& GetMotd() const
         {
             return motd;
         }
 
-        const std::string& GetIconBase64() const
+        const std::optional<std::string>& GetIconBase64() const
         {
             return icon_base_64;
         }
@@ -88,18 +88,8 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            const bool has_motd = ReadData<bool>(iter, length);
-            motd = Chat();
-            if (has_motd)
-            {
-                motd = ReadData<Chat>(iter, length);
-            }
-            const bool has_icon_base_64 = ReadData<bool>(iter, length);
-            icon_base_64 = "";
-            if (has_icon_base_64)
-            {
-                icon_base_64 = ReadData<std::string>(iter, length);
-            }
+            motd = ReadOptional<Chat>(iter, length);
+            icon_base_64 = ReadOptional<std::string>(iter, length);
 #if PROTOCOL_VERSION < 761
             previews_chat = ReadData<bool>(iter, length);
 #endif
@@ -110,16 +100,8 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<bool>(!motd.GetRawText().empty(), container);
-            if (!motd.GetRawText().empty())
-            {
-                WriteData<Chat>(motd, container);
-            }
-            WriteData<bool>(!icon_base_64.empty(), container);
-            if (!icon_base_64.empty())
-            {
-                WriteData<std::string>(icon_base_64, container);
-            }
+            WriteOptional<Chat>(motd, container);
+            WriteOptional<std::string>(icon_base_64, container);
 #if PROTOCOL_VERSION < 761
             WriteData<bool>(previews_chat, container);
 #endif
@@ -132,13 +114,13 @@ namespace ProtocolCraft
         {
             nlohmann::json output;
 
-            if (!motd.GetRawText().empty())
+            if (motd.has_value())
             {
-                output["motd"] = motd.Serialize();
+                output["motd"] = motd.value().Serialize();
             }
-            if (!icon_base_64.empty())
+            if (icon_base_64.has_value())
             {
-                output["icon_base_64"] = icon_base_64;
+                output["icon_base_64"] = icon_base_64.value();
             }
 #if PROTOCOL_VERSION < 761
             output["previews_chat"] = previews_chat;
@@ -152,8 +134,8 @@ namespace ProtocolCraft
         }
 
     private:
-        Chat motd;
-        std::string icon_base_64;
+        std::optional<Chat> motd;
+        std::optional<std::string> icon_base_64;
 #if PROTOCOL_VERSION < 761
         bool previews_chat;
 #endif

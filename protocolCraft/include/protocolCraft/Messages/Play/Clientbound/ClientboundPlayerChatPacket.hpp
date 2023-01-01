@@ -54,7 +54,7 @@ namespace ProtocolCraft
             signed_content = signed_content_;
         }
 
-        void SetUnsignedContent(const Chat& unsigned_content_)
+        void SetUnsignedContent(const std::optional<Chat>& unsigned_content_)
         {
             unsigned_content = unsigned_content_;
         }
@@ -85,7 +85,7 @@ namespace ProtocolCraft
             return signed_content;
         }
 
-        const Chat& GetUnsignedContent() const
+        const std::optional<Chat>& GetUnsignedContent() const
         {
             return unsigned_content;
         }
@@ -126,7 +126,7 @@ namespace ProtocolCraft
             index = index_;
         }
 
-        void SetSignature(const std::vector<unsigned char>& signature_)
+        void SetSignature(const std::optional<std::vector<unsigned char>>& signature_)
         {
             signature = signature_;
         }
@@ -136,7 +136,7 @@ namespace ProtocolCraft
             body = body_;
         }
 
-        void SetUnsignedContent(const Chat& unsigned_content_)
+        void SetUnsignedContent(const std::optional<Chat>& unsigned_content_)
         {
             unsigned_content = unsigned_content_;
         }
@@ -169,7 +169,7 @@ namespace ProtocolCraft
             return index;
         }
 
-        const std::vector<unsigned char>& GetSignature() const
+        const std::optional<std::vector<unsigned char>>& GetSignature() const
         {
             return signature;
         }
@@ -179,7 +179,7 @@ namespace ProtocolCraft
             return body;
         }
 
-        const Chat& GetUnsignedContent() const
+        const std::optional<Chat>& GetUnsignedContent() const
         {
             return unsigned_content;
         }
@@ -201,12 +201,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 760
             signed_content = ReadData<Chat>(iter, length);
-            const bool has_unsigned_content = ReadData<bool>(iter, length);
-            unsigned_content = Chat();
-            if (has_unsigned_content)
-            {
-                unsigned_content = ReadData<Chat>(iter, length);
-            }
+            unsigned_content = ReadOptional<Chat>(iter, length);
             type_id = ReadData<VarInt>(iter, length);
             sender = ReadData<ChatSender>(iter, length);
             timestamp = ReadData<long long int>(iter, length);
@@ -217,17 +212,14 @@ namespace ProtocolCraft
 #else
             sender = ReadData<UUID>(iter, length);
             index = ReadData<VarInt>(iter, length);
-            const bool has_signature = ReadData<bool>(iter, length);
-            if (has_signature)
-            {
-                signature = ReadByteArray(iter, length, 256);
-            }
+            signature = ReadOptional<std::vector<unsigned char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadByteArray(i, l, 256);
+                }
+            );
             body = ReadData<SignedMessageBody>(iter, length);
-            const bool has_unsigned_content = ReadData<bool>(iter, length);
-            if (has_unsigned_content)
-            {
-                unsigned_content = ReadData<Chat>(iter, length);
-            }
+            unsigned_content = ReadOptional<Chat>(iter, length);
             filter_mask = ReadData<FilterMask>(iter, length);
 #endif
             chat_type = ReadData<ChatTypeBoundNetwork>(iter, length);
@@ -238,11 +230,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 760
             WriteData<Chat>(signed_content, container);
-            WriteData<bool>(!unsigned_content.GetRawText().empty(), container);
-            if (!unsigned_content.GetRawText().empty())
-            {
-                WriteData<Chat>(unsigned_content, container);
-            }
+            WriteOptional<Chat>(unsigned_content, container);
             WriteData<VarInt>(type_id, container);
             WriteData<ChatSender>(sender, container);
             WriteData<long long int>(timestamp, container);
@@ -253,18 +241,14 @@ namespace ProtocolCraft
 #else
             WriteData<UUID>(sender, container);
             WriteData<VarInt>(index, container);
-            const bool has_signature = signature.size() > 0;
-            WriteData<bool>(has_signature, container);
-            if (has_signature)
-            {
-                WriteByteArray(signature, container);
-            }
+            WriteOptional<std::vector<unsigned char>>(signature, container,
+                [](const std::vector<unsigned char>& v, WriteContainer& c)
+                {
+                    WriteByteArray(v, c);
+                }
+            );
             WriteData<SignedMessageBody>(body, container);
-            const bool has_unsigned_content = !unsigned_content.GetRawText().empty();
-            if (has_unsigned_content)
-            {
-                WriteData<Chat>(unsigned_content, container);
-            }
+            WriteOptional<Chat>(unsigned_content, container);
             WriteData<FilterMask>(filter_mask, container);
 #endif
             WriteData<ChatTypeBoundNetwork>(chat_type, container);
@@ -277,9 +261,9 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION < 760
             output["signed_content"] = signed_content.Serialize();
-            if (!unsigned_content.GetRawText().empty())
+            if (unsigned_content.has_value())
             {
-                output["unsigned_content"] = unsigned_content.Serialize();
+                output["unsigned_content"] = unsigned_content.value().Serialize();
             }
             output["type_id"] = type_id;
             output["sender"] = sender.Serialize();
@@ -291,14 +275,14 @@ namespace ProtocolCraft
 #else
             output["sender"] = sender;
             output["index"] = index;
-            if (signature.size() > 0)
+            if (signature.has_value())
             {
-                output["signature"] = "Vector of " + std::to_string(signature.size()) + " unsigned chars.";
+                output["signature"] = "Vector of " + std::to_string(signature.value().size()) + " unsigned chars.";
             }
             output["body"] = body.Serialize();
-            if (!unsigned_content.GetRawText().empty())
+            if (!unsigned_content.has_value())
             {
-                output["unsigned_content"] = unsigned_content.Serialize();
+                output["unsigned_content"] = unsigned_content.value().Serialize();
             }
             output["filter_mask"] = filter_mask.Serialize();
 #endif
@@ -312,7 +296,7 @@ namespace ProtocolCraft
     private:
 #if PROTOCOL_VERSION < 760
         Chat signed_content;
-        Chat unsigned_content;
+        std::optional<Chat> unsigned_content;
         int type_id;
         ChatSender sender;
         long long int timestamp;
@@ -323,9 +307,9 @@ namespace ProtocolCraft
 #else
         UUID sender;
         int index;
-        std::vector<unsigned char> signature;
+        std::optional<std::vector<unsigned char>> signature;
         SignedMessageBody body;
-        Chat unsigned_content;
+        std::optional<Chat> unsigned_content;
         FilterMask filter_mask;
 #endif
         ChatTypeBoundNetwork chat_type;

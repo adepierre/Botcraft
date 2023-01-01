@@ -82,7 +82,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 758
-        void SetFactorData(const NBT& factor_data_)
+        void SetFactorData(const std::optional<NBT>& factor_data_)
         {
             factor_data = factor_data_;
         }
@@ -122,7 +122,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 758
-        const NBT& GetFactorData() const
+        const std::optional<NBT>& GetFactorData() const
         {
             return factor_data;
         }
@@ -142,11 +142,7 @@ namespace ProtocolCraft
             effect_duration_ticks = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION > 758
-            const bool has_factor_data = ReadData<bool>(iter, length);
-            if (has_factor_data)
-            {
-                factor_data = ReadData<NBT>(iter, length);
-            }
+            factor_data = ReadOptional<NBT>(iter, length);
 #endif
         }
 
@@ -162,11 +158,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(effect_duration_ticks, container);
             WriteData<char>(flags, container);
 #if PROTOCOL_VERSION > 758
-            WriteData<bool>(factor_data.HasData(), container);
-            if (factor_data.HasData())
-            {
-                WriteData<NBT>(factor_data, container);
-            }
+            WriteOptional<NBT>(factor_data, container);
 #endif
         }
 
@@ -180,9 +172,9 @@ namespace ProtocolCraft
             output["effect_duration_ticks"] = effect_duration_ticks;
             output["flags"] = flags;
 #if PROTOCOL_VERSION > 758
-            if (factor_data.HasData())
+            if (factor_data.has_value())
             {
-                output["factor_data"] = factor_data.Serialize();
+                output["factor_data"] = factor_data.value().Serialize();
             }
 #endif
 
@@ -200,7 +192,7 @@ namespace ProtocolCraft
         int effect_duration_ticks;
         char flags;
 #if PROTOCOL_VERSION > 758
-        NBT factor_data;
+        std::optional<NBT> factor_data;
 #endif
 
     };

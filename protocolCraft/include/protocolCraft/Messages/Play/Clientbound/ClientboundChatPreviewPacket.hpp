@@ -35,7 +35,7 @@ namespace ProtocolCraft
             query_id = query_id_;
         }
 
-        void SetPreview(const Chat& preview_)
+        void SetPreview(const std::optional<Chat>& preview_)
         {
             preview = preview_;
         }
@@ -46,7 +46,7 @@ namespace ProtocolCraft
             return query_id;
         }
 
-        const Chat& Getpreview() const
+        const std::optional<Chat>& Getpreview() const
         {
             return preview;
         }
@@ -56,21 +56,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             query_id = ReadData<int>(iter, length);
-            const bool has_preview = ReadData<bool>(iter, length);
-            if (has_preview)
-            {
-                preview = ReadData<Chat>(iter, length);
-            }
+            preview = ReadOptional<Chat>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<int>(query_id, container);
-            WriteData<bool>(preview.GetRawText().empty(), container);
-            if (!preview.GetRawText().empty())
-            {
-                WriteData<Chat>(preview, container);
-            }
+            WriteOptional<Chat>(preview, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -78,9 +70,9 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["query_id"] = query_id;
-            if (!preview.GetRawText().empty())
+            if (preview.has_value())
             {
-                output["preview"] = preview.Serialize();
+                output["preview"] = preview.value().Serialize();
             }
 
 
@@ -89,7 +81,7 @@ namespace ProtocolCraft
 
     private:
         int query_id;
-        Chat preview;
+        std::optional<Chat> preview;
     };
 } //ProtocolCraft
 #endif

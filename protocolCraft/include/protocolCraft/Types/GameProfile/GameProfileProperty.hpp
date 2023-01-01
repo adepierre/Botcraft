@@ -30,7 +30,7 @@ namespace ProtocolCraft
             value = value_;
         }
 
-        void SetSignature(const std::string& signature_)
+        void SetSignature(const std::optional<std::string>& signature_)
         {
             signature = signature_;
         }
@@ -46,7 +46,7 @@ namespace ProtocolCraft
             return value;
         }
 
-        const std::string& GetSignature() const
+        const std::optional<std::string>& GetSignature() const
         {
             return signature;
         }
@@ -56,30 +56,14 @@ namespace ProtocolCraft
         {
             name = ReadData<std::string>(iter, length);
             value = ReadData<std::string>(iter, length);
-
-            if (ReadData<bool>(iter, length))
-            {
-                signature = ReadData<std::string>(iter, length);
-            }
-            else
-            {
-                signature = "";
-            }
+            signature = ReadOptional<std::string>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(name, container);
             WriteData<std::string>(value, container);
-            if (signature.empty())
-            {
-                WriteData<bool>(false, container);
-            }
-            else
-            {
-                WriteData<bool>(true, container);
-                WriteData<std::string>(signature, container);
-            }
+            WriteOptional<std::string>(signature, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -88,9 +72,9 @@ namespace ProtocolCraft
 
             output["name"] = name;
             output["value"] = value;
-            if (!signature.empty())
+            if (signature.has_value())
             {
-                output["signature"] = signature;
+                output["signature"] = signature.value();
             }
 
 
@@ -100,6 +84,6 @@ namespace ProtocolCraft
     private:
         std::string name;
         std::string value;
-        std::string signature;
+        std::optional<std::string> signature;
     };
 } // ProtocolCraft

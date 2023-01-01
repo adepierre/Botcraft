@@ -6,10 +6,12 @@
 #include <cstring>
 #include <algorithm>
 #include <stdexcept>
+#include <type_traits>
+#include <optional>
+#include <functional>
 #if PROTOCOL_VERSION > 760
 #include <bitset>
 #endif
-#include <type_traits>
 
 namespace ProtocolCraft
 {
@@ -170,67 +172,91 @@ namespace ProtocolCraft
 
 
     template<typename T>
-    std::vector<T> ReadArrayData(ReadIterator &iter, size_t &length, const size_t size)
+    std::optional<T> ReadOptional(ReadIterator& iter, size_t& length, const std::function<T(ReadIterator&, size_t&)>& read_func = ReadData<T>)
     {
-        if (length < size * sizeof(T))
-        {
-            throw(std::runtime_error("Wrong input size in ReadArrayData"));
-        }
-        else
-        {
-            std::vector<T> output(size);
-            memcpy(output.data(), &(*iter), size * sizeof(T));
-            length -= size * sizeof(T);
-            iter += size * sizeof(T);
+        std::optional<T> output;
 
-            if (sizeof(T) > 1)
-            {
-                // The compiler should(?) optimize that
-                // This check doesn't work if int and char
-                // have the same size, but I guess this is not
-                // the only thing that souldn't work in this case
-                const int num = 1;
-                if (*(char*)&num == 1)
-                {
-                    // Little endian
-                    for (int i = 0; i < size; ++i)
-                    {
-                        output[i] = ChangeEndianness(output[i]);
-                    }
-                }
-            }
-            return output;
+        const bool has_value = ReadData<bool>(iter, length);
+        if (has_value)
+        {
+            output = read_func(iter, length);
         }
+
+        return output;
     }
 
     template<typename T>
-    void WriteArrayData(const std::vector<T> &values, WriteContainer &container)
+    void WriteOptional(const std::optional<T>& value, WriteContainer& container, const std::function<void(const T&, WriteContainer&)>& write_func = WriteData<T>)
     {
-        std::vector<unsigned char> bytes(sizeof(T));
-
-        // The compiler should(?) optimize that
-        // This check doesn't work if int and char
-        // have the same size, but I guess this is not
-        // the only thing that souldn't work in this case
-        const int num = 1;
-
-        for (int i = 0; i < values.size(); ++i)
+        WriteData<bool>(value.has_value(), container);
+        if (value.has_value())
         {
-            if (sizeof(T) > 1)
-            {
-                if (*(char*)&num == 1)
-                {
-                    // Little endian
-                    T big_endian_var = ChangeEndianness(values[i]);
-                    memcpy(bytes.data(), &big_endian_var, sizeof(T));
-                    container.insert(container.end(), bytes.begin(), bytes.end());
-                    continue;
-                }
-            }
+            write_func(value.value(), container);
+        }
+    }
 
-            // Big endian or sizeof(T) == 1
-            memcpy(bytes.data(), &values[i], sizeof(T));
-            container.insert(container.end(), bytes.begin(), bytes.end());
+    template<typename T, typename SizeType = VarInt>
+    std::vector<T> ReadCollection(ReadIterator& iter, size_t& length)
+    {
+        const int output_length = ReadData<SizeType>(iter, length);
+
+        std::vector<T> output(output_length);
+
+        if constexpr(sizeof(T) == 1 && !std::is_base_of<NetworkType, T>::value)
+        {
+            memcpy(output.data(), &(*iter), output_length);
+            length -= output_length;
+            iter += output_length;
+        }
+        else
+        {
+            for (size_t i = 0; i < output_length; ++i)
+            {
+                output[i] = ReadData<T>(iter, length);
+            }
+        }
+
+        return output;
+    }
+
+    template<typename T, typename SizeType = VarInt>
+    std::vector<T> ReadCollection(ReadIterator& iter, size_t& length, const std::function<T(ReadIterator&, size_t&)>& read_func)
+    {
+        const int output_length = ReadData<SizeType>(iter, length);
+
+        std::vector<T> output(output_length);
+        for (size_t i = 0; i < output_length; ++i)
+        {
+            output[i] = read_func(iter, length);
+        }
+
+        return output;
+    }
+
+    template<typename T, typename SizeType = VarInt>
+    void WriteCollection(const std::vector<T>& value, WriteContainer& container)
+    {
+        WriteData<SizeType>(static_cast<int>(value.size()), container);
+        if constexpr(sizeof(T) == 1 && !std::is_base_of<NetworkType, T>::value)
+        {
+            container.insert(container.end(), value.begin(), value.end());
+        }
+        else
+        {
+            for (size_t i = 0; i < value.size(); ++i)
+            {
+                WriteData<T>(value[i], container);
+            }
+        }
+    }
+
+    template<typename T, typename SizeType = VarInt>
+    void WriteCollection(const std::vector<T>& value, WriteContainer& container, const std::function<void(const T&, WriteContainer&)>& write_func)
+    {
+        WriteData<SizeType>(static_cast<int>(value.size()), container);
+        for (size_t i = 0; i < value.size(); ++i)
+        {
+            write_func(value[i], container);
         }
     }
 

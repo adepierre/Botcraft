@@ -46,13 +46,13 @@ namespace ProtocolCraft
 
         }
 
-        void SetTab(const std::string& tab_)
+        void SetTab(const std::optional<std::string>& tab_)
         {
             tab = tab_;
         }
 
 
-        const std::string& GetTab() const
+        const std::optional<std::string>& GetTab() const
         {
             return tab;
         }
@@ -61,36 +61,28 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            const bool has_tab = ReadData<bool>(iter, length);
-            if (has_tab)
-            {
-                tab = ReadData<std::string>(iter, length);
-            }
+            tab = ReadOptional<std::string>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<bool>(!tab.empty(), container);
-            if (!tab.empty())
-            {
-                WriteData<std::string>(tab, container);
-            }
+            WriteOptional<std::string>(tab, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
         {
             nlohmann::json output;
 
-            if (!tab.empty())
+            if (tab.has_value())
             {
-                output["tab"] = tab;
+                output["tab"] = tab.value();
             }
 
             return output;
         }
 
     private:
-        std::string tab;
+        std::optional<std::string> tab;
 
     };
 } //ProtocolCraft

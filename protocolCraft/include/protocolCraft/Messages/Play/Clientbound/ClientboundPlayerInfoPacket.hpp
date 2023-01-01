@@ -101,14 +101,8 @@ namespace ProtocolCraft
                     entries[uuid].SetLatency(ReadData<VarInt>(iter, length));
                     break;
                 case PlayerInfoAction::UpdateDisplayName:
-                {
-                    const bool has_display_name = ReadData<bool>(iter, length);
-                    if (has_display_name)
-                    {
-                        entries[uuid].SetDisplayName(ReadData<Chat>(iter, length));
-                    }
+                    entries[uuid].SetDisplayName(ReadOptional<Chat>(iter, length));
                     break;
-                }
                 case PlayerInfoAction::RemovePlayer:
                     entries[uuid] = PlayerUpdate();
                     break;
@@ -152,11 +146,7 @@ namespace ProtocolCraft
                 for (auto it = entries.begin(); it != entries.end(); ++it)
                 {
                     WriteData<UUID>(it->first, container);
-                    WriteData<bool>(!it->second.GetDisplayName().GetText().empty(), container);
-                    if (!it->second.GetDisplayName().GetText().empty())
-                    {
-                        WriteData<Chat>(it->second.GetDisplayName(), container);
-                    }
+                    WriteOptional<Chat>(it->second.GetDisplayName(), container);
                 }
                 break;
             case PlayerInfoAction::RemovePlayer:
@@ -212,9 +202,9 @@ namespace ProtocolCraft
                 {
                     nlohmann::json entry;
                     entry["uuid"] = it->first;
-                    if (!it->second.GetDisplayName().GetText().empty())
+                    if (it->second.GetDisplayName().has_value())
                     {
-                        entry["display_name"] = it->second.GetDisplayName().Serialize();
+                        entry["display_name"] = it->second.GetDisplayName().value().Serialize();
                     }
                     output["entries"].push_back(entry);
                 }

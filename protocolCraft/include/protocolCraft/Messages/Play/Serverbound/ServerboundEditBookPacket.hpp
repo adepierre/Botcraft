@@ -68,7 +68,7 @@ namespace ProtocolCraft
             pages = pages_;
         }
 
-        void SetTitle(const std::string& title_)
+        void SetTitle(const std::optional<std::string>& title_)
         {
             title = title_;
         }
@@ -98,7 +98,7 @@ namespace ProtocolCraft
             return pages;
         }
 
-        const std::string& GetTitle() const
+        const std::optional<std::string>& GetTitle() const
         {
             return title;
         }
@@ -129,11 +129,7 @@ namespace ProtocolCraft
             {
                 pages[i] = ReadData<std::string>(iter, length);
             }
-            bool has_title = ReadData<bool>(iter, length);
-            if (has_title)
-            {
-                title = ReadData<std::string>(iter, length);
-            }
+            title = ReadOptional<std::string>(iter, length);
 #endif
         }
 
@@ -152,11 +148,7 @@ namespace ProtocolCraft
             {
                 WriteData<std::string>(pages[i], container);
             }
-            WriteData<bool>(!title.empty(), container);
-            if (!title.empty())
-            {
-                WriteData<std::string>(title, container);
-            }
+            WriteOptional<std::string>(title, container);
 #endif
         }
 
@@ -174,9 +166,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 755
             output["pages"] = pages;
 
-            if (!title.empty())
+            if (title.has_value())
             {
-                output["title"] = title;
+                output["title"] = title.value();
             }
 #endif
 
@@ -189,7 +181,7 @@ namespace ProtocolCraft
         bool signing;
 #else
         std::vector<std::string> pages;
-        std::string title;
+        std::optional<std::string> title;
 #endif
 #if PROTOCOL_VERSION > 393
         int slot;

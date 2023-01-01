@@ -73,7 +73,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 356
-        void SetTooltips(const std::vector<Chat>& tooltips_)
+        void SetTooltips(const std::vector<std::optional<Chat>>& tooltips_)
         {
             tooltips = tooltips_;
         }
@@ -102,7 +102,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 356
-        const std::vector<Chat>& GetTooltips() const
+        const std::vector<std::optional<Chat>>& GetTooltips() const
         {
             return tooltips;
         }
@@ -119,17 +119,13 @@ namespace ProtocolCraft
             int count = ReadData<VarInt>(iter, length);
             suggestions = std::vector<std::string>(count);
 #if PROTOCOL_VERSION > 356
-            tooltips = std::vector<Chat>(count);
+            tooltips = std::vector<std::optional<Chat>>(count);
 #endif
             for (int i = 0; i < count; ++i)
             {
                 suggestions[i] = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 356
-                bool has_tooltip = ReadData<bool>(iter, length);
-                if (has_tooltip)
-                {
-                    tooltips[i].Read(iter, length);
-                }
+                tooltips[i] = ReadOptional<Chat>(iter, length);
 #endif
             }
         }
@@ -147,12 +143,7 @@ namespace ProtocolCraft
             {
                 WriteData<std::string>(suggestions[i], container);
 #if PROTOCOL_VERSION > 356
-                bool has_tooltip = tooltips[i].GetText().empty();
-                WriteData<bool>(has_tooltip, container);
-                if (has_tooltip)
-                {
-                    tooltips[i].Write(container);
-                }
+                WriteOptional<Chat>(tooltips[i], container);
 #endif
             }
         }
@@ -174,7 +165,7 @@ namespace ProtocolCraft
             output["tooltips"] = nlohmann::json::array();
             for (int i = 0; i < tooltips.size(); ++i) 
             {
-                output["tooltips"].push_back(tooltips[i].Serialize());
+                output["tooltips"].push_back(tooltips[i].has_value() ? tooltips[i].value().Serialize() : nlohmann::json());
             }
 #endif
 
@@ -189,7 +180,7 @@ namespace ProtocolCraft
 #endif
         std::vector<std::string> suggestions;
 #if PROTOCOL_VERSION > 356
-        std::vector<Chat> tooltips;
+        std::vector<std::optional<Chat>> tooltips;
 #endif
 
     };

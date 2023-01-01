@@ -28,7 +28,7 @@ namespace ProtocolCraft
     {
         GameProfile game_profile;
 
-        RemoteChatSessionData chat_session;
+        std::optional<RemoteChatSessionData> chat_session;
 
         int game_mode;
 
@@ -36,7 +36,7 @@ namespace ProtocolCraft
 
         int latency;
 
-        Chat display_name;
+        std::optional<Chat> display_name;
     };
 
     class ClientboundPlayerInfoUpdatePacket : public BaseMessage<ClientboundPlayerInfoUpdatePacket>
@@ -121,14 +121,8 @@ namespace ProtocolCraft
                         break;
                     }
                     case PlayerInfoUpdateAction::InitializeChat:
-                    {
-                        const bool has_chat_session = ReadData<bool>(iter, length);
-                        if (has_chat_session)
-                        {
-                            entry.chat_session = ReadData<RemoteChatSessionData>(iter, length);
-                        }
+                        entry.chat_session = ReadOptional<RemoteChatSessionData>(iter, length);
                         break;
-                    }
                     case PlayerInfoUpdateAction::UpdateGameMode:
                         entry.game_mode = ReadData<VarInt>(iter, length);
                         break;
@@ -139,14 +133,8 @@ namespace ProtocolCraft
                         entry.latency = ReadData<VarInt>(iter, length);
                         break;
                     case PlayerInfoUpdateAction::UpdateDisplayName:
-                    {
-                        const bool has_display_name = ReadData<bool>(iter, length);
-                        if (has_display_name)
-                        {
-                            entry.display_name = ReadData<Chat>(iter, length);
-                        }
+                        entry.display_name = ReadOptional<Chat>(iter, length);
                         break;
-                    }
                     default:
                         break;
                     }
@@ -181,15 +169,8 @@ namespace ProtocolCraft
                         }
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
-                    {
-                        const bool has_chat_session = it->second.chat_session.GetProfilePublicKey().GetKey().size() > 0;
-                        WriteData<bool>(has_chat_session, container);
-                        if (has_chat_session)
-                        {
-                            WriteData<RemoteChatSessionData>(it->second.chat_session, container);
-                        }
+                        WriteOptional<RemoteChatSessionData>(it->second.chat_session, container);
                         break;
-                    }
                     case PlayerInfoUpdateAction::UpdateGameMode:
                         WriteData<VarInt>(it->second.game_mode, container);
                         break;
@@ -200,15 +181,8 @@ namespace ProtocolCraft
                         WriteData<VarInt>(it->second.latency, container);
                         break;
                     case PlayerInfoUpdateAction::UpdateDisplayName:
-                    {
-                        const bool has_display_name = !it->second.display_name.GetRawText().empty();
-                        WriteData<bool>(has_display_name, container);
-                        if (has_display_name)
-                        {
-                            WriteData<Chat>(it->second.display_name, container);
-                        }
+                        WriteOptional<Chat>(it->second.display_name, container);
                         break;
-                    }
                     default:
                         break;
                     }
@@ -239,9 +213,9 @@ namespace ProtocolCraft
                         entry["game_profile"] = it->second.game_profile.Serialize();
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
-                        if (it->second.chat_session.GetProfilePublicKey().GetKey().size() > 0)
+                        if (it->second.chat_session.has_value())
                         {
-                            entry["chat_session"] = it->second.chat_session.Serialize();
+                            entry["chat_session"] = it->second.chat_session.value().Serialize();
                         }
                         break;
                     case PlayerInfoUpdateAction::UpdateGameMode:
@@ -254,9 +228,9 @@ namespace ProtocolCraft
                         entry["latency"] = it->second.latency;
                         break;
                     case PlayerInfoUpdateAction::UpdateDisplayName:
-                        if (!it->second.display_name.GetRawText().empty())
+                        if (it->second.display_name.has_value())
                         {
-                            entry["display_name"] = it->second.display_name.Serialize();
+                            entry["display_name"] = it->second.display_name.value().Serialize();
                         }
                         break;
                     default:

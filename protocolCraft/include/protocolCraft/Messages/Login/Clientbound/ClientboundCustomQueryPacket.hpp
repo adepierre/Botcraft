@@ -70,7 +70,7 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(transaction_id, container);
             WriteData<Identifier>(identifier, container);
-            WriteArrayData(data, container);
+            WriteByteArray(data, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

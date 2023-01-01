@@ -247,8 +247,7 @@ namespace ProtocolCraft
             {
                 if ((sky_Y_mask >> i) & 1)
                 {
-                    const int array_length = ReadData<VarInt>(iter, length); // Should be 2048
-                    sky_updates.push_back(ReadArrayData<char>(iter, length, array_length));
+                    sky_updates.push_back(ReadCollection<char>(iter, length)); // Should always contain 2048 chars
                 }
             }
 
@@ -257,8 +256,7 @@ namespace ProtocolCraft
             {
                 if ((block_Y_mask >> i) & 1)
                 {
-                    const int array_length = ReadData<VarInt>(iter, length); // Should be 2048
-                    block_updates.push_back(ReadArrayData<char>(iter, length, array_length));
+                    block_updates.push_back(ReadCollection<char>(iter, length)); // Should always contain 2048 chars
                 }
             }
 #else
@@ -266,16 +264,14 @@ namespace ProtocolCraft
             sky_updates = std::vector<std::vector<char> >(sky_updates_size);
             for (int i = 0; i < sky_updates_size; ++i)
             {
-                const int array_length = ReadData<VarInt>(iter, length); // Should be 2048
-                sky_updates[i] = ReadArrayData<char>(iter, length, 2048);
+                sky_updates[i] = ReadCollection<char>(iter, length); // Should always contain 2048 chars
             }
 
             const int block_updates_size = ReadData<VarInt>(iter, length);
             block_updates = std::vector<std::vector<char> >(block_updates_size);
             for (int i = 0; i < block_updates_size; ++i)
             {
-                const int array_length = ReadData<VarInt>(iter, length); // Should be 2048
-                block_updates[i] = ReadArrayData<char>(iter, length, 2048);
+                block_updates[i] = ReadCollection<char>(iter, length); // Should always contain 2048 chars
             }
 #endif
 #else
@@ -324,8 +320,7 @@ namespace ProtocolCraft
 #endif
             for (int i = 0; i < sky_updates.size(); ++i)
             {
-                WriteData<VarInt>(static_cast<int>(sky_updates[i].size()), container);
-                WriteArrayData(sky_updates[i], container);
+                WriteCollection<char>(sky_updates[i], container);
             }
 
 #if PROTOCOL_VERSION > 754
@@ -333,8 +328,7 @@ namespace ProtocolCraft
 #endif
             for (int i = 0; i < block_updates.size(); ++i)
             {
-                WriteData<VarInt>(static_cast<int>(block_updates[i].size()), container);
-                WriteArrayData(block_updates[i], container);
+                WriteCollection<char>(block_updates[i], container);
             }
 #else
             WriteData<ClientboundLightUpdatePacketData>(light_data, container);

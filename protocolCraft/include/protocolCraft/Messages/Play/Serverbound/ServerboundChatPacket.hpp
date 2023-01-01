@@ -78,10 +78,17 @@ namespace ProtocolCraft
             salt = salt_;
         }
 
+#if PROTOCOL_VERSION < 761
         void SetSignature(const std::vector<unsigned char>& signature_)
         {
             signature = signature_;
         }
+#else
+        void SetSignature(const std::optional<std::vector<unsigned char>>& signature_)
+        {
+            signature = signature_;
+        }
+#endif
 #endif
 
 #if PROTOCOL_VERSION < 761
@@ -122,10 +129,17 @@ namespace ProtocolCraft
             return salt;
         }
 
+#if PROTOCOL_VERSION < 761
         const std::vector<unsigned char>& GetSignature() const
         {
             return signature;
         }
+#else
+        const std::optional<std::vector<unsigned char>>& GetSignature() const
+        {
+            return signature;
+        }
+#endif
 #endif
 
 #if PROTOCOL_VERSION < 761
@@ -156,11 +170,12 @@ namespace ProtocolCraft
             const int signature_size = ReadData<VarInt>(iter, length);
             signature = ReadByteArray(iter, length, signature_size);
 #else
-            const bool has_signature = ReadData<bool>(iter, length);
-            if (has_signature)
-            {
-                signature = ReadByteArray(iter, length, 256);
-            }
+            signature = ReadOptional<std::vector<unsigned char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadByteArray(i, l, 256);
+                }
+            );
 #endif
 #endif
 #if PROTOCOL_VERSION < 761
@@ -186,11 +201,12 @@ namespace ProtocolCraft
             WriteData<VarInt>(static_cast<int>(signature.size()), container);
             WriteByteArray(signature, container);
 #else
-            WriteData<bool>(signature.size() > 0, container);
-            if (signature.size() > 0)
-            {
-                WriteByteArray(signature, container);
-            }
+            WriteOptional<std::vector<unsigned char>>(signature, container,
+                [](const std::vector<unsigned char>& v, WriteContainer& c)
+                {
+                    WriteByteArray(v, c);
+                }
+            );
 #endif
 #endif
 #if PROTOCOL_VERSION < 761
@@ -216,9 +232,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761
             output["signature"] = "Vector of " + std::to_string(signature.size()) + " unsigned char";
 #else
-            if (signature.size() > 0)
+            if (signature.has_value())
             {
-                output["signature"] = "Vector of " + std::to_string(signature.size()) + " unsigned char";
+                output["signature"] = "Vector of " + std::to_string(signature.value().size()) + " unsigned char";
             }
 #endif
 #endif
@@ -241,7 +257,11 @@ namespace ProtocolCraft
         SaltSignature salt_signature;
 #else
         long long int salt;
+#if PROTOCOL_VERSION < 761
         std::vector<unsigned char> signature;
+#else
+        std::optional<std::vector<unsigned char>> signature;
+#endif
 #endif
 #if PROTOCOL_VERSION < 761
         bool signed_preview;

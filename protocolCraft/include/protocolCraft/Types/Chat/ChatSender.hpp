@@ -24,7 +24,7 @@ namespace ProtocolCraft
             name = name_;
         }
 
-        void SetTeamName(const Chat& team_name_)
+        void SetTeamName(const std::optional<Chat>& team_name_)
         {
             team_name = team_name_;
         }
@@ -40,7 +40,7 @@ namespace ProtocolCraft
             return name;
         }
 
-        const Chat& GetTeamName() const
+        const std::optional<Chat>& GetTeamName() const
         {
             return team_name;
         }
@@ -50,21 +50,14 @@ namespace ProtocolCraft
         {
             uuid = ReadData<UUID>(iter, length);
             name = ReadData<Chat>(iter, length);
-            const bool has_team_name = ReadData<bool>(iter, length);
-            if (has_team_name)
-            {
-                team_name = ReadData<Chat>(iter, length);
-            }
+            team_name = ReadOptional<Chat>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<UUID>(uuid, container);
             WriteData<Chat>(name, container);
-            if (!team_name.GetRawText().empty())
-            {
-                team_WriteData<Chat>(name, container);
-            }
+            WriteOptional<Chat>(team_name, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -73,9 +66,9 @@ namespace ProtocolCraft
 
             output["uuid"] = uuid;
             output["name"] = name.Serialize();
-            if (!team_name.GetRawText().empty())
+            if (team_name.has_value())
             {
-                output["team_name"] = team_name.Serialize();
+                output["team_name"] = team_name.value().Serialize();
             }
 
 
@@ -85,7 +78,7 @@ namespace ProtocolCraft
     private:
         UUID uuid;
         Chat name;
-        Chat team_name;
+        std::optional<Chat> team_name;
     };
 }
 #endif

@@ -19,7 +19,7 @@ namespace ProtocolCraft
             plain = plain_;
         }
 
-        void SetDecorated(const Chat& decorated_)
+        void SetDecorated(const std::optional<Chat>& decorated_)
         {
             decorated = decorated_;
         }
@@ -30,7 +30,7 @@ namespace ProtocolCraft
             return plain;
         }
 
-        const Chat& GetDecorated() const
+        const std::optional<Chat>& GetDecorated() const
         {
             return decorated;
         }
@@ -40,21 +40,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             plain = ReadData<std::string>(iter, length);
-            const bool has_decorated = ReadData<bool>(iter, length);
-            if (has_decorated)
-            {
-                decorated = ReadData<Chat>(iter, length);
-            }
+            decorated = ReadOptional<Chat>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<std::string>(plain, container);
-            WriteData<bool>(!decorated.GetRawText().empty(), container);
-            if (!decorated.GetRawText().empty())
-            {
-                WriteData<Chat>(decorated, container);
-            }
+            WriteOptional<Chat>(decorated, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -62,9 +54,9 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["plain"] = plain;
-            if (!decorated.GetRawText().empty())
+            if (decorated.has_value())
             {
-                output["decorated"] = decorated.Serialize();
+                output["decorated"] = decorated.value().Serialize();
             }
 
             return output;
@@ -72,7 +64,7 @@ namespace ProtocolCraft
 
     private:
         std::string plain;
-        Chat decorated;
+        std::optional<Chat> decorated;
     };
 }
 #endif
