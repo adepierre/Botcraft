@@ -281,7 +281,7 @@ namespace Botcraft
             else if (!cursor.IsEmptySlot() &&
                 cursor.GetItemCount() + clicked_slot.GetItemCount() >
 #if PROTOCOL_VERSION < 347
-                AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(cursor.GetItemDamage())->GetStackSize()
+                AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(static_cast<unsigned char>(cursor.GetItemDamage()))->GetStackSize()
 #else
                 AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize()
 #endif
@@ -362,7 +362,7 @@ namespace Botcraft
                             {
                                 const int sum_count = cursor.GetItemCount() + clicked_slot.GetItemCount();
 #if PROTOCOL_VERSION < 347
-                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(cursor.GetItemDamage())->GetStackSize();
+                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(static_cast<unsigned char>(cursor.GetItemDamage()))->GetStackSize();
 #else
                                 const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize();
 #endif
@@ -412,7 +412,7 @@ namespace Botcraft
 #endif
                             {
 #if PROTOCOL_VERSION < 347
-                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(cursor.GetItemDamage())->GetStackSize();
+                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(static_cast<unsigned char>(cursor.GetItemDamage()))->GetStackSize();
 #else
                                 const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize();
 #endif

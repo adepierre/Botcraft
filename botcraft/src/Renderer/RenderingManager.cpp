@@ -271,7 +271,7 @@ namespace Botcraft
                                 ImGui::Text("Offhand");
                             }
 #if PROTOCOL_VERSION < 347
-                            std::string name = AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName();
+                            std::string name = AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(static_cast<unsigned char>(it->second.GetItemDamage()))->GetName();
 #else
                             std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName();
 #endif

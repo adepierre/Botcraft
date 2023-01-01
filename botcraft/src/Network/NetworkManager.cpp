@@ -456,11 +456,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 761
         chat_context.AddSeenMessage(msg.GetMessage_().GetHeaderSignature(), msg.GetMessage_().GetSignedHeader().GetSender());
 #else
-        if (!msg.GetSignature().empty())
+        if (msg.GetSignature().has_value())
         {
             std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
 
-            chat_context.AddSeenMessage(msg.GetSignature());
+            chat_context.AddSeenMessage(msg.GetSignature().value());
 
             if (chat_context.GetOffset() > 64)
             {

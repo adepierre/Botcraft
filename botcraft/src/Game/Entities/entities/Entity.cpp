@@ -384,8 +384,12 @@ namespace Botcraft
                 break;
             case EntityMetadataTypes::Rotations:
             {
-                std::vector<float> rotation = ProtocolCraft::ReadArrayData<float>(iter, length, 3);
-                value = Vector3<float>(rotation[0], rotation[1], rotation[2]);
+                Vector3<float> rotation;
+                for (int i = 0; i < 3; ++i)
+                {
+                    rotation[i] = ProtocolCraft::ReadData<float>(iter, length);
+                }
+                value = rotation;
                 break;
             }
             case EntityMetadataTypes::BlockPosition:

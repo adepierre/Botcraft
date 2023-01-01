@@ -92,7 +92,7 @@ namespace Botcraft
             {
                 const Item* item;
 #if PROTOCOL_VERSION < 347
-                item = AssetsManager::getInstance().GetItem(main_hand.GetBlockID(), main_hand.GetItemDamage());
+                item = AssetsManager::getInstance().GetItem(main_hand.GetBlockID(), static_cast<unsigned char>(main_hand.GetItemDamage()));
 #else
                 item = AssetsManager::getInstance().GetItem(main_hand.GetItemID());
 #endif

@@ -232,7 +232,7 @@ namespace Botcraft
             const Slot& current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
             if (!current_selected.IsEmptySlot()
 #if PROTOCOL_VERSION < 347
-                && AssetsManager::getInstance().Items().at(current_selected.GetBlockID()).at(current_selected.GetItemDamage())->GetName() == item_name)
+                && AssetsManager::getInstance().Items().at(current_selected.GetBlockID()).at(static_cast<unsigned char>(current_selected.GetItemDamage()))->GetName() == item_name)
 #else
                 && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item_name)
 #endif
@@ -248,7 +248,7 @@ namespace Botcraft
                     && it->first < Window::INVENTORY_OFFHAND_INDEX
                     && !it->second.IsEmptySlot()
 #if PROTOCOL_VERSION < 347
-                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(it->second.GetItemDamage())->GetName() == item_name)
+                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(static_cast<unsigned char>(it->second.GetItemDamage()))->GetName() == item_name)
 #else
                     && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name)
 #endif
@@ -708,7 +708,7 @@ namespace Botcraft
                         || (!buy && trades[i].GetInputItem1().GetItemID() == item_id))
                     {
                         trade_index = i;
-                        has_trade_second_item = trades[i].GetHasSecondItem();
+                        has_trade_second_item = trades[i].GetInputItem2().has_value();
                         break;
                     }
                 }
@@ -1103,7 +1103,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 347
                     (inventory_manager->GetCursor().GetBlockID() == s.second.GetBlockID()
                         && inventory_manager->GetCursor().GetItemDamage() == s.second.GetItemDamage()
-                        && s.second.GetItemCount() < AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetStackSize() - 1)
+                        && s.second.GetItemCount() < AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(static_cast<unsigned char>(s.second.GetItemDamage()))->GetStackSize() - 1)
 #else
                     (inventory_manager->GetCursor().GetItemID() == s.second.GetItemID() &&
                         s.second.GetItemCount() < AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetStackSize() - 1)
@@ -1269,7 +1269,7 @@ namespace Botcraft
                     // check if "lower" slot with same items that
                     // could fit in it
 #if PROTOCOL_VERSION < 350
-                    const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetBlockID()).at(dst_slot.GetItemDamage())->GetStackSize() - dst_slot.GetItemCount();
+                    const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetBlockID()).at(static_cast<unsigned char>(dst_slot.GetItemDamage()))->GetStackSize() - dst_slot.GetItemCount();
 #else
                     const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetItemID())->GetStackSize() - dst_slot.GetItemCount();
 #endif

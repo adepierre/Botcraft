@@ -74,7 +74,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 759
         // Pre-1.19 behaviour, compute encrypted nonce
         encrypted_nonce = std::vector<unsigned char>(rsa_size);
-        RSA_public_encrypt(input_nonce.size(), input_nonce.data(), encrypted_nonce.data(), rsa, RSA_PKCS1_PADDING);
+        RSA_public_encrypt(static_cast<int>(input_nonce.size()), input_nonce.data(), encrypted_nonce.data(), rsa, RSA_PKCS1_PADDING);
 #elif PROTOCOL_VERSION < 761
         // 1.19, 1.19.1 and 1.19.2 behaviour, signature of salted nonce
         // Generate random salt
@@ -103,7 +103,7 @@ namespace Botcraft
         const int rsa_signature_size = RSA_size(rsa_signature);
         salted_nonce_signature = std::vector<unsigned char>(rsa_signature_size);
         unsigned int salted_nonce_signature_size;
-        RSA_sign(NID_sha256, salted_hash.data(), salted_hash.size(), salted_nonce_signature.data(), &salted_nonce_signature_size, rsa_signature);
+        RSA_sign(NID_sha256, salted_hash.data(), static_cast<unsigned int>(salted_hash.size()), salted_nonce_signature.data(), &salted_nonce_signature_size, rsa_signature);
         RSA_free(rsa_signature);
         salted_nonce_signature.resize(salted_nonce_signature_size);
 #else
