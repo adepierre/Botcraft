@@ -104,7 +104,7 @@ namespace ProtocolCraft
             const bool has_prompt = ReadData<bool>(iter, length);
             if (has_prompt)
             {
-                prompt.Read(iter, length);
+                prompt = ReadData<Chat>(iter, length);
             }
 #endif
         }
@@ -122,7 +122,7 @@ namespace ProtocolCraft
             else
             {
                 WriteData<bool>(true, container);
-                prompt.Write(container);
+                WriteData<Chat>(prompt, container);
             }
 #endif
         }

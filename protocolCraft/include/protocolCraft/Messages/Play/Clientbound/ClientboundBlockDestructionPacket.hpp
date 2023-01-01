@@ -83,14 +83,14 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             id_ = ReadData<VarInt>(iter, length);
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             progress = ReadData<char>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(id_, container);
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             WriteData<char>(progress, container);
         }
 

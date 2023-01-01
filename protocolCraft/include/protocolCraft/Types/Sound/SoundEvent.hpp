@@ -52,7 +52,7 @@ namespace ProtocolCraft
             sound_id = ReadData<VarInt>(iter, length);
             if (sound_id == 0)
             {
-                location.Read(iter, length);
+                location = ReadData<Identifier>(iter, length);
                 const bool has_range = ReadData<bool>(iter, length);
                 if (has_range)
                 {
@@ -78,7 +78,7 @@ namespace ProtocolCraft
             else
             {
                 WriteData<VarInt>(0, container);
-                location.Write(container);
+                WriteData<Identifier>(location, container);
                 WriteData<bool>(range != 0.0f, container);
                 if (range != 0.0f)
                 {

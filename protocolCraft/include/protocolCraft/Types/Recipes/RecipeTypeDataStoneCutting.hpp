@@ -50,15 +50,15 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             group = ReadData<std::string>(iter, length);
-            ingredient.Read(iter, length);
-            result.Read(iter, length);
+            ingredient = ReadData<Ingredient>(iter, length);
+            result = ReadData<Slot>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(group, container);
-            ingredient.Write(container);
-            result.Write(container);
+            WriteData<Ingredient>(ingredient, container);
+            WriteData<Slot>(result, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

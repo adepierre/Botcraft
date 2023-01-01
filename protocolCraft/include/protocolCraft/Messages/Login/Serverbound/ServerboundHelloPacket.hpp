@@ -85,7 +85,7 @@ namespace ProtocolCraft
             const bool has_public_key = ReadData<bool>(iter, length);
             if (has_public_key)
             {
-                public_key.Read(iter, length);
+                public_key = ReadData<ProfilePublicKey>(iter, length);
             }
 #endif
 #if PROTOCOL_VERSION > 759
@@ -108,7 +108,7 @@ namespace ProtocolCraft
             WriteData<bool>(!public_key.GetKey().empty(), container);
             if (!public_key.GetKey().empty())
             {
-                public_key.Write(container);
+                WriteData<ProfilePublicKey>(public_key, container);
             }
 #endif
 #if PROTOCOL_VERSION > 759

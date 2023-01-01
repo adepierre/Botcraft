@@ -43,7 +43,7 @@ namespace ProtocolCraft
             const bool has_decorated = ReadData<bool>(iter, length);
             if (has_decorated)
             {
-                decorated.Read(iter, length);
+                decorated = ReadData<Chat>(iter, length);
             }
         }
 
@@ -53,7 +53,7 @@ namespace ProtocolCraft
             WriteData<bool>(!decorated.GetRawText().empty(), container);
             if (!decorated.GetRawText().empty())
             {
-                decorated.Write(container);
+                WriteData<Chat>(decorated, container);
             }
         }
 

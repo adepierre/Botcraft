@@ -39,13 +39,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             uuid = ReadData<UUID>(iter, length);
-            profile_public_key.Read(iter, length);
+            profile_public_key = ReadData<ProfilePublicKey>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<UUID>(uuid, container);
-            profile_public_key.Write(container);
+            WriteData<ProfilePublicKey>(profile_public_key, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

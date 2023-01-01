@@ -75,7 +75,7 @@ namespace ProtocolCraft
             action = ReadData<VarInt>(iter, length);
             if (action == 0)
             {
-                tab.Read(iter, length);
+                tab = ReadData<Identifier>(iter, length);
             }
         }
 
@@ -84,7 +84,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(action, container);
             if (action == 0)
             {
-                tab.Write(container);
+                WriteData<Identifier>(tab, container);
             }
         }
 

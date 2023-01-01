@@ -71,30 +71,30 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            signed_header.Read(iter, length);
+            signed_header = ReadData<SignedMessageHeader>(iter, length);
             const int header_signature_size = ReadData<VarInt>(iter, length);
             header_signature = ReadByteArray(iter, length, header_signature_size);
-            signed_body.Read(iter, length);
+            signed_body = ReadData<SignedMessageBody>(iter, length);
             const bool has_unsigned_content = ReadData<bool>(iter, length);
             if (has_unsigned_content)
             {
-                unsigned_content.Read(iter, length);
+                unsigned_content = ReadData<Chat>(iter, length);
             }
-            filter_mask.Read(iter, length);
+            filter_mask = ReadData<FilterMask>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            signed_header.Write(container);
+            WriteData<SignedMessageHeader>(signed_header, container);
             WriteData<VarInt>(static_cast<int>(header_signature.size()), container);
             WriteByteArray(header_signature, container);
-            signed_body.Write(container);
+            WriteData<SignedMessageBody>(signed_body, container);
             WriteData<bool>(!unsigned_content.GetRawText().empty(), container);
             if (!unsigned_content.GetRawText().empty())
             {
-                unsigned_content.Write(container);
+                WriteData<Chat>(unsigned_content, container);
             }
-            filter_mask.Write(container);
+            WriteData<FilterMask>(filter_mask, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

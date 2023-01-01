@@ -72,14 +72,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            header.Read(iter, length);
-            footer.Read(iter, length);
+            header = ReadData<Chat>(iter, length);
+            footer = ReadData<Chat>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            header.Write(container);
-            footer.Write(container);
+            WriteData<Chat>(header, container);
+            WriteData<Chat>(footer, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

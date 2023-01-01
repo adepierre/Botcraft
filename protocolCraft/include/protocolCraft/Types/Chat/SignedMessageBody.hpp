@@ -79,7 +79,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
 #if PROTOCOL_VERSION < 761
-            content.Read(iter, length);
+            content = ReadData<ChatMessageContent>(iter, length);
 #else
             content = ReadData<std::string>(iter, length);
 #endif
@@ -96,7 +96,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
 #if PROTOCOL_VERSION < 761
-            content.Write(container);
+            WriteData<ChatMessageContent>(content, container);
 #else
             WriteData<std::string>(content, container);
 #endif

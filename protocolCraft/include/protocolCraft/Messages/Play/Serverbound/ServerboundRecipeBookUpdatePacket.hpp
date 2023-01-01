@@ -160,7 +160,7 @@ namespace ProtocolCraft
             {
             case 0:
 #if PROTOCOL_VERSION > 375
-                recipe.Read(iter, length);
+                recipe = ReadData<Identifier>(iter, length);
 #else
                 recipe = ReadData<VarInt>(iter, length);
 #endif
@@ -191,7 +191,7 @@ namespace ProtocolCraft
             {
             case 0:
 #if PROTOCOL_VERSION > 375
-                recipe.Write(container);
+                WriteData<Identifier>(recipe, container);
 #else
                 WriteData<VarInt>(recipe, container);
 #endif

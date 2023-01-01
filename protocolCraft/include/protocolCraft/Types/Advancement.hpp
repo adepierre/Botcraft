@@ -101,12 +101,12 @@ namespace ProtocolCraft
             has_parent = ReadData<bool>(iter, length);
             if (has_parent)
             {
-                parent_id.Read(iter, length);
+                parent_id = ReadData<Identifier>(iter, length);
             }
             has_display = ReadData<bool>(iter, length);
             if (has_display)
             {
-                display_data.Read(iter, length);
+                display_data = ReadData<AdvancementDisplay>(iter, length);
             }
             number_of_criteria = ReadData<VarInt>(iter, length);
             criteria = std::vector<Identifier>(number_of_criteria);
@@ -132,12 +132,12 @@ namespace ProtocolCraft
             WriteData<bool>(has_parent, container);
             if (has_parent)
             {
-                parent_id.Write(container);
+                WriteData<Identifier>(parent_id, container);
             }
             WriteData<bool>(has_display, container);
             if (has_display)
             {
-                display_data.Write(container);
+                WriteData<AdvancementDisplay>(display_data, container);
             }
             WriteData<VarInt>(number_of_criteria, container);
             for (int i = 0; i < number_of_criteria; ++i)

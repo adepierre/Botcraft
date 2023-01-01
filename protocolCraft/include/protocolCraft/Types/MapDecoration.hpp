@@ -106,7 +106,7 @@ namespace ProtocolCraft
             const bool has_display_name = ReadData<bool>(iter, length);
             if (has_display_name)
             {
-                display_name.Read(iter, length);
+                display_name = ReadData<Chat>(iter, length);
             }
 #endif
         }
@@ -128,7 +128,7 @@ namespace ProtocolCraft
             WriteData<bool>(!display_name.GetText().empty(), container);
             if (!display_name.GetText().empty())
             {
-                display_name.Write(container);
+                WriteData<Chat>(display_name, container);
             }
 #endif
         }

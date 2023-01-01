@@ -59,7 +59,7 @@ namespace ProtocolCraft
             const bool has_preview = ReadData<bool>(iter, length);
             if (has_preview)
             {
-                preview.Read(iter, length);
+                preview = ReadData<Chat>(iter, length);
             }
         }
 
@@ -69,7 +69,7 @@ namespace ProtocolCraft
             WriteData<bool>(preview.GetRawText().empty(), container);
             if (!preview.GetRawText().empty())
             {
-                preview.Write(container);
+                WriteData<Chat>(preview, container);
             }
         }
 

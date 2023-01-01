@@ -62,14 +62,14 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             transaction_id = ReadData<VarInt>(iter, length);
-            identifier.Read(iter, length);
+            identifier = ReadData<Identifier>(iter, length);
             data = ReadByteArray(iter, length, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<VarInt>(transaction_id, container);
-            identifier.Write(container);
+            WriteData<Identifier>(identifier, container);
             WriteArrayData(data, container);
         }
 

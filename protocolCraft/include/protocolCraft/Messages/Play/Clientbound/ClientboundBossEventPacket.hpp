@@ -127,7 +127,7 @@ namespace ProtocolCraft
             switch (operation)
             {
             case 0:
-                name_.Read(iter, length);
+                name_ = ReadData<Chat>(iter, length);
                 pct = ReadData<float>(iter, length);
                 color = ReadData<VarInt>(iter, length);
                 overlay = ReadData<VarInt>(iter, length);
@@ -139,7 +139,7 @@ namespace ProtocolCraft
                 pct = ReadData<float>(iter, length);
                 break;
             case 3:
-                name_.Read(iter, length);
+                name_ = ReadData<Chat>(iter, length);
                 break;
             case 4:
                 color = ReadData<VarInt>(iter, length);
@@ -160,7 +160,7 @@ namespace ProtocolCraft
             switch (operation)
             {
             case 0:
-                name_.Write(container);
+                WriteData<Chat>(name_, container);
                 WriteData<float>(pct, container);
                 WriteData<VarInt>(color, container);
                 WriteData<VarInt>(overlay, container);
@@ -172,7 +172,7 @@ namespace ProtocolCraft
                 WriteData<float>(pct, container);
                 break;
             case 3:
-                name_.Write(container);
+                WriteData<Chat>(name_, container);
                 break;
             case 4:
                 WriteData<VarInt>(color, container);

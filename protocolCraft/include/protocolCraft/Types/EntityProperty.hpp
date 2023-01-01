@@ -76,7 +76,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
 #if PROTOCOL_VERSION > 709
-            key.Read(iter, length);
+            key = ReadData<Identifier>(iter, length);
 #else
             key = ReadData<std::string>(iter, length);
 #endif
@@ -92,7 +92,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
 #if PROTOCOL_VERSION > 709
-            key.Write(container);
+            WriteData<Identifier>(key, container);
 #else
             WriteData<std::string>(key, container);
 #endif

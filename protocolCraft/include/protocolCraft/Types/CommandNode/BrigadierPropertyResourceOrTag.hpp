@@ -29,12 +29,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            registry.Read(iter, length);
+            registry = ReadData<Identifier>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            registry.Write(container);
+            WriteData<Identifier>(registry, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

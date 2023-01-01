@@ -129,12 +129,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            input_item_1.Read(iter, length);
-            output_item.Read(iter, length);
+            input_item_1 = ReadData<Slot>(iter, length);
+            output_item = ReadData<Slot>(iter, length);
             has_second_item = ReadData<bool>(iter, length);
             if (has_second_item)
             {
-                input_item_2.Read(iter, length);
+                input_item_2 = ReadData<Slot>(iter, length);
             }
             trade_disabled = ReadData<bool>(iter, length);
             number_of_trades_uses = ReadData<int>(iter, length);
@@ -147,12 +147,12 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            input_item_1.Write(container);
-            output_item.Write(container);
+            WriteData<Slot>(input_item_1, container);
+            WriteData<Slot>(output_item, container);
             WriteData<bool>(has_second_item, container);
             if (has_second_item)
             {
-                input_item_2.Write(container);
+                WriteData<Slot>(input_item_2, container);
             }
             WriteData<bool>(trade_disabled, container);
             WriteData<int>(number_of_trades_uses, container);

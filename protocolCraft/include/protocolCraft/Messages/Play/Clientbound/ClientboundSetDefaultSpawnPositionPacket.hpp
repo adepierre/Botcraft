@@ -76,7 +76,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            location.Read(iter, length);
+            location = ReadData<NetworkPosition>(iter, length);
 #if PROTOCOL_VERSION > 754
             angle = ReadData<float>(iter, length);
 #endif
@@ -84,7 +84,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-           location.Write(container);
+           WriteData<NetworkPosition>(location, container);
 #if PROTOCOL_VERSION > 754
            WriteData<float>(angle, container);
 #endif

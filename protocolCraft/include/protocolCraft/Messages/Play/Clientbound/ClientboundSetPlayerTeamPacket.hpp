@@ -191,13 +191,13 @@ namespace ProtocolCraft
                 collision_rule = ReadData<std::string>(iter, length);
                 color = ReadData<char>(iter, length);
 #else
-                display_name.Read(iter, length);
+                display_name = ReadData<Chat>(iter, length);
                 options = ReadData<char>(iter, length);
                 nametag_visibility = ReadData<std::string>(iter, length);
                 collision_rule = ReadData<std::string>(iter, length);
                 color = ReadData<VarInt>(iter, length);
-                player_prefix.Read(iter, length);
-                player_suffix.Read(iter, length);
+                player_prefix = ReadData<Chat>(iter, length);
+                player_suffix = ReadData<Chat>(iter, length);
 #endif
             }
             
@@ -228,13 +228,13 @@ namespace ProtocolCraft
                 WriteData<std::string>(collision_rule, container);
                 WriteData<char>(color, container);
 #else
-                display_name.Write(container);
+                WriteData<Chat>(display_name, container);
                 WriteData<char>(options, container);
                 WriteData<std::string>(nametag_visibility, container);
                 WriteData<std::string>(collision_rule, container);
                 WriteData<VarInt>(color, container);
-                player_prefix.Write(container);
-                player_suffix.Write(container);
+                WriteData<Chat>(player_prefix, container);
+                WriteData<Chat>(player_suffix, container);
 #endif
             }
             

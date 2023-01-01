@@ -131,7 +131,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 452
             container_id = ReadData<unsigned char>(iter, length);
             type = ReadData<std::string>(iter, length);
-            title.Read(iter, length);
+            title = ReadData<Chat>(iter, length);
             number_of_slots = ReadData<unsigned char>(iter, length);
             if (type == "EntityHorse")
             {
@@ -140,7 +140,7 @@ namespace ProtocolCraft
 #else
             container_id = ReadData<VarInt>(iter, length);
             type = ReadData<VarInt>(iter, length);
-            title.Read(iter, length);
+            title = ReadData<Chat>(iter, length);
 #endif
         }
 
@@ -149,7 +149,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 452
             WriteData<unsigned char>(container_id, container);
             WriteData<std::string>(type, container);
-            title.Write(container);
+            WriteData<Chat>(title, container);
             WriteData<unsigned char>(number_of_slots, container);
             if (type == "EntityHorse")
             {
@@ -158,7 +158,7 @@ namespace ProtocolCraft
 #else
             WriteData<VarInt>(container_id, container);
             WriteData<VarInt>(type, container);
-            title.Write(container);
+            WriteData<Chat>(title, container);
 #endif
         }
 

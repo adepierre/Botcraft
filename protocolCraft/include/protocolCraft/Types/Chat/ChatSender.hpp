@@ -49,21 +49,21 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             uuid = ReadData<UUID>(iter, length);
-            name.Read(iter, length);
+            name = ReadData<Chat>(iter, length);
             const bool has_team_name = ReadData<bool>(iter, length);
             if (has_team_name)
             {
-                team_name.Read(iter, length);
+                team_name = ReadData<Chat>(iter, length);
             }
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<UUID>(uuid, container);
-            name.Write(container);
+            WriteData<Chat>(name, container);
             if (!team_name.GetRawText().empty())
             {
-                team_name.Write(container);
+                team_WriteData<Chat>(name, container);
             }
         }
 

@@ -35,12 +35,12 @@ namespace ProtocolCraft
 
     void ItemParticle::ReadImpl(ReadIterator& iter, size_t& length)
     {
-        item_stack.Read(iter, length);
+        item_stack = ReadData<Slot>(iter, length);
     }
     
     void ItemParticle::WriteImpl(WriteContainer& container) const
     {
-        item_stack.Write(container);
+        WriteData<Slot>(item_stack, container);
     }
     
     const nlohmann::json ItemParticle::SerializeImpl() const

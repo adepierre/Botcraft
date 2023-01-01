@@ -97,7 +97,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             action = ReadData<VarInt>(iter, length);
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             direction = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION > 758
             sequence = ReadData<VarInt>(iter, length);
@@ -107,7 +107,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<VarInt>(action, container);
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             WriteData<char>(direction, container);
 #if PROTOCOL_VERSION > 758
             WriteData<VarInt>(sequence, container);

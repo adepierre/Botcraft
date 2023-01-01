@@ -54,14 +54,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            message.Read(iter, length);
-            chat_type.Read(iter, length);
+            message = ReadData<Chat>(iter, length);
+            chat_type = ReadData<ChatTypeBoundNetwork>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            message.Write(container);
-            chat_type.Write(container);
+            WriteData<Chat>(message, container);
+            WriteData<ChatTypeBoundNetwork>(chat_type, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

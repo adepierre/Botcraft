@@ -102,7 +102,7 @@ namespace ProtocolCraft
             for (int i = 0; i < added_size; ++i)
             {
                 Identifier key;
-                key.Read(iter, length);
+                key = ReadData<Identifier>(iter, length);
                 added[key].Read(iter, length);
             }
             const int removed_size = ReadData<VarInt>(iter, length);
@@ -116,7 +116,7 @@ namespace ProtocolCraft
             for (int i = 0; i < progress_size; ++i)
             {
                 Identifier key;
-                key.Read(iter, length);
+                key = ReadData<Identifier>(iter, length);
                 progress[key].Read(iter, length);
             }
         }

@@ -145,7 +145,7 @@ namespace ProtocolCraft
             for (int i = 0; i < tags_size; ++i)
             {
                 Identifier tag_type;
-                tag_type.Read(iter, length);
+                tag_type = ReadData<Identifier>(iter, length);
                 const int tags_array_size = ReadData<VarInt>(iter, length);
                 std::vector<BlockEntityTag> tags_array = std::vector<BlockEntityTag>(tags_array_size);
                 for (int j = 0; j < tags_array_size; ++j)

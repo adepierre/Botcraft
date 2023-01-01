@@ -94,7 +94,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 348
             recipe = ReadData<VarInt>(iter, length);
 #else
-            recipe.Read(iter, length);
+            recipe = ReadData<Identifier>(iter, length);
 #endif
             shift_down = ReadData<bool>(iter, length);
         }
@@ -105,7 +105,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 348
             WriteData<VarInt>(recipe, container);
 #else
-            recipe.Write(container);
+            WriteData<Identifier>(recipe, container);
 #endif
             WriteData<bool>(shift_down, container);
         }

@@ -200,20 +200,20 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
 #if PROTOCOL_VERSION < 760
-            signed_content.Read(iter, length);
+            signed_content = ReadData<Chat>(iter, length);
             const bool has_unsigned_content = ReadData<bool>(iter, length);
             unsigned_content = Chat();
             if (has_unsigned_content)
             {
-                unsigned_content.Read(iter, length);
+                unsigned_content = ReadData<Chat>(iter, length);
             }
             type_id = ReadData<VarInt>(iter, length);
-            sender.Read(iter, length);
+            sender = ReadData<ChatSender>(iter, length);
             timestamp = ReadData<long long int>(iter, length);
-            salt_signature.Read(iter, length);
+            salt_signature = ReadData<SaltSignature>(iter, length);
 #else
 #if PROTOCOL_VERSION < 761
-            message.Read(iter, length);
+            message = ReadData<PlayerChatMessage>(iter, length);
 #else
             sender = ReadData<UUID>(iter, length);
             index = ReadData<VarInt>(iter, length);
@@ -222,34 +222,34 @@ namespace ProtocolCraft
             {
                 signature = ReadByteArray(iter, length, 256);
             }
-            body.Read(iter, length);
+            body = ReadData<SignedMessageBody>(iter, length);
             const bool has_unsigned_content = ReadData<bool>(iter, length);
             if (has_unsigned_content)
             {
-                unsigned_content.Read(iter, length);
+                unsigned_content = ReadData<Chat>(iter, length);
             }
-            filter_mask.Read(iter, length);
+            filter_mask = ReadData<FilterMask>(iter, length);
 #endif
-            chat_type.Read(iter, length);
+            chat_type = ReadData<ChatTypeBoundNetwork>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
 #if PROTOCOL_VERSION < 760
-            signed_content.Write(container);
+            WriteData<Chat>(signed_content, container);
             WriteData<bool>(!unsigned_content.GetRawText().empty(), container);
             if (!unsigned_content.GetRawText().empty())
             {
-                unsigned_content.Write(container);
+                WriteData<Chat>(unsigned_content, container);
             }
             WriteData<VarInt>(type_id, container);
-            sender.Write(container);
+            WriteData<ChatSender>(sender, container);
             WriteData<long long int>(timestamp, container);
-            salt_signature.Write(container);
+            WriteData<SaltSignature>(salt_signature, container);
 #else
 #if PROTOCOL_VERSION < 761
-            message.Write(container);
+            WriteData<PlayerChatMessage>(message, container);
 #else
             WriteData<UUID>(sender, container);
             WriteData<VarInt>(index, container);
@@ -259,15 +259,15 @@ namespace ProtocolCraft
             {
                 WriteByteArray(signature, container);
             }
-            body.Write(container);
+            WriteData<SignedMessageBody>(body, container);
             const bool has_unsigned_content = !unsigned_content.GetRawText().empty();
             if (has_unsigned_content)
             {
-                unsigned_content.Write(container);
+                WriteData<Chat>(unsigned_content, container);
             }
-            filter_mask.Write(container);
+            WriteData<FilterMask>(filter_mask, container);
 #endif
-            chat_type.Write(container);
+            WriteData<ChatTypeBoundNetwork>(chat_type, container);
 #endif
         }
 

@@ -101,7 +101,7 @@ namespace ProtocolCraft
             state_id = ReadData<VarInt>(iter, length);
 #endif
             slot = ReadData<short>(iter, length);
-            item_stack.Read(iter, length);
+            item_stack = ReadData<Slot>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -111,7 +111,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(state_id, container);
 #endif
             WriteData<short>(slot, container);
-            item_stack.Write(container);
+            WriteData<Slot>(item_stack, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

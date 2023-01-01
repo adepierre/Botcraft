@@ -9,9 +9,12 @@
 #if PROTOCOL_VERSION > 760
 #include <bitset>
 #endif
+#include <type_traits>
 
 namespace ProtocolCraft
 {
+    class NetworkType;
+
     using ReadIterator = std::vector<unsigned char>::const_iterator;
     using WriteContainer = std::vector<unsigned char>;
 
@@ -49,7 +52,10 @@ namespace ProtocolCraft
         return in_cpy;
     }
 
-    template<typename T>
+    template<
+        typename T,
+        typename std::enable_if<!std::is_base_of<NetworkType, T>::value, bool>::type = true
+    >
     T ReadData(ReadIterator &iter, size_t &length)
     {
         if (length < sizeof(T))
@@ -83,6 +89,17 @@ namespace ProtocolCraft
         }
     }
 
+    template<
+        typename T,
+        typename std::enable_if<std::is_base_of<NetworkType, T>::value, bool>::type = true
+    >
+    T ReadData(ReadIterator& iter, size_t& length)
+    {
+        T output;
+        output.Read(iter, length);
+        return output;
+    }
+
     template<>
     std::string ReadData(ReadIterator& iter, size_t& length);
 
@@ -97,7 +114,10 @@ namespace ProtocolCraft
     template<>
     UUID ReadData(ReadIterator& iter, size_t& length);
 
-    template<typename T>
+    template<
+        typename T,
+        typename std::enable_if<!std::is_base_of<NetworkType, T>::value, bool>::type = true
+    >
     void WriteData(const T& value, WriteContainer& container)
     {
         std::vector<unsigned char> output(sizeof(T));
@@ -125,11 +145,20 @@ namespace ProtocolCraft
         container.insert(container.end(), output.begin(), output.end());
     }
 
-    template<>
-    void WriteData(const std::string &value, WriteContainer& container);
+    template<
+        typename T,
+        typename std::enable_if<std::is_base_of<NetworkType, T>::value, bool>::type = true
+    >
+    void WriteData(const T& value, WriteContainer& container)
+    {
+        value.Write(container);
+    }
 
     template<>
-    void WriteData(const VarInt &value, WriteContainer &container);
+    void WriteData(const std::string& value, WriteContainer& container);
+
+    template<>
+    void WriteData(const VarInt& value, WriteContainer &container);
 
     template<>
     void WriteData(const VarLong& value, WriteContainer& container);

@@ -79,7 +79,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            message.Read(iter, length);
+            message = ReadData<Chat>(iter, length);
             type = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION > 717
             sender = ReadData<UUID>(iter, length);
@@ -88,7 +88,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            message.Write(container);
+            WriteData<Chat>(message, container);
             WriteData<char>(type, container);
 #if PROTOCOL_VERSION > 717
             WriteData<UUID>(sender, container);

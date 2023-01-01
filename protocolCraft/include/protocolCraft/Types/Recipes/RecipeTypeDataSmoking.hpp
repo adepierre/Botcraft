@@ -87,8 +87,8 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
             cooking_book_category = ReadData<VarInt>(iter, length);
 #endif
-            ingredient.Read(iter, length);
-            result.Read(iter, length);
+            ingredient = ReadData<Ingredient>(iter, length);
+            result = ReadData<Slot>(iter, length);
             experience = ReadData<float>(iter, length);
             cooking_time = ReadData<VarInt>(iter, length);
         }
@@ -99,8 +99,8 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
             WriteData<VarInt>(cooking_book_category, container);
 #endif
-            ingredient.Write(container);
-            result.Write(container);
+            WriteData<Ingredient>(ingredient, container);
+            WriteData<Slot>(result, container);
             WriteData<float>(experience, container);
             WriteData<VarInt>(cooking_time, container);
         }

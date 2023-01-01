@@ -206,7 +206,7 @@ namespace ProtocolCraft
 #endif
             WriteData<float>(power, container);
 #if PROTOCOL_VERSION < 755
-            WriteData<int>(to_blow.size(), container);
+            WriteData<int>(static_cast<int>(to_blow.size()), container);
 #else
             WriteData<VarInt>(static_cast<int>(to_blow.size()), container);
 #endif

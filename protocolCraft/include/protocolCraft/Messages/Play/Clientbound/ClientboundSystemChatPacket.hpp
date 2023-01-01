@@ -72,7 +72,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            content.Read(iter, length);
+            content = ReadData<Chat>(iter, length);
 #if PROTOCOL_VERSION < 760
             type_id = ReadData<VarInt>(iter, length);
 #else
@@ -82,7 +82,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            content.Write(container);
+            WriteData<Chat>(content, container);
 #if PROTOCOL_VERSION < 760
             WriteData<VarInt>(type_id, container);
 #else

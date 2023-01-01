@@ -99,14 +99,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            title.Read(iter, length);
-            description.Read(iter, length);
-            icon.Read(iter, length);
+            title = ReadData<Chat>(iter, length);
+            description = ReadData<Chat>(iter, length);
+            icon = ReadData<Slot>(iter, length);
             frame_type = ReadData<VarInt>(iter, length);
             flags = ReadData<int>(iter, length);
             if (flags & 0x01)
             {
-                background_texture.Read(iter, length);
+                background_texture = ReadData<Identifier>(iter, length);
             }
             x_coord = ReadData<float>(iter, length);
             y_coord = ReadData<float>(iter, length);
@@ -114,14 +114,14 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            title.Write(container);
-            description.Write(container);
-            icon.Write(container);
+            WriteData<Chat>(title, container);
+            WriteData<Chat>(description, container);
+            WriteData<Slot>(icon, container);
             WriteData<VarInt>(frame_type, container);
             WriteData<int>(flags, container);
             if (flags & 0x01)
             {
-                background_texture.Write(container);
+                WriteData<Identifier>(background_texture, container);
             }
             WriteData<float>(x_coord, container);
             WriteData<float>(y_coord, container);

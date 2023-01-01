@@ -109,7 +109,7 @@ namespace ProtocolCraft
             case SetTitlesType::Title:
             case SetTitlesType::Subtitle:
             case SetTitlesType::ActionBar:
-                text.Read(iter, length);
+                text = ReadData<Chat>(iter, length);
                 break;
             case SetTitlesType::Times:
                 fade_in_time = ReadData<int>(iter, length);
@@ -136,7 +136,7 @@ namespace ProtocolCraft
             case SetTitlesType::Title:
             case SetTitlesType::Subtitle:
             case SetTitlesType::ActionBar:
-                text.Write(container);
+                WriteData<Chat>(text, container);
                 break;
             case SetTitlesType::Times:
                 WriteData<int>(fade_in_time, container);

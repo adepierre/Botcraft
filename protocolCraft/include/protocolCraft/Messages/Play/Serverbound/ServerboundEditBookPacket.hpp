@@ -116,7 +116,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 756
-            book.Read(iter, length);
+            book = ReadData<Slot>(iter, length);
             signing = ReadData<bool>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 393
@@ -140,7 +140,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 756
-            book.Write(container);
+            WriteData<Slot>(book, container);
             WriteData<bool>(signing, container);
 #endif
 #if PROTOCOL_VERSION > 393

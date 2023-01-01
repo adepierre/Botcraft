@@ -61,7 +61,7 @@ namespace ProtocolCraft
             packed_XZ = ReadData<unsigned char>(iter, length);
             y = ReadData<short>(iter, length);
             type = ReadData<VarInt>(iter, length);
-            tag.Read(iter, length);
+            tag = ReadData<NBT>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -69,7 +69,7 @@ namespace ProtocolCraft
             WriteData<unsigned char>(packed_XZ, container);
             WriteData<short>(y, container);
             WriteData<VarInt>(type, container);
-            tag.Write(container);
+            WriteData<NBT>(tag, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

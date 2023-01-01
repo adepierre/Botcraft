@@ -135,7 +135,7 @@ namespace ProtocolCraft
             if (node_type == 2)
             {
 #if PROTOCOL_VERSION < 759
-                parser.Read(iter, length);
+                parser = ReadData<Identifier>(iter, length);
                 properties = BrigadierProperty::CreateProperties(parser);
 #else
                 parser_id = ReadData<VarInt>(iter, length);
@@ -144,7 +144,7 @@ namespace ProtocolCraft
                 properties->Read(iter, length);
                 if (flags & 0x10)
                 {
-                    suggestions_type.Read(iter, length);
+                    suggestions_type = ReadData<Identifier>(iter, length);
                 }
             }
         }
@@ -169,14 +169,14 @@ namespace ProtocolCraft
             if (node_type == 2)
             {
 #if PROTOCOL_VERSION < 759
-                parser.Write(container);
+                WriteData<Identifier>(parser, container);
 #else
                 WriteData<VarInt>(parser_id, container);
 #endif
                 properties->Write(container);
                 if (flags & 0x10)
                 {
-                    suggestions_type.Write(container);
+                    WriteData<Identifier>(suggestions_type, container);
                 }
             }
         }

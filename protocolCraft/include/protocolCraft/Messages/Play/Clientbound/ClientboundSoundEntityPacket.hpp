@@ -134,7 +134,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761
             sound = ReadData<VarInt>(iter, length);
 #else
-            sound.Read(iter, length);
+            sound = ReadData<SoundEvent>(iter, length);
 #endif
             source = ReadData<VarInt>(iter, length);
             id_ = ReadData<VarInt>(iter, length);
@@ -150,7 +150,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761
             WriteData<VarInt>(sound, container);
 #else
-            sound.Write(container);
+            WriteData<SoundEvent>(sound, container);
 #endif
             WriteData<VarInt>(source, container);
             WriteData<VarInt>(id_, container);

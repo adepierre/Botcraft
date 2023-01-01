@@ -49,7 +49,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            tag_name.Read(iter, length);
+            tag_name = ReadData<Identifier>(iter, length);
             count = ReadData<VarInt>(iter, length);
             entries = std::vector<int>(count);
             for (int i = 0; i < count; ++i)
@@ -60,7 +60,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            tag_name.Write(container);
+            WriteData<Identifier>(tag_name, container);
             WriteData<VarInt>(count, container);
             for (int i = 0; i < count; ++i)
             {

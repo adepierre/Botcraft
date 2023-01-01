@@ -66,7 +66,7 @@ namespace ProtocolCraft
             for (size_t i = 0; i < properties_length; ++i)
             {
                 GameProfileProperty prop;
-                prop.Read(iter, length);
+                prop = ReadData<GameProfileProperty>(iter, length);
                 properties[prop.GetName()] = prop;
             }
         }
@@ -78,7 +78,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(static_cast<int>(properties.size()), container);
             for (const auto& p : properties)
             {
-                p.second.Write(container);
+                WriteData<GameProfileProperty>(p.second, container);
             }
         }
 

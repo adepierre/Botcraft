@@ -179,7 +179,7 @@ namespace ProtocolCraft
             }
 #endif
 #if PROTOCOL_VERSION > 442
-            heightmaps.Read(iter, length);
+            heightmaps = ReadData<NBT>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 551
 #if PROTOCOL_VERSION < 755
@@ -230,7 +230,7 @@ namespace ProtocolCraft
             }
 #endif
 #if PROTOCOL_VERSION > 442
-            heightmaps.Write(container);
+            WriteData<NBT>(heightmaps, container);
 #endif
 #if PROTOCOL_VERSION > 551
 #if PROTOCOL_VERSION < 755

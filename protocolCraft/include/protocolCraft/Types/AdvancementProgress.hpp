@@ -45,7 +45,7 @@ namespace ProtocolCraft
             for (int i = 0; i < size; ++i)
             {
                 Identifier identifier;
-                identifier.Read(iter, length);
+                identifier = ReadData<Identifier>(iter, length);
                 criteria[identifier].Read(iter, length);
             }
         }

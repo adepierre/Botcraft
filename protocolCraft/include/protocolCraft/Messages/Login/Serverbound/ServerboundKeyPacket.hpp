@@ -89,7 +89,7 @@ namespace ProtocolCraft
             }
             else
             {
-                salt_signature.Read(iter, length);
+                salt_signature = ReadData<SaltSignature>(iter, length);
             }
 #else
             const int nonce_length = ReadData<VarInt>(iter, length);
@@ -115,7 +115,7 @@ namespace ProtocolCraft
             }
             else
             {
-                salt_signature.Write(container);
+                WriteData<SaltSignature>(salt_signature, container);
             }
 #else
             WriteData<VarInt>(static_cast<int>(nonce.size()), container);

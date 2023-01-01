@@ -49,7 +49,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            heightmaps.Read(iter, length);
+            heightmaps = ReadData<NBT>(iter, length);
 
             const int buffer_size = ReadData<VarInt>(iter, length);
             buffer = ReadByteArray(iter, length, buffer_size);
@@ -64,7 +64,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            heightmaps.Write(container);
+            WriteData<NBT>(heightmaps, container);
             WriteData<VarInt>(static_cast<int>(buffer.size()), container);
             WriteByteArray(buffer, container);
             WriteData<VarInt>(static_cast<int>(block_entities_data.size()), container);

@@ -92,7 +92,7 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(entity_id, container);
 #if PROTOCOL_VERSION < 755
-            WriteData<int>(attributes.size(), container);
+            WriteData<int>(static_cast<int>(attributes.size()), container);
 #else
             WriteData<VarInt>(static_cast<int>(attributes.size()), container);
 #endif

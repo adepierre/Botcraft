@@ -52,12 +52,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            text.Read(iter, length);
+            text = ReadData<Chat>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            text.Write(container);
+            WriteData<Chat>(text, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

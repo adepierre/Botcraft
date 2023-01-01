@@ -120,7 +120,7 @@ namespace ProtocolCraft
             has_position = ReadData<bool>(iter, length); 
             if (has_position)
             {
-                looked_at_block.Read(iter, length);
+                looked_at_block = ReadData<NetworkPosition>(iter, length);
             }
 #endif
         }
@@ -136,7 +136,7 @@ namespace ProtocolCraft
             WriteData<bool>(has_position, container);
             if (has_position)
             {
-                looked_at_block.Write(container);
+                WriteData<NetworkPosition>(looked_at_block, container);
             }
 #endif
         }

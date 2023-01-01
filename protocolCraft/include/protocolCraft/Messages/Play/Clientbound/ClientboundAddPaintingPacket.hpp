@@ -118,7 +118,7 @@ namespace ProtocolCraft
 #else
             motive = ReadData<VarInt>(iter, length);
 #endif
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             direction = ReadData<char>(iter, length);
         }
 
@@ -131,7 +131,7 @@ namespace ProtocolCraft
 #else
             WriteData<VarInt>(motive, container);
 #endif
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             WriteData<char>(direction, container);
         }
 

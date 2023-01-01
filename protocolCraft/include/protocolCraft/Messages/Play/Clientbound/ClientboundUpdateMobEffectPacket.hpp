@@ -145,7 +145,7 @@ namespace ProtocolCraft
             const bool has_factor_data = ReadData<bool>(iter, length);
             if (has_factor_data)
             {
-                factor_data.Read(iter, length);
+                factor_data = ReadData<NBT>(iter, length);
             }
 #endif
         }
@@ -165,7 +165,7 @@ namespace ProtocolCraft
             WriteData<bool>(factor_data.HasData(), container);
             if (factor_data.HasData())
             {
-                factor_data.Write(container);
+                WriteData<NBT>(factor_data, container);
             }
 #endif
         }

@@ -279,7 +279,7 @@ namespace ProtocolCraft
             }
 #endif
 #else
-            light_data.Read(iter, length);
+            light_data = ReadData<ClientboundLightUpdatePacketData>(iter, length);
 #endif
         }
 
@@ -324,7 +324,7 @@ namespace ProtocolCraft
 #endif
             for (int i = 0; i < sky_updates.size(); ++i)
             {
-                WriteData<VarInt>(sky_updates[i].size(), container);
+                WriteData<VarInt>(static_cast<int>(sky_updates[i].size()), container);
                 WriteArrayData(sky_updates[i], container);
             }
 
@@ -333,11 +333,11 @@ namespace ProtocolCraft
 #endif
             for (int i = 0; i < block_updates.size(); ++i)
             {
-                WriteData<VarInt>(block_updates[i].size(), container);
+                WriteData<VarInt>(static_cast<int>(block_updates[i].size()), container);
                 WriteArrayData(block_updates[i], container);
             }
 #else
-            light_data.Write(container);
+            WriteData<ClientboundLightUpdatePacketData>(light_data, container);
 #endif
         }
 

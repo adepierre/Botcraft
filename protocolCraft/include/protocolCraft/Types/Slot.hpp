@@ -178,7 +178,7 @@ namespace ProtocolCraft
             item_id = ReadData<VarInt>(iter, length);
             item_count = ReadData<char>(iter, length);
 #endif
-            nbt.Read(iter, length);
+            nbt = ReadData<NBT>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -207,7 +207,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(item_id, container);
             WriteData<char>(item_count, container);
 #endif
-            nbt.Write(container);
+            WriteData<NBT>(nbt, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

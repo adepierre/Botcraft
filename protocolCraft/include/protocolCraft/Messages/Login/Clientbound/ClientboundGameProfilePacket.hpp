@@ -77,7 +77,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
 #if PROTOCOL_VERSION > 758
-            game_profile.Read(iter, length);
+            game_profile = ReadData<GameProfile>(iter, length);
 #else
 #if PROTOCOL_VERSION > 706
             uuid = ReadData<UUID>(iter, length);
@@ -91,7 +91,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
 #if PROTOCOL_VERSION > 758
-            game_profile.Write(container);
+            WriteData<GameProfile>(game_profile, container);
 #else
 #if PROTOCOL_VERSION > 706
             WriteData<UUID>(uuid, container);

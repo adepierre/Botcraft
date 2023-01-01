@@ -49,16 +49,16 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            base.Read(iter, length);
-            ingredient.Read(iter, length);
-            result.Read(iter, length);
+            base = ReadData<Ingredient>(iter, length);
+            ingredient = ReadData<Ingredient>(iter, length);
+            result = ReadData<Slot>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            base.Write(container);
-            ingredient.Write(container);
-            result.Write(container);
+            WriteData<Ingredient>(base, container);
+            WriteData<Ingredient>(ingredient, container);
+            WriteData<Slot>(result, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

@@ -62,7 +62,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            header.Read(iter, length);
+            header = ReadData<SignedMessageHeader>(iter, length);
             const int header_signature_size = ReadData<VarInt>(iter, length);
             header_signature = ReadByteArray(iter, length, header_signature_size);
             const int body_digest_size = ReadData<VarInt>(iter, length);
@@ -71,7 +71,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            header.Write(container);
+            WriteData<SignedMessageHeader>(header, container);
             WriteData<VarInt>(static_cast<int>(header_signature.size()), container);
             WriteByteArray(header_signature, container);
             WriteData<VarInt>(static_cast<int>(body_digest.size()), container);

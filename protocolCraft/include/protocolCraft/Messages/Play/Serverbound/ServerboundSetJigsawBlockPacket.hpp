@@ -137,14 +137,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
 #if PROTOCOL_VERSION > 708
-            name_.Read(iter, length);
-            target.Read(iter, length);
-            pool.Read(iter, length);
+            name_ = ReadData<Identifier>(iter, length);
+            target = ReadData<Identifier>(iter, length);
+            pool = ReadData<Identifier>(iter, length);
 #else
-            attachment_type.Read(iter, length);
-            target_pool.Read(iter, length);
+            attachment_type = ReadData<Identifier>(iter, length);
+            target_pool = ReadData<Identifier>(iter, length);
 #endif
             final_state = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 708
@@ -154,14 +154,14 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
 #if PROTOCOL_VERSION > 708
-            name_.Write(container);
-            target.Write(container);
-            pool.Write(container);
+            WriteData<Identifier>(name_, container);
+            WriteData<Identifier>(target, container);
+            WriteData<Identifier>(pool, container);
 #else
-            attachment_type.Write(container);
-            target_pool.Write(container);
+            WriteData<Identifier>(attachment_type, container);
+            WriteData<Identifier>(target_pool, container);
 #endif
             WriteData<std::string>(final_state, container);
 #if PROTOCOL_VERSION > 708

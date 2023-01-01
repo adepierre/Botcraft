@@ -110,7 +110,7 @@ namespace ProtocolCraft
             {
                 items[i].Read(iter, length);
             }
-            carried_item.Read(iter, length);
+            carried_item = ReadData<Slot>(iter, length);
 #endif            
         }
 
@@ -118,7 +118,7 @@ namespace ProtocolCraft
         {
             WriteData<unsigned char>(container_id, container);
 #if PROTOCOL_VERSION < 756
-            WriteData<short>(items.size(), container);
+            WriteData<short>(static_cast<short>(items.size()), container);
             for (int i = 0; i < items.size(); ++i)
             {
                 items[i].Write(container);
@@ -130,7 +130,7 @@ namespace ProtocolCraft
             {
                 items[i].Write(container);
             }
-            carried_item.Write(container);
+            WriteData<Slot>(carried_item, container);
 #endif
         }
 

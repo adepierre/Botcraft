@@ -61,7 +61,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 761
-            last_seen_messages.Read(iter, length);
+            last_seen_messages = ReadData<LastSeenMessagesUpdate>(iter, length);
 #else
             offset = ReadData<VarInt>(iter, length);
 #endif
@@ -70,7 +70,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 761
-            last_seen_messages.Write(container);
+            WriteData<LastSeenMessagesUpdate>(last_seen_messages, container);
 #else
             WriteData<VarInt>(offset, container);
 #endif

@@ -56,13 +56,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             entity_id = ReadData<VarInt>(iter, length);
-            location.Read(iter, length);
+            location = ReadData<NetworkPosition>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(entity_id, container);
-            location.Write(container);
+            WriteData<NetworkPosition>(location, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

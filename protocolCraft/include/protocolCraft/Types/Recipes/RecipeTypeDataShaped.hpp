@@ -95,7 +95,7 @@ namespace ProtocolCraft
             {
                 ingredients[i].Read(iter, length);
             }
-            result.Read(iter, length);
+            result = ReadData<Slot>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -110,7 +110,7 @@ namespace ProtocolCraft
             {
                 ingredients[i].Write(container);
             }
-            result.Write(container);
+            WriteData<Slot>(result, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

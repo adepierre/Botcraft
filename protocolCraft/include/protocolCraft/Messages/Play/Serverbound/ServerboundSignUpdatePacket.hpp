@@ -72,7 +72,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             lines = std::vector<std::string>(4);
             for (int i = 0; i < 4; ++i)
             {
@@ -82,7 +82,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             for (int i = 0; i < 4; ++i)
             {
                 WriteData<std::string>(lines[i], container);

@@ -79,7 +79,7 @@ namespace ProtocolCraft
             const bool has_last_received = ReadData<bool>(iter, length);
             if (has_last_received)
             {
-                last_received.Read(iter, length);
+                last_received = ReadData<LastSeenMessagesEntry>(iter, length);
             }
 #else
             offset = ReadData<VarInt>(iter, length);
@@ -107,7 +107,7 @@ namespace ProtocolCraft
             WriteData<bool>(has_last_received, container);
             if (has_last_received)
             {
-                last_received.Write(container);
+                WriteData<LastSeenMessagesEntry>(last_received, container);
             }
 #else
             WriteData<VarInt>(offset, container);

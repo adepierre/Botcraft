@@ -78,7 +78,7 @@ namespace ProtocolCraft
             }
             if (flags & 0x02)
             {
-                name_.Read(iter, length);
+                name_ = ReadData<Identifier>(iter, length);
             }
         }
 
@@ -91,7 +91,7 @@ namespace ProtocolCraft
             }
             if (!name_.GetName().empty())
             {
-                name_.Write(container);
+                WriteData<Identifier>(name_, container);
             }
         }
 

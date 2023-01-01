@@ -35,12 +35,12 @@ namespace ProtocolCraft
     
     void VibrationParticle::ReadImpl(ReadIterator& iter, size_t& length)
     {
-        vibration_path.Read(iter, length);
+        vibration_path = ReadData<VibrationPath>(iter, length);
     }
     
     void VibrationParticle::WriteImpl(WriteContainer& container) const
     {
-        vibration_path.Write(container);
+        WriteData<VibrationPath>(vibration_path, container);
     }
     
     const nlohmann::json VibrationParticle::SerializeImpl() const

@@ -95,24 +95,24 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
 #if PROTOCOL_VERSION < 757
             type = ReadData<unsigned char>(iter, length);
 #else
             type = ReadData<VarInt>(iter, length);
 #endif
-            tag.Read(iter, length);
+            tag = ReadData<NBT>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
 #if PROTOCOL_VERSION < 757
             WriteData<unsigned char>(type, container);
 #else
             WriteData<VarInt>(type, container);
 #endif
-            tag.Write(container);
+            WriteData<NBT>(tag, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

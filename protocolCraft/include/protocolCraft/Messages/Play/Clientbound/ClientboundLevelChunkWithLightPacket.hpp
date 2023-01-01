@@ -85,8 +85,8 @@ namespace ProtocolCraft
             x = ReadData<int>(iter, length);
             z = ReadData<int>(iter, length);
 
-            chunk_data.Read(iter, length);
-            light_data.Read(iter, length);
+            chunk_data = ReadData<ClientboundLevelChunkPacketData>(iter, length);
+            light_data = ReadData<ClientboundLightUpdatePacketData>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -94,8 +94,8 @@ namespace ProtocolCraft
             WriteData<int>(x, container);
             WriteData<int>(z, container);
 
-            chunk_data.Write(container);
-            light_data.Write(container);
+            WriteData<ClientboundLevelChunkPacketData>(chunk_data, container);
+            WriteData<ClientboundLightUpdatePacketData>(light_data, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

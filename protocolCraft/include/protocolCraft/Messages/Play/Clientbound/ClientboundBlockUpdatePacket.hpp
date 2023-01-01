@@ -70,13 +70,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             blockstate = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             WriteData<VarInt>(blockstate, container);
         }
 

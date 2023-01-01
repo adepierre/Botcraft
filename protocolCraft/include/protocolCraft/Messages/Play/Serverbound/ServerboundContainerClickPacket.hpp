@@ -179,9 +179,9 @@ namespace ProtocolCraft
             }
 #endif
 #if PROTOCOL_VERSION < 755
-            item_stack.Read(iter, length);
+            item_stack = ReadData<Slot>(iter, length);
 #else
-            carried_item.Read(iter, length);
+            carried_item = ReadData<Slot>(iter, length);
 #endif
         }
 
@@ -206,9 +206,9 @@ namespace ProtocolCraft
             }
 #endif
 #if PROTOCOL_VERSION < 755
-            item_stack.Write(container);
+            WriteData<Slot>(item_stack, container);
 #else
-            carried_item.Write(container);
+            WriteData<Slot>(carried_item, container);
 #endif
         }
 

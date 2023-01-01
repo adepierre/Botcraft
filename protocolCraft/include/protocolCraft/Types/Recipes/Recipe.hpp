@@ -52,11 +52,11 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 453
-            recipe_id.Read(iter, length);
-            type.Read(iter, length);
+            recipe_id = ReadData<Identifier>(iter, length);
+            type = ReadData<Identifier>(iter, length);
 #else
-            type.Read(iter, length);
-            recipe_id.Read(iter, length);
+            type = ReadData<Identifier>(iter, length);
+            recipe_id = ReadData<Identifier>(iter, length);
 #endif
             data = RecipeTypeData::CreateRecipeTypeData(type);
             data->Read(iter, length);
@@ -65,11 +65,11 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 453
-            recipe_id.Write(container);
-            type.Write(container);
+            WriteData<Identifier>(recipe_id, container);
+            WriteData<Identifier>(type, container);
 #else
-            type.Write(container);
-            recipe_id.Write(container);
+            WriteData<Identifier>(type, container);
+            WriteData<Identifier>(recipe_id, container);
 #endif
             data->Write(container);
         }

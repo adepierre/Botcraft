@@ -171,7 +171,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             update_type = ReadData<VarInt>(iter, length);
             mode = ReadData<VarInt>(iter, length);
             name_ = ReadData<std::string>(iter, length);
@@ -191,7 +191,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             WriteData<VarInt>(update_type, container);
             WriteData<VarInt>(mode, container);
             WriteData<std::string>(name_, container);

@@ -104,7 +104,7 @@ namespace ProtocolCraft
             {
                 player_id = ReadData<VarInt>(iter, length);
                 killer_id = ReadData<int>(iter, length);
-                message.Read(iter, length);
+                message = ReadData<Chat>(iter, length);
             }
         }
 
@@ -120,7 +120,7 @@ namespace ProtocolCraft
             {
                 WriteData<VarInt>(player_id, container);
                 WriteData<int>(killer_id, container);
-                message.Write(container);
+                WriteData<Chat>(message, container);
             }
         }
 

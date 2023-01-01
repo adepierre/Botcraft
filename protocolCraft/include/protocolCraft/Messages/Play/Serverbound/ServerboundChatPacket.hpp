@@ -149,7 +149,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758
             timestamp = ReadData<long long int>(iter, length);
 #if PROTOCOL_VERSION < 760
-            salt_signature.Read(iter, length);
+            salt_signature = ReadData<SaltSignature>(iter, length);
 #else
             salt = ReadData<long long int>(iter, length);
 #if PROTOCOL_VERSION < 761
@@ -168,7 +168,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 759
-            last_seen_messages.Read(iter, length);
+            last_seen_messages = ReadData<LastSeenMessagesUpdate>(iter, length);
 #endif
         }
 
@@ -178,7 +178,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758
             WriteData<long long int>(timestamp, container);
 #if PROTOCOL_VERSION < 760
-            salt_signature.Write(container);
+            WriteData<SaltSignature>(salt_signature, container);
 #else
             WriteData<long long int>(salt, container);
 
@@ -198,7 +198,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 759
-            last_seen_messages.Write(container);
+            WriteData<LastSeenMessagesUpdate>(last_seen_messages, container);
 #endif
         }
 

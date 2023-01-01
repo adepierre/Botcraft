@@ -47,7 +47,7 @@ namespace ProtocolCraft
         // Read name
         root_name = ReadRawString(iterator, length, name_size);
 
-        root_tag.Read(iterator, length);
+        root_tag = ReadData<TagCompound>(iterator, length);
         has_data = true;
     }
 
@@ -58,7 +58,7 @@ namespace ProtocolCraft
             WriteData<char>(static_cast<char>(TagType::Compound), container);
             WriteData<unsigned short>(static_cast<unsigned short>(root_name.size()), container);
             WriteRawString(root_name, container);
-            root_tag.Write(container);
+            WriteData<TagCompound>(root_tag, container);
         }
         else
         {

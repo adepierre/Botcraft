@@ -92,7 +92,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             b0 = ReadData<unsigned char>(iter, length);
             b1 = ReadData<unsigned char>(iter, length);
             block = ReadData<VarInt>(iter, length);
@@ -100,7 +100,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             WriteData<unsigned char>(b0, container);
             WriteData<unsigned char>(b1, container);
             WriteData<VarInt>(block, container);

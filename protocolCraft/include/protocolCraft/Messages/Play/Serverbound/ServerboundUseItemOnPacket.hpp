@@ -143,7 +143,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 452
             hand = ReadData<VarInt>(iter, length);
 #endif
-            location.Read(iter, length);
+            location = ReadData<NetworkPosition>(iter, length);
             direction = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION < 453
             hand = ReadData<VarInt>(iter, length);
@@ -164,7 +164,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 452
             WriteData<VarInt>(hand, container);
 #endif
-            location.Write(container);
+            WriteData<NetworkPosition>(location, container);
             WriteData<VarInt>(direction, container);
 #if PROTOCOL_VERSION < 453
             WriteData<VarInt>(hand, container);

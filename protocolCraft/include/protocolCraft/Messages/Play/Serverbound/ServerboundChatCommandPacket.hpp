@@ -131,7 +131,7 @@ namespace ProtocolCraft
             signed_preview = ReadData<bool>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 759
-            last_seen_messages.Read(iter, length);
+            last_seen_messages = ReadData<LastSeenMessagesUpdate>(iter, length);
 #endif
         }
 
@@ -153,7 +153,7 @@ namespace ProtocolCraft
             WriteData<bool>(signed_preview, container);
 #endif
 #if PROTOCOL_VERSION > 759
-            last_seen_messages.Write(container);
+            WriteData<LastSeenMessagesUpdate>(last_seen_messages, container);
 #endif
         }
 

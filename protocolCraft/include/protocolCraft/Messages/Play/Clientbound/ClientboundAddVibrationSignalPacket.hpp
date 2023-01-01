@@ -45,12 +45,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            vibration_path.Read(iter, length);
+            vibration_path = ReadData<VibrationPath>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            vibration_path.Write(container);
+            WriteData<VibrationPath>(vibration_path, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

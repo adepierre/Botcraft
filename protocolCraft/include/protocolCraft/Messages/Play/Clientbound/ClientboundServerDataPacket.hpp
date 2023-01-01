@@ -92,7 +92,7 @@ namespace ProtocolCraft
             motd = Chat();
             if (has_motd)
             {
-                motd.Read(iter, length);
+                motd = ReadData<Chat>(iter, length);
             }
             const bool has_icon_base_64 = ReadData<bool>(iter, length);
             icon_base_64 = "";
@@ -113,7 +113,7 @@ namespace ProtocolCraft
             WriteData<bool>(!motd.GetRawText().empty(), container);
             if (!motd.GetRawText().empty())
             {
-                motd.Write(container);
+                WriteData<Chat>(motd, container);
             }
             WriteData<bool>(!icon_base_64.empty(), container);
             if (!icon_base_64.empty())

@@ -40,14 +40,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            dimension.Read(iter, length);
-            pos.Read(iter, length);
+            dimension = ReadData<Identifier>(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            dimension.Write(container);
-            pos.Write(container);
+            WriteData<Identifier>(dimension, container);
+            WriteData<NetworkPosition>(pos, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

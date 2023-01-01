@@ -91,7 +91,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             command = ReadData<std::string>(iter, length);
             mode = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
@@ -99,7 +99,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             WriteData<std::string>(command, container);
             WriteData<VarInt>(mode, container);
             WriteData<char>(flags, container);

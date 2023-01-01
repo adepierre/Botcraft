@@ -114,8 +114,7 @@ namespace ProtocolCraft
                         std::map<std::string, GameProfileProperty> properties;
                         for (size_t i = 0; i < properties_length; ++i)
                         {
-                            GameProfileProperty prop;
-                            prop.Read(iter, length);
+                            GameProfileProperty prop = ReadData<GameProfileProperty>(iter, length);
                             properties[prop.GetName()] = prop;
                         }
                         entry.game_profile.SetProperties(properties);
@@ -126,7 +125,7 @@ namespace ProtocolCraft
                         const bool has_chat_session = ReadData<bool>(iter, length);
                         if (has_chat_session)
                         {
-                            entry.chat_session.Read(iter, length);
+                            entry.chat_session = ReadData<RemoteChatSessionData>(iter, length);
                         }
                         break;
                     }
@@ -144,7 +143,7 @@ namespace ProtocolCraft
                         const bool has_display_name = ReadData<bool>(iter, length);
                         if (has_display_name)
                         {
-                            entry.display_name.Read(iter, length);
+                            entry.display_name = ReadData<Chat>(iter, length);
                         }
                         break;
                     }
@@ -178,7 +177,7 @@ namespace ProtocolCraft
                         WriteData<VarInt>(static_cast<int>(it->second.game_profile.GetProperties().size()), container);
                         for (auto it2 = it->second.game_profile.GetProperties().begin(); it2 != it->second.game_profile.GetProperties().end(); ++it)
                         {
-                            it2->second.Write(container);
+                            WriteData<GameProfileProperty>(it2->second, container);
                         }
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
@@ -187,7 +186,7 @@ namespace ProtocolCraft
                         WriteData<bool>(has_chat_session, container);
                         if (has_chat_session)
                         {
-                            it->second.chat_session.Write(container);
+                            WriteData<RemoteChatSessionData>(it->second.chat_session, container);
                         }
                         break;
                     }
@@ -206,7 +205,7 @@ namespace ProtocolCraft
                         WriteData<bool>(has_display_name, container);
                         if (has_display_name)
                         {
-                            it->second.display_name.Write(container);
+                            WriteData<Chat>(it->second.display_name, container);
                         }
                         break;
                     }

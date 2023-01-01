@@ -93,7 +93,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             type = ReadData<int>(iter, length);
-            pos.Read(iter, length);
+            pos = ReadData<NetworkPosition>(iter, length);
             data = ReadData<int>(iter, length);
             global_event = ReadData<bool>(iter, length);
         }
@@ -101,7 +101,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<int>(type, container);
-            pos.Write(container);
+            WriteData<NetworkPosition>(pos, container);
             WriteData<int>(data, container);
             WriteData<bool>(global_event, container);
         }

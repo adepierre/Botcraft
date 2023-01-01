@@ -106,14 +106,14 @@ namespace ProtocolCraft
             display_name = Chat();
             if (has_display_name)
             {
-                display_name.Read(iter, length);
+                display_name = ReadData<Chat>(iter, length);
             }
 #if PROTOCOL_VERSION > 758
             const bool has_profile_public_key = ReadData<bool>(iter, length);
             profile_public_key = ProfilePublicKey();
             if (has_profile_public_key)
             {
-                profile_public_key.Read(iter, length);
+                profile_public_key = ReadData<ProfilePublicKey>(iter, length);
             }
 #endif
         }
@@ -131,13 +131,13 @@ namespace ProtocolCraft
             WriteData<bool>(!display_name.GetText().empty() , container);
             if (!display_name.GetText().empty())
             {
-                display_name.Write(container);
+                WriteData<Chat>(display_name, container);
             }
 #if PROTOCOL_VERSION > 758
             WriteData<bool>(!profile_public_key.GetKey().empty(), container);
             if (!profile_public_key.GetKey().empty())
             {
-                profile_public_key.Write(container);
+                WriteData<ProfilePublicKey>(profile_public_key, container);
             }
 #endif
         }

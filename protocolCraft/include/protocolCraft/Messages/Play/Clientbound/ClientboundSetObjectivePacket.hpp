@@ -118,7 +118,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 390
                 display_name = ReadData<std::string>(iter, length);
 #else
-                display_name.Read(iter, length);
+                display_name = ReadData<Chat>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 349
                 render_type = ReadData<std::string>(iter, length);
@@ -137,7 +137,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 390
                 WriteData<std::string>(display_name, container);
 #else
-                display_name.Write(container);
+                WriteData<Chat>(display_name, container);
 #endif
 #if PROTOCOL_VERSION < 349
                 WriteData<std::string>(render_type, container);

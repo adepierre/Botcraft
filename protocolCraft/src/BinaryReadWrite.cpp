@@ -166,7 +166,7 @@ namespace ProtocolCraft
     }
 
     template<>
-    void WriteData(const VarInt &value, WriteContainer& container)
+    void WriteData(const VarInt& value, WriteContainer& container)
     {
         unsigned int val = value;
         do {

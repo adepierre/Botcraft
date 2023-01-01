@@ -43,12 +43,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            chat_session.Read(iter, length);
+            chat_session = ReadData<RemoteChatSessionData>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            chat_session.Write(container);
+            WriteData<RemoteChatSessionData>(chat_session, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

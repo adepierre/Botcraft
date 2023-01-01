@@ -62,8 +62,8 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            origin.Read(iter, length);
-            destination_type.Read(iter, length);
+            origin = ReadData<NetworkPosition>(iter, length);
+            destination_type = ReadData<Identifier>(iter, length);
             destination = PositionSource::CreatePositionSource(destination_type);
             destination->Read(iter, length);
             arrival_in_ticks = ReadData<VarInt>(iter, length);
@@ -71,8 +71,8 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            origin.Write(container);
-            destination_type.Write(container);
+            WriteData<NetworkPosition>(origin, container);
+            WriteData<Identifier>(destination_type, container);
             destination->Write(container);
             WriteData<VarInt>(arrival_in_ticks, container);
         }

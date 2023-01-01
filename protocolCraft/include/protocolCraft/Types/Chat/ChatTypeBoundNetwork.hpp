@@ -49,22 +49,22 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             chat_type = ReadData<VarInt>(iter, length);
-            name.Read(iter, length);
+            name = ReadData<Chat>(iter, length);
             const bool has_target_name = ReadData<bool>(iter, length);
             if (has_target_name)
             {
-                target_name.Read(iter, length);
+                target_name = ReadData<Chat>(iter, length);
             }
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<VarInt>(chat_type, container);
-            name.Write(container);
+            WriteData<Chat>(name, container);
             WriteData<bool>(!target_name.GetRawText().empty(), container);
             if (!target_name.GetRawText().empty())
             {
-                target_name.Write(container);
+                WriteData<Chat>(target_name, container);
             }
         }
 

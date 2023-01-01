@@ -52,12 +52,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            recipe.Read(iter, length);
+            recipe = ReadData<Identifier>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            recipe.Write(container);
+            WriteData<Identifier>(recipe, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

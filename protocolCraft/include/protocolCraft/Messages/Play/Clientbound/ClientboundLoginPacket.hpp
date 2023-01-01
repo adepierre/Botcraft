@@ -332,11 +332,15 @@ namespace ProtocolCraft
             {
                 levels[i].Read(iter, length);
             }
-            registry_holder.Read(iter, length);
+            registry_holder = ReadData<NBT>(iter, length);
 #if PROTOCOL_VERSION > 747
-            dimension_type.Read(iter, length);
+#if PROTOCOL_VERSION < 759
+            dimension_type = ReadData<NBT>(iter, length);
+#else
+            dimension_type = ReadData<Identifier>(iter, length);
 #endif
-            dimension.Read(iter, length);
+#endif
+            dimension = ReadData<Identifier>(iter, length);
 #else
             dimension = ReadData<int>(iter, length);
 #endif
@@ -372,7 +376,7 @@ namespace ProtocolCraft
             const bool has_last_death_location = ReadData<bool>(iter, length);
             if (has_last_death_location)
             {
-                last_death_location.Read(iter, length);
+                last_death_location = ReadData<GlobalPos>(iter, length);
             }
 #endif
         }
@@ -391,11 +395,15 @@ namespace ProtocolCraft
             {
                 levels[i].Write(container);
             }
-            registry_holder.Write(container);
+            WriteData<NBT>(registry_holder, container);
 #if PROTOCOL_VERSION > 747
-            dimension_type.Write(container);
+#if PROTOCOL_VERSION < 759
+            WriteData<NBT>(dimension_type, container);
+#else
+            WriteData<Identifier>(dimension_type, container);
 #endif
-            dimension.Write(container);
+#endif
+            WriteData<Identifier>(dimension, container);
 #else
             WriteData<int>(dimension, container);
 #endif
@@ -431,7 +439,7 @@ namespace ProtocolCraft
             WriteData<bool>(!last_death_location.GetDimension().GetFull().empty(), container);
             if (!last_death_location.GetDimension().GetFull().empty())
             {
-                last_death_location.Write(container);
+                WriteData<GlobalPos>(last_death_location, container);
             }
 #endif
         }

@@ -72,13 +72,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             transaction_id = ReadData<VarInt>(iter, length);
-            tag.Read(iter, length);
+            tag = ReadData<NBT>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(transaction_id, container);
-            tag.Write(container);
+            WriteData<NBT>(tag, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

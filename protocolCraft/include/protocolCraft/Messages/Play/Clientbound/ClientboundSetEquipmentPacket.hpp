@@ -94,16 +94,13 @@ namespace ProtocolCraft
             {
                 unsigned char current_value = ReadData<unsigned char>(iter, length);
                 
-                std::pair<unsigned char, Slot> slot;
-                slot.first = current_value & 0x7F;
-                slot.second.Read(iter, length);
-                slots.push_back(slot);
+                slots.push_back({ current_value & 0x7F, ReadData<Slot>(iter, length) });
 
                 has_value = current_value & (1 << 7);
             }
 #else
             slot.first = ReadData<VarInt>(iter, length);
-            slot.second.Read(iter, length);
+            slot.second = ReadData<Slot>(iter, length);
 #endif
         }
 
@@ -114,11 +111,11 @@ namespace ProtocolCraft
             for (int i = 0; i < slots.size(); ++i)
             {
                 WriteData<unsigned char>(i != slots.size() - 1 ? slots[i].first | (1 << 7) : slots[i].first, container);
-                slots[i].second.Write(container);
+                WriteData<Slot>(slots[i].second, container);
             }
 #else
             WriteData<VarInt>(slot.first, container);
-            slot.second.Write(container);
+            WriteData<Slot>(slot.second, container);
 #endif
         }
 
