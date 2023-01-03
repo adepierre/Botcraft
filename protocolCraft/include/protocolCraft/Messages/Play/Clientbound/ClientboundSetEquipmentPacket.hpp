@@ -127,12 +127,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 730
             output["slots"] = nlohmann::json::array();
 
-            for (int i = 0; i < slots.size(); ++i)
+            for (const auto& s : slots)
             {
                 nlohmann::json current_slot;
 
-                current_slot["first"] = slots[i].first;
-                current_slot["second"] = slots[i].second.Serialize();
+                current_slot["first"] = s.first;
+                current_slot["second"] = s.second.Serialize();
 
                 output["slots"].push_back(current_slot);
             }

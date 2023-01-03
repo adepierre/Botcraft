@@ -120,13 +120,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759
             salt = ReadData<long long int>(iter, length);
 #endif
-            const int argument_signatures_size = ReadData<VarInt>(iter, length);
-            for (int i = 0; i < argument_signatures_size; ++i)
-            {
-                const std::string key = ReadData<std::string>(iter, length);
-                const int value_size = ReadData<VarInt>(iter, length);
-                argument_signatures[key] = ReadByteArray(iter, length, value_size);
-            }
+            argument_signatures = ReadMap<std::string, std::vector<unsigned char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    const std::string key = ReadData<std::string>(i, l);
+                    const std::vector<unsigned char> val = ReadVector<unsigned char>(i, l);
+
+                    return std::make_pair(key, val);
+                }
+            );
 #if PROTOCOL_VERSION < 761
             signed_preview = ReadData<bool>(iter, length);
 #endif
@@ -142,13 +144,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759
             WriteData<long long int>(salt, container);
 #endif
-            WriteData<VarInt>(static_cast<int>(argument_signatures.size()), container);
-            for (const auto& s: argument_signatures)
-            {
-                WriteData<std::string>(s.first, container);
-                WriteData<VarInt>(static_cast<int>(s.second.size()), container);
-                WriteByteArray(s.second, container);
-            }
+            WriteMap<std::string, std::vector<unsigned char>>(argument_signatures, container,
+                [](const std::pair<const std::string, std::vector<unsigned char>>& p, WriteContainer& c)
+                {
+                    WriteData<std::string>(p.first, c);
+                    WriteVector<unsigned char>(p.second, c);
+                }
+            );
 #if PROTOCOL_VERSION < 761
             WriteData<bool>(signed_preview, container);
 #endif

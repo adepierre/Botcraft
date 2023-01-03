@@ -93,7 +93,7 @@ namespace ProtocolCraft
             ingredients = std::vector<Ingredient>(width * height);
             for (int i = 0; i < width * height; ++i)
             {
-                ingredients[i].Read(iter, length);
+                ingredients[i] = ReadData<Ingredient>(iter, length);
             }
             result = ReadData<Slot>(iter, length);
         }
@@ -108,7 +108,7 @@ namespace ProtocolCraft
 #endif
             for (int i = 0; i < width * height; ++i)
             {
-                ingredients[i].Write(container);
+                WriteData<Ingredient>(ingredients[i], container);
             }
             WriteData<Slot>(result, container);
         }

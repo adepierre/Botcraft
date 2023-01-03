@@ -47,7 +47,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            unsigned long long int value = ReadData<unsigned long long int>(iter, length);
+            const unsigned long long int value = ReadData<unsigned long long int>(iter, length);
 
             x = value >> 38;
             if (x >= 33554432)
@@ -85,9 +85,9 @@ namespace ProtocolCraft
         {
 
 #if PROTOCOL_VERSION < 442
-            unsigned long long int value = (((long long int)x & 0x3FFFFFF) << 38) | (((long long int)y & 0xFFF) << 26) | ((long long int)z & 0x3FFFFFF);
+            const unsigned long long int value = (((long long int)x & 0x3FFFFFF) << 38) | (((long long int)y & 0xFFF) << 26) | ((long long int)z & 0x3FFFFFF);
 #else
-            unsigned long long int value = (((long long int)x & 0x3FFFFFF) << 38) | (((long long int)z & 0x3FFFFFF) << 12) | ((long long int)y & 0xFFF);
+            const unsigned long long int value = (((long long int)x & 0x3FFFFFF) << 38) | (((long long int)z & 0x3FFFFFF) << 12) | ((long long int)y & 0xFFF);
 #endif
             WriteData<unsigned long long int>(value, container);
         }

@@ -63,19 +63,15 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             header = ReadData<SignedMessageHeader>(iter, length);
-            const int header_signature_size = ReadData<VarInt>(iter, length);
-            header_signature = ReadByteArray(iter, length, header_signature_size);
-            const int body_digest_size = ReadData<VarInt>(iter, length);
-            body_digest = ReadByteArray(iter, length, body_digest_size);
+            header_signature = ReadVector<unsigned char>(iter, length);
+            body_digest = ReadVector<unsigned char>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<SignedMessageHeader>(header, container);
-            WriteData<VarInt>(static_cast<int>(header_signature.size()), container);
-            WriteByteArray(header_signature, container);
-            WriteData<VarInt>(static_cast<int>(body_digest.size()), container);
-            WriteByteArray(body_digest, container);
+            WriteVector<unsigned char>(header_signature, container);
+            WriteVector<unsigned char>(body_digest, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

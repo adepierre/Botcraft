@@ -97,50 +97,17 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             reset = ReadData<bool>(iter, length);
-            const int added_size = ReadData<VarInt>(iter, length);
-            added.clear();
-            for (int i = 0; i < added_size; ++i)
-            {
-                Identifier key;
-                key = ReadData<Identifier>(iter, length);
-                added[key].Read(iter, length);
-            }
-            const int removed_size = ReadData<VarInt>(iter, length);
-            removed = std::vector<Identifier>(removed_size);
-            for (int i = 0; i < removed_size; ++i)
-            {
-                removed[i].Read(iter, length);
-            }
-            const int progress_size = ReadData<VarInt>(iter, length);
-            progress.clear();
-            for (int i = 0; i < progress_size; ++i)
-            {
-                Identifier key;
-                key = ReadData<Identifier>(iter, length);
-                progress[key].Read(iter, length);
-            }
+            added = ReadMap<Identifier, Advancement>(iter, length);
+            removed = ReadVector<Identifier>(iter, length);
+            progress = ReadMap<Identifier, AdvancementProgress, VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<bool>(reset, container);
-            WriteData<VarInt>(static_cast<int>(added.size()), container);
-            for (auto it = added.begin(); it != added.end(); it++)
-            {
-                it->first.Write(container);
-                it->second.Write(container);
-            }
-            WriteData<VarInt>(static_cast<int>(removed.size()), container);
-            for (int i = 0; i < removed.size(); ++i)
-            {
-                removed[i].Write(container);
-            }
-            WriteData<VarInt>(static_cast<int>(progress.size()), container);
-            for (auto it = progress.begin(); it != progress.end(); it++)
-            {
-                it->first.Write(container);
-                it->second.Write(container);
-            }
+            WriteMap<Identifier, Advancement>(added, container);
+            WriteVector<Identifier>(removed, container);
+            WriteMap<Identifier, AdvancementProgress>(progress, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -150,26 +117,26 @@ namespace ProtocolCraft
             output["reset"] = reset;
 
             output["added"] = nlohmann::json::array();
-            for (auto it = added.begin(); it != added.end(); ++it)
+            for (const auto& p : added)
             {
                 nlohmann::json add;
-                add["key"] = it->first.Serialize();
-                add["value"] = it->second.Serialize();
+                add["key"] = p.first.Serialize();
+                add["value"] = p.second.Serialize();
                 output["added"].push_back(add);
             }
 
             output["removed"] = nlohmann::json::array();
-            for (int i = 0; i < removed.size(); ++i)
+            for (const auto& r : removed)
             {
-                output["removed"].push_back(removed[i].Serialize());
+                output["removed"].push_back(r.Serialize());
             } 
 
             output["progress"] = nlohmann::json::array();
-            for (auto it = progress.begin(); it != progress.end(); ++it)
+            for (const auto& p : progress)
             {
                 nlohmann::json prog;
-                prog["key"] = it->first.Serialize();
-                prog["value"] = it->second.Serialize();
+                prog["key"] = p.first.Serialize();
+                prog["value"] = p.second.Serialize();
                 output["progress"].push_back(prog);
             }
 

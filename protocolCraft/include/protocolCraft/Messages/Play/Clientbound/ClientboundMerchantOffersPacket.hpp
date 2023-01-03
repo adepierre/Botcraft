@@ -110,12 +110,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             container_id = ReadData<VarInt>(iter, length);
-            int offers_size = ReadData<char>(iter, length);
-            offers = std::vector<Trade>(offers_size);
-            for (int i = 0; i < offers_size; ++i)
-            {
-                offers[i].Read(iter, length);
-            }
+            offers = ReadVector<Trade, char>(iter, length);
             villager_level = ReadData<VarInt>(iter, length);
             villager_xp = ReadData<VarInt>(iter, length);
             show_progress = ReadData<bool>(iter, length);
@@ -125,11 +120,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(container_id, container);
-            WriteData<char>(static_cast<char>(offers.size()), container);
-            for (int i = 0; i < offers.size(); ++i)
-            {
-                offers[i].Write(container);
-            }
+            WriteVector<Trade, char>(offers, container);
             WriteData<VarInt>(villager_level, container);
             WriteData<VarInt>(villager_xp, container);
             WriteData<bool>(show_progress, container);
@@ -142,9 +133,9 @@ namespace ProtocolCraft
 
             output["container_id"] = container_id;
             output["offers"] = nlohmann::json::array();
-            for (int i = 0; i < offers.size(); ++i)
+            for (const auto& o : offers)
             {
-                output["offers"].push_back(offers[i].Serialize());
+                output["offers"].push_back(o.Serialize());
             }
             output["villager_level"] = villager_level;
             output["villager_xp"] = villager_xp;

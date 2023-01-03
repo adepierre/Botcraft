@@ -203,12 +203,7 @@ namespace ProtocolCraft
             
             if (method == 0 || method == 3 || method == 4)
             {
-                int players_count = ReadData<VarInt>(iter, length);
-                players = std::vector<std::string>(players_count);
-                for (int i = 0; i < players_count; ++i)
-                {
-                    players[i] = ReadData<std::string>(iter, length);
-                }
+                players = ReadVector<std::string>(iter, length);
             }
         }
 
@@ -240,11 +235,7 @@ namespace ProtocolCraft
             
             if (method == 0 || method == 3 || method == 4)
             {
-                WriteData<VarInt>(static_cast<int>(players.size()), container);
-                for (int i = 0; i < players.size(); ++i)
-                {
-                    WriteData<std::string>(players[i], container);
-                }
+                WriteVector<std::string>(players, container);
             }
         }
 

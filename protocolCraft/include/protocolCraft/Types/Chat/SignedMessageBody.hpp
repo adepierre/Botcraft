@@ -85,12 +85,7 @@ namespace ProtocolCraft
 #endif
             timestamp = ReadData<long long int>(iter, length);
             salt = ReadData<long long int>(iter, length);
-            const int last_seen_size = ReadData<VarInt>(iter, length);
-            last_seen = std::vector<LastSeenMessagesEntry>(last_seen_size);
-            for (int i = 0; i < last_seen_size; ++i)
-            {
-                last_seen[i].Read(iter, length);
-            }
+            last_seen = ReadVector<LastSeenMessagesEntry>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -102,11 +97,7 @@ namespace ProtocolCraft
 #endif
             WriteData<long long int>(timestamp, container);
             WriteData<long long int>(salt, container);
-            WriteData<VarInt>(static_cast<int>(last_seen.size()), container);
-            for (int i = 0; i < last_seen.size(); ++i)
-            {
-                last_seen[i].Write(container);
-            }
+            WriteVector<LastSeenMessagesEntry>(last_seen, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -121,9 +112,9 @@ namespace ProtocolCraft
             output["timestamp"] = timestamp;
             output["salt"] = salt;
             output["last_seen"] = nlohmann::json::array();
-            for (int i = 0; i < last_seen.size(); ++i)
+            for (const auto& l : last_seen)
             {
-                output["last_seen"].push_back(last_seen[i].Serialize());
+                output["last_seen"].push_back(l.Serialize());
             }
 
 

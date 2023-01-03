@@ -326,12 +326,7 @@ namespace ProtocolCraft
             game_type = ReadData<unsigned char>(iter, length);
 #if PROTOCOL_VERSION > 718
             previous_game_type = ReadData<unsigned char>(iter, length);
-            int levels_size = ReadData<VarInt>(iter, length);
-            levels = std::vector<Identifier>(levels_size);
-            for (int i = 0; i < levels_size; ++i)
-            {
-                levels[i].Read(iter, length);
-            }
+            levels = ReadVector<Identifier>(iter, length);
             registry_holder = ReadData<NBT>(iter, length);
 #if PROTOCOL_VERSION > 747
 #if PROTOCOL_VERSION < 759
@@ -386,11 +381,7 @@ namespace ProtocolCraft
             WriteData<unsigned char>(game_type, container);
 #if PROTOCOL_VERSION > 718
             WriteData<unsigned char>(previous_game_type, container);
-            WriteData<VarInt>(static_cast<int>(levels.size()), container);
-            for (int i = 0; i < levels.size(); ++i)
-            {
-                levels[i].Write(container);
-            }
+            WriteVector<Identifier>(levels, container);
             WriteData<NBT>(registry_holder, container);
 #if PROTOCOL_VERSION > 747
 #if PROTOCOL_VERSION < 759
@@ -448,9 +439,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 718
             output["previous_game_type"] = previous_game_type;
             output["levels"] = nlohmann::json::array();
-            for (int i = 0; i < levels.size(); ++i)
+            for (const auto& l : levels)
             {
-                output["levels"].push_back(levels[i].Serialize());
+                output["levels"].push_back(l.Serialize());
             }
             output["registry_holder"] = registry_holder.Serialize();
 

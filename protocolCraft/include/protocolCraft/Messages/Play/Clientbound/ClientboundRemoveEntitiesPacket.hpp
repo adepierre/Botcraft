@@ -63,21 +63,22 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            const int entity_ids_size = ReadData<VarInt>(iter, length);
-            entity_ids = std::vector<int>(entity_ids_size);
-            for (int i = 0; i < entity_ids_size; ++i)
-            {
-                entity_ids[i] = ReadData<VarInt>(iter, length);
-            }
+            entity_ids = ReadVector<int>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadData<VarInt>(i, l);
+                }
+            );
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(static_cast<int>(entity_ids.size()), container);
-            for (int i = 0; i < entity_ids.size(); ++i)
-            {
-                WriteData<VarInt>(entity_ids[i], container);
-            }
+            WriteVector<int>(entity_ids, container,
+                [](const int& i, WriteContainer& c)
+                {
+                    WriteData<VarInt>(i, c);
+                }
+            );
         }
 
         virtual const nlohmann::json SerializeImpl() const override

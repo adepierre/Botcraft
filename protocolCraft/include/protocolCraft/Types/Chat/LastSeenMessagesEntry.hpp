@@ -56,8 +56,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 761
             profile_id = ReadData<UUID>(iter, length);
-            const int last_signature_size = ReadData<VarInt>(iter, length);
-            last_signature = ReadByteArray(iter, length, last_signature_size);
+            last_signature = ReadVector<unsigned char>(iter, length);
 #else
             id = ReadData<VarInt>(iter, length) - 1;
             if (id == -1)
@@ -75,8 +74,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 761
             WriteData<UUID>(profile_id, container);
-            WriteData<VarInt>(static_cast<int>(last_signature.size()), container);
-            WriteByteArray(last_signature, container);
+            WriteVector<unsigned char>(last_signature, container);
 #else
             WriteData<VarInt>(id + 1, container);
             if (last_signature.size() > 0)

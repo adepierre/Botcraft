@@ -77,29 +77,20 @@ namespace ProtocolCraft
             entity_id = ReadData<VarInt>(iter, length);
 
 #if PROTOCOL_VERSION < 755
-            const int attributes_size = ReadData<int>(iter, length);
+            attributes = ReadVector<EntityProperty, int>(iter, length);
 #else
-            const int attributes_size = ReadData<VarInt>(iter, length);
+            attributes = ReadVector<EntityProperty>(iter, length);
 #endif
-            attributes = std::vector<EntityProperty>(attributes_size);
-            for (int i = 0; i < attributes_size; ++i)
-            {
-                attributes[i].Read(iter, length);
-            }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(entity_id, container);
 #if PROTOCOL_VERSION < 755
-            WriteData<int>(static_cast<int>(attributes.size()), container);
+            WriteVector<EntityProperty, int>(attributes, container);
 #else
-            WriteData<VarInt>(static_cast<int>(attributes.size()), container);
+            WriteVector<EntityProperty>(attributes, container);
 #endif
-            for (int i = 0; i < attributes.size(); ++i)
-            {
-                attributes[i].Write(container);
-            }
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -109,9 +100,9 @@ namespace ProtocolCraft
             output["entity_id"] = entity_id;
             
             output["attributes"] = nlohmann::json::array();
-            for (int i = 0; i < attributes.size(); ++i)
+            for (const auto& a : attributes)
             {
-                output["attributes"].push_back(attributes[i].Serialize());
+                output["attributes"].push_back(a.Serialize());
             }
 
             return output;

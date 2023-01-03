@@ -40,18 +40,17 @@ namespace ProtocolCraft
     void TagList::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         // Read type
-       tags_type = (TagType)ReadData<char>(iterator, length);
+       tags_type = static_cast<TagType>(ReadData<char>(iterator, length));
 
-       // Read list size
-       const int list_size = ReadData<int>(iterator, length);
-
-       tags = std::vector<std::shared_ptr<Tag> >(list_size);
-
-       for (int i = 0; i < list_size; ++i)
-       {
-           tags[i] = Tag::CreateTag(tags_type);
-           tags[i]->Read(iterator, length);
-       }
+       // Read list
+       tags = ReadVector<std::shared_ptr<Tag>, int>(iterator, length,
+           [this](ReadIterator& i, size_t& l)
+           {
+               std::shared_ptr<Tag> output = Tag::CreateTag(tags_type);
+               output->Read(i, l);
+               return output;
+           }
+       );
     }
 
     void TagList::WriteImpl(WriteContainer &container) const
@@ -59,14 +58,12 @@ namespace ProtocolCraft
         // Write type
         WriteData<char>(static_cast<char>(tags_type), container);
 
-        // Write size
-        WriteData<int>(static_cast<int>(tags.size()), container);
-
-        for (int i = 0; i < tags.size(); ++i)
-        {
-            // Write payload
-            tags[i]->Write(container);
-        }
+        WriteVector<std::shared_ptr<Tag>, int>(tags, container,
+            [](const std::shared_ptr<Tag>& t, WriteContainer& c)
+            {
+                t->Write(c);
+            }
+        );
     }
 
     const nlohmann::json TagList::SerializeImpl() const
@@ -76,9 +73,9 @@ namespace ProtocolCraft
         output["type"] = Tag::TagTypeToString(tags_type);
         output["content"] = nlohmann::json::array();
 
-        for (int i = 0; i < tags.size(); ++i)
+        for (const auto& t : tags)
         {
-            output["content"].push_back(tags[i]->Serialize());
+            output["content"].push_back(t->Serialize());
         }
 
         return output;

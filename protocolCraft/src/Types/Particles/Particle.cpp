@@ -42,47 +42,36 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 392 // 1.13+
     std::shared_ptr<Particle> Particle::CreateParticle(const ParticleType type)
     {
-        std::shared_ptr<Particle> output;
-        
         switch (type)
         {
         case ParticleType::None:
-            output = nullptr;
+            return nullptr;
             break;
         case ParticleType::Block:
-            output = std::make_shared<BlockParticle>();
-            break;
+            return std::make_shared<BlockParticle>();
 #if PROTOCOL_VERSION > 756
         case ParticleType::BlockMarker:
-            output = std::make_shared<BlockMarkerParticle>();
-            break;
+            return std::make_shared<BlockMarkerParticle>();
 #endif
         case ParticleType::Dust:
-            output = std::make_shared<DustParticle>();
-            break;
+            return std::make_shared<DustParticle>();
 #if PROTOCOL_VERSION > 754
         case ParticleType::DustColorTransition:
-            output = std::make_shared<DustColorTransitionParticle>();
-            break;
+            return std::make_shared<DustColorTransitionParticle>();
 #endif
         case ParticleType::FallingDust:
-            output = std::make_shared<FallingDustParticle>();
-            break;
+            return std::make_shared<FallingDustParticle>();
         case ParticleType::Item:
-            output = std::make_shared<ItemParticle>();
-            break;
+            return std::make_shared<ItemParticle>();
 #if PROTOCOL_VERSION > 758
         case ParticleType::SculkCharge:
-            output = std::make_shared<SculkChargeParticle>();
-            break;
+            return std::make_shared<SculkChargeParticle>();
         case ParticleType::Shriek:
-            output = std::make_shared<ShriekParticle>();
-            break;
+            return std::make_shared<ShriekParticle>();
 #endif
 #if PROTOCOL_VERSION > 754
         case ParticleType::Vibration:
-            output = std::make_shared<VibrationParticle>();
-            break;
+            return std::make_shared<VibrationParticle>();
 #endif
         case ParticleType::AmbientEntityEffect:
         case ParticleType::AngryVillager:
@@ -204,37 +193,26 @@ namespace ProtocolCraft
         case ParticleType::ElectricSpark:
         case ParticleType::Scrape:
 #endif
-            output = std::make_shared<NoDataTypedParticle>(type);
-            break;
+            return std::make_shared<NoDataTypedParticle>(type);
         default:
-            output = nullptr;
-            break;
+            return nullptr;
         }
-        
-        return output;
     }
 #else //1.12.2
     std::shared_ptr<Particle> Particle::CreateParticle(const ParticleType type)
     {
-        std::shared_ptr<Particle> output;
-        
         switch (type)
         {
         case ParticleType::None:
-            output = nullptr;
-            break;
+            return nullptr;
         case ParticleType::Iconcrack:
-            output = std::make_shared<IconcrackParticle>();
-            break;
+            return std::make_shared<IconcrackParticle>();
         case ParticleType::Blockcrack:
-            output = std::make_shared<BlockcrackParticle>();
-            break;
+            return std::make_shared<BlockcrackParticle>();
         case ParticleType::Blockdust:
-            output = std::make_shared<BlockdustParticle>();
-            break;
+            return std::make_shared<BlockdustParticle>();
         case ParticleType::FallingDust:
-            output = std::make_shared<FallingDustParticle>();
-            break;
+            return std::make_shared<FallingDustParticle>();
         case ParticleType::Explode:
         case ParticleType::LargeExplode:
         case ParticleType::HugeExplosion:
@@ -280,14 +258,10 @@ namespace ProtocolCraft
         case ParticleType::SweepAttack:
         case ParticleType::Totem:
         case ParticleType::Spit:
-            output = std::make_shared<NoDataTypedParticle>(type);
-            break;
+            return std::make_shared<NoDataTypedParticle>(type);
         default:
-            output = nullptr;
-            break;
+            return nullptr;
         }
-        
-        return output;
     }
 #endif
 }

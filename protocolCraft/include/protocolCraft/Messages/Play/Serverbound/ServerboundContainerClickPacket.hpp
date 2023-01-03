@@ -171,12 +171,7 @@ namespace ProtocolCraft
 #endif
             click_type = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 754
-            changed_slots.clear();
-            const int changed_slots_size = ReadData<VarInt>(iter, length);
-            for (int i = 0; i < changed_slots_size; ++i)
-            {
-                changed_slots[ReadData<short>(iter, length)].Read(iter, length);
-            }
+            changed_slots = ReadMap<short, Slot>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 755
             item_stack = ReadData<Slot>(iter, length);
@@ -198,12 +193,7 @@ namespace ProtocolCraft
 #endif
             WriteData<VarInt>(click_type, container);
 #if PROTOCOL_VERSION > 754
-            WriteData<VarInt>(static_cast<int>(changed_slots.size()), container);
-            for (auto it = changed_slots.begin(); it != changed_slots.end(); ++it)
-            {
-                WriteData<short>(it->first, container);
-                it->second.Write(container);
-            }
+            WriteMap<short, Slot>(changed_slots, container);
 #endif
 #if PROTOCOL_VERSION < 755
             WriteData<Slot>(item_stack, container);
@@ -227,11 +217,11 @@ namespace ProtocolCraft
 #endif
             output["click_type"] = click_type;
 #if PROTOCOL_VERSION > 754
-            output["changed_slots"] = nlohmann::json::object();
 
-            for (auto it = changed_slots.begin(); it != changed_slots.end(); ++it)
+            output["changed_slots"] = nlohmann::json::object();
+            for (const auto& p : changed_slots)
             {
-                output["changed_slots"][std::to_string(it->first)] = it->second.Serialize();
+                output["changed_slots"][std::to_string(p.first)] = p.second.Serialize();
             }
 #endif
 #if PROTOCOL_VERSION < 755

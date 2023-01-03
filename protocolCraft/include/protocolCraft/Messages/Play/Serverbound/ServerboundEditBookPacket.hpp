@@ -123,12 +123,7 @@ namespace ProtocolCraft
             slot = ReadData<VarInt>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 755
-            int pages_size = ReadData<VarInt>(iter, length);
-            pages = std::vector<std::string>(pages_size);
-            for (int i = 0; i < pages_size; ++i)
-            {
-                pages[i] = ReadData<std::string>(iter, length);
-            }
+            pages = ReadVector<std::string>(iter, length);
             title = ReadOptional<std::string>(iter, length);
 #endif
         }
@@ -143,11 +138,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(slot, container);
 #endif
 #if PROTOCOL_VERSION > 755
-            WriteData<VarInt>(static_cast<int>(pages.size()), container);
-            for (int i = 0; i < pages.size(); ++i)
-            {
-                WriteData<std::string>(pages[i], container);
-            }
+            WriteVector<std::string>(pages, container);
             WriteOptional<std::string>(title, container);
 #endif
         }

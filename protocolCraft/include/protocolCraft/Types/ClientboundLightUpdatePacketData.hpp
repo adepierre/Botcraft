@@ -13,6 +13,12 @@ namespace ProtocolCraft
 
         }
 
+
+        void SetTrustEdges(const bool trust_edges_)
+        {
+            trust_edges = trust_edges_;
+        }
+
         void SetSkyYMask(const std::vector<unsigned long long int>& sky_Y_mask_)
         {
             sky_Y_mask = sky_Y_mask_;
@@ -43,11 +49,11 @@ namespace ProtocolCraft
             block_updates = block_updates_;
         }
 
-        void SetTrustEdges(const bool trust_edges_)
-        {
-            trust_edges = trust_edges_;
-        }
 
+        const bool GetTrustEdges() const
+        {
+            return trust_edges;
+        }
 
         const std::vector<unsigned long long int>& GetSkyYMask() const
         {
@@ -79,52 +85,27 @@ namespace ProtocolCraft
             return block_updates;
         }
 
-        const bool GetTrustEdges() const
-        {
-            return trust_edges;
-        }
-
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             trust_edges = ReadData<bool>(iter, length);
             
-            const int sky_Y_mask_size = ReadData<VarInt>(iter, length);
-            sky_Y_mask = std::vector<unsigned long long int>(sky_Y_mask_size);
-            for (int i = 0; i < sky_Y_mask_size; ++i)
-            {
-                sky_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
-            }
-            const int block_Y_mask_size = ReadData<VarInt>(iter, length);
-            block_Y_mask = std::vector<unsigned long long int>(block_Y_mask_size);
-            for (int i = 0; i < block_Y_mask_size; ++i)
-            {
-                block_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
-            }
-            const int empty_sky_Y_mask_size = ReadData<VarInt>(iter, length);
-            empty_sky_Y_mask = std::vector<unsigned long long int>(empty_sky_Y_mask_size);
-            for (int i = 0; i < empty_sky_Y_mask_size; ++i)
-            {
-                empty_sky_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
-            }
-            const int empty_block_Y_mask_size = ReadData<VarInt>(iter, length);
-            empty_block_Y_mask = std::vector<unsigned long long int>(empty_block_Y_mask_size);
-            for (int i = 0; i < empty_block_Y_mask_size; ++i)
-            {
-                empty_block_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
-            }
+            sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
+            block_Y_mask = ReadVector<unsigned long long int>(iter, length);
+            empty_sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
+            empty_block_Y_mask = ReadVector<unsigned long long int>(iter, length);
 
-            sky_updates = ReadCollection<std::vector<char>>(iter, length,
+            sky_updates = ReadVector<std::vector<char>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
-                    return ReadCollection<char>(i, l);
+                    return ReadVector<char>(i, l);
                 }
             );
 
-            block_updates = ReadCollection<std::vector<char>>(iter, length,
+            block_updates = ReadVector<std::vector<char>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
-                    return ReadCollection<char>(i, l);
+                    return ReadVector<char>(i, l);
                 }
             );
         }
@@ -133,38 +114,22 @@ namespace ProtocolCraft
         {
             WriteData<bool>(trust_edges, container);
 
-            WriteData<VarInt>(static_cast<int>(sky_Y_mask.size()), container);
-            for (int i = 0; i < sky_Y_mask.size(); ++i)
-            {
-                WriteData<unsigned long long int>(sky_Y_mask[i], container);
-            }
-            WriteData<VarInt>(static_cast<int>(block_Y_mask.size()), container);
-            for (int i = 0; i < block_Y_mask.size(); ++i)
-            {
-                WriteData<unsigned long long int>(block_Y_mask[i], container);
-            }
-            WriteData<VarInt>(static_cast<int>(empty_sky_Y_mask.size()), container);
-            for (int i = 0; i < empty_sky_Y_mask.size(); ++i)
-            {
-                WriteData<unsigned long long int>(empty_sky_Y_mask[i], container);
-            }
-            WriteData<VarInt>(static_cast<int>(empty_block_Y_mask.size()), container);
-            for (int i = 0; i < empty_block_Y_mask.size(); ++i)
-            {
-                WriteData<unsigned long long int>(empty_block_Y_mask[i], container);
-            }
+            WriteVector<unsigned long long int>(sky_Y_mask, container);
+            WriteVector<unsigned long long int>(block_Y_mask, container);
+            WriteVector<unsigned long long int>(empty_sky_Y_mask, container);
+            WriteVector<unsigned long long int>(empty_block_Y_mask, container);
 
-            WriteCollection<std::vector<char>>(sky_updates, container,
+            WriteVector<std::vector<char>>(sky_updates, container,
                 [](const std::vector<char>& v, WriteContainer& c)
                 {
-                    WriteCollection<char>(v, c);
+                    WriteVector<char>(v, c);
                 }
             );
 
-            WriteCollection<std::vector<char>>(block_updates, container,
+            WriteVector<std::vector<char>>(block_updates, container,
                 [](const std::vector<char>& v, WriteContainer& c)
                 {
-                    WriteCollection<char>(v, c);
+                    WriteVector<char>(v, c);
                 }
             );
         }
@@ -181,15 +146,15 @@ namespace ProtocolCraft
             output["empty_block_Y_mask"] = empty_block_Y_mask;
 
             output["sky_updates"] = nlohmann::json::array();
-            for (int i = 0; i < sky_updates.size(); ++i)
+            for (const auto& v : sky_updates)
             {
-                output["sky_updates"].push_back(sky_updates[i]);
+                output["sky_updates"].push_back(v);
             }
 
             output["block_updates"] = nlohmann::json::array();
-            for (int i = 0; i < block_updates.size(); ++i)
+            for (const auto& v : block_updates)
             {
-                output["block_updates"].push_back(block_updates[i]);
+                output["block_updates"].push_back(v);
             }
 
 
@@ -197,6 +162,8 @@ namespace ProtocolCraft
         }
 
     private:
+        bool trust_edges;
+
         std::vector<unsigned long long int> sky_Y_mask;
         std::vector<unsigned long long int> block_Y_mask;
         std::vector<unsigned long long int> empty_sky_Y_mask;
@@ -204,8 +171,6 @@ namespace ProtocolCraft
 
         std::vector<std::vector<char> > sky_updates;
         std::vector<std::vector<char> > block_updates;
-
-        bool trust_edges;
     };
 }
 #endif

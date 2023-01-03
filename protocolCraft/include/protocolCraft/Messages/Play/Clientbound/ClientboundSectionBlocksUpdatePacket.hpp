@@ -156,7 +156,7 @@ namespace ProtocolCraft
             states = std::vector<int>(data_size);
             for (int i = 0; i < data_size; ++i)
             {
-                long long int data = ReadData<VarLong>(iter, length);
+                const long long int data = ReadData<VarLong>(iter, length);
                 positions[i] = data & 0xFFFl;
                 states[i] = static_cast<int>(data >> 12);
             }
@@ -195,9 +195,9 @@ namespace ProtocolCraft
 
             output["records"] = nlohmann::json::array();
 
-            for (int i = 0; i < records.size(); ++i)
+            for (const auto& r : records)
             {
-                output["records"].push_back(records[i].Serialize());
+                output["records"].push_back(r.Serialize());
             }
 #else
             output["section_pos"] = section_pos;

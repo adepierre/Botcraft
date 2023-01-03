@@ -171,12 +171,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755
             available_sections = ReadData<VarInt>(iter, length);
 #else
-            const int available_sections_size = ReadData<VarInt>(iter, length);
-            available_sections = std::vector<unsigned long long int>(available_sections_size);
-            for (int i = 0; i < available_sections_size; ++i)
-            {
-                available_sections[i] = ReadData<unsigned long long int>(iter, length);
-            }
+            available_sections = ReadVector<unsigned long long int>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 442
             heightmaps = ReadData<NBT>(iter, length);
@@ -187,12 +182,12 @@ namespace ProtocolCraft
             {
 #endif
 #if PROTOCOL_VERSION > 738
-                const int biomes_size = ReadData<VarInt>(iter, length);
-                biomes = std::vector<int>(biomes_size);
-                for (int i = 0; i < biomes_size; ++i)
-                {
-                    biomes[i] = ReadData<VarInt>(iter, length);
-                }
+                biomes = ReadVector<int>(iter, length,
+                    [](ReadIterator& i, size_t& l)
+                    {
+                        return ReadData<VarInt>(i, l);
+                    }
+                );
 #else
                 biomes = std::vector<int>(1024);
                 for (size_t i = 0; i < biomes.size(); ++i)
@@ -204,14 +199,8 @@ namespace ProtocolCraft
             }
 #endif
 #endif
-            const int buffer_size = ReadData<VarInt>(iter, length);
-            buffer = ReadByteArray(iter, length, buffer_size);
-            const int num_block_entities_tags = ReadData<VarInt>(iter, length);
-            block_entities_tags = std::vector<NBT>(num_block_entities_tags);
-            for (int i = 0; i < num_block_entities_tags; ++i)
-            {
-                block_entities_tags[i].Read(iter, length);
-            }
+            buffer = ReadVector<unsigned char>(iter, length);
+            block_entities_tags = ReadVector<NBT>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -227,11 +216,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755
             WriteData<VarInt>(available_sections, container);
 #else
-            WriteData<VarInt>(static_cast<int>(available_sections.size()), container);
-            for (int i = 0; i < available_sections.size(); ++i)
-            {
-                WriteData<unsigned long long int>(available_sections[i], container);
-            }
+            WriteVector<unsigned long long int>(available_sections, container);
 #endif
 #if PROTOCOL_VERSION > 442
             WriteData<NBT>(heightmaps, container);
@@ -242,28 +227,24 @@ namespace ProtocolCraft
             {
 #endif
 #if PROTOCOL_VERSION > 738
-                WriteData<VarInt>(static_cast<int>(biomes.size()), container);
-                for (int i = 0; i < biomes.size(); ++i)
-                {
-                    WriteData<VarInt>(biomes[i], container);
-                }
+                WriteVector<int>(biomes, container,
+                    [](const int& i, WriteContainer& c)
+                    {
+                        WriteData<VarInt>(i, c);
+                    }
+                );
 #else
-                for (size_t i = 0; i < biomes.size(); ++i)
+                for (const auto i : biomes)
                 {
-                    WriteData<int>(biomes[i], container);
+                    WriteData<int>(i, container);
                 }
 #endif
 #if PROTOCOL_VERSION < 755
             }
 #endif
 #endif
-            WriteData<VarInt>(static_cast<int>(buffer.size()), container);
-            WriteByteArray(buffer, container);
-            WriteData<VarInt>(static_cast<int>(block_entities_tags.size()), container);
-            for (int i = 0; i < block_entities_tags.size(); ++i)
-            {
-                block_entities_tags[i].Write(container);
-            }
+            WriteVector<unsigned char>(buffer, container);
+            WriteVector<NBT>(block_entities_tags, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -289,9 +270,9 @@ namespace ProtocolCraft
             output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
 
             output["block_entities_tags"] = nlohmann::json::array();
-            for (int i = 0; i < block_entities_tags.size(); ++i)
+            for (const auto& b : block_entities_tags)
             {
-                output["block_entities_tags"].push_back(block_entities_tags[i].Serialize());
+                output["block_entities_tags"].push_back(b.Serialize());
             }
 
 #if PROTOCOL_VERSION < 755

@@ -40,15 +40,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             salt = ReadData<long long int>(iter, length);
-            const int signature_size = ReadData<VarInt>(iter, length);
-            signature = ReadByteArray(iter, length, signature_size);
+            signature = ReadVector<unsigned char>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<long long int>(salt, container);
-            WriteData<VarInt>(static_cast<int>(signature.size()), container);
-            WriteByteArray(signature, container);
+            WriteVector<unsigned char>(signature, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

@@ -55,21 +55,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             action = ReadData<VarInt>(iter, length);
-            entries = std::vector<std::string>(ReadData<VarInt>(iter, length));
-            for (int i = 0; i < entries.size(); ++i)
-            {
-                entries[i] = ReadData<std::string>(iter, length);
-            }
+            entries = ReadVector<std::string>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(action, container);
-            WriteData<VarInt>(static_cast<int>(entries.size()), container);
-            for (int i = 0; i < entries.size(); ++i)
-            {
-                WriteData<std::string>(entries[i], container);
-            }
+            WriteVector<std::string>(entries, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override

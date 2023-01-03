@@ -27,7 +27,7 @@ namespace ProtocolCraft
     void NBT::ReadImpl(ReadIterator &iterator, size_t &length)
     {
         // Read type
-        const TagType type = (TagType)ReadData<char>(iterator, length);
+        const TagType type = static_cast<TagType>(ReadData<char>(iterator, length));
 
         // No data to read
         if (type == TagType::End)

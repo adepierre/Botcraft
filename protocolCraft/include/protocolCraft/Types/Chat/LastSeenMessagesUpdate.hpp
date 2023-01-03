@@ -70,12 +70,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
 #if PROTOCOL_VERSION < 761
-            const int last_seen_size = ReadData<VarInt>(iter, length);
-            last_seen = std::vector<LastSeenMessagesEntry>(last_seen_size);
-            for (int i = 0; i < last_seen_size; ++i)
-            {
-                last_seen[i].Read(iter, length);
-            }
+            last_seen = ReadVector<LastSeenMessagesEntry>(iter, length);
             last_received = ReadOptional<LastSeenMessagesEntry>(iter, length);
 #else
             offset = ReadData<VarInt>(iter, length);
@@ -86,11 +81,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
 #if PROTOCOL_VERSION < 761
-            WriteData<VarInt>(static_cast<int>(last_seen.size()), container);
-            for (int i = 0; i < last_seen.size(); ++i)
-            {
-                last_seen[i].Write(container);
-            }
+            WriteVector<LastSeenMessagesEntry>(last_seen, container);
             WriteOptional<LastSeenMessagesEntry>(last_received, container);
 #else
             WriteData<VarInt>(offset, container);
@@ -104,9 +95,9 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION < 761
             output["last_seen"] = nlohmann::json::array();
-            for (int i = 0; i < last_seen.size(); ++i)
+            for (const auto& l : last_seen)
             {
-                output["last_seen"].push_back(last_seen[i].Serialize());
+                output["last_seen"].push_back(l.Serialize());
             };
             if (last_received.has_value())
             {

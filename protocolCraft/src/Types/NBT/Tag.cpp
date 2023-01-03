@@ -28,54 +28,37 @@ namespace ProtocolCraft
 
     std::shared_ptr<Tag> Tag::CreateTag(const TagType type)
     {
-        std::shared_ptr<Tag> output;
-
         switch (type)
         {
         case TagType::End:
-            output = std::shared_ptr<TagEnd>(new TagEnd);
-            break;
+            return std::make_shared<TagEnd>();
         case TagType::Byte:
-            output = std::shared_ptr<TagByte>(new TagByte);
-            break;
+            return std::make_shared<TagByte>();
         case TagType::Short:
-            output = std::shared_ptr<TagShort>(new TagShort);
-            break;
+            return std::make_shared<TagShort>();
         case TagType::Int:
-            output = std::shared_ptr<TagInt>(new TagInt);
-            break;
+            return std::make_shared<TagInt>();
         case TagType::Long:
-            output = std::shared_ptr<TagLong>(new TagLong);
-            break;
+            return std::make_shared<TagLong>();
         case TagType::Float:
-            output = std::shared_ptr<TagFloat>(new TagFloat);
-            break;
+            return std::make_shared<TagFloat>();
         case TagType::Double:
-            output = std::shared_ptr<TagDouble>(new TagDouble);
-            break;
+            return std::make_shared<TagDouble>();
         case TagType::ByteArray:
-            output = std::shared_ptr<TagByteArray>(new TagByteArray);
-            break;
+            return std::make_shared<TagByteArray>();
         case TagType::String:
-            output = std::shared_ptr<TagString>(new TagString);
-            break;
+            return std::make_shared<TagString>();
         case TagType::List:
-            output = std::shared_ptr<TagList>(new TagList);
-            break;
+            return std::make_shared<TagList>();
         case TagType::Compound:
-            output = std::shared_ptr<TagCompound>(new TagCompound);
-            break;
+            return std::make_shared<TagCompound>();
         case TagType::IntArray:
-            output = std::shared_ptr<TagIntArray>(new TagIntArray);
-            break;
+            return std::make_shared<TagIntArray>();
         case TagType::LongArray:
-            output = std::shared_ptr<TagLongArray>(new TagLongArray);
-            break;
+            return std::make_shared<TagLongArray>();
         default:
-            break;
+            return nullptr;
         }
-
-        return output;
     }
 
     const std::string Tag::TagTypeToString(const TagType type)

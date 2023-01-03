@@ -94,12 +94,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             name = ReadData<std::string>(iter, length);
-            const int number_of_properties = ReadData<VarInt>(iter, length);
-            properties = std::vector<GameProfileProperty>(number_of_properties);
-            for (int i = 0; i < number_of_properties; ++i)
-            {
-                properties[i].Read(iter, length);
-            }
+            properties = ReadVector<GameProfileProperty>(iter, length);
             game_mode = ReadData<VarInt>(iter, length);
             latency = ReadData<VarInt>(iter, length);
             display_name = ReadOptional<Chat>(iter, length);
@@ -111,11 +106,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(name, container);
-            WriteData<VarInt>(static_cast<int>(properties.size()), container);
-            for (int i = 0; i < properties.size(); ++i)
-            {
-                properties[i].Write(container);
-            }
+            WriteVector<GameProfileProperty>(properties, container);
             WriteData<VarInt>(game_mode, container);
             WriteData<VarInt>(latency, container);
             WriteOptional<Chat>(display_name, container);
@@ -136,9 +127,9 @@ namespace ProtocolCraft
                 output["display_name"] = display_name.value().Serialize();
             }
             output["properties"] = nlohmann::json::array();
-            for (int i = 0; i < properties.size(); ++i)
+            for (const auto& p : properties)
             {
-                output["properties"].push_back(properties[i].Serialize());
+                output["properties"].push_back(p.Serialize());
             }
 #if PROTOCOL_VERSION > 758
             if (profile_public_key.has_value())

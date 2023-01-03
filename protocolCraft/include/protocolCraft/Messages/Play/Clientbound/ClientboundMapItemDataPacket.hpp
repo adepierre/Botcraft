@@ -186,16 +186,11 @@ namespace ProtocolCraft
             decorations = ReadOptional<std::vector<MapDecoration>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
-                    return ReadCollection<MapDecoration>(i, l);
+                    return ReadVector<MapDecoration>(i, l);
                 }
             );
 #else
-            const int decorations_count = ReadData<VarInt>(iter, length);
-            decorations = std::vector<MapDecoration>(decorations_count);
-            for (int i = 0; i < decorations_count; ++i)
-            {
-                decorations[i].Read(iter, length);
-            }
+            decorations = ReadVector<MapDecoration>(iter, length);
 #endif
 
             width = ReadData<unsigned char>(iter, length);
@@ -204,8 +199,7 @@ namespace ProtocolCraft
                 height = ReadData<unsigned char>(iter, length);
                 start_x = ReadData<unsigned char>(iter, length);
                 start_z = ReadData<unsigned char>(iter, length);
-                int map_colors_size = ReadData<VarInt>(iter, length);
-                map_colors = ReadByteArray(iter, length, map_colors_size);
+                map_colors = ReadVector<unsigned char>(iter, length);
             }
         }
 
@@ -223,15 +217,11 @@ namespace ProtocolCraft
             WriteOptional<std::vector<MapDecoration>>(decorations, container,
                 [](const std::vector<MapDecoration>& v, WriteContainer& c)
                 {
-                    WriteCollection<MapDecoration>(v, c);
+                    WriteVector<MapDecoration>(v, c);
                 }
             );
 #else
-            WriteData<VarInt>(static_cast<int>(decorations.size()), container);
-            for (int i = 0; i < decorations.size(); ++i)
-            {
-                decorations[i].Write(container);
-            }
+            WriteVector<MapDecoration>(decorations, container);
 #endif
 
             WriteData<unsigned char>(width, container);
@@ -240,8 +230,7 @@ namespace ProtocolCraft
                 WriteData<unsigned char>(height, container);
                 WriteData<unsigned char>(start_x, container);
                 WriteData<unsigned char>(start_z, container);
-                WriteData<VarInt>(static_cast<int>(map_colors.size()), container);
-                WriteByteArray(map_colors, container);
+                WriteVector<unsigned char>(map_colors, container);
             }
         }
 
@@ -262,16 +251,16 @@ namespace ProtocolCraft
             if (decorations.has_value())
             {
                 output["decorations"] = nlohmann::json::array();
-                for (int i = 0; i < decorations.value().size(); ++i)
+                for (const auto& d : decorations.value())
                 {
-                    output["decorations"].push_back(decorations.value()[i].Serialize());
+                    output["decorations"].push_back(d.Serialize());
                 }
             }
 #else
             output["decorations"] = nlohmann::json::array();
-            for (int i = 0; i < decorations.size(); ++i)
+            for (const auto& d : decorations)
             {
-                output["decorations"].push_back(decorations[i].Serialize());
+                output["decorations"].push_back(d.Serialize());
             }
 #endif
             output["width"] = width;

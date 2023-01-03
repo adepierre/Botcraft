@@ -46,21 +46,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            const int features_size = ReadData<VarInt>(iter, length);
-            features = std::vector<Identifier>(features_size);
-            for (size_t i = 0; i < features_size; ++i)
-            {
-                features[i].Read(iter, length);
-            }
+            features = ReadVector<Identifier>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(static_cast<int>(features.size()), container);
-            for (size_t i = 0; i < features.size(); ++i)
-            {
-                features[i].Write(container);
-            }
+            WriteVector<Identifier>(features, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -68,9 +59,9 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["features"] = nlohmann::json::array();
-            for (size_t i = 0; i < features.size(); ++i)
+            for (const auto& f : features)
             {
-                output["features"].push_back(features[i].Serialize());
+                output["features"].push_back(f.Serialize());
             }
 
             return output;

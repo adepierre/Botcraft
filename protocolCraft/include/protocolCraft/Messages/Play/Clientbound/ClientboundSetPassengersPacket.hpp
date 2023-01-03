@@ -72,22 +72,23 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             vehicle = ReadData<VarInt>(iter, length);
-            int passengers_count = ReadData<VarInt>(iter, length);
-            passengers = std::vector<int>(passengers_count);
-            for (int i = 0; i < passengers_count; ++i)
-            {
-                passengers[i] = ReadData<VarInt>(iter, length);
-            }
+            passengers = ReadVector<int>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadData<VarInt>(i, l);
+                }
+            );
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(vehicle, container);
-            WriteData<VarInt>(static_cast<int>(passengers.size()), container);
-            for (int i = 0; i < passengers.size(); ++i)
-            {
-                WriteData<VarInt>(passengers[i], container);
-            }
+            WriteVector<int>(passengers, container,
+                [](const int& i, WriteContainer& c)
+                {
+                    WriteData<VarInt>(i, c);
+                }
+            );
         }
 
         virtual const nlohmann::json SerializeImpl() const override

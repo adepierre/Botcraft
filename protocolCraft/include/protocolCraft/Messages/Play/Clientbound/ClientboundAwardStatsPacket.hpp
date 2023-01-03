@@ -77,37 +77,51 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            int count = ReadData<VarInt>(iter, length);
-            stats.clear();
-            for (int i = 0; i < count; ++i)
-            {
-#if PROTOCOL_VERSION < 346
-                std::string name = ReadData<std::string>(iter, length);
-                int value = ReadData<VarInt>(iter, length);
-                stats[name] = value;
-#else
-                int category_id = ReadData<VarInt>(iter, length);
-                int stats_id = ReadData<VarInt>(iter, length);
-                int value = ReadData<VarInt>(iter, length);
 
-                stats[std::make_pair(category_id, stats_id)] = value;
+#if PROTOCOL_VERSION < 346
+            stats = ReadMap<std::string, int>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    const std::string name = ReadData<std::string>(i, l);
+                    const int val = ReadData<VarInt>(i, l);
+
+                    return std::make_pair(name, val);
+                }
+            );
+#else
+            stats = ReadMap<std::pair<int, int>, int>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    const int category_id = ReadData<VarInt>(i, l);
+                    const int stats_id = ReadData<VarInt>(i, l);
+                    const int val = ReadData<VarInt>(i, l);
+
+                    return std::make_pair(std::make_pair(category_id, stats_id), val);
+                }
+            );
 #endif
-            }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(static_cast<int>(stats.size()), container);
-            for (auto it = stats.begin(); it != stats.end(); ++it)
-            {
 #if PROTOCOL_VERSION < 346
-                WriteData<std::string>(it->first, container);
+            WriteMap<std::string, int>(stats, container,
+                [](const std::pair<const std::string, int>& p, WriteContainer& c)
+                {
+                    WriteData<std::string>(p.first, c);
+                    WriteData<VarInt>(p.second, c);
+                }
+            );
 #else
-                WriteData<VarInt>(it->first.first, container);
-                WriteData<VarInt>(it->first.second, container);
+            WriteMap<std::pair<int, int>, int>(stats, container,
+                [](const std::pair<const std::pair<int, int>, int>& p, WriteContainer& c)
+                {
+                    WriteData<VarInt>(p.first.first, c);
+                    WriteData<VarInt>(p.first.second, c);
+                    WriteData<VarInt>(p.second, c);
+                }
+            );
 #endif
-                WriteData<VarInt>(it->second, container);
-            }
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -116,18 +130,17 @@ namespace ProtocolCraft
 
             output["stats"] = nlohmann::json::array();
 
-            for (auto it = stats.begin(); it != stats.end(); it++)
+            for (const auto& p : stats)
             {
                 nlohmann::json s;
 
-
 #if PROTOCOL_VERSION < 346
-                s["name"] = it->first;
+                s["name"] = p.first;
 #else
-                s["category_id"] = it->first.first;
-                s["stats_id"] = it->first.second;
+                s["category_id"] = p.first.first;
+                s["stats_id"] = p.first.second;
 #endif
-                s["value"] = it->second;
+                s["value"] = p.second;
                 output.push_back(s);
             }
 

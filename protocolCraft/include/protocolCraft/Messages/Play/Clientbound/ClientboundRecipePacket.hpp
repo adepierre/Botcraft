@@ -118,36 +118,30 @@ namespace ProtocolCraft
         {
             state = static_cast<RecipeState>(static_cast<int>(ReadData<VarInt>(iter, length)));
             book_settings = ReadData<RecipeBookSettings>(iter, length);
-            int recipes_size = ReadData<VarInt>(iter, length);
+
 #if PROTOCOL_VERSION > 348
-            recipes = std::vector<Identifier>(recipes_size);
+            recipes = ReadVector<Identifier>(iter, length);
 #else
-            recipes = std::vector<int>(recipes_size);
+            recipes = ReadVector<int>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadData<VarInt>(i, l);
+                }
+            );
 #endif
-            for (int i = 0; i < recipes_size; ++i)
-            {
-#if PROTOCOL_VERSION > 348
-                recipes[i].Read(iter, length);
-#else
-                recipes[i] = ReadData<VarInt>(iter, length);
-#endif
-            }
+
             if (state == RecipeState::Init)
             {
-                int to_highlight_size = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 348
-                to_highlight = std::vector<Identifier>(to_highlight_size);
+                to_highlight = ReadVector<Identifier>(iter, length);
 #else
-                to_highlight = std::vector<int>(to_highlight_size);
+                to_highlight = ReadVector<int>(iter, length,
+                    [](ReadIterator& i, size_t& l)
+                    {
+                        return ReadData<VarInt>(i, l);
+                    }
+                );
 #endif
-                for (int i = 0; i < to_highlight_size; ++i)
-                {
-#if PROTOCOL_VERSION > 348
-                    to_highlight[i].Read(iter, length);
-#else
-                    to_highlight[i] = ReadData<VarInt>(iter, length);
-#endif
-                }
             }
         }
 
@@ -155,26 +149,33 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(static_cast<int>(state), container);
             WriteData<RecipeBookSettings>(book_settings, container);
-            WriteData<VarInt>(static_cast<int>(recipes.size()), container);
-            for (int i = 0; i < recipes.size(); ++i)
-            {
+
+
 #if PROTOCOL_VERSION > 348
-                recipes[i].Write(container);
+
+            WriteVector<Identifier>(recipes, container);
 #else
-                WriteData<VarInt>(recipes[i], container);
+            WriteVector<int>(recipes, container,
+                [](const int& i, WriteContainer& c)
+                {
+                    WriteData<VarInt>(i, c);
+                }
+            );
 #endif
-            }
+
             if (state == RecipeState::Init)
             {
-                WriteData<VarInt>(static_cast<int>(to_highlight.size()), container);
-                for (int i = 0; i < to_highlight.size(); ++i)
-                {
 #if PROTOCOL_VERSION > 348
-                    to_highlight[i].Write(container);
+
+                WriteVector<Identifier>(to_highlight, container);
 #else
-                    WriteData<VarInt>(to_highlight[i], container);
+                WriteVector<int>(to_highlight, container,
+                    [](const int& i, WriteContainer& c)
+                    {
+                        WriteData<VarInt>(i, c);
+                    }
+                );
 #endif
-                }
             }
         }
 
@@ -186,9 +187,9 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 348
             output["recipes"] = nlohmann::json::array();
-            for (int i = 0; i < recipes.size(); ++i)
+            for (const auto& r : recipes)
             {
-                output["recipes"].push_back(recipes[i].Serialize());
+                output["recipes"].push_back(r.Serialize());
             }
 #else
             output["recipes"]= recipes;
@@ -198,9 +199,9 @@ namespace ProtocolCraft
             {
 #if PROTOCOL_VERSION > 348
                 output["to_highlight"] = nlohmann::json::array();
-                for (int i = 0; i < to_highlight.size(); ++i)
+                for (const auto& t : to_highlight)
                 {
-                    output["to_highlight"].push_back(to_highlight[i].Serialize());
+                    output["to_highlight"].push_back(t.Serialize());
                 }
 #else
                 output["to_highlight"] = to_highlight;

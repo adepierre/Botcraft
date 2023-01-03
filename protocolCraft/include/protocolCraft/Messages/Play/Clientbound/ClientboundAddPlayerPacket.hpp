@@ -157,7 +157,7 @@ namespace ProtocolCraft
             WriteData<Angle>(yRot, container);
             WriteData<Angle>(xRot, container); 
 #if PROTOCOL_VERSION < 550
-                WriteByteArray(raw_metadata, container);
+            WriteByteArray(raw_metadata, container);
 #endif
         }
 

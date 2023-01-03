@@ -181,7 +181,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(static_cast<int>(action), container);
-            switch ((SetBorderType)action)
+            switch (static_cast<SetBorderType>(action))
             {
             case SetBorderType::SetSize:
                 WriteData<double>(new_size, container);

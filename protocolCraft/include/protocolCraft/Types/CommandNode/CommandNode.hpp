@@ -23,11 +23,6 @@ namespace ProtocolCraft
             flags = flags_;
         }
 
-        void SetChildrenCount(const int children_count_)
-        {
-            children_count = children_count_;
-        }
-
         void SetChildren(const std::vector<int>& children_)
         {
             children = children_;
@@ -71,11 +66,6 @@ namespace ProtocolCraft
             return flags;
         }
 
-        const int GetChildrenCount() const
-        {
-            return children_count;
-        }
-
         const std::vector<int>& GetChildren() const
         {
             return children;
@@ -117,12 +107,12 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             flags = ReadData<char>(iter, length);
-            children_count = ReadData<VarInt>(iter, length);
-            children = std::vector<int>(children_count);
-            for (int i = 0; i < children_count; ++i)
-            {
-                children[i] = ReadData<VarInt>(iter, length);
-            }
+            children = ReadVector<int>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadData<VarInt>(i, l);
+                }
+            );
             if (flags & 0x08)
             {
                 redirect_node = ReadData<VarInt>(iter, length);
@@ -152,11 +142,12 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<char>(flags, container);
-            WriteData<VarInt>(children_count, container);
-            for (int i = 0; i < children_count; ++i)
-            {
-                WriteData<VarInt>(children[i], container);
-            }
+            WriteVector<int>(children, container,
+                [](const int& i, WriteContainer& c)
+                {
+                    WriteData<VarInt>(i, c);
+                }
+            );
             if (flags & 0x08)
             {
                 WriteData<VarInt>(redirect_node, container);
@@ -186,7 +177,6 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["flags"] = flags;
-            output["children_count"] = children_count;
             output["children"] = children;
 
             if (flags & 0x08)
@@ -218,7 +208,6 @@ namespace ProtocolCraft
 
     private:
         char flags;
-        int children_count;
         std::vector<int> children;
         int redirect_node;
         std::string name;

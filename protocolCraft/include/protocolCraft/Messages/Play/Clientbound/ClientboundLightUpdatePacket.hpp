@@ -215,30 +215,10 @@ namespace ProtocolCraft
             empty_sky_Y_mask = ReadData<VarInt>(iter, length);
             empty_block_Y_mask = ReadData<VarInt>(iter, length);
 #else
-            const int sky_Y_mask_size = ReadData<VarInt>(iter, length);
-            sky_Y_mask = std::vector<unsigned long long int>(sky_Y_mask_size);
-            for (int i = 0; i < sky_Y_mask_size; ++i)
-            {
-                sky_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
-            }
-            const int block_Y_mask_size = ReadData<VarInt>(iter, length);
-            block_Y_mask = std::vector<unsigned long long int>(block_Y_mask_size);
-            for (int i = 0; i < block_Y_mask_size; ++i)
-            {
-                block_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
-            }
-            const int empty_sky_Y_mask_size = ReadData<VarInt>(iter, length);
-            empty_sky_Y_mask = std::vector<unsigned long long int>(empty_sky_Y_mask_size);
-            for (int i = 0; i < empty_sky_Y_mask_size; ++i)
-            {
-                empty_sky_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
-            }
-            const int empty_block_Y_mask_size = ReadData<VarInt>(iter, length);
-            empty_block_Y_mask = std::vector<unsigned long long int>(empty_block_Y_mask_size);
-            for (int i = 0; i < empty_block_Y_mask_size; ++i)
-            {
-                empty_block_Y_mask[i] = ReadData<unsigned long long int>(iter, length);
-            }
+            sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
+            block_Y_mask = ReadVector<unsigned long long int>(iter, length);
+            empty_sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
+            empty_block_Y_mask = ReadVector<unsigned long long int>(iter, length);
 #endif
 
 #if PROTOCOL_VERSION < 755
@@ -247,7 +227,7 @@ namespace ProtocolCraft
             {
                 if ((sky_Y_mask >> i) & 1)
                 {
-                    sky_updates.push_back(ReadCollection<char>(iter, length)); // Should always contain 2048 chars
+                    sky_updates.push_back(ReadVector<char>(iter, length)); // Should always contain 2048 chars
                 }
             }
 
@@ -256,23 +236,22 @@ namespace ProtocolCraft
             {
                 if ((block_Y_mask >> i) & 1)
                 {
-                    block_updates.push_back(ReadCollection<char>(iter, length)); // Should always contain 2048 chars
+                    block_updates.push_back(ReadVector<char>(iter, length)); // Should always contain 2048 chars
                 }
             }
 #else
-            const int sky_updates_size = ReadData<VarInt>(iter, length);
-            sky_updates = std::vector<std::vector<char> >(sky_updates_size);
-            for (int i = 0; i < sky_updates_size; ++i)
-            {
-                sky_updates[i] = ReadCollection<char>(iter, length); // Should always contain 2048 chars
-            }
-
-            const int block_updates_size = ReadData<VarInt>(iter, length);
-            block_updates = std::vector<std::vector<char> >(block_updates_size);
-            for (int i = 0; i < block_updates_size; ++i)
-            {
-                block_updates[i] = ReadCollection<char>(iter, length); // Should always contain 2048 chars
-            }
+            sky_updates = ReadVector<std::vector<char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadVector<char>(i, l); // Should always contain 2048 chars
+                }
+            );
+            block_updates = ReadVector<std::vector<char>>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadVector<char>(i, l); // Should always contain 2048 chars
+                }
+            );
 #endif
 #else
             light_data = ReadData<ClientboundLightUpdatePacketData>(iter, length);
@@ -293,43 +272,39 @@ namespace ProtocolCraft
             WriteData<VarInt>(empty_sky_Y_mask, container);
             WriteData<VarInt>(empty_block_Y_mask, container);
 #else
-            WriteData<VarInt>(static_cast<int>(sky_Y_mask.size()), container);
-            for (int i = 0; i < sky_Y_mask.size(); ++i)
-            {
-                 WriteData<unsigned long long int>(sky_Y_mask[i], container);
-            }
-            WriteData<VarInt>(static_cast<int>(block_Y_mask.size()), container);
-            for (int i = 0; i < block_Y_mask.size(); ++i)
-            {
-                WriteData<unsigned long long int>(block_Y_mask[i], container);
-            }
-            WriteData<VarInt>(static_cast<int>(empty_sky_Y_mask.size()), container);
-            for (int i = 0; i < empty_sky_Y_mask.size(); ++i)
-            {
-                WriteData<unsigned long long int>(empty_sky_Y_mask[i], container);
-            }
-            WriteData<VarInt>(static_cast<int>(empty_block_Y_mask.size()), container);
-            for (int i = 0; i < empty_block_Y_mask.size(); ++i)
-            {
-                WriteData<unsigned long long int>(empty_block_Y_mask[i], container);
-            }
+            WriteVector<unsigned long long int>(sky_Y_mask, container);
+            WriteVector<unsigned long long int>(block_Y_mask, container);
+            WriteVector<unsigned long long int>(empty_sky_Y_mask, container);
+            WriteVector<unsigned long long int>(empty_block_Y_mask, container);
 #endif
 
-#if PROTOCOL_VERSION > 754
-            WriteData<VarInt>(static_cast<int>(sky_updates.size()), container);
-#endif
-            for (int i = 0; i < sky_updates.size(); ++i)
+#if PROTOCOL_VERSION < 755
+            for (const auto& v : sky_updates)
             {
-                WriteCollection<char>(sky_updates[i], container);
+                WriteVector<char>(v, container);
             }
+#else
+            WriteVector<std::vector<char>>(sky_updates, container,
+                [](const std::vector<char>& v, WriteContainer& c)
+                {
+                    WriteVector<char>(v, c);
+                }
+            );
+#endif
 
-#if PROTOCOL_VERSION > 754
-            WriteData<VarInt>(static_cast<int>(block_updates.size()), container);
-#endif
-            for (int i = 0; i < block_updates.size(); ++i)
+#if PROTOCOL_VERSION < 755
+            for (const auto& v : block_updates)
             {
-                WriteCollection<char>(block_updates[i], container);
+                WriteVector<char>(v, container);
             }
+#else
+            WriteVector<std::vector<char>>(block_updates, container,
+                [](const std::vector<char>& v, WriteContainer& c)
+                {
+                    WriteVector<char>(v, c);
+                }
+            );
+#endif
 #else
             WriteData<ClientboundLightUpdatePacketData>(light_data, container);
 #endif
@@ -351,15 +326,15 @@ namespace ProtocolCraft
             output["empty_block_Y_mask"] = empty_block_Y_mask;
 
             output["sky_updates"] = nlohmann::json::array();
-            for (int i = 0; i < sky_updates.size(); ++i)
+            for (const auto& v : sky_updates)
             {
-                output["sky_updates"].push_back(sky_updates[i]);
+                output["sky_updates"].push_back(v);
             }
 
             output["block_updates"] = nlohmann::json::array();
-            for (int i = 0; i < block_updates.size(); ++i)
+            for (const auto& v : block_updates)
             {
-                output["block_updates"].push_back(block_updates[i]);
+                output["block_updates"].push_back(v);
             }
 #else
             output["light_data"] = light_data.Serialize();

@@ -177,17 +177,32 @@ namespace ProtocolCraft
 #endif
             power = ReadData<float>(iter, length);
 #if PROTOCOL_VERSION < 755
-            const int to_blow_size = ReadData<int>(iter, length);
+            to_blow = ReadVector<NetworkPosition, int>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    NetworkPosition output;
+
+                    output.SetX(static_cast<int>(ReadData<char>(i, l)));
+                    output.SetY(static_cast<int>(ReadData<char>(i, l)));
+                    output.SetZ(static_cast<int>(ReadData<char>(i, l)));
+
+                    return output;
+                }
+            );
 #else
-            const int to_blow_size = ReadData<VarInt>(iter, length);
+            to_blow = ReadVector<NetworkPosition>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    NetworkPosition output;
+
+                    output.SetX(static_cast<int>(ReadData<char>(i, l)));
+                    output.SetY(static_cast<int>(ReadData<char>(i, l)));
+                    output.SetZ(static_cast<int>(ReadData<char>(i, l)));
+
+                    return output;
+                }
+            );
 #endif
-            to_blow = std::vector<NetworkPosition>(to_blow_size);
-            for (int i = 0; i < to_blow_size; ++i)
-            {
-                to_blow[i].SetX(static_cast<int>(ReadData<char>(iter, length)));
-                to_blow[i].SetY(static_cast<int>(ReadData<char>(iter, length)));
-                to_blow[i].SetZ(static_cast<int>(ReadData<char>(iter, length)));
-            }
             knockback_x = ReadData<float>(iter, length);
             knockback_y = ReadData<float>(iter, length);
             knockback_z = ReadData<float>(iter, length);
@@ -206,16 +221,24 @@ namespace ProtocolCraft
 #endif
             WriteData<float>(power, container);
 #if PROTOCOL_VERSION < 755
-            WriteData<int>(static_cast<int>(to_blow.size()), container);
+            WriteVector<NetworkPosition, int>(to_blow, container,
+                [](const NetworkPosition& n, WriteContainer& c)
+                {
+                    WriteData<char>(static_cast<char>(n.GetX()), c);
+                    WriteData<char>(static_cast<char>(n.GetY()), c);
+                    WriteData<char>(static_cast<char>(n.GetZ()), c);
+                }
+            );
 #else
-            WriteData<VarInt>(static_cast<int>(to_blow.size()), container);
+            WriteVector<NetworkPosition>(to_blow, container,
+                [](const NetworkPosition& n, WriteContainer& c)
+                {
+                    WriteData<char>(static_cast<char>(n.GetX()), c);
+                    WriteData<char>(static_cast<char>(n.GetY()), c);
+                    WriteData<char>(static_cast<char>(n.GetZ()), c);
+                }
+            );
 #endif
-            for (int i = 0; i < to_blow.size(); ++i)
-            {
-                WriteData<char>(to_blow[i].GetX(), container);
-                WriteData<char>(to_blow[i].GetY(), container);
-                WriteData<char>(to_blow[i].GetZ(), container);
-            }
             WriteData<float>(knockback_x, container);
             WriteData<float>(knockback_y, container);
             WriteData<float>(knockback_z, container);
@@ -230,9 +253,9 @@ namespace ProtocolCraft
             output["z"] = z;
             output["power"] = power;
             output["to_blow"] = nlohmann::json::array();
-            for (int i = 0; i < to_blow.size(); ++i)
+            for (const auto& t : to_blow)
             {
-                output["to_blow"].push_back(to_blow[i].Serialize());
+                output["to_blow"].push_back(t.Serialize());
             }
             output["knockback_x"] = knockback_x;
             output["knockback_y"] = knockback_y;

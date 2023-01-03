@@ -61,25 +61,26 @@ namespace ProtocolCraft
         {
             uuid = ReadData<UUID>(iter, length);
             name = ReadData<std::string>(iter, length);
-            properties.clear();
-            const int properties_length = ReadData<VarInt>(iter, length);
-            for (size_t i = 0; i < properties_length; ++i)
-            {
-                GameProfileProperty prop;
-                prop = ReadData<GameProfileProperty>(iter, length);
-                properties[prop.GetName()] = prop;
-            }
+            properties = ReadMap<std::string, GameProfileProperty>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    const GameProfileProperty prop = ReadData<GameProfileProperty>(i, l);
+
+                    return std::make_pair(prop.GetName(), prop);
+                }
+            );
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<UUID>(uuid, container);
             WriteData<std::string>(name, container);
-            WriteData<VarInt>(static_cast<int>(properties.size()), container);
-            for (const auto& p : properties)
-            {
-                WriteData<GameProfileProperty>(p.second, container);
-            }
+            WriteMap<std::string, GameProfileProperty>(properties, container,
+                [](const std::pair<const std::string, GameProfileProperty>& p, WriteContainer& c)
+                {
+                    WriteData<GameProfileProperty>(p.second, c);
+                }
+            );
         }
 
         virtual const nlohmann::json SerializeImpl() const override

@@ -167,8 +167,7 @@ namespace ProtocolCraft
 #else
             salt = ReadData<long long int>(iter, length);
 #if PROTOCOL_VERSION < 761
-            const int signature_size = ReadData<VarInt>(iter, length);
-            signature = ReadByteArray(iter, length, signature_size);
+            signature = ReadVector<unsigned char>(iter, length);
 #else
             signature = ReadOptional<std::vector<unsigned char>>(iter, length,
                 [](ReadIterator& i, size_t& l)
@@ -198,8 +197,7 @@ namespace ProtocolCraft
             WriteData<long long int>(salt, container);
 
 #if PROTOCOL_VERSION < 761
-            WriteData<VarInt>(static_cast<int>(signature.size()), container);
-            WriteByteArray(signature, container);
+            WriteVector<unsigned char>(signature, container);
 #else
             WriteOptional<std::vector<unsigned char>>(signature, container,
                 [](const std::vector<unsigned char>& v, WriteContainer& c)

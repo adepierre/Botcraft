@@ -102,22 +102,23 @@ namespace ProtocolCraft
             {
                 const UUID uuid = ReadData<UUID>(iter, length);
                 PlayerInfoUpdateEntry& entry = entries[uuid];
-                for (size_t a = 0; a < actions.size(); ++a)
+                for (const auto a : actions)
                 {
-                    switch (actions[a])
+                    switch (a)
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
                     {
                         entry.game_profile.SetUUID(uuid);
                         entry.game_profile.SetName(ReadData<std::string>(iter, length));
-                        const int properties_length = ReadData<VarInt>(iter, length);
-                        std::map<std::string, GameProfileProperty> properties;
-                        for (size_t i = 0; i < properties_length; ++i)
-                        {
-                            GameProfileProperty prop = ReadData<GameProfileProperty>(iter, length);
-                            properties[prop.GetName()] = prop;
-                        }
-                        entry.game_profile.SetProperties(properties);
+                        entry.game_profile.SetProperties(
+                            ReadMap<std::string, GameProfileProperty>(iter, length,
+                                [](ReadIterator& i, size_t& l)
+                                {
+                                    const GameProfileProperty prop = ReadData<GameProfileProperty>(i, l);
+                                    return std::make_pair(prop.GetName(), prop);
+                                }
+                                )
+                        );
                         break;
                     }
                     case PlayerInfoUpdateAction::InitializeChat:
@@ -146,42 +147,43 @@ namespace ProtocolCraft
         {
             constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
             std::bitset<bitset_size> bitset;
-            for (size_t i = 0; i < actions.size(); ++i)
+            for (const auto a : actions)
             {
-                bitset.set(static_cast<size_t>(actions[i]), true);
+                bitset.set(static_cast<size_t>(a), true);
             }
             WriteBitset<bitset_size>(bitset, container);
 
             WriteData<VarInt>(static_cast<int>(entries.size()), container);
-            for (auto it = entries.begin(); it != entries.end(); ++it)
+            for (const auto& p : entries)
             {
-                WriteData<UUID>(it->first, container);
-                for (size_t a = 0; a < actions.size(); ++a)
+                WriteData<UUID>(p.first, container);
+                for (const auto a : actions)
                 {
-                    switch (actions[a])
+                    switch (a)
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
-                        WriteData<std::string>(it->second.game_profile.GetName(), container);
-                        WriteData<VarInt>(static_cast<int>(it->second.game_profile.GetProperties().size()), container);
-                        for (auto it2 = it->second.game_profile.GetProperties().begin(); it2 != it->second.game_profile.GetProperties().end(); ++it)
-                        {
-                            WriteData<GameProfileProperty>(it2->second, container);
-                        }
+                        WriteData<std::string>(p.second.game_profile.GetName(), container);
+                        WriteMap<std::string, GameProfileProperty>(p.second.game_profile.GetProperties(), container,
+                            [](const std::pair<const std::string, GameProfileProperty>& i, WriteContainer& c)
+                            {
+                                WriteData<GameProfileProperty>(i.second, c);
+                            }
+                        );
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
-                        WriteOptional<RemoteChatSessionData>(it->second.chat_session, container);
+                        WriteOptional<RemoteChatSessionData>(p.second.chat_session, container);
                         break;
                     case PlayerInfoUpdateAction::UpdateGameMode:
-                        WriteData<VarInt>(it->second.game_mode, container);
+                        WriteData<VarInt>(p.second.game_mode, container);
                         break;
                     case PlayerInfoUpdateAction::UpdateListed:
-                        WriteData<bool>(it->second.listed, container);
+                        WriteData<bool>(p.second.listed, container);
                         break;
                     case PlayerInfoUpdateAction::UpdateLatency:
-                        WriteData<VarInt>(it->second.latency, container);
+                        WriteData<VarInt>(p.second.latency, container);
                         break;
                     case PlayerInfoUpdateAction::UpdateDisplayName:
-                        WriteOptional<Chat>(it->second.display_name, container);
+                        WriteOptional<Chat>(p.second.display_name, container);
                         break;
                     default:
                         break;
@@ -195,42 +197,42 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["actions"] = nlohmann::json::array();
-            for (size_t i = 0; i < actions.size(); ++i)
+            for (const auto a : actions)
             {
-                output["actions"].push_back(static_cast<int>(actions[i]));
+                output["actions"].push_back(static_cast<int>(a));
             }
 
             output["entries"] = nlohmann::json::array();
-            for (auto it = entries.begin(); it != entries.end(); ++it)
+            for (const auto& p : entries)
             {
                 nlohmann::json entry = nlohmann::json::object();
-                entry["uuid"] = it->first;
-                for (size_t a = 0; a < actions.size(); ++a)
+                entry["uuid"] = p.first;
+                for (const auto a : actions)
                 {
-                    switch (actions[a])
+                    switch (a)
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
-                        entry["game_profile"] = it->second.game_profile.Serialize();
+                        entry["game_profile"] = p.second.game_profile.Serialize();
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
-                        if (it->second.chat_session.has_value())
+                        if (p.second.chat_session.has_value())
                         {
-                            entry["chat_session"] = it->second.chat_session.value().Serialize();
+                            entry["chat_session"] = p.second.chat_session.value().Serialize();
                         }
                         break;
                     case PlayerInfoUpdateAction::UpdateGameMode:
-                        entry["game_mode"] = it->second.game_mode;
+                        entry["game_mode"] = p.second.game_mode;
                         break;
                     case PlayerInfoUpdateAction::UpdateListed:
-                        entry["listed"] = it->second.listed;
+                        entry["listed"] = p.second.listed;
                         break;
                     case PlayerInfoUpdateAction::UpdateLatency:
-                        entry["latency"] = it->second.latency;
+                        entry["latency"] = p.second.latency;
                         break;
                     case PlayerInfoUpdateAction::UpdateDisplayName:
-                        if (it->second.display_name.has_value())
+                        if (p.second.display_name.has_value())
                         {
-                            entry["display_name"] = it->second.display_name.value().Serialize();
+                            entry["display_name"] = p.second.display_name.value().Serialize();
                         }
                         break;
                     default:

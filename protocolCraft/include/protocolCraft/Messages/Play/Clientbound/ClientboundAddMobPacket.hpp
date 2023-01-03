@@ -193,7 +193,7 @@ namespace ProtocolCraft
             yd = ReadData<short>(iter, length);
             zd = ReadData<short>(iter, length);
 #if PROTOCOL_VERSION < 550
-                raw_metadata = ReadByteArray(iter, length, length);
+            raw_metadata = ReadByteArray(iter, length, length);
 #endif
         }
 

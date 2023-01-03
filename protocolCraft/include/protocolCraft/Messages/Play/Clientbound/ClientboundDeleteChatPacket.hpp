@@ -64,8 +64,7 @@ namespace ProtocolCraft
                 message_signature = ReadByteArray(iter, length, 256);
             }
 #else
-            const int size = ReadData<VarInt>(iter, length);
-            message_signature = ReadByteArray(iter, length, size);
+            message_signature = ReadVector<unsigned char>(iter, length);
 #endif
         }
 
@@ -73,13 +72,12 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION > 760
             WriteData<VarInt>(message_signature_id + 1, container);
-            if (message_signature.size() > 0)
+            if (message_signature_id == -1)
             {
                 WriteByteArray(message_signature, container);
             }
 #else
-            WriteData<VarInt>(static_cast<int>(message_signature.size()), container);
-            WriteByteArray(message_signature, container);
+            WriteVector<unsigned char>(message_signature, container);
 #endif
         }
 

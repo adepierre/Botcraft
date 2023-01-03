@@ -98,7 +98,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             owner = ReadData<std::string>(iter, length);
-            method = (SetScoreMethod)ReadData<char>(iter, length);
+            method = static_cast<SetScoreMethod>(ReadData<char>(iter, length));
             objective_name = ReadData<std::string>(iter, length);
             if (method != SetScoreMethod::Remove)
             {

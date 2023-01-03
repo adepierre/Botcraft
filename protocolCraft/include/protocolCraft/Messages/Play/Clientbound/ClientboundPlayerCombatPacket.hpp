@@ -38,9 +38,9 @@ namespace ProtocolCraft
 
         }
 
-        void SetEvent(const int event_)
+        void SetEvent(const int event__)
         {
-            event = event_;
+            event_ = event__;
         }
 
         void SetPlayerId(const int player_id_)
@@ -66,7 +66,7 @@ namespace ProtocolCraft
 
         const int GetEvent() const
         {
-            return event;
+            return event_;
         }
 
         const int GetPlayerId() const
@@ -93,14 +93,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            event = ReadData<VarInt>(iter, length);
+            event_ = ReadData<VarInt>(iter, length);
 
-            if (event == 1)
+            if (event_ == 1)
             {
                 duration = ReadData<VarInt>(iter, length);
                 killer_id = ReadData<int>(iter, length);
             }
-            else if (event == 2)
+            else if (event_ == 2)
             {
                 player_id = ReadData<VarInt>(iter, length);
                 killer_id = ReadData<int>(iter, length);
@@ -110,13 +110,13 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(event, container);
-            if (event == 1)
+            WriteData<VarInt>(event_, container);
+            if (event_ == 1)
             {
                 WriteData<VarInt>(duration, container);
                 WriteData<int>(killer_id, container);
             }
-            else if (event == 2)
+            else if (event_ == 2)
             {
                 WriteData<VarInt>(player_id, container);
                 WriteData<int>(killer_id, container);
@@ -128,13 +128,13 @@ namespace ProtocolCraft
         {
             nlohmann::json output;
 
-            output["event"] = event;
-            if (event == 1)
+            output["event"] = event_;
+            if (event_ == 1)
             {
                 output["duration"] = duration;
                 output["killer_id"] = killer_id;
             }
-            else if (event == 2)
+            else if (event_ == 2)
             {
                 output["player_id"] = player_id;
                 output["killer_id"] = killer_id;
@@ -145,7 +145,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int event;
+        int event_;
         int player_id;
         int killer_id;
         int duration;

@@ -3,6 +3,8 @@
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
+#include <array>
+
 namespace ProtocolCraft
 {
     class ServerboundSignUpdatePacket : public BaseMessage<ServerboundSignUpdatePacket>
@@ -52,7 +54,7 @@ namespace ProtocolCraft
             pos = pos_;
         }
 
-        void SetLines(const std::vector<std::string>& lines_)
+        void SetLines(const std::array<std::string, 4>& lines_)
         {
             lines = lines_;
         }
@@ -63,7 +65,7 @@ namespace ProtocolCraft
             return pos;
         }
 
-        const std::vector<std::string>& GetLines() const
+        const std::array<std::string, 4>& GetLines() const
         {
             return lines;
         }
@@ -73,7 +75,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             pos = ReadData<NetworkPosition>(iter, length);
-            lines = std::vector<std::string>(4);
+            lines = std::array<std::string, 4>();
             for (int i = 0; i < 4; ++i)
             {
                 lines[i] = ReadData<std::string>(iter, length);
@@ -101,7 +103,7 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
-        std::vector<std::string> lines;
+        std::array<std::string, 4> lines;
 
     };
 } //ProtocolCraft

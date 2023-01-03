@@ -33,11 +33,6 @@ namespace ProtocolCraft
         {
             value = value_;
         }
-
-        void SetNumberOfModifiers(const int number_of_modifiers_)
-        {
-            number_of_modifiers = number_of_modifiers_;
-        }
         
         void SetModifiers(const std::vector<EntityModifierData>& modifiers_)
         {
@@ -61,11 +56,6 @@ namespace ProtocolCraft
         {
             return value;
         }
-
-        const int GetNumberOfModifiers() const
-        {
-            return number_of_modifiers;
-        }
         
         const std::vector<EntityModifierData>& GetModifiers() const
         {
@@ -81,12 +71,7 @@ namespace ProtocolCraft
             key = ReadData<std::string>(iter, length);
 #endif
             value = ReadData<double>(iter, length);
-            number_of_modifiers = ReadData<VarInt>(iter, length);
-            modifiers = std::vector<EntityModifierData>(number_of_modifiers);
-            for (int i = 0; i < number_of_modifiers; ++i)
-            {
-                modifiers[i].Read(iter, length);
-            }
+            modifiers = ReadVector<EntityModifierData>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -97,11 +82,7 @@ namespace ProtocolCraft
             WriteData<std::string>(key, container);
 #endif
             WriteData<double>(value, container);
-            WriteData<VarInt>(number_of_modifiers, container);
-            for (int i = 0; i < number_of_modifiers; ++i)
-            {
-                modifiers[i].Write(container);
-            }
+            WriteVector<EntityModifierData>(modifiers, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -114,12 +95,11 @@ namespace ProtocolCraft
             output["key"] = key;
 #endif
             output["value"] = value;
-            output["number_of_modifiers"] = number_of_modifiers;
 
             output["modifiers"] = nlohmann::json::array();
-            for (int i = 0; i < number_of_modifiers; ++i)
+            for (const auto& m : modifiers)
             {
-                output["modifiers"].push_back(modifiers[i].Serialize());
+                output["modifiers"].push_back(m.Serialize());
             }
 
             return output;
@@ -132,7 +112,6 @@ namespace ProtocolCraft
         std::string key;
 #endif
         double value;
-        int number_of_modifiers;
         std::vector<EntityModifierData> modifiers;
     };
 }

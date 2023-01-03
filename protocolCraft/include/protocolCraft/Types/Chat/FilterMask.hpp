@@ -41,7 +41,7 @@ namespace ProtocolCraft
             type = ReadData<VarInt>(iter, length);
             if (type == 2)
             {
-                mask = ReadCollection<long long int>(iter, length);
+                mask = ReadVector<long long int>(iter, length);
             }
         }
 
@@ -50,7 +50,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(type, container);
             if (type == 2)
             {
-                WriteCollection<long long int>(mask, container);
+                WriteVector<long long int>(mask, container);
             }
         }
 

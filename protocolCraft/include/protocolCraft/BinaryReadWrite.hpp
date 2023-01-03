@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <optional>
 #include <functional>
+#include <map>
 #if PROTOCOL_VERSION > 760
 #include <bitset>
 #endif
@@ -62,7 +63,7 @@ namespace ProtocolCraft
     {
         if (length < sizeof(T))
         {
-            throw(std::runtime_error("Wrong input size in ReadData"));
+            throw std::runtime_error("Not enough input in ReadData");
         }
         else
         {
@@ -125,13 +126,13 @@ namespace ProtocolCraft
         std::vector<unsigned char> output(sizeof(T));
 
         // Don't need to change endianess of char!
-        if (sizeof(T) > 1)
+        if constexpr(sizeof(T) > 1)
         {
-            // The compiler should(?) optimize that
-            // This check doesn't work if int and char
+            // Little endian check
+            // It doesn't work if int and char
             // have the same size, but I guess this is not
             // the only thing that souldn't work in this case
-            const int num = 1;
+            constexpr int num = 1;
             if (*(char*)&num == 1)
             {
                 // Little endian
@@ -195,8 +196,9 @@ namespace ProtocolCraft
         }
     }
 
+
     template<typename T, typename SizeType = VarInt>
-    std::vector<T> ReadCollection(ReadIterator& iter, size_t& length)
+    std::vector<T> ReadVector(ReadIterator& iter, size_t& length)
     {
         const int output_length = ReadData<SizeType>(iter, length);
 
@@ -204,13 +206,18 @@ namespace ProtocolCraft
 
         if constexpr(sizeof(T) == 1 && !std::is_base_of<NetworkType, T>::value)
         {
+            if (length < output_length)
+            {
+                throw std::runtime_error("Not enough input in ReadVector");
+            }
+
             memcpy(output.data(), &(*iter), output_length);
             length -= output_length;
             iter += output_length;
         }
         else
         {
-            for (size_t i = 0; i < output_length; ++i)
+            for (int i = 0; i < output_length; ++i)
             {
                 output[i] = ReadData<T>(iter, length);
             }
@@ -220,12 +227,12 @@ namespace ProtocolCraft
     }
 
     template<typename T, typename SizeType = VarInt>
-    std::vector<T> ReadCollection(ReadIterator& iter, size_t& length, const std::function<T(ReadIterator&, size_t&)>& read_func)
+    std::vector<T> ReadVector(ReadIterator& iter, size_t& length, const std::function<T(ReadIterator&, size_t&)>& read_func)
     {
         const int output_length = ReadData<SizeType>(iter, length);
 
         std::vector<T> output(output_length);
-        for (size_t i = 0; i < output_length; ++i)
+        for (int i = 0; i < output_length; ++i)
         {
             output[i] = read_func(iter, length);
         }
@@ -234,31 +241,84 @@ namespace ProtocolCraft
     }
 
     template<typename T, typename SizeType = VarInt>
-    void WriteCollection(const std::vector<T>& value, WriteContainer& container)
+    void WriteVector(const std::vector<T>& value, WriteContainer& container)
     {
         WriteData<SizeType>(static_cast<int>(value.size()), container);
-        if constexpr(sizeof(T) == 1 && !std::is_base_of<NetworkType, T>::value)
+        if constexpr (sizeof(T) == 1 && !std::is_base_of<NetworkType, T>::value)
         {
             container.insert(container.end(), value.begin(), value.end());
         }
         else
         {
-            for (size_t i = 0; i < value.size(); ++i)
+            for (const auto& e: value)
             {
-                WriteData<T>(value[i], container);
+                WriteData<T>(e, container);
             }
         }
     }
 
     template<typename T, typename SizeType = VarInt>
-    void WriteCollection(const std::vector<T>& value, WriteContainer& container, const std::function<void(const T&, WriteContainer&)>& write_func)
+    void WriteVector(const std::vector<T>& value, WriteContainer& container, const std::function<void(const T&, WriteContainer&)>& write_func)
     {
         WriteData<SizeType>(static_cast<int>(value.size()), container);
-        for (size_t i = 0; i < value.size(); ++i)
+        for (const auto& e: value)
         {
-            write_func(value[i], container);
+            write_func(e, container);
         }
     }
+
+
+    template<typename K, typename V, typename SizeType = VarInt>
+    std::map<K, V> ReadMap(ReadIterator& iter, size_t& length)
+    {
+        const int output_length = ReadData<SizeType>(iter, length);
+
+        std::map<K, V> output;
+        for (int i = 0; i < output_length; ++i)
+        {
+            const K key = ReadData<K>(iter, length);
+            const V val = ReadData<V>(iter, length);
+            output.insert(std::make_pair(key, val));
+        }
+
+        return output;
+    }
+
+    template<typename K, typename V, typename SizeType = VarInt>
+    std::map<K, V> ReadMap(ReadIterator& iter, size_t& length, const std::function<std::pair<const K, V>(ReadIterator&, size_t&)>& read_func)
+    {
+        const int output_length = ReadData<SizeType>(iter, length);
+
+        std::map<K, V> output;
+        for (int i = 0; i < output_length; ++i)
+        {
+            output.insert(read_func(iter, length));
+        }
+
+        return output;
+    }
+
+    template<typename K, typename V, typename SizeType = VarInt>
+    void WriteMap(const std::map<K, V>& value, WriteContainer& container)
+    {
+        WriteData<SizeType>(static_cast<int>(value.size()), container);
+        for (const auto& p : value)
+        {
+            WriteData<K>(p.first, container);
+            WriteData<V>(p.second, container);
+        }
+    }
+
+    template<typename K, typename V, typename SizeType = VarInt>
+    void WriteMap(const std::map<K, V>& value, WriteContainer& container, const std::function<void(const std::pair<const K, V>&, WriteContainer&)>& write_func)
+    {
+        WriteData<SizeType>(static_cast<int>(value.size()), container);
+        for (const auto& p : value)
+        {
+            write_func(p, container);
+        }
+    }
+
 
 #if PROTOCOL_VERSION > 760
     template<size_t N>

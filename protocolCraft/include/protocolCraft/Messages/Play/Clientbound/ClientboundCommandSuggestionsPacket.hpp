@@ -116,7 +116,7 @@ namespace ProtocolCraft
             start = ReadData<VarInt>(iter, length);
             length_ = ReadData<VarInt>(iter, length);
 #endif
-            int count = ReadData<VarInt>(iter, length);
+            const int count = ReadData<VarInt>(iter, length);
             suggestions = std::vector<std::string>(count);
 #if PROTOCOL_VERSION > 356
             tooltips = std::vector<std::optional<Chat>>(count);
@@ -163,9 +163,9 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 356
             output["tooltips"] = nlohmann::json::array();
-            for (int i = 0; i < tooltips.size(); ++i) 
+            for (const auto& t : tooltips)
             {
-                output["tooltips"].push_back(tooltips[i].has_value() ? tooltips[i].value().Serialize() : nlohmann::json());
+                output["tooltips"].push_back(t.has_value() ? t.value().Serialize() : nlohmann::json());
             }
 #endif
 

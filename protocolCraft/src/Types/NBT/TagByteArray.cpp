@@ -29,12 +29,12 @@ namespace ProtocolCraft
 
     void TagByteArray::ReadImpl(ReadIterator &iterator, size_t &length)
     {
-        ReadCollection<char, int>(iterator, length);
+        ReadVector<char, int>(iterator, length);
     }
 
     void TagByteArray::WriteImpl(WriteContainer &container) const
     {
-        WriteCollection<char, int>(values, container);
+        WriteVector<char, int>(values, container);
     }
 
     const nlohmann::json TagByteArray::SerializeImpl() const

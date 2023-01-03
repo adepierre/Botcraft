@@ -117,11 +117,8 @@ namespace ProtocolCraft
                 fade_out_time = ReadData<int>(iter, length);
                 break;
             case SetTitlesType::Clear:
-
                 break;
-
             case SetTitlesType::Reset:
-
                 break;
             default:
                 break;
@@ -144,11 +141,8 @@ namespace ProtocolCraft
                 WriteData<int>(fade_out_time, container);
                 break;
             case SetTitlesType::Clear:
-
                 break;
-
             case SetTitlesType::Reset:
-
                 break;
             default:
                 break;

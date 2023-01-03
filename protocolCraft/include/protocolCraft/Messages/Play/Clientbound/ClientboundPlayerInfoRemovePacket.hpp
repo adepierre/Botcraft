@@ -43,21 +43,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            const int profile_ids_length = ReadData<VarInt>(iter, length);
-            profile_ids = std::vector<UUID>(profile_ids_length);
-            for (size_t i = 0; i < profile_ids_length; ++i)
-            {
-                profile_ids[i] = ReadData<UUID>(iter, length);
-            }
+            profile_ids = ReadVector<UUID>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<VarInt>(static_cast<int>(profile_ids.size()), container);
-            for (size_t i = 0; i < profile_ids.size(); ++i)
-            {
-                WriteData<UUID>(profile_ids[i], container);
-            }
+            WriteVector<UUID>(profile_ids, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -65,9 +56,9 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["profile_ids"] = nlohmann::json::array();
-            for (size_t i = 0; i < profile_ids.size(); ++i)
+            for (const auto& p : profile_ids)
             {
-                output["profile_ids"].push_back(profile_ids[i]);
+                output["profile_ids"].push_back(p);
             }
 
             return output;

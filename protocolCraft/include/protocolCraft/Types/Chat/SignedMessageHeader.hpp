@@ -42,7 +42,7 @@ namespace ProtocolCraft
             previous_signature = ReadOptional<std::vector<unsigned char>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
-                    return ReadCollection<unsigned char>(i, l);
+                    return ReadVector<unsigned char>(i, l);
                 }
             );
             sender = ReadData<UUID>(iter, length);
@@ -53,7 +53,7 @@ namespace ProtocolCraft
             WriteOptional<std::vector<unsigned char>>(previous_signature, container,
                 [](const std::vector<unsigned char>& v, WriteContainer& c)
                 {
-                    WriteCollection<unsigned char>(v, c);
+                    WriteVector<unsigned char>(v, c);
                 }
             );
             WriteData<UUID>(sender, container);

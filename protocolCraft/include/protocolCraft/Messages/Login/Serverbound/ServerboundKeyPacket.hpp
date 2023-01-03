@@ -77,8 +77,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            const int key_bytes_length = ReadData<VarInt>(iter, length);
-            key_bytes = ReadByteArray(iter, length, key_bytes_length);
+            key_bytes = ReadVector<unsigned char>(iter, length);
 #if PROTOCOL_VERSION < 761
 #if PROTOCOL_VERSION > 758
             const bool has_nonce = ReadData<bool>(iter, length);
@@ -92,19 +91,16 @@ namespace ProtocolCraft
                 salt_signature = ReadData<SaltSignature>(iter, length);
             }
 #else
-            const int nonce_length = ReadData<VarInt>(iter, length);
-            nonce = ReadByteArray(iter, length, nonce_length);
+            nonce = ReadVector<unsigned char>(iter, length);
 #endif
 #else
-            const int encrypted_challenge_length = ReadData<VarInt>(iter, length);
-            encrypted_challenge = ReadByteArray(iter, length, encrypted_challenge_length);
+            encrypted_challenge = ReadVector<unsigned char>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<VarInt>(static_cast<int>(key_bytes.size()), container);
-            WriteByteArray(key_bytes, container);
+            WriteVector<unsigned char>(key_bytes, container);
 #if PROTOCOL_VERSION < 761
 #if PROTOCOL_VERSION > 758
             WriteData<bool>(salt_signature.GetSignature().empty(), container);
@@ -118,12 +114,10 @@ namespace ProtocolCraft
                 WriteData<SaltSignature>(salt_signature, container);
             }
 #else
-            WriteData<VarInt>(static_cast<int>(nonce.size()), container);
-            WriteByteArray(nonce, container);
+            WriteVector<unsigned char>(nonce, container);
 #endif
 #else
-            WriteData<VarInt>(static_cast<int>(encrypted_challenge.size()), container);
-            WriteByteArray(encrypted_challenge, container);
+            WriteVector<unsigned char>(encrypted_challenge, container);
 #endif
         }
 

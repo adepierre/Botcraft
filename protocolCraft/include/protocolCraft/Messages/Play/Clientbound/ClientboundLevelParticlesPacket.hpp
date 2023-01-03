@@ -193,7 +193,6 @@ namespace ProtocolCraft
 #else
             const ParticleType particle_type = static_cast<ParticleType>(static_cast<int>(ReadData<VarInt>(iter, length)));
 #endif
-            particle = Particle::CreateParticle(particle_type);
             override_limiter = ReadData<bool>(iter, length);
 #if PROTOCOL_VERSION < 569
             x = ReadData<float>(iter, length);
@@ -209,6 +208,7 @@ namespace ProtocolCraft
             z_dist = ReadData<float>(iter, length);
             max_speed = ReadData<float>(iter, length);
             count = ReadData<int>(iter, length);
+            particle = Particle::CreateParticle(particle_type);
             particle->Read(iter, length);
         }
 

@@ -71,22 +71,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            const int nodes_size = ReadData<VarInt>(iter, length);
-            nodes = std::vector<CommandNode>(nodes_size);
-            for (int i = 0; i < nodes_size; ++i)
-            {
-                nodes[i].Read(iter, length);
-            }
+            nodes = ReadVector<CommandNode>(iter, length);
             root_index = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(static_cast<int>(nodes.size()), container);
-            for (int i = 0; i < nodes.size(); ++i)
-            {
-                nodes[i].Write(container);
-            }
+            WriteVector<CommandNode>(nodes, container);
             WriteData<VarInt>(root_index, container);
         }
 
@@ -95,9 +86,9 @@ namespace ProtocolCraft
             nlohmann::json output;
 
             output["nodes"] = nlohmann::json::array();
-            for (int i = 0; i < nodes.size(); ++i)
+            for (const auto& n : nodes)
             {
-                output["nodes"].push_back(nodes[i].Serialize());
+                output["nodes"].push_back(n.Serialize());
             }
             output["root_index"] = root_index;
 

@@ -25,19 +25,9 @@ namespace ProtocolCraft
             display_data = display_data_;
         }
 
-        void SetNumberOfCriteria(const int number_of_criteria_)
-        {
-            number_of_criteria = number_of_criteria_;
-        }
-
         void SetCriteria(const std::vector<Identifier>& criteria_)
         {
             criteria = criteria_;
-        }
-
-        void SetArrayLength(const int array_length_)
-        {
-            array_length = array_length_;
         }
         
         void SetRequirements(const std::vector<std::vector<std::string> >& requirements_)
@@ -56,19 +46,9 @@ namespace ProtocolCraft
             return display_data;
         }
 
-        const int GetNumberOfCriteria() const
-        {
-            return number_of_criteria;
-        }
-
         const std::vector<Identifier>& GetCriteria() const
         {
             return criteria;
-        }
-
-        const int GetArrayLength() const
-        {
-            return array_length;
         }
         
         const std::vector<std::vector<std::string> >& GetRequirements() const
@@ -81,43 +61,26 @@ namespace ProtocolCraft
         {
             parent_id = ReadOptional<Identifier>(iter, length);
             display_data = ReadOptional<AdvancementDisplay>(iter, length);
-            number_of_criteria = ReadData<VarInt>(iter, length);
-            criteria = std::vector<Identifier>(number_of_criteria);
-            for (int i = 0; i < number_of_criteria; ++i)
-            {
-                criteria[i].Read(iter, length);
-            }
-            array_length = ReadData<VarInt>(iter, length);
-            requirements = std::vector<std::vector<std::string> >(array_length);
-            for (int i = 0; i < array_length; ++i)
-            {
-                const int array_length2 = ReadData<VarInt>(iter, length);
-                requirements[i] = std::vector<std::string>(array_length2);
-                for (int j = 0; j < array_length2; ++j)
+            criteria = ReadVector<Identifier>(iter, length);
+            requirements = ReadVector<std::vector<std::string>>(iter, length,
+                [](ReadIterator& i, size_t& l)
                 {
-                    requirements[i][j] = ReadData<std::string>(iter, length);
+                    return ReadVector<std::string>(i, l);
                 }
-            }
+            );
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteOptional<Identifier>(parent_id, container);
             WriteOptional<AdvancementDisplay>(display_data, container);
-            WriteData<VarInt>(number_of_criteria, container);
-            for (int i = 0; i < number_of_criteria; ++i)
-            {
-                criteria[i].Write(container);
-            }
-            WriteData<VarInt>(array_length, container);
-            for (int i = 0; i < array_length; ++i)
-            {
-                WriteData<VarInt>(static_cast<int>(requirements[i].size()), container);
-                for (int j = 0; j < requirements[i].size(); ++j)
+            WriteVector<Identifier>(criteria, container);
+            WriteVector<std::vector<std::string>>(requirements, container,
+                [](const std::vector<std::string>& v, WriteContainer& c)
                 {
-                    WriteData<std::string>(requirements[i][j], container);
+                    WriteVector<std::string>(v, c);
                 }
-            }
+            );
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -133,20 +96,22 @@ namespace ProtocolCraft
             {
                 output["display_data"] = display_data.value().Serialize();
             }
-            output["number_of_criteria"] = number_of_criteria;
             
             output["criteria"] = nlohmann::json::array();
-            for (int i = 0; i < number_of_criteria; ++i)
+            for (const auto& c : criteria)
             {
-                output["criteria"].push_back(criteria[i].Serialize());
+                output["criteria"].push_back(c.Serialize());
             }
-
-            output["array_length"] = array_length;
             
             output["requirements"] = nlohmann::json::array();
-            for (int i = 0; i < array_length; ++i)
+            for (const auto& r : requirements)
             {
-                output.push_back(requirements[i]);
+                nlohmann::json current_array = nlohmann::json::array();
+                for (const auto& r2 : r)
+                {
+                    current_array.push_back(r2);
+                }
+                output.push_back(current_array);
             }
 
             return output;
@@ -155,9 +120,7 @@ namespace ProtocolCraft
     private:
         std::optional<Identifier> parent_id;
         std::optional<AdvancementDisplay> display_data;
-        int number_of_criteria;
         std::vector<Identifier> criteria;
-        int array_length;
         std::vector<std::vector<std::string> > requirements;
     };
 }

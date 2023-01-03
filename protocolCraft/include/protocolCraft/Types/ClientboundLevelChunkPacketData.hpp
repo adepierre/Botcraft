@@ -50,28 +50,15 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             heightmaps = ReadData<NBT>(iter, length);
-
-            const int buffer_size = ReadData<VarInt>(iter, length);
-            buffer = ReadByteArray(iter, length, buffer_size);
-
-            const int num_block_entities_data = ReadData<VarInt>(iter, length);
-            block_entities_data = std::vector<BlockEntityInfo>(num_block_entities_data);
-            for (int i = 0; i < num_block_entities_data; ++i)
-            {
-                block_entities_data[i].Read(iter, length);
-            }
+            buffer = ReadVector<unsigned char>(iter, length);
+            block_entities_data = ReadVector<BlockEntityInfo>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<NBT>(heightmaps, container);
-            WriteData<VarInt>(static_cast<int>(buffer.size()), container);
-            WriteByteArray(buffer, container);
-            WriteData<VarInt>(static_cast<int>(block_entities_data.size()), container);
-            for (int i = 0; i < block_entities_data.size(); ++i)
-            {
-                block_entities_data[i].Write(container);
-            }
+            WriteVector<unsigned char>(buffer, container);
+            WriteVector<BlockEntityInfo>(block_entities_data, container);
         }
 
         virtual const nlohmann::json SerializeImpl() const override
@@ -83,9 +70,9 @@ namespace ProtocolCraft
             output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
 
             output["block_entities_data"] = nlohmann::json::array();
-            for (int i = 0; i < block_entities_data.size(); ++i)
+            for (const auto& b : block_entities_data)
             {
-                output["block_entities_data"].push_back(block_entities_data[i].Serialize());
+                output["block_entities_data"].push_back(b.Serialize());
             }
 
             return output;

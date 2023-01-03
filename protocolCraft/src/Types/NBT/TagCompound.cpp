@@ -46,8 +46,6 @@ namespace ProtocolCraft
             // Read type
             const TagType type = (TagType)ReadData<char>(iterator, length);
 
-            std::shared_ptr<Tag> tag = Tag::CreateTag(type);
-
             // If it's an End tag, do not read the name
             if (type == TagType::End)
             {
@@ -61,6 +59,7 @@ namespace ProtocolCraft
             const std::string read_name = ReadRawString(iterator, length, name_size);
 
             // Read payload
+            std::shared_ptr<Tag> tag = Tag::CreateTag(type);
             tag->Read(iterator, length);
 
             tags[read_name] = tag;
@@ -92,15 +91,15 @@ namespace ProtocolCraft
     {
         nlohmann::json output = nlohmann::json::array();
 
-        for (auto it = tags.begin(); it != tags.end(); ++it)
+        for (const auto& p : tags)
         {
-            if (it->second->GetType() != TagType::End)
+            if (p.second->GetType() != TagType::End)
             {
                 nlohmann::json current_item;
 
-                current_item["type"] = Tag::TagTypeToString(it->second->GetType());
-                current_item["name"] = it->first;
-                current_item["content"] = it->second->Serialize();
+                current_item["type"] = Tag::TagTypeToString(p.second->GetType());
+                current_item["name"] = p.first;
+                current_item["content"] = p.second->Serialize();
                 
                 output.push_back(current_item);
             }

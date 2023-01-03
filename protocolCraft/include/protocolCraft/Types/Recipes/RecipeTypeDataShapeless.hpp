@@ -26,11 +26,6 @@ namespace ProtocolCraft
             cooking_book_category = cooking_book_category_;
         }
 #endif
-        
-        void SetIngredientCount(const int ingredient_count_)
-        {
-            ingredient_count = ingredient_count_;
-        }
 
         void SetIngredients(const std::vector<Ingredient>& ingredients_)
         {
@@ -55,11 +50,6 @@ namespace ProtocolCraft
         }
 #endif
 
-        const int GetIngredientCount() const
-        {
-            return ingredient_count;
-        }
-
         const std::vector<Ingredient>& GetIngredients() const
         {
             return ingredients;
@@ -78,12 +68,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
             cooking_book_category = ReadData<VarInt>(iter, length);
 #endif
-            ingredient_count = ReadData<VarInt>(iter, length);
-            ingredients = std::vector<Ingredient>(ingredient_count);
-            for (int i = 0; i < ingredient_count; ++i)
-            {
-                ingredients[i].Read(iter, length);
-            }
+            ingredients = ReadVector<Ingredient>(iter, length);
             result = ReadData<Slot>(iter, length);
         }
 
@@ -93,11 +78,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
             WriteData<VarInt>(cooking_book_category, container);
 #endif
-            WriteData<VarInt>(ingredient_count, container);
-            for (int i = 0; i < ingredient_count; ++i)
-            {
-                ingredients[i].Write(container);
-            }
+            WriteVector<Ingredient>(ingredients, container);
             WriteData<Slot>(result, container);
         }
 
@@ -109,11 +90,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
             output["cooking_book_category"] = cooking_book_category;
 #endif
-            output["ingredient_count"] = ingredient_count;
             output["ingredients"] = nlohmann::json::array();
-            for (int i = 0; i < ingredient_count; ++i)
+            for (const auto& i : ingredients)
             {
-                output["ingredients"].push_back(ingredients[i].Serialize());
+                output["ingredients"].push_back(i.Serialize());
             }
             output["result"] = result.Serialize();
 
@@ -125,7 +105,6 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
         int cooking_book_category;
 #endif
-        int ingredient_count;
         std::vector<Ingredient> ingredients;
         Slot result;
     };

@@ -96,20 +96,10 @@ namespace ProtocolCraft
         {
             container_id = ReadData<unsigned char>(iter, length);
 #if PROTOCOL_VERSION < 756
-            short count = ReadData<short>(iter, length);
-            items = std::vector<Slot>(count);
-            for (int i = 0; i < count; ++i)
-            {
-                items[i].Read(iter, length);
-            }
+            items = ReadVector<Slot, short>(iter, length);
 #else
             state_id = ReadData<VarInt>(iter, length);
-            int count = ReadData<VarInt>(iter, length);
-            items = std::vector<Slot>(count);
-            for (int i = 0; i < count; ++i)
-            {
-                items[i].Read(iter, length);
-            }
+            items = ReadVector<Slot>(iter, length);
             carried_item = ReadData<Slot>(iter, length);
 #endif            
         }
@@ -118,18 +108,10 @@ namespace ProtocolCraft
         {
             WriteData<unsigned char>(container_id, container);
 #if PROTOCOL_VERSION < 756
-            WriteData<short>(static_cast<short>(items.size()), container);
-            for (int i = 0; i < items.size(); ++i)
-            {
-                items[i].Write(container);
-            }
+            WriteVector<Slot, short>(items, container);
 #else
             WriteData<VarInt>(state_id, container);
-            WriteData<VarInt>(static_cast<int>(items.size()), container);
-            for (int i = 0; i < items.size(); ++i)
-            {
-                items[i].Write(container);
-            }
+            WriteVector<Slot>(items, container);
             WriteData<Slot>(carried_item, container);
 #endif
         }
@@ -140,9 +122,9 @@ namespace ProtocolCraft
 
             output["container_id"] = container_id;
             output["items"] = nlohmann::json::array();
-            for (int i = 0; i < items.size(); ++i)
+            for (const auto& i : items)
             {
-                output["items"].push_back(items[i].Serialize());
+                output["items"].push_back(i.Serialize());
             }
 
 #if PROTOCOL_VERSION > 755
