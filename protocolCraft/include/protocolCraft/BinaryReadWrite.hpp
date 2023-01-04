@@ -47,12 +47,13 @@ namespace ProtocolCraft
     template <typename T>
     T ChangeEndianness(const T& in)
     {
-        T in_cpy = in;
-        std::vector<char> p(sizeof(T));
-        memcpy(&p[0], &in_cpy, sizeof(T));
-        std::reverse(p.begin(), p.end());
-        memcpy(&in_cpy, &p[0], sizeof(T));
-        return in_cpy;
+        T out;
+        std::reverse_copy(
+            reinterpret_cast<const unsigned char*>(&in),
+            reinterpret_cast<const unsigned char*>(&in) + sizeof(T),
+            reinterpret_cast<unsigned char*>(&out)
+        );
+        return out;
     }
 
     template<
@@ -68,7 +69,7 @@ namespace ProtocolCraft
         else
         {
             T output;
-            memcpy(&output, &(*iter), sizeof(T));
+            std::memcpy(&output, &(*iter), sizeof(T));
             length -= sizeof(T);
             iter += sizeof(T);
 
@@ -123,7 +124,7 @@ namespace ProtocolCraft
     >
     void WriteData(const T& value, WriteContainer& container)
     {
-        std::vector<unsigned char> output(sizeof(T));
+        T val = value;
 
         // Don't need to change endianess of char!
         if constexpr(sizeof(T) > 1)
@@ -136,16 +137,16 @@ namespace ProtocolCraft
             if (*(char*)&num == 1)
             {
                 // Little endian
-                T big_endian_var = ChangeEndianness(value);
-                memcpy(output.data(), &big_endian_var, sizeof(T));
-                container.insert(container.end(), output.begin(), output.end());
-                return;
+                val = ChangeEndianness(value);
             }
         }
 
         // Big endian or sizeof(T) == 1
-        memcpy(output.data(), &value, sizeof(T));
-        container.insert(container.end(), output.begin(), output.end());
+        container.insert(
+            container.end(),
+            reinterpret_cast<unsigned char*>(&val),
+            reinterpret_cast<unsigned char*>(&val) + sizeof(T)
+        );
     }
 
     template<
@@ -211,7 +212,7 @@ namespace ProtocolCraft
                 throw std::runtime_error("Not enough input in ReadVector");
             }
 
-            memcpy(output.data(), &(*iter), output_length);
+            std::memcpy(output.data(), &(*iter), output_length);
             length -= output_length;
             iter += output_length;
         }
