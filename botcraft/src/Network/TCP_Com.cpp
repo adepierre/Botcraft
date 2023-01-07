@@ -1,4 +1,7 @@
 #include <functional>
+#include <asio/connect.hpp>
+#include <asio/write.hpp>
+#include <asio/ip/udp.hpp>
 
 #include "protocolCraft/BinaryReadWrite.hpp"
 

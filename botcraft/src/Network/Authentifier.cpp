@@ -1,4 +1,8 @@
-#include <asio.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/connect.hpp>
+#include <asio/streambuf.hpp>
+#include <asio/read_until.hpp>
+#include <asio/read.hpp>
 
 #ifdef USE_ENCRYPTION
 #include <asio/ssl.hpp>

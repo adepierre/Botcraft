@@ -2,7 +2,10 @@
 
 #include <deque>
 #include <thread>
-#include <asio.hpp>
+#include <mutex>
+#include <asio/error_code.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/io_service.hpp>
 
 namespace Botcraft
 {
