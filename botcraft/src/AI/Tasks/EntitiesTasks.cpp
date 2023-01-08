@@ -1,6 +1,8 @@
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
 #include "botcraft/AI/Tasks/EntitiesTasks.hpp"
+#include "botcraft/AI/BehaviourClient.hpp"
+#include "botcraft/AI/BehaviourTree.hpp"
 
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"

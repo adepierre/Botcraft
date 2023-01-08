@@ -1,8 +1,11 @@
 #pragma once
 
-#include "protocolCraft/Types/NBT/NBT.hpp"
-
 #include <string>
+
+namespace ProtocolCraft
+{
+    class NBT;
+}
 
 namespace Botcraft
 {

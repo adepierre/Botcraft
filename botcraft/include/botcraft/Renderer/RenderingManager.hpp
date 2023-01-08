@@ -1,22 +1,15 @@
 #pragma once
 
-#include <unordered_map>
 #include <unordered_set>
-#include <tuple>
 #include <mutex>
 #include <functional>
 #include <array>
-#include <vector>
 #include <memory>
-#include <map>
 #include <thread>
 #include <condition_variable>
-#include <deque>
-#include <fstream>
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/Vector3.hpp"
-#include "botcraft/Renderer/Face.hpp"
 
 #include "protocolCraft/Handler.hpp"
 

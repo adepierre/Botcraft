@@ -1,5 +1,6 @@
 #include "botcraft/Utilities/NBTUtilities.hpp"
 
+#include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Types/NBT/TagList.hpp"
 #include "protocolCraft/Types/NBT/TagCompound.hpp"
 #include "protocolCraft/Types/NBT/TagShort.hpp"

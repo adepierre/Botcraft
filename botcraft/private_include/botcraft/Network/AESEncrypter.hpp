@@ -3,7 +3,6 @@
 #ifdef USE_ENCRYPTION
 
 #include <vector>
-#include <memory>
 #if PROTOCOL_VERSION > 758
 #include <string>
 #endif

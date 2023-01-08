@@ -1,14 +1,13 @@
 #pragma once
 
 #include <string>
-#include <tuple>
-#include <map>
 #include <unordered_map>
 #include <vector>
-#include <deque>
 
 #include "botcraft/Game/AABB.hpp"
 #if USE_GUI
+#include <map>
+
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Renderer/Transformation.hpp"
 #include "botcraft/Renderer/Face.hpp"

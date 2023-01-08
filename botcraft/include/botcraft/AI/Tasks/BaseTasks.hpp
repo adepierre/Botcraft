@@ -1,12 +1,13 @@
 #pragma once
 
-#include "botcraft/AI/BehaviourTree.hpp"
-#include "botcraft/AI/BehaviourClient.hpp"
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/Vector3.hpp"
 
 namespace Botcraft
 {
+    class BehaviourClient;
+    enum class Status;
+
     /// @brief Just call client.Yield(). Can be used to Idle the behaviour.
     /// @param client The client performing the action
     /// @return Always return Success

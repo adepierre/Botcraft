@@ -1,8 +1,6 @@
 #pragma once
 
 #include "protocolCraft/Handler.hpp"
-#include "protocolCraft/Message.hpp"
-#include "protocolCraft/AllMessages.hpp"
 
 namespace Botcraft
 {

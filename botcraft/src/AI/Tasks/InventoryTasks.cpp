@@ -2,6 +2,8 @@
 #include "botcraft/AI/Tasks/BaseTasks.hpp"
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
+#include "botcraft/AI/BehaviourClient.hpp"
+#include "botcraft/AI/BehaviourTree.hpp"
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"

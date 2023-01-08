@@ -1,5 +1,7 @@
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
+#include "botcraft/AI/BehaviourClient.hpp"
+#include "botcraft/AI/BehaviourTree.hpp"
 
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
@@ -7,8 +9,6 @@
 #include "botcraft/Network/NetworkManager.hpp"
 
 #include "botcraft/Utilities/Logger.hpp"
-
-#include <iostream>
 
 namespace Botcraft
 {

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "botcraft/AI/BehaviourTree.hpp"
-#include "botcraft/AI/BehaviourClient.hpp"
-
 #include "botcraft/Game/Vector3.hpp"
 
 namespace Botcraft
 {
+    class BehaviourClient;
+    enum class Status;
+
     /// @brief Find a path to a position and navigate to it.
     /// @param client The client performing the action
     /// @param goal The end goal

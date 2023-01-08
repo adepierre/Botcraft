@@ -1,6 +1,7 @@
 #pragma once
 
 #include "botcraft/Game/Vector3.hpp"
+#include "botcraft/Renderer/Face.hpp"
 
 #include <glm/glm.hpp>
 

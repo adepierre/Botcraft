@@ -1,6 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+#include <set>
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/Block.hpp"

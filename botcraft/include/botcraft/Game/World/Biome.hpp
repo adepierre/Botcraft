@@ -1,8 +1,6 @@
 #pragma once
 
-#include <map>
 #include <string>
-#include <memory>
 
 namespace Botcraft
 {

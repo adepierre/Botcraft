@@ -2,6 +2,7 @@
 #include <fstream>
 #include <random>
 #include <chrono>
+#include <deque>
 
 #include <nlohmann/json.hpp>
 

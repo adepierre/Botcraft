@@ -1,8 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <map>
-#include <memory>
 
 #include "botcraft/Game/World/Chunk.hpp"
 

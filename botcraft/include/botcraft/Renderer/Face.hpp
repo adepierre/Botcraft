@@ -1,20 +1,17 @@
 #pragma once
 
-#include <map>
 #include <array>
 #include <vector>
-#include <memory>
-#include <deque>
 
 #include "botcraft/Game/Enums.hpp"
 
-#include "botcraft/Renderer/Transformation.hpp"
 #include "botcraft/Renderer/Enums.hpp"
 
 namespace Botcraft
 {
     namespace Renderer
     {
+        struct FaceTransformation;
         struct IMatrix;
 
         class Face

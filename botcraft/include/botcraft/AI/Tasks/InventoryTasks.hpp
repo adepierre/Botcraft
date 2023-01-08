@@ -1,12 +1,14 @@
 #pragma once
 
-#include "botcraft/AI/BehaviourTree.hpp"
-#include "botcraft/AI/BehaviourClient.hpp"
 #include "botcraft/Game/Vector3.hpp"
+#include "botcraft/Game/Enums.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
 namespace Botcraft
 {
+    class BehaviourClient;
+    enum class Status;
+
     /// @brief Perform a click action on a container
     /// @param client The client performing the action
     /// @param container_id Container id

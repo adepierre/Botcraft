@@ -1,6 +1,6 @@
 #pragma once
 
-#include <botcraft/AI/TemplatedBehaviourClient.hpp>
+#include "botcraft/AI/TemplatedBehaviourClient.hpp"
 
 namespace Botcraft
 {

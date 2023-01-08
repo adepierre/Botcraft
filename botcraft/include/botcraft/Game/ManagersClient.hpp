@@ -3,9 +3,6 @@
 #include <thread>
 #include <atomic>
 
-#include "protocolCraft/Handler.hpp"
-#include "protocolCraft/Message.hpp"
-#include "protocolCraft/AllMessages.hpp"
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/ConnectionClient.hpp"
 

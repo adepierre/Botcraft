@@ -1,12 +1,7 @@
 #pragma once
 
-#include <string>
-#include <map>
-#include <vector>
-#include <set>
-#include <memory>
-
 #include "botcraft/Game/World/Blockstate.hpp"
+#include "botcraft/Game/Vector3.hpp"
 
 namespace Botcraft
 {
