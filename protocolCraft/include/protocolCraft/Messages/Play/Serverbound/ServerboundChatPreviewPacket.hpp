@@ -11,21 +11,14 @@ namespace ProtocolCraft
     class ServerboundChatPreviewPacket : public BaseMessage<ServerboundChatPreviewPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 759 // 1.19
-            return 0x05;
+        static constexpr int packet_id = 0x05;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
-            return 0x06;
+        static constexpr int packet_id = 0x06;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Chat Preview";
-        }
+        static constexpr std::string_view packet_name = "Chat Preview";
 
         virtual ~ServerboundChatPreviewPacket() override
         {

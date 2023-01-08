@@ -8,21 +8,14 @@ namespace ProtocolCraft
     class ServerboundEnchantItemPacket : public BaseMessage<ServerboundEnchantItemPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 340 // 1.12.2
-            return 0x06;
+        static constexpr int packet_id = 0x06;
 #elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
-            return 0x07;
+        static constexpr int packet_id = 0x07;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Enchant item";
-        }
+        static constexpr std::string_view packet_name = "Enchant item";
 
         virtual ~ServerboundEnchantItemPacket() override
         {

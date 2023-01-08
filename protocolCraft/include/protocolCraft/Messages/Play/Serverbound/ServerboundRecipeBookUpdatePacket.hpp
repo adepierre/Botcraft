@@ -9,27 +9,20 @@ namespace ProtocolCraft
     class ServerboundRecipeBookUpdatePacket : public BaseMessage<ServerboundRecipeBookUpdatePacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 340 // 1.12.2
-            return 0x17;
+        static constexpr int packet_id = 0x17;
 #elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
-            return 0x1B;
+        static constexpr int packet_id = 0x1B;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
-            return 0x1D;
+        static constexpr int packet_id = 0x1D;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
-            return 0x1D;
+        static constexpr int packet_id = 0x1D;
 #elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
-            return 0x1E;
+        static constexpr int packet_id = 0x1E;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Recipe Book Update";
-        }
+        static constexpr std::string_view packet_name = "Recipe Book Update";
 
         virtual ~ServerboundRecipeBookUpdatePacket() override
         {

@@ -8,25 +8,18 @@ namespace ProtocolCraft
     class ClientboundAddGlobalEntityPacket : public BaseMessage<ClientboundAddGlobalEntityPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 340 // 1.12.2
-            return 0x02;
+        static constexpr int packet_id = 0x02;
 #elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
-            return 0x02;
+        static constexpr int packet_id = 0x02;
 #elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
-            return 0x02;
+        static constexpr int packet_id = 0x02;
 #elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
-            return 0x02;
+        static constexpr int packet_id = 0x02;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Add Global Entity";
-        }
+        static constexpr std::string_view packet_name = "Add Global Entity";
 
         virtual ~ClientboundAddGlobalEntityPacket() override
         {

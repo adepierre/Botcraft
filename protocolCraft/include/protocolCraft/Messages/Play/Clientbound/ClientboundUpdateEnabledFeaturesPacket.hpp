@@ -11,19 +11,12 @@ namespace ProtocolCraft
     class ClientboundUpdateEnabledFeaturesPacket : public BaseMessage<ClientboundUpdateEnabledFeaturesPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 761 // 1.19.3
-            return 0x67;
+        static constexpr int packet_id = 0x67;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Update Enabled Features";
-        }
+        static constexpr std::string_view packet_name = "Update Enabled Features";
 
         virtual ~ClientboundUpdateEnabledFeaturesPacket() override
         {

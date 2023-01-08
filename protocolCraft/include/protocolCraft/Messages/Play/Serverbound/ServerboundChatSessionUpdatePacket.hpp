@@ -9,19 +9,12 @@ namespace ProtocolCraft
     class ServerboundChatSessionUpdatePacket : public BaseMessage<ServerboundChatSessionUpdatePacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 761 // 1.19.3
-            return 0x20;
+        static constexpr int packet_id = 0x20;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Chat Session Update";
-        }
+        static constexpr std::string_view packet_name = "Chat Session Update";
 
         virtual ~ServerboundChatSessionUpdatePacket() override
         {

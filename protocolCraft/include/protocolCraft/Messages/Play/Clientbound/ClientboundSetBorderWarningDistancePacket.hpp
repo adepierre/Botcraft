@@ -8,27 +8,20 @@ namespace ProtocolCraft
     class ClientboundSetBorderWarningDistancePacket : public BaseMessage<ClientboundSetBorderWarningDistancePacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
-            return 0x46;
+        static constexpr int packet_id = 0x46;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
-            return 0x46;
+        static constexpr int packet_id = 0x46;
 #elif PROTOCOL_VERSION == 759 // 1.19
-            return 0x45;
+        static constexpr int packet_id = 0x45;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
-            return 0x48;
+        static constexpr int packet_id = 0x48;
 #elif PROTOCOL_VERSION == 761 // 1.19.3
-            return 0x47;
+        static constexpr int packet_id = 0x47;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Set Border Warning Distance";
-        }
+        static constexpr std::string_view packet_name = "Set Border Warning Distance";
 
         virtual ~ClientboundSetBorderWarningDistancePacket() override
         {

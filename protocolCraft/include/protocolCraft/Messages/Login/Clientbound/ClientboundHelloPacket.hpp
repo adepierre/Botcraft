@@ -7,15 +7,8 @@ namespace ProtocolCraft
     class ClientboundHelloPacket : public BaseMessage<ClientboundHelloPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
-            return 0x01;
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Hello";
-        }
+        static constexpr int packet_id = 0x01;
+        static constexpr std::string_view packet_name = "Hello";
 
         virtual ~ClientboundHelloPacket() override
         {

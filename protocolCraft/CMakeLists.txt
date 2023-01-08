@@ -326,6 +326,7 @@ set(protocolCraft_PUBLIC_HDR
 set(protocolCraft_SRC 
     src/BaseMessage.cpp
     src/BinaryReadWrite.cpp
+    src/MessageFactory.cpp
     
     src/Types/Chat/Chat.cpp
     

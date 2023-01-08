@@ -7,15 +7,8 @@ namespace ProtocolCraft
     class ClientboundPongResponsePacket : public BaseMessage<ClientboundPongResponsePacket>
     {
     public:
-        virtual const int GetId() const override
-        {
-            return 0x01;
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Pong Response";
-        }
+        static constexpr int packet_id = 0x01;
+        static constexpr std::string_view packet_name = "Pong Response";
 
         virtual ~ClientboundPongResponsePacket() override
         {

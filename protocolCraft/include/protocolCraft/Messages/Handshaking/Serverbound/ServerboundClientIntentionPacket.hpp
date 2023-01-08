@@ -7,15 +7,8 @@ namespace ProtocolCraft
     class ServerboundClientIntentionPacket : public BaseMessage<ServerboundClientIntentionPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
-            return 0x00;
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Client Intention";
-        }
+        static constexpr int packet_id = 0x00;
+        static constexpr std::string_view packet_name = "Client Intention";
 
         virtual ~ServerboundClientIntentionPacket() override
         {

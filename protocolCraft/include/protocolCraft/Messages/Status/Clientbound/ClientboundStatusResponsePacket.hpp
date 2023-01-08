@@ -7,15 +7,8 @@ namespace ProtocolCraft
     class ClientboundStatusResponsePacket : public BaseMessage<ClientboundStatusResponsePacket>
     {
     public:
-        virtual const int GetId() const override
-        {
-            return 0x00;
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Status Response";
-        }
+        static constexpr int packet_id = 0x00;
+        static constexpr std::string_view packet_name = "Status Response";
 
         virtual ~ClientboundStatusResponsePacket() override
         {

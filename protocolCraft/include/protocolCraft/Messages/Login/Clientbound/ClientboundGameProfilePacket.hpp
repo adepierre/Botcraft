@@ -11,15 +11,8 @@ namespace ProtocolCraft
     class ClientboundGameProfilePacket : public BaseMessage<ClientboundGameProfilePacket>
     {
     public:
-        virtual const int GetId() const override
-        {
-            return 0x02;
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Game Profile";
-        }
+        static constexpr int packet_id = 0x02;
+        static constexpr std::string_view packet_name = "Game Profile";
 
         virtual ~ClientboundGameProfilePacket() override
         {

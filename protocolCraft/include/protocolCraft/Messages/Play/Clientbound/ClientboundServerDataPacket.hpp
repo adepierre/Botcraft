@@ -11,23 +11,16 @@ namespace ProtocolCraft
     class ClientboundServerDataPacket : public BaseMessage<ClientboundServerDataPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 759 // 1.19
-            return 0x3F;
+        static constexpr int packet_id = 0x3F;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
-            return 0x42;
+        static constexpr int packet_id = 0x42;
 #elif PROTOCOL_VERSION == 761 // 1.19.3
-            return 0x41;
+        static constexpr int packet_id = 0x41;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Server Data";
-        }
+        static constexpr std::string_view packet_name = "Server Data";
 
         virtual ~ClientboundServerDataPacket() override
         {

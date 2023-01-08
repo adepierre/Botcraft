@@ -8,15 +8,8 @@ namespace ProtocolCraft
     class ClientboundLoginDisconnectPacket : public BaseMessage<ClientboundLoginDisconnectPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
-            return 0x00;
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Login Disconnect";
-        }
+        static constexpr int packet_id = 0x00;
+        static constexpr std::string_view packet_name = "Login Disconnect";
 
         virtual ~ClientboundLoginDisconnectPacket() override
         {

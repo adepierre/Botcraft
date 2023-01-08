@@ -12,25 +12,18 @@ namespace ProtocolCraft
     class ClientboundLevelChunkWithLightPacket : public BaseMessage<ClientboundLevelChunkWithLightPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
-            return 0x22;
+        static constexpr int packet_id = 0x22;
 #elif PROTOCOL_VERSION == 759 // 1.19
-            return 0x1F;
+        static constexpr int packet_id = 0x1F;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
-            return 0x21;
+        static constexpr int packet_id = 0x21;
 #elif PROTOCOL_VERSION == 761 // 1.19.3
-            return 0x20;
+        static constexpr int packet_id = 0x20;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Level Chunk With Light";
-        }
+        static constexpr std::string_view packet_name = "Level Chunk With Light";
 
         virtual ~ClientboundLevelChunkWithLightPacket() override
         {

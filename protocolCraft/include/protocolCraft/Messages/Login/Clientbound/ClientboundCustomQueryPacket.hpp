@@ -10,15 +10,8 @@ namespace ProtocolCraft
     class ClientboundCustomQueryPacket : public BaseMessage<ClientboundCustomQueryPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
-            return 0x04;
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Custom Query";
-        }
+        static constexpr int packet_id = 0x04;
+        static constexpr std::string_view packet_name = "Custom Query";
 
         virtual ~ClientboundCustomQueryPacket() override
         {

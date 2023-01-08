@@ -8,27 +8,20 @@ namespace ProtocolCraft
     class ServerboundMovePlayerPacketStatusOnly : public BaseMessage<ServerboundMovePlayerPacketStatusOnly>
     {
     public:
-        virtual const int GetId() const override
-        {
 #if PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
-            return 0x14;
+        static constexpr int packet_id = 0x14;
 #elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
-            return 0x14;
+        static constexpr int packet_id = 0x14;
 #elif PROTOCOL_VERSION == 759 // 1.19
-            return 0x16;
+        static constexpr int packet_id = 0x16;
 #elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
-            return 0x17;
+        static constexpr int packet_id = 0x17;
 #elif PROTOCOL_VERSION == 761 // 1.19.3
-            return 0x16;
+        static constexpr int packet_id = 0x16;
 #else
 #error "Protocol version not implemented"
 #endif
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Move Player Status Only";
-        }
+        static constexpr std::string_view packet_name = "Move Player Status Only";
 
         virtual ~ServerboundMovePlayerPacketStatusOnly() override
         {

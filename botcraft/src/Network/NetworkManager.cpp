@@ -329,9 +329,9 @@ namespace Botcraft
         std::vector<unsigned char>::const_iterator packet_iterator = packet.begin();
         size_t length = packet.size();
 
-        int packet_id = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(packet_iterator, length);
+        const int packet_id = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(packet_iterator, length);
 
-        std::shared_ptr<ProtocolCraft::Message> msg = ProtocolCraft::MessageFactory::CreateMessageClientbound(packet_id, state);
+        std::shared_ptr<ProtocolCraft::Message> msg = ProtocolCraft::CreateClientboundMessage(state, packet_id);
 
         if (msg)
         {

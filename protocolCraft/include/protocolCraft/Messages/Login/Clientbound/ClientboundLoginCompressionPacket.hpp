@@ -7,15 +7,8 @@ namespace ProtocolCraft
     class ClientboundLoginCompressionPacket : public BaseMessage<ClientboundLoginCompressionPacket>
     {
     public:
-        virtual const int GetId() const override
-        {
-            return 0x03;
-        }
-
-        virtual const std::string GetName() const override
-        {
-            return "Login Compression";
-        }
+        static constexpr int packet_id = 0x03;
+        static constexpr std::string_view packet_name = "Login Compression";
 
         virtual ~ClientboundLoginCompressionPacket() override
         {

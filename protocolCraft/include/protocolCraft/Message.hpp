@@ -28,11 +28,11 @@ namespace ProtocolCraft
             return DispatchImpl(handler);
         }
 
-        virtual const int GetId() const = 0;
+        virtual int GetId() const = 0;
 
-        virtual const std::string GetName() const = 0;
+        virtual std::string_view GetName() const = 0;
 
-        virtual const std::shared_ptr<Message> Clone() const = 0;
+        virtual std::shared_ptr<Message> Clone() const = 0;
 
     protected:
         virtual void DispatchImpl(Handler *handler) = 0;
