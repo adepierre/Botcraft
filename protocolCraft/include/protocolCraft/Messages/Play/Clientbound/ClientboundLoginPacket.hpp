@@ -5,6 +5,7 @@
 #if PROTOCOL_VERSION > 758
 #include "protocolCraft/Types/GlobalPos.hpp"
 #endif
+#include "protocolCraft/Types/NBT/NBT.hpp"
 
 namespace ProtocolCraft
 {

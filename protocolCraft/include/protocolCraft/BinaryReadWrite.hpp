@@ -58,7 +58,7 @@ namespace ProtocolCraft
 
     template<
         typename T,
-        typename std::enable_if<!std::is_base_of<NetworkType, T>::value, bool>::type = true
+        typename std::enable_if_t<!std::is_base_of_v<NetworkType, T>, bool> = true
     >
     T ReadData(ReadIterator &iter, size_t &length)
     {
@@ -95,7 +95,7 @@ namespace ProtocolCraft
 
     template<
         typename T,
-        typename std::enable_if<std::is_base_of<NetworkType, T>::value, bool>::type = true
+        typename std::enable_if_t<std::is_base_of_v<NetworkType, T>, bool> = true
     >
     T ReadData(ReadIterator& iter, size_t& length)
     {
@@ -120,7 +120,7 @@ namespace ProtocolCraft
 
     template<
         typename T,
-        typename std::enable_if<!std::is_base_of<NetworkType, T>::value, bool>::type = true
+        typename std::enable_if_t<!std::is_base_of_v<NetworkType, T>, bool> = true
     >
     void WriteData(const T& value, WriteContainer& container)
     {
@@ -151,7 +151,7 @@ namespace ProtocolCraft
 
     template<
         typename T,
-        typename std::enable_if<std::is_base_of<NetworkType, T>::value, bool>::type = true
+        typename std::enable_if_t<std::is_base_of_v<NetworkType, T>, bool> = true
     >
     void WriteData(const T& value, WriteContainer& container)
     {

@@ -1,7 +1,9 @@
 project(protocolCraft)
 
 set(protocolCraft_PUBLIC_HDR
+    include/protocolCraft/AllClientboundMessages.hpp
     include/protocolCraft/AllMessages.hpp
+    include/protocolCraft/AllServerboundMessages.hpp
     include/protocolCraft/BaseMessage.hpp 
     include/protocolCraft/BinaryReadWrite.hpp
     include/protocolCraft/enums.hpp
@@ -317,6 +319,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Vibrations/EntityPositionSource.hpp
     include/protocolCraft/Types/Vibrations/PositionSource.hpp
     include/protocolCraft/Types/Vibrations/VibrationPath.hpp
+    
+    include/protocolCraft/Utilities/TupleCat.hpp
 )
 
 set(protocolCraft_SRC 
