@@ -240,9 +240,9 @@ namespace ProtocolCraft
             WriteVector<NBT>(block_entities_tags, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["x"] = x;
             output["z"] = z;
@@ -262,7 +262,7 @@ namespace ProtocolCraft
 #endif
             output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
 
-            output["block_entities_tags"] = nlohmann::json::array();
+            output["block_entities_tags"] = Json::Array();
             for (const auto& b : block_entities_tags)
             {
                 output["block_entities_tags"].push_back(b.Serialize());

@@ -76,9 +76,9 @@ namespace ProtocolCraft
             WriteData<VarLong>(lerp_time, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["old_size"] = old_size;
             output["new_size"] = new_size;

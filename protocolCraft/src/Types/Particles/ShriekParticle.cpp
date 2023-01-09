@@ -43,9 +43,9 @@ namespace ProtocolCraft
         WriteData<VarInt>(delay, container);
     }
     
-    const nlohmann::json ShriekParticle::SerializeImpl() const
+    Json::Value ShriekParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
         output["delay"] = delay;
         

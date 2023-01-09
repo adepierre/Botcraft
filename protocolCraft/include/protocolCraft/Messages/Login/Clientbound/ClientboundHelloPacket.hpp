@@ -82,9 +82,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["server_ID"] = server_ID;
             output["public_key"] = "vector of " + std::to_string(public_key.size()) + " unsigned char";

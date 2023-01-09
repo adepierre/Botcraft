@@ -74,9 +74,9 @@ namespace ProtocolCraft
             WriteByteArray(packed_items, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["id_"] = id_;
             output["packed_items"] = "Vector of " + std::to_string(packed_items.size()) + " unsigned chars";

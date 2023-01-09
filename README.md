@@ -63,7 +63,6 @@ Dependencies are included either directly(\*) or as git submodules(†). All lib
 You *don't* have to clone recursively, download nor install any of them, as the cmake build system is made to do that for you automatically for each dependency that is not already found on your system.
 
 - [asio](https://think-async.com/Asio/)† for low-level TCP
-- [nlohmann json](https://github.com/nlohmann/json)\* for JSON support
 
 Optional dependencies (additional features support):
 - [openssl](https://www.openssl.org/)† for encryption

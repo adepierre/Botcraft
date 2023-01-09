@@ -66,12 +66,12 @@ namespace ProtocolCraft
         );
     }
 
-    const nlohmann::json TagList::SerializeImpl() const
+    Json::Value TagList::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
         output["type"] = Tag::TagTypeToString(tags_type);
-        output["content"] = nlohmann::json::array();
+        output["content"] = Json::Array();
 
         for (const auto& t : tags)
         {

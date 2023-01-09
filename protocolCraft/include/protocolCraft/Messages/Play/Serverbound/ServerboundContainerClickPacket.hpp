@@ -195,9 +195,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["container_id"] = container_id;
 #if PROTOCOL_VERSION > 755
@@ -211,7 +211,7 @@ namespace ProtocolCraft
             output["click_type"] = click_type;
 #if PROTOCOL_VERSION > 754
 
-            output["changed_slots"] = nlohmann::json::object();
+            output["changed_slots"] = Json::Object();
             for (const auto& p : changed_slots)
             {
                 output["changed_slots"][std::to_string(p.first)] = p.second.Serialize();

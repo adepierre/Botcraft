@@ -154,9 +154,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["entity_id"] = entity_id;
             output["player_id"] = player_id;

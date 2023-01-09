@@ -99,9 +99,9 @@ namespace ProtocolCraft
             WriteData<bool>(global_event, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["type"] = type;
             output["pos"] = pos.Serialize();

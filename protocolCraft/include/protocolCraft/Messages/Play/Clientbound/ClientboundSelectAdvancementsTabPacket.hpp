@@ -62,9 +62,9 @@ namespace ProtocolCraft
             WriteOptional<std::string>(tab, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             if (tab.has_value())
             {

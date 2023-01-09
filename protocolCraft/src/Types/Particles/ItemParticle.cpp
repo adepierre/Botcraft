@@ -43,9 +43,9 @@ namespace ProtocolCraft
         WriteData<Slot>(item_stack, container);
     }
     
-    const nlohmann::json ItemParticle::SerializeImpl() const
+    Json::Value ItemParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
         output["item_stack"] = item_stack.Serialize();
 

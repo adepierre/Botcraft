@@ -321,6 +321,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Vibrations/VibrationPath.hpp
     
     include/protocolCraft/Utilities/TupleCat.hpp
+    include/protocolCraft/Utilities/Json.hpp
 )
 
 set(protocolCraft_SRC 
@@ -366,6 +367,8 @@ set(protocolCraft_SRC
     src/Types/Recipes/RecipeTypeData.cpp
     
     src/Types/Vibrations/PositionSource.cpp
+    
+    src/Utilities/Json.cpp
 )
 
 # To have a nice files structure in Visual Studio
@@ -421,12 +424,6 @@ target_include_directories(protocolCraft
         "$<INSTALL_INTERFACE:include>"
         )
 
-# Add json
-target_include_directories(protocolCraft 
-    PUBLIC 
-        "$<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>"
-)
-
 # Installation stuff
 include(GNUInstallDirs)
 
@@ -459,11 +456,6 @@ install(
         "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake"
     DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft"
-)
-
-# Copy json
-install(DIRECTORY "${JSON_INCLUDE_DIR}/nlohmann"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 export(EXPORT protocolCraft-targets

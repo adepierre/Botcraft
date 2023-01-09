@@ -74,9 +74,9 @@ namespace ProtocolCraft
             WriteData<float>(param, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["type"] = type;
             output["param"] = param;

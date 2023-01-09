@@ -115,9 +115,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["name"] = name;
             output["game_mode"] = game_mode;
@@ -126,7 +126,7 @@ namespace ProtocolCraft
             {
                 output["display_name"] = display_name.value().Serialize();
             }
-            output["properties"] = nlohmann::json::array();
+            output["properties"] = Json::Array();
             for (const auto& p : properties)
             {
                 output["properties"].push_back(p.Serialize());

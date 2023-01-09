@@ -152,16 +152,16 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["command"] = command;
             output["timestamp"] = timestamp;
 #if PROTOCOL_VERSION > 759
             output["salt"] = salt;
 #endif
-            output["argument_signatures"] = nlohmann::json::object();
+            output["argument_signatures"] = Json::Object();
             for (const auto& s: argument_signatures)
             {
                 output["argument_signatures"][s.first] = "Vector of " + std::to_string(s.second.size()) + " unsigned char";

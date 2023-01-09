@@ -61,9 +61,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(block_id, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["horizontal_position"] = horizontal_position;
             output["y_coordinate"] = y_coordinate;

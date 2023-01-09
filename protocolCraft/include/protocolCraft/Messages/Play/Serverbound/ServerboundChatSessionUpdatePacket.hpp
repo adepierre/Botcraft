@@ -44,9 +44,9 @@ namespace ProtocolCraft
             WriteData<RemoteChatSessionData>(chat_session, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["chat_session"] = chat_session.Serialize();
 

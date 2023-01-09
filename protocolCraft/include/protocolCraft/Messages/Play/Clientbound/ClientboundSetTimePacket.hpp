@@ -72,9 +72,9 @@ namespace ProtocolCraft
             WriteData<long long int>(day_time, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["game_time"] = game_time;
             output["day_time"] = day_time;

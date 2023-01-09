@@ -43,9 +43,9 @@ namespace ProtocolCraft
         WriteData<VarInt>(argument1, container);
     }
     
-    const nlohmann::json BlockdustParticle::SerializeImpl() const
+    Json::Value BlockdustParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
         
         output["argument1"] = argument1;
         

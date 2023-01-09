@@ -37,8 +37,8 @@ namespace ProtocolCraft
         WriteData<short>(value, container);
     }
 
-    const nlohmann::json TagShort::SerializeImpl() const
+    Json::Value TagShort::SerializeImpl() const
     {
-        return nlohmann::json(value);
+        return Json::Value(value);
     }
 }

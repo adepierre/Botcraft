@@ -237,15 +237,15 @@ namespace ProtocolCraft
             WriteData<float>(knockback_z, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["x"] = x;
             output["y"] = y;
             output["z"] = z;
             output["power"] = power;
-            output["to_blow"] = nlohmann::json::array();
+            output["to_blow"] = Json::Array();
             for (const auto& t : to_blow)
             {
                 output["to_blow"].push_back(t.Serialize());

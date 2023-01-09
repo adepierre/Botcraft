@@ -172,14 +172,14 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["state"] = state;
 
 #if PROTOCOL_VERSION > 348
-            output["recipes"] = nlohmann::json::array();
+            output["recipes"] = Json::Array();
             for (const auto& r : recipes)
             {
                 output["recipes"].push_back(r.Serialize());
@@ -191,7 +191,7 @@ namespace ProtocolCraft
             if (state == RecipeState::Init)
             {
 #if PROTOCOL_VERSION > 348
-                output["to_highlight"] = nlohmann::json::array();
+                output["to_highlight"] = Json::Array();
                 for (const auto& t : to_highlight)
                 {
                     output["to_highlight"].push_back(t.Serialize());

@@ -136,9 +136,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["is_gui_open"] = is_gui_open;
             output["is_filtering_craftable"] = is_filtering_craftable;

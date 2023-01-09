@@ -215,10 +215,8 @@ namespace ProtocolCraft
 
     }
 
-    const nlohmann::json NoDataTypedParticle::SerializeImpl() const
+    Json::Value NoDataTypedParticle::SerializeImpl() const
     {
-        nlohmann::json output;
-
-        return output;
+        return Json::Value();
     }
 }

@@ -74,9 +74,9 @@ namespace ProtocolCraft
             WriteData<Angle>(y_head_rot, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["entity_id"] = entity_id;
             output["y_head_rot"] = y_head_rot;

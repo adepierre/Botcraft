@@ -83,13 +83,13 @@ namespace ProtocolCraft
             );
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["uuid"] = uuid;
             output["name"] = name;
-            output["properties"] = nlohmann::json::array();
+            output["properties"] = Json::Array();
             for (const auto& p: properties)
             {
                 output["properties"].push_back(p.second.Serialize());

@@ -74,11 +74,11 @@ namespace ProtocolCraft
             WriteData<VarInt>(root_index, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
-            output["nodes"] = nlohmann::json::array();
+            output["nodes"] = Json::Array();
             for (const auto& n : nodes)
             {
                 output["nodes"].push_back(n.Serialize());

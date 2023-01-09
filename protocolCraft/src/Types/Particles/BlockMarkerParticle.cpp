@@ -44,9 +44,9 @@ namespace ProtocolCraft
         WriteData<VarInt>(state, container);
     }
     
-    const nlohmann::json BlockMarkerParticle::SerializeImpl() const
+    Json::Value BlockMarkerParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
         output["state"] = state;
 

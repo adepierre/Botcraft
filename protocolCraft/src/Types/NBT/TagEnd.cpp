@@ -27,8 +27,8 @@ namespace ProtocolCraft
 
     }
 
-    const nlohmann::json TagEnd::SerializeImpl() const
+    Json::Value TagEnd::SerializeImpl() const
     {
-        return nlohmann::json();
+        return Json::Value();
     }
 }

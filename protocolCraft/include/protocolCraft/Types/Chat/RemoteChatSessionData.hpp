@@ -48,9 +48,9 @@ namespace ProtocolCraft
             WriteData<ProfilePublicKey>(profile_public_key, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["uuid"] = uuid;
             output["profile_public_key"] = profile_public_key.Serialize();

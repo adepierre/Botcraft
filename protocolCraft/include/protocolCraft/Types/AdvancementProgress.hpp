@@ -38,14 +38,14 @@ namespace ProtocolCraft
             WriteMap<Identifier, CriterionProgress>(criteria, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
-            output["criteria"] = nlohmann::json::array();
+            output["criteria"] = Json::Array();
             for (const auto& p : criteria)
             {
-                nlohmann::json crit;
+                Json::Value crit;
 
                 crit["criterion_identifier"] = p.first.Serialize();
                 crit["criterion_progress"] = p.second.Serialize();

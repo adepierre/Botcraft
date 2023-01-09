@@ -64,9 +64,9 @@ namespace ProtocolCraft
             WriteData<int>(killer_id, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["duration"] = duration;
             output["killer_id"] = killer_id;

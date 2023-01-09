@@ -75,9 +75,9 @@ namespace ProtocolCraft
             WriteData<std::string>(objective_name, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["slot"] = slot;
             output["objective_name"] = objective_name;

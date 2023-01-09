@@ -49,9 +49,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(simulation_distance, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["simulation_distance"] = simulation_distance;
 

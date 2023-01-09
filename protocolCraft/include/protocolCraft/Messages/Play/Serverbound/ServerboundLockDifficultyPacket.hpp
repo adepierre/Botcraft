@@ -59,9 +59,9 @@ namespace ProtocolCraft
             WriteData<bool>(locked, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["locked"] = locked;
 

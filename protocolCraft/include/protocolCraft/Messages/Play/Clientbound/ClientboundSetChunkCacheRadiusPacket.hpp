@@ -59,9 +59,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(radius, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["radius"] = radius;
 

@@ -86,9 +86,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(total_experience, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["experience_progress"] = experience_progress;
             output["experience_level"] = experience_level;

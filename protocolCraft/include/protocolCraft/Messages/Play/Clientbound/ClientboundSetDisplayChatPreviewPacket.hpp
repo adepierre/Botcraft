@@ -45,9 +45,9 @@ namespace ProtocolCraft
             WriteData<bool>(enabled, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["enabled"] = enabled;
 

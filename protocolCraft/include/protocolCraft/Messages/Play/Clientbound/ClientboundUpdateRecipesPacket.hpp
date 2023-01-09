@@ -63,11 +63,11 @@ namespace ProtocolCraft
             WriteVector<Recipe>(recipes, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
-            output["recipes"] = nlohmann::json::array();
+            output["recipes"] = Json::Array();
             for (const auto& r : recipes)
             {
                 output["recipes"].push_back(r.Serialize());

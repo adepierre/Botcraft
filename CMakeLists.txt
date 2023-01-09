@@ -51,9 +51,6 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/assets.cmake")
 # Add Asio
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/asio.cmake")
 
-# Add nlohmann json
-include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/json.cmake")
-
 # Add ZLIB
 if(BOTCRAFT_COMPRESSION)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib.cmake")

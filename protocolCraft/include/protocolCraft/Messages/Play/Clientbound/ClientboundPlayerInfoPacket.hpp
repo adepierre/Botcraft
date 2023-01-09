@@ -180,19 +180,19 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["action"] = action;
-            output["entries"] = nlohmann::json::array();
+            output["entries"] = Json::Array();
 
             switch (action)
             {
             case PlayerInfoAction::AddPlayer:
                 for (const auto& p : entries)
                 {
-                    nlohmann::json entry;
+                    Json::Value entry;
                     entry["uuid"] = p.first;
                     entry["player_info"] = p.second.Serialize();
                     output["entries"].push_back(entry);
@@ -201,7 +201,7 @@ namespace ProtocolCraft
             case PlayerInfoAction::UpdateGameMode:
                 for (const auto& p : entries)
                 {
-                    nlohmann::json entry;
+                    Json::Value entry;
                     entry["uuid"] = p.first;
                     entry["game_mode"] = p.second.GetGameMode();
                     output["entries"].push_back(entry);
@@ -210,7 +210,7 @@ namespace ProtocolCraft
             case PlayerInfoAction::UpdateLatency:
                 for (const auto& p : entries)
                 {
-                    nlohmann::json entry;
+                    Json::Value entry;
                     entry["uuid"] = p.first;
                     entry["latency"] = p.second.GetLatency();
                     output["entries"].push_back(entry);
@@ -219,7 +219,7 @@ namespace ProtocolCraft
             case PlayerInfoAction::UpdateDisplayName:
                 for (const auto& p : entries)
                 {
-                    nlohmann::json entry;
+                    Json::Value entry;
                     entry["uuid"] = p.first;
                     if (p.second.GetDisplayName().has_value())
                     {

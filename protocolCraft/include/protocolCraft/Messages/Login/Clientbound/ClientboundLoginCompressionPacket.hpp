@@ -36,9 +36,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(compression_threshold, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["compression_threshold"] = compression_threshold;
 

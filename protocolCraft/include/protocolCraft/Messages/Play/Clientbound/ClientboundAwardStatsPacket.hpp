@@ -117,15 +117,15 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
-            output["stats"] = nlohmann::json::array();
+            output["stats"] = Json::Array();
 
             for (const auto& p : stats)
             {
-                nlohmann::json s;
+                Json::Value s;
 
 #if PROTOCOL_VERSION < 346
                 s["name"] = p.first;

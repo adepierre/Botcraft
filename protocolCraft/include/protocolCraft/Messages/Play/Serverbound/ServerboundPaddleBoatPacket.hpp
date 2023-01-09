@@ -74,9 +74,9 @@ namespace ProtocolCraft
             WriteData<bool>(right, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["left"] = left;
             output["right"] = right;

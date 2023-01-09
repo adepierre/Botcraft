@@ -112,17 +112,17 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["entity_id"] = entity_id;
 #if PROTOCOL_VERSION > 730
-            output["slots"] = nlohmann::json::array();
+            output["slots"] = Json::Array();
 
             for (const auto& s : slots)
             {
-                nlohmann::json current_slot;
+                Json::Value current_slot;
 
                 current_slot["first"] = s.first;
                 current_slot["second"] = s.second.Serialize();

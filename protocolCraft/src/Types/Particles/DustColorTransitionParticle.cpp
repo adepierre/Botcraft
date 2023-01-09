@@ -115,9 +115,9 @@ namespace ProtocolCraft
         WriteData(to_blue, container);
     }
     
-    const nlohmann::json DustColorTransitionParticle::SerializeImpl() const
+    Json::Value DustColorTransitionParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
         output["from_red"] = from_red;
         output["from_green"] = from_green;

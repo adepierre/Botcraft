@@ -421,9 +421,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["player_id"] = player_id;
 #if PROTOCOL_VERSION > 737
@@ -432,7 +432,7 @@ namespace ProtocolCraft
             output["game_type"] = game_type;
 #if PROTOCOL_VERSION > 718
             output["previous_game_type"] = previous_game_type;
-            output["levels"] = nlohmann::json::array();
+            output["levels"] = Json::Array();
             for (const auto& l : levels)
             {
                 output["levels"].push_back(l.Serialize());

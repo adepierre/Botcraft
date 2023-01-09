@@ -85,9 +85,9 @@ namespace ProtocolCraft
             WriteVector<EntityModifierData>(modifiers, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
 #if PROTOCOL_VERSION > 709
             output["key"] = key.Serialize();
@@ -96,7 +96,7 @@ namespace ProtocolCraft
 #endif
             output["value"] = value;
 
-            output["modifiers"] = nlohmann::json::array();
+            output["modifiers"] = Json::Array();
             for (const auto& m : modifiers)
             {
                 output["modifiers"].push_back(m.Serialize());

@@ -74,9 +74,9 @@ namespace ProtocolCraft
             data->Write(container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["recipe_id"] = recipe_id.Serialize();
             output["type"] = type.Serialize();

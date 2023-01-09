@@ -67,9 +67,9 @@ namespace ProtocolCraft
             WriteVector<unsigned char>(body_digest, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["header"] = header.Serialize();
             output["header_signature"] = "Vector of " + std::to_string(header_signature.size()) + " unsigned char";

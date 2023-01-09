@@ -43,9 +43,9 @@ namespace ProtocolCraft
         WriteData<VibrationPath>(vibration_path, container);
     }
     
-    const nlohmann::json VibrationParticle::SerializeImpl() const
+    Json::Value VibrationParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
         output["vibration_path"] = vibration_path.Serialize();
 

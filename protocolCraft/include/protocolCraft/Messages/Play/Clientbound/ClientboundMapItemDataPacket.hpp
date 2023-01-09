@@ -227,9 +227,9 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["map_id"] = map_id;
             output["scale"] = scale;
@@ -243,14 +243,14 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 754
             if (decorations.has_value())
             {
-                output["decorations"] = nlohmann::json::array();
+                output["decorations"] = Json::Array();
                 for (const auto& d : decorations.value())
                 {
                     output["decorations"].push_back(d.Serialize());
                 }
             }
 #else
-            output["decorations"] = nlohmann::json::array();
+            output["decorations"] = Json::Array();
             for (const auto& d : decorations)
             {
                 output["decorations"].push_back(d.Serialize());

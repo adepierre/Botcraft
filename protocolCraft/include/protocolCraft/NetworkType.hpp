@@ -2,9 +2,8 @@
 
 #include <vector>
 
-#include <nlohmann/json.hpp>
-
 #include "protocolCraft/BinaryReadWrite.hpp"
+#include "protocolCraft/Utilities/Json.hpp"
 
 namespace ProtocolCraft
 {
@@ -26,7 +25,7 @@ namespace ProtocolCraft
             return WriteImpl(container);
         }
 
-        virtual const nlohmann::json Serialize() const
+        virtual Json::Value Serialize() const
         {
             return SerializeImpl();
         }
@@ -34,6 +33,6 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) = 0;
         virtual void WriteImpl(WriteContainer &container) const = 0;
-        virtual const nlohmann::json SerializeImpl() const = 0;
+        virtual Json::Value SerializeImpl() const = 0;
     };
 } // ProtocolCraft

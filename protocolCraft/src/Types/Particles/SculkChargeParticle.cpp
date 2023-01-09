@@ -43,9 +43,9 @@ namespace ProtocolCraft
         WriteData<float>(roll, container);
     }
     
-    const nlohmann::json SculkChargeParticle::SerializeImpl() const
+    Json::Value SculkChargeParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
         output["roll"] = roll;
 

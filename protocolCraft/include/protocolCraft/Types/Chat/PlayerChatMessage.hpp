@@ -87,9 +87,9 @@ namespace ProtocolCraft
             WriteData<FilterMask>(filter_mask, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["signed_header"] = signed_header.Serialize();
             output["header_signature"] = "Vector of " + std::to_string(header_signature.size()) + " unsigned char";

@@ -84,9 +84,9 @@ namespace ProtocolCraft
             WriteData<float>(walking_speed, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["flags"] = flags;
             output["flying_speed"] = flying_speed;

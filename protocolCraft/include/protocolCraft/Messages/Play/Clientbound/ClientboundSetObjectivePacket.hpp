@@ -140,9 +140,9 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["objective_name"] = objective_name;
             output["method"] = method;

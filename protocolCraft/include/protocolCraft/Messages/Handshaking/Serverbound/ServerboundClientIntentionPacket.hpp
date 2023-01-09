@@ -72,9 +72,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(intention, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["protocol_version"] = protocol_version;
             output["host_name"] = host_name;

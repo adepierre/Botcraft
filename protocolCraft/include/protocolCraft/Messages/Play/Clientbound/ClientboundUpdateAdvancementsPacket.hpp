@@ -103,31 +103,31 @@ namespace ProtocolCraft
             WriteMap<Identifier, AdvancementProgress>(progress, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["reset"] = reset;
 
-            output["added"] = nlohmann::json::array();
+            output["added"] = Json::Array();
             for (const auto& p : added)
             {
-                nlohmann::json add;
+                Json::Value add;
                 add["key"] = p.first.Serialize();
                 add["value"] = p.second.Serialize();
                 output["added"].push_back(add);
             }
 
-            output["removed"] = nlohmann::json::array();
+            output["removed"] = Json::Array();
             for (const auto& r : removed)
             {
                 output["removed"].push_back(r.Serialize());
             } 
 
-            output["progress"] = nlohmann::json::array();
+            output["progress"] = Json::Array();
             for (const auto& p : progress)
             {
-                nlohmann::json prog;
+                Json::Value prog;
                 prog["key"] = p.first.Serialize();
                 prog["value"] = p.second.Serialize();
                 output["progress"].push_back(prog);

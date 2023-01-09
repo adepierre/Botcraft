@@ -89,12 +89,12 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
 #if PROTOCOL_VERSION < 761
-            output["last_seen"] = nlohmann::json::array();
+            output["last_seen"] = Json::Array();
             for (const auto& l : last_seen)
             {
                 output["last_seen"].push_back(l.Serialize());

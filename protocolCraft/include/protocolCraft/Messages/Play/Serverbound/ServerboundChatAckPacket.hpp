@@ -69,9 +69,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
 #if PROTOCOL_VERSION < 761
             output["last_seen_message"] = last_seen_messages.Serialize();

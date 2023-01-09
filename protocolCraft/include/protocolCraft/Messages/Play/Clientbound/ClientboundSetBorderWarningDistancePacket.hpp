@@ -52,9 +52,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(warning_blocks, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["warning_blocks"] = warning_blocks;
 

@@ -67,9 +67,9 @@ namespace ProtocolCraft
 #endif
     }
     
-    const nlohmann::json FallingDustParticle::SerializeImpl() const
+    Json::Value FallingDustParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
 #if PROTOCOL_VERSION > 392
         output["state"] = state;

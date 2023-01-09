@@ -22,7 +22,7 @@ namespace ProtocolCraft
 
         virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
         virtual void WriteImpl(WriteContainer &container) const override;
-        virtual const nlohmann::json SerializeImpl() const override;
+        virtual Json::Value SerializeImpl() const override;
 
     private:
         std::vector<std::shared_ptr<Tag> > tags;

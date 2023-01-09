@@ -1,1 +1,2 @@
 add_subdirectory(botcraft)
+add_subdirectory(protocolCraft)

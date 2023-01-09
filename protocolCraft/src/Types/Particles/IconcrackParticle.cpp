@@ -55,9 +55,9 @@ namespace ProtocolCraft
         WriteData<VarInt>(argument2, container);
     }
     
-    const nlohmann::json IconcrackParticle::SerializeImpl() const
+    Json::Value IconcrackParticle::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
         
         output["argument1"] = argument1;
         output["argument2"] = argument2;

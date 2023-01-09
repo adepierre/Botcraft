@@ -114,9 +114,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["key_bytes"] = "vector of " + std::to_string(key_bytes.size()) + " unsigned char";
 #if PROTOCOL_VERSION < 761

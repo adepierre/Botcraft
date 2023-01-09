@@ -303,9 +303,9 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["x"] = x;
             output["z"] = z;
@@ -318,13 +318,13 @@ namespace ProtocolCraft
             output["empty_sky_Y_mask"] = empty_sky_Y_mask;
             output["empty_block_Y_mask"] = empty_block_Y_mask;
 
-            output["sky_updates"] = nlohmann::json::array();
+            output["sky_updates"] = Json::Array();
             for (const auto& v : sky_updates)
             {
                 output["sky_updates"].push_back(v);
             }
 
-            output["block_updates"] = nlohmann::json::array();
+            output["block_updates"] = Json::Array();
             for (const auto& v : block_updates)
             {
                 output["block_updates"].push_back(v);

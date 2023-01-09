@@ -113,9 +113,9 @@ namespace ProtocolCraft
             WriteData<Slot>(result, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["width"] = width;
             output["height"] = height;
@@ -123,7 +123,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
             output["cooking_book_category"] = cooking_book_category;
 #endif
-            output["ingredients"] = nlohmann::json::array();
+            output["ingredients"] = Json::Array();
             for (int i = 0; i < width * height; ++i)
             {
                 output["ingredients"].push_back(ingredients[i].Serialize());

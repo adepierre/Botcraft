@@ -87,15 +87,15 @@ namespace ProtocolCraft
         WriteData<char>(static_cast<char>(TagType::End), container);
     }
     
-    const nlohmann::json TagCompound::SerializeImpl() const
+    Json::Value TagCompound::SerializeImpl() const
     {
-        nlohmann::json output = nlohmann::json::array();
+        Json::Value output = Json::Array();
 
         for (const auto& p : tags)
         {
             if (p.second->GetType() != TagType::End)
             {
-                nlohmann::json current_item;
+                Json::Value current_item;
 
                 current_item["type"] = Tag::TagTypeToString(p.second->GetType());
                 current_item["name"] = p.first;

@@ -75,9 +75,9 @@ namespace ProtocolCraft
             WriteData<bool>(accepted, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["container_id"] = container_id;
             output["uid"] = uid;

@@ -86,9 +86,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(amount, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["item_id"] = item_id;
             output["player_id"] = player_id;

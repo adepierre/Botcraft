@@ -61,15 +61,15 @@ namespace ProtocolCraft
             WriteVector<BlockEntityInfo>(block_entities_data, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["heightmaps"] = heightmaps.Serialize();
 
             output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
 
-            output["block_entities_data"] = nlohmann::json::array();
+            output["block_entities_data"] = Json::Array();
             for (const auto& b : block_entities_data)
             {
                 output["block_entities_data"].push_back(b.Serialize());

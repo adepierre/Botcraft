@@ -50,9 +50,9 @@ namespace ProtocolCraft
             WriteData<bool>(reset_times, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["reset_times"] = reset_times;
 

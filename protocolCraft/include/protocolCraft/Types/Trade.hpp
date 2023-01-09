@@ -145,9 +145,9 @@ namespace ProtocolCraft
             WriteData<int>(demand, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["input_item_1"] = input_item_1.Serialize();
             output["output_item"] = output_item.Serialize();

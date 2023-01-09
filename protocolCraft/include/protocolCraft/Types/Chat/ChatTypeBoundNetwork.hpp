@@ -60,9 +60,9 @@ namespace ProtocolCraft
             WriteOptional<Chat>(target_name, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["chat_type"] = chat_type;
             output["name"] = name.Serialize();

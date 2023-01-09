@@ -185,20 +185,20 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
-            output["actions"] = nlohmann::json::array();
+            output["actions"] = Json::Array();
             for (const auto a : actions)
             {
                 output["actions"].push_back(static_cast<int>(a));
             }
 
-            output["entries"] = nlohmann::json::array();
+            output["entries"] = Json::Array();
             for (const auto& p : entries)
             {
-                nlohmann::json entry = nlohmann::json::object();
+                Json::Value entry = Json::Object();
                 entry["uuid"] = p.first;
                 for (const auto a : actions)
                 {

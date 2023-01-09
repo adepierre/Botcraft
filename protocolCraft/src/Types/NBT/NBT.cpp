@@ -66,9 +66,9 @@ namespace ProtocolCraft
         }
     }
 
-    const nlohmann::json NBT::SerializeImpl() const
+    Json::Value NBT::SerializeImpl() const
     {
-        nlohmann::json output;
+        Json::Value output;
 
         output["type"] = "NBT";
         output["name"] = root_name;

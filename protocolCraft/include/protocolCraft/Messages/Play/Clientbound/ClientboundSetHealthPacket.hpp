@@ -84,9 +84,9 @@ namespace ProtocolCraft
             WriteData<float>(food_saturation, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["health"] = health;
             output["food"] = food;

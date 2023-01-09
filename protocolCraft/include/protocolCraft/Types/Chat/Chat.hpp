@@ -34,7 +34,7 @@ namespace ProtocolCraft
         {
             raw_text = ReadData<std::string>(iter, length);
             
-            text = ParseChat(nlohmann::json::parse(raw_text));
+            text = ParseChat(Json::Parse(raw_text));
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -42,11 +42,11 @@ namespace ProtocolCraft
             WriteData<std::string>(raw_text, container);
         }
 
-        const std::string ParseChat(const nlohmann::json& raw_json);
+        std::string ParseChat(const Json::Value& raw_json);
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["raw_text"] = raw_text;
 

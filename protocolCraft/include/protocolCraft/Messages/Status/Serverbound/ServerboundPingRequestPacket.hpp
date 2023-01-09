@@ -36,9 +36,9 @@ namespace ProtocolCraft
             WriteData<long long int>(time, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["time"] = time;
 

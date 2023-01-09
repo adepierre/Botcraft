@@ -230,9 +230,9 @@ namespace ProtocolCraft
             particle->Write(container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["override_limiter"] = override_limiter;
             output["x"] = x;

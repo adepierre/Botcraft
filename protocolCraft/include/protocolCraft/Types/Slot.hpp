@@ -210,9 +210,9 @@ namespace ProtocolCraft
             WriteData<NBT>(nbt, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
 #if PROTOCOL_VERSION < 350
             output["block_id"] = block_id;

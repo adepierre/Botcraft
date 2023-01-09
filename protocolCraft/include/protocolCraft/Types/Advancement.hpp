@@ -83,9 +83,9 @@ namespace ProtocolCraft
             );
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             if (parent_id.has_value())
             {
@@ -97,16 +97,16 @@ namespace ProtocolCraft
                 output["display_data"] = display_data.value().Serialize();
             }
             
-            output["criteria"] = nlohmann::json::array();
+            output["criteria"] = Json::Array();
             for (const auto& c : criteria)
             {
                 output["criteria"].push_back(c.Serialize());
             }
             
-            output["requirements"] = nlohmann::json::array();
+            output["requirements"] = Json::Array();
             for (const auto& r : requirements)
             {
-                nlohmann::json current_array = nlohmann::json::array();
+                Json::Value current_array = Json::Array();
                 for (const auto& r2 : r)
                 {
                     current_array.push_back(r2);

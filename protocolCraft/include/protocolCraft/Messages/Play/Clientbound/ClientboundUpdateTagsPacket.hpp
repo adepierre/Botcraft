@@ -145,41 +145,41 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
 #if PROTOCOL_VERSION < 755
-            output["block_tags"] = nlohmann::json::array();
+            output["block_tags"] = Json::Array();
             for (const auto& t : block_tags)
             {
                 output["block_tags"].push_back(t.Serialize());
             }
             
-            output["item_tags"] = nlohmann::json::array();
+            output["item_tags"] = Json::Array();
             for (const auto& t : item_tags)
             {
                 output["item_tags"].push_back(t.Serialize());
             }
             
-            output["fluid_tags"] = nlohmann::json::array();
+            output["fluid_tags"] = Json::Array();
             for (const auto& t : fluid_tags)
             {
                 output["fluid_tags"].push_back(t.Serialize());
             }
 #if PROTOCOL_VERSION > 440
-            output["entity_tags"] = nlohmann::json::array();
+            output["entity_tags"] = Json::Array();
             for (const auto& t : entity_tags)
             {
                 output["entity_tags"].push_back(t.Serialize());
             }
 #endif
 #else
-            output["tags"] = nlohmann::json::object();
+            output["tags"] = Json::Object();
             
             for (const auto& p : tags)
             {
-                output["tags"][p.first.GetFull()] = nlohmann::json::array();
+                output["tags"][p.first.GetFull()] = Json::Array();
                 for (const auto& t : p.second)
                 {
                     output["tags"][p.first.GetFull()].push_back(t.Serialize());

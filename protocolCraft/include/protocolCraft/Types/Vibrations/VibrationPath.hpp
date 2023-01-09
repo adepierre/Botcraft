@@ -77,9 +77,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(arrival_in_ticks, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["origin"] = origin.Serialize();
             output["destination"] = destination->Serialize();

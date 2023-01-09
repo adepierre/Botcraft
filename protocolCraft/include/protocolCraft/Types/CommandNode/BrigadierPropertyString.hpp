@@ -35,9 +35,9 @@ namespace ProtocolCraft
             WriteData<VarInt>(read_type, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["read_type"] = read_type;
 

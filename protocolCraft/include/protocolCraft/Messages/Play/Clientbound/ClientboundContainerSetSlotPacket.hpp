@@ -107,9 +107,9 @@ namespace ProtocolCraft
             WriteData<Slot>(item_stack, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["container_id"] = container_id;
             output["slot"] = slot;

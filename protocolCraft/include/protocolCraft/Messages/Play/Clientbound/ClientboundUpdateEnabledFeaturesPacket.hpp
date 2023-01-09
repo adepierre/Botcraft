@@ -47,11 +47,11 @@ namespace ProtocolCraft
             WriteVector<Identifier>(features, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
-            output["features"] = nlohmann::json::array();
+            output["features"] = Json::Array();
             for (const auto& f : features)
             {
                 output["features"].push_back(f.Serialize());

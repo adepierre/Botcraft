@@ -141,9 +141,9 @@ namespace ProtocolCraft
             }
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
 
 
@@ -155,10 +155,10 @@ namespace ProtocolCraft
             output["suggestions"] = suggestions;
 
 #if PROTOCOL_VERSION > 356
-            output["tooltips"] = nlohmann::json::array();
+            output["tooltips"] = Json::Array();
             for (const auto& t : tooltips)
             {
-                output["tooltips"].push_back(t.has_value() ? t.value().Serialize() : nlohmann::json());
+                output["tooltips"].push_back(t.has_value() ? t.value().Serialize() : Json::Value());
             }
 #endif
 

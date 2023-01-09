@@ -120,12 +120,12 @@ namespace ProtocolCraft
             WriteData<bool>(can_restock, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["container_id"] = container_id;
-            output["offers"] = nlohmann::json::array();
+            output["offers"] = Json::Array();
             for (const auto& o : offers)
             {
                 output["offers"].push_back(o.Serialize());

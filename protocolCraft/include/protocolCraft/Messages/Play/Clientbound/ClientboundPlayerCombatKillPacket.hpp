@@ -78,9 +78,9 @@ namespace ProtocolCraft
             WriteData<Chat>(message, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["player_id"] = player_id;
             output["killer_id"] = killer_id;

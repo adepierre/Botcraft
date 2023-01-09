@@ -92,9 +92,9 @@ namespace ProtocolCraft
             WriteData<unsigned long long int>(value, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["x"] = x;
             output["y"] = y;

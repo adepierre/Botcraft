@@ -64,9 +64,9 @@ namespace ProtocolCraft
             WriteData<double>(new_center_z, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["new_center_x"] = new_center_x;
             output["new_center_z"] = new_center_z;

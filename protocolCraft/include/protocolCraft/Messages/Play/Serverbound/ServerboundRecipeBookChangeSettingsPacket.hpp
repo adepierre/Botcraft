@@ -76,9 +76,9 @@ namespace ProtocolCraft
             WriteData<bool>(is_filtering, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["book_type"] = book_type;
             output["is_open"] = is_open;

@@ -8,6 +8,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2WithMain)
 target_link_libraries(${PROJECT_NAME} PRIVATE botcraft)
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Tests)
 
 # Output the test executable next to the examples and library files
 if(MSVC)

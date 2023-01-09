@@ -44,11 +44,11 @@ namespace ProtocolCraft
             WriteVector<UUID>(profile_ids, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
-            output["profile_ids"] = nlohmann::json::array();
+            output["profile_ids"] = Json::Array();
             for (const auto& p : profile_ids)
             {
                 output["profile_ids"].push_back(p);

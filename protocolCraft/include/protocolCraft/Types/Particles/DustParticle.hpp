@@ -31,7 +31,7 @@ namespace ProtocolCraft
         
         virtual void WriteImpl(WriteContainer &container) const override;
         
-        virtual const nlohmann::json SerializeImpl() const override;
+        virtual Json::Value SerializeImpl() const override;
 
     private:
         float red;

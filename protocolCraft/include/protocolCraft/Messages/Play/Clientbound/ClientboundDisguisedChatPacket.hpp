@@ -57,9 +57,9 @@ namespace ProtocolCraft
             WriteData<ChatTypeBoundNetwork>(chat_type, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["message"] = message.Serialize();
             output["chat_type"] = chat_type.Serialize();
