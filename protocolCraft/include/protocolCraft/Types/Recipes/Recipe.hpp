@@ -43,7 +43,7 @@ namespace ProtocolCraft
             return type;
         }
 
-        const std::shared_ptr<RecipeTypeData> GetData() const
+        std::shared_ptr<RecipeTypeData> GetData() const
         {
             return data;
         }

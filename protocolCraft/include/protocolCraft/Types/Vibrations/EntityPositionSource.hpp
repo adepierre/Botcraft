@@ -20,7 +20,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetSourceEntityId() const
+        int GetSourceEntityId() const
         {
             return source_entity_id;
         }

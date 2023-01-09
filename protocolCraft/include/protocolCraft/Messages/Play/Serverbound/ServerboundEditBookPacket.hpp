@@ -81,7 +81,7 @@ namespace ProtocolCraft
             return book;
         }
 
-        const bool GetSigning() const
+        bool GetSigning() const
         {
             return signing;
         }
@@ -98,7 +98,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 393
-        const int GetSlot() const
+        int GetSlot() const
         {
             return slot;
         }

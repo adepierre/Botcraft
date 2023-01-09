@@ -45,7 +45,7 @@ namespace ProtocolCraft
         }
 
 
-        const short GetSlot() const
+        short GetSlot() const
         {
             return slot;
         }

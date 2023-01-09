@@ -54,17 +54,17 @@ namespace ProtocolCraft
             food_saturation = food_saturation_;
         }
 
-        const float GetHealth() const
+        float GetHealth() const
         {
             return health;
         }
 
-        const int GetFood() const
+        int GetFood() const
         {
             return food;
         }
 
-        const float GetFoodSaturation() const
+        float GetFoodSaturation() const
         {
             return food_saturation;
         }

@@ -22,7 +22,7 @@ namespace ProtocolCraft
         values = v;
     }
 
-    const TagType TagLongArray::GetType() const
+    TagType TagLongArray::GetType() const
     {
         return TagType::LongArray;
     }

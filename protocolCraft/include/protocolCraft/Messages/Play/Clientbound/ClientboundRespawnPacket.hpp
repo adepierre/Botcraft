@@ -145,27 +145,27 @@ namespace ProtocolCraft
             return dimension;
         }
 #else
-        const int GetDimension() const
+        int GetDimension() const
         {
             return dimension;
         }
 #endif
 
 #if PROTOCOL_VERSION > 551
-        const long long int GetSeed() const
+        long long int GetSeed() const
         {
             return seed;
         }
 #endif
 
 #if PROTOCOL_VERSION < 477
-        const int GetDifficulty() const
+        int GetDifficulty() const
         {
             return difficulty;
         }
 #endif
 
-        const int GetPlayerGameType() const
+        int GetPlayerGameType() const
         {
             return player_game_type;
         }
@@ -176,28 +176,28 @@ namespace ProtocolCraft
             return level_type;
         }
 #else
-        const int GetPreviousPlayerGameType() const
+        int GetPreviousPlayerGameType() const
         {
             return previous_player_game_type;
         }
 
-        const bool GetIsDebug() const
+        bool GetIsDebug() const
         {
             return is_debug;
         }
 
-        const bool GetIsFlat() const
+        bool GetIsFlat() const
         {
             return is_flat;
         }
 
 #if PROTOCOL_VERSION < 761
-        const bool GetKeepAllPlayerData() const
+        bool GetKeepAllPlayerData() const
         {
             return keep_all_player_data;
         }
 #else
-        const unsigned char GetDataToKeep() const
+        unsigned char GetDataToKeep() const
         {
             return data_to_keep;
         }

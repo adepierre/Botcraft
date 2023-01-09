@@ -61,7 +61,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetType() const
+        int GetType() const
         {
             return type;
         }
@@ -71,12 +71,12 @@ namespace ProtocolCraft
             return pos;
         }
 
-        const int GetData() const
+        int GetData() const
         {
             return data;
         }
 
-        const bool GetGlobalEvent() const
+        bool GetGlobalEvent() const
         {
             return global_event;
         }

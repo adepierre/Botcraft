@@ -55,17 +55,17 @@ namespace ProtocolCraft
         }
 
 
-        const int GetItemId() const
+        int GetItemId() const
         {
             return item_id;
         }
 
-        const int GetPlayerId() const
+        int GetPlayerId() const
         {
             return player_id;
         }
 
-        const int GetAmount() const
+        int GetAmount() const
         {
             return amount;
         }

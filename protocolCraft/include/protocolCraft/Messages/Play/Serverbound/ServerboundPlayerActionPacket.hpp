@@ -41,7 +41,7 @@ namespace ProtocolCraft
         }
 
 
-        void SetPos(const NetworkPosition &pos_)
+        void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;
         }
@@ -64,23 +64,23 @@ namespace ProtocolCraft
 #endif
 
 
-        const NetworkPosition GetPos() const
+        const NetworkPosition& GetPos() const
         {
             return pos;
         }
 
-        const int GetDirection() const
+        int GetDirection() const
         {
             return direction;
         }
 
-        const int GetAction() const
+        int GetAction() const
         {
             return action;
         }
 
 #if PROTOCOL_VERSION > 758
-        const int GetSequence() const
+        int GetSequence() const
         {
             return sequence;
         }

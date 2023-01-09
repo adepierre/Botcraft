@@ -45,17 +45,17 @@ namespace ProtocolCraft
             accepted = accepted_;
         }
 
-        const char GetContainerId() const
+        char GetContainerId() const
         {
             return container_id;
         }
 
-        const short GetUid() const
+        short GetUid() const
         {
             return uid;
         }
 
-        const bool GetAccepted() const
+        bool GetAccepted() const
         {
             return accepted;
         }

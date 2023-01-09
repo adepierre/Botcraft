@@ -12,7 +12,7 @@ namespace ProtocolCraft
 
     }
 
-    const long long int TagLong::GetValue() const
+    long long int TagLong::GetValue() const
     {
         return value;
     }
@@ -22,7 +22,7 @@ namespace ProtocolCraft
         value = v;
     }
 
-    const TagType TagLong::GetType() const
+    TagType TagLong::GetType() const
     {
         return TagType::Long;
     }

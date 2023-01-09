@@ -55,17 +55,17 @@ namespace ProtocolCraft
         }
 
 
-        const float GetYRot() const
+        float GetYRot() const
         {
             return yRot;
         }
 
-        const float GetXRot() const
+        float GetXRot() const
         {
             return xRot;
         }
 
-        const bool GetOnGround() const
+        bool GetOnGround() const
         {
             return on_ground;
         }

@@ -31,17 +31,17 @@ namespace ProtocolCraft
         }
     
     
-        const unsigned char GetHorizontalPosition() const
+        unsigned char GetHorizontalPosition() const
         {
             return horizontal_position;
         }
         
-        const unsigned char GetYCoordinate() const
+        unsigned char GetYCoordinate() const
         {
             return y_coordinate;
         }
         
-        const int GetBlockId() const
+        int GetBlockId() const
         {
             return block_id;
         }

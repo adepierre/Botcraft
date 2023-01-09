@@ -54,7 +54,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 760
-        const int GetCookingBookCategory() const
+        int GetCookingBookCategory() const
         {
             return cooking_book_category;
         }
@@ -70,12 +70,12 @@ namespace ProtocolCraft
             return result;
         }
 
-        const float GetExperience() const
+        float GetExperience() const
         {
             return experience;
         }
 
-        const int GetCookingTime() const
+        int GetCookingTime() const
         {
             return cooking_time;
         }

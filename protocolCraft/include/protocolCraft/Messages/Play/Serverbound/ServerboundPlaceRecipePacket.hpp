@@ -60,13 +60,13 @@ namespace ProtocolCraft
         }
 
 
-        const char GetContainerId() const
+        char GetContainerId() const
         {
             return container_id;
         }
 
 #if PROTOCOL_VERSION < 348
-        const int GetRecipe() const
+        int GetRecipe() const
 #else
         const Identifier& GetRecipe() const
 #endif
@@ -74,7 +74,7 @@ namespace ProtocolCraft
             return recipe;
         }
 
-        const bool GetShiftDown() const
+        bool GetShiftDown() const
         {
             return shift_down;
         }

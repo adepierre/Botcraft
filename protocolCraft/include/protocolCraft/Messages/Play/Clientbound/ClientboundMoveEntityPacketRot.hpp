@@ -59,22 +59,22 @@ namespace ProtocolCraft
             on_ground = on_ground_;
         }
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }
 
-        const unsigned char GetYRot() const
+        unsigned char GetYRot() const
         {
             return yRot;
         }
 
-        const unsigned char GetXRot() const
+        unsigned char GetXRot() const
         {
             return xRot;
         }
 
-        const bool GetOnGround() const
+        bool GetOnGround() const
         {
             return on_ground;
         }

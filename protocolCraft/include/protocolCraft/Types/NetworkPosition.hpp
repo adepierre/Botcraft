@@ -29,17 +29,17 @@ namespace ProtocolCraft
             z = z_;
         }
 
-        const int GetX() const
+        int GetX() const
         {
             return x;
         }
 
-        const int GetY() const
+        int GetY() const
         {
             return y;
         }
 
-        const int GetZ() const
+        int GetZ() const
         {
             return z;
         }

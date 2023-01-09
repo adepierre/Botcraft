@@ -74,37 +74,37 @@ namespace ProtocolCraft
             on_ground = on_ground_;
         }
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }
 
-        const short GetXA() const
+        short GetXA() const
         {
             return x_a;
         }
 
-        const short GetYA() const
+        short GetYA() const
         {
             return y_a;
         }
 
-        const short GetZA() const
+        short GetZA() const
         {
             return z_a;
         }
 
-        const unsigned char GetYRot() const
+        unsigned char GetYRot() const
         {
             return yRot;
         }
 
-        const unsigned char GetXRot() const
+        unsigned char GetXRot() const
         {
             return xRot;
         }
 
-        const bool GetOnGround() const
+        bool GetOnGround() const
         {
             return on_ground;
         }

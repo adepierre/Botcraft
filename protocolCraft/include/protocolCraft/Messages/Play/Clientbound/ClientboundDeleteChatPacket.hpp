@@ -36,7 +36,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 760
-        const int GetMessageSignatureId() const
+        int GetMessageSignatureId() const
         {
             return message_signature_id;
         }

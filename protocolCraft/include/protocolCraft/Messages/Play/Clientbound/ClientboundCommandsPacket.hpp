@@ -55,7 +55,7 @@ namespace ProtocolCraft
             return nodes;
         }
 
-        const int GetRootIndex() const
+        int GetRootIndex() const
         {
             return root_index;
         }

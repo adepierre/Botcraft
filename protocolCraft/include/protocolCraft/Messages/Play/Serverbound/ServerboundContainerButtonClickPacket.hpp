@@ -47,12 +47,12 @@ namespace ProtocolCraft
         }
 
 
-        const char GetContainerId() const
+        char GetContainerId() const
         {
             return container_id;
         }
 
-        const char GetButtonId() const
+        char GetButtonId() const
         {
             return button_id;
         }

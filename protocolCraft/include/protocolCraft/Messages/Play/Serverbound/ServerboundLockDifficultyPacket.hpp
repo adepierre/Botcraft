@@ -42,7 +42,7 @@ namespace ProtocolCraft
         }
 
 
-        const bool GetLocked() const
+        bool GetLocked() const
         {
             return locked;
         }

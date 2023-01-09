@@ -45,17 +45,17 @@ namespace ProtocolCraft
         }
 
 
-        const int GetFadeIn() const
+        int GetFadeIn() const
         {
             return fade_in;
         }
 
-        const int GetStay() const
+        int GetStay() const
         {
             return stay;
         }
 
-        const int GetFadeOut() const
+        int GetFadeOut() const
         {
             return fade_out;
         }

@@ -34,7 +34,7 @@ namespace ProtocolCraft
         tags = v;
     }
 
-    const TagType TagCompound::GetType() const
+    TagType TagCompound::GetType() const
     {
         return TagType::Compound;
     }

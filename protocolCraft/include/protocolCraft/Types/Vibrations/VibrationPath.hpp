@@ -49,12 +49,12 @@ namespace ProtocolCraft
             return destination_type;
         }
 
-        const std::shared_ptr<PositionSource> GetDestination() const
+        std::shared_ptr<PositionSource> GetDestination() const
         {
             return destination;
         }
 
-        const int GetArrivalInTicks() const
+        int GetArrivalInTicks() const
         {
             return arrival_in_ticks;
         }

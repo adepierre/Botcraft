@@ -55,7 +55,7 @@ namespace ProtocolCraft
             return pos;
         }
 
-        const int GetBlockstate() const
+        int GetBlockstate() const
         {
             return blockstate;
         }

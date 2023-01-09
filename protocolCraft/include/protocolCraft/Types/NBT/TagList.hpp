@@ -15,10 +15,10 @@ namespace ProtocolCraft
         const std::vector<std::shared_ptr<Tag> >& GetValues() const;
         void SetValues(const std::vector<std::shared_ptr<Tag> > &v);
 
-        const TagType GetTagsType() const;
+        TagType GetTagsType() const;
         void SetTagsType(const TagType tags_type_);
 
-        virtual const TagType GetType() const override;
+        virtual TagType GetType() const override;
 
         virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
         virtual void WriteImpl(WriteContainer &container) const override;

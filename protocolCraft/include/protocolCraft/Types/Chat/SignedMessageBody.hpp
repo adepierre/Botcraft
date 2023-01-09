@@ -60,12 +60,12 @@ namespace ProtocolCraft
         }
 #endif
 
-        const long long int GetTimestamp() const
+        long long int GetTimestamp() const
         {
             return timestamp;
         }
 
-        const long long int GetSalt() const
+        long long int GetSalt() const
         {
             return salt;
         }

@@ -34,7 +34,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }

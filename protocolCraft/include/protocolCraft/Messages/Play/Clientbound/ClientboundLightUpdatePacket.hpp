@@ -116,34 +116,34 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetX() const
+        int GetX() const
         {
             return x;
         }
 
-        const int GetZ() const
+        int GetZ() const
         {
             return z;
         }
 
 #if PROTOCOL_VERSION < 757
 #if PROTOCOL_VERSION < 755
-        const int GetSkyYMask() const
+        int GetSkyYMask() const
         {
             return sky_Y_mask;
         }
 
-        const int GetBlockYMask() const
+        int GetBlockYMask() const
         {
             return block_Y_mask;
         }
 
-        const int GetEmptySkyYMask() const
+        int GetEmptySkyYMask() const
         {
             return empty_sky_Y_mask;
         }
 
-        const int GetEmptyBlockYMask() const
+        int GetEmptyBlockYMask() const
         {
             return empty_block_Y_mask;
         }
@@ -181,7 +181,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 722
-        const bool GetTrustEdges() const
+        bool GetTrustEdges() const
         {
             return trust_edges;
         }

@@ -30,7 +30,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetSequence() const
+        int GetSequence() const
         {
             return sequence;
         }

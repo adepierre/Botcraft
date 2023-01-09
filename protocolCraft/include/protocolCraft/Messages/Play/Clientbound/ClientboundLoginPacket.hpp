@@ -178,32 +178,32 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetPlayerId() const
+        int GetPlayerId() const
         {
             return player_id;
         }
 
 #if PROTOCOL_VERSION > 551
-        const long long int GetSeed() const
+        long long int GetSeed() const
         {
             return seed;
         }
 #endif
 
 #if PROTOCOL_VERSION > 737
-        const bool GetHardcore() const
+        bool GetHardcore() const
         {
             return hardcore;
         }
 #endif
 
-        const unsigned char GetGameType() const
+        unsigned char GetGameType() const
         {
             return game_type;
         }
 
 #if PROTOCOL_VERSION > 718
-        const unsigned char GetPreviousGameType() const
+        unsigned char GetPreviousGameType() const
         {
             return previous_game_type;
         }
@@ -235,26 +235,26 @@ namespace ProtocolCraft
             return dimension;
         }
 #else
-        const int GetDimension() const
+        int GetDimension() const
         {
             return dimension;
         }
 #endif
 
 #if PROTOCOL_VERSION < 477
-        const unsigned char GetDifficulty() const
+        unsigned char GetDifficulty() const
         {
             return difficulty;
         }
 #endif
 
 #if PROTOCOL_VERSION < 749
-        const unsigned char GetMaxPlayers() const
+        unsigned char GetMaxPlayers() const
         {
             return max_players;
         }
 #else
-        const int GetMaxPlayers() const
+        int GetMaxPlayers() const
         {
             return max_players;
         }
@@ -268,36 +268,36 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION >= 477
-        const int GetChunkRadius() const
+        int GetChunkRadius() const
         {
             return chunk_radius;
         }
 #endif
 #if PROTOCOL_VERSION > 756
-        const int GetSimulationDistance() const
+        int GetSimulationDistance() const
         {
             return simulation_distance;
         }
 #endif
 
-        const bool GetReducedDebugInfo() const
+        bool GetReducedDebugInfo() const
         {
             return reduced_debug_info;
         }
 
 #if PROTOCOL_VERSION > 565
-        const bool GetShowDeathScreen() const
+        bool GetShowDeathScreen() const
         {
             return show_death_screen;
         }
 #endif
 #if PROTOCOL_VERSION > 718
-        const bool GetIsDebug() const
+        bool GetIsDebug() const
         {
             return is_debug;
         }
 
-        const bool GetIsFlat() const
+        bool GetIsFlat() const
         {
             return is_flat;
         }

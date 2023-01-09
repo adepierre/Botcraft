@@ -51,13 +51,13 @@ namespace ProtocolCraft
         }
 #endif
 
-        const int GetDifficulty() const
+        int GetDifficulty() const
         {
             return difficulty;
         }
 
 #if PROTOCOL_VERSION >= 477
-        const bool GetLocked() const
+        bool GetLocked() const
         {
             return locked;
         }

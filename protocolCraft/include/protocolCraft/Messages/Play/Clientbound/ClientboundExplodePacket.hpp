@@ -98,39 +98,39 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 761
-        const float GetX() const
+        float GetX() const
         {
             return x;
         }
 
-        const float GetY() const
+        float GetY() const
         {
             return y;
         }
 
-        const float GetZ() const
+        float GetZ() const
         {
             return z;
         }
 #else
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 #endif
 
-        const float GetPower() const
+        float GetPower() const
         {
             return power;
         }
@@ -140,17 +140,17 @@ namespace ProtocolCraft
             return to_blow;
         }
 
-        const float GetKnockbackX() const
+        float GetKnockbackX() const
         {
             return knockback_x;
         }
 
-        const float GetKnockbackY() const
+        float GetKnockbackY() const
         {
             return knockback_y;
         }
 
-        const float GetKnockbackZ() const
+        float GetKnockbackZ() const
         {
             return knockback_z;
         }

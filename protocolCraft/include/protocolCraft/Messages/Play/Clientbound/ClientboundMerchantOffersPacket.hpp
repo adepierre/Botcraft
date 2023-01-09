@@ -68,7 +68,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetContainerId() const
+        int GetContainerId() const
         {
             return container_id;
         }
@@ -78,22 +78,22 @@ namespace ProtocolCraft
             return offers;
         }
 
-        const int GetVillagerLevel() const
+        int GetVillagerLevel() const
         {
             return villager_level;
         }
 
-        const int GetVillagerXp() const
+        int GetVillagerXp() const
         {
             return villager_xp;
         }
 
-        const bool GetShowProgress() const
+        bool GetShowProgress() const
         {
             return show_progress;
         }
 
-        const bool GetCanRestock() const
+        bool GetCanRestock() const
         {
             return can_restock;
         }

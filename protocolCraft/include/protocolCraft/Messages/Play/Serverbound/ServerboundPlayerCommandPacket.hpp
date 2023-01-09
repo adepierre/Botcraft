@@ -55,17 +55,17 @@ namespace ProtocolCraft
         }
 
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
 
-        const int GetAction() const
+        int GetAction() const
         {
             return action;
         }
 
-        const int GetData() const
+        int GetData() const
         {
             return data;
         }

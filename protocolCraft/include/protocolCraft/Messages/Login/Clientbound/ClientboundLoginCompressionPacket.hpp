@@ -20,7 +20,7 @@ namespace ProtocolCraft
             compression_threshold = compression_threshold_;
         }
 
-        const int GetCompressionThreshold() const
+        int GetCompressionThreshold() const
         {
             return compression_threshold;
         }

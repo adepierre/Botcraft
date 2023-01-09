@@ -74,13 +74,13 @@ namespace ProtocolCraft
             return command;
         }
 
-        const long long int GetTimestamp() const
+        long long int GetTimestamp() const
         {
             return timestamp;
         }
 
 #if PROTOCOL_VERSION > 759
-        const long long int GetSalt() const
+        long long int GetSalt() const
         {
             return salt;
         }
@@ -92,7 +92,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 761
-        const bool GetSignedPreview() const
+        bool GetSignedPreview() const
         {
             return signed_preview;
         }

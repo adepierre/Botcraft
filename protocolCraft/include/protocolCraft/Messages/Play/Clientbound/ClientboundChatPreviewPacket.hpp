@@ -34,7 +34,7 @@ namespace ProtocolCraft
         }
         
         
-        const char GetQueryId() const
+        char GetQueryId() const
         {
             return query_id;
         }

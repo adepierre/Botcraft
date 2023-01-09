@@ -19,7 +19,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetReadType() const
+        int GetReadType() const
         {
             return read_type;
         }

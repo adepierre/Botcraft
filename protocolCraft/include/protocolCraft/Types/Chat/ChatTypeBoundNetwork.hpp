@@ -30,7 +30,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetChatType() const
+        int GetChatType() const
         {
             return chat_type;
         }

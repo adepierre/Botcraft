@@ -62,7 +62,7 @@ namespace ProtocolCraft
         }
 #endif
 
-        const unsigned char GetContainerId() const
+        unsigned char GetContainerId() const
         {
             return container_id;
         }
@@ -78,7 +78,7 @@ namespace ProtocolCraft
             return carried_item;
         }
 
-        const int GetStateId() const
+        int GetStateId() const
         {
             return state_id;
         }

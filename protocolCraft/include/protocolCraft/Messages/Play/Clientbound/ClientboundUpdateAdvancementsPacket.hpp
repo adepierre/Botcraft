@@ -65,7 +65,7 @@ namespace ProtocolCraft
         }
 
 
-        const bool GetReset() const
+        bool GetReset() const
         {
             return reset;
         }

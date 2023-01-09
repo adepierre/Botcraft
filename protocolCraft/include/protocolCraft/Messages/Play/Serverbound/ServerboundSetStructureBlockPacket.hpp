@@ -105,12 +105,12 @@ namespace ProtocolCraft
             return pos;
         }
 
-        const int GetUpdateType() const
+        int GetUpdateType() const
         {
             return update_type;
         }
 
-        const int GetMode() const
+        int GetMode() const
         {
             return mode;
         }
@@ -130,12 +130,12 @@ namespace ProtocolCraft
             return size;
         }
 
-        const int GetMirror() const
+        int GetMirror() const
         {
             return mirror;
         }
 
-        const int GetRotation() const
+        int GetRotation() const
         {
             return rotation;
         }
@@ -145,17 +145,17 @@ namespace ProtocolCraft
             return data;
         }
 
-        const float GetIntegrity() const
+        float GetIntegrity() const
         {
             return integrity;
         }
 
-        const long long int GetSeed() const
+        long long int GetSeed() const
         {
             return seed;
         }
 
-        const char GetFlags() const
+        char GetFlags() const
         {
             return flags;
         }

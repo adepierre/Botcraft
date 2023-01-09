@@ -82,34 +82,34 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }
 
 #if PROTOCOL_VERSION < 758
-        const char GetEffectId() const
+        char GetEffectId() const
         {
             return effect_id;
         }
 #else
-        const int GetEffectId() const
+        int GetEffectId() const
         {
             return effect_id;
         }
 #endif
 
-        const char GetEffectAmplifier() const
+        char GetEffectAmplifier() const
         {
             return effect_amplifier;
         }
 
-        const int GetEffectDurationTicks() const
+        int GetEffectDurationTicks() const
         {
             return effect_duration_ticks;
         }
 
-        const char GetFlags() const
+        char GetFlags() const
         {
             return flags;
         }

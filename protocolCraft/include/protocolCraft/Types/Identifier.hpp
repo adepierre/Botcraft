@@ -47,7 +47,7 @@ namespace ProtocolCraft
             return name;
         }
 
-        const std::string GetFull() const
+        std::string GetFull() const
         {
             if (namespace_.empty())
             {

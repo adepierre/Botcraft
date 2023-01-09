@@ -50,12 +50,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetItem() const
+        int GetItem() const
         {
             return item;
         }
 
-        const int GetDuration() const
+        int GetDuration() const
         {
             return duration;
         }

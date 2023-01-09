@@ -45,17 +45,17 @@ namespace ProtocolCraft
         }
 
 
-        const double GetOldSize() const
+        double GetOldSize() const
         {
             return old_size;
         }
 
-        const double GetNewSize() const
+        double GetNewSize() const
         {
             return new_size;
         }
 
-        const long long int GetLerpTime() const
+        long long int GetLerpTime() const
         {
             return lerp_time;
         }

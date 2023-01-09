@@ -102,7 +102,7 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
@@ -112,52 +112,52 @@ namespace ProtocolCraft
             return uuid;
         }
 
-        const int GetType() const
+        int GetType() const
         {
             return type;
         }
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const Angle GetYRot() const
+        Angle GetYRot() const
         {
             return y_rot;
         }
 
-        const Angle GetXRot() const
+        Angle GetXRot() const
         {
             return x_rot;
         }
 
-        const Angle GetYHeadRot() const
+        Angle GetYHeadRot() const
         {
             return y_head_rot;
         }
 
-        const short GetXd() const
+        short GetXd() const
         {
             return xd;
         }
 
-        const short GetYd() const
+        short GetYd() const
         {
             return yd;
         }
 
-        const short GetZd() const
+        short GetZd() const
         {
             return zd;
         }

@@ -34,7 +34,7 @@ namespace ProtocolCraft
         }
 
 
-        const bool GetResetTimes() const
+        bool GetResetTimes() const
         {
             return reset_times;
         }

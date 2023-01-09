@@ -51,12 +51,12 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 760
-        const int GetTypeId() const
+        int GetTypeId() const
         {
             return type_id;
         }
 #else
-        const bool GetOverlay() const
+        bool GetOverlay() const
         {
             return overlay;
         }

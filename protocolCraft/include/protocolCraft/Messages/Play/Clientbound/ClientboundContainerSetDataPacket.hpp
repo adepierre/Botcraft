@@ -55,17 +55,17 @@ namespace ProtocolCraft
         }
 
 
-        const unsigned char GetWindowId() const
+        unsigned char GetWindowId() const
         {
             return container_id;
         }
 
-        const short GetId_() const
+        short GetId_() const
         {
             return id_;
         }
 
-        const short GetValue() const
+        short GetValue() const
         {
             return value;
         }

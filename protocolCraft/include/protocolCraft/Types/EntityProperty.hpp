@@ -52,7 +52,7 @@ namespace ProtocolCraft
         }
 #endif
 
-        const double GetValue() const
+        double GetValue() const
         {
             return value;
         }

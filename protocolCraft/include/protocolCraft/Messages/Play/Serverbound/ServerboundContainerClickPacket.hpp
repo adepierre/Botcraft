@@ -96,29 +96,29 @@ namespace ProtocolCraft
         }
 #endif
 
-        const unsigned char GetContainerId() const
+        unsigned char GetContainerId() const
         {
             return container_id;
         }
 
-        const short GetSlotNum() const
+        short GetSlotNum() const
         {
             return slot_num;
         }
 
-        const char GetButtonNum() const
+        char GetButtonNum() const
         {
             return button_num;
         }
 
 #if PROTOCOL_VERSION < 755
-        const short GetUid() const
+        short GetUid() const
         {
             return uid;
         }
 #endif
 
-        const int GetClickType() const
+        int GetClickType() const
         {
             return click_type;
         }
@@ -143,7 +143,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 755
-        const int GetStateId() const
+        int GetStateId() const
         {
             return state_id;
         }

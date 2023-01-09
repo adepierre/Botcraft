@@ -22,7 +22,7 @@ namespace ProtocolCraft
         tags = v;
     }
 
-    const TagType TagList::GetTagsType() const
+    TagType TagList::GetTagsType() const
     {
         return tags_type;
     }
@@ -32,7 +32,7 @@ namespace ProtocolCraft
         tags_type = tags_type_;
     }
 
-    const TagType TagList::GetType() const
+    TagType TagList::GetType() const
     {
         return TagType::List;
     }

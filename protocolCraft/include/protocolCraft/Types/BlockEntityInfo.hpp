@@ -35,17 +35,17 @@ namespace ProtocolCraft
         }
 
 
-        const unsigned char GetPackedXZ() const
+        unsigned char GetPackedXZ() const
         {
             return packed_XZ;
         }
 
-        const short GetY() const
+        short GetY() const
         {
             return y;
         }
 
-        const int GetType() const
+        int GetType() const
         {
             return type;
         }

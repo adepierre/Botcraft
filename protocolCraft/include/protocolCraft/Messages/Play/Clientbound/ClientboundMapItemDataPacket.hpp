@@ -102,25 +102,25 @@ namespace ProtocolCraft
         }
 
 
-        const int GetMapId() const
+        int GetMapId() const
         {
             return map_id;
         }
 
-        const char GetScale() const
+        char GetScale() const
         {
             return scale;
         }
 
 #if PROTOCOL_VERSION < 755
-        const bool GetTrackingPosition() const
+        bool GetTrackingPosition() const
         {
             return tracking_position;
         }
 #endif
 
 #if PROTOCOL_VERSION > 451
-        const bool GetLocked() const
+        bool GetLocked() const
         {
             return locked;
         }
@@ -138,22 +138,22 @@ namespace ProtocolCraft
         }
 #endif
 
-        const unsigned char GetStartX() const
+        unsigned char GetStartX() const
         {
             return start_x;
         }
 
-        const unsigned char GetStartZ() const
+        unsigned char GetStartZ() const
         {
             return start_z;
         }
 
-        const unsigned char GetWidth() const
+        unsigned char GetWidth() const
         {
             return width;
         }
 
-        const unsigned char GetHeight() const
+        unsigned char GetHeight() const
         {
             return height;
         }

@@ -54,7 +54,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetEntity() const
+        int GetEntity() const
         {
             return entity;
         }
@@ -64,7 +64,7 @@ namespace ProtocolCraft
             return command;
         }
 
-        const bool GetTrackOutput() const
+        bool GetTrackOutput() const
         {
             return track_output;
         }

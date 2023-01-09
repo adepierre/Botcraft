@@ -33,6 +33,6 @@ namespace ProtocolCraft
         static std::shared_ptr<Tag> CreateTag(const TagType type);
         static const std::string TagTypeToString(const TagType type);
 
-        virtual const TagType GetType() const = 0;
+        virtual TagType GetType() const = 0;
     };
 }

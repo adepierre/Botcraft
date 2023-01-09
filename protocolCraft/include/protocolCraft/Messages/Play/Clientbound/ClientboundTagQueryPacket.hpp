@@ -50,7 +50,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetTransactionId() const
+        int GetTransactionId() const
         {
             return transaction_id;
         }

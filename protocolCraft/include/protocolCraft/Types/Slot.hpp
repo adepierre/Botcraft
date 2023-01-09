@@ -112,33 +112,33 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 350
-        const short GetBlockID() const
+        short GetBlockID() const
         {
             return block_id;
         }
 
-        const short GetItemDamage() const
+        short GetItemDamage() const
         {
             return item_damage;
         }
 #elif PROTOCOL_VERSION < 402
-        const short GetItemID() const
+        short GetItemID() const
         {
             return item_id;
         }
 #elif PROTOCOL_VERSION >= 402
-        const bool GetPresent() const
+        bool GetPresent() const
         {
             return present;
         }
 
-        const short GetItemID() const
+        short GetItemID() const
         {
             return item_id;
         }
 #endif
 
-        const char GetItemCount() const
+        char GetItemCount() const
         {
             return item_count;
         }

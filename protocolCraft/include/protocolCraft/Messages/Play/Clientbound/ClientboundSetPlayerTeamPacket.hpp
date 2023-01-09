@@ -147,7 +147,7 @@ namespace ProtocolCraft
             return collision_rule;
         }
 
-        const int GetColor() const
+        int GetColor() const
         {
             return color;
         }
@@ -157,12 +157,12 @@ namespace ProtocolCraft
             return players;
         }
 
-        const char GetMethod() const
+        char GetMethod() const
         {
             return method;
         }
 
-        const char GetOptions() const
+        char GetOptions() const
         {
             return options;
         }

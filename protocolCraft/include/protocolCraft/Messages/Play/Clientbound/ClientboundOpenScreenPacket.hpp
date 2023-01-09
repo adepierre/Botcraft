@@ -80,7 +80,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION < 452
-        const unsigned char GetContainerId() const
+        unsigned char GetContainerId() const
         {
             return container_id;
         }
@@ -90,12 +90,12 @@ namespace ProtocolCraft
             return type;
         }
 #else
-        const int GetContainerId() const
+        int GetContainerId() const
         {
             return container_id;
         }
 
-        const int GetType() const
+        int GetType() const
         {
             return type;
         }
@@ -107,12 +107,12 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 452
-        const unsigned char GetNumberOfSlots() const
+        unsigned char GetNumberOfSlots() const
         {
             return number_of_slots;
         }
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }

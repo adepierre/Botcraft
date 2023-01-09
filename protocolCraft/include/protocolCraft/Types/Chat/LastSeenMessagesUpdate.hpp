@@ -55,7 +55,7 @@ namespace ProtocolCraft
             return last_received;
         }
 #else
-        const int GetOffset() const
+        int GetOffset() const
         {
             return offset;
         }

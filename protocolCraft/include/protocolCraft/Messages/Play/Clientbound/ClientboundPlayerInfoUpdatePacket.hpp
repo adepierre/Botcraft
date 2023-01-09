@@ -65,7 +65,7 @@ namespace ProtocolCraft
         }
 
 
-        const std::vector<PlayerInfoUpdateAction> GetActions() const
+        const std::vector<PlayerInfoUpdateAction>& GetActions() const
         {
             return actions;
         }

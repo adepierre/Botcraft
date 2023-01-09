@@ -52,27 +52,27 @@ namespace ProtocolCraft
         }
 
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const char GetType() const
+        char GetType() const
         {
             return type;
         }

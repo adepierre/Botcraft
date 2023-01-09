@@ -56,17 +56,17 @@ namespace ProtocolCraft
             return pos;
         }
 
-        const int GetState() const
+        int GetState() const
         {
             return state;
         }
 
-        const int GetAction() const
+        int GetAction() const
         {
             return action;
         }
 
-        const bool GetAllGood() const
+        bool GetAllGood() const
         {
             return all_good;
         }

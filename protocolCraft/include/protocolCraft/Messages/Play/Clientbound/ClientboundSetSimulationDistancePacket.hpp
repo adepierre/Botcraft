@@ -32,7 +32,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetSimulationDistance() const
+        int GetSimulationDistance() const
         {
             return simulation_distance;
         }

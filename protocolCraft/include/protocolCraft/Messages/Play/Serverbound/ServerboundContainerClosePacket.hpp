@@ -45,7 +45,7 @@ namespace ProtocolCraft
         }
 
 
-        const unsigned char GetContainerId() const
+        unsigned char GetContainerId() const
         {
             return container_id;
         }

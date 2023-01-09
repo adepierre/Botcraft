@@ -33,12 +33,12 @@ namespace ProtocolCraft
             return uuid;
         }
 
-        const double GetAmount() const
+        double GetAmount() const
         {
             return amount;
         }
         
-        const char GetOperation() const
+        char GetOperation() const
         {
             return operation;
         }

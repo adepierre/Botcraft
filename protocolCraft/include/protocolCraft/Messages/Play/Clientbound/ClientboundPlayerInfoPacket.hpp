@@ -62,7 +62,7 @@ namespace ProtocolCraft
             entries = entries_;
         }
 
-        const PlayerInfoAction GetAction() const
+        PlayerInfoAction GetAction() const
         {
             return action;
         }

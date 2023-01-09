@@ -77,7 +77,7 @@ namespace ProtocolCraft
         }
 
 
-        const RecipeState GetState() const
+        RecipeState GetState() const
         {
             return state;
         }

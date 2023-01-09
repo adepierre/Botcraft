@@ -50,12 +50,12 @@ namespace ProtocolCraft
         }
 
 
-        const unsigned char GetType() const
+        unsigned char GetType() const
         {
             return type;
         }
 
-        const float GetParam() const
+        float GetParam() const
         {
             return param;
         }

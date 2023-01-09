@@ -46,17 +46,17 @@ namespace ProtocolCraft
         }
 
 
-        const int GetBookType() const
+        int GetBookType() const
         {
             return book_type;
         }
 
-        const bool GetIsOpen() const
+        bool GetIsOpen() const
         {
             return is_open;
         }
 
-        const int GetIsFiltering() const
+        bool GetIsFiltering() const
         {
             return is_filtering;
         }

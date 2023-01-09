@@ -74,37 +74,37 @@ namespace ProtocolCraft
         }
 
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const int GetEntity() const
+        int GetEntity() const
         {
             return entity;
         }
 
-        const int GetFromAnchor() const
+        int GetFromAnchor() const
         {
             return from_anchor;
         }
 
-        const int GetToAnchor() const
+        int GetToAnchor() const
         {
             return to_anchor;
         }
 
-        const bool GetAtEntity() const
+        bool GetAtEntity() const
         {
             return at_entity;
         }

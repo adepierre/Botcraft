@@ -50,12 +50,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }
 
-        const char GetEventId() const
+        char GetEventId() const
         {
             return event_id;
         }

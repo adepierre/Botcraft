@@ -86,17 +86,17 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION < 739
-        const int GetChunkX() const
+        int GetChunkX() const
         {
             return chunk_x;
         }
 
-        const int GetChunkZ() const
+        int GetChunkZ() const
         {
             return chunk_z;
         }
 
-        const int GetRecordCount() const
+        int GetRecordCount() const
         {
             return record_count;
         }
@@ -106,12 +106,12 @@ namespace ProtocolCraft
             return records;
         }
 #else
-        const long long int GetSectionPos() const
+        long long int GetSectionPos() const
         {
             return section_pos;
         }
 
-        const bool GetSuppressLightUpdates() const
+        bool GetSuppressLightUpdates() const
         {
             return suppress_light_updates;
         }

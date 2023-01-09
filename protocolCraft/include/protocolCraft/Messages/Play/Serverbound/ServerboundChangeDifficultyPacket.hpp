@@ -42,7 +42,7 @@ namespace ProtocolCraft
         }
 
 
-        const char GetDifficulty() const
+        char GetDifficulty() const
         {
             return difficulty;
         }

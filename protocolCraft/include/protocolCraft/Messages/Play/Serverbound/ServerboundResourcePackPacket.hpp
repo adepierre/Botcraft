@@ -45,7 +45,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetAction() const
+        int GetAction() const
         {
             return action;
         }

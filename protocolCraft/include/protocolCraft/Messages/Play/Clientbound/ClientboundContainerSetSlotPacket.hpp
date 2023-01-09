@@ -64,12 +64,12 @@ namespace ProtocolCraft
         }
 #endif
 
-        const char GetContainerId() const
+        char GetContainerId() const
         {
             return container_id;
         }
 
-        const short GetSlot() const
+        short GetSlot() const
         {
             return slot;
         }
@@ -80,7 +80,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 755
-        const int GetStateId() const
+        int GetStateId() const
         {
             return state_id;
         }

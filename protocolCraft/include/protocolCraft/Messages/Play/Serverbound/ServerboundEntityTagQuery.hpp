@@ -49,12 +49,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetTransactionId() const
+        int GetTransactionId() const
         {
             return transaction_id;
         }
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }

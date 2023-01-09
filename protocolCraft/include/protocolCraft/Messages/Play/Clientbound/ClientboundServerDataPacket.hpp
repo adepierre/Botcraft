@@ -64,14 +64,14 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 761
-        const bool GetPreviewsChat() const
+        bool GetPreviewsChat() const
         {
             return previews_chat;
         }
 #endif
 
 #if PROTOCOL_VERSION > 759
-        const bool GetEnforcesSecureChat() const
+        bool GetEnforcesSecureChat() const
         {
             return enforces_secure_chat;
         }

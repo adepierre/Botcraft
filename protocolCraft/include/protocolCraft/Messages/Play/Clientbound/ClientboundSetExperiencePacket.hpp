@@ -55,17 +55,17 @@ namespace ProtocolCraft
         }
 
 
-        const float GetExperienceProgress() const
+        float GetExperienceProgress() const
         {
             return experience_progress;
         }
 
-        const int GetTotalExperience() const
+        int GetTotalExperience() const
         {
             return total_experience;
         }
 
-        const int GetExperienceLevel() const
+        int GetExperienceLevel() const
         {
             return experience_level;
         }

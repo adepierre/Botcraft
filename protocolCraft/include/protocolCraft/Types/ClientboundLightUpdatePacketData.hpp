@@ -50,7 +50,7 @@ namespace ProtocolCraft
         }
 
 
-        const bool GetTrustEdges() const
+        bool GetTrustEdges() const
         {
             return trust_edges;
         }

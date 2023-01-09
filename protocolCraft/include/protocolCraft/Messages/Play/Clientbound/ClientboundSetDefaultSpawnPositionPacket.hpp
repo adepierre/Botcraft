@@ -59,7 +59,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 754
-        const float GetAngle() const
+        float GetAngle() const
         {
             return angle;
         }

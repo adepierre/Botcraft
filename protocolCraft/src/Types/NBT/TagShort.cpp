@@ -12,7 +12,7 @@ namespace ProtocolCraft
 
     }
 
-    const short TagShort::GetValue() const
+    short TagShort::GetValue() const
     {
         return value;
     }
@@ -22,7 +22,7 @@ namespace ProtocolCraft
         value = v;
     }
 
-    const TagType TagShort::GetType() const
+    TagType TagShort::GetType() const
     {
         return TagType::Short;
     }

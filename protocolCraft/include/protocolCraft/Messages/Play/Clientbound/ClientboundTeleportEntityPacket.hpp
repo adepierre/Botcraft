@@ -74,37 +74,37 @@ namespace ProtocolCraft
             on_ground = on_ground_;
         }
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const unsigned char GetYRot() const
+        unsigned char GetYRot() const
         {
             return yRot;
         }
 
-        const unsigned char GetXRot() const
+        unsigned char GetXRot() const
         {
             return xRot;
         }
 
-        const bool GetOnGround() const
+        bool GetOnGround() const
         {
             return on_ground;
         }

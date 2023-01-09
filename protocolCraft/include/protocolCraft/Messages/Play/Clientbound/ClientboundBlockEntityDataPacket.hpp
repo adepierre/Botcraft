@@ -69,12 +69,12 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 757
-        const unsigned char GetType() const
+        unsigned char GetType() const
         {
             return type;
         }
 #else
-        const int GetType() const
+        int GetType() const
         {
             return type;
         }

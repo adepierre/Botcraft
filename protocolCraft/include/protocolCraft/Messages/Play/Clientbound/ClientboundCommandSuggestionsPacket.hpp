@@ -73,17 +73,17 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 356
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
 
-        const int GetStart() const
+        int GetStart() const
         {
             return start;
         }
 
-        const int GetLength() const
+        int GetLength() const
         {
             return length_;
         }

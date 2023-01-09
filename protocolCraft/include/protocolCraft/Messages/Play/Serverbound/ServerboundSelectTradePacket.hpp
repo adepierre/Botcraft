@@ -44,7 +44,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetItem() const
+        int GetItem() const
         {
             return item;
         }

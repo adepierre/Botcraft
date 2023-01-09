@@ -40,12 +40,12 @@ namespace ProtocolCraft
         }
 
 
-        const double GetNewCenterX() const
+        double GetNewCenterX() const
         {
             return new_center_x;
         }
 
-        const double GetNewCenterZ() const
+        double GetNewCenterZ() const
         {
             return new_center_z;
         }

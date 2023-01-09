@@ -23,7 +23,7 @@ namespace ProtocolCraft
         return ParticleType::Shriek;
     }
 
-    const int ShriekParticle::GetDelay() const
+    int ShriekParticle::GetDelay() const
     {
         return delay;
     }

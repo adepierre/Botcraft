@@ -12,7 +12,7 @@ namespace ProtocolCraft
 
     }
     
-    const float TagFloat::GetValue() const
+    float TagFloat::GetValue() const
     {
         return value;
     }
@@ -22,7 +22,7 @@ namespace ProtocolCraft
         value = v;
     }
 
-    const TagType TagFloat::GetType() const
+    TagType TagFloat::GetType() const
     {
         return TagType::Float;
     }

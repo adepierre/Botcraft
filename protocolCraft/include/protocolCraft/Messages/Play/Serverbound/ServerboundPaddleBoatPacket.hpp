@@ -50,12 +50,12 @@ namespace ProtocolCraft
         }
 
 
-        const bool GetLeft() const
+        bool GetLeft() const
         {
             return left;
         }
 
-        const bool GetRight() const
+        bool GetRight() const
         {
             return right;
         }

@@ -76,7 +76,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 754
-        const bool GetRequired() const
+        bool GetRequired() const
         {
             return required;
         }

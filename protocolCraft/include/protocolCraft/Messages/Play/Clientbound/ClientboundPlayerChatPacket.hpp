@@ -83,7 +83,7 @@ namespace ProtocolCraft
             return unsigned_content;
         }
 
-        const int GetTypeId() const
+        int GetTypeId() const
         {
             return type_id;
         }
@@ -93,7 +93,7 @@ namespace ProtocolCraft
             return sender;
         }
 
-        const long long int GetTimestamp() const
+        long long int GetTimestamp() const
         {
             return timestamp;
         }
@@ -157,7 +157,7 @@ namespace ProtocolCraft
             return sender;
         }
 
-        const int GetIndex() const
+        int GetIndex() const
         {
             return index;
         }

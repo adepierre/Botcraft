@@ -24,7 +24,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetType() const
+        int GetType() const
         {
             return type;
         }

@@ -86,38 +86,38 @@ namespace ProtocolCraft
             return name_;
         }
 
-        const int GetSource() const
+        int GetSource() const
         {
             return source;
         }
 
-        const int GetX() const
+        int GetX() const
         {
             return x;
         }
 
-        const int GetY() const
+        int GetY() const
         {
             return y;
         }
 
-        const int GetZ() const
+        int GetZ() const
         {
             return z;
         }
 
-        const float GetVolume() const
+        float GetVolume() const
         {
             return volume;
         }
 
-        const float GetPitch() const
+        float GetPitch() const
         {
             return pitch;
         }
 
 #if PROTOCOL_VERSION > 758
-        const long long int GetSeed() const
+        long long int GetSeed() const
         {
             return seed;
         }

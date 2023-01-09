@@ -50,12 +50,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
 
-        const unsigned char GetAction() const
+        unsigned char GetAction() const
         {
             return action;
         }

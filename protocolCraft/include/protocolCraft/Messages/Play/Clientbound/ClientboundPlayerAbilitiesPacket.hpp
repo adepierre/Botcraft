@@ -54,17 +54,17 @@ namespace ProtocolCraft
             walking_speed = walking_speed_;
         }
 
-        const char GetFlags() const
+        char GetFlags() const
         {
             return flags;
         }
 
-        const float GetFlyingSpeed() const
+        float GetFlyingSpeed() const
         {
             return flying_speed;
         }
 
-        const float GetWalkingSpeed() const
+        float GetWalkingSpeed() const
         {
             return walking_speed;
         }

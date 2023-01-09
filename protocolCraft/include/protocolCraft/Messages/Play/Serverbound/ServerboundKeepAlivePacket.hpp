@@ -44,7 +44,7 @@ namespace ProtocolCraft
             id_ = l;
         }
 
-        const long long int GetId_() const
+        long long int GetId_() const
         {
             return id_;
         }

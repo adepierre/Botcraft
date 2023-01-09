@@ -49,12 +49,12 @@ namespace ProtocolCraft
             z = z_;
         }
 
-        const int GetX() const
+        int GetX() const
         {
             return x;
         }
 
-        const int GetZ() const
+        int GetZ() const
         {
             return z;
         }

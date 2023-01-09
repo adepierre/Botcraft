@@ -39,7 +39,7 @@ namespace ProtocolCraft
         }
 
 
-        const long long int GetTimestamp() const
+        long long int GetTimestamp() const
         {
             return timestamp;
         }

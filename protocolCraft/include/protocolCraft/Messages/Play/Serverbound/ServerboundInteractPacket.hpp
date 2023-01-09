@@ -77,38 +77,38 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }
 
-        const int GetAction() const
+        int GetAction() const
         {
             return action;
         }
 
-        const float GetLocationX() const
+        float GetLocationX() const
         {
             return location_x;
         }
 
-        const float GetLocationY() const
+        float GetLocationY() const
         {
             return location_y;
         }
 
-        const float GetLocationZ() const
+        float GetLocationZ() const
         {
             return location_z;
         }
 
-        const int GetHand() const
+        int GetHand() const
         {
             return hand;
         }
 
 #if PROTOCOL_VERSION > 722
-        const bool GetUsingSecondaryAction() const
+        bool GetUsingSecondaryAction() const
         {
             return using_secondary_action;
         }

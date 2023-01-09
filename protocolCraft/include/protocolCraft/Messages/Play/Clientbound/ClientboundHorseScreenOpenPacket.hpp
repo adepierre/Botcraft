@@ -52,17 +52,17 @@ namespace ProtocolCraft
         }
 
 
-        const char GetContainerId() const
+        char GetContainerId() const
         {
             return container_id;
         }
 
-        const int GetSize() const
+        int GetSize() const
         {
             return size;
         }
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }

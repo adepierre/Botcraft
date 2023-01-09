@@ -89,13 +89,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 349
         const std::string& GetRenderType() const
 #else
-        const int GetRenderType() const
+        int GetRenderType() const
 #endif
         {
             return render_type;
         }
 
-        const char GetMethod() const
+        char GetMethod() const
         {
             return method;
         }

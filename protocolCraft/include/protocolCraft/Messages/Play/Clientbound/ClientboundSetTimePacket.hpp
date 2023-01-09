@@ -49,12 +49,12 @@ namespace ProtocolCraft
             day_time = day_time_;
         }
 
-        const long long int GetGameTime() const
+        long long int GetGameTime() const
         {
             return game_time;
         }
 
-        const long long int GetDayTime() const
+        long long int GetDayTime() const
         {
             return day_time;
         }

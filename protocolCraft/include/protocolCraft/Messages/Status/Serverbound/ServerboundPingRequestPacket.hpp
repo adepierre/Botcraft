@@ -20,7 +20,7 @@ namespace ProtocolCraft
             time = time_;
         }
 
-        const long long int GetTime() const
+        long long int GetTime() const
         {
             return time;
         }

@@ -70,12 +70,12 @@ namespace ProtocolCraft
             return command;
         }
 
-        const int GetMode() const
+        int GetMode() const
         {
             return mode;
         }
 
-        const char GetFlags() const
+        char GetFlags() const
         {
             return flags;
         }

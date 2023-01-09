@@ -57,18 +57,18 @@ namespace ProtocolCraft
 #endif
 
 
-        const char GetFlags() const
+        char GetFlags() const
         {
             return flags;
         }
 
 #if PROTOCOL_VERSION < 727
-        const float GetFlyingSpeed() const
+        float GetFlyingSpeed() const
         {
             return flying_speed;
         }
 
-        const float GetWalkingSpeed() const
+        float GetWalkingSpeed() const
         {
             return walking_speed;
         }

@@ -45,7 +45,7 @@ namespace ProtocolCraft
             uuid = uuid_;
         }
 
-        void SetPos(const NetworkPosition pos_)
+        void SetPos(const NetworkPosition& pos_)
         {
             pos = pos_;
         }
@@ -56,7 +56,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 353
-        void SetTitle(const std::string title_)
+        void SetTitle(const std::string& title_)
         {
             title = title_;
         }
@@ -69,7 +69,7 @@ namespace ProtocolCraft
 
 
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
@@ -79,23 +79,23 @@ namespace ProtocolCraft
             return uuid;
         }
 
-        const NetworkPosition GetPos() const
+        const NetworkPosition& GetPos() const
         {
             return pos;
         }
 
-        const char GetDirection() const
+        char GetDirection() const
         {
             return direction;
         }
 
 #if PROTOCOL_VERSION < 353
-        const std::string GetTitle() const
+        const std::string& GetTitle() const
         {
             return title;
         }
 #else
-        const int GetMotive() const
+        int GetMotive() const
         {
             return motive;
         }

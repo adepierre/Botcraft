@@ -92,25 +92,25 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetX() const
+        int GetX() const
         {
             return x;
         }
 
-        const int GetZ() const
+        int GetZ() const
         {
             return z;
         }
 
 #if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
-        const bool GetIgnoreOldData() const
+        bool GetIgnoreOldData() const
         {
             return ignore_old_data;
         }
 #endif
 
 #if PROTOCOL_VERSION < 755
-        const int GetAvailableSections() const
+        int GetAvailableSections() const
 #else
         const std::vector<unsigned long long int>& GetAvailableSections() const
 #endif
@@ -143,7 +143,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 755
-        const bool GetFullChunk() const
+        bool GetFullChunk() const
         {
             return full_chunk;
         }

@@ -69,42 +69,42 @@ namespace ProtocolCraft
         }
 
 
-        const double GetNewCenterX() const
+        double GetNewCenterX() const
         {
             return new_center_x;
         }
 
-        const double GetNewCenterZ() const
+        double GetNewCenterZ() const
         {
             return new_center_z;
         }
 
-        const double GetOldSize() const
+        double GetOldSize() const
         {
             return old_size;
         }
 
-        const double GetNewSize() const
+        double GetNewSize() const
         {
             return new_size;
         }
 
-        const long long int GetLerpTime() const
+        long long int GetLerpTime() const
         {
             return lerp_time;
         }
 
-        const int GetNewAbsoluteMaxSize() const
+        int GetNewAbsoluteMaxSize() const
         {
             return new_absolute_max_size;
         }
 
-        const int GetWarningTime() const
+        int GetWarningTime() const
         {
             return warning_time;
         }
 
-        const int GetWarningBlocks() const
+        int GetWarningBlocks() const
         {
             return warning_blocks;
         }

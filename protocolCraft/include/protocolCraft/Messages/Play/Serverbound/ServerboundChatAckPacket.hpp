@@ -43,7 +43,7 @@ namespace ProtocolCraft
             return last_seen_messages;
         }
 #else
-        const int GetOffset() const
+        int GetOffset() const
         {
             return offset;
         }

@@ -31,7 +31,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetSoundId() const
+        int GetSoundId() const
         {
             return sound_id;
         }

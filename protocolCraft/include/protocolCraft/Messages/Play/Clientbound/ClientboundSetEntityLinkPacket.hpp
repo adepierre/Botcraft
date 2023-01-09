@@ -50,12 +50,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetSourceId() const
+        int GetSourceId() const
         {
             return source_id;
         }
 
-        const int GetDestId() const
+        int GetDestId() const
         {
             return dest_id;
         }

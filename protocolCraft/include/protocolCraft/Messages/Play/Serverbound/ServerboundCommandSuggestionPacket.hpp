@@ -66,7 +66,7 @@ namespace ProtocolCraft
 
 
 #if PROTOCOL_VERSION > 344
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
@@ -78,7 +78,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 345
-        const bool GetAssumeCommand() const
+        bool GetAssumeCommand() const
         {
             return assume_command;
         }

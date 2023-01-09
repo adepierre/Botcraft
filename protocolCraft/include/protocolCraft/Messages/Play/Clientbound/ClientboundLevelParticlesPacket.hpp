@@ -111,68 +111,68 @@ namespace ProtocolCraft
 
 
 #if PROTOCOL_VERSION < 569
-        const float GetX() const
+        float GetX() const
         {
             return x;
         }
 
-        const float GetY() const
+        float GetY() const
         {
             return y;
         }
 
-        const float GetZ() const
+        float GetZ() const
         {
             return z;
         }
 #else
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 #endif
 
-        const float GetXDist() const
+        float GetXDist() const
         {
             return x_dist;
         }
 
-        const float GetYDist() const
+        float GetYDist() const
         {
             return y_dist;
         }
 
-        const float GetZDist() const
+        float GetZDist() const
         {
             return z_dist;
         }
 
-        const float GetMaxSpeed() const
+        float GetMaxSpeed() const
         {
             return max_speed;
         }
 
-        const int GetCount() const
+        int GetCount() const
         {
             return count;
         }
 
-        const bool GetOverrideLimiter() const
+        bool GetOverrideLimiter() const
         {
             return override_limiter;
         }
 
-        const std::shared_ptr<Particle> GetParticle() const
+        std::shared_ptr<Particle> GetParticle() const
         {
             return particle;
         }

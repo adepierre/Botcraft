@@ -82,43 +82,43 @@ namespace ProtocolCraft
 #endif
 
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const float GetYRot() const
+        float GetYRot() const
         {
             return yRot;
         }
 
-        const float GetXRot() const
+        float GetXRot() const
         {
             return xRot;
         }
 
-        const char GetRelativeArguments() const
+        char GetRelativeArguments() const
         {
             return relative_arguments;
         }
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
 
 #if PROTOCOL_VERSION > 754
-        const bool GetDismountVehicle() const
+        bool GetDismountVehicle() const
         {
             return dismount_vehicle;
         }

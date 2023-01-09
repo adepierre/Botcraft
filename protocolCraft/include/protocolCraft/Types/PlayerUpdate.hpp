@@ -58,12 +58,12 @@ namespace ProtocolCraft
             return name;
         }
 
-        const int GetGameMode() const
+        int GetGameMode() const
         {
             return game_mode;
         }
 
-        const int GetLatency() const
+        int GetLatency() const
         {
             return latency;
         }

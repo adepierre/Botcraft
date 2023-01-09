@@ -69,32 +69,32 @@ namespace ProtocolCraft
             on_ground = b;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const float GetYRot() const
+        float GetYRot() const
         {
             return yRot;
         }
 
-        const float GetXRot() const
+        float GetXRot() const
         {
             return xRot;
         }
 
-        const bool GetOnGround() const
+        bool GetOnGround() const
         {
             return on_ground;
         }

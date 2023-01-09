@@ -43,7 +43,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetHand() const
+        int GetHand() const
         {
             return hand;
         }

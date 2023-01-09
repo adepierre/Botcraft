@@ -65,27 +65,27 @@ namespace ProtocolCraft
         }
 
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const float GetYRot() const
+        float GetYRot() const
         {
             return yRot;
         }
 
-        const float GetXRot() const
+        float GetXRot() const
         {
             return xRot;
         }

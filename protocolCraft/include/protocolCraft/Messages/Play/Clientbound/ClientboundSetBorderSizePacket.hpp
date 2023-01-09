@@ -35,7 +35,7 @@ namespace ProtocolCraft
         }
 
 
-        const double GetSize() const
+        double GetSize() const
         {
             return size;
         }

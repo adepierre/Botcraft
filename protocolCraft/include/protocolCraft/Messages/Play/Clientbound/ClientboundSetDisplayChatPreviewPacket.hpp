@@ -28,7 +28,7 @@ namespace ProtocolCraft
         }
 
 
-        const bool GetEnabled() const
+        bool GetEnabled() const
         {
             return enabled;
         }

@@ -15,7 +15,7 @@ namespace ProtocolCraft
         const std::vector<long long int>& GetValues() const;
         void SetValues(const std::vector<long long int> &v);
 
-        virtual const TagType GetType() const override;
+        virtual TagType GetType() const override;
 
         virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
         virtual void WriteImpl(WriteContainer &container) const override;

@@ -12,7 +12,7 @@ namespace ProtocolCraft
 
     }
 
-    const char TagByte::GetValue() const
+    char TagByte::GetValue() const
     {
         return value;
     }
@@ -22,7 +22,7 @@ namespace ProtocolCraft
         value = v;
     }
 
-    const TagType TagByte::GetType() const
+    TagType TagByte::GetType() const
     {
         return TagType::Byte;
     }

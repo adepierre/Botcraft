@@ -40,12 +40,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetKillerId() const
+        int GetKillerId() const
         {
             return killer_id;
         }
 
-        const int GetDuration() const
+        int GetDuration() const
         {
             return duration;
         }

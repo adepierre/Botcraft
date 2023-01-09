@@ -76,12 +76,12 @@ namespace ProtocolCraft
             return objective_name;
         }
 
-        const int GetScore() const
+        int GetScore() const
         {
             return score;
         }
 
-        const SetScoreMethod GetMethod() const
+        SetScoreMethod GetMethod() const
         {
             return method;
         }

@@ -26,7 +26,7 @@ namespace ProtocolCraft
         }
     
 
-        const long long int GetSalt() const
+        long long int GetSalt() const
         {
             return salt;
         }

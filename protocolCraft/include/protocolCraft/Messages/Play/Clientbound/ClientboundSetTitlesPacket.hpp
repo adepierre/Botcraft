@@ -67,7 +67,7 @@ namespace ProtocolCraft
         }
 
 
-        const SetTitlesType GetType() const
+        SetTitlesType GetType() const
         {
             return type;
         }
@@ -77,17 +77,17 @@ namespace ProtocolCraft
             return text;
         }
 
-        const int GetFadeInTime() const
+        int GetFadeInTime() const
         {
             return fade_in_time;
         }
 
-        const int GetStayTime() const
+        int GetStayTime() const
         {
             return stay_time;
         }
 
-        const int GetFadeOutTime() const
+        int GetFadeOutTime() const
         {
             return fade_out_time;
         }

@@ -81,37 +81,37 @@ namespace ProtocolCraft
             return input_item_2;
         }
 
-        const bool GetTradeDisabled() const
+        bool GetTradeDisabled() const
         {
             return trade_disabled;
         }
 
-        const int GetNumberOfTradesUses() const
+        int GetNumberOfTradesUses() const
         {
             return number_of_trades_uses;
         }
 
-        const int GetMaximumNumberOfTradeUses() const
+        int GetMaximumNumberOfTradeUses() const
         {
             return maximum_number_of_trade_uses;
         }
 
-        const int GetXp() const
+        int GetXp() const
         {
             return xp;
         }
 
-        const int GetSpecialPrice() const
+        int GetSpecialPrice() const
         {
             return special_price;
         }
 
-        const float GetPriceMultiplier() const
+        float GetPriceMultiplier() const
         {
             return price_multiplier;
         }
 
-        const int GetDemand() const
+        int GetDemand() const
         {
             return demand;
         }

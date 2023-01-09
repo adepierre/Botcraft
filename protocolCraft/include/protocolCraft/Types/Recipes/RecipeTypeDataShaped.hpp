@@ -48,12 +48,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetWidth() const
+        int GetWidth() const
         {
             return width;
         }
 
-        const int GetHeight() const
+        int GetHeight() const
         {
             return height;
         }
@@ -64,7 +64,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 760
-        const int GetCookingBookCategory() const
+        int GetCookingBookCategory() const
         {
             return cooking_book_category;
         }

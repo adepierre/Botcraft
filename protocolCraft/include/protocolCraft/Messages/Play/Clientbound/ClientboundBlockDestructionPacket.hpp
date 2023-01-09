@@ -56,7 +56,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
@@ -66,7 +66,7 @@ namespace ProtocolCraft
             return pos;
         }
 
-        const char GetProgress() const
+        char GetProgress() const
         {
             return progress;
         }

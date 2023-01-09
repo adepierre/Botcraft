@@ -47,12 +47,12 @@ namespace ProtocolCraft
 
 
 
-        const int GetPlayerId() const
+        int GetPlayerId() const
         {
             return player_id;
         }
 
-        const int GetKillerId() const
+        int GetKillerId() const
         {
             return killer_id;
         }

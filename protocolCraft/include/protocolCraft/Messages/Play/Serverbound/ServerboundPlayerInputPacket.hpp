@@ -55,17 +55,17 @@ namespace ProtocolCraft
         }
 
 
-        const float GetXxa() const
+        float GetXxa() const
         {
             return xxa;
         }
 
-        const float GetZza() const
+        float GetZza() const
         {
             return zza;
         }
 
-        const unsigned char GetFlags() const
+        unsigned char GetFlags() const
         {
             return flags;
         }

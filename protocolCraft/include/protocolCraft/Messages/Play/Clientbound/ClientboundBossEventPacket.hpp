@@ -81,7 +81,7 @@ namespace ProtocolCraft
             return id_;
         }
 
-        const int GetOperation() const
+        int GetOperation() const
         {
             return operation;
         }
@@ -91,22 +91,22 @@ namespace ProtocolCraft
             return name_;
         }
 
-        const float GetPct() const
+        float GetPct() const
         {
             return pct;
         }
 
-        const int GetColor() const
+        int GetColor() const
         {
             return color;
         }
 
-        const int GetOverlay() const
+        int GetOverlay() const
         {
             return overlay;
         }
 
-        const unsigned char GetFlags() const
+        unsigned char GetFlags() const
         {
             return flags;
         }

@@ -35,7 +35,7 @@ namespace ProtocolCraft
             intention = n;
         }
 
-        const int GetProtocolVersion() const
+        int GetProtocolVersion() const
         {
             return protocol_version;
         }
@@ -45,12 +45,12 @@ namespace ProtocolCraft
             return host_name;
         }
 
-        const unsigned short GetPort() const
+        unsigned short GetPort() const
         {
             return port;
         }
 
-        const int GetIntention() const
+        int GetIntention() const
         {
             return intention;
         }

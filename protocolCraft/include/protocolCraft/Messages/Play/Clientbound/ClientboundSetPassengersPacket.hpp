@@ -50,7 +50,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetVehicle() const
+        int GetVehicle() const
         {
             return vehicle;
         }

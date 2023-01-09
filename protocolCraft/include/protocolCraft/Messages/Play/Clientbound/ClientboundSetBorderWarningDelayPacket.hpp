@@ -35,7 +35,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetWarningDelay() const
+        int GetWarningDelay() const
         {
             return warning_delay;
         }

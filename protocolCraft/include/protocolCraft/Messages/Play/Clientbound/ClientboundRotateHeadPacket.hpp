@@ -50,12 +50,12 @@ namespace ProtocolCraft
         }
 
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }
 
-        const Angle GetYHeadRot() const
+        Angle GetYHeadRot() const
         {
             return y_head_rot;
         }

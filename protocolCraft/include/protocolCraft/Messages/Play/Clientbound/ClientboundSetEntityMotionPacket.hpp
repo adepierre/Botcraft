@@ -60,22 +60,22 @@ namespace ProtocolCraft
         }
 
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
 
-        const short GetXA() const
+        short GetXA() const
         {
             return x_a;
         }
 
-        const short GetYA() const
+        short GetYA() const
         {
             return y_a;
         }
 
-        const short GetZA() const
+        short GetZA() const
         {
             return z_a;
         }

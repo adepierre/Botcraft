@@ -57,22 +57,22 @@ namespace ProtocolCraft
         }
 
 
-        const int GetEvent() const
+        int GetEvent() const
         {
             return event_;
         }
 
-        const int GetPlayerId() const
+        int GetPlayerId() const
         {
             return player_id;
         }
 
-        const int GetKillerId() const
+        int GetKillerId() const
         {
             return killer_id;
         }
 
-        const int GetDuration() const
+        int GetDuration() const
         {
             return duration;
         }

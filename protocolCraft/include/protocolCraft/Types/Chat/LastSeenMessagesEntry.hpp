@@ -40,7 +40,7 @@ namespace ProtocolCraft
             return profile_id;
         }
 #else
-        const int GetId() const
+        int GetId() const
         {
             return id;
         }

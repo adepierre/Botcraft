@@ -62,12 +62,12 @@ namespace ProtocolCraft
 
 
 #if PROTOCOL_VERSION < 759
-        const int GetPrimary() const
+        int GetPrimary() const
         {
             return primary;
         }
 
-        const int GetSecondary() const
+        int GetSecondary() const
         {
             return secondary;
         }

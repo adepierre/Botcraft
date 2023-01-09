@@ -26,7 +26,7 @@ namespace ProtocolCraft
             data = data_;
         }
 
-        const int GetTransationId() const
+        int GetTransationId() const
         {
             return transaction_id;
         }

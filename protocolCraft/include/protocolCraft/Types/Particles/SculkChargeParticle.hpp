@@ -16,7 +16,7 @@ namespace ProtocolCraft
         
         virtual ParticleType GetType() const override;
 
-        const float GetRoll() const;
+        float GetRoll() const;
 
         void SetRoll(const float roll_);
         

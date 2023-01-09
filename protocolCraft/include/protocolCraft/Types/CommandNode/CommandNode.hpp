@@ -61,7 +61,7 @@ namespace ProtocolCraft
         }
 
 
-        const char GetFlags() const
+        char GetFlags() const
         {
             return flags;
         }
@@ -71,7 +71,7 @@ namespace ProtocolCraft
             return children;
         }
 
-        const int GetRedirectNode() const
+        int GetRedirectNode() const
         {
             return redirect_node;
         }
@@ -87,13 +87,13 @@ namespace ProtocolCraft
             return parser;
         }
 #else
-        const int GetParserId() const
+        int GetParserId() const
         {
             return parser_id;
         }
 #endif
 
-        const std::shared_ptr<BrigadierProperty> GetProperties() const
+        std::shared_ptr<BrigadierProperty> GetProperties() const
         {
             return properties;
         }

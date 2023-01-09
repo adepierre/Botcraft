@@ -88,39 +88,39 @@ namespace ProtocolCraft
             return language;
         }
 
-        const char GetViewDistance() const
+        char GetViewDistance() const
         {
             return view_distance;
         }
 
-        const int GetChatVisibility() const
+        int GetChatVisibility() const
         {
             return chat_visibility;
         }
 
-        const bool GetChatColors() const
+        bool GetChatColors() const
         {
             return chat_colors;
         }
 
-        const unsigned char GetModelCustomisation() const
+        unsigned char GetModelCustomisation() const
         {
             return model_customisation;
         }
 
-        const int GetMainHand() const
+        int GetMainHand() const
         {
             return main_hand;
         }
 
 #if PROTOCOL_VERSION > 754
-        const bool GetTextFilteringEnabled() const
+        bool GetTextFilteringEnabled() const
         {
             return text_filtering_enabled;
         }
 #endif
 #if PROTOCOL_VERSION > 756
-        const bool GetAllowListing() const
+        bool GetAllowListing() const
         {
             return allow_listing;
         }

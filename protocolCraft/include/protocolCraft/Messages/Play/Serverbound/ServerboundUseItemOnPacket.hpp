@@ -85,7 +85,7 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetHand() const
+        int GetHand() const
         {
             return hand;
         }
@@ -95,35 +95,35 @@ namespace ProtocolCraft
             return location;
         }
 
-        const int GetDirection() const
+        int GetDirection() const
         {
             return direction;
         }
 
-        const float GetCursorPositionX() const
+        float GetCursorPositionX() const
         {
             return cursor_position_x;
         }
 
-        const float GetCursorPositionY() const
+        float GetCursorPositionY() const
         {
             return cursor_position_y;
         }
 
-        const float GetCursorPositionZ() const
+        float GetCursorPositionZ() const
         {
             return cursor_position_z;
         }
 
 #if PROTOCOL_VERSION > 452
-        const bool GetInside() const
+        bool GetInside() const
         {
             return inside;
         }
 #endif
 
 #if PROTOCOL_VERSION > 758
-        const int GetSequence() const
+        int GetSequence() const
         {
             return sequence;
         }

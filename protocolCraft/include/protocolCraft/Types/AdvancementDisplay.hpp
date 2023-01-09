@@ -71,12 +71,12 @@ namespace ProtocolCraft
             return icon;
         }
 
-        const int GetFrameType() const
+        int GetFrameType() const
         {
             return frame_type;
         }
 
-        const int GetFlags() const
+        int GetFlags() const
         {
             return flags;
         }
@@ -86,12 +86,12 @@ namespace ProtocolCraft
             return background_texture;
         }
 
-        const float GetXCoord() const
+        float GetXCoord() const
         {
             return x_coord;
         }
         
-        const float GetYCoord() const
+        float GetYCoord() const
         {
             return y_coord;
         }

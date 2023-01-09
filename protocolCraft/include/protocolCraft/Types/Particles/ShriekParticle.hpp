@@ -16,7 +16,7 @@ namespace ProtocolCraft
         
         virtual ParticleType GetType() const override;
 
-        const int GetDelay() const;
+        int GetDelay() const;
 
         void SetDelay(const int delay_);
         

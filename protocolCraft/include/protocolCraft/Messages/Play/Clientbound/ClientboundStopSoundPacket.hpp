@@ -50,7 +50,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetSource() const
+        int GetSource() const
         {
             return source;
         }

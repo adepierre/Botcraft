@@ -29,17 +29,17 @@ namespace ProtocolCraft
         }
         
         
-        const char GetFlags() const
+        char GetFlags() const
         {
             return flags;
         }
         
-        const long long int GetMin() const
+        long long int GetMin() const
         {
             return min;
         }
         
-        const long long int GetMax() const
+        long long int GetMax() const
         {
             return max;
         }

@@ -19,7 +19,7 @@ namespace ProtocolCraft
         }
         
         
-        const char GetFlags() const
+        char GetFlags() const
         {
             return flags;
         }

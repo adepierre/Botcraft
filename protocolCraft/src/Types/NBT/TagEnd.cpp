@@ -12,7 +12,7 @@ namespace ProtocolCraft
 
     }
 
-    const TagType TagEnd::GetType() const
+    TagType TagEnd::GetType() const
     {
         return TagType::End;
     }

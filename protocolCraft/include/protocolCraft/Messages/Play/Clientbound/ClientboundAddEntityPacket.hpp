@@ -106,7 +106,7 @@ namespace ProtocolCraft
             data = data_;
         }
 
-        const int GetId_() const
+        int GetId_() const
         {
             return id_;
         }
@@ -116,59 +116,59 @@ namespace ProtocolCraft
             return uuid;
         }
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const short GetXa() const
+        short GetXa() const
         {
             return xa;
         }
 
-        const short GetYa() const
+        short GetYa() const
         {
             return ya;
         }
 
-        const short GetZa() const
+        short GetZa() const
         {
             return za;
         }
 
-        const Angle GetXRot() const
+        Angle GetXRot() const
         {
             return x_rot;
         }
 
-        const Angle GetYRot() const
+        Angle GetYRot() const
         {
             return y_rot;
         }
 
 #if PROTOCOL_VERSION > 758
-        const Angle GetYHeadRot() const
+        Angle GetYHeadRot() const
         {
             return y_head_rot;
         }
 #endif
 
-        const char GetType() const
+        char GetType() const
         {
             return type;
         }
 
-        const int GetData() const
+        int GetData() const
         {
             return data;
         }

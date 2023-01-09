@@ -87,7 +87,7 @@ namespace ProtocolCraft
         }
 #endif
 
-        const int GetPurpose() const
+        int GetPurpose() const
         {
             return purpose;
         }
@@ -95,51 +95,51 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 375
         const Identifier& GetRecipe() const
 #else
-        const int GetRecipe() const
+        int GetRecipe() const
 #endif
         {
             return recipe;
         }
 
-        const bool GetGuiOpen() const
+        bool GetGuiOpen() const
         {
             return gui_open;
         }
 
-        const bool GetFilteringCraftable() const
+        bool GetFilteringCraftable() const
         {
             return filtering_craftable;
         }
 
 #if PROTOCOL_VERSION > 358
-        const bool GetFurnaceGuiOpen() const
+        bool GetFurnaceGuiOpen() const
         {
             return furnace_gui_open;
         }
 
-        const bool GetFurnaceFilteringCraftable() const
+        bool GetFurnaceFilteringCraftable() const
         {
             return furnace_filtering_craftable;
         }
 #endif
 
 #if PROTOCOL_VERSION > 450
-        const bool GetBlastFurnaceGuiOpen() const
+        bool GetBlastFurnaceGuiOpen() const
         {
             return blast_furnace_gui_open;
         }
 
-        const bool GetBlastFurnaceFilteringCraftable() const
+        bool GetBlastFurnaceFilteringCraftable() const
         {
             return blast_furnace_filtering_craftable;
         }
 
-        const bool GetSmokerGuiOpen() const
+        bool GetSmokerGuiOpen() const
         {
             return smoker_gui_open;
         }
 
-        const bool GetSmokerFilteringCraftable() const
+        bool GetSmokerFilteringCraftable() const
         {
             return smoker_filtering_craftable;
         }

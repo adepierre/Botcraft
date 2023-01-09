@@ -66,17 +66,17 @@ namespace ProtocolCraft
             return pos;
         }
 
-        const unsigned char GetB0() const
+        unsigned char GetB0() const
         {
             return b0;
         }
 
-        const unsigned char GetB1() const
+        unsigned char GetB1() const
         {
             return b1;
         }
 
-        const int GetBlock() const
+        int GetBlock() const
         {
             return block;
         }

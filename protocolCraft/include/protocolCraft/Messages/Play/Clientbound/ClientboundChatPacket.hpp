@@ -57,7 +57,7 @@ namespace ProtocolCraft
             return message;
         }
 
-        const char GetType() const
+        char GetType() const
         {
             return type;
         }

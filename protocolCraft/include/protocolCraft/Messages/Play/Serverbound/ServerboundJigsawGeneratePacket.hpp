@@ -48,17 +48,17 @@ namespace ProtocolCraft
             keep_jigsaws = keep_jigsaws_;
         }
 
-        const NetworkPosition GetPos() const
+        const NetworkPosition& GetPos() const
         {
             return pos;
         }
 
-        const int GetLevels() const
+        int GetLevels() const
         {
             return levels;
         }
 
-        const bool GetKeepJigsaws() const
+        bool GetKeepJigsaws() const
         {
             return keep_jigsaws;
         }

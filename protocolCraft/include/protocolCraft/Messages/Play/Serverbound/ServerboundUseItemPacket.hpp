@@ -52,13 +52,13 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetHand() const
+        int GetHand() const
         {
             return hand;
         }
 
 #if PROTOCOL_VERSION > 758
-        const int GetSequence() const
+        int GetSequence() const
         {
             return sequence;
         }

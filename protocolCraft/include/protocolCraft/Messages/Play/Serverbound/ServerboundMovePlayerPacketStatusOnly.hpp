@@ -34,7 +34,7 @@ namespace ProtocolCraft
         }
 
 
-        const bool GetOnGround() const
+        bool GetOnGround() const
         {
             return on_ground;
         }

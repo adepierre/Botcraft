@@ -57,18 +57,18 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }
 
 #if PROTOCOL_VERSION < 758
-        const char GetEffect() const
+        char GetEffect() const
         {
             return effect;
         }
 #else
-        const int GetEffect() const
+        int GetEffect() const
         {
             return effect;
         }

@@ -42,7 +42,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetRadius() const
+        int GetRadius() const
         {
             return radius;
         }

@@ -17,7 +17,7 @@ namespace ProtocolCraft
         const std::shared_ptr<Tag> GetValue(const std::string& name) const;
         void SetValues(const std::map<std::string, std::shared_ptr<Tag> > &v);
 
-        virtual const TagType GetType() const override;
+        virtual TagType GetType() const override;
 
         virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
         virtual void WriteImpl(WriteContainer &container) const override;

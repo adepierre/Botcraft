@@ -19,7 +19,7 @@ namespace ProtocolCraft
         }
         
         
-        const bool GetDecimals() const
+        bool GetDecimals() const
         {
             return decimals;
         }

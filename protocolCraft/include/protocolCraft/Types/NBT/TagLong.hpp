@@ -12,10 +12,10 @@ namespace ProtocolCraft
         TagLong();
         virtual ~TagLong();
 
-        const long long int GetValue() const;
+        long long int GetValue() const;
         void SetValue(const long long int v);
 
-        virtual const TagType GetType() const override;
+        virtual TagType GetType() const override;
 
         virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
         virtual void WriteImpl(WriteContainer &container) const override;

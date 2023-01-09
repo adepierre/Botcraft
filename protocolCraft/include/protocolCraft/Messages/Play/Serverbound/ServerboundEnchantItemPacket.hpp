@@ -33,12 +33,12 @@ namespace ProtocolCraft
         }
 
 
-        const char GetContainerId() const
+        char GetContainerId() const
         {
             return container_id;
         }
 
-        const char GetEnchantment() const
+        char GetEnchantment() const
         {
             return enchantment;
         }

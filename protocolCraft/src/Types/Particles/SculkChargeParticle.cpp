@@ -23,7 +23,7 @@ namespace ProtocolCraft
         return ParticleType::SculkCharge;
     }
 
-    const float SculkChargeParticle::GetRoll() const
+    float SculkChargeParticle::GetRoll() const
     {
         return roll;
     }

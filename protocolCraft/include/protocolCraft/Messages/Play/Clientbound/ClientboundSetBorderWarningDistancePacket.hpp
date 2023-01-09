@@ -35,7 +35,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetWarningBlocks() const
+        int GetWarningBlocks() const
         {
             return warning_blocks;
         }

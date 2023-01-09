@@ -82,7 +82,7 @@ namespace ProtocolCraft
 #endif
 
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }
@@ -92,27 +92,27 @@ namespace ProtocolCraft
             return player_id;
         }
 
-        const double GetX() const
+        double GetX() const
         {
             return x;
         }
 
-        const double GetY() const
+        double GetY() const
         {
             return y;
         }
 
-        const double GetZ() const
+        double GetZ() const
         {
             return z;
         }
 
-        const Angle GetYRot() const
+        Angle GetYRot() const
         {
             return yRot;
         }
 
-        const Angle GetXRot() const
+        Angle GetXRot() const
         {
             return xRot;
         }

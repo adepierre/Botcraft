@@ -45,7 +45,7 @@ namespace ProtocolCraft
         }
 
 
-        const int GetCameraId() const
+        int GetCameraId() const
         {
             return camera_id;
         }

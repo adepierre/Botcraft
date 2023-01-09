@@ -35,7 +35,7 @@ namespace ProtocolCraft
             entity_id = entity_id_;
         }
 
-        const int GetEntityId() const
+        int GetEntityId() const
         {
             return entity_id;
         }

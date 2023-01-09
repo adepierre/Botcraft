@@ -16,28 +16,28 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 373
-        const char GetRotAndType() const
+        char GetRotAndType() const
         {
             return rot_and_type;
         }
 #else
-        const int GetType() const
+        int GetType() const
         {
             return type;
         }
 #endif
-        const char GetX() const
+        char GetX() const
         {
             return x;
         }
 
-        const char GetZ() const
+        char GetZ() const
         {
             return z;
         }
 
 #if PROTOCOL_VERSION > 372
-        const char GetRot() const
+        char GetRot() const
         {
             return rot;
         }
