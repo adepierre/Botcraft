@@ -62,9 +62,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ArmorStandEntity::Serialize() const
+    ProtocolCraft::Json::Value ArmorStandEntity::Serialize() const
     {
-        nlohmann::json output = LivingEntity::Serialize();
+        ProtocolCraft::Json::Value output = LivingEntity::Serialize();
 
         output["metadata"]["data_client_flags"] = GetDataClientFlags();
         output["metadata"]["data_head_pose"] = GetDataHeadPose().Serialize();

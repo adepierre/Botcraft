@@ -60,17 +60,17 @@ namespace Botcraft
     }
 
 
-    nlohmann::json FireworkRocketEntity::Serialize() const
+    ProtocolCraft::Json::Value FireworkRocketEntity::Serialize() const
     {
 #if PROTOCOL_VERSION > 578
-        nlohmann::json output = ProjectileEntity::Serialize();
+        ProtocolCraft::Json::Value output = ProjectileEntity::Serialize();
 #else
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 #endif
 
         output["metadata"]["data_id_fireworks_item"] = GetDataIdFireworksItem().Serialize();
 #if PROTOCOL_VERSION > 404
-        output["metadata"]["data_attached_to_target"] = GetDataAttachedToTarget() ? nlohmann::json(GetDataAttachedToTarget().value()) : nlohmann::json();
+        output["metadata"]["data_attached_to_target"] = GetDataAttachedToTarget() ? ProtocolCraft::Json::Value(GetDataAttachedToTarget().value()) : ProtocolCraft::Json::Value();
         output["metadata"]["data_shot_at_angle"] = GetDataShotAtAngle();
 #else
         output["metadata"]["data_attached_to_target"] = GetDataAttachedToTarget();

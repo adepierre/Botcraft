@@ -64,9 +64,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json WolfEntity::Serialize() const
+    ProtocolCraft::Json::Value WolfEntity::Serialize() const
     {
-        nlohmann::json output = TamableAnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = TamableAnimalEntity::Serialize();
 
 #if PROTOCOL_VERSION < 499
         output["metadata"]["data_health_id"] = GetDataHealthId();

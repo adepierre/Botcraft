@@ -59,9 +59,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json GoatEntity::Serialize() const
+    ProtocolCraft::Json::Value GoatEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_is_screaming_goat"] = GetDataIsScreamingGoat();
 #if PROTOCOL_VERSION > 758

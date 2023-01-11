@@ -3,8 +3,6 @@
 #include <ostream>
 #include <cassert>
 
-#include <nlohmann/json.hpp>
-
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
 namespace Botcraft
@@ -193,9 +191,9 @@ namespace Botcraft
             return o;
         }
 
-        const nlohmann::json Serialize() const
+        const ProtocolCraft::Json::Value Serialize() const
         {
-            return nlohmann::json({ x, y, z });
+            return ProtocolCraft::Json::Value({ x, y, z });
         }
 
         const ProtocolCraft::NetworkPosition ToNetworkPosition() const

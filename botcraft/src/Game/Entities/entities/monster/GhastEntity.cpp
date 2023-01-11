@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json GhastEntity::Serialize() const
+    ProtocolCraft::Json::Value GhastEntity::Serialize() const
     {
-        nlohmann::json output = FlyingMobEntity::Serialize();
+        ProtocolCraft::Json::Value output = FlyingMobEntity::Serialize();
 
         output["metadata"]["data_is_charging"] = GetDataIsCharging();
 

@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json SheepEntity::Serialize() const
+    ProtocolCraft::Json::Value SheepEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_wool_id"] = GetDataWoolId();
 

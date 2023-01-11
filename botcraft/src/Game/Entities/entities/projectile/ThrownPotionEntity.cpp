@@ -55,9 +55,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION < 579
-    nlohmann::json ThrownPotionEntity::Serialize() const
+    ProtocolCraft::Json::Value ThrownPotionEntity::Serialize() const
     {
-        nlohmann::json output = ThrowableProjectileEntity::Serialize();
+        ProtocolCraft::Json::Value output = ThrowableProjectileEntity::Serialize();
 
         output["metadata"]["data_item_stack"] = GetDataItemStack().Serialize();
 

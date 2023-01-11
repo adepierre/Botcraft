@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json RabbitEntity::Serialize() const
+    ProtocolCraft::Json::Value RabbitEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_type_id"] = GetDataTypeId();
 

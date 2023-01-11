@@ -55,9 +55,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json StriderEntity::Serialize() const
+    ProtocolCraft::Json::Value StriderEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_boost_time"] = GetDataBoostTime();
         output["metadata"]["data_suffocating"] = GetDataSuffocating();

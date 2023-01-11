@@ -55,12 +55,12 @@ namespace Botcraft
         return EntityType::FishingHook;
     }
 
-    nlohmann::json FishingHookEntity::Serialize() const
+    ProtocolCraft::Json::Value FishingHookEntity::Serialize() const
     {
 #if PROTOCOL_VERSION > 578
-        nlohmann::json output = ProjectileEntity::Serialize();
+        ProtocolCraft::Json::Value output = ProjectileEntity::Serialize();
 #else
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 #endif
 
         output["metadata"]["data_hooked_entity"] = GetDataHookedEntity();

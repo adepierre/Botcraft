@@ -24,9 +24,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json RaiderEntity::Serialize() const
+    ProtocolCraft::Json::Value RaiderEntity::Serialize() const
     {
-        nlohmann::json output = PatrollingMonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = PatrollingMonsterEntity::Serialize();
 
         output["metadata"]["is_celebrating"] = GetIsCelebrating();
 

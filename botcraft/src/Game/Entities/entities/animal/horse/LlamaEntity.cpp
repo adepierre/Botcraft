@@ -54,9 +54,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json LlamaEntity::Serialize() const
+    ProtocolCraft::Json::Value LlamaEntity::Serialize() const
     {
-        nlohmann::json output = AbstractChestedHorseEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractChestedHorseEntity::Serialize();
 
         output["metadata"]["data_strength_id"] = GetDataStrengthId();
         output["metadata"]["data_swag_id"] = GetDataSwagId();

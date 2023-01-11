@@ -53,9 +53,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json CamelEntity::Serialize() const
+    ProtocolCraft::Json::Value CamelEntity::Serialize() const
     {
-        nlohmann::json output = AbstractHorseEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractHorseEntity::Serialize();
 
         output["metadata"]["dash"] = GetDash();
         output["metadata"]["last_pose_change_tick"] = GetLastPoseChangeTick();

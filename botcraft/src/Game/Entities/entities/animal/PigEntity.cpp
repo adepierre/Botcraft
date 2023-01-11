@@ -52,9 +52,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PigEntity::Serialize() const
+    ProtocolCraft::Json::Value PigEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_saddle_id"] = GetDataSaddleId();
         output["metadata"]["data_boost_time"] = GetDataBoostTime();

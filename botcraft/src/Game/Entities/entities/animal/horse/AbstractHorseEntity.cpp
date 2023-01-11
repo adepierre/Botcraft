@@ -25,12 +25,12 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AbstractHorseEntity::Serialize() const
+    ProtocolCraft::Json::Value AbstractHorseEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_id_flags"] = GetDataIdFlags();
-        output["metadata"]["data_id_owner_uuid"] = GetDataIdOwnerUuid() ? nlohmann::json(GetDataIdOwnerUuid().value()) : nlohmann::json();
+        output["metadata"]["data_id_owner_uuid"] = GetDataIdOwnerUuid() ? ProtocolCraft::Json::Value(GetDataIdOwnerUuid().value()) : ProtocolCraft::Json::Value();
 
         return output;
     }

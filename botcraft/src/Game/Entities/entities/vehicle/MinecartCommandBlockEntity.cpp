@@ -52,9 +52,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json MinecartCommandBlockEntity::Serialize() const
+    ProtocolCraft::Json::Value MinecartCommandBlockEntity::Serialize() const
     {
-        nlohmann::json output = AbstractMinecartEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractMinecartEntity::Serialize();
 
         output["metadata"]["data_id_command_name"] = GetDataIdCommandName();
         output["metadata"]["data_id_last_output"] = GetDataIdLastOutput().Serialize();

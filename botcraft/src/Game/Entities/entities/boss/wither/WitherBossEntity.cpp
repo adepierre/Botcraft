@@ -56,9 +56,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json WitherBossEntity::Serialize() const
+    ProtocolCraft::Json::Value WitherBossEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["metadata"]["data_target_a"] = GetDataTargetA();
         output["metadata"]["data_target_b"] = GetDataTargetB();

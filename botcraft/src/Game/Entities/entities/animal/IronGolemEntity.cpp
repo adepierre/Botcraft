@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json IronGolemEntity::Serialize() const
+    ProtocolCraft::Json::Value IronGolemEntity::Serialize() const
     {
-        nlohmann::json output = AbstractGolemEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractGolemEntity::Serialize();
 
         output["metadata"]["data_flags_id"] = GetDataFlagsId();
 

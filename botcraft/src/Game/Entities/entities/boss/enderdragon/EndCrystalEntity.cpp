@@ -52,11 +52,11 @@ namespace Botcraft
     }
 
 
-    nlohmann::json EndCrystalEntity::Serialize() const
+    ProtocolCraft::Json::Value EndCrystalEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
-        output["metadata"]["data_beam_target"] = GetDataBeamTarget() ? GetDataBeamTarget().value().Serialize() : nlohmann::json();
+        output["metadata"]["data_beam_target"] = GetDataBeamTarget() ? GetDataBeamTarget().value().Serialize() : ProtocolCraft::Json::Value();
         output["metadata"]["data_show_bottom"] = GetDataShowBottom();
 
         return output;

@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json MinecartFurnaceEntity::Serialize() const
+    ProtocolCraft::Json::Value MinecartFurnaceEntity::Serialize() const
     {
-        nlohmann::json output = AbstractMinecartEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractMinecartEntity::Serialize();
 
         output["metadata"]["data_id_fuel"] = GetDataIdFuel();
 

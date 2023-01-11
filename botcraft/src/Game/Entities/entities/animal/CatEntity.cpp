@@ -57,9 +57,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json CatEntity::Serialize() const
+    ProtocolCraft::Json::Value CatEntity::Serialize() const
     {
-        nlohmann::json output = TamableAnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = TamableAnimalEntity::Serialize();
 
         output["metadata"]["data_type_id"] = GetDataTypeId();
         output["metadata"]["is_lying"] = GetIsLying();

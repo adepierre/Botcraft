@@ -55,9 +55,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION > 758
-    nlohmann::json PaintingEntity::Serialize() const
+    ProtocolCraft::Json::Value PaintingEntity::Serialize() const
     {
-        nlohmann::json output = HangingEntity::Serialize();
+        ProtocolCraft::Json::Value output = HangingEntity::Serialize();
 
         output["metadata"]["data_painting_variant_id"] = GetDataPaintingVariantId();
 

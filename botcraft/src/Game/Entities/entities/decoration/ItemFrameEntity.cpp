@@ -52,9 +52,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ItemFrameEntity::Serialize() const
+    ProtocolCraft::Json::Value ItemFrameEntity::Serialize() const
     {
-        nlohmann::json output = HangingEntity::Serialize();
+        ProtocolCraft::Json::Value output = HangingEntity::Serialize();
 
         output["metadata"]["data_item"] = GetDataItem().Serialize();
         output["metadata"]["data_rotation"] = GetDataRotation();

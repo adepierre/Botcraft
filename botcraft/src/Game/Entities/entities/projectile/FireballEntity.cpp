@@ -28,9 +28,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION > 404
-    nlohmann::json FireballEntity::Serialize() const
+    ProtocolCraft::Json::Value FireballEntity::Serialize() const
     {
-        nlohmann::json output = AbstractHurtingProjectileEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractHurtingProjectileEntity::Serialize();
 
         output["metadata"]["data_item_stack"] = GetDataItemStack().Serialize();
 

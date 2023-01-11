@@ -50,12 +50,12 @@ namespace Botcraft
     }
 
 
-    nlohmann::json WitchEntity::Serialize() const
+    ProtocolCraft::Json::Value WitchEntity::Serialize() const
     {
 #if PROTOCOL_VERSION > 404
-        nlohmann::json output = RaiderEntity::Serialize();
+        ProtocolCraft::Json::Value output = RaiderEntity::Serialize();
 #else
-        nlohmann::json output = MobEntity::Serialize();
+        ProtocolCraft::Json::Value output = MobEntity::Serialize();
 #endif
 
         output["metadata"]["data_using_item"] = GetDataUsingItem();

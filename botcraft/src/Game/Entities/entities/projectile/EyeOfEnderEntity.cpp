@@ -55,9 +55,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION > 404
-    nlohmann::json EyeOfEnderEntity::Serialize() const
+    ProtocolCraft::Json::Value EyeOfEnderEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_item_stack"] = GetDataItemStack().Serialize();
 

@@ -2,10 +2,12 @@
 #include "botcraft/Utilities/StringUtilities.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
-#include <nlohmann/json.hpp>
+#include "protocolCraft/Utilities/Json.hpp"
 
 #include <sstream>
 #include <fstream>
+
+using namespace ProtocolCraft;
 
 namespace Botcraft
 {
@@ -46,7 +48,7 @@ namespace Botcraft
         }
 
         bool error = filepath == "";
-        nlohmann::json obj;
+        Json::Value obj;
         
         if (!error)
         {
@@ -56,7 +58,7 @@ namespace Botcraft
                 file >> obj;
                 file.close();
             }
-            catch (const nlohmann::json::exception& e)
+            catch (const std::runtime_error& e)
             {
                 LOG_ERROR("Error reading model file  " << full_filepath << '\n' << e.what());
                 error = true;
@@ -86,19 +88,18 @@ namespace Botcraft
         //Default values
         ambient_occlusion = true;
 
-        auto it = obj.find("parent");
-        if (it != obj.end())
+        if (obj.contains("parent"))
         {
 #if PROTOCOL_VERSION > 578 // > 1.15.2
             // Remove the minecraft: in front of the parent model name
-            std::string model_name = it.value();
+            std::string model_name = obj["parent"].get_string();
             if (StartsWith(model_name, "minecraft:"))
             {
                 model_name = model_name.substr(10);
             }
             const Model& parent_model = GetModel(model_name, custom);
 #else
-            const Model& parent_model = GetModel(it.value(), custom);
+            const Model& parent_model = GetModel(obj["parent"].get_string(), custom);
 #endif
             colliders = parent_model.colliders;
 #if USE_GUI
@@ -109,61 +110,56 @@ namespace Botcraft
 #endif
         }
 
-        it = obj.find("ambientocclusion");
-        if (it != obj.end())
+        if (obj.contains("ambientocclusion"))
         {
-            ambient_occlusion = it.value();
+            ambient_occlusion = obj["ambientocclusion"].get<bool>();
         }
 
-        it = obj.find("display");
-        if (it != obj.end())
+        if (obj.contains("display"))
         {
             //TODO do something with display information?
         }
 
 #if USE_GUI
-        it = obj.find("textures_base_size");
-        if (it != obj.end())
+        if (obj.contains("textures_base_size"))
         {
-            for (nlohmann::json::const_iterator j = obj["textures_base_size"].begin(); j != obj["textures_base_size"].end(); ++j)
+            for (const auto& [key, val] : obj["textures_base_size"].get_object())
             {
-                textures_base_size[j.key()] = std::pair<int, int>(j.value()[0], j.value()[1]);
+                textures_base_size[key] = std::pair<int, int>(val[0].get_number<int>(), val[1].get_number<int>());
             }
         }
 
-        it = obj.find("textures");
-        if (it != obj.end())
+        if (obj.contains("textures"))
         {
-            for (nlohmann::json::const_iterator j = obj["textures"].begin(); j != obj["textures"].end(); ++j)
+            for (const auto& [key, val] : obj["textures"].get_object())
             {
 #if PROTOCOL_VERSION > 578 // > 1.15.2
                 // Remove leading minecraft: from the path of the textures
-                std::string texture_name = j.value();
+                std::string texture_name = val.get_string();
                 if (StartsWith(texture_name, "minecraft:"))
                 {
                      texture_name = texture_name.substr(10);
                 }
 #else
-                const std::string texture_name = j.value();
+                const std::string& texture_name = val.get_string();
 #endif
-                textures_variables["#" + j.key()] = texture_name;
-                if (j.value().get<std::string>().rfind("#", 0) == 0)
+                textures_variables["#" + key] = texture_name;
+                if (val.get_string().rfind("#", 0) == 0)
                 {
-                    textures_variables[j.value().get<std::string>()] = j.value();
+                    textures_variables[val.get_string()] = val.get_string();
                 }
             }
         }
 #endif
 
-        it = obj.find("elements");
-        if (it != obj.end())
+        if (obj.contains("elements"))
         {
 #if USE_GUI
             //Override any elements from the parent
             faces.clear();
 #endif
 
-            for (auto& element : it.value())
+            for (const auto& element : obj["elements"].get_array())
             {
 #if USE_GUI
                 std::vector<FaceDescriptor> current_element;
@@ -174,16 +170,16 @@ namespace Botcraft
 
                 if (element.contains("from"))
                 {
-                    start_x = element["from"][0];
-                    start_y = element["from"][1];
-                    start_z = element["from"][2];
+                    start_x = element["from"][0].get_number<int>();
+                    start_y = element["from"][1].get_number<int>();
+                    start_z = element["from"][2].get_number<int>();
                 }
 
                 if (element.contains("to"))
                 {
-                    end_x = element["to"][0];
-                    end_y = element["to"][1];
-                    end_z = element["to"][2];
+                    end_x = element["to"][0].get_number<int>();
+                    end_y = element["to"][1].get_number<int>();
+                    end_z = element["to"][2].get_number<int>();
                 }
 
                 colliders.push_back(AABB(Vector3<double>(start_x + end_x, start_y + end_y, start_z + end_z) / 2.0 / 16.0, Vector3<double>(std::abs(end_x - start_x), std::abs(end_y - start_y), std::abs(end_z - start_z)) / 2.0 / 16.0));
@@ -192,23 +188,23 @@ namespace Botcraft
                 if (element.contains("rotation"))
                 {
                     float origin_x, origin_y, origin_z;
-                    origin_x = element["rotation"]["origin"][0];
-                    origin_y = element["rotation"]["origin"][1];
-                    origin_z = element["rotation"]["origin"][2];
+                    origin_x = element["rotation"]["origin"][0].get_number<float>();
+                    origin_y = element["rotation"]["origin"][1].get_number<float>();
+                    origin_z = element["rotation"]["origin"][2].get_number<float>();
 
                     //Add the rotation to global transformations
 
-                    const float angle = element["rotation"]["angle"].get<float>();
+                    const float angle = element["rotation"]["angle"].get_number<float>();
                     element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Translation(-((start_x + end_x) / 2.0f - origin_x) / 16.0f, -((start_y + end_y) / 2.0f - origin_y) / 16.0f, -((start_z + end_z) / 2.0f - origin_z) / 16.0f)));
-                    if (element["rotation"]["axis"] == "x")
+                    if (element["rotation"]["axis"].get_string() == "x")
                     {
                         element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Rotation(1.0f, 0.0f, 0.0f, angle)));
                     }
-                    else if (element["rotation"]["axis"] == "y")
+                    else if (element["rotation"]["axis"].get_string() == "y")
                     {
                         element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 1.0f, 0.0f, angle)));
                     }
-                    else if (element["rotation"]["axis"] == "z")
+                    else if (element["rotation"]["axis"].get_string() == "z")
                     {
                         element_global_transformations.rotations.push_back(Renderer::TransformationPtr(new Renderer::Rotation(0.0f, 0.0f, 1.0f, angle)));
                     }
@@ -217,21 +213,21 @@ namespace Botcraft
                     bool rescale = false;
                     if (element["rotation"].contains("rescale"))
                     {
-                        rescale = element["rotation"]["rescale"];
+                        rescale = element["rotation"]["rescale"].get<bool>();
                     }
 
                     if (rescale)
                     {
                         float scale_factor = abs(1.0f / (cos(angle * 3.14159f / 180.0f)));
-                        if (element["rotation"]["axis"] == "x")
+                        if (element["rotation"]["axis"].get_string() == "x")
                         {
                             element_global_transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(1.0f, scale_factor, scale_factor)));
                         }
-                        else if (element["rotation"]["axis"] == "y")
+                        else if (element["rotation"]["axis"].get_string() == "y")
                         {
                             element_global_transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(scale_factor, 1.0f, scale_factor)));
                         }
-                        else if (element["rotation"]["axis"] == "z")
+                        else if (element["rotation"]["axis"].get_string() == "z")
                         {
                             element_global_transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(scale_factor, scale_factor, 1.0f)));
                         }
@@ -245,42 +241,40 @@ namespace Botcraft
 
                 if (element.contains("faces"))
                 {
-                    for (nlohmann::json::const_iterator face = element["faces"].begin(); face != element["faces"].end(); ++face)
+                    for (const auto& [key, face_params] : element["faces"].get_object())
                     {
                         FaceDescriptor current_face;
-                        if (face.key() == "down")
+                        if (key == "down")
                         {
                             current_face.orientation = Orientation::Bottom;
                         }
-                        else if (face.key() == "up")
+                        else if (key == "up")
                         {
                             current_face.orientation = Orientation::Top;
                         }
-                        else if (face.key() == "north")
+                        else if (key == "north")
                         {
                             current_face.orientation = Orientation::North;
                         }
-                        else if (face.key() == "south")
+                        else if (key == "south")
                         {
                             current_face.orientation = Orientation::South;
                         }
-                        else if (face.key() == "east")
+                        else if (key == "east")
                         {
                             current_face.orientation = Orientation::East;
                         }
-                        else if (face.key() == "west")
+                        else if (key == "west")
                         {
                             current_face.orientation = Orientation::West;
                         }
-
-                        const nlohmann::json &face_params = face.value();
-                        
+                                                
                         if (face_params.contains("uv"))
                         {
-                            current_face.transformations.offset_x1 = face_params["uv"][0];
-                            current_face.transformations.offset_y1 = face_params["uv"][1];
-                            current_face.transformations.offset_x2 = face_params["uv"][2];
-                            current_face.transformations.offset_y2 = face_params["uv"][3];
+                            current_face.transformations.offset_x1 = face_params["uv"][0].get_number<float>();
+                            current_face.transformations.offset_y1 = face_params["uv"][1].get_number<float>();
+                            current_face.transformations.offset_x2 = face_params["uv"][2].get_number<float>();
+                            current_face.transformations.offset_y2 = face_params["uv"][3].get_number<float>();
                         }
                         //If UV are not specified, we have to get them from [x,y,z] coordinates
                         else
@@ -330,7 +324,7 @@ namespace Botcraft
 
                         if (face_params.contains("texture"))
                         {
-                            std::string texture_name = face_params["texture"];
+                            const std::string& texture_name = face_params["texture"].get_string();
                             current_face.texture_names[0] = texture_name;
                             if (textures_variables.find(texture_name) == textures_variables.end())
                             {
@@ -340,7 +334,7 @@ namespace Botcraft
 
                         if (face_params.contains("cullface"))
                         {
-                            std::string value = face_params["cullface"];
+                            const std::string& value = face_params["cullface"].get_string();
                             if (value == "down")
                             {
                                 current_face.cullface_direction = Orientation::Bottom;
@@ -377,8 +371,7 @@ namespace Botcraft
 
                         if (face_params.contains("rotation"))
                         {
-                            int rotation_value = face_params["rotation"];
-                            current_face.transformations.rotation = rotation_value / 90;
+                            current_face.transformations.rotation = face_params["rotation"].get_number<int>() / 90;
                         }
 
                         if (face_params.contains("tintindex"))

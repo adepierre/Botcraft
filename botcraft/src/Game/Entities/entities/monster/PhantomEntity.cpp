@@ -51,9 +51,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PhantomEntity::Serialize() const
+    ProtocolCraft::Json::Value PhantomEntity::Serialize() const
     {
-        nlohmann::json output = FlyingMobEntity::Serialize();
+        ProtocolCraft::Json::Value output = FlyingMobEntity::Serialize();
 
         output["metadata"]["id_size"] = GetIdSize();
 

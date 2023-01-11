@@ -23,9 +23,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json MobEntity::Serialize() const
+    ProtocolCraft::Json::Value MobEntity::Serialize() const
     {
-        nlohmann::json output = LivingEntity::Serialize();
+        ProtocolCraft::Json::Value output = LivingEntity::Serialize();
 
         output["metadata"]["data_mob_flags_id"] = GetDataMobFlagsId();
 

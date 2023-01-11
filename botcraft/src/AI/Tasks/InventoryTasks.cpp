@@ -634,10 +634,10 @@ namespace Botcraft
         std::stringstream output;
         {
             std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            output << "Cursor --> " << inventory_manager->GetCursor().Serialize().dump() << "\n";
+            output << "Cursor --> " << inventory_manager->GetCursor().Serialize().Dump() << "\n";
             for (const auto& s: inventory_manager->GetPlayerInventory()->GetSlots())
             {
-                output << s.first << " --> " << s.second.Serialize().dump() << "\n";
+                output << s.first << " --> " << s.second.Serialize().Dump() << "\n";
             }
         }
         LOG(output.str(), level);

@@ -23,9 +23,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json SpellcasterIllagerEntity::Serialize() const
+    ProtocolCraft::Json::Value SpellcasterIllagerEntity::Serialize() const
     {
-        nlohmann::json output = AbstractIllagerEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractIllagerEntity::Serialize();
 
         output["metadata"]["data_spell_casting_id"] = GetDataSpellCastingId();
 

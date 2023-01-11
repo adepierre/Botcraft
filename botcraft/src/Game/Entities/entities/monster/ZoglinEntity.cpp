@@ -51,9 +51,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ZoglinEntity::Serialize() const
+    ProtocolCraft::Json::Value ZoglinEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["metadata"]["data_baby_id"] = GetDataBabyId();
 

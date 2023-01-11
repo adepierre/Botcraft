@@ -55,9 +55,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AxolotlEntity::Serialize() const
+    ProtocolCraft::Json::Value AxolotlEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_variant"] = GetDataVariant();
         output["metadata"]["data_playing_dead"] = GetDataPlayingDead();

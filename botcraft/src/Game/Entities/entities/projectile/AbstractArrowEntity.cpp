@@ -35,17 +35,17 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AbstractArrowEntity::Serialize() const
+    ProtocolCraft::Json::Value AbstractArrowEntity::Serialize() const
     {
 #if PROTOCOL_VERSION > 578
-        nlohmann::json output = ProjectileEntity::Serialize();
+        ProtocolCraft::Json::Value output = ProjectileEntity::Serialize();
 #else
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 #endif
 
         output["metadata"]["id_flags"] = GetIdFlags();
 #if PROTOCOL_VERSION < 579 && PROTOCOL_VERSION > 393
-        output["metadata"]["data_owneruuid_id"] = GetDataOwneruuidId() ? nlohmann::json(GetDataOwneruuidId().value()) : nlohmann::json();
+        output["metadata"]["data_owneruuid_id"] = GetDataOwneruuidId() ? ProtocolCraft::Json::Value(GetDataOwneruuidId().value()) : ProtocolCraft::Json::Value();
 #endif
 #if PROTOCOL_VERSION > 404
         output["metadata"]["pierce_level"] = GetPierceLevel();

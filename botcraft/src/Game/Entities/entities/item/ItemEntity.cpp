@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ItemEntity::Serialize() const
+    ProtocolCraft::Json::Value ItemEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_item"] = GetDataItem().Serialize();
 

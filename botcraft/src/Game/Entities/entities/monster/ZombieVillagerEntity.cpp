@@ -60,9 +60,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ZombieVillagerEntity::Serialize() const
+    ProtocolCraft::Json::Value ZombieVillagerEntity::Serialize() const
     {
-        nlohmann::json output = ZombieEntity::Serialize();
+        ProtocolCraft::Json::Value output = ZombieEntity::Serialize();
 
         output["metadata"]["data_converting_id"] = GetDataConvertingId();
 #if PROTOCOL_VERSION > 404

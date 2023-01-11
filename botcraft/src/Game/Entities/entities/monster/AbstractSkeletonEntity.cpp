@@ -28,9 +28,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION < 405
-    nlohmann::json AbstractSkeletonEntity::Serialize() const
+    ProtocolCraft::Json::Value AbstractSkeletonEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["metadata"]["is_swinging_arms"] = GetIsSwingingArms();
 

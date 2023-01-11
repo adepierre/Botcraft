@@ -6,12 +6,11 @@
 #include <any>
 #include <chrono>
 
-#include <nlohmann/json.hpp>
-
 #if PROTOCOL_VERSION > 340
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
 #include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Utilities/Json.hpp"
 
 #include "botcraft/Game/AABB.hpp"
 #include "botcraft/Game/Enums.hpp"
@@ -140,7 +139,7 @@ namespace Botcraft
 #endif
 
         // In case it's needed one day, could be useful
-        virtual nlohmann::json Serialize() const;
+        virtual ProtocolCraft::Json::Value Serialize() const;
 
         virtual bool IsLocalPlayer() const;
         virtual bool IsRemotePlayer() const;

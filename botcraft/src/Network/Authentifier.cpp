@@ -19,11 +19,13 @@
 
 #include "botcraft/Utilities/StringUtilities.hpp"
 
+using namespace ProtocolCraft;
+
 namespace Botcraft
 {
     const std::string Authentifier::cached_credentials_path = "botcraft_cached_credentials.json";
     const std::string Authentifier::botcraft_app_id = "a0ad834d-e78a-4881-87f6-390aa0f4b283";
-    const nlohmann::json Authentifier::defaultCachedCredentials = {
+    const Json::Value Authentifier::defaultCachedCredentials = {
         { "msa", {
             { "access_token", nullptr },
             { "expires_date", nullptr },
@@ -63,7 +65,7 @@ namespace Botcraft
 #ifndef USE_ENCRYPTION
         return false;
 #else
-        const nlohmann::json cached = GetCachedCredentials(login);
+        const Json::Value cached = GetCachedCredentials(login);
         if (!cached.contains("mc_token") || !cached["mc_token"].is_string() ||
             !cached.contains("expires_date") || !cached["expires_date"].is_number() ||
             !cached.contains("name") || !cached["name"].is_string() ||
@@ -77,9 +79,9 @@ namespace Botcraft
         }
         else
         {
-            mc_access_token = cached["mc_token"].get<std::string>();
-            player_display_name = cached["name"].get<std::string>();
-            mc_player_uuid = cached["id"].get<std::string>();
+            mc_access_token = cached["mc_token"].get_string();
+            player_display_name = cached["name"].get_string();
+            mc_player_uuid = cached["id"].get_string();
             UpdateUUIDBytes();
             LOG_INFO("Cached Minecraft token for Microsoft account still valid.");
 
@@ -236,20 +238,20 @@ namespace Botcraft
         }
 
         // Prepare the data to send to the server
-        const nlohmann::json data = {
+        const Json::Value data = {
             { "accessToken", mc_access_token },
             { "selectedProfile", mc_player_uuid },
             { "serverId", server_hash}
         };
 
         const WebRequestResponse post_response = POSTRequest("sessionserver.mojang.com", "/session/minecraft/join",
-            "application/json; charset=utf-8", "*/*", "", data.dump());
+            "application/json; charset=utf-8", "*/*", "", data.Dump());
 
         if (post_response.status_code != 204)
         {
             LOG_ERROR("Response returned with status code " << post_response.status_code 
                 << " (" << post_response.status_message << ") during server join:\n" 
-                << post_response.response.dump(4));
+                << post_response.response.Dump(4));
             return false;
         }
 
@@ -293,11 +295,11 @@ namespace Botcraft
         long long int& salt, long long int& timestamp)
 #elif PROTOCOL_VERSION == 760
     const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
-        const std::vector<unsigned char>& previous_signature, const std::vector<ProtocolCraft::LastSeenMessagesEntry>& last_seen,
+        const std::vector<unsigned char>& previous_signature, const std::vector<LastSeenMessagesEntry>& last_seen,
         long long int& salt, long long int& timestamp)
 #else
     const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
-        const int message_sent_index, const ProtocolCraft::UUID& chat_session_uuid,
+        const int message_sent_index, const UUID& chat_session_uuid,
         const std::vector<std::vector<unsigned char>>& last_seen,
         long long int& salt, long long int& timestamp)
 #endif
@@ -436,25 +438,25 @@ namespace Botcraft
     }
 
 #ifdef USE_ENCRYPTION
-    nlohmann::json Authentifier::GetCachedProfiles() const
+    Json::Value Authentifier::GetCachedProfiles() const
     {
         std::ifstream cache_file(cached_credentials_path);
         if (!cache_file.good())
         {
             return {};
         }
-        nlohmann::json cached_content;
+        Json::Value cached_content;
         cache_file >> cached_content;
         cache_file.close();
 
         return cached_content;
     }
 
-    nlohmann::json Authentifier::GetCachedCredentials(const std::string& login) const
+    Json::Value Authentifier::GetCachedCredentials(const std::string& login) const
     {
-        const nlohmann::json profiles = GetCachedProfiles();
+        const Json::Value profiles = GetCachedProfiles();
 
-        if (!profiles.empty() &&
+        if (profiles.size() > 0 &&
             profiles.contains(login) &&
             profiles[login].is_object())
         {
@@ -464,11 +466,11 @@ namespace Botcraft
         return defaultCachedCredentials;
     }
 
-    const std::tuple<std::string, std::string, std::string> Authentifier::ExtractMCFromResponse(const nlohmann::json& response) const
+    const std::tuple<std::string, std::string, std::string> Authentifier::ExtractMCFromResponse(const Json::Value& response) const
     {
         if (response.contains("error"))
         {
-            LOG_ERROR("Error trying to authenticate: " << response["errorMessage"].get<std::string>());
+            LOG_ERROR("Error trying to authenticate: " << response["errorMessage"].get_string());
             return { "","","" };
         }
 
@@ -484,7 +486,7 @@ namespace Botcraft
             return { "","","" };
         }
 
-        const nlohmann::json& profile = response.at("selectedProfile");
+        const Json::Value& profile = response.get_object().at("selectedProfile");
 
         if (!profile.contains("name"))
         {
@@ -498,7 +500,7 @@ namespace Botcraft
             return { "","","" };
         }
 
-        return { response["accessToken"].get<std::string>(), profile["name"].get<std::string>(), profile["id"].get<std::string>() };
+        return { response["accessToken"].get_string(), profile["name"].get_string(), profile["id"].get_string() };
     }
 
     const bool Authentifier::IsTokenExpired(const long long int& t) const
@@ -506,14 +508,14 @@ namespace Botcraft
         return t < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     }
 
-    void Authentifier::WriteCacheFile(const nlohmann::json& profiles) const
+    void Authentifier::WriteCacheFile(const Json::Value& profiles) const
     {
         std::ofstream cached_ofile(cached_credentials_path);
         if (!cached_ofile.is_open())
         {
             return;
         }
-        cached_ofile << profiles.dump(4) << std::endl;
+        cached_ofile << profiles.Dump(4) << std::endl;
         cached_ofile.close();
     }
 
@@ -521,7 +523,7 @@ namespace Botcraft
         const std::string& access_token, const std::string& refresh_token,
         const long long int& expiration) const
     {
-        nlohmann::json profiles = GetCachedProfiles();
+        Json::Value profiles = GetCachedProfiles();
 
         if (!profiles.contains(login))
         {
@@ -561,7 +563,7 @@ namespace Botcraft
     void Authentifier::UpdateCachedMCToken(const std::string& login,
         const std::string& mc_token, const long long int& expiration) const
     {
-        nlohmann::json profiles = GetCachedProfiles();
+        Json::Value profiles = GetCachedProfiles();
 
         if (!profiles.contains(login))
         {
@@ -591,7 +593,7 @@ namespace Botcraft
 
     void Authentifier::UpdateCachedMCProfile(const std::string& login, const std::string& name, const std::string& id) const
     {
-        nlohmann::json profiles = GetCachedProfiles();
+        Json::Value profiles = GetCachedProfiles();
 
         if (!profiles.contains(login))
         {
@@ -624,7 +626,7 @@ namespace Botcraft
         const std::string& public_k, const std::string& signature_v1,
         const std::string& signature_v2, const long long int& expiration) const
     {
-        nlohmann::json profiles = GetCachedProfiles();
+        Json::Value profiles = GetCachedProfiles();
 
         if (!profiles.contains(login))
         {
@@ -683,7 +685,7 @@ namespace Botcraft
     const std::string Authentifier::GetMSAToken(const std::string& login) const
     {
         // Retrieve cached microsoft credentials
-        const nlohmann::json cached = GetCachedCredentials(login);
+        const Json::Value cached = GetCachedCredentials(login);
 
         // In case there is something wrong in the cached data
         if (!cached.contains("msa") || !cached["msa"].is_object() ||
@@ -702,7 +704,7 @@ namespace Botcraft
             LOG_INFO("Refreshing Microsoft token...");
             std::string refresh_data;
             refresh_data += "client_id=" + botcraft_app_id;
-            refresh_data += "&refresh_token=" + cached["msa"]["refresh_token"].get<std::string>();
+            refresh_data += "&refresh_token=" + cached["msa"]["refresh_token"].get_string();
             refresh_data += "&grant_type=refresh_token";
             refresh_data += "&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient";
 
@@ -715,13 +717,13 @@ namespace Botcraft
             {
                 LOG_ERROR("Response returned with status code " << post_response.status_code 
                     << " (" << post_response.status_message << ") during Microsoft token refresh:\n" 
-                    << post_response.response.dump(4));
+                    << post_response.response.Dump(4));
                 UpdateCachedMSA(login, "", "", -1);
                 LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
                 return MSAAuthDeviceFlow(login);
             }
 
-            const nlohmann::json& response = post_response.response;
+            const Json::Value& response = post_response.response;
 
             if (!response.contains("expires_in"))
             {
@@ -747,19 +749,19 @@ namespace Botcraft
                 return MSAAuthDeviceFlow(login);
             }
 
-            UpdateCachedMSA(login, response["access_token"].get<std::string>(),
-                response["refresh_token"].get<std::string>(),
+            UpdateCachedMSA(login, response["access_token"].get_string(),
+                response["refresh_token"].get_string(),
                 response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
             );
 
             LOG_INFO("Cached Microsoft token refreshed");
 
-            return response["access_token"].get<std::string>();
+            return response["access_token"].get_string();
         }
 
         LOG_INFO("Microsoft token obtained from cache");
 
-        return cached["msa"]["access_token"].get<std::string>();
+        return cached["msa"]["access_token"].get_string();
     }
 
     const std::string Authentifier::MSAAuthDeviceFlow(const std::string& login) const
@@ -775,11 +777,11 @@ namespace Botcraft
         {
             LOG_ERROR("Response returned with status code " << post_response.status_code << " ("
                 << post_response.status_message << ") during microsoft authentification:\n" 
-                << post_response.response.dump(4));
+                << post_response.response.Dump(4));
             return "";
         }
 
-        const nlohmann::json& auth_response = post_response.response;
+        const Json::Value& auth_response = post_response.response;
 
         if (!auth_response.contains("interval"))
         {
@@ -800,24 +802,24 @@ namespace Botcraft
         }
 
         // Display the instructions the user has to follow to authenticate in the console
-        std::cout << auth_response["message"].get<std::string>() << std::endl;
-        LOG_INFO(auth_response["message"].get<std::string>());
+        std::cout << auth_response["message"].get_string() << std::endl;
+        LOG_INFO(auth_response["message"].get_string());
 
-        const long long int pool_interval = auth_response["interval"];
+        const long long int pool_interval = auth_response["interval"].get_number<long long int>();
         while (true)
         {
             std::this_thread::sleep_for(std::chrono::seconds(pool_interval + 1));
 
-            std::string check_auth_status_data;
-            check_auth_status_data += "client_id=" + botcraft_app_id;
-            check_auth_status_data += "&scope=XboxLive.signin%20offline_access";
-            check_auth_status_data += "&grant_type=urn:ietf:params:oauth:grant-type:device_code";
-            check_auth_status_data += "&device_code=" + auth_response["device_code"].get<std::string>();
+            const std::string check_auth_status_data =
+            "client_id=" + botcraft_app_id +
+            "&scope=XboxLive.signin%20offline_access" +
+            "&grant_type=urn:ietf:params:oauth:grant-type:device_code" +
+            "&device_code=" + auth_response["device_code"].get_string();
 
             const WebRequestResponse post_response = POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/token",
                 "application/x-www-form-urlencoded", "*/*", "", check_auth_status_data);
 
-            const nlohmann::json& status_response = post_response.response;
+            const Json::Value& status_response = post_response.response;
 
             if (post_response.status_code == 400)
             {
@@ -827,7 +829,7 @@ namespace Botcraft
                     return "";
                 }
 
-                const std::string error = status_response["error"];
+                const std::string error = status_response["error"].get_string();
 
                 if (error == "authorization_pending")
                 {
@@ -851,7 +853,7 @@ namespace Botcraft
                     }
                     else
                     {
-                        LOG_ERROR("While waiting for microsoft device authentication, token got invalidated: " << status_response["error_description"]);
+                        LOG_ERROR("While waiting for microsoft device authentication, token got invalidated: " << status_response["error_description"].get_string());
                     }
 
                     return "";
@@ -878,14 +880,14 @@ namespace Botcraft
                 }
 
                 UpdateCachedMSA(login,
-                    status_response["access_token"].get<std::string>(),
-                    status_response["refresh_token"].get<std::string>(),
+                    status_response["access_token"].get_string(),
+                    status_response["refresh_token"].get_string(),
                     status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
                 );
 
                 LOG_INFO("Newly obtained Microsoft token stored in cache");
 
-                return status_response["access_token"].get<std::string>();
+                return status_response["access_token"].get_string();
             }
             else
             {
@@ -897,7 +899,7 @@ namespace Botcraft
 
     const std::string Authentifier::GetXBLToken(const std::string& msa_token) const
     {
-        nlohmann::json request_data = {
+        Json::Value request_data = {
             { "Properties", {
                     {"AuthMethod", "RPS"},
                     {"SiteName", "user.auth.xboxlive.com"},
@@ -909,17 +911,17 @@ namespace Botcraft
         };
 
         const WebRequestResponse post_response = POSTRequest("user.auth.xboxlive.com", "/user/authenticate",
-            "application/json", "application/json", "", request_data.dump());
+            "application/json", "application/json", "", request_data.Dump());
 
         if (post_response.status_code != 200)
         {
             LOG_ERROR("Response returned with status code " << post_response.status_code 
                 << " (" << post_response.status_message << ") during XBL authentication:\n" 
-                << post_response.response.dump(4));
+                << post_response.response.Dump(4));
             return "";
         }
 
-        const nlohmann::json& response = post_response.response;
+        const Json::Value& response = post_response.response;
 
         if (!response.contains("Token"))
         {
@@ -927,12 +929,12 @@ namespace Botcraft
             return "";
         }
 
-        return response["Token"].get<std::string>();
+        return response["Token"].get_string();
     }
 
     const std::pair<std::string, std::string> Authentifier::GetXSTSToken(const std::string& xbl_token) const
     {
-        nlohmann::json request_data = {
+        Json::Value request_data = {
             { "Properties", {
                     {"SandboxId", "RETAIL"},
                     {"UserTokens", { xbl_token } }
@@ -943,17 +945,17 @@ namespace Botcraft
         };
 
         const WebRequestResponse post_response = POSTRequest("xsts.auth.xboxlive.com", "/xsts/authorize",
-            "application/json", "application/json", "", request_data.dump());
+            "application/json", "application/json", "", request_data.Dump());
 
         if (post_response.status_code != 200)
         {
             LOG_ERROR("Response returned with status code " << post_response.status_code 
                 << " (" << post_response.status_message << ") during XSTS authentication:\n" 
-                << post_response.response.dump(4));
+                << post_response.response.Dump(4));
             return { "", "" };
         }
 
-        const nlohmann::json& response = post_response.response;
+        const Json::Value& response = post_response.response;
 
         if (!response.contains("Token"))
         {
@@ -969,27 +971,27 @@ namespace Botcraft
             return { "", "" };
         }
 
-        return { response["Token"], response["DisplayClaims"]["xui"][0]["uhs"] };
+        return { response["Token"].get_string(), response["DisplayClaims"]["xui"][0]["uhs"].get_string() };
     }
 
     const std::string Authentifier::GetMCToken(const std::string& login, const std::string& xsts_token, const std::string& user_hash) const
     {
-        nlohmann::json request_data = {
+        Json::Value request_data = {
             { "identityToken", "XBL3.0 x=" + user_hash + ";" + xsts_token }
         };
 
         const WebRequestResponse post_response = POSTRequest("api.minecraftservices.com", "/authentication/login_with_xbox",
-            "application/json", "application/json", "", request_data.dump());
+            "application/json", "application/json", "", request_data.Dump());
 
         if (post_response.status_code != 200)
         {
             LOG_ERROR("Response returned with status code " << post_response.status_code 
                 << " (" << post_response.status_message << ") during MC authentication:\n" 
-                << post_response.response.dump(4));
+                << post_response.response.Dump(4));
             return "";
         }
 
-        const nlohmann::json& response = post_response.response;
+        const Json::Value& response = post_response.response;
 
         if (!response.contains("access_token"))
         {
@@ -1001,15 +1003,15 @@ namespace Botcraft
         {
             LOG_WARNING("No expires_in in authentication response of MC");
             // if no expires_in assuming it is one-time, don't need to cache it
-            return response["access_token"].get<std::string>();
+            return response["access_token"].get_string();
         }
 
         UpdateCachedMCToken(login,
-            response["access_token"].get<std::string>(),
+            response["access_token"].get_string(),
             response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
         );
 
-        return response["access_token"].get<std::string>();
+        return response["access_token"].get_string();
     }
 
     const std::pair<std::string, std::string> Authentifier::GetMCProfile(const std::string& login, const std::string& mc_token) const
@@ -1023,11 +1025,11 @@ namespace Botcraft
             return { "", "" };
         }
 
-        const nlohmann::json& response = get_response.response;
+        const Json::Value& response = get_response.response;
 
         if (response.contains("errorMessage"))
         {
-            LOG_ERROR("Error trying to get MC profile : " << response["errorMessage"]);
+            LOG_ERROR("Error trying to get MC profile : " << response["errorMessage"].get_string());
             return { "", "" };
         }
 
@@ -1044,10 +1046,10 @@ namespace Botcraft
         }
 
         UpdateCachedMCProfile(login,
-            response["name"].get<std::string>(),
-            response["id"].get<std::string>()
+            response["name"].get_string(),
+            response["id"].get_string()
         );
-        return { response["id"].get<std::string>(), response["name"].get<std::string>() };
+        return { response["id"].get_string(), response["name"].get_string() };
     }
 
 #if PROTOCOL_VERSION > 758
@@ -1055,7 +1057,7 @@ namespace Botcraft
         const std::string& mc_token) const
     {
         // Retrieve cached certificates
-        nlohmann::json cached = GetCachedCredentials(login);
+        Json::Value cached = GetCachedCredentials(login);
         
         const bool invalid_cached_values = !cached.contains("certificates") || !cached["certificates"].is_object() ||
             !cached["certificates"].contains("private_key") || !cached["certificates"]["private_key"].is_string() ||
@@ -1093,11 +1095,11 @@ namespace Botcraft
             {
                 LOG_ERROR("Response returned with status code " << post_response.status_code
                     << " (" << post_response.status_message << ") during player certificates acquisition:\n"
-                    << post_response.response.dump(4));
+                    << post_response.response.Dump(4));
                 return { "", "", "", 0};
             }
 
-            const nlohmann::json& response = post_response.response;
+            const Json::Value& response = post_response.response;
 
             if (!response.contains("keyPair"))
             {
@@ -1136,31 +1138,31 @@ namespace Botcraft
             }
 
             // Convert expires date in ISO8601 to ms since UNIX epoch
-            const long long int expires_timestamp = TimestampMilliFromISO8601(response["expiresAt"].get<std::string>());
+            const long long int expires_timestamp = TimestampMilliFromISO8601(response["expiresAt"].get_string());
             
-            UpdateCachedPlayerCertificates(login, response["keyPair"]["privateKey"].get<std::string>(),
-                response["keyPair"]["publicKey"].get<std::string>(), response["publicKeySignature"].get<std::string>(),
-                response["publicKeySignatureV2"].get<std::string>(), expires_timestamp
+            UpdateCachedPlayerCertificates(login, response["keyPair"]["privateKey"].get_string(),
+                response["keyPair"]["publicKey"].get_string(), response["publicKeySignature"].get_string(),
+                response["publicKeySignatureV2"].get_string(), expires_timestamp
             );
 
-            return { response["keyPair"]["privateKey"].get<std::string>(),
-                response["keyPair"]["publicKey"].get<std::string>(),
+            return { response["keyPair"]["privateKey"].get_string(),
+                response["keyPair"]["publicKey"].get_string(),
 #if PROTOCOL_VERSION == 759
-                response["publicKeySignature"].get<std::string>(),
+                response["publicKeySignature"].get_string(),
 #else
-                response["publicKeySignatureV2"].get<std::string>(),
+                response["publicKeySignatureV2"].get_string(),
 #endif
                 expires_timestamp
             };
         }
 
         LOG_INFO("Cached player certificates still valid!");
-        return { cached["certificates"]["private_key"].get<std::string>(),
-            cached["certificates"]["public_key"].get<std::string>(),
+        return { cached["certificates"]["private_key"].get_string(),
+            cached["certificates"]["public_key"].get_string(),
         #if PROTOCOL_VERSION == 759
-            cached["certificates"]["signature_v1"].get<std::string>(),
+            cached["certificates"]["signature_v1"].get_string(),
 #else
-            cached["certificates"]["signature_v2"].get<std::string>(),
+            cached["certificates"]["signature_v2"].get_string(),
 #endif
             cached["certificates"]["expires_date"].get<long long int>(),
         };
@@ -1263,7 +1265,7 @@ namespace Botcraft
         }
         else
         {
-            web_response.response = nlohmann::json::parse(raw_response);
+            web_response.response = Json::Parse(raw_response);
         }
 
         return web_response;

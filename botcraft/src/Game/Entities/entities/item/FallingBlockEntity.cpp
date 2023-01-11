@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json FallingBlockEntity::Serialize() const
+    ProtocolCraft::Json::Value FallingBlockEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_start_pos"] = GetDataStartPos().Serialize();
 

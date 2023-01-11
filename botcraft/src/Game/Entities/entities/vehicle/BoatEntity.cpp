@@ -66,9 +66,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json BoatEntity::Serialize() const
+    ProtocolCraft::Json::Value BoatEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_id_hurt"] = GetDataIdHurt();
         output["metadata"]["data_id_hurtdir"] = GetDataIdHurtdir();

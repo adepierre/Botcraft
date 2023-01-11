@@ -51,9 +51,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json GlowSquidEntity::Serialize() const
+    ProtocolCraft::Json::Value GlowSquidEntity::Serialize() const
     {
-        nlohmann::json output = SquidEntity::Serialize();
+        ProtocolCraft::Json::Value output = SquidEntity::Serialize();
 
         output["metadata"]["data_dark_ticks_remaining"] = GetDataDarkTicksRemaining();
 

@@ -61,9 +61,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json TurtleEntity::Serialize() const
+    ProtocolCraft::Json::Value TurtleEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["home_pos"] = GetHomePos().Serialize();
         output["metadata"]["has_egg"] = GetHasEgg();

@@ -51,9 +51,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PillagerEntity::Serialize() const
+    ProtocolCraft::Json::Value PillagerEntity::Serialize() const
     {
-        nlohmann::json output = AbstractIllagerEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractIllagerEntity::Serialize();
 
         output["metadata"]["is_charging_crossbow"] = GetIsChargingCrossbow();
 

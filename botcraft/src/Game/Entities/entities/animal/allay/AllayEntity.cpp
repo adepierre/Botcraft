@@ -57,9 +57,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION > 759
-    nlohmann::json AllayEntity::Serialize() const
+    ProtocolCraft::Json::Value AllayEntity::Serialize() const
     {
-        nlohmann::json output = PathfinderMobEntity::Serialize();
+        ProtocolCraft::Json::Value output = PathfinderMobEntity::Serialize();
 
         output["metadata"]["data_dancing"] = GetDataDancing();
         output["metadata"]["data_can_duplicate"] = GetDataCanDuplicate();

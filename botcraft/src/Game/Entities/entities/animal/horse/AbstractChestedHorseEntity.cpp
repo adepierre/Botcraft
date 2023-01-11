@@ -23,9 +23,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AbstractChestedHorseEntity::Serialize() const
+    ProtocolCraft::Json::Value AbstractChestedHorseEntity::Serialize() const
     {
-        nlohmann::json output = AbstractHorseEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractHorseEntity::Serialize();
 
         output["metadata"]["data_id_chest"] = GetDataIdChest();
 

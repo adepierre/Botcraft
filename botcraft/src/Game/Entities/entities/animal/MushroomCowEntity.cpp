@@ -55,9 +55,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION > 404
-    nlohmann::json MushroomCowEntity::Serialize() const
+    ProtocolCraft::Json::Value MushroomCowEntity::Serialize() const
     {
-        nlohmann::json output = CowEntity::Serialize();
+        ProtocolCraft::Json::Value output = CowEntity::Serialize();
 
         output["metadata"]["data_type"] = GetDataType();
 

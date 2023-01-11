@@ -33,9 +33,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AbstractMinecartEntity::Serialize() const
+    ProtocolCraft::Json::Value AbstractMinecartEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_id_hurt"] = GetDataIdHurt();
         output["metadata"]["data_id_hurtdir"] = GetDataIdHurtdir();

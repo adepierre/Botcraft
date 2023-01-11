@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json SpiderEntity::Serialize() const
+    ProtocolCraft::Json::Value SpiderEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["metadata"]["data_flags_id"] = GetDataFlagsId();
 

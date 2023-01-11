@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ParrotEntity::Serialize() const
+    ProtocolCraft::Json::Value ParrotEntity::Serialize() const
     {
-        nlohmann::json output = ShoulderRidingEntity::Serialize();
+        ProtocolCraft::Json::Value output = ShoulderRidingEntity::Serialize();
 
         output["metadata"]["data_variant_id"] = GetDataVariantId();
 

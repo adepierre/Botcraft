@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ArrowEntity::Serialize() const
+    ProtocolCraft::Json::Value ArrowEntity::Serialize() const
     {
-        nlohmann::json output = AbstractArrowEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractArrowEntity::Serialize();
 
         output["metadata"]["id_effect_color"] = GetIdEffectColor();
 

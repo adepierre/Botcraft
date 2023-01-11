@@ -25,7 +25,7 @@ namespace Botcraft
         virtual bool IsFireball() const override;
 
 #if PROTOCOL_VERSION > 404
-        virtual nlohmann::json Serialize() const override;
+        virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;

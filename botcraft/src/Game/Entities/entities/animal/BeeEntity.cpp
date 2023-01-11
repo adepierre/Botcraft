@@ -53,9 +53,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json BeeEntity::Serialize() const
+    ProtocolCraft::Json::Value BeeEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_flags_id"] = GetDataFlagsId();
         output["metadata"]["data_remaining_anger_time"] = GetDataRemainingAngerTime();

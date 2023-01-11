@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json BatEntity::Serialize() const
+    ProtocolCraft::Json::Value BatEntity::Serialize() const
     {
-        nlohmann::json output = AmbientCreatureEntity::Serialize();
+        ProtocolCraft::Json::Value output = AmbientCreatureEntity::Serialize();
 
         output["metadata"]["data_id_flags"] = GetDataIdFlags();
 

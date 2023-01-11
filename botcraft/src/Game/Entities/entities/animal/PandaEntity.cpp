@@ -61,9 +61,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PandaEntity::Serialize() const
+    ProtocolCraft::Json::Value PandaEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["unhappy_counter"] = GetUnhappyCounter();
         output["metadata"]["sneeze_counter"] = GetSneezeCounter();

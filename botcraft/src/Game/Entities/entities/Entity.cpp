@@ -867,9 +867,9 @@ namespace Botcraft
 #endif
 
 
-    nlohmann::json Entity::Serialize() const
+    ProtocolCraft::Json::Value Entity::Serialize() const
     {
-        nlohmann::json output;
+        ProtocolCraft::Json::Value output;
 
         output["id"] = entity_id;
         output["position"] = position.Serialize();
@@ -877,18 +877,18 @@ namespace Botcraft
         output["pitch"] = pitch;
         output["speed"] = speed.Serialize();
         output["on_ground"] = on_ground;
-        output["equipment"] = nlohmann::json();
+        output["equipment"] = ProtocolCraft::Json::Value();
         for (auto& p : equipments)
         {
             output["equipment"][std::to_string(static_cast<int>(p.first))] = p.second.Serialize();
         }
 
-        output["metadata"] = nlohmann::json();
+        output["metadata"] = ProtocolCraft::Json::Value();
 
         output["metadata"]["data_shared_flags_id"] = GetDataSharedFlagsId();
         output["metadata"]["data_air_supply_id"] = GetDataAirSupplyId();
 #if PROTOCOL_VERSION > 340
-        output["metadata"]["data_custom_name"] = GetDataCustomName() ? GetDataCustomName().value().Serialize() : nlohmann::json();
+        output["metadata"]["data_custom_name"] = GetDataCustomName() ? GetDataCustomName().value().Serialize() : ProtocolCraft::Json::Value();
 #else
         output["metadata"]["data_custom_name"] = GetDataCustomName();
 #endif

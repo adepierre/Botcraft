@@ -58,12 +58,12 @@ namespace Botcraft
     }
 
 
-    nlohmann::json VillagerEntity::Serialize() const
+    ProtocolCraft::Json::Value VillagerEntity::Serialize() const
     {
 #if PROTOCOL_VERSION > 477
-        nlohmann::json output = AbstractVillagerEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractVillagerEntity::Serialize();
 #else
-        nlohmann::json output = AgeableMobEntity::Serialize();
+        ProtocolCraft::Json::Value output = AgeableMobEntity::Serialize();
 #endif
 
 #if PROTOCOL_VERSION > 404

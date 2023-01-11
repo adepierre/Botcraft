@@ -53,12 +53,12 @@ namespace Botcraft
     }
 
 
-    nlohmann::json FrogEntity::Serialize() const
+    ProtocolCraft::Json::Value FrogEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_variant_id"] = GetDataVariantId();
-        output["metadata"]["data_tongue_target_id"] = GetDataTongueTargetId() ? nlohmann::json(GetDataTongueTargetId().value()) : nlohmann::json();
+        output["metadata"]["data_tongue_target_id"] = GetDataTongueTargetId() ? ProtocolCraft::Json::Value(GetDataTongueTargetId().value()) : ProtocolCraft::Json::Value();
 
         return output;
     }

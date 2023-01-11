@@ -1,8 +1,8 @@
 #pragma once
-#include <nlohmann/json.hpp>
-
 #include <string>
 #include <array>
+
+#include "protocolCraft/Utilities/Json.hpp"
 
 #if PROTOCOL_VERSION > 758
 #include <random>
@@ -15,7 +15,7 @@ namespace Botcraft
 {
     struct WebRequestResponse
     {
-        nlohmann::json response;
+        ProtocolCraft::Json::Value response;
         unsigned int status_code = 0;
         std::string status_message;
     };
@@ -86,18 +86,18 @@ namespace Botcraft
 #ifdef USE_ENCRYPTION
         /// @brief Get the content of the whole cache file
         /// @return The content in JSON
-        nlohmann::json GetCachedProfiles() const;
+        ProtocolCraft::Json::Value GetCachedProfiles() const;
 
         /// @brief Try to find a cached account corresponding to login.
         /// Only one Microsoft account can be cached using an empty login.
         /// @param login Login of the account
         /// @return Cached credentials for the corresponding account
-        nlohmann::json GetCachedCredentials(const std::string& login) const;
+        ProtocolCraft::Json::Value GetCachedCredentials(const std::string& login) const;
 
         /// @brief Extract the token, the name and the uuid from a server response
         /// @param response The json response sent by the auth server
         /// @return A tuple containing <the new token, the new name, the new uuid>, all empty if failed
-        const std::tuple<std::string, std::string, std::string> ExtractMCFromResponse(const nlohmann::json& response) const;
+        const std::tuple<std::string, std::string, std::string> ExtractMCFromResponse(const ProtocolCraft::Json::Value& response) const;
 
         /// @brief Check if a validity time is in the present or in the future
         /// @param t The expiration timestamp
@@ -106,7 +106,7 @@ namespace Botcraft
 
         /// @brief Save a profiles list to cache file
         /// @param profiles A json object with logins as keys and cache credentials as values
-        void WriteCacheFile(const nlohmann::json& profiles) const;
+        void WriteCacheFile(const ProtocolCraft::Json::Value& profiles) const;
 
         /// @brief Update the cached MSA data for the given login
         /// @param login The login we want to update the data for
@@ -223,7 +223,7 @@ namespace Botcraft
         static const std::string botcraft_app_id;
 
         /// @brief Default cached credentials JSON
-        static const nlohmann::json defaultCachedCredentials;
+        static const ProtocolCraft::Json::Value defaultCachedCredentials;
         
         std::string player_display_name;
         std::string mc_access_token;

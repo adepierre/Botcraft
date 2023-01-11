@@ -58,9 +58,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json OcelotEntity::Serialize() const
+    ProtocolCraft::Json::Value OcelotEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
 #if PROTOCOL_VERSION > 404
         output["metadata"]["data_trusting"] = GetDataTrusting();

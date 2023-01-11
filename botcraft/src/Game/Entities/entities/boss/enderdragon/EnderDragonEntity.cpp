@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json EnderDragonEntity::Serialize() const
+    ProtocolCraft::Json::Value EnderDragonEntity::Serialize() const
     {
-        nlohmann::json output = MobEntity::Serialize();
+        ProtocolCraft::Json::Value output = MobEntity::Serialize();
 
         output["metadata"]["data_phase"] = GetDataPhase();
 

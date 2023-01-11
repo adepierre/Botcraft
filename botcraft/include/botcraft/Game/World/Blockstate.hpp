@@ -5,7 +5,7 @@
 #include <random>
 #include <map>
 
-#include <nlohmann/json.hpp>
+#include "protocolCraft/Utilities/Json.hpp"
 
 #include "botcraft/Game/Model.hpp"
 #include "botcraft/Game/Enums.hpp"
@@ -102,7 +102,7 @@ namespace Botcraft
 #endif
 
     private:
-        static std::map<std::string, nlohmann::json> cached_jsons;
+        static std::map<std::string, ProtocolCraft::Json::Value> cached_jsons;
 
         bool transparent;
         bool solid;

@@ -60,13 +60,13 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ShulkerEntity::Serialize() const
+    ProtocolCraft::Json::Value ShulkerEntity::Serialize() const
     {
-        nlohmann::json output = AbstractGolemEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractGolemEntity::Serialize();
 
         output["metadata"]["data_attach_face_id"] = static_cast<int>(GetDataAttachFaceId());
 #if PROTOCOL_VERSION < 755
-        output["metadata"]["data_attach_pos_id"] = GetDataAttachPosId() ? GetDataAttachPosId().value().Serialize() : nlohmann::json();
+        output["metadata"]["data_attach_pos_id"] = GetDataAttachPosId() ? GetDataAttachPosId().value().Serialize() : ProtocolCraft::Json::Value();
 #endif
         output["metadata"]["data_peek_id"] = GetDataPeekId();
         output["metadata"]["data_color_id"] = GetDataColorId();

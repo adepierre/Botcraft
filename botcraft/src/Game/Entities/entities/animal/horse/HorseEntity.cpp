@@ -56,13 +56,13 @@ namespace Botcraft
     }
 
 
-    nlohmann::json HorseEntity::Serialize() const
+    ProtocolCraft::Json::Value HorseEntity::Serialize() const
     {
-        nlohmann::json output = AbstractHorseEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractHorseEntity::Serialize();
 
         output["metadata"]["data_id_type_variant"] = GetDataIdTypeVariant();
 #if PROTOCOL_VERSION < 405
-        output["metadata"]["armor_type"] = GetArmorType() ? nlohmann::json(GetArmorType().value()) : nlohmann::json();
+        output["metadata"]["armor_type"] = GetArmorType() ? ProtocolCraft::Json::Value(GetArmorType().value()) : ProtocolCraft::Json::Value();
 #endif
 
         return output;

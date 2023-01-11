@@ -52,9 +52,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json GuardianEntity::Serialize() const
+    ProtocolCraft::Json::Value GuardianEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["metadata"]["data_id_moving"] = GetDataIdMoving();
         output["metadata"]["data_id_attack_target"] = GetDataIdAttackTarget();

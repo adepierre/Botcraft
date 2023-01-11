@@ -23,9 +23,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AbstractFishEntity::Serialize() const
+    ProtocolCraft::Json::Value AbstractFishEntity::Serialize() const
     {
-        nlohmann::json output = WaterAnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = WaterAnimalEntity::Serialize();
 
         output["metadata"]["from_bucket"] = GetFromBucket();
 

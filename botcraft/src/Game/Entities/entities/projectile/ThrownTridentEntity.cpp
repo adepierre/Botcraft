@@ -57,9 +57,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json ThrownTridentEntity::Serialize() const
+    ProtocolCraft::Json::Value ThrownTridentEntity::Serialize() const
     {
-        nlohmann::json output = AbstractArrowEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractArrowEntity::Serialize();
 
         output["metadata"]["id_loyalty"] = GetIdLoyalty();
 #if PROTOCOL_VERSION > 498

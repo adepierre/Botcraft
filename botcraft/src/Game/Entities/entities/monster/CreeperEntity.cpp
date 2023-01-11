@@ -54,9 +54,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json CreeperEntity::Serialize() const
+    ProtocolCraft::Json::Value CreeperEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["metadata"]["data_swell_dir"] = GetDataSwellDir();
         output["metadata"]["data_is_powered"] = GetDataIsPowered();

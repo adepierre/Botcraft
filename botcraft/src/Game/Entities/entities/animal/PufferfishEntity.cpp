@@ -51,9 +51,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PufferfishEntity::Serialize() const
+    ProtocolCraft::Json::Value PufferfishEntity::Serialize() const
     {
-        nlohmann::json output = AbstractFishEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractFishEntity::Serialize();
 
         output["metadata"]["puff_state"] = GetPuffState();
 

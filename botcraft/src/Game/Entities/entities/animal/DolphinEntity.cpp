@@ -55,9 +55,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json DolphinEntity::Serialize() const
+    ProtocolCraft::Json::Value DolphinEntity::Serialize() const
     {
-        nlohmann::json output = WaterAnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = WaterAnimalEntity::Serialize();
 
         output["metadata"]["treasure_pos"] = GetTreasurePos().Serialize();
         output["metadata"]["got_fish"] = GetGotFish();

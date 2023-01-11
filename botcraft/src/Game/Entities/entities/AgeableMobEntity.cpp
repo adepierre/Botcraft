@@ -23,9 +23,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AgeableMobEntity::Serialize() const
+    ProtocolCraft::Json::Value AgeableMobEntity::Serialize() const
     {
-        nlohmann::json output = PathfinderMobEntity::Serialize();
+        ProtocolCraft::Json::Value output = PathfinderMobEntity::Serialize();
 
         output["metadata"]["data_baby_id"] = GetDataBabyId();
 

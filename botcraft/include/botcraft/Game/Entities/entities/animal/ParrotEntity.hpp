@@ -26,7 +26,7 @@ namespace Botcraft
         static EntityType GetClassType();
 
 
-        virtual nlohmann::json Serialize() const override;
+        virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;

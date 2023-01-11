@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json SnowGolemEntity::Serialize() const
+    ProtocolCraft::Json::Value SnowGolemEntity::Serialize() const
     {
-        nlohmann::json output = AbstractGolemEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractGolemEntity::Serialize();
 
         output["metadata"]["data_pumpkin_id"] = GetDataPumpkinId();
 

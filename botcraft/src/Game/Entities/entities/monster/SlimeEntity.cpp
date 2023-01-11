@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json SlimeEntity::Serialize() const
+    ProtocolCraft::Json::Value SlimeEntity::Serialize() const
     {
-        nlohmann::json output = MobEntity::Serialize();
+        ProtocolCraft::Json::Value output = MobEntity::Serialize();
 
         output["metadata"]["id_size"] = GetIdSize();
 

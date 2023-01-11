@@ -58,9 +58,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json EnderManEntity::Serialize() const
+    ProtocolCraft::Json::Value EnderManEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["metadata"]["data_carry_state"] = GetDataCarryState();
         output["metadata"]["data_creepy"] = GetDataCreepy();

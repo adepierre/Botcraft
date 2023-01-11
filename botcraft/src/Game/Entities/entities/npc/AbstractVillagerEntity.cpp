@@ -24,9 +24,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AbstractVillagerEntity::Serialize() const
+    ProtocolCraft::Json::Value AbstractVillagerEntity::Serialize() const
     {
-        nlohmann::json output = AgeableMobEntity::Serialize();
+        ProtocolCraft::Json::Value output = AgeableMobEntity::Serialize();
 
         output["metadata"]["data_unhappy_counter"] = GetDataUnhappyCounter();
 

@@ -51,9 +51,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json WardenEntity::Serialize() const
+    ProtocolCraft::Json::Value WardenEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["client_anger_level"] = GetClientAngerLevel();
 

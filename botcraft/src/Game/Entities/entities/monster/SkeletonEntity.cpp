@@ -55,9 +55,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION > 754
-    nlohmann::json SkeletonEntity::Serialize() const
+    ProtocolCraft::Json::Value SkeletonEntity::Serialize() const
     {
-        nlohmann::json output = AbstractSkeletonEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractSkeletonEntity::Serialize();
 
         output["metadata"]["data_stray_conversion_id"] = GetDataStrayConversionId();
 

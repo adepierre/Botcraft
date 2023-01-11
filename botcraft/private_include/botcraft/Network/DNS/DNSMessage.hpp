@@ -266,9 +266,9 @@ namespace Botcraft
             }
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             output["qr"] = qr;
             output["opcode"] = opcode;
@@ -283,25 +283,25 @@ namespace Botcraft
             output["number_authority"] = number_authority;
             output["number_additional_rr"] = number_additional_rr;
             
-            output["questions"] = nlohmann::json::array();
+            output["questions"] = Json::Array();
             for (int i = 0; i < number_question; ++i)
             {
                 output["questions"].push_back(questions[i].Serialize());
             }
 
-            output["answers"] = nlohmann::json::array();
+            output["answers"] = Json::Array();
             for (int i = 0; i < number_answer; ++i)
             {
                 output["answers"].push_back(answers[i].Serialize());
             }
 
-            output["authorities"] = nlohmann::json::array();
+            output["authorities"] = Json::Array();
             for (int i = 0; i < number_authority; ++i)
             {
                 output["authorities"].push_back(authorities[i].Serialize());
             }
 
-            output["additionals"] = nlohmann::json::array();
+            output["additionals"] = Json::Array();
             for (int i = 0; i < number_additional_rr; ++i)
             {
                 output["additionals"].push_back(additionals[i].Serialize());

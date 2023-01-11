@@ -70,9 +70,9 @@ namespace Botcraft
             WriteData<unsigned short>(class_code, container);
         }
 
-        virtual const nlohmann::json SerializeImpl() const override
+        virtual Json::Value SerializeImpl() const override
         {
-            nlohmann::json output;
+            Json::Value output;
 
             std::string name = "";
             for (int i = 0; i < name_labels.size(); ++i)

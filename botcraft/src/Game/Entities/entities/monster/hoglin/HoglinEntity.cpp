@@ -51,9 +51,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json HoglinEntity::Serialize() const
+    ProtocolCraft::Json::Value HoglinEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_immune_to_zombification"] = GetDataImmuneToZombification();
 

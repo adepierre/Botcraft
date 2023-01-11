@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PrimedTntEntity::Serialize() const
+    ProtocolCraft::Json::Value PrimedTntEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_fuse_id"] = GetDataFuseId();
 

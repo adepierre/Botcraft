@@ -50,9 +50,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json WitherSkullEntity::Serialize() const
+    ProtocolCraft::Json::Value WitherSkullEntity::Serialize() const
     {
-        nlohmann::json output = AbstractHurtingProjectileEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractHurtingProjectileEntity::Serialize();
 
         output["metadata"]["data_dangerous"] = GetDataDangerous();
 

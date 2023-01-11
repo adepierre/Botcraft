@@ -12,7 +12,9 @@
 #include "botcraft/Renderer/Atlas.hpp"
 #endif
 
-#include <nlohmann/json.hpp>
+#include "protocolCraft/Utilities/Json.hpp"
+
+using namespace ProtocolCraft;
 
 namespace Botcraft
 {
@@ -242,48 +244,48 @@ namespace Botcraft
 #endif
         const std::string info_file_path = ASSETS_PATH + std::string("/custom/Blocks_info.json");
 
-        nlohmann::json json;
+        Json::Value json;
         try
         {
             std::ifstream file(info_file_path);
             file >> json;
             file.close();
         }
-        catch (const nlohmann::json::exception& e)
+        catch (const std::runtime_error& e)
         {
             LOG_ERROR("Error reading info block file at " << info_file_path << '\n' << e.what());
             return;
         }
 
         //Load all the info
-        for (auto& info : json)
+        for (auto& info : json.get_array())
         {
             std::string name = "";
 
             if (!info.contains("name") || !info["name"].is_string())
             {
-                LOG_ERROR("Error with an element of blockstates info: \n" << info);
+                LOG_ERROR("Error with an element of blockstates info: \n" << info.Dump());
                 continue;
             }
             else
             {
-                name = info["name"];
+                name = info["name"].get_string();
                 blockstate_properties[name].name = name;
             }
 
-            if (info.contains("transparent") && info["transparent"].is_boolean())
+            if (info.contains("transparent") && info["transparent"].is_bool())
             {
-                blockstate_properties[name].transparent = info["transparent"];
+                blockstate_properties[name].transparent = info["transparent"].get<bool>();
             }
 
-            if (info.contains("solid") && info["solid"].is_boolean())
+            if (info.contains("solid") && info["solid"].is_bool())
             {
-                blockstate_properties[name].solid = info["solid"];
+                blockstate_properties[name].solid = info["solid"].get<bool>();
             }
 
             if (info.contains("hardness") && info["hardness"].is_number())
             {
-                blockstate_properties[name].hardness = info["hardness"];
+                blockstate_properties[name].hardness = info["hardness"].get_number<float>();
             }
 
             if (!info.contains("render") || !info["render"].is_string())
@@ -292,22 +294,22 @@ namespace Botcraft
             }
             else
             {
-                rendering[name] = info["render"];
+                rendering[name] = info["render"].get_string();
             }
 
-            if (info.contains("climbable") && info["climbable"].is_boolean())
+            if (info.contains("climbable") && info["climbable"].is_bool())
             {
-                blockstate_properties[name].climbable = info["climbable"];
+                blockstate_properties[name].climbable = info["climbable"].get<bool>();
             }
 
             // Get breaking tools info
             if (info.contains("tools") && info["tools"].is_array())
             {
-                for (const auto& tool : info["tools"])
+                for (const auto& tool : info["tools"].get_array())
                 {
                     if (tool.is_string())
                     {
-                        const std::string tool_name = tool.get<std::string>();
+                        const std::string tool_name = tool.get_string();
                         if (tool_name == "any")
                         {
                             blockstate_properties[name].any_tool_harvest = true;
@@ -329,11 +331,11 @@ namespace Botcraft
                         if (tool.contains("tool") && tool["tool"].is_string())
                         {
                             BestTool best_tool;
-                            best_tool.tool_type = GetToolTypeFromString(tool["tool"].get<std::string>());
+                            best_tool.tool_type = GetToolTypeFromString(tool["tool"].get_string());
                             
                             if (tool.contains("min_material") && tool["min_material"].is_string())
                             {
-                                best_tool.min_material = GetToolMaterialFromString(tool["min_material"].get<std::string>());
+                                best_tool.min_material = GetToolMaterialFromString(tool["min_material"].get_string());
                             }
                             else
                             {
@@ -359,7 +361,7 @@ namespace Botcraft
             // Get texture info (used for fluids)
             if (info.contains("texture") && info["texture"].is_string())
             {
-                textures[name] = info["texture"];
+                textures[name] = info["texture"].get_string();
             }
 
             // Get the tint type info (for grass/leaves/water ...)
@@ -367,7 +369,7 @@ namespace Botcraft
             {
                 std::string tint_type_string;
                 TintType tint_type = TintType::None;
-                tint_type_string = info["tintType"];
+                tint_type_string = info["tintType"].get_string();
                 if (tint_type_string == "grass")
                 {
                     tint_type = TintType::Grass;
@@ -396,10 +398,10 @@ namespace Botcraft
             else if (info.contains("tintTypes") && info["tintType"].is_object())
             {
                 tint_types[name] = std::unordered_map<int, TintType>({});
-                for (auto it = info["tintType"].begin(); it != info["tintType"].end(); ++it)
+                for (const auto& [key, val]: info["tintType"].get_object())
                 {
                     TintType tint_type = TintType::None;
-                    std::string tint_type_string = it.value().get<std::string>();
+                    std::string tint_type_string = val.get_string();
                     
                     if (tint_type_string == "grass")
                     {
@@ -418,7 +420,7 @@ namespace Botcraft
                         tint_type = TintType::Redstone;
                     }
 
-                    tint_types[name][std::stoi(it.key())] = tint_type;
+                    tint_types[name][std::stoi(key)] = tint_type;
                 }
             }
 #endif
@@ -473,7 +475,7 @@ namespace Botcraft
             file >> json;
             file.close();
         }
-        catch (const nlohmann::json::exception& e)
+        catch (const std::runtime_error& e)
         {
             LOG_ERROR("Error reading block file at " << file_path << '\n' << e.what());
             return;
@@ -488,9 +490,9 @@ namespace Botcraft
         }
 
         //Load all the blockstates from JSON file
-        for (auto& element : json)
+        for (const auto& element : json.get_object())
         {
-            const std::string& blockstate_name = element["name"].get<std::string>();
+            const std::string& blockstate_name = element["name"].get_string();
 
             if (rendering.find(blockstate_name) == rendering.end() ||
                 blockstate_properties.find(blockstate_name) == blockstate_properties.end() ||
@@ -507,10 +509,10 @@ namespace Botcraft
 
             if (element.contains("id") && element["id"].is_number())
             {
-                props.id = element["id"];
+                props.id = element["id"]).get_number<int>();
             }
 
-            const std::string render = rendering[blockstate_name];
+            const std::string& render = rendering[blockstate_name];
 
             if (render == "none")
             {
@@ -532,16 +534,16 @@ namespace Botcraft
                     LOG_ERROR("Error, no metadata found for block " << blockstate_name);
                 }
 
-                for (auto& metadata_obj : element["metadata"])
+                for (const auto& metadata_obj : element["metadata"].get_array())
                 {
-                    props.metadata = metadata_obj["value"];
-                    props.path = metadata_obj["blockstate"];
+                    props.metadata = metadata_obj["value"].get_number<int>();
+                    props.path = metadata_obj["blockstate"].get_string();
                     props.variables = std::vector<std::string>();
                     if (metadata_obj.contains("variables"))
                     {
-                        for (auto& s : metadata_obj["variables"])
+                        for (const auto& s : metadata_obj["variables"].get_array())
                         {
-                            props.variables.push_back(s);
+                            props.variables.push_back(s.get_string());
                         }
                     }
 
@@ -603,18 +605,14 @@ namespace Botcraft
             return;
         }
 
-        for (nlohmann::json::const_iterator blockstates_it = json.begin(); blockstates_it != json.end(); ++blockstates_it)
+        for (const auto& [blockstate_name, element]: json.get_object())
         {
-            std::string blockstate_name = blockstates_it.key();
-
-            const nlohmann::json& element = blockstates_it.value();
-
             if (!element.contains("states") || !element["states"].is_array())
             {
                 continue;
             }
 
-            for (auto& blockstate : element["states"])
+            for (const auto& blockstate : element["states"].get_array())
             {
                 if (rendering.find(blockstate_name) == rendering.end() ||
                     blockstate_properties.find(blockstate_name) == blockstate_properties.end() ||
@@ -630,7 +628,7 @@ namespace Botcraft
 
                 if (blockstate.contains("id") && blockstate["id"].is_number())
                 {
-                    props.id = blockstate["id"];
+                    props.id = blockstate["id"].get_number<int>();
                 }
                 else
                 {
@@ -638,18 +636,18 @@ namespace Botcraft
                     continue;
                 }
 
-                const std::string render = rendering[blockstate_name];
+                const std::string& render = rendering[blockstate_name];
 
                 // Read the properties (if any)
                 int fluid_level = 0;
                 if (blockstate.contains("properties") && blockstate["properties"].is_object())
                 {
-                    for (nlohmann::json::const_iterator prop = blockstate["properties"].begin(); prop != blockstate["properties"].end(); ++prop)
+                    for (const auto& [key, val]: blockstate["properties"].get_object())
                     {
-                        props.variables.push_back(prop.key() + "=" + prop.value().get<std::string>());
-                        if (render == "fluid" && prop.key() == "level")
+                        props.variables.push_back(key + "=" + val.get_string());
+                        if (render == "fluid" && key == "level")
                         {
-                            fluid_level = std::stoi(prop.value().get<std::string>());
+                            fluid_level = std::stoi(val.get_string());
                         }
                     }
                 }
@@ -692,14 +690,14 @@ namespace Botcraft
     {
         std::string file_path = ASSETS_PATH + std::string("/custom/Biomes.json");
 
-        nlohmann::json json;
+        Json::Value json;
         try
         {
             std::ifstream file(file_path);
             file >> json;
             file.close();
         }
-        catch (const nlohmann::json::exception& e)
+        catch (const std::runtime_error& e)
         {
             LOG_ERROR("Error reading biome file at " << file_path << '\n' << e.what());
             return;
@@ -712,7 +710,7 @@ namespace Botcraft
         }
 
         //Load all the biomes from JSON file
-        for (auto& element : json)
+        for (const auto& element : json.get_array())
         {
             unsigned char id = 0;
             std::string name = "";
@@ -722,27 +720,27 @@ namespace Botcraft
 
             if (element.contains("id"))
             {
-                id = element["id"];
+                id = element["id"].get_number<unsigned char>();
             }
 
             if (element.contains("name"))
             {
-                name = element["name"];
+                name = element["name"].get_string();
             }
 
             if (element.contains("rainfall"))
             {
-                rainfall = element["rainfall"];
+                rainfall = element["rainfall"].get_number<float>();
             }
             
             if (element.contains("temperature"))
             {
-                temperature = element["temperature"];
+                temperature = element["temperature"].get_number<float>();
             }
 
             if (element.contains("biomeType"))
             {
-                std::string string_biome_type = element["biomeType"];
+                const std::string& string_biome_type = element["biomeType"].get_string();
                 if (string_biome_type == "Swamp")
                 {
                     biome_type = BiomeType::Swamp;
@@ -783,14 +781,14 @@ namespace Botcraft
     {
         std::string file_path = ASSETS_PATH + std::string("/custom/Items.json");
 
-        nlohmann::json json;
+        Json::Value json;
         try
         {
             std::ifstream file(file_path);
             file >> json;
             file.close();
         }
-        catch (const nlohmann::json::exception& e)
+        catch (const std::runtime_error& e)
         {
             LOG_ERROR("Error reading item file at " << file_path << '\n' << e.what());
             return;
@@ -813,22 +811,20 @@ namespace Botcraft
 #endif
 
         //Load all the items from JSON file
-        for (nlohmann::json::const_iterator items_it = json.begin(); items_it != json.end(); ++items_it)
+        for (const auto& [key, properties]:  json.get_object())
         {
             // Read name
-            props.name = items_it.key();
-
-            const nlohmann::json& properties = items_it.value();
+            props.name = key;
 
             if (!properties.contains("id") || !properties["id"].is_number())
             {
                 continue;
             }
-            props.id = properties["id"];
+            props.id = properties["id"].get_number<int>();
 
             if (properties.contains("stack_size") && properties["stack_size"].is_number())
             {
-                props.stack_size = properties["stack_size"];
+                props.stack_size = properties["stack_size"].get_number<unsigned char>();
             }
             // Default value
             else
@@ -841,7 +837,7 @@ namespace Botcraft
             {
                 continue;
             }
-            props.damage_id = properties["damage_id"];
+            props.damage_id = properties["damage_id"].get_number<unsigned char>();
             if (items.find(props.id) == items.end())
             {
                 items[props.id];

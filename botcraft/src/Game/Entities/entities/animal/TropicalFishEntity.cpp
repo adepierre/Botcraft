@@ -51,9 +51,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json TropicalFishEntity::Serialize() const
+    ProtocolCraft::Json::Value TropicalFishEntity::Serialize() const
     {
-        nlohmann::json output = AbstractSchoolingFishEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractSchoolingFishEntity::Serialize();
 
         output["metadata"]["data_id_type_variant"] = GetDataIdTypeVariant();
 

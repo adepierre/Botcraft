@@ -27,9 +27,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION < 405
-    nlohmann::json AbstractIllagerEntity::Serialize() const
+    ProtocolCraft::Json::Value AbstractIllagerEntity::Serialize() const
     {
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
         output["metadata"]["has_target"] = GetHasTarget();
 

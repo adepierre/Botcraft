@@ -61,12 +61,12 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PiglinEntity::Serialize() const
+    ProtocolCraft::Json::Value PiglinEntity::Serialize() const
     {
 #if PROTOCOL_VERSION > 736
-        nlohmann::json output = AbstractPiglinEntity::Serialize();
+        ProtocolCraft::Json::Value output = AbstractPiglinEntity::Serialize();
 #else
-        nlohmann::json output = MonsterEntity::Serialize();
+        ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 #endif
 
         output["metadata"]["data_baby_id"] = GetDataBabyId();

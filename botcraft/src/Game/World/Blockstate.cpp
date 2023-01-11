@@ -4,8 +4,6 @@
 #include <chrono>
 #include <deque>
 
-#include <nlohmann/json.hpp>
-
 #include "botcraft/Game/World/Blockstate.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/StringUtilities.hpp"
@@ -14,30 +12,32 @@
 #include "botcraft/Renderer/Atlas.hpp"
 #endif
 
+using namespace ProtocolCraft;
+
 namespace Botcraft
 {
     // Utilities functions
 
-    Model ModelModificationFromJson(const Model &model, const nlohmann::json &json)
+    Model ModelModificationFromJson(const Model &model, const Json::Value &json)
     {
         Model output = model;
 
         bool uv_lock = false;
         if (json.contains("uvlock"))
         {
-            uv_lock = json["uvlock"];
+            uv_lock = json["uvlock"].get<bool>();
         }
 
         int rotation_x = 0;
         if (json.contains("x"))
         {
-            rotation_x = json["x"];
+            rotation_x = json["x"].get_number<int>();
         }
 
         int rotation_y = 0;
         if (json.contains("y"))
         {
-            rotation_y = json["y"];
+            rotation_y = json["y"].get_number<int>();
         }
 
         //Rotate colliders
@@ -184,9 +184,9 @@ namespace Botcraft
         return output;
     }
 
-    std::string ModelNameFromJson(const nlohmann::json &json)
+    std::string ModelNameFromJson(const Json::Value& json)
     {
-        std::string model_path = json["model"];
+        const std::string& model_path = json["model"].get_string();
 #if PROTOCOL_VERSION < 347
         return "block/" + model_path;
 #elif PROTOCOL_VERSION > 578 //> 1.15.2
@@ -197,13 +197,13 @@ namespace Botcraft
 #endif
     }
 
-    int WeightFromJson(const nlohmann::json &json)
+    int WeightFromJson(const Json::Value& json)
     {
         int output = 1;
 
         if (json.contains("weight"))
         {
-            output = json["weight"];
+            output = json["weight"].get_number<int>();
         }
 
         return output;
@@ -238,7 +238,7 @@ namespace Botcraft
     }
 
     // Blockstate implementation starts here
-    std::map<std::string, nlohmann::json> Blockstate::cached_jsons;
+    std::map<std::string, Json::Value> Blockstate::cached_jsons;
 
     Blockstate::Blockstate(const BlockstateProperties& properties)
     {
@@ -297,7 +297,7 @@ namespace Botcraft
                 file.close();
             }
         }
-        catch (const nlohmann::json::exception& e)
+        catch (const std::runtime_error& e)
         {
             if (properties.custom)
             {
@@ -315,7 +315,7 @@ namespace Botcraft
             return;
         }
 
-        const nlohmann::json& json = cached_jsons[full_filepath];
+        const Json::Value& json = cached_jsons[full_filepath];
 
         // We store the models in a deque for efficiency
         std::deque<Model> models_deque;
@@ -329,8 +329,8 @@ namespace Botcraft
         //If it's a "normal" blockstate
         if (json.contains("variants"))
         {
-            nlohmann::json null_value;
-            nlohmann::json &variant_value = null_value;
+            Json::Value null_value;
+            Json::Value& variant_value = null_value;
 
             if (json["variants"].contains(""))
             {
@@ -348,9 +348,9 @@ namespace Botcraft
             {
                 int max_match = 0;
 
-                for (nlohmann::json::const_iterator it = json["variants"].begin(); it != json["variants"].end(); ++it)
+                for (const auto& [key, val] : json["variants"].get_object())
                 {
-                    const std::vector<std::string> variables_values = SplitString(it.key(), ',');
+                    const std::vector<std::string> variables_values = SplitString(key, ',');
                     
                     int num_match = 0;
                     for (int i = 0; i < properties.variables.size(); ++i)
@@ -365,7 +365,7 @@ namespace Botcraft
                     }
                     if (num_match > max_match)
                     {
-                        variant_value = it.value();
+                        variant_value = val;
                         max_match = num_match;
                     }
                 }
@@ -376,7 +376,7 @@ namespace Botcraft
             {
                 if (variant_value.is_array())
                 {
-                    for (auto& model : variant_value)
+                    for (const auto& model : variant_value.get_array())
                     {
                         const int weight = WeightFromJson(model);
                         models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(model), properties.custom), model));
@@ -409,7 +409,7 @@ namespace Botcraft
             models_weights.push_back(1);
             weights_sum = 0;
 
-            for (auto& part : json["multipart"])
+            for (const auto& part : json["multipart"].get_array())
             {
                 //If no condition
                 if (!part.contains("when"))
@@ -418,7 +418,7 @@ namespace Botcraft
                     if (part["apply"].is_array())
                     {
                         size_t num_models = models_deque.size();
-                        for (auto& m : part["apply"])
+                        for (const auto& m : part["apply"].get_array())
                         {
                             const std::string model_name = ModelNameFromJson(m);
                             for (int k = 0; k < num_models; ++k)
@@ -448,24 +448,24 @@ namespace Botcraft
                     //If it's a OR condition
                     if (part["when"].contains("OR"))
                     {
-                        for (auto& current_condition : part["when"]["OR"])
+                        for (const auto& current_condition : part["when"]["OR"].get_array())
                         {
-                            for (nlohmann::json::const_iterator condition_it = current_condition.begin(); condition_it != current_condition.end(); ++condition_it)
+                            for (const auto& [key, val] : current_condition.get_object())
                             {
-                                const std::string condition_name = condition_it.key();
+                                const std::string condition_name = key;
                                 std::string condition_value = "";
 
-                                if (condition_it.value().is_string())
+                                if (val.is_string())
                                 {
-                                    condition_value = condition_it.value();
+                                    condition_value = val.get_string();
                                 }
-                                else if (condition_it.value().is_boolean())
+                                else if (val.is_bool())
                                 {
-                                    condition_value = condition_it.value().get<bool>() ? "true" : "false";
+                                    condition_value = val.get<bool>() ? "true" : "false";
                                 }
-                                else if (condition_it.value().is_number())
+                                else if (val.is_number())
                                 {
-                                    condition_value = std::to_string(condition_it.value().get<double>());
+                                    condition_value = std::to_string(val.get_number<double>());
                                 }
 
                                 condition = CheckCondition(condition_name, condition_value, properties.variables);
@@ -485,24 +485,24 @@ namespace Botcraft
                     }
                     else
                     {
-                        for (nlohmann::json::const_iterator condition_it = part["when"].begin(); condition_it != part["when"].end(); ++condition_it)
+                        for (const auto& [key, val] : part["when"].get_object())
                         {
                             std::string condition_value = "";
 
-                            if (condition_it.value().is_string())
+                            if (val.is_string())
                             {
-                                condition_value = condition_it.value();
+                                condition_value = val.get_string();
                             }
-                            else if (condition_it.value().is_boolean())
+                            else if (val.is_bool())
                             {
-                                condition_value = condition_it.value().get<bool>() ? "true" : "false";
+                                condition_value = val.get<bool>() ? "true" : "false";
                             }
-                            else if (condition_it.value().is_number())
+                            else if (val.is_number())
                             {
-                                condition_value = std::to_string(condition_it.value().get<double>());
+                                condition_value = std::to_string(val.get<double>());
                             }
 
-                            condition = CheckCondition(condition_it.key(), condition_value, properties.variables);
+                            condition = CheckCondition(key, condition_value, properties.variables);
                             //If one condition in the list is not verified,
                             //the whole condition is not
                             if (!condition)
@@ -519,7 +519,7 @@ namespace Botcraft
                         if (part["apply"].is_array())
                         {
                             size_t num_models = models_deque.size();
-                            for (auto& m : part["apply"])
+                            for (const auto& m : part["apply"].get_array())
                             {
                                 const std::string model_name = ModelNameFromJson(m);
                                 const int model_weight = WeightFromJson(m);

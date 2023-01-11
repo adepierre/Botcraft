@@ -60,9 +60,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PlayerEntity::Serialize() const
+    ProtocolCraft::Json::Value PlayerEntity::Serialize() const
     {
-        nlohmann::json output = LivingEntity::Serialize();
+        ProtocolCraft::Json::Value output = LivingEntity::Serialize();
 
         output["metadata"]["data_player_absorption_id"] = GetDataPlayerAbsorptionId();
         output["metadata"]["data_score_id"] = GetDataScoreId();

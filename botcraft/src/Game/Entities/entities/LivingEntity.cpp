@@ -43,9 +43,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json LivingEntity::Serialize() const
+    ProtocolCraft::Json::Value LivingEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_living_entity_flags"] = GetDataLivingEntityFlags();
         output["metadata"]["data_health_id"] = GetDataHealthId();
@@ -56,7 +56,7 @@ namespace Botcraft
         output["metadata"]["data_stinger_count_id"] = GetDataStingerCountId();
 #endif
 #if PROTOCOL_VERSION > 404
-        output["metadata"]["sleeping_pos_id"] = GetSleepingPosId() ? GetSleepingPosId().value().Serialize() : nlohmann::json();
+        output["metadata"]["sleeping_pos_id"] = GetSleepingPosId() ? GetSleepingPosId().value().Serialize() : ProtocolCraft::Json::Value();
 #endif
 
         return output;

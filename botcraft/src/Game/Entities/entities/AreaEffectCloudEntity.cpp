@@ -70,17 +70,17 @@ namespace Botcraft
     }
 
 
-    nlohmann::json AreaEffectCloudEntity::Serialize() const
+    ProtocolCraft::Json::Value AreaEffectCloudEntity::Serialize() const
     {
-        nlohmann::json output = Entity::Serialize();
+        ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_radius"] = GetDataRadius();
         output["metadata"]["data_color"] = GetDataColor();
         output["metadata"]["data_waiting"] = GetDataWaiting();
 #if PROTOCOL_VERSION > 340
-        output["metadata"]["data_particle"] = GetDataParticle() ? nlohmann::json({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : nlohmann::json();
+        output["metadata"]["data_particle"] = GetDataParticle() ? ProtocolCraft::Json::Value({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : ProtocolCraft::Json::Value();
 #else
-        output["metadata"]["data_particle"] = GetDataParticle() ? nlohmann::json(GetDataParticle().value()) : nlohmann::json();
+        output["metadata"]["data_particle"] = GetDataParticle() ? ProtocolCraft::Json::Value(GetDataParticle().value()) : ProtocolCraft::Json::Value();
 #endif
         return output;
     }

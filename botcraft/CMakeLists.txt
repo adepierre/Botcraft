@@ -536,12 +536,6 @@ if (WIN32 AND BOTCRAFT_WINDOWS_BETTER_SLEEP)
     target_compile_definitions(botcraft PRIVATE BETTER_SLEEP=1)
 endif()
 
-# Add json
-target_include_directories(botcraft 
-    PUBLIC 
-        "$<BUILD_INTERFACE:${JSON_INCLUDE_DIR}>"
-)
-
 # Add Asio
 target_link_libraries(botcraft PRIVATE asio)
 target_compile_definitions(botcraft PRIVATE ASIO_STANDALONE)
@@ -631,11 +625,6 @@ install(
         "${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-config.cmake"
     DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/cmake/botcraft"
-)
-
-# Copy json
-install(DIRECTORY "${JSON_INCLUDE_DIR}/nlohmann"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 export(EXPORT botcraft-targets

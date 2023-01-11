@@ -54,9 +54,9 @@ namespace Botcraft
     }
 
 
-    nlohmann::json PolarBearEntity::Serialize() const
+    ProtocolCraft::Json::Value PolarBearEntity::Serialize() const
     {
-        nlohmann::json output = AnimalEntity::Serialize();
+        ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_standing_id"] = GetDataStandingId();
 
