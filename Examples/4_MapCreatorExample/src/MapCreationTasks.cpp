@@ -19,6 +19,7 @@
 #include <fstream>
 #include <unordered_set>
 #include <set>
+#include <iterator>
 
 using namespace Botcraft;
 using namespace ProtocolCraft;

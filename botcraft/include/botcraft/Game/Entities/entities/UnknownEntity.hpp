@@ -13,7 +13,7 @@ namespace Botcraft
         // Object related stuff
         virtual std::string GetName() const override;
         virtual EntityType GetType() const override;
-        virtual double GetWidth() const;
-        virtual double GetHeight() const;
+        virtual double GetWidth() const override;
+        virtual double GetHeight() const override;
     };
 }

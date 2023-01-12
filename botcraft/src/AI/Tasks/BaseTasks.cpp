@@ -1,7 +1,5 @@
 #include "botcraft/AI/Tasks/BaseTasks.hpp"
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
-#include "botcraft/AI/BehaviourClient.hpp"
-#include "botcraft/AI/BehaviourTree.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/World/World.hpp"

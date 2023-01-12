@@ -1,6 +1,8 @@
 #pragma once
 
 #if PROTOCOL_VERSION > 344
+#include <limits>
+
 #include "protocolCraft/Types/CommandNode/BrigadierProperty.hpp"
 
 namespace ProtocolCraft

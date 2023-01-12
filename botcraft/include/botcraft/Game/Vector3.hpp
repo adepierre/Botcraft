@@ -2,6 +2,7 @@
 
 #include <ostream>
 #include <cassert>
+#include <cmath>
 
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
@@ -174,7 +175,7 @@ namespace Botcraft
 
         void Normalize()
         {
-            const double norm = sqrt(SqrNorm());
+            const double norm = std::sqrt(SqrNorm());
             x /= norm;
             y /= norm;
             z /= norm;

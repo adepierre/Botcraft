@@ -111,13 +111,7 @@ namespace ProtocolCraft
                 typename A = std::allocator<T>,
                 std::enable_if_t<std::is_convertible_v<T, Value>, bool> = true
             >
-            Value(const C<T, A>& c) : val(Array())
-            {
-                for (const auto& i : c)
-                {
-                    push_back(i);
-                }
-            }
+            Value(const C<T, A>& c);
 
             // Add support for any std::array<T, N> when T is compatible with Value
             template<
@@ -125,13 +119,7 @@ namespace ProtocolCraft
                 size_t N,
                 std::enable_if_t<std::is_convertible_v<T, Value>, bool> = true
             >
-            Value(const std::array<T, N>& v) : val(Array())
-            {
-                for (const auto& i : v)
-                {
-                    push_back(i);
-                }
-            }
+            Value(const std::array<T, N>& v);
 
             // Add support for all (unsigned) int/char/short that can't be natively
             // converted to JsonVariant on this platform
@@ -139,143 +127,40 @@ namespace ProtocolCraft
                 typename T,
                 std::enable_if_t<std::is_integral_v<T>&& std::is_unsigned_v<T>, bool> = true
             >
-            Value(const T u) : val(static_cast<unsigned long long int>(u))
-            {
-
-            }
+            Value(const T u);
 
             template<
                 typename T,
                 std::enable_if_t<(std::is_integral_v<T>&& std::is_signed_v<T>) || std::is_enum_v<T>, bool> = true
             >
-            Value(const T i) : val(static_cast<long long int>(i))
-            {
-
-            }
+            Value(const T i);
 
             template<
                 typename T,
                 std::enable_if_t<std::is_floating_point_v<T>, bool> = true
             >
-            Value(const T f) : val(static_cast<double>(f))
-            {
-
-            }
+            Value(const T f);
 
             template<
                 typename T,
                 std::enable_if_t<!std::is_same_v<T, std::monostate> && !std::is_same_v<T, Object> && !std::is_same_v<T, Array> && !std::is_same_v<T, std::string>, bool> = true
             >
-            T get() const
-            {
-                if constexpr (std::is_same_v<T, bool>)
-                {
-                    return std::get<bool>(val);
-                }
-                // Wrapper to be able to get char/short/int
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    if (std::holds_alternative<long long int>(val))
-                    {
-                        return static_cast<T>(std::get<long long int>(val));
-                    }
-                    else if (std::holds_alternative<unsigned long long int>(val))
-                    {
-                        return static_cast<T>(std::get<unsigned long long int>(val));
-                    }
-                    else
-                    {
-                        throw std::runtime_error("Trying to get an integral value from a Value that is something else");
-                    }
-                }
-                // Wrapper to be able to get float/long double
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    if (std::holds_alternative<double>(val))
-                    {
-                        return static_cast<T>(std::get<double>(val));
-                    }
-                    else
-                    {
-                        throw std::runtime_error("Trying to get a floating point value from a Value that is something else");
-                    }
-                }
-                else
-                {
-                    if (std::holds_alternative<T>(val))
-                    {
-                        throw std::runtime_error("Trying to get the wrong type from Value");
-                    }
-                    return std::get<T>(val);
-                }
-            }
+            T get() const;
 
             template<typename T = double>
-            T get_number() const
-            {
-                if (std::holds_alternative<double>(val))
-                {
-                    return static_cast<T>(std::get<double>(val));
-                }
-                else if (std::holds_alternative<long long int>(val))
-                {
-                    return static_cast<T>(std::get<long long int>(val));
-                }
-                else if (std::holds_alternative<unsigned long long int>(val))
-                {
-                    return static_cast<T>(std::get<unsigned long long int>(val));
-                }
-                else
-                {
-                    throw std::runtime_error("Trying to get a number value from a Value that is something else");
-                }
-            }
+            T get_number() const;
 
             template<
                 typename T,
                 std::enable_if_t<!std::is_same_v<T, std::monostate> && (std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>), bool> = true
             >
-            T& get()
-            {
-                // special case for object (removing the RecursiveWrapper)
-                if constexpr (std::is_same_v<T, Object>)
-                {
-                    return std::get<Internal::RecursiveWrapper<Object>>(val).get();
-                }
-                // special case for array (removing the RecursiveWrapper)
-                else if constexpr (std::is_same_v<T, Array>)
-                {
-                    return std::get<Internal::RecursiveWrapper<Array>>(val).get();
-                }
-                // all other cases (only std::string for now) should work with generic template
-                else
-                {
-                    return std::get<T>(val);
-                }
-            }
+            T& get();
 
             template<
                 typename T,
                 std::enable_if_t<!std::is_same_v<T, std::monostate> && (std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>), bool> = true
             >
-            const T& get() const
-            {
-                // special case for object (removing the RecursiveWrapper)
-                if constexpr (std::is_same_v<T, Object>)
-                {
-                    return std::get<Internal::RecursiveWrapper<Object>>(val).get();
-                }
-                // special case for array (removing the RecursiveWrapper)
-                else if constexpr (std::is_same_v<T, Array>)
-                {
-                    return std::get<Internal::RecursiveWrapper<Array>>(val).get();
-                }
-                // all other cases (only std::string for now) should work with generic template
-                else
-                {
-                    return std::get<T>(val);
-                }
-            }
+            const T& get() const;
 
             Object& get_object();
             Array& get_array();
@@ -286,21 +171,7 @@ namespace ProtocolCraft
             const std::string& get_string() const;
 
             template<typename T>
-            bool is() const
-            {
-                if constexpr (std::is_same_v<T, Object>)
-                {
-                    return std::holds_alternative<Internal::RecursiveWrapper<Object>>(val);
-                }
-                else if constexpr (std::is_same_v<T, Array>)
-                {
-                    return std::holds_alternative<Internal::RecursiveWrapper<Array>>(val);
-                }
-                else
-                {
-                    return std::holds_alternative<T>(val);
-                }
-            }
+            bool is() const;
 
             bool is_null() const;
             bool is_string() const;
@@ -368,5 +239,197 @@ namespace ProtocolCraft
         /// instead of throwing an exception in case of unvalid string
         /// @return The parsed Value, will throw a std::runtime_error if unvalid
         Value Parse(const std::string& s, bool no_except = false);
+
+
+
+        // Templates implementations, they need to be below
+        // Object and Array class so they are not incomplete
+        // any more
+
+        template<
+            template<typename, typename> class C,
+            typename T,
+            typename A,
+            std::enable_if_t<std::is_convertible_v<T, Value>, bool>
+        >
+        Value::Value(const C<T, A>& c) : val(Array())
+        {
+            for (const auto& i : c)
+            {
+                push_back(i);
+            }
+        }
+
+        template<
+            typename T,
+            size_t N,
+            std::enable_if_t<std::is_convertible_v<T, Value>, bool>
+        >
+        Value::Value(const std::array<T, N>& v) : val(Array())
+        {
+            for (const auto& i : v)
+            {
+                push_back(i);
+            }
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<std::is_integral_v<T>&& std::is_unsigned_v<T>, bool>
+        >
+        Value::Value(const T u) : val(static_cast<unsigned long long int>(u))
+        {
+
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<(std::is_integral_v<T>&& std::is_signed_v<T>) || std::is_enum_v<T>, bool>
+        >
+        Value::Value(const T i) : val(static_cast<long long int>(i))
+        {
+
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<std::is_floating_point_v<T>, bool>
+        >
+        Value::Value(const T f) : val(static_cast<double>(f))
+        {
+
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<!std::is_same_v<T, std::monostate> && !std::is_same_v<T, Object> && !std::is_same_v<T, Array> && !std::is_same_v<T, std::string>, bool>
+        >
+        T Value::get() const
+        {
+            if constexpr (std::is_same_v<T, bool>)
+            {
+                return std::get<bool>(val);
+            }
+            // Wrapper to be able to get char/short/int
+            else if constexpr (std::is_integral_v<T>)
+            {
+                if (std::holds_alternative<long long int>(val))
+                {
+                    return static_cast<T>(std::get<long long int>(val));
+                }
+                else if (std::holds_alternative<unsigned long long int>(val))
+                {
+                    return static_cast<T>(std::get<unsigned long long int>(val));
+                }
+                else
+                {
+                    throw std::runtime_error("Trying to get an integral value from a Value that is something else");
+                }
+            }
+            // Wrapper to be able to get float/long double
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                if (std::holds_alternative<double>(val))
+                {
+                    return static_cast<T>(std::get<double>(val));
+                }
+                else
+                {
+                    throw std::runtime_error("Trying to get a floating point value from a Value that is something else");
+                }
+            }
+            else
+            {
+                if (std::holds_alternative<T>(val))
+                {
+                    throw std::runtime_error("Trying to get the wrong type from Value");
+                }
+                return std::get<T>(val);
+            }
+        }
+
+        template<typename T>
+        T Value::get_number() const
+        {
+            if (std::holds_alternative<double>(val))
+            {
+                return static_cast<T>(std::get<double>(val));
+            }
+            else if (std::holds_alternative<long long int>(val))
+            {
+                return static_cast<T>(std::get<long long int>(val));
+            }
+            else if (std::holds_alternative<unsigned long long int>(val))
+            {
+                return static_cast<T>(std::get<unsigned long long int>(val));
+            }
+            else
+            {
+                throw std::runtime_error("Trying to get a number value from a Value that is something else");
+            }
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<!std::is_same_v<T, std::monostate> && (std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>), bool>
+        >
+        T& Value::get()
+        {
+            // special case for object (removing the RecursiveWrapper)
+            if constexpr (std::is_same_v<T, Object>)
+            {
+                return std::get<Internal::RecursiveWrapper<Object>>(val).get();
+            }
+            // special case for array (removing the RecursiveWrapper)
+            else if constexpr (std::is_same_v<T, Array>)
+            {
+                return std::get<Internal::RecursiveWrapper<Array>>(val).get();
+            }
+            // all other cases (only std::string for now) should work with generic template
+            else
+            {
+                return std::get<T>(val);
+            }
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<!std::is_same_v<T, std::monostate> && (std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>), bool>
+        >
+        const T& Value::get() const
+        {
+            // special case for object (removing the RecursiveWrapper)
+            if constexpr (std::is_same_v<T, Object>)
+            {
+                return std::get<Internal::RecursiveWrapper<Object>>(val).get();
+            }
+            // special case for array (removing the RecursiveWrapper)
+            else if constexpr (std::is_same_v<T, Array>)
+            {
+                return std::get<Internal::RecursiveWrapper<Array>>(val).get();
+            }
+            // all other cases (only std::string for now) should work with generic template
+            else
+            {
+                return std::get<T>(val);
+            }
+        }
+
+        template<typename T>
+        bool Value::is() const
+        {
+            if constexpr (std::is_same_v<T, Object>)
+            {
+                return std::holds_alternative<Internal::RecursiveWrapper<Object>>(val);
+            }
+            else if constexpr (std::is_same_v<T, Array>)
+            {
+                return std::holds_alternative<Internal::RecursiveWrapper<Array>>(val);
+            }
+            else
+            {
+                return std::holds_alternative<T>(val);
+            }
+        }
     }
 }
