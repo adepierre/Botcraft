@@ -54,8 +54,8 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["dimension"] = dimension.Serialize();
-            output["pos"] = pos.Serialize();
+            output["dimension"] = dimension;
+            output["pos"] = pos;
 
 
             return output;

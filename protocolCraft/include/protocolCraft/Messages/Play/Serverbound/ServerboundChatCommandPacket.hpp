@@ -170,7 +170,7 @@ namespace ProtocolCraft
             output["signed_preview"] = signed_preview;
 #endif
 #if PROTOCOL_VERSION > 759
-            output["last_seen_messages"] = last_seen_messages.Serialize();
+            output["last_seen_messages"] = last_seen_messages;
 #endif
 
 

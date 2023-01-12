@@ -47,7 +47,7 @@ namespace ProtocolCraft
     {
         Json::Value output;
 
-        output["vibration_path"] = vibration_path.Serialize();
+        output["vibration_path"] = vibration_path;
 
         return output;
     }

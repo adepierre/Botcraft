@@ -255,18 +255,14 @@ namespace ProtocolCraft
             output["available_sections"] = available_sections;
 #endif
 #if PROTOCOL_VERSION > 442
-            output["heightmaps"] = heightmaps.Serialize();
+            output["heightmaps"] = heightmaps;
 #endif
 #if PROTOCOL_VERSION > 551
             output["biomes"] = "Vector of " + std::to_string(biomes.size()) + " int";
 #endif
             output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
 
-            output["block_entities_tags"] = Json::Array();
-            for (const auto& b : block_entities_tags)
-            {
-                output["block_entities_tags"].push_back(b.Serialize());
-            }
+            output["block_entities_tags"] = block_entities_tags;
 
 #if PROTOCOL_VERSION < 755
             output["full_chunk"] = full_chunk;

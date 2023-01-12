@@ -217,7 +217,7 @@ namespace ProtocolCraft
             {
             case 0:
 #if PROTOCOL_VERSION > 375
-                output["recipe"] = recipe.Serialize();
+                output["recipe"] = recipe;
 #else
                 output["recipe"] = recipe;
 #endif

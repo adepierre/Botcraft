@@ -192,14 +192,14 @@ namespace ProtocolCraft
             if (node_type == 2)
             {
 #if PROTOCOL_VERSION < 759
-                output["parser"] = parser.Serialize();
+                output["parser"] = parser;
 #else
                 output["parser_id"] = parser_id;
 #endif
                 output["properties"] = properties->Serialize();
                 if (flags & 0x10)
                 {
-                    output["suggestions_type"] = suggestions_type.Serialize();
+                    output["suggestions_type"] = suggestions_type;
                 }
             }
 

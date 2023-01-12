@@ -48,11 +48,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["profile_ids"] = Json::Array();
-            for (const auto& p : profile_ids)
-            {
-                output["profile_ids"].push_back(p);
-            }
+            output["profile_ids"] = profile_ids;
 
             return output;
         }

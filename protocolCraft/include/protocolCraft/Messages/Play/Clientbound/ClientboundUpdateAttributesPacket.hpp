@@ -91,12 +91,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["entity_id"] = entity_id;
-            
-            output["attributes"] = Json::Array();
-            for (const auto& a : attributes)
-            {
-                output["attributes"].push_back(a.Serialize());
-            }
+            output["attributes"] = attributes;
 
             return output;
         }

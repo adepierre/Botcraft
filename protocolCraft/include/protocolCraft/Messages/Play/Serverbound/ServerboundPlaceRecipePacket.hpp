@@ -111,7 +111,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 348
             output["recipe"] = recipe;
 #else
-            output["recipe"] = recipe.Serialize();
+            output["recipe"] = recipe;
 #endif
             output["shift_down"] = shift_down;
 

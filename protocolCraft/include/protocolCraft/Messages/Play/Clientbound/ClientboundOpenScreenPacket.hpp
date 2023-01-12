@@ -169,7 +169,7 @@ namespace ProtocolCraft
             output["type"] = type;
 #endif
 
-            output["title"] = title.Serialize();
+            output["title"] = title;
 
             return output;
         }

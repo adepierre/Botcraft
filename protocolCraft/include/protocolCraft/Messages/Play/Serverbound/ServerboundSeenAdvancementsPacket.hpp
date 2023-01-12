@@ -88,7 +88,7 @@ namespace ProtocolCraft
             output["action"] = action;
             if (action == 0)
             {
-                output["tab"] = tab.Serialize();
+                output["tab"] = tab;
             }
 
             return output;

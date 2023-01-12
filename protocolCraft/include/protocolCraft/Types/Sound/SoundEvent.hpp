@@ -81,7 +81,7 @@ namespace ProtocolCraft
 
             if (location.GetFull().empty())
             {
-                output["location"] = location.Serialize();
+                output["location"] = location;
                 if (range.has_value())
                 {
                     output["range"] = range.value();

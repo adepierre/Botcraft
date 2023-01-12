@@ -114,15 +114,11 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["container_id"] = container_id;
-            output["items"] = Json::Array();
-            for (const auto& i : items)
-            {
-                output["items"].push_back(i.Serialize());
-            }
+            output["items"] = items;
 
 #if PROTOCOL_VERSION > 755
             output["state_id"] = state_id;
-            output["carried_item"] = carried_item.Serialize();
+            output["carried_item"] = carried_item;
 #endif
 
             return output;

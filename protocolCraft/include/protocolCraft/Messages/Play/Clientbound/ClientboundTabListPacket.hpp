@@ -79,8 +79,8 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["header"] = header.Serialize();
-            output["footer"] = footer.Serialize();
+            output["header"] = header;
+            output["footer"] = footer;
 
             return output;
         }

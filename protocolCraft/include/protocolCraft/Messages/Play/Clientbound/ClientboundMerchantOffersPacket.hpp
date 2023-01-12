@@ -125,11 +125,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["container_id"] = container_id;
-            output["offers"] = Json::Array();
-            for (const auto& o : offers)
-            {
-                output["offers"].push_back(o.Serialize());
-            }
+            output["offers"] = offers;
             output["villager_level"] = villager_level;
             output["villager_xp"] = villager_xp;
             output["show_progress"] = show_progress;

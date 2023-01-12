@@ -143,7 +143,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 363
             if (display_name.has_value())
             {
-                output["display_name"] = display_name.value().Serialize();
+                output["display_name"] = display_name.value();
             }
 #endif
 

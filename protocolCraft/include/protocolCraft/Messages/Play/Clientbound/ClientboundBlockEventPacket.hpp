@@ -103,7 +103,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["b0"] = b0;
             output["b1"] = b1;
             output["block"] = block;

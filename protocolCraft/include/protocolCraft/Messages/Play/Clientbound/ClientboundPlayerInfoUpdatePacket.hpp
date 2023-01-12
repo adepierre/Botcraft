@@ -103,15 +103,7 @@ namespace ProtocolCraft
                     {
                         entry.game_profile.SetUUID(uuid);
                         entry.game_profile.SetName(ReadData<std::string>(iter, length));
-                        entry.game_profile.SetProperties(
-                            ReadMap<std::string, GameProfileProperty>(iter, length,
-                                [](ReadIterator& i, size_t& l)
-                                {
-                                    const GameProfileProperty prop = ReadData<GameProfileProperty>(i, l);
-                                    return std::make_pair(prop.GetName(), prop);
-                                }
-                                )
-                        );
+                        entry.game_profile.SetProperties(ReadVector<GameProfileProperty>(iter, length));
                         break;
                     }
                     case PlayerInfoUpdateAction::InitializeChat:
@@ -156,12 +148,7 @@ namespace ProtocolCraft
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
                         WriteData<std::string>(p.second.game_profile.GetName(), container);
-                        WriteMap<std::string, GameProfileProperty>(p.second.game_profile.GetProperties(), container,
-                            [](const std::pair<const std::string, GameProfileProperty>& i, WriteContainer& c)
-                            {
-                                WriteData<GameProfileProperty>(i.second, c);
-                            }
-                        );
+                        WriteVector<GameProfileProperty>(p.second.game_profile.GetProperties(), container);
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
                         WriteOptional<RemoteChatSessionData>(p.second.chat_session, container);
@@ -189,11 +176,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["actions"] = Json::Array();
-            for (const auto a : actions)
-            {
-                output["actions"].push_back(static_cast<int>(a));
-            }
+            output["actions"] = actions;
 
             output["entries"] = Json::Array();
             for (const auto& p : entries)
@@ -205,12 +188,12 @@ namespace ProtocolCraft
                     switch (a)
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
-                        entry["game_profile"] = p.second.game_profile.Serialize();
+                        entry["game_profile"] = p.second.game_profile;
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
                         if (p.second.chat_session.has_value())
                         {
-                            entry["chat_session"] = p.second.chat_session.value().Serialize();
+                            entry["chat_session"] = p.second.chat_session.value();
                         }
                         break;
                     case PlayerInfoUpdateAction::UpdateGameMode:
@@ -225,7 +208,7 @@ namespace ProtocolCraft
                     case PlayerInfoUpdateAction::UpdateDisplayName:
                         if (p.second.display_name.has_value())
                         {
-                            entry["display_name"] = p.second.display_name.value().Serialize();
+                            entry["display_name"] = p.second.display_name.value();
                         }
                         break;
                     default:

@@ -243,18 +243,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 754
             if (decorations.has_value())
             {
-                output["decorations"] = Json::Array();
-                for (const auto& d : decorations.value())
-                {
-                    output["decorations"].push_back(d.Serialize());
-                }
+                output["decorations"] = decorations.value();
             }
 #else
-            output["decorations"] = Json::Array();
-            for (const auto& d : decorations)
-            {
-                output["decorations"].push_back(d.Serialize());
-            }
+            output["decorations"] = decorations;
 #endif
             output["width"] = width;
             if (width > 0)

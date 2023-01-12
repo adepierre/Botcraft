@@ -79,7 +79,7 @@ namespace ProtocolCraft
             output["packed_XZ"] = packed_XZ;
             output["y"] = y;
             output["type"] = type;
-            output["tag"] = tag.Serialize();
+            output["tag"] = tag;
 
             return output;
         }

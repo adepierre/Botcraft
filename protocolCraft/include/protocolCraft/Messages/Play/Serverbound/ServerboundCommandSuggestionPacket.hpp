@@ -128,7 +128,7 @@ namespace ProtocolCraft
             output["assume_command"] = assume_command;
             if (looked_at_block.has_value())
             {
-                output["looked_at_block"] = looked_at_block.value().Serialize();
+                output["looked_at_block"] = looked_at_block.value();
             }
 #endif
 

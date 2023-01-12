@@ -240,7 +240,7 @@ namespace ProtocolCraft
                 output["item_count"] = item_count;
                 if (nbt.HasData())
                 {
-                    output["nbt"] = nbt.Serialize();
+                    output["nbt"] = nbt;
                 }
             }
             return output;

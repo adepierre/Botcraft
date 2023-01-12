@@ -102,7 +102,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["command"] = command;
             output["mode"] = mode;
             output["flags"] = flags;

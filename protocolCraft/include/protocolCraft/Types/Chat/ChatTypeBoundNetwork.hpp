@@ -65,10 +65,10 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["chat_type"] = chat_type;
-            output["name"] = name.Serialize();
+            output["name"] = name;
             if (target_name.has_value())
             {
-                output["target_name"] = target_name.value().Serialize();
+                output["target_name"] = target_name.value();
             }
 
 

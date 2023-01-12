@@ -87,7 +87,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["content"] = content.Serialize();
+            output["content"] = content;
 #if PROTOCOL_VERSION < 760
             output["type_id"] = type_id;
 #else

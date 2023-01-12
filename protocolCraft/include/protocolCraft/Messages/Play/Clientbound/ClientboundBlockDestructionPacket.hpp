@@ -92,7 +92,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["id_"] = id_;
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["progress"] = progress;
 
             return output;

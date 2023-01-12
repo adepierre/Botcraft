@@ -81,7 +81,8 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["origin"] = origin.Serialize();
+            output["origin"] = origin;
+            output["destination_type"] = destination_type;
             output["destination"] = destination->Serialize();
             output["arrival_in_ticks"] = arrival_in_ticks;
 

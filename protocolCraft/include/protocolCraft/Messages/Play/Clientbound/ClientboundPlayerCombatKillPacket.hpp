@@ -84,7 +84,7 @@ namespace ProtocolCraft
 
             output["player_id"] = player_id;
             output["killer_id"] = killer_id;
-            output["message"] = message.Serialize();
+            output["message"] = message;
 
             return output;
         }

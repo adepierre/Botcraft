@@ -40,7 +40,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
 
             return output;
         }

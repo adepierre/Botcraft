@@ -41,7 +41,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["registry"] = registry.Serialize();
+            output["registry"] = registry;
 
             return output;
         }

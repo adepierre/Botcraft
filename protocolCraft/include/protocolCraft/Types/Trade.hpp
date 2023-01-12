@@ -149,11 +149,11 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["input_item_1"] = input_item_1.Serialize();
-            output["output_item"] = output_item.Serialize();
+            output["input_item_1"] = input_item_1;
+            output["output_item"] = output_item;
             if (input_item_2.has_value())
             {
-                output["input_item_2"] = input_item_2.value().Serialize();
+                output["input_item_2"] = input_item_2.value();
             }
             output["trade_disabled"] = trade_disabled;
             output["number_of_trades_uses"] = number_of_trades_uses;

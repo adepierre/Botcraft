@@ -104,18 +104,10 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 761
-            output["content"] = content.Serialize();
-#else
             output["content"] = content;
-#endif
             output["timestamp"] = timestamp;
             output["salt"] = salt;
-            output["last_seen"] = Json::Array();
-            for (const auto& l : last_seen)
-            {
-                output["last_seen"].push_back(l.Serialize());
-            }
+            output["last_seen"] = last_seen;
 
 
             return output;

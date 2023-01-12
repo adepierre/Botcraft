@@ -89,18 +89,9 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION > 709
-            output["key"] = key.Serialize();
-#else
             output["key"] = key;
-#endif
             output["value"] = value;
-
-            output["modifiers"] = Json::Array();
-            for (const auto& m : modifiers)
-            {
-                output["modifiers"].push_back(m.Serialize());
-            }
+            output["modifiers"] = modifiers;
 
             return output;
         }

@@ -63,7 +63,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["entity_id"] = entity_id;
-            output["location"] = location.Serialize();
+            output["location"] = location;
 
             return output;
         }

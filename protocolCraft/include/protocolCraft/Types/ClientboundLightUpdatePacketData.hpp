@@ -139,24 +139,12 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["trust_edges"] = trust_edges;
-
             output["sky_Y_mask"] = sky_Y_mask;
             output["block_Y_mask"] = block_Y_mask;
             output["empty_sky_Y_mask"] = empty_sky_Y_mask;
             output["empty_block_Y_mask"] = empty_block_Y_mask;
-
-            output["sky_updates"] = Json::Array();
-            for (const auto& v : sky_updates)
-            {
-                output["sky_updates"].push_back(v);
-            }
-
-            output["block_updates"] = Json::Array();
-            for (const auto& v : block_updates)
-            {
-                output["block_updates"].push_back(v);
-            }
-
+            output["sky_updates"] = sky_updates;
+            output["block_updates"] = block_updates;
 
             return output;
         }

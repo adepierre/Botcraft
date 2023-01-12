@@ -71,7 +71,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["transaction_id"] = transaction_id;
-            output["identifier"] = identifier.Serialize();
+            output["identifier"] = identifier;
             output["data"] = "Vector of " + std::to_string(data.size()) + " unsigned char";
 
 

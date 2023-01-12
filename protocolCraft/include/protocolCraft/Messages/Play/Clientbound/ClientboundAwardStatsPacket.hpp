@@ -121,21 +121,19 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
+#if PROTOCOL_VERSION < 346
+            output["stats"] = stats;
+#else
             output["stats"] = Json::Array();
-
             for (const auto& p : stats)
             {
-                Json::Value s;
-
-#if PROTOCOL_VERSION < 346
-                s["name"] = p.first;
-#else
-                s["category_id"] = p.first.first;
-                s["stats_id"] = p.first.second;
-#endif
-                s["value"] = p.second;
-                output.push_back(s);
+                output.push_back({
+                    {"category_id", p.first.first},
+                    {"stats_id", p.first.second},
+                    {"value", p.second} }
+                );
             }
+#endif
 
             return output;
         }

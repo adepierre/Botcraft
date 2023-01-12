@@ -13,6 +13,8 @@
 
 namespace ProtocolCraft
 {
+    class NetworkType;
+
     namespace Json
     {
         // Forward declaration
@@ -103,6 +105,7 @@ namespace ProtocolCraft
             Value(const Array& a);
             Value(Array&& a);
             Value(const std::initializer_list<Value>& init);
+            Value(const NetworkType& o);
 
             // Add support for any std::vector<T>, std::deque<T>, std::list<T> etc... when T is compatible with Value
             template<
@@ -120,6 +123,13 @@ namespace ProtocolCraft
                 std::enable_if_t<std::is_convertible_v<T, Value>, bool> = true
             >
             Value(const std::array<T, N>& v);
+
+            // Add support for any std::map<std::string, T> when T is compatible with Value
+            template<
+                typename T,
+                std::enable_if_t<std::is_convertible_v<T, Value>, bool> = true
+            >
+            Value(const std::map<std::string, T>& m);
 
             // Add support for all (unsigned) int/char/short that can't be natively
             // converted to JsonVariant on this platform
@@ -270,6 +280,18 @@ namespace ProtocolCraft
             for (const auto& i : v)
             {
                 push_back(i);
+            }
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<std::is_convertible_v<T, Value>, bool>
+        >
+        Value::Value(const std::map<std::string, T>& m) : val(Object())
+        {
+            for (const auto& [k, v] : m)
+            {
+                m[k] = v;
             }
         }
 

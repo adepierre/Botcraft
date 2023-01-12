@@ -48,7 +48,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["chat_session"] = chat_session.Serialize();
+            output["chat_session"] = chat_session;
 
 
             return output;

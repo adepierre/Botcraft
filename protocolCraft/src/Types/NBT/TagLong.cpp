@@ -39,6 +39,6 @@ namespace ProtocolCraft
 
     Json::Value TagLong::SerializeImpl() const
     {
-        return Json::Value(value);
+        return value;
     }
 }

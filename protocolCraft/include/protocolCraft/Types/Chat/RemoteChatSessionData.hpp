@@ -53,7 +53,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["uuid"] = uuid;
-            output["profile_public_key"] = profile_public_key.Serialize();
+            output["profile_public_key"] = profile_public_key;
 
             return output;
         }

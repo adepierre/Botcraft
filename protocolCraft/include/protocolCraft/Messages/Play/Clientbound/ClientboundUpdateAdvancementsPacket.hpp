@@ -112,25 +112,15 @@ namespace ProtocolCraft
             output["added"] = Json::Array();
             for (const auto& p : added)
             {
-                Json::Value add;
-                add["key"] = p.first.Serialize();
-                add["value"] = p.second.Serialize();
-                output["added"].push_back(add);
+                output["added"].push_back({ {"key", p.first}, {"value", p.second} });
             }
 
-            output["removed"] = Json::Array();
-            for (const auto& r : removed)
-            {
-                output["removed"].push_back(r.Serialize());
-            } 
+            output["removed"] = removed;
 
             output["progress"] = Json::Array();
             for (const auto& p : progress)
             {
-                Json::Value prog;
-                prog["key"] = p.first.Serialize();
-                prog["value"] = p.second.Serialize();
-                output["progress"].push_back(prog);
+                output["progress"].push_back({ {"key", p.first}, {"value", p.second} });
             }
 
             return output;

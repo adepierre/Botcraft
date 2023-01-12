@@ -47,7 +47,7 @@ namespace ProtocolCraft
     {
         Json::Value output;
 
-        output["item_stack"] = item_stack.Serialize();
+        output["item_stack"] = item_stack;
 
         return output;
     }

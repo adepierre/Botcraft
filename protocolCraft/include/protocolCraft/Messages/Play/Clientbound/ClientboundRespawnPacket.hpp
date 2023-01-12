@@ -294,9 +294,9 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747
-            output["dimension_type"] = dimension_type.Serialize();
+            output["dimension_type"] = dimension_type;
 #endif
-            output["dimension"] = dimension.Serialize();
+            output["dimension"] = dimension;
 #else
             output["dimension"] = dimension;
 #endif
@@ -322,7 +322,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758
             if (last_death_location.has_value())
             {
-                output["last_death_location"] = last_death_location.value().Serialize();
+                output["last_death_location"] = last_death_location.value();
             }
 #endif
 

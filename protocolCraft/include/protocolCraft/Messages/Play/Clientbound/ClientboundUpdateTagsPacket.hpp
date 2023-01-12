@@ -150,40 +150,18 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION < 755
-            output["block_tags"] = Json::Array();
-            for (const auto& t : block_tags)
-            {
-                output["block_tags"].push_back(t.Serialize());
-            }
-            
-            output["item_tags"] = Json::Array();
-            for (const auto& t : item_tags)
-            {
-                output["item_tags"].push_back(t.Serialize());
-            }
-            
-            output["fluid_tags"] = Json::Array();
-            for (const auto& t : fluid_tags)
-            {
-                output["fluid_tags"].push_back(t.Serialize());
-            }
+            output["block_tags"] = block_tags;            
+            output["item_tags"] = item_tags;            
+            output["fluid_tags"] = fluid_tags;
 #if PROTOCOL_VERSION > 440
-            output["entity_tags"] = Json::Array();
-            for (const auto& t : entity_tags)
-            {
-                output["entity_tags"].push_back(t.Serialize());
-            }
+            output["entity_tags"] = entity_tags;
 #endif
 #else
             output["tags"] = Json::Object();
             
             for (const auto& p : tags)
             {
-                output["tags"][p.first.GetFull()] = Json::Array();
-                for (const auto& t : p.second)
-                {
-                    output["tags"][p.first.GetFull()].push_back(t.Serialize());
-                }
+                output["tags"][p.first.GetFull()] = p.second;
             }
 #endif
 

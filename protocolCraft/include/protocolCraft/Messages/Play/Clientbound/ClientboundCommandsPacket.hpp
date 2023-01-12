@@ -78,11 +78,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["nodes"] = Json::Array();
-            for (const auto& n : nodes)
-            {
-                output["nodes"].push_back(n.Serialize());
-            }
+            output["nodes"] = nodes;
             output["root_index"] = root_index;
 
             return output;

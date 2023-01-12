@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "protocolCraft/Utilities/Json.hpp"
+#include "protocolCraft/NetworkType.hpp"
 
 namespace ProtocolCraft
 {
@@ -91,6 +92,11 @@ namespace ProtocolCraft
             }
 
             val = std::move(new_val);
+        }
+
+        Value::Value(const NetworkType& o) : val(std::move(o.Serialize().val))
+        {
+
         }
 
         Object& Value::get_object()

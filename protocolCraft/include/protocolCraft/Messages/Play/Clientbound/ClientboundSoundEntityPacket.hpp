@@ -158,11 +158,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 761
             output["sound"] = sound;
-#else
-            output["sound"] = sound.Serialize();
-#endif
             output["source"] = source;
             output["id_"] = id_;
             output["volume"] = volume;

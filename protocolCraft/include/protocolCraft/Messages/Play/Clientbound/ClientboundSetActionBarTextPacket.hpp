@@ -57,7 +57,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["text"] = text.Serialize();
+            output["text"] = text;
 
             return output;
         }

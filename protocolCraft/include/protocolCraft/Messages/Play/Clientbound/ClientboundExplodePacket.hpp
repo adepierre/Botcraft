@@ -245,11 +245,7 @@ namespace ProtocolCraft
             output["y"] = y;
             output["z"] = z;
             output["power"] = power;
-            output["to_blow"] = Json::Array();
-            for (const auto& t : to_blow)
-            {
-                output["to_blow"].push_back(t.Serialize());
-            }
+            output["to_blow"] = to_blow;
             output["knockback_x"] = knockback_x;
             output["knockback_y"] = knockback_y;
             output["knockback_z"] = knockback_z;

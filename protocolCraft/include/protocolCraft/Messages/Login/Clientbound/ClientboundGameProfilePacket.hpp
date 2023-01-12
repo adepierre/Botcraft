@@ -100,7 +100,7 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION > 758
-            output["game_profile"] = game_profile.Serialize();
+            output["game_profile"] = game_profile;
 #else
             output["uuid"] = uuid;
             output["username"] = username;

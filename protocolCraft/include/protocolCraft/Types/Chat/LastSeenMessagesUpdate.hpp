@@ -94,14 +94,10 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION < 761
-            output["last_seen"] = Json::Array();
-            for (const auto& l : last_seen)
-            {
-                output["last_seen"].push_back(l.Serialize());
-            };
+            output["last_seen"] = last_seen;
             if (last_received.has_value())
             {
-                output["last_received"] = last_received.value().Serialize();
+                output["last_received"] = last_received.value();
             }
 #else
             output["offset"] = offset;

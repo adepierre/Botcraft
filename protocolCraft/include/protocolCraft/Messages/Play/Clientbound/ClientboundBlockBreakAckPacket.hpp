@@ -91,7 +91,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["state"] = state;
             output["action"] = action;
             output["all_good"] = all_good;

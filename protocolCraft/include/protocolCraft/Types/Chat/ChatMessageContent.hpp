@@ -56,7 +56,7 @@ namespace ProtocolCraft
             output["plain"] = plain;
             if (decorated.has_value())
             {
-                output["decorated"] = decorated.value().Serialize();
+                output["decorated"] = decorated.value();
             }
 
             return output;

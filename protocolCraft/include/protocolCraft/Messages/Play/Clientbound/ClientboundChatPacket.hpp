@@ -92,7 +92,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["message"] = message.Serialize();
+            output["message"] = message;
             output["type"] = type;
 #if PROTOCOL_VERSION > 717
             output["sender"] = sender;

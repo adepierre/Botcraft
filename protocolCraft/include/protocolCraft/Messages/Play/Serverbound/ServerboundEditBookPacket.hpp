@@ -141,7 +141,7 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION < 756
-            output["book"] = book.Serialize();
+            output["book"] = book;
             output["signing"] = signing;
 #endif
 #if PROTOCOL_VERSION > 393

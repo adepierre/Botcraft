@@ -177,7 +177,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["location"] = location.Serialize();
+            output["location"] = location;
             output["direction"] = direction;
             output["cursor_position_x"] = cursor_position_x;
             output["cursor_position_y"] = cursor_position_y;

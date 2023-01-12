@@ -253,18 +253,18 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION < 760
-            output["signed_content"] = signed_content.Serialize();
+            output["signed_content"] = signed_content;
             if (unsigned_content.has_value())
             {
-                output["unsigned_content"] = unsigned_content.value().Serialize();
+                output["unsigned_content"] = unsigned_content.value();
             }
             output["type_id"] = type_id;
-            output["sender"] = sender.Serialize();
+            output["sender"] = sender;
             output["timestamp"] = timestamp;
-            output["salt_signature"] = salt_signature.Serialize();
+            output["salt_signature"] = salt_signature;
 #else
 #if PROTOCOL_VERSION < 761
-            output["message"] = message.Serialize();
+            output["message"] = message;
 #else
             output["sender"] = sender;
             output["index"] = index;
@@ -272,14 +272,14 @@ namespace ProtocolCraft
             {
                 output["signature"] = "Vector of " + std::to_string(signature.value().size()) + " unsigned chars.";
             }
-            output["body"] = body.Serialize();
+            output["body"] = body;
             if (!unsigned_content.has_value())
             {
-                output["unsigned_content"] = unsigned_content.value().Serialize();
+                output["unsigned_content"] = unsigned_content.value();
             }
-            output["filter_mask"] = filter_mask.Serialize();
+            output["filter_mask"] = filter_mask;
 #endif
-            output["chat_type"] = chat_type.Serialize();
+            output["chat_type"] = chat_type;
 #endif
 
 

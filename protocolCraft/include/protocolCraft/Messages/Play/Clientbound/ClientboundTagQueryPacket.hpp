@@ -79,7 +79,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["transaction_id"] = transaction_id;
-            output["tag"] = tag.Serialize();
+            output["tag"] = tag;
 
             return output;
         }

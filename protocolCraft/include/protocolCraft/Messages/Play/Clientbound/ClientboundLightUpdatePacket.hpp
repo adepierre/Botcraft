@@ -317,20 +317,10 @@ namespace ProtocolCraft
             output["block_Y_mask"] = block_Y_mask;
             output["empty_sky_Y_mask"] = empty_sky_Y_mask;
             output["empty_block_Y_mask"] = empty_block_Y_mask;
-
-            output["sky_updates"] = Json::Array();
-            for (const auto& v : sky_updates)
-            {
-                output["sky_updates"].push_back(v);
-            }
-
-            output["block_updates"] = Json::Array();
-            for (const auto& v : block_updates)
-            {
-                output["block_updates"].push_back(v);
-            }
+            output["sky_updates"] = sky_updates;
+            output["block_updates"] = block_updates;
 #else
-            output["light_data"] = light_data.Serialize();
+            output["light_data"] = light_data;
 #endif
 
             return output;

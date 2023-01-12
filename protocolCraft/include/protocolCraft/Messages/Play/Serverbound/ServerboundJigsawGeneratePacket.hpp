@@ -82,7 +82,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["levels"] = levels;
             output["keep_jigsaws"] = keep_jigsaws;
 

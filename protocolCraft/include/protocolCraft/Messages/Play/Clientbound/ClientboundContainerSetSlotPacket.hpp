@@ -113,7 +113,7 @@ namespace ProtocolCraft
 
             output["container_id"] = container_id;
             output["slot"] = slot;
-            output["item_stack"] = item_stack.Serialize();
+            output["item_stack"] = item_stack;
 #if PROTOCOL_VERSION > 755
             output["state_id"] = state_id;
 #endif

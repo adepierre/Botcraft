@@ -66,14 +66,8 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["heightmaps"] = heightmaps.Serialize();
-
             output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
-
-            output["block_entities_data"] = Json::Array();
-            for (const auto& b : block_entities_data)
-            {
-                output["block_entities_data"].push_back(b.Serialize());
-            }
+            output["block_entities_data"] = block_entities_data;
 
             return output;
         }

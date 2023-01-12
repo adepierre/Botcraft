@@ -99,7 +99,7 @@ namespace ProtocolCraft
             }
             if (!name_.GetName().empty())
             {
-                output["name_"] = name_.Serialize();
+                output["name_"] = name_;
             }
 
             return output;

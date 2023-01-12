@@ -77,7 +77,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["blockstate"] = blockstate;
 
             return output;

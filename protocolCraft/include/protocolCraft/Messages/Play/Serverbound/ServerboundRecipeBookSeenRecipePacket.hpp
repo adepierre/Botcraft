@@ -57,7 +57,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["recipe"] = recipe.Serialize();
+            output["recipe"] = recipe;
 
             return output;
         }

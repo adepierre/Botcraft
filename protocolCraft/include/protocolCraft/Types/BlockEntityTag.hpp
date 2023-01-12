@@ -63,7 +63,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["tag_name"] = tag_name.Serialize();
+            output["tag_name"] = tag_name;
             output["entries"] = entries;
 
             return output;

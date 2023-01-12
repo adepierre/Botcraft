@@ -127,7 +127,7 @@ namespace ProtocolCraft
             }
             else
             {
-                output["salt_signature"] = salt_signature.Serialize();
+                output["salt_signature"] = salt_signature;
             }
 #else
             output["nonce"] = "vector of " + std::to_string(nonce.size()) + " unsigned char";

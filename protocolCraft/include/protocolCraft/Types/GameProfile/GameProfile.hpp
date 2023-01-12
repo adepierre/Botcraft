@@ -6,7 +6,6 @@
 #include "protocolCraft/Types/GameProfile/GameProfileProperty.hpp"
 
 #include <string>
-#include <map>
 
 namespace ProtocolCraft 
 {
@@ -35,7 +34,7 @@ namespace ProtocolCraft
             name = name_;
         }
 
-        void SetProperties(const std::map<std::string, GameProfileProperty>& properties_)
+        void SetProperties(const std::vector<GameProfileProperty>& properties_)
         {
             properties = properties_;
         }
@@ -51,7 +50,7 @@ namespace ProtocolCraft
             return name;
         }
 
-        const std::map<std::string, GameProfileProperty>& GetProperties() const
+        const std::vector<GameProfileProperty>& GetProperties() const
         {
             return properties;
         }
@@ -61,26 +60,14 @@ namespace ProtocolCraft
         {
             uuid = ReadData<UUID>(iter, length);
             name = ReadData<std::string>(iter, length);
-            properties = ReadMap<std::string, GameProfileProperty>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    const GameProfileProperty prop = ReadData<GameProfileProperty>(i, l);
-
-                    return std::make_pair(prop.GetName(), prop);
-                }
-            );
+            properties = ReadVector<GameProfileProperty>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<UUID>(uuid, container);
             WriteData<std::string>(name, container);
-            WriteMap<std::string, GameProfileProperty>(properties, container,
-                [](const std::pair<const std::string, GameProfileProperty>& p, WriteContainer& c)
-                {
-                    WriteData<GameProfileProperty>(p.second, c);
-                }
-            );
+            WriteVector<GameProfileProperty>(properties, container);
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -89,11 +76,7 @@ namespace ProtocolCraft
 
             output["uuid"] = uuid;
             output["name"] = name;
-            output["properties"] = Json::Array();
-            for (const auto& p: properties)
-            {
-                output["properties"].push_back(p.second.Serialize());
-            }
+            output["properties"] = properties;
 
 
             return output;
@@ -102,7 +85,7 @@ namespace ProtocolCraft
     private:
         UUID uuid;
         std::string name;
-        std::map<std::string, GameProfileProperty> properties;
+        std::vector<GameProfileProperty> properties;
     };
 } // ProtocolCraft
 #endif

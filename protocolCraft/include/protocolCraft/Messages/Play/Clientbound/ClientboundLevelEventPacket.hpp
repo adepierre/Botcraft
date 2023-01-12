@@ -104,7 +104,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["type"] = type;
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["data"] = data;
             output["global_event"] = global_event;
 

@@ -192,28 +192,19 @@ namespace ProtocolCraft
             case PlayerInfoAction::AddPlayer:
                 for (const auto& p : entries)
                 {
-                    Json::Value entry;
-                    entry["uuid"] = p.first;
-                    entry["player_info"] = p.second.Serialize();
-                    output["entries"].push_back(entry);
+                    output["entries"].push_back({ {"uuid", p.first}, {"player_info", p.second} });
                 }
                 break;
             case PlayerInfoAction::UpdateGameMode:
                 for (const auto& p : entries)
                 {
-                    Json::Value entry;
-                    entry["uuid"] = p.first;
-                    entry["game_mode"] = p.second.GetGameMode();
-                    output["entries"].push_back(entry);
+                    output["entries"].push_back({ {"uuid", p.first}, {"game_mode", p.second.GetGameMode()} });
                 }
                 break;
             case PlayerInfoAction::UpdateLatency:
                 for (const auto& p : entries)
                 {
-                    Json::Value entry;
-                    entry["uuid"] = p.first;
-                    entry["latency"] = p.second.GetLatency();
-                    output["entries"].push_back(entry);
+                    output["entries"].push_back({ {"uuid", p.first}, {"latency", p.second.GetLatency()} });
                 }
                 break;
             case PlayerInfoAction::UpdateDisplayName:

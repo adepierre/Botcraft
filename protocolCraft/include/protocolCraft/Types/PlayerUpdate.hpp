@@ -124,17 +124,13 @@ namespace ProtocolCraft
             output["latency"] = latency;
             if (display_name.has_value())
             {
-                output["display_name"] = display_name.value().Serialize();
+                output["display_name"] = display_name.value();
             }
-            output["properties"] = Json::Array();
-            for (const auto& p : properties)
-            {
-                output["properties"].push_back(p.Serialize());
-            }
+            output["properties"] = properties;
 #if PROTOCOL_VERSION > 758
             if (profile_public_key.has_value())
             {
-                output["profile_public_key"] = profile_public_key.value().Serialize();
+                output["profile_public_key"] = profile_public_key.value();
             }
 #endif
 

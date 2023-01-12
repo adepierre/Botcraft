@@ -131,14 +131,14 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["title"] = title.Serialize();
-            output["description"] = description.Serialize();
-            output["icon"] = icon.Serialize();
+            output["title"] = title;
+            output["description"] = description;
+            output["icon"] = icon;
             output["frame_type"] = frame_type;
             output["flags"] = flags;
             if (flags & 0x01)
             {
-                output["background_texture"] = background_texture.Serialize();
+                output["background_texture"] = background_texture;
             }
             output["x_coord"] = x_coord;
             output["y_coord"] = y_coord;

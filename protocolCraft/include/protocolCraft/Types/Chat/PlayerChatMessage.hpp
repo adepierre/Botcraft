@@ -91,14 +91,14 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["signed_header"] = signed_header.Serialize();
+            output["signed_header"] = signed_header;
             output["header_signature"] = "Vector of " + std::to_string(header_signature.size()) + " unsigned char";
-            output["signed_body"] = signed_body.Serialize();
+            output["signed_body"] = signed_body;
             if (unsigned_content.has_value())
             {
-                output["unsigned_content"] = unsigned_content.value().Serialize();
+                output["unsigned_content"] = unsigned_content.value();
             }
-            output["filter_mask"] = filter_mask.Serialize();
+            output["filter_mask"] = filter_mask;
 
 
             return output;

@@ -214,13 +214,13 @@ namespace ProtocolCraft
             output["changed_slots"] = Json::Object();
             for (const auto& p : changed_slots)
             {
-                output["changed_slots"][std::to_string(p.first)] = p.second.Serialize();
+                output["changed_slots"][std::to_string(p.first)] = p.second;
             }
 #endif
 #if PROTOCOL_VERSION < 755
-            output["item_stack"] = item_stack.Serialize();
+            output["item_stack"] = item_stack;
 #else
-            output["carried_item"] = carried_item.Serialize();
+            output["carried_item"] = carried_item;
 #endif
 
             return output;

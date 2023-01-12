@@ -118,7 +118,7 @@ namespace ProtocolCraft
             output["required"] = required;
             if (prompt.has_value())
             {
-                output["prompt"] = prompt.value().Serialize();
+                output["prompt"] = prompt.value();
             }
 #endif
 

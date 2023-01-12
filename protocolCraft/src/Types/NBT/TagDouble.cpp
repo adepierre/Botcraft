@@ -39,6 +39,6 @@ namespace ProtocolCraft
 
     Json::Value TagDouble::SerializeImpl() const
     {
-        return Json::Value(value);
+        return value;
     }
 }

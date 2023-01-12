@@ -166,14 +166,14 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
 #if PROTOCOL_VERSION > 708
-            output["name_"] = name_.Serialize();
-            output["target"] = target.Serialize();
-            output["pool"] = pool.Serialize();
+            output["name_"] = name_;
+            output["target"] = target;
+            output["pool"] = pool;
 #else
-            output["attachment_type"] = attachment_type.Serialize();
-            output["target_pool"] = target_pool.Serialize();
+            output["attachment_type"] = attachment_type;
+            output["target_pool"] = target_pool;
 #endif
             output["final_state"] = final_state;
 #if PROTOCOL_VERSION > 708

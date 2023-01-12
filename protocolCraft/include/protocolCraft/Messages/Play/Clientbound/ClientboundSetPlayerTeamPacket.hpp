@@ -250,13 +250,13 @@ namespace ProtocolCraft
                 output["collision_rule"] = collision_rule;
                 output["color"] = color;
 #else
-                output["display_name"] = display_name.Serialize();
+                output["display_name"] = display_name;
                 output["options"] = options;
                 output["nametag_visibility"] = nametag_visibility;
                 output["collision_rule"] = collision_rule;
                 output["color"] = color;
-                output["player_prefix"] = player_prefix.Serialize();
-                output["player_suffix"] = player_suffix.Serialize();
+                output["player_prefix"] = player_prefix;
+                output["player_suffix"] = player_suffix;
 #endif
             }
 

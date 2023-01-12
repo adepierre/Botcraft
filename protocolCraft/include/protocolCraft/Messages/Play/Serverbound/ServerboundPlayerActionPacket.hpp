@@ -111,7 +111,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["direction"] = direction;
             output["action"] = action;
 #if PROTOCOL_VERSION > 758

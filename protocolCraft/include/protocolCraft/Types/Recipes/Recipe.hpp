@@ -78,8 +78,8 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["recipe_id"] = recipe_id.Serialize();
-            output["type"] = type.Serialize();
+            output["recipe_id"] = recipe_id;
+            output["type"] = type;
             output["data"] = data->Serialize();
 
             return output;

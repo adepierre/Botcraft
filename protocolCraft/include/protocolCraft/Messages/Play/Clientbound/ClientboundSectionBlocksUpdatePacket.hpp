@@ -186,12 +186,7 @@ namespace ProtocolCraft
             output["chunk_z"] = chunk_z;
             output["record_count"] = record_count;
 
-            output["records"] = Json::Array();
-
-            for (const auto& r : records)
-            {
-                output["records"].push_back(r.Serialize());
-            }
+            output["records"] = records;
 #else
             output["section_pos"] = section_pos;
             output["suppress_light_updates"] = suppress_light_updates;

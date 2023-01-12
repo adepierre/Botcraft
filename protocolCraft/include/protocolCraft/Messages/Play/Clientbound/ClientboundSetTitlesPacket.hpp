@@ -152,7 +152,7 @@ namespace ProtocolCraft
             case SetTitlesType::Title:
             case SetTitlesType::Subtitle:
             case SetTitlesType::ActionBar:
-                output["text"] = text.Serialize();
+                output["text"] = text;
                 break;
             case SetTitlesType::Times:
                 output["fade_in_time"] = fade_in_time;
@@ -160,11 +160,7 @@ namespace ProtocolCraft
                 output["fade_out_time"] = fade_out_time;
                 break;
             case SetTitlesType::Clear:
-
-                break;
-
             case SetTitlesType::Reset:
-
                 break;
             default:
                 break;

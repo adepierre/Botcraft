@@ -189,7 +189,7 @@ namespace ProtocolCraft
             switch (operation)
             {
             case 0:
-                output["name_"] = name_.Serialize();
+                output["name_"] = name_;
                 output["pct"] = pct;
                 output["color"] = color;
                 output["overlay"] = overlay;
@@ -201,7 +201,7 @@ namespace ProtocolCraft
                 output["pct"] = pct;
                 break;
             case 3:
-                output["name_"] = name_.Serialize();
+                output["name_"] = name_;
                 break;
             case 4:
                 output["color"] = color;

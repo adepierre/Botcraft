@@ -80,7 +80,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["slot_num"] = slot_num;
-            output["item_stack"] = item_stack.Serialize();
+            output["item_stack"] = item_stack;
 
             return output;
         }

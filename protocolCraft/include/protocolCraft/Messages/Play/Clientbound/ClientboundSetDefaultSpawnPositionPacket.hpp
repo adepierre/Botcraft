@@ -87,7 +87,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["location"] = location.Serialize();
+            output["location"] = location;
 #if PROTOCOL_VERSION > 754
             output["angle"] = angle;
 #endif

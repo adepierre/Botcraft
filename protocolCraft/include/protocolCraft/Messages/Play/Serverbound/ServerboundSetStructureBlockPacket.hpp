@@ -206,12 +206,12 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["update_type"] = update_type;
             output["mode"] = mode;
             output["name_"] = name_;
-            output["offset"] = offset.Serialize();
-            output["size"] = size.Serialize();
+            output["offset"] = offset;
+            output["size"] = size;
             output["mirror"] = mirror;
             output["rotation"] = rotation;
             output["data"] = data;

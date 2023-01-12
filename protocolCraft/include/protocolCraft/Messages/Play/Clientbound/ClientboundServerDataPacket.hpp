@@ -109,7 +109,7 @@ namespace ProtocolCraft
 
             if (motd.has_value())
             {
-                output["motd"] = motd.value().Serialize();
+                output["motd"] = motd.value();
             }
             if (icon_base_64.has_value())
             {

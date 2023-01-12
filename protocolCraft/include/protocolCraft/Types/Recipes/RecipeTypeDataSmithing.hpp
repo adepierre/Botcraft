@@ -65,9 +65,9 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["base"] = base.Serialize();
-            output["ingredient"] = ingredient.Serialize();
-            output["result"] = result.Serialize();
+            output["base"] = base;
+            output["ingredient"] = ingredient;
+            output["result"] = result;
 
             return output;
         }

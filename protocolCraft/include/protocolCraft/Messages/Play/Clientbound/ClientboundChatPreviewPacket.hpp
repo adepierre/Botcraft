@@ -65,7 +65,7 @@ namespace ProtocolCraft
             output["query_id"] = query_id;
             if (preview.has_value())
             {
-                output["preview"] = preview.value().Serialize();
+                output["preview"] = preview.value();
             }
 
 

@@ -90,12 +90,8 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
             output["cooking_book_category"] = cooking_book_category;
 #endif
-            output["ingredients"] = Json::Array();
-            for (const auto& i : ingredients)
-            {
-                output["ingredients"].push_back(i.Serialize());
-            }
-            output["result"] = result.Serialize();
+            output["ingredients"] = ingredients;
+            output["result"] = result;
 
             return output;
         }

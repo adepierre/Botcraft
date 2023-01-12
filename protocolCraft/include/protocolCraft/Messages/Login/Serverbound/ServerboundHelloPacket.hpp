@@ -109,7 +109,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761
             if (public_key.has_value())
             {
-                output["public_key"] = public_key.value().Serialize();
+                output["public_key"] = public_key.value();
             }
 #endif
 #if PROTOCOL_VERSION > 759

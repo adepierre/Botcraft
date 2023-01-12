@@ -432,20 +432,14 @@ namespace ProtocolCraft
             output["game_type"] = game_type;
 #if PROTOCOL_VERSION > 718
             output["previous_game_type"] = previous_game_type;
-            output["levels"] = Json::Array();
-            for (const auto& l : levels)
-            {
-                output["levels"].push_back(l.Serialize());
-            }
-            output["registry_holder"] = registry_holder.Serialize();
+            output["levels"] = levels;
+            output["registry_holder"] = registry_holder;
 
 #if PROTOCOL_VERSION > 747
-            output["dimension_type"] = dimension_type.Serialize();
+            output["dimension_type"] = dimension_type;
 #endif
-            output["dimension"] = dimension.Serialize();
-#else
+#endif
             output["dimension"] = dimension;
-#endif
 #if PROTOCOL_VERSION > 551
             output["seed"] = seed;
 #endif
@@ -471,7 +465,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758
             if (last_death_location.has_value())
             {
-                output["last_death_location"] = last_death_location.value().Serialize();
+                output["last_death_location"] = last_death_location.value();
             }
 #endif
 

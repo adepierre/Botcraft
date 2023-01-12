@@ -41,6 +41,6 @@ namespace ProtocolCraft
 
     Json::Value TagString::SerializeImpl() const
     {
-        return Json::Value(value);
+        return value;
     }
 }

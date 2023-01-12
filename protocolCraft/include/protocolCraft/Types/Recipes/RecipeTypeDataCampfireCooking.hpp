@@ -113,8 +113,8 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
             output["cooking_book_category"] = cooking_book_category;
 #endif
-            output["ingredient"] = ingredient.Serialize();
-            output["result"] = result.Serialize();
+            output["ingredient"] = ingredient;
+            output["result"] = result;
             output["experience"] = experience;
             output["cooking_time"] = cooking_time;
 

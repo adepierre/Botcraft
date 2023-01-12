@@ -112,9 +112,9 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["type"] = type;
-            output["tag"] = tag.Serialize();
+            output["tag"] = tag;
 
             return output;
         }

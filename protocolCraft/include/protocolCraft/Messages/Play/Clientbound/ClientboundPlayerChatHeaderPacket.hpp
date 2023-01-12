@@ -71,7 +71,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["header"] = header.Serialize();
+            output["header"] = header;
             output["header_signature"] = "Vector of " + std::to_string(header_signature.size()) + " unsigned char";
             output["body_digest"] = "Vector of " + std::to_string(body_digest.size()) + " unsigned char";
 

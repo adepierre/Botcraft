@@ -41,7 +41,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["reason"] = reason.Serialize();
+            output["reason"] = reason;
 
             return output;
         }

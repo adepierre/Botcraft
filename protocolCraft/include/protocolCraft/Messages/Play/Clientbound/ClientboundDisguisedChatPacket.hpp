@@ -61,8 +61,8 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["message"] = message.Serialize();
-            output["chat_type"] = chat_type.Serialize();
+            output["message"] = message;
+            output["chat_type"] = chat_type;
 
             return output;
         }

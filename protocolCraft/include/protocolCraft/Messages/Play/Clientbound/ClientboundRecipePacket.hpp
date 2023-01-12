@@ -177,31 +177,14 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["state"] = state;
-
-#if PROTOCOL_VERSION > 348
-            output["recipes"] = Json::Array();
-            for (const auto& r : recipes)
-            {
-                output["recipes"].push_back(r.Serialize());
-            }
-#else
             output["recipes"]= recipes;
-#endif
 
             if (state == RecipeState::Init)
             {
-#if PROTOCOL_VERSION > 348
-                output["to_highlight"] = Json::Array();
-                for (const auto& t : to_highlight)
-                {
-                    output["to_highlight"].push_back(t.Serialize());
-                }
-#else
                 output["to_highlight"] = to_highlight;
-#endif
             }
 
-            output["book_settings"] = book_settings.Serialize();
+            output["book_settings"] = book_settings;
 
             return output;
         }

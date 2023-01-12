@@ -97,9 +97,8 @@ namespace ProtocolCraft
 
             output["x"] = x;
             output["z"] = z;
-
-            output["chunk_data"] = chunk_data.Serialize();
-            output["light_data"] = light_data.Serialize();
+            output["chunk_data"] = chunk_data;
+            output["light_data"] = light_data;
 
             return output;
         }

@@ -217,7 +217,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758
             output["timestamp"] = timestamp;
 #if PROTOCOL_VERSION < 760
-            output["salt_signature"] = salt_signature.Serialize();
+            output["salt_signature"] = salt_signature;
 #else
             output["salt"] = salt;
 #if PROTOCOL_VERSION < 761
@@ -234,7 +234,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 759
-            output["last_seen_messages"] = last_seen_messages.Serialize();
+            output["last_seen_messages"] = last_seen_messages;
 #endif
 
             return output;

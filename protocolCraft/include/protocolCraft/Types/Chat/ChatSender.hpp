@@ -65,10 +65,10 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["uuid"] = uuid;
-            output["name"] = name.Serialize();
+            output["name"] = name;
             if (team_name.has_value())
             {
-                output["team_name"] = team_name.value().Serialize();
+                output["team_name"] = team_name.value();
             }
 
 

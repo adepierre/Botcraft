@@ -122,16 +122,11 @@ namespace ProtocolCraft
 
             for (const auto& s : slots)
             {
-                Json::Value current_slot;
-
-                current_slot["first"] = s.first;
-                current_slot["second"] = s.second.Serialize();
-
-                output["slots"].push_back(current_slot);
+                output["slots"].push_back({ {"first", s.first}, {"second", s.second} });
             }
 #else
             output["slot_first"] = slot.first;
-            output["slot_second"] = slot.second.Serialize();
+            output["slot_second"] = slot.second;
 #endif
 
             return output;

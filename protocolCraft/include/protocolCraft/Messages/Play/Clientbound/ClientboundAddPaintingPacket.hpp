@@ -139,7 +139,7 @@ namespace ProtocolCraft
 #else
             output["motive"] = motive;
 #endif
-            output["pos"] = pos.Serialize();
+            output["pos"] = pos;
             output["direction"] = direction;
 
             return output;

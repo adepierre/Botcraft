@@ -148,16 +148,8 @@ namespace ProtocolCraft
             output["method"] = method;
             if (method == 0 || method == 2)
             {
-#if PROTOCOL_VERSION < 390
                 output["display_name"] = display_name;
-#else
-                output["display_name"] = display_name.Serialize();
-#endif
-#if PROTOCOL_VERSION < 349
                 output["render_type"] = render_type;
-#else
-                output["render_type"] = render_type;
-#endif
             }
 
             return output;

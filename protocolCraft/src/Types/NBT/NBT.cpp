@@ -72,7 +72,7 @@ namespace ProtocolCraft
 
         output["type"] = "NBT";
         output["name"] = root_name;
-        output["content"] = root_tag.Serialize();
+        output["content"] = root_tag;
 
         return output;
     }

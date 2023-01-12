@@ -167,7 +167,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758
             if (factor_data.has_value())
             {
-                output["factor_data"] = factor_data.value().Serialize();
+                output["factor_data"] = factor_data.value();
             }
 #endif
 

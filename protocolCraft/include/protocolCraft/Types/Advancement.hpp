@@ -89,30 +89,14 @@ namespace ProtocolCraft
 
             if (parent_id.has_value())
             {
-                output["parent_id"] = parent_id.value().Serialize();
+                output["parent_id"] = parent_id.value();
             }
-
             if (display_data.has_value())
             {
-                output["display_data"] = display_data.value().Serialize();
+                output["display_data"] = display_data.value();
             }
-            
-            output["criteria"] = Json::Array();
-            for (const auto& c : criteria)
-            {
-                output["criteria"].push_back(c.Serialize());
-            }
-            
-            output["requirements"] = Json::Array();
-            for (const auto& r : requirements)
-            {
-                Json::Value current_array = Json::Array();
-                for (const auto& r2 : r)
-                {
-                    current_array.push_back(r2);
-                }
-                output.push_back(current_array);
-            }
+            output["criteria"] = criteria;
+            output["requirements"] = requirements;
 
             return output;
         }

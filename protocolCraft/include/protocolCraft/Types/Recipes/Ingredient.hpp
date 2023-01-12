@@ -41,11 +41,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["items"] = Json::Array();
-            for (const auto& i : items)
-            {
-                output["items"].push_back(i.Serialize());
-            }
+            output["items"] = items;
 
             return output;
         }

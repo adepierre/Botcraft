@@ -74,7 +74,7 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION < 761
-            output["last_seen_message"] = last_seen_messages.Serialize();
+            output["last_seen_message"] = last_seen_messages;
 #else
             output["offset"] = offset;
 #endif
