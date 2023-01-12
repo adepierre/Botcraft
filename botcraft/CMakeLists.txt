@@ -424,7 +424,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             include/botcraft/Renderer/Enums.hpp
             include/botcraft/Renderer/Face.hpp
             include/botcraft/Renderer/Transformation.hpp
-            )
+    )
             
     list(APPEND botcraft_PRIVATE_HDR
             private_include/botcraft/Renderer/Atlas.hpp
@@ -436,7 +436,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             private_include/botcraft/Renderer/Shader.hpp
             private_include/botcraft/Renderer/TransparentChunk.hpp
             private_include/botcraft/Renderer/WorldRenderer.hpp
-            )
+    )
             
     list(APPEND botcraft_SRC
             src/Renderer/Atlas.cpp
@@ -451,7 +451,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             src/Renderer/Transformation.cpp
             src/Renderer/TransparentChunk.cpp
             src/Renderer/WorldRenderer.cpp
-            )
+    )
 endif(BOTCRAFT_USE_OPENGL_GUI)
 
 
@@ -483,6 +483,14 @@ add_library(botcraft SHARED ${botcraft_SRC} ${botcraft_PUBLIC_HDR} ${botcraft_PR
 set_property(TARGET botcraft PROPERTY CXX_STANDARD 17)
 set_target_properties(botcraft PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(botcraft PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")
+
+# Enable precompiled headers, except on GCC because it's hurting performances
+if (BOTCRAFT_USE_PRECOMPILED_HEADERS AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_precompile_headers(botcraft PRIVATE
+        include/botcraft/Game/Entities/entities/Entity.hpp
+        ${protocolCraft_SOURCE_DIR}/include/protocolCraft/AllMessages.hpp
+    )
+endif()
 
 if(MSVC)
     # To avoid having folder for each configuration when building with Visual

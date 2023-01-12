@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 project(Botcraft)
 
@@ -16,7 +16,8 @@ option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" O
 option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
 option(BOTCRAFT_BUILD_TESTS "Activate if you want to build tests" OFF)
-option(BOTCRAFT_WINDOWS_BETTER_SLEEP "Set to use better thread sleep on Windows" OFF)
+option(BOTCRAFT_WINDOWS_BETTER_SLEEP "Set to true to use better thread sleep on Windows" OFF)
+option(BOTCRAFT_USE_PRECOMPILED_HEADERS "Set to true to precompile botcraft headers, reducing compilation time with MSVC and Clang, ignored on GCC" ON)
 
 option(BOTCRAFT_FORCE_LOCAL_ZLIB "Set to true to force using a local install of zlib even if already present on the system" OFF)
 option(BOTCRAFT_FORCE_LOCAL_OPENSSL "Set to true to force using a local install of openssl even if already present on the system" OFF)
