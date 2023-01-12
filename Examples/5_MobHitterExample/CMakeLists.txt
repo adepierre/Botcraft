@@ -13,8 +13,8 @@ ${PROJECT_SOURCE_DIR}/src/main.cpp
 add_executable(${PROJECT_NAME} ${HDR_FILES} ${SRC_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_link_libraries(${PROJECT_NAME} botcraft)
-
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Examples)
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(${PROJECT_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")
