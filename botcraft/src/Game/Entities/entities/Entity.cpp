@@ -428,8 +428,8 @@ namespace Botcraft
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
             case EntityMetadataTypes::NBT:
-                value = ProtocolCraft::NBT();
-                std::any_cast<ProtocolCraft::NBT&>(value).Read(iter, length);
+                value = ProtocolCraft::NBT::Value();
+                std::any_cast<ProtocolCraft::NBT::Value&>(value).Read(iter, length);
                 break;
 #if PROTOCOL_VERSION > 340
             case EntityMetadataTypes::Particle:

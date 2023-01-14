@@ -4,10 +4,13 @@
 
 namespace ProtocolCraft
 {
-    class NBT;
+    namespace NBT
+    {
+        class Value;
+    }
 }
 
 namespace Botcraft
 {
-    short GetEnchantmentLvl(const ProtocolCraft::NBT& item_nbt, const std::string& enchantment_name);
+    short GetEnchantmentLvl(const ProtocolCraft::NBT::Value& item_nbt, const std::string& enchantment_name);
 }

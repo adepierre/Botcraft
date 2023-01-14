@@ -18,8 +18,8 @@ namespace Botcraft
         SetDataScoreId(0);
         SetDataPlayerModeCustomisation(0);
         SetDataPlayerMainHand(1);
-        SetDataShoulderLeft(ProtocolCraft::NBT());
-        SetDataShoulderRight(ProtocolCraft::NBT());
+        SetDataShoulderLeft(ProtocolCraft::NBT::Value());
+        SetDataShoulderRight(ProtocolCraft::NBT::Value());
     }
 
     PlayerEntity::~PlayerEntity()
@@ -107,14 +107,14 @@ namespace Botcraft
         return std::any_cast<char>(metadata.at("data_player_main_hand"));
     }
 
-    const ProtocolCraft::NBT& PlayerEntity::GetDataShoulderLeft() const
+    const ProtocolCraft::NBT::Value& PlayerEntity::GetDataShoulderLeft() const
     {
-        return std::any_cast<const ProtocolCraft::NBT&>(metadata.at("data_shoulder_left"));
+        return std::any_cast<const ProtocolCraft::NBT::Value&>(metadata.at("data_shoulder_left"));
     }
 
-    const ProtocolCraft::NBT& PlayerEntity::GetDataShoulderRight() const
+    const ProtocolCraft::NBT::Value& PlayerEntity::GetDataShoulderRight() const
     {
-        return std::any_cast<const ProtocolCraft::NBT&>(metadata.at("data_shoulder_right"));
+        return std::any_cast<const ProtocolCraft::NBT::Value&>(metadata.at("data_shoulder_right"));
     }
 
 
@@ -138,12 +138,12 @@ namespace Botcraft
         metadata["data_player_main_hand"] = data_player_main_hand;
     }
 
-    void PlayerEntity::SetDataShoulderLeft(const ProtocolCraft::NBT& data_shoulder_left)
+    void PlayerEntity::SetDataShoulderLeft(const ProtocolCraft::NBT::Value& data_shoulder_left)
     {
         metadata["data_shoulder_left"] = data_shoulder_left;
     }
 
-    void PlayerEntity::SetDataShoulderRight(const ProtocolCraft::NBT& data_shoulder_right)
+    void PlayerEntity::SetDataShoulderRight(const ProtocolCraft::NBT::Value& data_shoulder_right)
     {
         metadata["data_shoulder_right"] = data_shoulder_right;
     }

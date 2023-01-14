@@ -66,7 +66,7 @@ namespace Botcraft
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data);
 #endif
 #if PROTOCOL_VERSION < 757
-        bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT>& block_entities);
+        bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT::Value>& block_entities);
 #else
         bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities);
 #endif
@@ -93,9 +93,9 @@ namespace Botcraft
         const int GetHeight() const;
         const int GetMinY() const;
 
-        bool SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT& data);
+        bool SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT::Value& data);
         // Get the block entity data at a given position
-        std::shared_ptr<ProtocolCraft::NBT> GetBlockEntityData(const Position& pos);
+        std::shared_ptr<ProtocolCraft::NBT::Value> GetBlockEntityData(const Position& pos);
 
 #if PROTOCOL_VERSION < 358
         bool SetBiome(const int x, const int z, const unsigned char biome);

@@ -50,13 +50,13 @@ namespace Botcraft
         void LoadChunkData(const std::vector<unsigned char>& data);
 #endif
 #if PROTOCOL_VERSION < 757
-        void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::NBT>& block_entities);
+        void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::NBT::Value>& block_entities);
 #else
         void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities);
 #endif
-        void SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT& block_entity);
+        void SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT::Value& block_entity);
         void RemoveBlockEntityData(const Position& pos);
-        const std::shared_ptr<ProtocolCraft::NBT> GetBlockEntityData(const Position& pos) const;
+        const std::shared_ptr<ProtocolCraft::NBT::Value> GetBlockEntityData(const Position& pos) const;
 
         const Block *GetBlock(const Position &pos) const;
 #if PROTOCOL_VERSION < 347
@@ -75,7 +75,7 @@ namespace Botcraft
 #else
         const std::string& GetDimension() const;
 #endif
-        const std::map<Position, std::shared_ptr<ProtocolCraft::NBT> >& GetBlockEntitiesData() const;
+        const std::map<Position, std::shared_ptr<ProtocolCraft::NBT::Value> >& GetBlockEntitiesData() const;
 
         const bool HasSection(const int y) const;
         void AddSection(const int y);
@@ -102,7 +102,7 @@ namespace Botcraft
 #else
         std::vector<int> biomes;
 #endif
-        std::map<Position, std::shared_ptr<ProtocolCraft::NBT> > block_entities_data;
+        std::map<Position, std::shared_ptr<ProtocolCraft::NBT::Value> > block_entities_data;
 #if PROTOCOL_VERSION < 719
         Dimension dimension;
 #else

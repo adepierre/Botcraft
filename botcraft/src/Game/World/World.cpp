@@ -5,13 +5,6 @@
 #include "botcraft/Utilities/AsyncHandler.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
-#include "protocolCraft/Types/NBT/NBT.hpp"
-#include "protocolCraft/Types/NBT/TagInt.hpp"
-#if PROTOCOL_VERSION > 758
-#include "protocolCraft/Types/NBT/TagList.hpp"
-#include "protocolCraft/Types/NBT/TagString.hpp"
-#endif
-
 namespace Botcraft
 {
     World::World(const bool is_shared_, const bool async_handler_)
@@ -167,7 +160,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 757
-    bool World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT>& block_entities)
+    bool World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT::Value>& block_entities)
 #else
     bool World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities)
 #endif
@@ -259,7 +252,7 @@ namespace Botcraft
         return true;
     }
 
-    bool World::SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT& data)
+    bool World::SetBlockEntityData(const Position &pos, const ProtocolCraft::NBT::Value& data)
     {
         const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
         const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
@@ -640,7 +633,7 @@ namespace Botcraft
 #endif
     }
 
-    std::shared_ptr<ProtocolCraft::NBT> World::GetBlockEntityData(const Position &pos)
+    std::shared_ptr<ProtocolCraft::NBT::Value> World::GetBlockEntityData(const Position &pos)
     {
         const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
         const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
@@ -833,18 +826,14 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 756
 #if PROTOCOL_VERSION < 759
-        dimension_height[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("height"))->GetValue();
-        dimension_min_y[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("min_y"))->GetValue();
+        dimension_height[current_dimension] = msg.GetDimensionType()["height"].get<int>();
+        dimension_min_y[current_dimension] = msg.GetDimensionType()["min_y"].get<int>();
 #else
-        std::shared_ptr<ProtocolCraft::TagList> dimension_types = std::dynamic_pointer_cast<ProtocolCraft::TagList>(std::dynamic_pointer_cast<ProtocolCraft::TagCompound>(msg.GetRegistryHolder().GetTag("minecraft:dimension_type"))->GetValues().at("value"));
-        for (const auto& d : dimension_types->GetValues())
+        for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
-            const std::shared_ptr<ProtocolCraft::TagCompound> dim_entry = std::dynamic_pointer_cast<ProtocolCraft::TagCompound>(d);
-            const std::string& dim_name = std::dynamic_pointer_cast<ProtocolCraft::TagString>(dim_entry->GetValues().at("name"))->GetValue();
-            const std::shared_ptr<ProtocolCraft::TagCompound> dim_element = std::dynamic_pointer_cast<ProtocolCraft::TagCompound>(dim_entry->GetValues().at("element"));
-
-            dimension_height[dim_name] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(dim_element->GetValues().at("height"))->GetValue();
-            dimension_min_y[dim_name] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(dim_element->GetValues().at("min_y"))->GetValue();
+            const std::string& dim_name = d["name"].get<std::string>();
+            dimension_height[dim_name] = static_cast<unsigned int>(d["element"]["height"].get<int>());
+            dimension_min_y[dim_name] = d["element"]["min_y"].get<int>();
         }
 #endif
 #endif

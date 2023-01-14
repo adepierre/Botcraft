@@ -2,8 +2,6 @@
 #include "botcraft/Game/World/Section.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
-#include "protocolCraft/Types/NBT/TagInt.hpp"
-
 using namespace ProtocolCraft;
 
 namespace Botcraft
@@ -70,7 +68,7 @@ namespace Botcraft
 
         for (auto it = c.block_entities_data.begin(); it != c.block_entities_data.end(); it++)
         {
-            block_entities_data[it->first] = std::make_shared<NBT>(*it->second);
+            block_entities_data[it->first] = std::make_shared<NBT::Value>(*it->second);
         }
     }
 
@@ -525,7 +523,7 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION < 757
-    void Chunk::LoadChunkBlockEntitiesData(const std::vector<NBT>& block_entities)
+    void Chunk::LoadChunkBlockEntitiesData(const std::vector<NBT::Value>& block_entities)
 #else
     void Chunk::LoadChunkBlockEntitiesData(const std::vector<BlockEntityInfo>& block_entities)
 #endif
@@ -538,20 +536,21 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 757
             if (block_entities[i].HasData())
             {
-                std::shared_ptr<TagInt> tag_x = std::dynamic_pointer_cast<TagInt>(block_entities[i].GetTag("x"));
-                std::shared_ptr<TagInt> tag_y = std::dynamic_pointer_cast<TagInt>(block_entities[i].GetTag("y"));
-                std::shared_ptr<TagInt> tag_z = std::dynamic_pointer_cast<TagInt>(block_entities[i].GetTag("z"));
-
-                if (tag_x && tag_y && tag_z)
+                if (block_entities[i].contains("x") &&
+                    block_entities[i]["x"].is<int>() &&
+                    block_entities[i].contains("y") &&
+                    block_entities[i]["y"].is<int>() &&
+                    block_entities[i].contains("z") &&
+                    block_entities[i]["z"].is<int>())
                 {
-                    block_entities_data[Position((tag_x->GetValue() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, tag_y->GetValue(), (tag_z->GetValue() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = std::make_shared<NBT>(block_entities[i]);
+                    block_entities_data[Position((block_entities[i]["x"].get<int>() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, block_entities[i]["y"].get<int>(), (block_entities[i]["z"].get<int>() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = std::make_shared<NBT::Value>(block_entities[i]);
                 }
             }
 #else
             const int x = (block_entities[i].GetPackedXZ() & 15) << 4;
             const int z = (block_entities[i].GetPackedXZ() & 15);
             // And what about the type ???
-            block_entities_data[Position((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, block_entities[i].GetY(), (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = std::make_shared<NBT>(block_entities[i].GetTag());
+            block_entities_data[Position((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, block_entities[i].GetY(), (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = std::make_shared<NBT::Value>(block_entities[i].GetTag());
 #endif
         }
 
@@ -560,14 +559,14 @@ namespace Botcraft
 #endif
     }
 
-    void Chunk::SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT& block_entity)
+    void Chunk::SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT::Value& block_entity)
     {
         if (pos.x < -1 || pos.x > CHUNK_WIDTH || pos.y < min_y || pos.y > height + min_y - 1 || pos.z < -1 || pos.z > CHUNK_WIDTH)
         {
             return;
         }
 
-        block_entities_data[pos] = std::make_shared<NBT>(block_entity);
+        block_entities_data[pos] = std::make_shared<NBT::Value>(block_entity);
 
 #if USE_GUI
         modified_since_last_rendered = true;
@@ -579,7 +578,7 @@ namespace Botcraft
         block_entities_data.erase(pos);
     }
 
-    const std::shared_ptr<NBT> Chunk::GetBlockEntityData(const Position& pos) const
+    const std::shared_ptr<NBT::Value> Chunk::GetBlockEntityData(const Position& pos) const
     {
         auto it = block_entities_data.find(pos);
         if (it == block_entities_data.end())
@@ -998,7 +997,7 @@ namespace Botcraft
         return dimension;
     }
 
-    const std::map<Position, std::shared_ptr<NBT> >& Chunk::GetBlockEntitiesData() const
+    const std::map<Position, std::shared_ptr<NBT::Value> >& Chunk::GetBlockEntitiesData() const
     {
         return block_entities_data;
     }
