@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 
-#include <botcraft/AI/SimpleBehaviourClient.hpp>
-#include <botcraft/AI/Tasks/AllTasks.hpp>
-#include <botcraft/Utilities/Logger.hpp>
+#include "botcraft/AI/SimpleBehaviourClient.hpp"
+#include "botcraft/AI/Tasks/AllTasks.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include "DispenserFarmTasks.hpp"
 

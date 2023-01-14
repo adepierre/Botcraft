@@ -1,7 +1,7 @@
 #pragma once
 
-#include <botcraft/Game/Vector3.hpp>
-#include <botcraft/AI/TemplatedBehaviourClient.hpp>
+#include "botcraft/Game/Vector3.hpp"
+#include "botcraft/AI/TemplatedBehaviourClient.hpp"
 
 /// @brief Example of a class where we inherit
 /// TemplatedBehaviourClient<T>, with this class as parameter.

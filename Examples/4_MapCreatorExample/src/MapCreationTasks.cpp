@@ -1,15 +1,15 @@
 #include "MapCreationTasks.hpp"
 
-#include <botcraft/Network/NetworkManager.hpp>
-#include <botcraft/Game/AssetsManager.hpp>
-#include <botcraft/Game/Entities/EntityManager.hpp>
-#include <botcraft/Game/Entities/LocalPlayer.hpp>
-#include <botcraft/Game/World/World.hpp>
-#include <botcraft/Game/Vector3.hpp>
-#include <botcraft/Game/Inventory/InventoryManager.hpp>
-#include <botcraft/Game/Inventory/Window.hpp>
-#include <botcraft/AI/Tasks/AllTasks.hpp>
-#include <botcraft/Utilities/Logger.hpp>
+#include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Game/AssetsManager.hpp"
+#include "botcraft/Game/Entities/EntityManager.hpp"
+#include "botcraft/Game/Entities/LocalPlayer.hpp"
+#include "botcraft/Game/World/World.hpp"
+#include "botcraft/Game/Vector3.hpp"
+#include "botcraft/Game/Inventory/InventoryManager.hpp"
+#include "botcraft/Game/Inventory/Window.hpp"
+#include "botcraft/AI/Tasks/AllTasks.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include <iostream>
 #include <fstream>

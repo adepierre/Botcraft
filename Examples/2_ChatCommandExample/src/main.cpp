@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include <botcraft/Utilities/Logger.hpp>
+#include "botcraft/Utilities/Logger.hpp"
 
 #include "ChatCommandClient.hpp"
 

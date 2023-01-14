@@ -3,8 +3,8 @@
 #include <thread>
 #include <chrono>
 
-#include <botcraft/Game/ConnectionClient.hpp>
-#include <botcraft/Utilities/Logger.hpp>
+#include "botcraft/Game/ConnectionClient.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 void ShowHelp(const char* argv0)
 {

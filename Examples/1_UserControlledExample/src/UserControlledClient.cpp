@@ -1,17 +1,18 @@
-#include <botcraft/Game/AssetsManager.hpp>
-#include <botcraft/Version.hpp>
-#include <botcraft/Game/Entities/EntityManager.hpp>
-#include <botcraft/Game/Entities/entities/Entity.hpp>
-#include <botcraft/Game/Entities/LocalPlayer.hpp>
-#include <botcraft/Game/World/World.hpp>
-#include <botcraft/Game/World/Chunk.hpp>
-#include <botcraft/Game/Physics/PhysicsManager.hpp>
-#include <botcraft/Network/NetworkManager.hpp>
-#include <botcraft/Utilities/Logger.hpp>
-#include <protocolCraft/enums.hpp>
+#include "botcraft/Game/AssetsManager.hpp"
+#include "botcraft/Version.hpp"
+#include "botcraft/Game/Entities/EntityManager.hpp"
+#include "botcraft/Game/Entities/entities/Entity.hpp"
+#include "botcraft/Game/Entities/LocalPlayer.hpp"
+#include "botcraft/Game/World/World.hpp"
+#include "botcraft/Game/World/Chunk.hpp"
+#include "botcraft/Game/Physics/PhysicsManager.hpp"
+#include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Utilities/Logger.hpp"
+
+#include "protocolCraft/enums.hpp"
 
 #if USE_GUI
-#include <botcraft/Renderer/RenderingManager.hpp>
+#include "botcraft/Renderer/RenderingManager.hpp"
 #endif
 
 #include "UserControlledClient.hpp"

@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include <botcraft/AI/BehaviourTree.hpp>
-#include <botcraft/AI/BehaviourClient.hpp>
-#include <botcraft/Game/Vector3.hpp>
+#include "botcraft/AI/BehaviourTree.hpp"
+#include "botcraft/AI/BehaviourClient.hpp"
+#include "botcraft/Game/Vector3.hpp"
 
 /// @brief Check all blocks nearby for chests. Save the found positions in World.ChestsPos
 /// @param c The client performing the action

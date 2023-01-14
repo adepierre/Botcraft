@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 
-#include <botcraft/AI/SimpleBehaviourClient.hpp>
-#include <botcraft/Utilities/Logger.hpp>
+#include "botcraft/AI/SimpleBehaviourClient.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include "MobHitterTasks.hpp"
 

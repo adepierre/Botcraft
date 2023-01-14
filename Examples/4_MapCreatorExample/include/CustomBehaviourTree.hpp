@@ -1,6 +1,6 @@
 #pragma once
 
-#include <botcraft/AI/BehaviourTree.hpp>
+#include "botcraft/AI/BehaviourTree.hpp"
 
 /// @brief A Decorator that ticks its child until
 /// it successes. If ticked n times with no

@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
 
-#include <botcraft/Game/World/World.hpp>
-#include <botcraft/AI/BehaviourTree.hpp>
-#include <botcraft/AI/Tasks/AllTasks.hpp>
-#include <botcraft/AI/SimpleBehaviourClient.hpp>
-#include <botcraft/Utilities/Logger.hpp>
-#include <botcraft/Utilities/SleepUtilities.hpp>
+#include "botcraft/Game/World/World.hpp"
+#include "botcraft/AI/BehaviourTree.hpp"
+#include "botcraft/AI/Tasks/AllTasks.hpp"
+#include "botcraft/AI/SimpleBehaviourClient.hpp"
+#include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/SleepUtilities.hpp"
 
 #include "CustomBehaviourTree.hpp"
 #include "MapCreationTasks.hpp"

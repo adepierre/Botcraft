@@ -3,14 +3,14 @@
 #include <iostream>
 #include <iterator>
 
-#include <botcraft/Game/World/World.hpp>
-#include <botcraft/Game/World/Block.hpp>
-#include <botcraft/Game/Entities/EntityManager.hpp>
-#include <botcraft/Game/Entities/LocalPlayer.hpp>
-#include <botcraft/Network/NetworkManager.hpp>
+#include "botcraft/Game/World/World.hpp"
+#include "botcraft/Game/World/Block.hpp"
+#include "botcraft/Game/Entities/EntityManager.hpp"
+#include "botcraft/Game/Entities/LocalPlayer.hpp"
+#include "botcraft/Network/NetworkManager.hpp"
 
-#include <botcraft/AI/BehaviourTree.hpp>
-#include <botcraft/AI/Tasks/AllTasks.hpp>
+#include "botcraft/AI/BehaviourTree.hpp"
+#include "botcraft/AI/Tasks/AllTasks.hpp"
 
 #include "ChatCommandClient.hpp"
 

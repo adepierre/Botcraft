@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include <botcraft/AI/BehaviourTree.hpp>
-#include <botcraft/AI/BehaviourClient.hpp>
+#include "botcraft/AI/BehaviourTree.hpp"
+#include "botcraft/AI/BehaviourClient.hpp"
 
 /// @brief Hit all nearby monster, respecting the invulnerability cooldown of 0.5s
 /// @param c The client performing the action
