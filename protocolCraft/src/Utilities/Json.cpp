@@ -8,6 +8,8 @@
 
 namespace ProtocolCraft
 {
+    using namespace Internal;
+
     namespace Json
     {
         std::string EscapeChars(const std::string& s);
@@ -174,9 +176,9 @@ namespace ProtocolCraft
                 val = Object();
             }
 
-            if (!std::holds_alternative<Internal::RecursiveWrapper<Object>>(val))
+            if (!std::holds_alternative<RecursiveWrapper<Object>>(val))
             {
-                throw std::runtime_error("Value value is not an object");
+                throw std::runtime_error("Json::Value is not an object");
             }
 
             return get<Object>()[s];
@@ -184,9 +186,9 @@ namespace ProtocolCraft
 
         const Value& Value::operator[](const std::string& s) const
         {
-            if (!std::holds_alternative<Internal::RecursiveWrapper<Object>>(val))
+            if (!std::holds_alternative<RecursiveWrapper<Object>>(val))
             {
-                throw std::runtime_error("Value value is not an object");
+                throw std::runtime_error("Json::Value is not an object");
             }
 
             return get<Object>().at(s);
@@ -194,9 +196,9 @@ namespace ProtocolCraft
 
         Value& Value::operator[](const size_t i)
         {
-            if (!std::holds_alternative<Internal::RecursiveWrapper<Array>>(val))
+            if (!std::holds_alternative<RecursiveWrapper<Array>>(val))
             {
-                throw std::runtime_error("Value value is not an array");
+                throw std::runtime_error("Json::Value is not an array");
             }
 
             return get<Array>()[i];
@@ -204,9 +206,9 @@ namespace ProtocolCraft
 
         const Value& Value::operator[](const size_t i) const
         {
-            if (!std::holds_alternative<Internal::RecursiveWrapper<Array>>(val))
+            if (!std::holds_alternative<RecursiveWrapper<Array>>(val))
             {
-                throw std::runtime_error("Value value is not an array");
+                throw std::runtime_error("Json::Value is not an array");
             }
 
             return get<Array>().at(i);
@@ -229,17 +231,17 @@ namespace ProtocolCraft
 
         size_t Value::size() const
         {
-            if (std::holds_alternative<Internal::RecursiveWrapper<Array>>(val))
+            if (std::holds_alternative<RecursiveWrapper<Array>>(val))
             {
                 return get<Array>().size();
             }
 
-            if (std::holds_alternative<Internal::RecursiveWrapper<Object>>(val))
+            if (std::holds_alternative<RecursiveWrapper<Object>>(val))
             {
                 return get<Object>().size();
             }
 
-            throw std::runtime_error("Value value is neither an array nor an object");
+            throw std::runtime_error("Json::Value is neither an array nor an object");
         }
 
         void Value::push_back(const Value& value)
@@ -249,9 +251,9 @@ namespace ProtocolCraft
                 val = Array();
             }
 
-            if (!std::holds_alternative<Internal::RecursiveWrapper<Array>>(val))
+            if (!std::holds_alternative<RecursiveWrapper<Array>>(val))
             {
-                throw std::runtime_error("Can't push_back in a non-array Value");
+                throw std::runtime_error("Can't push_back in a non-array Json::Value");
             }
 
             get<Array>().push_back(value);
@@ -264,9 +266,9 @@ namespace ProtocolCraft
                 val = Array();
             }
 
-            if (!std::holds_alternative<Internal::RecursiveWrapper<Array>>(val))
+            if (!std::holds_alternative<RecursiveWrapper<Array>>(val))
             {
-                throw std::runtime_error("Can't push_back in a non-array Value");
+                throw std::runtime_error("Can't push_back in a non-array Json::Value");
             }
 
             get<Array>().push_back(std::move(value));
@@ -326,98 +328,95 @@ namespace ProtocolCraft
         {
             std::ostringstream oss;
 
-            // TODO use std::visit?
-            if (is_null())
+            std::visit([&](auto&& arg)
             {
-                oss << "null";
-            }
-            else if (is<Object>())
-            {
-                const Object& o = get<Object>();
-                if (o.empty())
+                using T = std::decay_t<decltype(arg)>;
+
+                if constexpr (std::is_same_v<T, std::monostate>)
                 {
-                    return "{}";
+                    oss << "null";
                 }
-
-                const std::string new_line = (indent == -1 ? "" : "\n");
-                const std::string line_indentation = indent > -1 ? std::string(depth_level * indent, indent_char) : "";
-                const std::string value_indentation = indent > -1 ? std::string(indent, indent_char) : "";
-
-                oss << "{" << new_line;
-                bool first = true;
-                for (const auto& [k, v] : o)
+                else if constexpr (std::is_same_v<T, RecursiveWrapper<Object>>)
                 {
-                    if (!first)
+                    const Object& o = arg.get();
+                    if (o.empty())
                     {
-                        oss << "," << new_line;
+                        oss << "{}";
+                        return;
+                    }
+
+                    const std::string new_line = (indent == -1 ? "" : "\n");
+                    const std::string line_indentation = indent > -1 ? std::string(depth_level * indent, indent_char) : "";
+                    const std::string value_indentation = indent > -1 ? std::string(indent, indent_char) : "";
+
+                    oss << "{" << new_line;
+                    bool first = true;
+                    for (const auto& [k, v] : o)
+                    {
+                        if (!first)
+                        {
+                            oss << "," << new_line;
+                        }
+                        else
+                        {
+                            first = false;
+                        }
+                        oss << line_indentation << value_indentation << "\"" << k << "\"" << (indent == -1 ? ":" : ": ") << v.Dump(depth_level + 1, indent, indent_char);
+                    }
+                    oss << new_line << line_indentation << "}";
+                }
+                else if constexpr (std::is_same_v<T, RecursiveWrapper<Array>>)
+                {
+                    const Array& a = arg.get();
+                    if (a.empty())
+                    {
+                        oss << "[]";
+                        return;
+                    }
+                    const std::string new_line = (indent == -1 ? "" : "\n");
+                    const std::string line_indentation = indent > -1 ? std::string(depth_level * indent, indent_char) : "";
+                    const std::string value_indentation = indent > -1 ? std::string(indent, indent_char) : "";
+
+                    oss << '[' << new_line;
+                    bool first = true;
+                    for (const auto& v : a)
+                    {
+                        if (!first)
+                        {
+                            oss << ',' << new_line;
+                        }
+                        else
+                        {
+                            first = false;
+                        }
+                        oss << line_indentation << value_indentation << v.Dump(depth_level + 1, indent, indent_char);
+                    }
+                    oss << new_line << line_indentation << ']';
+                }
+                else if constexpr (std::is_same_v<T, std::string>)
+                {
+                    oss << "\"" << EscapeChars(arg) << "\"";
+                }
+                else if constexpr (std::is_same_v<T, bool>)
+                {
+                    oss << (arg ? "true" : "false");
+                }
+                else if constexpr (std::is_same_v<T, double>)
+                {
+                    if (arg == std::floor(arg))
+                    {
+                        oss << std::setprecision(1) << std::fixed << arg;
                     }
                     else
                     {
-                        first = false;
+                        oss << arg;
                     }
-                    oss << line_indentation << value_indentation << "\"" << k << "\"" << (indent == -1 ? ":" : ": ") << v.Dump(depth_level + 1, indent, indent_char);
-                }
-                oss << new_line << line_indentation << "}";
-            }
-            else if (is_array())
-            {
-                const Array& a = get<Array>();
-                if (a.empty())
-                {
-                    return "[]";
-                }
-                const std::string new_line = (indent == -1 ? "" : "\n");
-                const std::string line_indentation = indent > -1 ? std::string(depth_level * indent, indent_char) : "";
-                const std::string value_indentation = indent > -1 ? std::string(indent, indent_char) : "";
-
-                oss << '[' << new_line;
-                bool first = true;
-                for (const auto& v : a)
-                {
-                    if (!first)
-                    {
-                        oss << ',' << new_line;
-                    }
-                    else
-                    {
-                        first = false;
-                    }
-                    oss << line_indentation << value_indentation << v.Dump(depth_level + 1, indent, indent_char);
-                }
-                oss << new_line << line_indentation << ']';
-            }
-            else if (is_string())
-            {
-                oss << "\"" << EscapeChars(get<std::string>()) << "\"";
-            }
-            else if (is_bool())
-            {
-                oss << (get<bool>() ? "true" : "false");
-            }
-            else if (is<long long int>())
-            {
-                oss << get<long long int>();
-            }
-            else if (is<unsigned long long int>())
-            {
-                oss << get<unsigned long long int>();
-            }
-            else if (is<double>())
-            {
-                const double v = get<double>();
-                if (v == std::floor(v))
-                {
-                    oss << std::setprecision(1) << std::fixed << v;
                 }
                 else
                 {
-                    oss << v;
+                    oss << arg;
                 }
-            }
-            else
-            {
-                // Should never happen
-            }
+            }, val);
 
             return oss.str();
         }
@@ -783,11 +782,11 @@ namespace ProtocolCraft
         {
             if (length < 2)
             {
-                throw std::runtime_error("Not enough input when reading Object");
+                throw std::runtime_error("Not enough input when reading Json::Object");
             }
             if (*iter != '{')
             {
-                throw std::runtime_error(std::string("Unexpected char found at beginning of Object \"") + *iter + "\"");
+                throw std::runtime_error(std::string("Unexpected char found at beginning of Json::Object \"") + *iter + "\"");
             }
             iter += 1;
             length -= 1;
@@ -796,7 +795,7 @@ namespace ProtocolCraft
 
             if (length == 0)
             {
-                throw std::runtime_error("Not enough input when reading Object");
+                throw std::runtime_error("Not enough input when reading Json::Object");
             }
 
             Object output;
@@ -817,7 +816,7 @@ namespace ProtocolCraft
 
                 if (*iter != ':')
                 {
-                    throw std::runtime_error(std::string("Unexpected char \"") + *iter + "\" when reading Object while expecting :");
+                    throw std::runtime_error(std::string("Unexpected char \"") + *iter + "\" when reading Json::Object while expecting :");
                 }
                 iter += 1;
                 length -= 1;
@@ -837,25 +836,25 @@ namespace ProtocolCraft
                 }
                 else if (*iter != ',')
                 {
-                    throw std::runtime_error(std::string("Unexpected char \"") + *iter + "\" when reading Object while expecting ,");
+                    throw std::runtime_error(std::string("Unexpected char \"") + *iter + "\" when reading Json::Object while expecting ,");
                 }
 
                 iter += 1;
                 length -= 1;
             }
 
-            throw std::runtime_error("Not enough input when reading Object");
+            throw std::runtime_error("Not enough input when reading Json::Object");
         }
 
         Value ParseArray(std::string_view::const_iterator& iter, size_t& length)
         {
             if (length < 2)
             {
-                throw std::runtime_error("Not enough input when reading Array");
+                throw std::runtime_error("Not enough input when reading Json::Array");
             }
             if (*iter != '[')
             {
-                throw std::runtime_error(std::string("Unexpected char found at beginning of Array \"") + *iter + "\"");
+                throw std::runtime_error(std::string("Unexpected char found at beginning of Json::Array \"") + *iter + "\"");
             }
             iter += 1;
             length -= 1;
@@ -866,7 +865,7 @@ namespace ProtocolCraft
 
             if (length == 0)
             {
-                throw std::runtime_error("Not enough input when reading Array");
+                throw std::runtime_error("Not enough input when reading Json::Array");
             }
 
             if (*iter == ']')
@@ -893,14 +892,14 @@ namespace ProtocolCraft
                 }
                 else if (*iter != ',')
                 {
-                    throw std::runtime_error(std::string("Unexpected char \"") + *iter + "\" when reading Array while expecting ,");
+                    throw std::runtime_error(std::string("Unexpected char \"") + *iter + "\" when reading Json::Array while expecting ,");
                 }
 
                 iter += 1;
                 length -= 1;
             }
 
-            throw std::runtime_error("Not enough input when reading Array");
+            throw std::runtime_error("Not enough input when reading Json::Array");
         }
 
         Value ParseValue(std::string_view::const_iterator& iter, size_t& length)

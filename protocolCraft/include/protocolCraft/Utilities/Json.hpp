@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <map>
-#include <memory>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -10,6 +9,8 @@
 #include <variant>
 #include <vector>
 #include <array>
+
+#include "protocolCraft/Utilities/RecursiveWrapper.hpp"
 
 namespace ProtocolCraft
 {
@@ -23,66 +24,11 @@ namespace ProtocolCraft
 
         namespace Internal
         {
-            /// @brief Template magic to have a full type instead of an incomplete one as required by std::variant
-            /// @tparam T Any incomplete class we want to wrap
-            template<typename T>
-            class RecursiveWrapper
-            {
-            public:
-                RecursiveWrapper() = delete;
-                ~RecursiveWrapper() = default;
-
-                RecursiveWrapper(const RecursiveWrapper& r) noexcept
-                {
-                    p = std::make_unique<T>(*r.p);
-                }
-
-                RecursiveWrapper(RecursiveWrapper&& r) noexcept
-                {
-                    p = std::move(r.p);
-                }
-
-                RecursiveWrapper(const T& r) noexcept
-                {
-                    p = std::make_unique<T>(r);
-                }
-
-                RecursiveWrapper(T&& r) noexcept
-                {
-                    p = std::make_unique<T>(std::move(r));
-                }
-
-                const T& get() const noexcept
-                {
-                    return *p.get();
-                }
-
-                T& get() noexcept
-                {
-                    return *p.get();
-                }
-
-                RecursiveWrapper& operator=(const RecursiveWrapper& other) noexcept
-                {
-                    p = std::make_unique<T>(*other.p);
-                    return *this;
-                }
-
-                RecursiveWrapper& operator=(RecursiveWrapper&& other) noexcept
-                {
-                    p = std::move(other.p);
-                    return *this;
-                }
-
-            private:
-                std::unique_ptr<T> p;
-            };
-
             /// @brief std::variant holding the actual data
             using JsonVariant = std::variant<
                 std::monostate,
-                Internal::RecursiveWrapper<Object>,
-                Internal::RecursiveWrapper<Array>,
+                ProtocolCraft::Internal::RecursiveWrapper<Object>,
+                ProtocolCraft::Internal::RecursiveWrapper<Array>,
                 std::string,
                 bool,
                 long long int,
@@ -91,7 +37,10 @@ namespace ProtocolCraft
             >;
         }
 
+
         /// @brief Main class, basically a JsonVariant with extra utility functions
+        /// it doesn't inherit JsonVariant directly so we can better control which
+        /// constructors are allowed
         class Value
         {
         public:
@@ -131,8 +80,7 @@ namespace ProtocolCraft
             >
             Value(const std::map<std::string, T>& m);
 
-            // Add support for all (unsigned) int/char/short that can't be natively
-            // converted to JsonVariant on this platform
+            // Add support for all (unsigned) int/char/short
             template<
                 typename T,
                 std::enable_if_t<std::is_integral_v<T>&& std::is_unsigned_v<T>, bool> = true
@@ -162,13 +110,13 @@ namespace ProtocolCraft
 
             template<
                 typename T,
-                std::enable_if_t<!std::is_same_v<T, std::monostate> && (std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>), bool> = true
+                std::enable_if_t<std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>, bool> = true
             >
             T& get();
 
             template<
                 typename T,
-                std::enable_if_t<!std::is_same_v<T, std::monostate> && (std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>), bool> = true
+                std::enable_if_t<std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>, bool> = true
             >
             const T& get() const;
 
@@ -291,7 +239,7 @@ namespace ProtocolCraft
         {
             for (const auto& [k, v] : m)
             {
-                m[k] = v;
+                operator[](k) = v;
             }
         }
 
@@ -330,6 +278,10 @@ namespace ProtocolCraft
         {
             if constexpr (std::is_same_v<T, bool>)
             {
+                if (!std::holds_alternative<bool>(val))
+                {
+                    throw std::runtime_error("Trying to get the wrong type from Json::Value");
+                }
                 return std::get<bool>(val);
             }
             // Wrapper to be able to get char/short/int
@@ -345,7 +297,7 @@ namespace ProtocolCraft
                 }
                 else
                 {
-                    throw std::runtime_error("Trying to get an integral value from a Value that is something else");
+                    throw std::runtime_error("Trying to get an integral value from a Json::Value that is something else");
                 }
             }
             // Wrapper to be able to get float/long double
@@ -357,14 +309,14 @@ namespace ProtocolCraft
                 }
                 else
                 {
-                    throw std::runtime_error("Trying to get a floating point value from a Value that is something else");
+                    throw std::runtime_error("Trying to get a floating point value from a Json::Value that is something else");
                 }
             }
             else
             {
-                if (std::holds_alternative<T>(val))
+                if (!std::holds_alternative<T>(val))
                 {
-                    throw std::runtime_error("Trying to get the wrong type from Value");
+                    throw std::runtime_error("Trying to get the wrong type from Json::Value");
                 }
                 return std::get<T>(val);
             }
@@ -387,52 +339,76 @@ namespace ProtocolCraft
             }
             else
             {
-                throw std::runtime_error("Trying to get a number value from a Value that is something else");
+                throw std::runtime_error("Trying to get a number value from a Json::Value that is something else");
             }
         }
 
         template<
             typename T,
-            std::enable_if_t<!std::is_same_v<T, std::monostate> && (std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>), bool>
+            std::enable_if_t<std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>, bool>
         >
         T& Value::get()
         {
             // special case for object (removing the RecursiveWrapper)
             if constexpr (std::is_same_v<T, Object>)
             {
-                return std::get<Internal::RecursiveWrapper<Object>>(val).get();
+                if (!std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<Object>>(val))
+                {
+                    throw std::runtime_error("Trying to get the wrong type from Json::Value");
+                }
+                return std::get<ProtocolCraft::Internal::RecursiveWrapper<Object>>(val).get();
             }
             // special case for array (removing the RecursiveWrapper)
             else if constexpr (std::is_same_v<T, Array>)
             {
-                return std::get<Internal::RecursiveWrapper<Array>>(val).get();
+                if (!std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<Array>>(val))
+                {
+                    throw std::runtime_error("Trying to get the wrong type from Json::Value");
+                }
+                return std::get<ProtocolCraft::Internal::RecursiveWrapper<Array>>(val).get();
             }
             // all other cases (only std::string for now) should work with generic template
             else
             {
+                if (!std::holds_alternative<T>(val))
+                {
+                    throw std::runtime_error("Trying to get the wrong type from Json::Value");
+                }
                 return std::get<T>(val);
             }
         }
 
         template<
             typename T,
-            std::enable_if_t<!std::is_same_v<T, std::monostate> && (std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>), bool>
+            std::enable_if_t<std::is_same_v<T, Object> || std::is_same_v<T, Array> || std::is_same_v<T, std::string>, bool>
         >
         const T& Value::get() const
         {
             // special case for object (removing the RecursiveWrapper)
             if constexpr (std::is_same_v<T, Object>)
             {
-                return std::get<Internal::RecursiveWrapper<Object>>(val).get();
+                if (!std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<Object>>(val))
+                {
+                    throw std::runtime_error("Trying to get the wrong type from Json::Value");
+                }
+                return std::get<ProtocolCraft::Internal::RecursiveWrapper<Object>>(val).get();
             }
             // special case for array (removing the RecursiveWrapper)
             else if constexpr (std::is_same_v<T, Array>)
             {
-                return std::get<Internal::RecursiveWrapper<Array>>(val).get();
+                if (!std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<Array>>(val))
+                {
+                    throw std::runtime_error("Trying to get the wrong type from Json::Value");
+                }
+                return std::get<ProtocolCraft::Internal::RecursiveWrapper<Array>>(val).get();
             }
             // all other cases (only std::string for now) should work with generic template
             else
             {
+                if (!std::holds_alternative<T>(val))
+                {
+                    throw std::runtime_error("Trying to get the wrong type from Json::Value");
+                }
                 return std::get<T>(val);
             }
         }
@@ -442,11 +418,11 @@ namespace ProtocolCraft
         {
             if constexpr (std::is_same_v<T, Object>)
             {
-                return std::holds_alternative<Internal::RecursiveWrapper<Object>>(val);
+                return std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<Object>>(val);
             }
             else if constexpr (std::is_same_v<T, Array>)
             {
-                return std::holds_alternative<Internal::RecursiveWrapper<Array>>(val);
+                return std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<Array>>(val);
             }
             else
             {
