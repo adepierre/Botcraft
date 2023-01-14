@@ -12,10 +12,6 @@
 
 #include <botcraft/AI/Tasks/AllTasks.hpp>
 
-#include <protocolCraft/Types/NBT/TagCompound.hpp>
-#include <protocolCraft/Types/NBT/TagList.hpp>
-#include <protocolCraft/Types/NBT/TagString.hpp>
-
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
@@ -283,16 +279,13 @@ Status CheckFrostWalkerMob(BehaviourClient& client)
             const Slot& boots = e.second->GetEquipment(EquipmentSlot::Boots);
             if (!boots.IsEmptySlot())
             {
-                const std::map<std::string, std::shared_ptr<Tag> >& nbt_values = boots.GetNBT().GetRoot().GetValues();
-                auto it = nbt_values.find("Enchantments");
-                if (it != nbt_values.end())
+                if (boots.GetNBT().contains("Enchantments") && boots.GetNBT()["Enchantments"].is_list_of<NBT::TagCompound>())
                 {
-                    std::shared_ptr<TagList> enchantments = std::dynamic_pointer_cast<TagList>(it->second);
-                    for (const auto& e : enchantments->GetValues())
+                    for (const auto& enchantment : boots.GetNBT()["Enchantments"].as_list_of<NBT::TagCompound>())
                     {
-                        std::shared_ptr<TagCompound> enchantment = std::dynamic_pointer_cast<TagCompound>(e);
-                        auto it2 = enchantment->GetValues().find("id");
-                        if (it2 != enchantment->GetValues().end() && std::dynamic_pointer_cast<TagString>(it2->second)->GetValue() == "minecraft:frost_walker")
+                        if (enchantment.contains("id") &&
+                            enchantment["id"].is<std::string>() &&
+                            enchantment["id"].get<std::string>() == "minecraft:frost_walker")
                         {
                             return Status::Success;
                         }

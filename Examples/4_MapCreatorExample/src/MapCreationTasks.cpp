@@ -11,10 +11,6 @@
 #include <botcraft/AI/Tasks/AllTasks.hpp>
 #include <botcraft/Utilities/Logger.hpp>
 
-#include <protocolCraft/Types/NBT/TagList.hpp>
-#include <protocolCraft/Types/NBT/TagString.hpp>
-#include <protocolCraft/Types/NBT/TagInt.hpp>
-
 #include <iostream>
 #include <fstream>
 #include <unordered_set>
@@ -731,28 +727,12 @@ Status WarnConsole(BehaviourClient& c, const std::string& msg)
 
 Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offset, const std::string& temp_block, const bool log_info)
 {
-    std::ifstream infile(path, std::ios_base::binary);
-    infile.unsetf(std::ios::skipws);
-
-    infile.seekg(0, std::ios::end);
-    size_t length = infile.tellg();
-    infile.seekg(0, std::ios::beg);
-
-    std::vector<unsigned char> file_content;
-    file_content.reserve(length);
-
-    file_content.insert(file_content.begin(),
-        std::istream_iterator<unsigned char>(infile),
-        std::istream_iterator<unsigned char>());
-
-    infile.close();
-
-    std::vector<unsigned char>::const_iterator it = file_content.begin();
-
-    NBT loaded_file;
+    NBT::Value loaded_file;
     try
     {
-        loaded_file.Read(it, length);
+        std::ifstream infile(path, std::ios_base::binary);
+        infile >> loaded_file;
+        infile.close();
     }
     catch (const std::exception&)
     {
@@ -765,12 +745,17 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
     short id_temp_block = -1;
     std::map<short, int> num_blocks_used;
 
-    std::shared_ptr<TagList> palette_tag = std::dynamic_pointer_cast<TagList>(loaded_file.GetTag("palette"));
-
-    for (int i = 0; i < palette_tag->GetValues().size(); ++i)
+    if (!loaded_file.contains("palette") ||
+        !loaded_file["palette"].is_list_of<NBT::TagCompound>())
     {
-        std::shared_ptr<TagCompound> compound = std::dynamic_pointer_cast<TagCompound>(palette_tag->GetValues()[i]);
-        const std::string& block_name = std::dynamic_pointer_cast<TagString>(compound->GetValues().at("Name"))->GetValue();
+        LOG_ERROR("Error loading NBT file, no palette TagCompound found");
+        return Status::Failure;
+    }
+
+    const std::vector<NBT::TagCompound>& palette_list = loaded_file["palette"].as_list_of<NBT::TagCompound>();
+    for (int i = 0; i < palette_list.size(); ++i)
+    {
+        const std::string& block_name = palette_list[i]["Name"].get<std::string>();
         palette[i] = block_name;
         num_blocks_used[i] = 0;
         if (block_name == temp_block)
@@ -781,14 +766,21 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
 
     Position min(std::numeric_limits<int>().max(), std::numeric_limits<int>().max(), std::numeric_limits<int>().max());
     Position max(std::numeric_limits<int>().min(), std::numeric_limits<int>().min(), std::numeric_limits<int>().min());
-    std::shared_ptr<TagList> blocks_tag = std::dynamic_pointer_cast<TagList>(loaded_file.GetTag("blocks"));
-    for (int i = 0; i < blocks_tag->GetValues().size(); ++i)
+
+    if (!loaded_file.contains("blocks") ||
+        !loaded_file["blocks"].is_list_of<NBT::TagCompound>())
     {
-        std::shared_ptr<TagCompound> compound = std::dynamic_pointer_cast<TagCompound>(blocks_tag->GetValues()[i]);
-        std::shared_ptr<TagList> pos_list = std::dynamic_pointer_cast<TagList>(compound->GetValues().at("pos"));
-        const int x = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[0])->GetValue();
-        const int y = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[1])->GetValue();
-        const int z = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[2])->GetValue();
+        LOG_ERROR("Error loading NBT file, no blocks TagCompound found");
+        return Status::Failure;
+    }
+
+    const std::vector<NBT::TagCompound>& block_tag = loaded_file["blocks"].as_list_of<NBT::TagCompound>();
+    for (const auto& c : block_tag)
+    {
+        const std::vector<int>& pos_list = c["pos"].as_list_of<int>();
+        const int x = pos_list[0];
+        const int y = pos_list[1];
+        const int z = pos_list[2];
 
         if (x < min.x)
         {
@@ -829,14 +821,13 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
     std::vector<std::vector<std::vector<short> > > target(size.x, std::vector<std::vector<short> >(size.y, std::vector<short>(size.z, -1)));
 
     // Read all block to place
-    for (int i = 0; i < blocks_tag->GetValues().size(); ++i)
+    for (const auto& c : block_tag)
     {
-        std::shared_ptr<TagCompound> compound = std::dynamic_pointer_cast<TagCompound>(blocks_tag->GetValues()[i]);
-        int state = std::dynamic_pointer_cast<TagInt>(compound->GetValues().at("state"))->GetValue();
-        std::shared_ptr<TagList> pos_list = std::dynamic_pointer_cast<TagList>(compound->GetValues().at("pos"));
-        const int x = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[0])->GetValue();
-        const int y = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[1])->GetValue();
-        const int z = std::dynamic_pointer_cast<TagInt>(pos_list->GetValues()[2])->GetValue();
+        const int state = c["state"].get<int>();
+        const std::vector<int>& pos_list = c["pos"].as_list_of<int>();
+        const int x = pos_list[0];
+        const int y = pos_list[1];
+        const int z = pos_list[2];
 
         target[x - min.x][y - min.y][z - min.z] = state;
         num_blocks_used[state] += 1;
