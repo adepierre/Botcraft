@@ -3,6 +3,9 @@
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/enums.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
+#if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
+#include "protocolCraft/Types/NBT/NBT.hpp"
+#endif
 #if PROTOCOL_VERSION > 758
 #include "protocolCraft/Types/GlobalPos.hpp"
 #endif
@@ -46,7 +49,7 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
-        void SetDimensionType(const NBT& dimension_type_)
+        void SetDimensionType(const NBT::Value& dimension_type_)
         {
             dimension_type = dimension_type_;
         }
@@ -129,7 +132,7 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
-        const NBT& GetDimensionType() const
+        const NBT::Value& GetDimensionType() const
         {
             return dimension_type;
         }
@@ -217,7 +220,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747
 #if PROTOCOL_VERSION < 759
-            dimension_type = ReadData<NBT>(iter, length);
+            dimension_type = ReadData<NBT::Value>(iter, length);
 #else
             dimension_type = ReadData<Identifier>(iter, length);
 #endif
@@ -255,7 +258,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747
 #if PROTOCOL_VERSION < 759
-            WriteData<NBT>(dimension_type, container);
+            WriteData<NBT::Value>(dimension_type, container);
 #else
             WriteData<Identifier>(dimension_type, container);
 #endif
@@ -332,7 +335,7 @@ namespace ProtocolCraft
     private:
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
-        NBT dimension_type;
+        NBT::Value dimension_type;
 #elif PROTOCOL_VERSION > 758
         Identifier dimension_type;
 #endif

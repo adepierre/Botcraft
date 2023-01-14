@@ -79,13 +79,13 @@ namespace ProtocolCraft
             levels = levels_;
         }
 
-        void SetRegistryHolder(const NBT& registry_holder_)
+        void SetRegistryHolder(const NBT::Value& registry_holder_)
         {
             registry_holder = registry_holder_;
         }
 
 #if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
-        void SetDimensionType(const NBT& dimension_type_)
+        void SetDimensionType(const NBT::Value& dimension_type_)
         {
             dimension_type = dimension_type_;
         }
@@ -213,13 +213,13 @@ namespace ProtocolCraft
             return levels;
         }
 
-        const NBT& GetRegistryHolder() const
+        const NBT::Value& GetRegistryHolder() const
         {
             return registry_holder;
         }
 
 #if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
-        const NBT& GetDimensionType() const
+        const NBT::Value& GetDimensionType() const
         {
             return dimension_type;
         }
@@ -321,10 +321,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 718
             previous_game_type = ReadData<unsigned char>(iter, length);
             levels = ReadVector<Identifier>(iter, length);
-            registry_holder = ReadData<NBT>(iter, length);
+            registry_holder = ReadData<NBT::Value>(iter, length);
 #if PROTOCOL_VERSION > 747
 #if PROTOCOL_VERSION < 759
-            dimension_type = ReadData<NBT>(iter, length);
+            dimension_type = ReadData<NBT::Value>(iter, length);
 #else
             dimension_type = ReadData<Identifier>(iter, length);
 #endif
@@ -376,10 +376,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 718
             WriteData<unsigned char>(previous_game_type, container);
             WriteVector<Identifier>(levels, container);
-            WriteData<NBT>(registry_holder, container);
+            WriteData<NBT::Value>(registry_holder, container);
 #if PROTOCOL_VERSION > 747
 #if PROTOCOL_VERSION < 759
-            WriteData<NBT>(dimension_type, container);
+            WriteData<NBT::Value>(dimension_type, container);
 #else
             WriteData<Identifier>(dimension_type, container);
 #endif
@@ -484,9 +484,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 718
         unsigned char previous_game_type;
         std::vector<Identifier> levels;
-        NBT registry_holder;
+        NBT::Value registry_holder;
 #if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
-        NBT dimension_type;
+        NBT::Value dimension_type;
 #elif PROTOCOL_VERSION > 758
         Identifier dimension_type;
 #endif

@@ -61,7 +61,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 442
-        void SetHeightmaps(const NBT& heightmaps_)
+        void SetHeightmaps(const NBT::Value& heightmaps_)
         {
             heightmaps = heightmaps_;
         }
@@ -79,7 +79,7 @@ namespace ProtocolCraft
             buffer = buffer_;
         }
 
-        void SetBlockEntitiesTags(const std::vector<NBT>& block_entities_tags_)
+        void SetBlockEntitiesTags(const std::vector<NBT::Value>& block_entities_tags_)
         {
             block_entities_tags = block_entities_tags_;
         }
@@ -119,7 +119,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 442
-        const NBT& GetHeightmaps() const
+        const NBT::Value& GetHeightmaps() const
         {
             return heightmaps;
         }
@@ -137,7 +137,7 @@ namespace ProtocolCraft
             return buffer;
         }
 
-        const std::vector<NBT>& GetBlockEntitiesTags() const
+        const std::vector<NBT::Value>& GetBlockEntitiesTags() const
         {
             return block_entities_tags;
         }
@@ -167,7 +167,7 @@ namespace ProtocolCraft
             available_sections = ReadVector<unsigned long long int>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 442
-            heightmaps = ReadData<NBT>(iter, length);
+            heightmaps = ReadData<NBT::Value>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 551
 #if PROTOCOL_VERSION < 755
@@ -193,7 +193,7 @@ namespace ProtocolCraft
 #endif
 #endif
             buffer = ReadVector<unsigned char>(iter, length);
-            block_entities_tags = ReadVector<NBT>(iter, length);
+            block_entities_tags = ReadVector<NBT::Value>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -212,7 +212,7 @@ namespace ProtocolCraft
             WriteVector<unsigned long long int>(available_sections, container);
 #endif
 #if PROTOCOL_VERSION > 442
-            WriteData<NBT>(heightmaps, container);
+            WriteData<NBT::Value>(heightmaps, container);
 #endif
 #if PROTOCOL_VERSION > 551
 #if PROTOCOL_VERSION < 755
@@ -237,7 +237,7 @@ namespace ProtocolCraft
 #endif
 #endif
             WriteVector<unsigned char>(buffer, container);
-            WriteVector<NBT>(block_entities_tags, container);
+            WriteVector<NBT::Value>(block_entities_tags, container);
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -283,13 +283,13 @@ namespace ProtocolCraft
         std::vector<unsigned long long int> available_sections;
 #endif
 #if PROTOCOL_VERSION > 442
-        NBT heightmaps;
+        NBT::Value heightmaps;
 #endif
 #if PROTOCOL_VERSION > 551
         std::vector<int> biomes;
 #endif
         std::vector<unsigned char> buffer;
-        std::vector<NBT> block_entities_tags;
+        std::vector<NBT::Value> block_entities_tags;
 #if PROTOCOL_VERSION < 755
         bool full_chunk;
 #endif

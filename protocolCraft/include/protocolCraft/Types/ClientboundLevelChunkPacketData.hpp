@@ -15,7 +15,7 @@ namespace ProtocolCraft
 
         }
 
-        void SetHeightmaps(const NBT& heightmaps_)
+        void SetHeightmaps(const NBT::Value& heightmaps_)
         {
             heightmaps = heightmaps_;
         }
@@ -31,7 +31,7 @@ namespace ProtocolCraft
         }
 
 
-        const NBT& GetHeightmaps() const
+        const NBT::Value& GetHeightmaps() const
         {
             return heightmaps;
         }
@@ -49,14 +49,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            heightmaps = ReadData<NBT>(iter, length);
+            heightmaps = ReadData<NBT::Value>(iter, length);
             buffer = ReadVector<unsigned char>(iter, length);
             block_entities_data = ReadVector<BlockEntityInfo>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            WriteData<NBT>(heightmaps, container);
+            WriteData<NBT::Value>(heightmaps, container);
             WriteVector<unsigned char>(buffer, container);
             WriteVector<BlockEntityInfo>(block_entities_data, container);
         }
@@ -73,7 +73,7 @@ namespace ProtocolCraft
         }
 
     private:
-        NBT heightmaps;
+        NBT::Value heightmaps;
         std::vector<unsigned char> buffer;
         std::vector<BlockEntityInfo> block_entities_data;
     };

@@ -44,7 +44,7 @@ namespace ProtocolCraft
             transaction_id = transaction_id_;
         }
 
-        void SetTag(const NBT& tag_)
+        void SetTag(const NBT::Value& tag_)
         {
             tag = tag_;
         }
@@ -55,7 +55,7 @@ namespace ProtocolCraft
             return transaction_id;
         }
 
-        const NBT& GetTag() const
+        const NBT::Value& GetTag() const
         {
             return tag;
         }
@@ -65,13 +65,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             transaction_id = ReadData<VarInt>(iter, length);
-            tag = ReadData<NBT>(iter, length);
+            tag = ReadData<NBT::Value>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(transaction_id, container);
-            WriteData<NBT>(tag, container);
+            WriteData<NBT::Value>(tag, container);
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -86,7 +86,7 @@ namespace ProtocolCraft
 
     private:
         int transaction_id;
-        NBT tag;
+        NBT::Value tag;
 
     };
 } //ProtocolCraft

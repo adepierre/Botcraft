@@ -102,11 +102,11 @@ namespace ProtocolCraft
                 present = false;
                 item_id = -1;
 #endif
-                nbt = NBT();
+                nbt = NBT::Value();
             }
         }
 
-        void SetNBT(const NBT& nbt_)
+        void SetNBT(const NBT::Value& nbt_)
         {
             nbt = nbt_;
         }
@@ -143,7 +143,7 @@ namespace ProtocolCraft
             return item_count;
         }
 
-        const NBT& GetNBT() const
+        const NBT::Value& GetNBT() const
         {
             return nbt;
         }
@@ -178,7 +178,7 @@ namespace ProtocolCraft
             item_id = ReadData<VarInt>(iter, length);
             item_count = ReadData<char>(iter, length);
 #endif
-            nbt = ReadData<NBT>(iter, length);
+            nbt = ReadData<NBT::Value>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -207,7 +207,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(item_id, container);
             WriteData<char>(item_count, container);
 #endif
-            WriteData<NBT>(nbt, container);
+            WriteData<NBT::Value>(nbt, container);
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -257,6 +257,6 @@ namespace ProtocolCraft
         short item_id;
 #endif
         char item_count;
-        NBT nbt;
+        NBT::Value nbt;
     };
 } // ProtocolCraft

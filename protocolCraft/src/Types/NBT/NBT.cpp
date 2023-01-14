@@ -1,89 +1,54 @@
+#include <iterator>
+#include <fstream>
+
 #include "protocolCraft/Types/NBT/NBT.hpp"
 
 namespace ProtocolCraft
 {
-    NBT::NBT()
+    namespace NBT
     {
-        has_data = false;
-    }
-
-    NBT::NBT(const NBT& nbt)
-    {
-        root_tag = nbt.root_tag;
-        root_name = nbt.root_name;
-        has_data = nbt.has_data;
-    }
-
-    NBT::~NBT()
-    {
-
-    }
-
-    const TagCompound& NBT::GetRoot() const
-    {
-        return root_tag;
-    }
-
-    void NBT::ReadImpl(ReadIterator &iterator, size_t &length)
-    {
-        // Read type
-        const TagType type = static_cast<TagType>(ReadData<char>(iterator, length));
-
-        // No data to read
-        if (type == TagType::End)
+        Value::Value()
         {
-            has_data = false;
-            return;
+
         }
 
-        if (type != TagType::Compound)
+        Value::~Value()
         {
-            throw(std::runtime_error("Error reading NBT, not starting with compound"));
+
         }
 
-        // Read name size
-        const unsigned short name_size = ReadData<unsigned short>(iterator, length);
-
-        // Read name
-        root_name = ReadRawString(iterator, length, name_size);
-
-        root_tag = ReadData<TagCompound>(iterator, length);
-        has_data = true;
-    }
-
-    void NBT::WriteImpl(WriteContainer &container) const
-    {
-        if (has_data)
+        bool Value::HasData() const
         {
-            WriteData<char>(static_cast<char>(TagType::Compound), container);
-            WriteData<unsigned short>(static_cast<unsigned short>(root_name.size()), container);
-            WriteRawString(root_name, container);
-            WriteData<TagCompound>(root_tag, container);
+            return !is<TagEnd>();
         }
-        else
+
+        std::istream& operator>>(std::istream& is, Value& v)
         {
-            WriteData<char>(static_cast<char>(TagType::End), container);
+            std::vector<unsigned char> file_content = std::vector<unsigned char>(
+                std::istream_iterator<unsigned char>(is),
+                std::istream_iterator<unsigned char>()
+            );
+            ReadIterator iter = file_content.begin();
+            size_t length = file_content.size();
+
+            v = ReadData<Value>(iter, length);
+
+            return is;
         }
-    }
 
-    Json::Value NBT::SerializeImpl() const
-    {
-        Json::Value output;
+        void Value::ReadImpl(ReadIterator& iter, size_t& length)
+        {
+            Tag::ReadImpl(iter, length);
 
-        output["type"] = "NBT";
-        output["name"] = root_name;
-        output["content"] = root_tag;
+            if (is<TagEnd>())
+            {
+                return;
+            }
 
-        return output;
-    }
-
-    const std::shared_ptr<Tag> NBT::GetTag(const std::string &s) const
-    {
-        return root_tag.GetValue(s);
-    }
-        
-    const bool NBT::HasData() const
-    {
-        return has_data;
+            if (!is<TagCompound>())
+            {
+                throw std::runtime_error("Error reading NBT value, not starting with compound");
+            }
+        }
     }
 }

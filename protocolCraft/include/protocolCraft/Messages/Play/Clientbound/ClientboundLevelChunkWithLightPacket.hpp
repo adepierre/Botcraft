@@ -2,7 +2,6 @@
 
 #if PROTOCOL_VERSION > 756
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Types/ClientboundLevelChunkPacketData.hpp"
 #include "protocolCraft/Types/ClientboundLightUpdatePacketData.hpp"
 

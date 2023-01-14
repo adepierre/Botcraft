@@ -270,19 +270,6 @@ set(protocolCraft_PUBLIC_HDR
     
     include/protocolCraft/Types/NBT/NBT.hpp
     include/protocolCraft/Types/NBT/Tag.hpp
-    include/protocolCraft/Types/NBT/TagByte.hpp
-    include/protocolCraft/Types/NBT/TagByteArray.hpp
-    include/protocolCraft/Types/NBT/TagCompound.hpp
-    include/protocolCraft/Types/NBT/TagDouble.hpp
-    include/protocolCraft/Types/NBT/TagEnd.hpp
-    include/protocolCraft/Types/NBT/TagFloat.hpp
-    include/protocolCraft/Types/NBT/TagInt.hpp
-    include/protocolCraft/Types/NBT/TagIntArray.hpp
-    include/protocolCraft/Types/NBT/TagList.hpp
-    include/protocolCraft/Types/NBT/TagLong.hpp
-    include/protocolCraft/Types/NBT/TagLongArray.hpp    
-    include/protocolCraft/Types/NBT/TagShort.hpp
-    include/protocolCraft/Types/NBT/TagString.hpp
     
     include/protocolCraft/Types/Particles/BlockcrackParticle.hpp
     include/protocolCraft/Types/Particles/BlockdustParticle.hpp
@@ -322,6 +309,7 @@ set(protocolCraft_PUBLIC_HDR
     
     include/protocolCraft/Utilities/TupleCat.hpp
     include/protocolCraft/Utilities/Json.hpp
+    include/protocolCraft/Utilities/RecursiveWrapper.hpp
 )
 
 set(protocolCraft_SRC 
@@ -335,19 +323,6 @@ set(protocolCraft_SRC
     
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp
-    src/Types/NBT/TagByte.cpp
-    src/Types/NBT/TagByteArray.cpp
-    src/Types/NBT/TagCompound.cpp
-    src/Types/NBT/TagDouble.cpp
-    src/Types/NBT/TagEnd.cpp
-    src/Types/NBT/TagFloat.cpp
-    src/Types/NBT/TagInt.cpp
-    src/Types/NBT/TagIntArray.cpp
-    src/Types/NBT/TagList.cpp
-    src/Types/NBT/TagLong.cpp
-    src/Types/NBT/TagLongArray.cpp
-    src/Types/NBT/TagShort.cpp
-    src/Types/NBT/TagString.cpp
     
     src/Types/Particles/BlockcrackParticle.cpp
     src/Types/Particles/BlockdustParticle.cpp

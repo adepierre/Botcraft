@@ -58,7 +58,7 @@ namespace ProtocolCraft
         }
 #endif
 
-        void SetTag(const NBT& tag_)
+        void SetTag(const NBT::Value& tag_)
         {
             tag = tag_;
         }
@@ -80,7 +80,7 @@ namespace ProtocolCraft
         }
 #endif
 
-        const NBT& GetTag() const
+        const NBT::Value& GetTag() const
         {
             return tag;
         }
@@ -94,7 +94,7 @@ namespace ProtocolCraft
 #else
             type = ReadData<VarInt>(iter, length);
 #endif
-            tag = ReadData<NBT>(iter, length);
+            tag = ReadData<NBT::Value>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -105,7 +105,7 @@ namespace ProtocolCraft
 #else
             WriteData<VarInt>(type, container);
 #endif
-            WriteData<NBT>(tag, container);
+            WriteData<NBT::Value>(tag, container);
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -126,6 +126,6 @@ namespace ProtocolCraft
 #else
         int type;
 #endif
-        NBT tag;
+        NBT::Value tag;
     };
 } //ProtocolCraft

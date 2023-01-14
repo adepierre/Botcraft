@@ -1,31 +1,24 @@
 #pragma once
-
 #include "protocolCraft/NetworkType.hpp"
-#include "protocolCraft/Types/NBT/TagCompound.hpp"
+#include "protocolCraft/Types/NBT/Tag.hpp"
 
 namespace ProtocolCraft
 {
-    class NBT : public NetworkType
+    namespace NBT
     {
-    public:
-        NBT();
-        NBT(const NBT& nbt);
-        virtual ~NBT() override;
+        class Value : public Tag
+        {
+        public:
+            Value();
+            virtual ~Value() override;
 
-        const TagCompound& GetRoot() const;
-        const std::shared_ptr<Tag> GetTag(const std::string &s) const;
-        const bool HasData() const;
+            bool HasData() const;
 
-        // TODO: add methods to deal with files // compression?
+            // TODO: add methods to deal with compressed files?
+            friend std::istream& operator>>(std::istream& is, Value& v);
 
-        virtual void ReadImpl(ReadIterator &iterator, size_t &length) override;
-        virtual void WriteImpl(WriteContainer &container) const override;
-        virtual Json::Value SerializeImpl() const override;
-
-
-    private:
-        TagCompound root_tag;
-        std::string root_name;
-        bool has_data;
-    };
+        protected:
+            virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
+        };
+    }
 }
