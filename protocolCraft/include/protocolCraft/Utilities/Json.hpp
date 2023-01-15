@@ -45,6 +45,7 @@ namespace ProtocolCraft
         {
         public:
             Value(std::nullptr_t = nullptr);
+            Value(std::string_view s);
             Value(const std::string& s);
             Value(std::string&& s);
             Value(const char* s);

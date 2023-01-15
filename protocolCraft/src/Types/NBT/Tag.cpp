@@ -27,7 +27,7 @@ namespace ProtocolCraft
         void WriteNBTString(const std::string& s, WriteContainer& container);
 
         template<typename T>
-        constexpr std::string GetTagName()
+        constexpr std::string_view GetTagName()
         {
             if constexpr (std::is_same_v<T, TagEnd>)
             {
@@ -81,10 +81,8 @@ namespace ProtocolCraft
             {
                 return "TagLongArray";
             }
-            else
-            {
-                static_assert(false, "Trying to get name of an unvalid NBT tag");
-            }
+
+            return "Unknown tag";
         }
 
 
@@ -395,7 +393,7 @@ namespace ProtocolCraft
                     }
                     else
                     {
-                        WriteVector<T::value_type, int>(arg, container);
+                        WriteVector<typename T::value_type, int>(arg, container);
                     }
                 }, vals);
         }

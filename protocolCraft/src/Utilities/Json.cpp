@@ -26,6 +26,11 @@ namespace ProtocolCraft
 
         }
 
+        Value::Value(std::string_view s) : val(std::string(s))
+        {
+
+        }
+
         Value::Value(const std::string& s) : val(s)
         {
 
