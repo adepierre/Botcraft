@@ -851,8 +851,8 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 756 && PROTOCOL_VERSION < 759
-        dimension_height[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("height"))->GetValue();
-        dimension_min_y[current_dimension] = std::dynamic_pointer_cast<ProtocolCraft::TagInt>(msg.GetDimensionType().GetTag("min_y"))->GetValue();
+        dimension_height[current_dimension] = msg.GetDimensionType()["height"].get<int>();
+        dimension_min_y[current_dimension] = msg.GetDimensionType()["min_y"].get<int>();
 #endif
     }
 

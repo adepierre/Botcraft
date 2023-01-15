@@ -490,7 +490,7 @@ namespace Botcraft
         }
 
         //Load all the blockstates from JSON file
-        for (const auto& element : json.get_object())
+        for (const auto& element : json.get_array())
         {
             const std::string& blockstate_name = element["name"].get_string();
 
@@ -509,7 +509,7 @@ namespace Botcraft
 
             if (element.contains("id") && element["id"].is_number())
             {
-                props.id = element["id"]).get_number<int>();
+                props.id = element["id"].get_number<int>();
             }
 
             const std::string& render = rendering[blockstate_name];

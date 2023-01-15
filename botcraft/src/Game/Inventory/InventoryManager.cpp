@@ -451,7 +451,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 754
         transaction->SetCarriedItem(carried_item);
         transaction->SetChangedSlots(changed_slots);
+#if PROTOCOL_VERSION > 755
         transaction->SetStateId(window->GetStateId());
+#endif
 #else
         transaction->SetItemStack(window->GetSlot(transaction->GetSlotNum()));
         output.changed_slots = changed_slots;
