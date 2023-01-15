@@ -101,7 +101,7 @@ jobs:
           path: ${{ runner.workspace }}/build/version.txt
           retention-days: 1
 
-  update_latest:
+  upload-artifacts:
     runs-on: ubuntu-latest
     needs: build
     steps:
