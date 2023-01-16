@@ -61,11 +61,12 @@ namespace Botcraft
 
     Status ClickSlotInContainerBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
                "ClickSlotInContainer.container_id",
                "ClickSlotInContainer.slot_id",
                "ClickSlotInContainer.click_type",
-               "ClickSlotInContainer.button_num" };
+               "ClickSlotInContainer.button_num"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -106,10 +107,11 @@ namespace Botcraft
 
     Status SwapItemsInContainerBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
                "SwapItemsInContainer.container_id",
                "SwapItemsInContainer.first_slot",
-               "SwapItemsInContainer.second_slot" };
+               "SwapItemsInContainer.second_slot"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -157,10 +159,11 @@ namespace Botcraft
 
     Status DropItemsFromContainerBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
                "DropItemsFromContainer.container_id",
                "DropItemsFromContainer.slot_id",
-               "DropItemsFromContainer.num_to_keep" };
+               "DropItemsFromContainer.num_to_keep"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -203,10 +206,11 @@ namespace Botcraft
 
     Status PutOneItemInContainerSlotBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
                "PutOneItemInContainerSlot.container_id",
                "PutOneItemInContainerSlot.source_slot",
-               "PutOneItemInContainerSlot.destination_slot" };
+               "PutOneItemInContainerSlot.destination_slot"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -272,8 +276,10 @@ namespace Botcraft
 
     Status SetItemInHandBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-            "SetItemInHand.item_name", "SetItemInHand.hand" };
+        constexpr std::array variable_names = {
+            "SetItemInHand.item_name",
+            "SetItemInHand.hand"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -476,8 +482,13 @@ namespace Botcraft
 
     Status PlaceBlockBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-               "PlaceBlock.item_name", "PlaceBlock.pos", "PlaceBlock.face", "PlaceBlock.wait_confirmation", "PlaceBlock.allow_midair_placing" };
+        constexpr std::array variable_names = {
+               "PlaceBlock.item_name",
+               "PlaceBlock.pos",
+               "PlaceBlock.face",
+               "PlaceBlock.wait_confirmation",
+               "PlaceBlock.allow_midair_placing"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -537,8 +548,10 @@ namespace Botcraft
 
     Status EatBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-               "Eat.food_name", "Eat.wait_confirmation" };
+        constexpr std::array variable_names = {
+               "Eat.food_name",
+               "Eat.wait_confirmation"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -579,8 +592,9 @@ namespace Botcraft
 
     Status OpenContainerBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-               "OpenContainer.pos" };
+        constexpr std::array variable_names = {
+               "OpenContainer.pos"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -615,8 +629,9 @@ namespace Botcraft
 
     Status CloseContainerBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-               "CloseContainer.container_id" };
+        constexpr std::array variable_names = {
+               "CloseContainer.container_id"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -646,8 +661,9 @@ namespace Botcraft
 
     Status LogInventoryContentBlackboard(BehaviourClient& client)
     {        
-        const std::vector<std::string> variable_names = {
-               "LogInventoryContent.level" };
+        constexpr std::array variable_names = {
+               "LogInventoryContent.level"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -850,8 +866,11 @@ namespace Botcraft
 
     Status TradeBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-               "Trade.item_id", "Trade.buy", "Trade.trade_id"};
+        constexpr std::array variable_names = {
+               "Trade.item_id",
+               "Trade.buy",
+               "Trade.trade_id"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -880,8 +899,11 @@ namespace Botcraft
 
     Status TradeNameBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-               "TradeName.item_name", "TradeName.buy", "TradeName.trade_id" };
+        constexpr std::array variable_names = {
+               "TradeName.item_name",
+               "TradeName.buy",
+               "TradeName.trade_id"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -1134,7 +1156,7 @@ namespace Botcraft
 
     Status CraftBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
                "Craft.inputs",
                "Craft.allow_inventory_craft"
         };
@@ -1178,7 +1200,7 @@ namespace Botcraft
 
     Status CraftNamedBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
                "CraftNamed.inputs",
                "CraftNamed.allow_inventory_craft"
         };
@@ -1233,7 +1255,7 @@ namespace Botcraft
 
     Status HasItemInInventoryBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
                "HasItemInInventory.item_name",
                "HasItemInInventory.quantity"
         };

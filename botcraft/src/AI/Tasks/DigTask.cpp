@@ -215,7 +215,7 @@ namespace Botcraft
 
     Status DigBlackboard(BehaviourClient& c)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
             "Dig.pos",
             "Dig.send_swing",
             "Dig.face"

@@ -73,7 +73,7 @@ namespace Botcraft
     template<typename T>
     Status SetBlackboardDataBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
             "SetBlackboardData.key" , "SetBlackboardData.data" };
 
         Blackboard& blackboard = client.GetBlackboard();

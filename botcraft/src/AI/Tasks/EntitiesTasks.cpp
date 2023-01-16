@@ -83,10 +83,10 @@ namespace Botcraft
 
     Status InteractEntityBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
             "InteractEntity.entity_id",
-            "InteractEntity.hand", 
-            "InteractEntity.swing" 
+            "InteractEntity.hand",
+            "InteractEntity.swing"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
