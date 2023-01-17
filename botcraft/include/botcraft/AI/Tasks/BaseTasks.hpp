@@ -1,7 +1,7 @@
 #pragma once
 
 #include "botcraft/AI/BehaviourClient.hpp"
-#include "botcraft/AI/BehaviourTree.hpp"
+#include "botcraft/AI/Status.hpp"
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/Vector3.hpp"
 

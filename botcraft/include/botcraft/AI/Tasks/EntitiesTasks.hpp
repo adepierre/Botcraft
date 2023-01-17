@@ -1,11 +1,11 @@
 #pragma once
 
+#include "botcraft/AI/Status.hpp"
 #include "botcraft/Game/Enums.hpp"
 
 namespace Botcraft
 {
     class BehaviourClient;
-    enum class Status;
 
     /// @brief Interact with a given entity. If too far, will try to pathfind to it.
     /// @param client The client performing the action

@@ -4,8 +4,8 @@
 #include <random>
 #include <chrono>
 
-#include "botcraft/AI/BehaviourTree.hpp"
 #include "botcraft/AI/BehaviourClient.hpp"
+#include "botcraft/AI/Status.hpp"
 
 /// @brief Check condition
 /// @param client The client performing the action

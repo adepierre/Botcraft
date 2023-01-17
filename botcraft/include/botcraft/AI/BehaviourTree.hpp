@@ -4,6 +4,8 @@
 #include <memory>
 #include <functional>
 
+#include "botcraft/AI/Status.hpp"
+
 // A behaviour tree implementation following this blog article
 // https://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
 // If you want the (more complete) original post rather than the new one:
@@ -14,12 +16,6 @@
 
 namespace Botcraft
 {
-    enum class Status
-    {
-        Failure,
-        Success
-    };
-
     template<class Context>
     class Node
     {

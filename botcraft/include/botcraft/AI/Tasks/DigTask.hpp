@@ -1,12 +1,12 @@
 #pragma once
 
+#include "botcraft/AI/Status.hpp"
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/Enums.hpp"
 
 namespace Botcraft
 {
     class BehaviourClient;
-    enum class Status;
 
     /// @brief Dig a block at a given location. If too far, will try to pathfind toward it
     /// @param c The client performing the action

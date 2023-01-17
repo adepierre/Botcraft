@@ -1,11 +1,12 @@
 project(botcraft)
 
 set(botcraft_PUBLIC_HDR
-    include/botcraft/AI/TemplatedBehaviourClient.hpp
     include/botcraft/AI/BehaviourClient.hpp
     include/botcraft/AI/BehaviourTree.hpp
     include/botcraft/AI/Blackboard.hpp
     include/botcraft/AI/SimpleBehaviourClient.hpp
+    include/botcraft/AI/Status.hpp
+    include/botcraft/AI/TemplatedBehaviourClient.hpp
     
     include/botcraft/AI/Tasks/AllTasks.hpp
     include/botcraft/AI/Tasks/BaseTasks.hpp
