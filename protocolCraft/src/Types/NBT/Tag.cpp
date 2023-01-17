@@ -493,6 +493,7 @@ namespace ProtocolCraft
         void WriteNBTString(const std::string& s, WriteContainer& container)
         {
             WriteData<unsigned short>(static_cast<unsigned short>(s.size()), container);
+            WriteRawString(s, container);
         }
     }
 }
