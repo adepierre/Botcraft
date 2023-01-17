@@ -253,36 +253,24 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
         .build();
 
     auto completion_tree = Builder<SimpleBehaviourClient>()
-        .succeeder()
-            .sequence()
-                .leaf(CheckCompletion)
-                .leaf(WarnConsole, "Task fully completed!")
-                .repeater(0)
-                    .inverter()
-                        .leaf(Yield)
-                    .end()
-                .end()
-            .end()
+        .succeeder().sequence()
+            .leaf(CheckCompletion)
+            .leaf(WarnConsole, "Task fully completed!")
+            .repeater(0).inverter().leaf(Yield)
         .end()
         .build();
     
     auto disconnect_subtree = Builder<SimpleBehaviourClient>()
         .sequence()
             .leaf(Disconnect)
-            .repeater(0)
-                .inverter()
-                    .leaf(Yield)
-                .end()
-            .end()
+            .repeater(0).inverter().leaf(Yield)
         .end()
         .build();
 
     auto eat_subtree = Builder<SimpleBehaviourClient>()
         .selector()
             // If hungry
-            .inverter()
-                .leaf(IsHungry)
-            .end()
+            .inverter().leaf(IsHungry)
             // Get some food, then eat
             .sequence()
                 .selector()
@@ -295,9 +283,7 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
                 .end()
                 .selector()
                     .leaf(Eat, food_name, true)
-                    .inverter()
-                        .leaf(WarnConsole, "Can't eat!")
-                    .end()
+                    .inverter().leaf(WarnConsole, "Can't eat!")
                     // If we are here, hungry and can't eat --> Disconnect
                     .tree(disconnect_subtree)
                 .end()
@@ -313,22 +299,14 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
             .sequence()
                 .selector()
                     .leaf(SwapChestsInventory, food_name, true)
-                    .inverter()
-                        .leaf(WarnConsole, "Can't swap with chests, will wait before retrying.")
-                    .end()
+                    .inverter().leaf(WarnConsole, "Can't swap with chests, will wait before retrying.")
                     // If the previous task failed, maybe chests were just
                     // not loaded yet, sleep for ~1 second
-                    .inverter()
-                        .repeater(100)
-                            .leaf(Yield)
-                        .end()
-                    .end()
+                    .inverter().repeater(100).leaf(Yield)
                 .end()
                 .selector()
                     .leaf(GetBlocksAvailableInInventory)
-                    .inverter()
-                        .leaf(WarnConsole, "No more block in chests, I will stop here.")
-                    .end()
+                    .inverter().leaf(WarnConsole, "No more block in chests, I will stop here.")
                     .tree(disconnect_subtree)
                 .end()
             .end()
@@ -338,20 +316,14 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
     auto placeblock_tree = Builder<SimpleBehaviourClient>()
         .selector()
             // Try to perform a task 5 times
-            .decorator<RepeatUntilSuccess<SimpleBehaviourClient>>(5)
-                .selector()
-                    .sequence()
-                        .leaf(FindNextTask)
-                        .leaf(ExecuteNextTask)
-                    .end()
-                    // If the previous task failed, sleep for ~1 second
-                    // before retrying to get an action
-                    .inverter()
-                        .repeater(100)
-                            .leaf(Yield)
-                        .end()
-                    .end()
+            .decorator<RepeatUntilSuccess<SimpleBehaviourClient>>(5).selector()
+                .sequence()
+                    .leaf(FindNextTask)
+                    .leaf(ExecuteNextTask)
                 .end()
+                // If the previous task failed, sleep for ~1 second
+                // before retrying to get an action
+                .inverter().repeater(100).leaf(Yield)
             .end()
             // If failed 5 times, put all blocks in chests to
             // randomize available blocks for next time

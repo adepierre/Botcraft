@@ -379,84 +379,79 @@ namespace Botcraft
 
         // To add a leaf
         template <typename... Args>
-        DecoratorBuilder leaf(Args... args)
+        Parent& leaf(Args... args)
         {
             auto child = std::make_shared<Leaf<Context> >((args)...);
             node->SetChild(child);
-            return *this;
+            return *parent;
         }
 
         // To add a tree
-        DecoratorBuilder tree(std::shared_ptr<BehaviourTree<Context> > arg)
+        Parent& tree(std::shared_ptr<BehaviourTree<Context> > arg)
         {
             node->SetChild(arg);
-            return *this;
+            return *parent;
         }
 
 
         // Composites
         // Custom function to add a sequence
-        CompositeBuilder<DecoratorBuilder, Context> sequence()
+        CompositeBuilder<Parent, Context> sequence()
         {
             auto child = std::make_shared<Sequence<Context>>();
             node->SetChild(child);
-            return CompositeBuilder<DecoratorBuilder, Context>(this, (Sequence<Context>*)child.get());
+            return CompositeBuilder<Parent, Context>(parent, (Sequence<Context>*)child.get());
         }
 
         // Custom function to add a selector
-        CompositeBuilder<DecoratorBuilder, Context> selector()
+        CompositeBuilder<Parent, Context> selector()
         {
             auto child = std::make_shared<Selector<Context>>();
             node->SetChild(child);
-            return CompositeBuilder<DecoratorBuilder, Context>(this, (Selector<Context>*)child.get());
+            return CompositeBuilder<Parent, Context>(parent, (Selector<Context>*)child.get());
         }
 
         // To add any other type of composite
         template <class CompositeType, class... Args>
-        CompositeBuilder<DecoratorBuilder, Context> composite(Args... args)
+        CompositeBuilder<Parent, Context> composite(Args... args)
         {
             auto child = std::make_shared<CompositeType>((args)...);
             node->SetChild(child);
-            return CompositeBuilder<DecoratorBuilder, Context>(this, (CompositeType*)child.get());
+            return CompositeBuilder<Parent, Context>(parent, (CompositeType*)child.get());
         }
 
         // Decorator
         // Inverter
-        DecoratorBuilder<DecoratorBuilder, Context> inverter()
+        DecoratorBuilder<Parent, Context> inverter()
         {
             auto child = std::make_shared<Inverter<Context>>();
             node->SetChild(child);
-            return DecoratorBuilder<DecoratorBuilder, Context>(this, (Inverter<Context>*)child.get());
+            return DecoratorBuilder<Parent, Context>(parent, (Inverter<Context>*)child.get());
         }
 
         // Succeeder
-        DecoratorBuilder<DecoratorBuilder, Context> succeeder()
+        DecoratorBuilder<Parent, Context> succeeder()
         {
             auto child = std::make_shared<Succeeder<Context>>();
             node->SetChild(child);
-            return DecoratorBuilder<DecoratorBuilder, Context>(this, (Succeeder<Context>*)child.get());
+            return DecoratorBuilder<Parent, Context>(parent, (Succeeder<Context>*)child.get());
         }
 
         // Repeater
-        DecoratorBuilder<DecoratorBuilder, Context> repeater(const size_t n)
+        DecoratorBuilder<Parent, Context> repeater(const size_t n)
         {
             auto child = std::make_shared<Repeater<Context>>(n);
             node->SetChild(child);
-            return DecoratorBuilder<DecoratorBuilder, Context>(this, (Repeater<Context>*)child.get());
+            return DecoratorBuilder<Parent, Context>(parent, (Repeater<Context>*)child.get());
         }
 
         // To add any other type of decorator
         template <class DecoratorType, class... Args>
-        DecoratorBuilder<DecoratorBuilder, Context> decorator(Args... args)
+        DecoratorBuilder<Parent, Context> decorator(Args... args)
         {
             auto child = std::make_shared<DecoratorType>((args)...);
             node->SetChild(child);
-            return DecoratorBuilder<DecoratorBuilder, Context>(this, (DecoratorType*)child.get());
-        }
-
-        Parent& end()
-        {
-            return *parent;
+            return DecoratorBuilder<Parent, Context>(parent, (DecoratorType*)child.get());
         }
 
     private:
