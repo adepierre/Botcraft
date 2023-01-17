@@ -25,6 +25,16 @@ TEST_CASE("Empty NBT")
         CHECK_FALSE(n.HasData());
         CHECK_THROWS(n["a"]);
     }
+
+    SECTION("Serialization")
+    {
+        std::vector<unsigned char> serialized;
+        serialized.reserve(data.size());
+
+        WriteData<NBT::Value>(n, serialized);
+
+        CHECK(serialized == data);
+    }
 }
 
 TEST_CASE("Tag short only")
@@ -83,6 +93,13 @@ TEST_CASE("test nbt")
     CHECK(nbt.GetName() == "hello world");
     CHECK(nbt["name"].is<NBT::TagString>());
     CHECK(nbt["name"].get<NBT::TagString>() == "Bananrama");
+
+    std::vector<unsigned char> serialized;
+    serialized.reserve(data.size());
+
+    WriteData<NBT::Value>(nbt, serialized);
+
+    CHECK(serialized == data);
 }
 
 TEST_CASE("Uncompressed bigtest nbt")
