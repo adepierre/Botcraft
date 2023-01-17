@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include <botcraft/AI/BehaviourTree.hpp>
 
@@ -79,7 +79,7 @@ class CustomDecorator : public Decorator<Context>
 public:
     virtual const Status Tick(Context& context) const override
     {
-        this->child->Tick(context);
+        this->TickChild(context);
 
         return Status::Failure;
     }
@@ -116,6 +116,17 @@ TEST_CASE("Decorator")
         CHECK(i == 3);
         CHECK(tree->Tick(i) == Status::Failure);
         CHECK(i == 6);
+    }
+
+    SECTION("Empty")
+    {
+        auto tree = Builder<int>()
+            .repeater(3)
+            .end()
+            .build();
+
+        CHECK_FALSE(tree == nullptr);
+        CHECK_THROWS(tree->Tick(i));
     }
 
     SECTION("Succeeder")
@@ -185,10 +196,9 @@ class CustomComposite : public Composite<Context>
 public:
     virtual const Status Tick(Context& context) const override
     {
-        // Tick all children without checking their result
-        for (const auto& c: this->children)
+        for (size_t i = 0; i < GetNumChildren(); ++i)
         {
-            c->Tick(context);
+            this->TickChild(context, i);
         }
 
         return Status::Success;
@@ -319,4 +329,54 @@ TEST_CASE("Subtree")
     CHECK(i == 5);
     CHECK(tree->Tick(i) == Status::Success);
     CHECK(i == 10);
+}
+
+TEST_CASE("Exceptions")
+{
+    int i = 0;
+    SECTION("Anonymous")
+    {
+        auto tree = Builder<int>()
+            .sequence()
+                .selector()
+                    .leaf([](int& i) { i += 1; return Status::Failure; })
+                    .leaf([](int& i) { i += 1; return Status::Failure; })
+                    .leaf([](int& i) { i += 1; return Status::Failure; })
+                    .leaf([](int& i) { i += 1; return Status::Failure; })
+                    .leaf([](int& i) { i += 1; return Status::Success; })
+                .end()
+                .selector()
+                    .leaf([](int& i) { i += 1; return Status::Failure; })
+                    .leaf([](int& i) { i += 1; return Status::Failure; })
+                    .composite<CustomComposite<int>>()
+                        .leaf([](int& i) { i += 1; return Status::Failure; })
+                        .leaf([](int& i) { i += 1; return Status::Failure; })
+                        .leaf([](int& i) { i += 1; return Status::Failure; })
+                        .leaf([](int& i) { i += 1; throw std::runtime_error("Exception to catch"); return Status::Failure; })
+                    .end()
+                    .leaf([](int& i) { i += 1; return Status::Failure; })
+                    .leaf([](int& i) { i += 1; return Status::Success; })
+                .end()
+            .end()
+            .build();
+
+        CHECK_FALSE(tree == nullptr);
+        CHECK_THROWS(tree->Tick(i));
+        CHECK(i == 11);
+
+        try
+        {
+            tree->Tick(i);
+        }
+        catch (const std::exception& ex)
+        {
+            CHECK_THAT(ex.what(), Catch::Matchers::Equals(
+                std::string("In ") + typeid(BehaviourTree<int>).name() + '\n' +
+                "In " + typeid(Sequence<int>).name() + " while Ticking child 1\n" +
+                "In " + typeid(Selector<int>).name() + " while Ticking child 2\n" +
+                "In " + typeid(CustomComposite<int>).name() + " while Ticking child 3\n" +
+                "Exception to catch")
+            );
+        }
+    }
 }

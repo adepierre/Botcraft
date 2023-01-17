@@ -43,6 +43,37 @@ namespace Botcraft
         }
 
     protected:
+        size_t GetNumChildren() const
+        {
+            return children.size();
+        }
+
+        // Needs to be virtual so we can access derived class to fetch
+        // its real name and add it to exception message
+        virtual Status TickChild(Context& context, const size_t index) const
+        {
+            if (index >= children.size())
+            {
+                throw std::runtime_error(std::string("Out of bounds child ticking in ") + typeid(*this).name() + " at index " + std::to_string(index));
+            }
+
+            if (children[index] == nullptr)
+            {
+                throw std::runtime_error(std::string("Nullptr child in ") + typeid(*this).name() + " at index " + std::to_string(index));
+            }
+
+            try
+            {
+                return children[index]->Tick(context);
+            }
+            catch (const std::exception& ex)
+            {
+                throw std::runtime_error(std::string("In ") + typeid(*this).name() + " while Ticking child " + std::to_string(index) + "\n" +
+                    ex.what());
+            }
+        }
+
+    private:
         std::vector<std::shared_ptr<Node<Context>>> children;
     };
 
@@ -58,7 +89,27 @@ namespace Botcraft
             child = child_;
         }
 
-    protected:
+        // Needs to be virtual so we can access derived class to fetch
+        // its real name and add it to exception message
+        virtual Status TickChild(Context& context) const
+        {
+            if (child == nullptr)
+            {
+                throw std::runtime_error("Nullptr child in decorator");
+            }
+
+            try
+            {
+                return child->Tick(context);
+            }
+            catch (const std::exception& ex)
+            {
+                throw std::runtime_error(std::string("In ") + typeid(*this).name() + "\n" +
+                    ex.what());
+            }
+        }
+
+    private:
         std::shared_ptr<Node<Context>> child;
     };
 
@@ -101,9 +152,17 @@ namespace Botcraft
         {
             if (root == nullptr)
             {
-                return Status::Failure;
+                throw std::runtime_error(std::string("Nullptr tree when trying to tick ") + typeid(*this).name());
             }
-            return root->Tick(context);
+            try
+            {
+                return root->Tick(context);
+            }
+            catch (const std::exception& ex)
+            {
+                throw std::runtime_error(std::string("In ") + typeid(*this).name() + "\n" +
+                    ex.what());
+            }
         }
 
     private:
@@ -120,17 +179,11 @@ namespace Botcraft
     public:
         virtual const Status Tick(Context& context) const override
         {
-            auto it = this->children.begin();
-            while (it != this->children.end())
+            for (size_t i = 0; i < this->GetNumChildren(); ++i)
             {
-                Status child_status = (*it)->Tick(context);
-                switch (child_status)
+                if (this->TickChild(context, i) == Status::Failure)
                 {
-                case Status::Failure:
                     return Status::Failure;
-                case Status::Success:
-                    ++it;
-                    break;
                 }
             }
             // If we are here, all children succeeded
@@ -148,20 +201,14 @@ namespace Botcraft
     public:
         virtual const Status Tick(Context& context) const override
         {
-            auto it = this->children.begin();
-            while (it != this->children.end())
+            for (size_t i = 0; i < this->GetNumChildren(); ++i)
             {
-                Status child_status = (*it)->Tick(context);
-                switch (child_status)
+                if (this->TickChild(context, i) == Status::Success)
                 {
-                case Status::Failure:
-                    // Move to next child
-                    ++it;
-                    break;
-                case Status::Success:
                     return Status::Success;
                 }
             }
+
             // If we are here, all children failed
             return Status::Failure;
         }
@@ -179,17 +226,7 @@ namespace Botcraft
     public:
         virtual const Status Tick(Context& context) const override
         {
-            Status child_status = this->child->Tick(context);
-
-            switch (child_status)
-            {
-            case Status::Failure:
-                return Status::Success;
-            case Status::Success:
-                return Status::Failure;
-            default: // Never happens
-                return Status::Failure;
-            }
+            return this->TickChild(context) == Status::Failure ? Status::Success : Status::Failure;
         }
     };
 
@@ -203,8 +240,7 @@ namespace Botcraft
     public:
         virtual const Status Tick(Context& context) const override
         {
-            Status child_status = this->child->Tick(context);
-
+            this->TickChild(context);
             return Status::Success;
         }
     };
@@ -228,7 +264,7 @@ namespace Botcraft
             size_t counter = 0;
             while ((child_status == Status::Failure && n == 0) || counter < n)
             {
-                child_status = this->child->Tick(context);
+                child_status = this->TickChild(context);
                 counter += 1;
             }
             return Status::Success;
