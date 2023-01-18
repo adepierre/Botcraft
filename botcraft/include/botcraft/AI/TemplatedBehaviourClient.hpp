@@ -157,7 +157,7 @@ namespace Botcraft
                 }
                 catch (std::exception& e)
                 {
-                    LOG_ERROR("Exception caught during tree ticking: " << e.what() << ". Stopping behaviour.");
+                    LOG_ERROR("Exception caught during tree ticking:\n" << e.what() << "\nStopping behaviour.");
                     return;
                 }
                 catch (...)

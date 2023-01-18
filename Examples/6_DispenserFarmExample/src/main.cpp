@@ -113,20 +113,20 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .sequence()
                 .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
                 .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
-                .leaf(Botcraft::GoToBlackboard)
+                .leaf("go to buying position", Botcraft::GoToBlackboard)
                 .leaf(CopyRandomFromVectorBlackboardData<int>, blackboard_entity_location, "InteractEntity.entity_id")
                 .leaf(Botcraft::SetBlackboardData<bool>, "InteractEntity.swing", true)
-                .leaf(Botcraft::InteractEntityBlackboard)
+                .leaf("open trading interface", Botcraft::InteractEntityBlackboard)
                 .repeater(100).leaf(Botcraft::Yield)
                 .selector()
                     // If trading fail, we still want to close the container
-                    .leaf(Botcraft::TradeName, item_name, true, -1)
+                    .leaf("buy item", Botcraft::TradeName, item_name, true, -1)
                     .leaf([](Botcraft::SimpleBehaviourClient& c) { Botcraft::CloseContainer(c, -1); return Botcraft::Status::Failure;})
                 .end()
-                .leaf(Botcraft::CloseContainer, -1)
+                .leaf("close trading interface", Botcraft::CloseContainer, -1)
             .end()
         .end()
-        .build();
+        .build("buy " + item_name + " tree");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateRottenFleshEmeraldTree()
@@ -143,8 +143,8 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.rotten_flesh_shulker_position", "OpenContainer.pos")
                     .leaf(Botcraft::OpenContainerBlackboard)
                     .repeater(100).leaf(Botcraft::Yield)
-                    .succeeder().leaf(TakeFromChest, "minecraft:rotten_flesh", 64)
-                    .leaf(Botcraft::CloseContainer, -1)
+                    .succeeder().leaf("take rotten flesh", TakeFromChest, "minecraft:rotten_flesh", 64)
+                    .leaf("close rotten flesh container", Botcraft::CloseContainer, -1)
                 .end()
             .end()
             // Trade some rotten flesh
@@ -152,17 +152,17 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .leaf(Botcraft::HasItemInInventory, "minecraft:rotten_flesh", 32)
                 .leaf(CopyRandomFromVectorBlackboardData<int>, "DispenserFarmBot.cleric_id", "InteractEntity.entity_id")
                 .leaf(Botcraft::SetBlackboardData<bool>, "InteractEntity.swing", true)
-                .leaf(Botcraft::InteractEntityBlackboard)
+                .leaf("open trading interface", Botcraft::InteractEntityBlackboard)
                 .selector()
                     // If trading fail, we still want to close the container
-                    .leaf(Botcraft::TradeName, "minecraft:rotten_flesh", false, -1)
+                    .leaf("sell rotten flesh", Botcraft::TradeName, "minecraft:rotten_flesh", false, -1)
                     .leaf([](Botcraft::SimpleBehaviourClient& c) { Botcraft::CloseContainer(c, -1); return Botcraft::Status::Failure;})
                 .end()
-                .leaf(Botcraft::CloseContainer, -1)
+                .leaf("close trading interface", Botcraft::CloseContainer, -1)
                 .repeater(50).leaf(Botcraft::Yield)
             .end()
         .end()
-        .build();
+        .build("collect and sell rotten flesh");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateBonesEmeraldTree()
@@ -181,40 +181,40 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                     .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
                     .leaf(Botcraft::GoToBlackboard)
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.bones_shulker_position", "OpenContainer.pos")
-                    .leaf(Botcraft::OpenContainerBlackboard)
+                    .leaf("open bones container", Botcraft::OpenContainerBlackboard)
                     .repeater(100).leaf(Botcraft::Yield)
-                    .succeeder().leaf(TakeFromChest, "minecraft:bone", 32)
-                    .leaf(Botcraft::CloseContainer, -1)
+                    .succeeder().leaf("take bones", TakeFromChest, "minecraft:bone", 32)
+                    .leaf("close bones container", Botcraft::CloseContainer, -1)
                 .end()
             .end()
             // While we have at least one bone
             // Craft as many bone meal as possible
             .repeater(0).inverter().sequence()
                 .leaf(Botcraft::HasItemInInventory, "minecraft:bone", 1)
-                .leaf(Botcraft::CraftNamed, recipe_bone_meal, true)
+                .leaf("craft bone meal", Botcraft::CraftNamed, recipe_bone_meal, true)
             .end()
             // While we have at least one bone meal
             // Craft as many white dye as possible
             .repeater(0).inverter().sequence()
                 .leaf(Botcraft::HasItemInInventory, "minecraft:bone_meal", 1)
-                .leaf(Botcraft::CraftNamed, recipe_white_dye, true)
+                .leaf("craft white dye", Botcraft::CraftNamed, recipe_white_dye, true)
             .end()
             // While we have some white dye, sell them
             .repeater(0).inverter().sequence()
                 .leaf(Botcraft::HasItemInInventory, "minecraft:white_dye", 12)
                 .leaf(CopyRandomFromVectorBlackboardData<int>, "DispenserFarmBot.shepperd_id", "InteractEntity.entity_id")
                 .leaf(Botcraft::SetBlackboardData<bool>, "InteractEntity.swing", true)
-                .leaf(Botcraft::InteractEntityBlackboard)
+                .leaf("open trading interface", Botcraft::InteractEntityBlackboard)
                 .selector()
                     // If trading fail, we still want to close the container
-                    .leaf(Botcraft::TradeName, "minecraft:white_dye", false, -1)
+                    .leaf("sell white dye", Botcraft::TradeName, "minecraft:white_dye", false, -1)
                     .leaf([](Botcraft::SimpleBehaviourClient& c) { Botcraft::CloseContainer(c, -1); return Botcraft::Status::Failure;})
                 .end()
-                .leaf(Botcraft::CloseContainer, -1)
+                .leaf("close trading interface", Botcraft::CloseContainer, -1)
                 .repeater(50).leaf(Botcraft::Yield)
             .end()
         .end()
-        .build();
+        .build("collect and sell bones");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCropEmeraldTree(const std::string& item_name, const std::string& blackboard_crops_location)
@@ -225,27 +225,27 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
         // Collect crops if we don't have some
             .selector()
                 .leaf(Botcraft::HasItemInInventory, item_name, 64)
-                .leaf(CollectCropsAndReplant, blackboard_crops_location, item_name)
+                .leaf("collect crops and replant", CollectCropsAndReplant, blackboard_crops_location, item_name)
             .end()
             .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
             .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
-            .leaf(Botcraft::GoToBlackboard)
+            .leaf("go to selling position", Botcraft::GoToBlackboard)
         // Sell crops
             .repeater(0).inverter().sequence()
-                .leaf(Botcraft::HasItemInInventory, item_name, min_item_to_sell)
+                .leaf("check if enough crop to sell", Botcraft::HasItemInInventory, item_name, min_item_to_sell)
                 .leaf(CopyRandomFromVectorBlackboardData<int>, "DispenserFarmBot.farmer_id", "InteractEntity.entity_id")
                 .leaf(Botcraft::SetBlackboardData<bool>, "InteractEntity.swing", true)
-                .leaf(Botcraft::InteractEntityBlackboard)
+                .leaf("interact with villager", Botcraft::InteractEntityBlackboard)
                 .repeater(100).leaf(Botcraft::Yield)
                 .selector()
                     // If trading fail, we still want to close the container
-                    .leaf(Botcraft::TradeName, item_name, false, -1)
+                    .leaf("trade", Botcraft::TradeName, item_name, false, -1)
                     .leaf([](Botcraft::SimpleBehaviourClient& c) { Botcraft::CloseContainer(c, -1); return Botcraft::Status::Failure;})
                 .end()
-                .leaf(Botcraft::CloseContainer, -1)
+                .leaf("close trading interface", Botcraft::CloseContainer, -1)
             .end()
         .end()
-        .build();
+        .build("collect and sell " + item_name);
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateEatTree()
@@ -253,15 +253,15 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>()
         .selector()
             // If hungry
-            .inverter().leaf(Botcraft::IsHungry)
+            .inverter().leaf("check is hungry", Botcraft::IsHungry)
             // Go buy some food, then eat
             .sequence()
-                .leaf(Botcraft::HasItemInInventory, "minecraft:emerald", 3)
+                .leaf("check if has 3 emeralds in inventory", Botcraft::HasItemInInventory, "minecraft:emerald", 3)
                 .tree(CreateBuyTree("minecraft:golden_carrot", "DispenserFarmBot.farmer_id"))
-                .leaf(Botcraft::Eat, "minecraft:golden_carrot", true)
+                .leaf("eat", Botcraft::Eat, "minecraft:golden_carrot", true)
             .end()
         .end()
-        .build();
+        .build("eat");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCollectCobblestoneTree()
@@ -269,31 +269,31 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>()
         .selector()
             // If we already have engouh, don't enter the loop
-            .leaf(Botcraft::HasItemInInventory, "minecraft:cobblestone", 7)
+            .leaf("check if >=7 cobblestone in inventory", Botcraft::HasItemInInventory, "minecraft:cobblestone", 7)
             // Repeat 10 times (7 + 3 in case something goes wrong)
             .repeater(10).selector()
                 // If already 7 in inventory, no need to get more
-                .leaf(Botcraft::HasItemInInventory, "minecraft:cobblestone", 7)
+                .leaf("check if >=7 cobblestone in inventory", Botcraft::HasItemInInventory, "minecraft:cobblestone", 7)
                 .sequence()
                     // Get a pickaxe if don't have one already
                     .selector()
-                        .leaf(Botcraft::SetItemInHand, "minecraft:stone_pickaxe", Botcraft::Hand::Right)
+                        .leaf("set pickaxe in hand", Botcraft::SetItemInHand, "minecraft:stone_pickaxe", Botcraft::Hand::Right)
                         .sequence()
-                            .leaf(Botcraft::HasItemInInventory, "minecraft:emerald", 1)
+                            .leaf("check if has 1 emerald in inventory", Botcraft::HasItemInInventory, "minecraft:emerald", 1)
                             .tree(CreateBuyTree("minecraft:stone_pickaxe", "DispenserFarmBot.toolsmith_id"))
-                            .leaf(Botcraft::SetItemInHand, "minecraft:stone_pickaxe", Botcraft::Hand::Right)
+                            .leaf("set pick in hand", Botcraft::SetItemInHand, "minecraft:stone_pickaxe", Botcraft::Hand::Right)
                         .end()
                     .end()
                     // Go to the mining position
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.stone_standing_position", "GoTo.goal")
                     .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
-                    .leaf(Botcraft::GoToBlackboard)
+                    .leaf("go to mining position", Botcraft::GoToBlackboard)
                     // Get cobblestone
-                    .leaf(MineCobblestone)
+                    .leaf("mine cobblestone", MineCobblestone)
                 .end()
             .end()
         .end()
-        .build();
+        .build("collect cobblestone");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCraftDispenserTree()
@@ -313,14 +313,14 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
         .sequence()
             .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
             .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
-            .leaf(Botcraft::GoToBlackboard)
+            .leaf("go to crafting table", Botcraft::GoToBlackboard)
             .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.crafting_table_position", "OpenContainer.pos")
-            .leaf(Botcraft::OpenContainerBlackboard)
+            .leaf("open crafting table interface", Botcraft::OpenContainerBlackboard)
             .repeater(100).leaf(Botcraft::Yield)
-            .leaf(Botcraft::CraftNamed, dispenser_recipe, false)
-            .leaf(Botcraft::CloseContainer, -1)
+            .leaf("craft dispenser", Botcraft::CraftNamed, dispenser_recipe, false)
+            .leaf("close container", Botcraft::CloseContainer, -1)
             .selector()
-                .leaf(StoreDispenser)
+                .leaf("store dispenser", StoreDispenser)
                 // Stop all behaviour if output chest is potentially full
                 .sequence()
                     .leaf(Botcraft::Say, "Error trying to put dispenser in output chest, stopping behaviour...")
@@ -329,31 +329,31 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .end()
             .end()
         .end()
-        .build();
+        .build("craft dispenser");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCleanStorageTree()
 {
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>()
         .sequence()
-            .leaf(CleanChest, "DispenserFarmBot.bones_shulker_position", "minecraft:bone")
-            .leaf(CleanChest, "DispenserFarmBot.rotten_flesh_shulker_position", "minecraft:rotten_flesh")
+            .leaf("clean bones chest", CleanChest, "DispenserFarmBot.bones_shulker_position", "minecraft:bone")
+            .leaf("clean rotten flesh chest", CleanChest, "DispenserFarmBot.rotten_flesh_shulker_position", "minecraft:rotten_flesh")
         .end()
-        .build();
+        .build("clean storage");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateDespawnFrostWalkerTree()
 {
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>()
         .selector()
-            .inverter().leaf(CheckFrostWalkerMob)
+            .inverter().leaf("check for frost walker mobs", CheckFrostWalkerMob)
             .sequence()
                 .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.despawn_position", "GoTo.goal")
                 .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 1)
-                .leaf(Botcraft::GoToBlackboard)
+                .leaf("go to despawn position", Botcraft::GoToBlackboard)
             .end()
         .end()
-        .build();
+        .build("despawn frost walker mobs");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateSleepTree()
@@ -361,24 +361,24 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>()
         .selector()
             // If it's night
-            .inverter().leaf(Botcraft::IsNightTime)
+            .inverter().leaf("check if night", Botcraft::IsNightTime)
             .sequence()
                 // Go to the bed
                 .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.bed_position", "GoTo.goal")
                 .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 2)
-                .leaf(Botcraft::GoToBlackboard)
+                .leaf("go to bed", Botcraft::GoToBlackboard)
                 // Right click the bed every second until it's day time
                 .repeater(0).sequence()
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.bed_position", "InteractWithBlock.pos")
                     .leaf(Botcraft::SetBlackboardData<bool>, "InteractWithBlock.animation", true)
-                    .leaf(Botcraft::InteractWithBlockBlackboard)
+                    .leaf("interact with bed", Botcraft::InteractWithBlockBlackboard)
                     // Wait ~1s
                     .repeater(100).leaf(Botcraft::Yield)
-                    .inverter().leaf(Botcraft::IsNightTime)
+                    .inverter().leaf("check if night", Botcraft::IsNightTime)
                 .end()
             .end()
         .end()
-        .build();
+        .build("sleep");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCollectEmeraldsTree()
@@ -390,7 +390,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .succeeder().tree(CreateCropEmeraldTree("minecraft:potato", "DispenserFarmBot.potato_positions"))
             .succeeder().tree(CreateCropEmeraldTree("minecraft:carrot", "DispenserFarmBot.carrot_positions"))
         .end()
-        .build();
+        .build("collect emeralds");
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateTree()
@@ -398,25 +398,25 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>()
         .sequence()
             .selector()
-                .leaf(Botcraft::CheckBlackboardBoolData, "DispenserFarmBot.initialized")
+                .leaf("check if initialized in blackboard", Botcraft::CheckBlackboardBoolData, "DispenserFarmBot.initialized")
                 .sequence()
-                    .leaf(InitializeBlocks, 50)
-                    .leaf(StartSpawners)
+                    .leaf("initialize blocks", InitializeBlocks, 50)
+                    .leaf("start spawners", StartSpawners)
                 .end()
             .end()
             .tree(CreateCollectEmeraldsTree())
             .tree(CreateCleanStorageTree())
-            .leaf(Botcraft::SortInventory)
-            .leaf(DestroyItems, "minecraft:poisonous_potato")
+            .leaf("sort inventory", Botcraft::SortInventory)
+            .leaf("destroy poisonous potatoes", DestroyItems, "minecraft:poisonous_potato")
             .tree(CreateDespawnFrostWalkerTree())
             .tree(CreateSleepTree())
             .tree(CreateEatTree())
-            .leaf(Botcraft::HasItemInInventory, "minecraft:emerald", 2)
+            .leaf("check 2 emeralds in inventory", Botcraft::HasItemInInventory, "minecraft:emerald", 2)
             .tree(CreateBuyTree("minecraft:bow", "DispenserFarmBot.fletcher_id"))
-            .leaf(Botcraft::HasItemInInventory, "minecraft:emerald", 1)
+            .leaf("check 1 emerald in inventory", Botcraft::HasItemInInventory, "minecraft:emerald", 1)
             .tree(CreateBuyTree("minecraft:redstone", "DispenserFarmBot.cleric_id"))
             .tree(CreateCollectCobblestoneTree())
             .tree(CreateCraftDispenserTree())
         .end()
-        .build();
+        .build("main");
 }

@@ -72,8 +72,8 @@ int main(int argc, char* argv[])
 
         auto mob_hitter_tree = Botcraft::Builder<Botcraft::SimpleBehaviourClient>()
             .sequence()
-                .leaf(HitCloseHostiles)
-                .leaf(CleanLastTimeHit)
+                .leaf("hit close hostiles mobs", HitCloseHostiles)
+                .leaf("remove old entities from last time hit", CleanLastTimeHit)
             .end()
             .build();
 

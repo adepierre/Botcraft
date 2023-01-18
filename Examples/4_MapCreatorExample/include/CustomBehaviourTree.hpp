@@ -10,10 +10,7 @@ template<class Context>
 class RepeatUntilSuccess : public Botcraft::Decorator<Context>
 {
 public:
-    RepeatUntilSuccess(const size_t n_)
-    {
-        n = n_;
-    }
+    RepeatUntilSuccess(const std::string& s, const size_t n_) : Botcraft::Decorator<Context>(s), n(n_) {}
 
     virtual const Botcraft::Status Tick(Context& context) const override
     {
