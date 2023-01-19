@@ -42,8 +42,10 @@ jobs:
 
       - name: Create release note
         if: ${{ matrix.config.name == 'Linux' }}
+        env:
+          MC_VERSION: ${{ steps.mc-version.outputs.content }}
         run: |
-            echo Automatically built library with the latest version of the code for Minecraft ${{ steps.mc-version.outputs.content }} and all options enabled. Examples are in \`\`bin\`\` folder. If you want to run any example other than 0_HelloWorld and 3_SimpleAFKExample, you first need to run the provided \`\`download_mc_assets\`\` script to automatically populate the \`\`Assets\`\` folder by downloading and extracting the official Minecraft client. > release_note.txt
+            echo Automatically built library with the latest version of the code for Minecraft $MC_VERSION and all options enabled. Examples are in \`\`bin\`\` folder. If you want to run any example other than 0_HelloWorld and 3_SimpleAFKExample, you first need to run the provided \`\`download_mc_assets\`\` script to automatically populate the \`\`Assets\`\` folder by downloading and extracting the official Minecraft client. > release_note.txt
             echo -en '\n' >> release_note.txt
             echo If you're on Windows < 10, the script wont work and you'll have to do it manually as curl and tar commands have only been added recently. >> release_note.txt
             echo Linux version is compiled using Ubuntu with all dependencies included and should work on other distributions. You might have to install the unzip command to run the script though. >> release_note.txt
