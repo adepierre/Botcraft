@@ -1,6 +1,6 @@
 name: Manual Build
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       minecraft_version:
@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Install GLFW deps
         if: ${{ matrix.config.name == 'Linux' }}
         run: |
@@ -71,7 +71,7 @@ jobs:
         shell: bash
         working-directory: ${{ runner.workspace }}/build
         run: cmake --build . --config $BUILD_TYPE --parallel 2
-      
+
       - name: Run tests
         working-directory: ${{ runner.workspace }}/build
         run: ctest -C $BUILD_TYPE

@@ -1,6 +1,6 @@
 name: Build
 
-on: 
+on:
   push:
     branches:
       - master
@@ -78,7 +78,7 @@ jobs:
         shell: bash
         working-directory: ${{ runner.workspace }}/build
         run: cmake --build . --config $BUILD_TYPE --parallel 2
-      
+
       - name: Run tests
         working-directory: ${{ runner.workspace }}/build
         run: ctest -C $BUILD_TYPE
@@ -122,7 +122,7 @@ jobs:
             echo If you'd like to get the precompiled binaries for another version of the game, just open an issue or ask on [the discord server](https://discord.gg/wECVsTbjA9). There is an automatic workflow to build it, but I need to trigger it manually. >> release_note.txt
             echo -en '\n' >> release_note.txt
             echo **Changes:** >> release_note.txt
-      
+
       - name: Append git messages
         if: ${{ matrix.config.name == 'Linux' }}
         run: git log latest..HEAD --oneline --no-merges >> release_note.txt
