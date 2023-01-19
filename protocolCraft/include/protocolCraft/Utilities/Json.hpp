@@ -106,7 +106,10 @@ namespace ProtocolCraft
             >
             T get() const;
 
-            template<typename T = double>
+            template<
+                typename T = double,
+                std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, bool> = true
+            >
             T get_number() const;
 
             template<
@@ -285,33 +288,10 @@ namespace ProtocolCraft
                 }
                 return std::get<bool>(val);
             }
-            // Wrapper to be able to get char/short/int
-            else if constexpr (std::is_integral_v<T>)
+            // Wrapper to be able to get char/short/int/float
+            else if constexpr (std::is_integral_v<T> || std::is_floating_point_v<T>)
             {
-                if (std::holds_alternative<long long int>(val))
-                {
-                    return static_cast<T>(std::get<long long int>(val));
-                }
-                else if (std::holds_alternative<unsigned long long int>(val))
-                {
-                    return static_cast<T>(std::get<unsigned long long int>(val));
-                }
-                else
-                {
-                    throw std::runtime_error("Trying to get an integral value from a Json::Value that is something else");
-                }
-            }
-            // Wrapper to be able to get float/long double
-            else if constexpr (std::is_floating_point_v<T>)
-            {
-                if (std::holds_alternative<double>(val))
-                {
-                    return static_cast<T>(std::get<double>(val));
-                }
-                else
-                {
-                    throw std::runtime_error("Trying to get a floating point value from a Json::Value that is something else");
-                }
+                return get_number<T>();
             }
             else
             {
@@ -323,7 +303,10 @@ namespace ProtocolCraft
             }
         }
 
-        template<typename T>
+        template<
+            typename T,
+            std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, bool>
+        >
         T Value::get_number() const
         {
             if (std::holds_alternative<double>(val))

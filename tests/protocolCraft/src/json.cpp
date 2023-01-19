@@ -161,6 +161,61 @@ TEST_CASE("Constructors and is")
     }
 }
 
+TEST_CASE("size()")
+{
+    Json::Value j;
+
+    SECTION("empty")
+    {
+        CHECK(j.size() == 0);
+    }
+
+    SECTION("Object")
+    {
+        j = Json::Object();
+        CHECK(j.size() == 0);
+    }
+
+    SECTION("Array")
+    {
+        j = Json::Array();
+        CHECK(j.size() == 0);
+
+        j = std::vector<int>(4, 0);
+        CHECK(j.size() == 4);
+    }
+
+    SECTION("std::string")
+    {
+        j = "s";
+        CHECK_THROWS(j.size());
+    }
+
+    SECTION("bool")
+    {
+        j = true;
+        CHECK_THROWS(j.size());
+    }
+
+    SECTION("long long int")
+    {
+        j = 3LL;
+        CHECK_THROWS(j.size());
+    }
+
+    SECTION("unsigned long long int")
+    {
+        j = 3ULL;
+        CHECK_THROWS(j.size());
+    }
+
+    SECTION("double")
+    {
+        j = 3.14;
+        CHECK_THROWS(j.size());
+    }
+}
+
 TEST_CASE("get")
 {
     Json::Value j;
@@ -258,12 +313,13 @@ TEST_CASE("get")
         CHECK_NOTHROW(j.get<unsigned long long int>());
         CHECK_THROWS(j.get<std::string>());
         CHECK_NOTHROW(j.get<char>());
-        CHECK_THROWS(j.get<double>());
-        CHECK_THROWS(j.get<float>());
+        CHECK_NOTHROW(j.get<double>());
+        CHECK_NOTHROW(j.get<float>());
 
         CHECK(j.get<long long int>() == -1LL);
         CHECK(j.get<int>() == -1);
         CHECK(j.get<unsigned int>() == static_cast<unsigned int>(-1));
+        CHECK(j.get<double>() == -1.0);
     }
 
     SECTION("unsigned long long int")
@@ -276,12 +332,13 @@ TEST_CASE("get")
         CHECK_NOTHROW(j.get<unsigned long long int>());
         CHECK_THROWS(j.get<std::string>());
         CHECK_NOTHROW(j.get<char>());
-        CHECK_THROWS(j.get<double>());
-        CHECK_THROWS(j.get<float>());
+        CHECK_NOTHROW(j.get<double>());
+        CHECK_NOTHROW(j.get<float>());
 
         CHECK(j.get<unsigned long long int>() == 1U);
         CHECK(j.get<unsigned int>() == 1U);
         CHECK(j.get<int>() == 1);
+        CHECK(j.get<double>() == 1.0);
     }
 
     SECTION("double")
@@ -290,15 +347,16 @@ TEST_CASE("get")
         CHECK_THROWS(j.get<bool>());
         CHECK_THROWS(j.get<Json::Object>());
         CHECK_THROWS(j.get<Json::Array>());
-        CHECK_THROWS(j.get<long long int>());
-        CHECK_THROWS(j.get<unsigned long long int>());
+        CHECK_NOTHROW(j.get<long long int>());
+        CHECK_NOTHROW(j.get<unsigned long long int>());
         CHECK_THROWS(j.get<std::string>());
-        CHECK_THROWS(j.get<char>());
+        CHECK_NOTHROW(j.get<char>());
         CHECK_NOTHROW(j.get<double>());
         CHECK_NOTHROW(j.get<float>());
 
         CHECK(j.get<double>() == 1.0);
         CHECK(j.get<float>() == 1.0);
+        CHECK(j.get<char>() == 1);
     }
 
     SECTION("get_number")

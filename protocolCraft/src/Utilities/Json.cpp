@@ -236,14 +236,19 @@ namespace ProtocolCraft
 
         size_t Value::size() const
         {
-            if (std::holds_alternative<RecursiveWrapper<Array>>(val))
+            if (std::holds_alternative<std::monostate>(val))
             {
-                return get<Array>().size();
+                return 0;
             }
 
             if (std::holds_alternative<RecursiveWrapper<Object>>(val))
             {
                 return get<Object>().size();
+            }
+
+            if (std::holds_alternative<RecursiveWrapper<Array>>(val))
+            {
+                return get<Array>().size();
             }
 
             throw std::runtime_error("Json::Value is neither an array nor an object");

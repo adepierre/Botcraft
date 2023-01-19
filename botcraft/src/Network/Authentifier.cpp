@@ -456,8 +456,7 @@ namespace Botcraft
     {
         const Json::Value profiles = GetCachedProfiles();
 
-        if (profiles.is_array() &&
-            profiles.size() > 0 &&
+        if (profiles.size() > 0 &&
             profiles.contains(login) &&
             profiles[login].is_object())
         {
