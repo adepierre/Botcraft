@@ -23,14 +23,13 @@ namespace Botcraft
         Node() = delete;
         Node(const Node&) = delete;
         Node(const std::string& name_) : name(name_) {}
-        // Needs to be virtual even if never overriden to get
-        // the proper typeid of the calling derived class
-        virtual std::string GetFullDescriptor() const
+        virtual ~Node() {}
+        virtual const Status Tick(Context& context) const = 0;
+
+        std::string GetFullDescriptor() const
         {
             return this->name.empty() ? typeid(*this).name() : ("\"" + this->name + "\" (" + typeid(*this).name() + ")");
         }
-        virtual ~Node() {}
-        virtual const Status Tick(Context& context) const = 0;
     protected:
         const std::string name;
     };
