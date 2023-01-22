@@ -18,14 +18,16 @@ namespace Botcraft
     class TemplatedBehaviourClient : public BehaviourClient
     {
     private:
-        /// @brief Custom internal exception used
-        /// when the tree needs to be changed
-        class SwapTreeException : public std::exception
+        /// @brief Custom internal type used when the tree needs
+        /// to be changed. It does not inherit std::exception to
+        /// prevent tree components from catching it
+        class SwapTree
         {
         };
-        /// @brief Custom internal exception used
-        /// when the tree needs to be stopped
-        class InterruptedException : public std::exception
+        /// @brief Custom internal type used when the tree needs
+        /// to be stopped. It does not inherit std::exception to
+        /// prevent tree components from catching it
+        class Interrupted
         {
         };
 
@@ -72,14 +74,14 @@ namespace Botcraft
             behaviour_cond_var.wait(lock);
             if (should_be_closed)
             {
-                throw InterruptedException();
+                throw Interrupted();
             }
             else if (swap_tree)
             {
-                throw SwapTreeException();
+                throw SwapTree();
             }
-        }        
-        
+        }
+
         /// @brief Start the behaviour thread loop.
         void StartBehaviour()
         {
@@ -142,7 +144,7 @@ namespace Botcraft
                     Yield();
                 }
                 // We need to update the tree with the new one
-                catch (const SwapTreeException&)
+                catch (const SwapTree&)
                 {
                     tree = new_tree;
                     new_tree = nullptr;
@@ -151,7 +153,7 @@ namespace Botcraft
                     continue;
                 }
                 // We need to stop the behaviour thread
-                catch (const InterruptedException&)
+                catch (const Interrupted&)
                 {
                     return;
                 }
