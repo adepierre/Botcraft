@@ -243,31 +243,31 @@ int main(int argc, char* argv[])
 std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(const std::string& food_name,
     const std::string& nbt_path, const Botcraft::Position& offset, const std::string& temp_block, const bool detailed)
 {
-    auto loading_tree = Builder<SimpleBehaviourClient>()
+    auto loading_tree = Builder<SimpleBehaviourClient>("loading")
         .selector()
             // Check if the structure is already loaded
             .leaf(CheckBlackboardBoolData, "Structure.loaded")
             // Otherwise load it
             .leaf("load NBT file", LoadNBT, nbt_path, offset, temp_block, detailed)
         .end()
-        .build("loading");
+        .build();
 
-    auto completion_tree = Builder<SimpleBehaviourClient>()
+    auto completion_tree = Builder<SimpleBehaviourClient>("completion check")
         .succeeder().sequence()
             .leaf("check completion", CheckCompletion)
             .leaf(WarnConsole, "Task fully completed!")
             .repeater(0).inverter().leaf(Yield)
         .end()
-        .build("completion check");
+        .build();
     
-    auto disconnect_subtree = Builder<SimpleBehaviourClient>()
+    auto disconnect_subtree = Builder<SimpleBehaviourClient>("disconnect")
         .sequence()
             .leaf("disconnect", Disconnect)
             .repeater(0).inverter().leaf(Yield)
         .end()
-        .build("disconnect");
+        .build();
 
-    auto eat_subtree = Builder<SimpleBehaviourClient>()
+    auto eat_subtree = Builder<SimpleBehaviourClient>("eat")
         .selector()
             // If hungry
             .inverter().leaf(IsHungry)
@@ -289,9 +289,9 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
                 .end()
             .end()
         .end()
-        .build("eat");
+        .build();
 
-    auto getinventory_tree = Builder<SimpleBehaviourClient>()
+    auto getinventory_tree = Builder<SimpleBehaviourClient>("list blocks in inventory")
         // List all blocks in the inventory
         .selector()
             .leaf("get block in inventory", GetBlocksAvailableInInventory)
@@ -311,9 +311,9 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
                 .end()
             .end()
         .end()
-        .build("list blocks in inventory");
+        .build();
 
-    auto placeblock_tree = Builder<SimpleBehaviourClient>()
+    auto placeblock_tree = Builder<SimpleBehaviourClient>("place block")
         .selector()
             // Try to perform a task 5 times
             .decorator<RepeatUntilSuccess<SimpleBehaviourClient>>(5).selector()
@@ -329,9 +329,9 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
             // randomize available blocks for next time
             .leaf("dump all items in chest", SwapChestsInventory, food_name, false)
         .end()
-        .build("place block");
+        .build();
 
-    return Builder<SimpleBehaviourClient>()
+    return Builder<SimpleBehaviourClient>("main")
         // Main sequence of actions
         .sequence()
             .tree(loading_tree)
@@ -340,5 +340,5 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
             .tree(getinventory_tree)
             .tree(placeblock_tree)
         .end()
-        .build("main");
+        .build();
 }

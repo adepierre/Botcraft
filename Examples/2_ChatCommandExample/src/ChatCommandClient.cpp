@@ -118,7 +118,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             return;
         }
 
-        auto tree = Builder<ChatCommandClient>()
+        auto tree = Builder<ChatCommandClient>("goto tree")
             .sequence()
                 // Perform the pathfinding in a Selector,
                 // so it exits as soon as one leaf
@@ -138,7 +138,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
             .end()
-            .build("goto tree");
+            .build();
 
         SetBehaviourTree(tree);
     }
@@ -206,14 +206,14 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
         }
         LOG_INFO("Asked to place a block at " << pos << " (" << item << ")");
 
-        auto tree = Builder<ChatCommandClient>()
+        auto tree = Builder<ChatCommandClient>("place block")
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
                 .succeeder().leaf(PlaceBlock, item, pos, PlayerDiggingFace::Up, true, true)
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
             .end()
-            .build("place block");
+            .build();
 
         SetBehaviourTree(tree);
     }
@@ -239,14 +239,14 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             return;
         }
 
-        auto tree = Builder<ChatCommandClient>()
+        auto tree = Builder<ChatCommandClient>("dig")
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
                 .succeeder().leaf("diggy diggy hole", Dig, pos, true, PlayerDiggingFace::Up)
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
             .end()
-            .build("dig");
+            .build();
 
         SetBehaviourTree(tree);
     }
@@ -271,7 +271,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             return;
         }
 
-        auto tree = Builder<ChatCommandClient>()
+        auto tree = Builder<ChatCommandClient>("interact")
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
                 .succeeder().sequence()
@@ -291,7 +291,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
             .end()
-            .build("interact");
+            .build();
 
         SetBehaviourTree(tree);
     }

@@ -595,6 +595,8 @@ namespace Botcraft
     class Builder
     {
     public:
+        Builder(const std::string& name = "") : root(nullptr), root_name(name) {}
+
         template<
             typename S,
             typename... Args,
@@ -709,14 +711,15 @@ namespace Botcraft
             return DecoratorBuilder<Builder, Context>(this, (DecoratorType*)root.get());
         }
 
-        std::shared_ptr<BehaviourTree<Context> > build(const std::string& s = "")
+        std::shared_ptr<BehaviourTree<Context> > build()
         {
-            auto tree = std::make_shared<BehaviourTree<Context> >(s);
+            auto tree = std::make_shared<BehaviourTree<Context> >(root_name);
             tree->SetRoot(root);
             return tree;
         }
 
     private:
+        const std::string root_name;
         std::shared_ptr<Node<Context> > root;
     };
 } // namespace Botcraft

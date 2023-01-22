@@ -425,13 +425,13 @@ TEST_CASE("Composite")
 
 TEST_CASE("Subtree")
 {
-    auto subtree = Builder<int>()
+    auto subtree = Builder<int>("tree")
         .sequence()
             .leaf([](int& i) { i += 1; return Status::Success; })
             .leaf([](int& i) { i += 1; return Status::Failure; })
             .leaf([](int& i) { i += 1; return Status::Success; }) // Never reached
         .end()
-        .build("tree");
+        .build();
 
     auto tree = Builder<int>()
         .selector()
@@ -501,7 +501,7 @@ TEST_CASE("Exceptions")
     
     SECTION("Named")
     {
-        auto tree = Builder<int>()
+        auto tree = Builder<int>("tree")
             .inverter("inverter").sequence("sequence")
                 .selector("selector 0")
                     .leaf("leaf 00", [](int& i) { i += 1; return Status::Failure; })
@@ -523,7 +523,7 @@ TEST_CASE("Exceptions")
                     .leaf("leaf 31", [](int& i) { i += 1; return Status::Success; })
                 .end()
             .end()
-            .build("tree");
+            .build();
 
         CHECK_FALSE(tree == nullptr);
 
