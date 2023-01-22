@@ -74,8 +74,7 @@ int main(int argc, char* argv[])
             .sequence()
                 .leaf("hit close hostiles mobs", HitCloseHostiles)
                 .leaf("remove old entities from last time hit", CleanLastTimeHit)
-            .end()
-            .build();
+            .end();
 
         Botcraft::SimpleBehaviourClient client(true);
         client.SetAutoRespawn(true);

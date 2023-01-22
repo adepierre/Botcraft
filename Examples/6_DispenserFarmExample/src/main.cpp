@@ -125,8 +125,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .end()
                 .leaf("close trading interface", Botcraft::CloseContainer, -1)
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateRottenFleshEmeraldTree()
@@ -161,8 +160,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .leaf("close trading interface", Botcraft::CloseContainer, -1)
                 .repeater(50).leaf(Botcraft::Yield)
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateBonesEmeraldTree()
@@ -213,8 +211,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .leaf("close trading interface", Botcraft::CloseContainer, -1)
                 .repeater(50).leaf(Botcraft::Yield)
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCropEmeraldTree(const std::string& item_name, const std::string& blackboard_crops_location)
@@ -244,8 +241,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .end()
                 .leaf("close trading interface", Botcraft::CloseContainer, -1)
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateEatTree()
@@ -260,8 +256,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .tree(CreateBuyTree("minecraft:golden_carrot", "DispenserFarmBot.farmer_id"))
                 .leaf("eat", Botcraft::Eat, "minecraft:golden_carrot", true)
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCollectCobblestoneTree()
@@ -292,8 +287,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                     .leaf("mine cobblestone", MineCobblestone)
                 .end()
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCraftDispenserTree()
@@ -328,8 +322,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                     .leaf(Botcraft::Yield)
                 .end()
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCleanStorageTree()
@@ -338,8 +331,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
         .sequence()
             .leaf("clean bones chest", CleanChest, "DispenserFarmBot.bones_shulker_position", "minecraft:bone")
             .leaf("clean rotten flesh chest", CleanChest, "DispenserFarmBot.rotten_flesh_shulker_position", "minecraft:rotten_flesh")
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateDespawnFrostWalkerTree()
@@ -352,8 +344,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 1)
                 .leaf("go to despawn position", Botcraft::GoToBlackboard)
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateSleepTree()
@@ -377,8 +368,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                     .inverter().leaf("check if night", Botcraft::IsNightTime)
                 .end()
             .end()
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateCollectEmeraldsTree()
@@ -389,8 +379,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .succeeder().tree(CreateRottenFleshEmeraldTree())
             .succeeder().tree(CreateCropEmeraldTree("minecraft:potato", "DispenserFarmBot.potato_positions"))
             .succeeder().tree(CreateCropEmeraldTree("minecraft:carrot", "DispenserFarmBot.carrot_positions"))
-        .end()
-        .build();
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateTree()
@@ -417,6 +406,5 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .tree(CreateBuyTree("minecraft:redstone", "DispenserFarmBot.cleric_id"))
             .tree(CreateCollectCobblestoneTree())
             .tree(CreateCraftDispenserTree())
-        .end()
-        .build();
+        .end();
 }

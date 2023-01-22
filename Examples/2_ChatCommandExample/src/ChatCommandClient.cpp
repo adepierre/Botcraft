@@ -137,8 +137,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                 .end()
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         SetBehaviourTree(tree);
     }
@@ -212,8 +211,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                 .succeeder().leaf(PlaceBlock, item, pos, PlayerDiggingFace::Up, true, true)
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         SetBehaviourTree(tree);
     }
@@ -245,8 +243,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                 .succeeder().leaf("diggy diggy hole", Dig, pos, true, PlayerDiggingFace::Up)
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         SetBehaviourTree(tree);
     }
@@ -290,8 +287,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                 .end()
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         SetBehaviourTree(tree);
     }

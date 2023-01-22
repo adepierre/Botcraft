@@ -23,8 +23,7 @@ TEST_CASE("LeafTree")
     SECTION("Function")
     {
         auto tree = Builder<int>()
-            .leaf(TestLeaf)
-            .build();
+            .leaf(TestLeaf);
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -36,8 +35,7 @@ TEST_CASE("LeafTree")
     SECTION("NamedFunction")
     {
         auto tree = Builder<int>()
-            .leaf("leaf", TestLeaf)
-            .build();
+            .leaf("leaf", TestLeaf);
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -49,8 +47,7 @@ TEST_CASE("LeafTree")
     SECTION("FunctionWithArg")
     {
         auto tree = Builder<int>()
-            .leaf(TestLeafWithArg, 2)
-            .build();
+            .leaf(TestLeafWithArg, 2);
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -62,8 +59,7 @@ TEST_CASE("LeafTree")
     SECTION("NamedFunctionWithArg")
     {
         auto tree = Builder<int>()
-            .leaf("leaf", TestLeafWithArg, 2)
-            .build();
+            .leaf("leaf", TestLeafWithArg, 2);
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -75,8 +71,7 @@ TEST_CASE("LeafTree")
     SECTION("std::bind")
     {
         auto tree = Builder<int>()
-            .leaf(std::bind(TestLeafWithArg, std::placeholders::_1, 2))
-            .build();
+            .leaf(std::bind(TestLeafWithArg, std::placeholders::_1, 2));
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -88,8 +83,7 @@ TEST_CASE("LeafTree")
     SECTION("Namedstd::bind")
     {
         auto tree = Builder<int>()
-            .leaf("leaf", std::bind(TestLeafWithArg, std::placeholders::_1, 2))
-            .build();
+            .leaf("leaf", std::bind(TestLeafWithArg, std::placeholders::_1, 2));
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -101,8 +95,7 @@ TEST_CASE("LeafTree")
     SECTION("Lambda")
     {
         auto tree = Builder<int>()
-            .leaf([](int& i) { i += 1; return Status::Success; })
-            .build();
+            .leaf([](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -114,8 +107,7 @@ TEST_CASE("LeafTree")
     SECTION("NamedLambda")
     {
         auto tree = Builder<int>()
-            .leaf("leaf", [](int& i) { i += 1; return Status::Success; })
-            .build();
+            .leaf("leaf", [](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -143,8 +135,7 @@ TEST_CASE("Decorator")
     SECTION("Inverter")
     {
         auto tree = Builder<int>()
-            .inverter().leaf([](int& i) { i += 1; return Status::Success; })
-            .build();
+            .inverter().leaf([](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Failure);
@@ -156,8 +147,7 @@ TEST_CASE("Decorator")
     SECTION("NamedInverter")
     {
         auto tree = Builder<int>()
-            .inverter("inverter").leaf([](int& i) { i += 1; return Status::Success; })
-            .build();
+            .inverter("inverter").leaf([](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Failure);
@@ -167,8 +157,7 @@ TEST_CASE("Decorator")
     SECTION("Succeeder")
     {
         auto tree = Builder<int>()
-            .succeeder().leaf([](int& i) { i += 1; return Status::Failure; })
-            .build();
+            .succeeder().leaf([](int& i) { i += 1; return Status::Failure; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -180,8 +169,7 @@ TEST_CASE("Decorator")
     SECTION("NamedSucceeder")
     {
         auto tree = Builder<int>()
-            .succeeder("succeeder").leaf([](int& i) { i += 1; return Status::Failure; })
-            .build();
+            .succeeder("succeeder").leaf([](int& i) { i += 1; return Status::Failure; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -191,8 +179,7 @@ TEST_CASE("Decorator")
     SECTION("Repeater")
     {
         auto tree = Builder<int>()
-            .repeater(3).leaf([](int& i) { i += 1; return Status::Success; })
-            .build();
+            .repeater(3).leaf([](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -202,8 +189,7 @@ TEST_CASE("Decorator")
 
         i = 0;
         tree = Builder<int>()
-            .repeater(0).leaf([](int& i) { i += 1; return i > 10 ? Status::Success : Status::Failure; })
-            .build();
+            .repeater(0).leaf([](int& i) { i += 1; return i > 10 ? Status::Success : Status::Failure; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -215,8 +201,7 @@ TEST_CASE("Decorator")
     SECTION("NamedRepeater")
     {
         auto tree = Builder<int>()
-            .repeater("repeater", 3).leaf([](int& i) { i += 1; return Status::Success; })
-            .build();
+            .repeater("repeater", 3).leaf([](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -226,8 +211,7 @@ TEST_CASE("Decorator")
     SECTION("CustomDecorator")
     {
         auto tree = Builder<int>()
-            .decorator<CustomDecorator<int>>().leaf([](int& i) { i += 1; return Status::Success; })
-            .build();
+            .decorator<CustomDecorator<int>>().leaf([](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Failure);
@@ -239,8 +223,7 @@ TEST_CASE("Decorator")
     SECTION("NamedCustomDecorator")
     {
         auto tree = Builder<int>()
-            .decorator<CustomDecorator<int>>("custom decorator").leaf([](int& i) { i += 1; return Status::Success; })
-            .build();
+            .decorator<CustomDecorator<int>>("custom decorator").leaf([](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Failure);
@@ -274,8 +257,7 @@ TEST_CASE("Composite")
                 .leaf([](int& i) { i += 1; return Status::Success; })
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Success; }) // Never reached
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Failure);
@@ -289,8 +271,7 @@ TEST_CASE("Composite")
                 .leaf([](int& i) { i += 1; return Status::Success; })
                 .leaf([](int& i) { i += 1; return Status::Success; })
                 .leaf([](int& i) { i += 1; return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -306,8 +287,7 @@ TEST_CASE("Composite")
                 .leaf([](int& i) { i += 1; return Status::Success; })
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Success; }) // Never reached
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Failure);
@@ -318,8 +298,7 @@ TEST_CASE("Composite")
     {
         auto tree = Builder<int>()
             .sequence() // empty sequence is useless but valid
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -332,8 +311,7 @@ TEST_CASE("Composite")
     {
         auto tree = Builder<int>()
             .sequence("sequence") // empty sequence is useless but valid
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -348,8 +326,7 @@ TEST_CASE("Composite")
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Success; })
                 .leaf([](int& i) { i += 1; return Status::Success; }) // Never reached
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -364,8 +341,7 @@ TEST_CASE("Composite")
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Failure; })
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Failure);
@@ -382,8 +358,7 @@ TEST_CASE("Composite")
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Success; })
                 .leaf([](int& i) { i += 1; return Status::Success; }) // Never reached
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -397,8 +372,7 @@ TEST_CASE("Composite")
                 .leaf([](int& i) { i += 1; return Status::Success; })
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -414,8 +388,7 @@ TEST_CASE("Composite")
                 .leaf([](int& i) { i += 1; return Status::Success; })
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -430,16 +403,14 @@ TEST_CASE("Subtree")
             .leaf([](int& i) { i += 1; return Status::Success; })
             .leaf([](int& i) { i += 1; return Status::Failure; })
             .leaf([](int& i) { i += 1; return Status::Success; }) // Never reached
-        .end()
-        .build();
+        .end();
 
     auto tree = Builder<int>()
         .selector()
             .tree(subtree)
             .tree(subtree)
             .leaf([](int& i) { i += 1; return Status::Success; })
-        .end()
-        .build();
+        .end();
 
     int i = 0;
     CHECK_FALSE(tree == nullptr);
@@ -475,8 +446,7 @@ TEST_CASE("Exceptions")
                     .leaf([](int& i) { i += 1; return Status::Failure; })
                     .leaf([](int& i) { i += 1; return Status::Success; })
                 .end()
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK_THROWS(tree->Tick(i));
@@ -522,8 +492,7 @@ TEST_CASE("Exceptions")
                     .leaf("leaf 30", [](int& i) { i += 1; return Status::Failure; })
                     .leaf("leaf 31", [](int& i) { i += 1; return Status::Success; })
                 .end()
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
 
@@ -573,8 +542,7 @@ TEST_CASE("Nested")
                     .leaf([](int& i) { i += 1; return Status::Failure; })
                     .leaf([](int& i) { i += 1; return Status::Success; })
                 .end()
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -595,8 +563,7 @@ TEST_CASE("Nested")
                 .end()
                 .leaf([](int& i) { i += 1; return Status::Failure; })
                 .leaf([](int& i) { i += 1; return Status::Failure; })
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -606,8 +573,7 @@ TEST_CASE("Nested")
     SECTION("Decorator in decorator")
     {
         auto tree = Builder<int>()
-            .inverter().decorator<CustomDecorator<int>>().repeater(3).leaf([](int& i) { i += 1; return Status::Success; })
-            .build();
+            .inverter().decorator<CustomDecorator<int>>().repeater(3).leaf([](int& i) { i += 1; return Status::Success; });
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Success);
@@ -623,8 +589,7 @@ TEST_CASE("Nested")
                 .repeater(3).leaf([](int& i) { i += 1; return Status::Success; })
                 .succeeder().leaf([](int& i) { i += 1; return Status::Failure; })
                 .decorator<CustomDecorator<int>>().leaf([](int& i) { i += 1; return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         CHECK_FALSE(tree == nullptr);
         CHECK(tree->Tick(i) == Status::Failure);

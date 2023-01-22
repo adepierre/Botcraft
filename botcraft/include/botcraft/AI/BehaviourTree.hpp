@@ -299,6 +299,9 @@ namespace Botcraft
     template<typename Parent, typename Context>
     class DecoratorBuilder;
 
+    template<typename Context>
+    class Builder;
+
     template<typename Parent, typename Context>
     class CompositeBuilder
     {
@@ -442,9 +445,20 @@ namespace Botcraft
             return DecoratorBuilder<CompositeBuilder, Context>(this, (DecoratorType*)child.get());
         }
 
-        Parent& end()
+        std::conditional_t<
+            std::is_same_v<Parent, Builder<Context>>, // If the parent is a Builder
+            std::shared_ptr<BehaviourTree<Context>>,  // Then return the tree as we can't add anything else after the root
+            Parent&                                   // Else return the parent to continue the chain
+        > end()
         {
-            return *parent;
+            if constexpr (std::is_same_v<Parent, Builder<Context>>)
+            {
+                return parent->build();
+            }
+            else
+            {
+                return *parent;
+            }
         }
 
     private:
@@ -464,25 +478,58 @@ namespace Botcraft
             typename... Args,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        Parent& leaf(const S& s, Args... args)
+        std::conditional_t<
+            std::is_same_v<Parent, Builder<Context>>, // If the parent is a Builder
+            std::shared_ptr<BehaviourTree<Context>>,  // Then return the tree as we can't add anything else after the root
+            Parent&                                   // Else return the parent to continue the chain
+        > leaf(const S& s, Args... args)
         {
             auto child = std::make_shared<Leaf<Context> >(s, (args)...);
             node->SetChild(child);
-            return *parent;
+            if constexpr (std::is_same_v<Parent, Builder<Context>>)
+            {
+                return parent->build();
+            }
+            else
+            {
+                return *parent;
+            }
         }
         template<typename... Args>
-        Parent& leaf(Args... args)
+        std::conditional_t<
+            std::is_same_v<Parent, Builder<Context>>, // If the parent is a Builder
+            std::shared_ptr<BehaviourTree<Context>>,  // Then return the tree as we can't add anything else after the root
+            Parent&                                   // Else return the parent to continue the chain
+        > leaf(Args... args)
         {
             auto child = std::make_shared<Leaf<Context> >("", (args)...);
             node->SetChild(child);
-            return *parent;
+            if constexpr (std::is_same_v<Parent, Builder<Context>>)
+            {
+                return parent->build();
+            }
+            else
+            {
+                return *parent;
+            }
         }
 
         // To add a tree
-        Parent& tree(std::shared_ptr<BehaviourTree<Context> > arg)
+        std::conditional_t<
+            std::is_same_v<Parent, Builder<Context>>, // If the parent is a Builder
+            std::shared_ptr<BehaviourTree<Context>>,  // Then return the tree as we can't add anything else after the root
+            Parent&                                   // Else return the parent to continue the chain
+        > tree(std::shared_ptr<BehaviourTree<Context> > arg)
         {
             node->SetChild(arg);
-            return *parent;
+            if constexpr (std::is_same_v<Parent, Builder<Context>>)
+            {
+                return parent->build();
+            }
+            else
+            {
+                return *parent;
+            }
         }
 
 
@@ -602,24 +649,18 @@ namespace Botcraft
             typename... Args,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        Builder leaf(const S& s, Args... args)
+        std::shared_ptr<BehaviourTree<Context>> leaf(const S& s, Args... args)
         {
-            root = std::make_shared<Leaf<Context> >(s, (args)...);
-            return *this;
+            auto tree = std::make_shared<BehaviourTree<Context> >(root_name);
+            tree->SetRoot(std::make_shared<Leaf<Context> >(s, (args)...));
+            return tree;
         }
         template<typename... Args>
-        Builder leaf(Args... args)
+        std::shared_ptr<BehaviourTree<Context>> leaf(Args... args)
         {
-            root = std::make_shared<Leaf<Context> >("", (args)...);
-            return *this;
-        }
-
-
-        // I'm not sure why someone would add a tree as the root of a tree but...
-        Builder tree(std::shared_ptr<BehaviourTree<Context> > arg)
-        {
-            root = arg;
-            return *this;
+            auto tree = std::make_shared<BehaviourTree<Context> >(root_name);
+            tree->SetRoot(std::make_shared<Leaf<Context> >("", (args)...));
+            return tree;
         }
 
 
@@ -711,12 +752,15 @@ namespace Botcraft
             return DecoratorBuilder<Builder, Context>(this, (DecoratorType*)root.get());
         }
 
+    private:
         std::shared_ptr<BehaviourTree<Context> > build()
         {
             auto tree = std::make_shared<BehaviourTree<Context> >(root_name);
             tree->SetRoot(root);
             return tree;
         }
+        friend DecoratorBuilder<Builder, Context>;
+        friend CompositeBuilder<Builder, Context>;
 
     private:
         const std::string root_name;
