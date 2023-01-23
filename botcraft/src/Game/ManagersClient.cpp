@@ -217,7 +217,7 @@ namespace Botcraft
         settings_msg->SetChatVisibility(static_cast<int>(ChatMode::Enabled));
         settings_msg->SetChatColors(true);
         settings_msg->SetModelCustomisation(0xFF);
-        settings_msg->SetMainHand(static_cast<int>(Hand::Right));
+        settings_msg->SetMainHand(1); // 1 is right handed, 0 is left handed
 
         network_manager->Send(settings_msg);
     }
