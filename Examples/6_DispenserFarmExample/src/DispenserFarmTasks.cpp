@@ -844,7 +844,7 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
         }
     }
 
-    for (int i = 0; i < positions.size(); ++i)
+    for (int i = positions.size() - 1; i >= 0; --i)
     {
         bool to_replant = false;
         {
