@@ -10,27 +10,27 @@ if(NOT TARGET imgui)
 
     set(IMGUI_SOURCES 
         3rdparty/imgui/imgui.cpp
-        3rdparty/imgui/imgui_demo.cpp
         3rdparty/imgui/imgui_draw.cpp
+        3rdparty/imgui/imgui_tables.cpp
         3rdparty/imgui/imgui_widgets.cpp
-        3rdparty/imgui/examples/imgui_impl_glfw.cpp
-        3rdparty/imgui/examples/imgui_impl_opengl3.cpp)
+        3rdparty/imgui/backends/imgui_impl_glfw.cpp
+        3rdparty/imgui/backends/imgui_impl_opengl3.cpp)
 
     set(IMGUI_HEADERS 
         3rdparty/imgui/imconfig.h
+        3rdparty/imgui/imgui.h
         3rdparty/imgui/imgui_internal.h
         3rdparty/imgui/imstb_rectpack.h
         3rdparty/imgui/imstb_textedit.h
         3rdparty/imgui/imstb_truetype.h
-        3rdparty/imgui/imgui.h
-        3rdparty/imgui/examples/imgui_impl_glfw.h
-        3rdparty/imgui/examples/imgui_impl_opengl3.h)
+        3rdparty/imgui/backends/imgui_impl_glfw.h
+        3rdparty/imgui/backends/imgui_impl_opengl3.h)
 
     add_library(imgui STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
     set_property(TARGET imgui PROPERTY POSITION_INDEPENDENT_CODE ON)
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui")
     target_include_directories(imgui PUBLIC "${IMGUI_DIR}")
-    target_include_directories(imgui PUBLIC "${IMGUI_DIR}/examples")
+    target_include_directories(imgui PUBLIC "${IMGUI_DIR}/backends")
 
     target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
     target_link_libraries(imgui PRIVATE OpenGL::GL glfw glad)

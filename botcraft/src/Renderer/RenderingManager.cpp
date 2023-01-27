@@ -12,7 +12,6 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-static bool imgui_demo = false;
 #endif
 
 #include "botcraft/Renderer/Atlas.hpp"
@@ -135,11 +134,6 @@ namespace Botcraft
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
-
-                if (imgui_demo)
-                {
-                    ImGui::ShowDemoWindow(&imgui_demo);
-                }
 
                 {
                     ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -462,11 +456,6 @@ namespace Botcraft
             isKeyPressed[static_cast<int>(KEY_CODE::INVENTORY)] = isInventoryKeyPressed;
 
 #ifdef USE_IMGUI
-            if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-            {
-                imgui_demo = !imgui_demo;
-            }
-
             if (toggleInventory)
             {
                 inventory_open = !inventory_open;
