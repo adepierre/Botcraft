@@ -20,12 +20,16 @@ namespace Botcraft
     class World;
     class InventoryManager;
     class EntityManager;
+    class BaseNode;
 
     namespace Renderer
     {
         class Shader;
         class Atlas;
         class WorldRenderer;
+#if USE_IMGUI
+        class BehaviourRenderer;
+#endif
 
         // Key that can be used in KeyboardCallback when set
         enum class KEY_CODE
@@ -40,6 +44,7 @@ namespace Botcraft
             ESC,
             MOUSE_LEFT,
             INVENTORY,
+            BEHAVIOUR,
             NUMBER_OF_KEYS
         };
 
@@ -70,6 +75,8 @@ namespace Botcraft
 
             // Take a screenshot of the current frame and save it to path
             void Screenshot(const std::string &path);
+
+            void SetCurrentBehaviourTree(const BaseNode* root);
 
         protected:
             void WaitForRenderingUpdate();
@@ -134,10 +141,11 @@ namespace Botcraft
             std::shared_ptr<InventoryManager> inventory_manager;
             std::shared_ptr<EntityManager> entity_manager;
 
-            std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)> isKeyPressed;
+            std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)> is_key_pressed;
 
 #if USE_IMGUI
             bool inventory_open;
+            bool behaviour_open;
 #endif
 
             std::thread rendering_thread;// OpenGL thread
@@ -160,6 +168,10 @@ namespace Botcraft
             std::unique_ptr<Shader> my_shader;
 
             std::unique_ptr<WorldRenderer> world_renderer;
+
+#if USE_IMGUI
+            std::unique_ptr<BehaviourRenderer> behaviour_renderer;
+#endif
 
             std::function<void(double, double)> MouseCallback;
             std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> KeyboardCallback;

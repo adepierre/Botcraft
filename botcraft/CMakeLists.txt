@@ -431,6 +431,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             
     list(APPEND botcraft_PRIVATE_HDR
             private_include/botcraft/Renderer/Atlas.hpp
+            private_include/botcraft/Renderer/BehaviourRenderer.hpp
             private_include/botcraft/Renderer/BlockRenderable.hpp
             private_include/botcraft/Renderer/Camera.hpp
             private_include/botcraft/Renderer/Chunk.hpp
@@ -443,6 +444,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             
     list(APPEND botcraft_SRC
             src/Renderer/Atlas.cpp
+            src/Renderer/BehaviourRenderer.cpp
             src/Renderer/BlockRenderable.cpp
             src/Renderer/Camera.cpp
             src/Renderer/Chunk.cpp

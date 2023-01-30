@@ -5,6 +5,9 @@
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/SleepUtilities.hpp"
+#if USE_GUI
+#include "botcraft/Renderer/RenderingManager.hpp"
+#endif
 
 namespace Botcraft
 {
@@ -129,6 +132,18 @@ namespace Botcraft
             behaviour_cond_var.wait(lock);
         }
 
+        virtual void OnTreeChanged(const BaseNode* root)
+        {
+            const std::string& tree_name = root->GetName();
+            LOG_INFO("Behaviour tree changed" << (tree_name.empty() ? " (anonymous tree)" : (" to " + tree_name)));
+#if USE_GUI
+            if (rendering_manager != nullptr)
+            {
+                rendering_manager->SetCurrentBehaviourTree(root);
+            }
+#endif
+        }
+
     private:
         void TreeLoop()
         {
@@ -150,6 +165,7 @@ namespace Botcraft
                     new_tree = nullptr;
                     swap_tree = false;
                     blackboard.Clear();
+                    OnTreeChanged(tree.get());
                     continue;
                 }
                 // We need to stop the behaviour thread
@@ -157,7 +173,7 @@ namespace Botcraft
                 {
                     return;
                 }
-                catch (std::exception& e)
+                catch (const std::exception& e)
                 {
                     LOG_ERROR("Exception caught during tree ticking:\n" << e.what() << "\nStopping behaviour.");
                     return;
