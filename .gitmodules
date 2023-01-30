@@ -22,3 +22,6 @@
 [submodule "3rdparty/catch2"]
 	path = 3rdparty/catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "3rdparty/imgui-node-editor"]
+	path = 3rdparty/imgui-node-editor
+	url = https://github.com/thedmd/imgui-node-editor

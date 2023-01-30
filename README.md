@@ -60,7 +60,7 @@ Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 The code is cross-platform and requires a C++17 compiler, as well as git and CMake. I try to keep the number of external libraries for the core part of the library very low. This is less true for the rendering part or testing.
 Dependencies are included either directly(\*) or as git submodules(†). All libraries marked as optional can be disabled using cmake options.
 
-You *don't* have to clone recursively, download nor install any of them, as the cmake build system is made to do that for you automatically for each dependency that is not already found on your system.
+You *don't* have to clone recursively, download nor install any of them: the cmake build system is made to do that for you automatically for each dependency that is not already found on your system.
 
 - [asio](https://think-async.com/Asio/)† for low-level TCP
 
@@ -72,9 +72,9 @@ Optional dependencies (rendering):
 - [glad](https://glad.dav1d.de/)\* for OpenGL stuff
 - [glfw](https://github.com/glfw/glfw)† for OpenGL window creation
 - [glm](https://github.com/g-truc/glm)† for math stuff
-- [imgui](https://github.com/ocornut/imgui)† for additional UI display
+- [imgui](https://github.com/ocornut/imgui)† with [node-editor](https://github.com/thedmd/imgui-node-editor)† extension for additional UI display
 - [rectpack2D](https://github.com/TeamHypersomnia/rectpack2D)† for texture packing
-- [stb_image](https://github.com/nothings/stb)\* for texture loading
+- [stb_image](https://github.com/nothings/stb)\* for texture loading and screenshot saving
 
 Optional dependencies (testing)
 - [catch2](https://github.com/catchorg/Catch2)† for tests
