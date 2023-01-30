@@ -1,6 +1,7 @@
 project(botcraft)
 
 set(botcraft_PUBLIC_HDR
+    include/botcraft/AI/BaseNode.hpp
     include/botcraft/AI/BehaviourClient.hpp
     include/botcraft/AI/BehaviourTree.hpp
     include/botcraft/AI/Blackboard.hpp
@@ -220,6 +221,7 @@ set(botcraft_PRIVATE_HDR
 )
 
 set(botcraft_SRC
+    src/AI/BaseNode.cpp
     src/AI/BehaviourClient.cpp
     src/AI/SimpleBehaviourClient.cpp
     

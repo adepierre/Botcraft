@@ -6,6 +6,7 @@
 #include <string>
 #include <stdexcept>
 
+#include "botcraft/AI/BaseNode.hpp"
 #include "botcraft/AI/Status.hpp"
 
 // A behaviour tree implementation following this blog article
@@ -17,21 +18,12 @@
 namespace Botcraft
 {
     template<typename Context>
-    class Node
+    class Node : public BaseNode
     {
+        using BaseNode::BaseNode;
     public:
-        Node() = delete;
-        Node(const Node&) = delete;
-        Node(const std::string& name_) : name(name_) {}
         virtual ~Node() {}
         virtual const Status Tick(Context& context) const = 0;
-
-        std::string GetFullDescriptor() const
-        {
-            return this->name.empty() ? typeid(*this).name() : ("\"" + this->name + "\" (" + typeid(*this).name() + ")");
-        }
-    protected:
-        const std::string name;
     };
 
 
@@ -47,12 +39,22 @@ namespace Botcraft
             children.push_back(child);
         }
 
-    protected:
-        size_t GetNumChildren() const
+        virtual BehaviourNodeType GetNodeType() const override
+        {
+            return BehaviourNodeType::Composite;
+        }
+        
+        virtual size_t GetNumChildren() const override
         {
             return children.size();
         }
 
+        virtual const BaseNode * GetChild(const size_t index) const
+        {
+            return children[index].get();
+        }
+
+    protected:
         Status TickChild(Context& context, const size_t index) const
         {
             if (index >= children.size())
@@ -92,6 +94,22 @@ namespace Botcraft
             child = child_;
         }
 
+        virtual BehaviourNodeType GetNodeType() const override
+        {
+            return BehaviourNodeType::Decorator;
+        }
+
+        virtual size_t GetNumChildren() const override
+        {
+            return child == nullptr ? 0 : 1;
+        }
+
+        virtual const BaseNode* GetChild(const size_t index) const
+        {
+            return child.get();
+        }
+
+    protected:
         Status TickChild(Context& context) const
         {
             if (child == nullptr)
@@ -130,6 +148,22 @@ namespace Botcraft
         }
 
         virtual ~Leaf() {}
+
+        virtual BehaviourNodeType GetNodeType() const override
+        {
+            return BehaviourNodeType::Leaf;
+        }
+
+        virtual size_t GetNumChildren() const override
+        {
+            return 0;
+        }
+
+        virtual const BaseNode* GetChild(const size_t index) const
+        {
+            return nullptr;
+        }
+
         virtual const Status Tick(Context& context) const override
         {
             try
@@ -159,6 +193,21 @@ namespace Botcraft
         virtual ~BehaviourTree() {}
 
         void SetRoot(const std::shared_ptr<Node<Context>> node) { root = node; }
+
+        virtual BehaviourNodeType GetNodeType() const override
+        {
+            return BehaviourNodeType::Tree;
+        }
+
+        virtual size_t GetNumChildren() const override
+        {
+            return root == nullptr ? 0 : 1;
+        }
+
+        virtual const BaseNode* GetChild(const size_t index) const
+        {
+            return root.get();
+        }
 
         virtual const Status Tick(Context& context) const override
         {
