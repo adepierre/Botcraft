@@ -142,7 +142,7 @@ namespace Botcraft
         Leaf(const std::string& s, FuncType func_) : Node<Context>(s), func(func_) {}
 
         template<typename FuncType, typename... Args>
-        Leaf(const std::string& s, FuncType func_, Args... args) : Node<Context>(s)
+        Leaf(const std::string& s, FuncType func_, Args&&... args) : Node<Context>(s)
         {
             func = [=](Context& c) -> Status { return func_(c, (args)...); };
         }
@@ -368,9 +368,9 @@ namespace Botcraft
             typename... Args,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        CompositeBuilder leaf(const S& s, Args... args)
+        CompositeBuilder leaf(const S& s, Args&&... args)
         {
-            auto child = std::make_shared<Leaf<Context> >(s, (args)...);
+            auto child = std::make_shared<Leaf<Context> >(s, std::forward<Args>(args)...);
             node->AddChild(child);
             return *this;
         }
@@ -380,9 +380,9 @@ namespace Botcraft
         /// @param ...args 
         /// @return 
         template<typename... Args>
-        CompositeBuilder leaf(Args... args)
+        CompositeBuilder leaf(Args&&... args)
         {
-            auto child = std::make_shared<Leaf<Context> >("", (args)...);
+            auto child = std::make_shared<Leaf<Context> >("", std::forward<Args>(args)...);
             node->AddChild(child);
             return *this;
         }
@@ -419,9 +419,9 @@ namespace Botcraft
             typename S,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        CompositeBuilder<CompositeBuilder, Context> composite(const S& s, Args... args)
+        CompositeBuilder<CompositeBuilder, Context> composite(const S& s, Args&&... args)
         {
-            auto child = std::make_shared<CompositeType>(s, (args)...);
+            auto child = std::make_shared<CompositeType>(s, std::forward<Args>(args)...);
             node->AddChild(child);
             return CompositeBuilder<CompositeBuilder, Context>(this, (CompositeType*)child.get());
         }
@@ -430,9 +430,9 @@ namespace Botcraft
             typename CompositeType,
             typename... Args
         >
-        CompositeBuilder<CompositeBuilder, Context> composite(Args... args)
+        CompositeBuilder<CompositeBuilder, Context> composite(Args&&... args)
         {
-            auto child = std::make_shared<CompositeType>("", (args)...);
+            auto child = std::make_shared<CompositeType>("", std::forward<Args>(args)...);
             node->AddChild(child);
             return CompositeBuilder<CompositeBuilder, Context>(this, (CompositeType*)child.get());
         }
@@ -477,9 +477,9 @@ namespace Botcraft
             typename S,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        DecoratorBuilder<CompositeBuilder, Context> decorator(const S& s, Args... args)
+        DecoratorBuilder<CompositeBuilder, Context> decorator(const S& s, Args&&... args)
         {
-            auto child = std::make_shared<DecoratorType>(s, (args)...);
+            auto child = std::make_shared<DecoratorType>(s, std::forward<Args>(args)...);
             node->AddChild(child);
             return DecoratorBuilder<CompositeBuilder, Context>(this, (DecoratorType*)child.get());
         }
@@ -487,9 +487,9 @@ namespace Botcraft
             typename DecoratorType,
             typename... Args
         >
-        DecoratorBuilder<CompositeBuilder, Context> decorator(Args... args)
+        DecoratorBuilder<CompositeBuilder, Context> decorator(Args&&... args)
         {
-            auto child = std::make_shared<DecoratorType>("", (args)...);
+            auto child = std::make_shared<DecoratorType>("", std::forward<Args>(args)...);
             node->AddChild(child);
             return DecoratorBuilder<CompositeBuilder, Context>(this, (DecoratorType*)child.get());
         }
@@ -531,9 +531,9 @@ namespace Botcraft
             std::is_same_v<Parent, Builder<Context>>, // If the parent is a Builder
             std::shared_ptr<BehaviourTree<Context>>,  // Then return the tree as we can't add anything else after the root
             Parent&                                   // Else return the parent to continue the chain
-        > leaf(const S& s, Args... args)
+        > leaf(const S& s, Args&&... args)
         {
-            auto child = std::make_shared<Leaf<Context> >(s, (args)...);
+            auto child = std::make_shared<Leaf<Context> >(s, std::forward<Args>(args)...);
             node->SetChild(child);
             if constexpr (std::is_same_v<Parent, Builder<Context>>)
             {
@@ -549,9 +549,9 @@ namespace Botcraft
             std::is_same_v<Parent, Builder<Context>>, // If the parent is a Builder
             std::shared_ptr<BehaviourTree<Context>>,  // Then return the tree as we can't add anything else after the root
             Parent&                                   // Else return the parent to continue the chain
-        > leaf(Args... args)
+        > leaf(Args&&... args)
         {
-            auto child = std::make_shared<Leaf<Context> >("", (args)...);
+            auto child = std::make_shared<Leaf<Context> >("", std::forward<Args>(args)...);
             node->SetChild(child);
             if constexpr (std::is_same_v<Parent, Builder<Context>>)
             {
@@ -606,9 +606,9 @@ namespace Botcraft
             typename S,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        CompositeBuilder<Parent, Context> composite(const S& s, Args... args)
+        CompositeBuilder<Parent, Context> composite(const S& s, Args&&... args)
         {
-            auto child = std::make_shared<CompositeType>(s, (args)...);
+            auto child = std::make_shared<CompositeType>(s, std::forward<Args>(args)...);
             node->SetChild(child);
             return CompositeBuilder<Parent, Context>(parent, (CompositeType*)child.get());
         }
@@ -616,9 +616,9 @@ namespace Botcraft
             typename CompositeType,
             typename... Args
         >
-        CompositeBuilder<Parent, Context> composite(Args... args)
+        CompositeBuilder<Parent, Context> composite(Args&&... args)
         {
-            auto child = std::make_shared<CompositeType>("", (args)...);
+            auto child = std::make_shared<CompositeType>("", std::forward<Args>(args)...);
             node->SetChild(child);
             return CompositeBuilder<Parent, Context>(parent, (CompositeType*)child.get());
         }
@@ -663,9 +663,9 @@ namespace Botcraft
             typename S,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        DecoratorBuilder<Parent, Context> decorator(const S& s, Args... args)
+        DecoratorBuilder<Parent, Context> decorator(const S& s, Args&&... args)
         {
-            auto child = std::make_shared<DecoratorType>(s, (args)...);
+            auto child = std::make_shared<DecoratorType>(s, std::forward<Args>(args)...);
             node->SetChild(child);
             return DecoratorBuilder<Parent, Context>(parent, (DecoratorType*)child.get());
         }
@@ -673,9 +673,9 @@ namespace Botcraft
             typename DecoratorType,
             typename... Args
         >
-        DecoratorBuilder<Parent, Context> decorator(Args... args)
+        DecoratorBuilder<Parent, Context> decorator(Args&&... args)
         {
-            auto child = std::make_shared<DecoratorType>("", (args)...);
+            auto child = std::make_shared<DecoratorType>("", std::forward<Args>(args)...);
             node->SetChild(child);
             return DecoratorBuilder<Parent, Context>(parent, (DecoratorType*)child.get());
         }
@@ -698,17 +698,17 @@ namespace Botcraft
             typename... Args,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        std::shared_ptr<BehaviourTree<Context>> leaf(const S& s, Args... args)
+        std::shared_ptr<BehaviourTree<Context>> leaf(const S& s, Args&&... args)
         {
             auto tree = std::make_shared<BehaviourTree<Context> >(root_name);
-            tree->SetRoot(std::make_shared<Leaf<Context> >(s, (args)...));
+            tree->SetRoot(std::make_shared<Leaf<Context> >(s, std::forward<Args>(args)...));
             return tree;
         }
         template<typename... Args>
-        std::shared_ptr<BehaviourTree<Context>> leaf(Args... args)
+        std::shared_ptr<BehaviourTree<Context>> leaf(Args&&... args)
         {
             auto tree = std::make_shared<BehaviourTree<Context> >(root_name);
-            tree->SetRoot(std::make_shared<Leaf<Context> >("", (args)...));
+            tree->SetRoot(std::make_shared<Leaf<Context> >("", std::forward<Args>(args)...));
             return tree;
         }
 
@@ -735,18 +735,18 @@ namespace Botcraft
             typename S,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        CompositeBuilder<Builder, Context> composite(const S& s, Args... args)
+        CompositeBuilder<Builder, Context> composite(const S& s, Args&&... args)
         {
-            root = std::make_shared<CompositeType>(s, (args)...);
+            root = std::make_shared<CompositeType>(s, std::forward<Args>(args)...);
             return CompositeBuilder<Builder, Context>(this, (CompositeType*)root.get());
         }
         template<
             typename CompositeType,
             typename... Args
         >
-        CompositeBuilder<Builder, Context> composite(Args... args)
+        CompositeBuilder<Builder, Context> composite(Args&&... args)
         {
-            root = std::make_shared<CompositeType>("", (args)...);
+            root = std::make_shared<CompositeType>("", std::forward<Args>(args)...);
             return CompositeBuilder<Builder, Context>(this, (CompositeType*)root.get());
         }
 
@@ -786,18 +786,18 @@ namespace Botcraft
             typename S,
             typename = typename std::enable_if_t<std::is_convertible_v<S, std::string>>
         >
-        DecoratorBuilder<Builder, Context> decorator(const S& s, Args... args)
+        DecoratorBuilder<Builder, Context> decorator(const S& s, Args&&... args)
         {
-            root = std::make_shared<DecoratorType>(s, (args)...);
+            root = std::make_shared<DecoratorType>(s, std::forward<Args>(args)...);
             return DecoratorBuilder<Builder, Context>(this, (DecoratorType*)root.get());
         }
         template<
             typename DecoratorType,
             typename... Args
         >
-        DecoratorBuilder<Builder, Context> decorator(Args... args)
+        DecoratorBuilder<Builder, Context> decorator(Args&&... args)
         {
-            root = std::make_shared<DecoratorType>("", (args)...);
+            root = std::make_shared<DecoratorType>("", std::forward<Args>(args)...);
             return DecoratorBuilder<Builder, Context>(this, (DecoratorType*)root.get());
         }
 
