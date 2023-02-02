@@ -103,6 +103,12 @@ namespace Botcraft
             }
 
             ax::NodeEditor::SetCurrentEditor(context);
+
+            ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_FlowDuration, 0.5f);
+            ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_SelectedNodeBorderWidth, 10.0f);
+            ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_Flow, GetStatusColor(ImNodeStatus::Running));
+            ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_FlowMarker, GetStatusColor(ImNodeStatus::Running));
+
             ax::NodeEditor::Begin("Behaviour");
 
             // Render all nodes
@@ -132,10 +138,20 @@ namespace Botcraft
                 for (size_t i = 0; i < node->out_attr_ids.size(); ++i)
                 {
                     ax::NodeEditor::Link(current_link_id++, node->out_attr_ids[i], node->children[i]->in_attr_id, GetStatusColor(node->children[i]->status), 3.0f);
+                    if (node->children[i]->status == ImNodeStatus::Running)
+                    {
+                        ax::NodeEditor::Flow(current_link_id - 1);
+                    }
                 }
             }
 
             ax::NodeEditor::End();
+
+            ax::NodeEditor::PopStyleColor();
+            ax::NodeEditor::PopStyleColor();
+            ax::NodeEditor::PopStyleVar();
+            ax::NodeEditor::PopStyleVar();
+
             ax::NodeEditor::SetCurrentEditor(nullptr);
         }
 
