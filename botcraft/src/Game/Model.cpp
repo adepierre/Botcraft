@@ -218,7 +218,7 @@ namespace Botcraft
 
                     if (rescale)
                     {
-                        float scale_factor = abs(1.0f / (cos(angle * 3.14159f / 180.0f)));
+                        float scale_factor = std::abs(1.0f / (std::cos(angle * 3.14159f / 180.0f)));
                         if (element["rotation"]["axis"].get_string() == "x")
                         {
                             element_global_transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(1.0f, scale_factor, scale_factor)));

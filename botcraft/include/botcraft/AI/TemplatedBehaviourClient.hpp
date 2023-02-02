@@ -5,7 +5,7 @@
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/SleepUtilities.hpp"
-#if USE_GUI
+#if USE_IMGUI
 #include "botcraft/Renderer/RenderingManager.hpp"
 #endif
 
@@ -132,17 +132,51 @@ namespace Botcraft
             behaviour_cond_var.wait(lock);
         }
 
-        virtual void OnTreeChanged(const BaseNode* root)
+        void OnTreeChanged(const BaseNode* root)
         {
             const std::string& tree_name = root->GetName();
             LOG_INFO("Behaviour tree changed" << (tree_name.empty() ? " (anonymous tree)" : (" to " + tree_name)));
-#if USE_GUI
+#if USE_IMGUI
             if (rendering_manager != nullptr)
             {
                 rendering_manager->SetCurrentBehaviourTree(root);
             }
 #endif
         }
+
+#if USE_IMGUI
+        void OnFullTreeStart()
+        {
+            if (rendering_manager != nullptr)
+            {
+                rendering_manager->ResetBehaviourState();
+            }
+        }
+
+        void OnNodeStartTick()
+        {
+            if (rendering_manager != nullptr)
+            {
+                rendering_manager->BehaviourStartTick();
+            }
+        }
+
+        void OnNodeEndTick(const Status s)
+        {
+            if (rendering_manager != nullptr)
+            {
+                rendering_manager->BehaviourEndTick(s == Status::Success);
+            }
+        }
+
+        void OnNodeTickChild(const size_t i)
+        {
+            if (rendering_manager != nullptr)
+            {
+                rendering_manager->BehaviourTickChild(i);
+            }
+        }
+#endif
 
     private:
         void TreeLoop()
@@ -154,6 +188,9 @@ namespace Botcraft
                 {
                     if (tree)
                     {
+#if USE_IMGUI
+                        OnFullTreeStart();
+#endif
                         tree->Tick(static_cast<TDerived&>(*this));
                     }
                     Yield();

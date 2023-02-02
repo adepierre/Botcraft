@@ -12,7 +12,7 @@ class RepeatUntilSuccess : public Botcraft::Decorator<Context>
 public:
     RepeatUntilSuccess(const std::string& s, const size_t n_) : Botcraft::Decorator<Context>(s), n(n_) {}
 
-    virtual const Botcraft::Status Tick(Context& context) const override
+    virtual Botcraft::Status TickImpl(Context& context) const override
     {
         for (size_t i = 0; i < n; ++i)
         {

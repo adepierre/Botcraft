@@ -11,6 +11,14 @@ namespace Botcraft
 {
     namespace Renderer
     {
+        enum class ImNodeStatus
+        {
+            Idle,
+            Success,
+            Failure,
+            Running
+        };
+
         /// @brief A class to hold data to be drawn on ImNode context
         struct ImNode
         {
@@ -19,6 +27,7 @@ namespace Botcraft
             const std::string name;
             const std::string classname;
             int in_attr_id = -1;
+            ImNode* parent = nullptr;
             std::vector<int> out_attr_ids;
             std::vector<ImNode*> children;
 
@@ -26,6 +35,8 @@ namespace Botcraft
             float height = 0.0f;
             float x = 0.0f;
             float y = 0.0f;
+
+            ImNodeStatus status = ImNodeStatus::Idle;
 
             ImNode(const int id_, const BehaviourNodeType t,
                 const std::string& name_, const std::string& classname_) :
@@ -56,8 +67,9 @@ namespace Botcraft
         void GetMaxWidthPerDepthLevel(TreePosNode* node, std::vector<float>& max_width_depth);
         void SetRealNodePos(TreePosNode* node, std::vector<float>& max_width_depth);
         ImColor GetNodeColor(const BehaviourNodeType type);
+        ImColor GetStatusColor(const ImNodeStatus s);
 
-        BehaviourRenderer::BehaviourRenderer() : context(nullptr)
+        BehaviourRenderer::BehaviourRenderer() : context(nullptr), config(nullptr), active_node(nullptr)
         {
 
         }
@@ -119,7 +131,7 @@ namespace Botcraft
             {
                 for (size_t i = 0; i < node->out_attr_ids.size(); ++i)
                 {
-                    ax::NodeEditor::Link(current_link_id++, node->out_attr_ids[i], node->children[i]->in_attr_id, ImVec4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f);
+                    ax::NodeEditor::Link(current_link_id++, node->out_attr_ids[i], node->children[i]->in_attr_id, GetStatusColor(node->children[i]->status), 3.0f);
                 }
             }
 
@@ -134,6 +146,48 @@ namespace Botcraft
             context = nullptr;
             config.reset();
             nodes.clear();
+        }
+
+        void BehaviourRenderer::ResetBehaviourState()
+        {
+            std::scoped_lock<std::mutex> lock(mutex);
+            for (const auto& node : nodes)
+            {
+                node->status = ImNodeStatus::Idle;
+            }
+
+            active_node = nodes[0].get();
+        }
+
+        void BehaviourRenderer::BehaviourStartTick()
+        {
+            std::scoped_lock<std::mutex> lock(mutex);
+            if (active_node != nullptr)
+            {
+                active_node->status = ImNodeStatus::Running;
+            }
+        }
+
+        void BehaviourRenderer::BehaviourEndTick(const bool b)
+        {
+            std::scoped_lock<std::mutex> lock(mutex);
+            if (active_node != nullptr)
+            {
+                active_node->status = b ? ImNodeStatus::Success : ImNodeStatus::Failure;
+                if (active_node->parent != nullptr)
+                {
+                    active_node = active_node->parent;
+                }
+            }
+        }
+
+        void BehaviourRenderer::BehaviourTickChild(const size_t i)
+        {
+            std::scoped_lock<std::mutex> lock(mutex);
+            if (active_node != nullptr)
+            {
+                active_node = active_node->children[i];
+            }
         }
 
         void BehaviourRenderer::RenderNode(const size_t index) const
@@ -168,7 +222,7 @@ namespace Botcraft
                 ImVec2 size = ImGui::GetItemRectSize();
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
                 ImVec2 p = ImGui::GetCursorScreenPos();
-                draw_list->AddCircleFilled(ImVec2(p.x, p.y - size.y + 2.0f), 4.0f, ImColor(255, 255, 255), 8);
+                draw_list->AddCircleFilled(ImVec2(p.x, p.y - size.y + 2.0f), 4.0f, GetStatusColor(node->status), 8);
 
                 ax::NodeEditor::EndPin();
                 ax::NodeEditor::PopStyleVar();
@@ -181,18 +235,18 @@ namespace Botcraft
             ImGui::SameLine();
 
             ImGui::BeginGroup();
-            for (const auto i : node->out_attr_ids)
+            for (int i = 0; i < node->out_attr_ids.size(); ++i)
             {
                 ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_PivotAlignment, ImVec2(1.0f, 0.5f));
                 ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_PivotSize, ImVec2(0, 0));
-                ax::NodeEditor::BeginPin(i, ax::NodeEditor::PinKind::Output);
+                ax::NodeEditor::BeginPin(node->out_attr_ids[i], ax::NodeEditor::PinKind::Output);
 
                 ImGui::Dummy(ImVec2(1, ImGui::GetTextLineHeight()));
 
                 ImVec2 size = ImGui::GetItemRectSize();
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
                 ImVec2 p = ImGui::GetCursorScreenPos();
-                draw_list->AddCircleFilled(ImVec2(p.x + size.x, p.y - size.y + 2.0f), 4.0f, ImColor(255,255,255), 8);
+                draw_list->AddCircleFilled(ImVec2(p.x + size.x, p.y - size.y + 2.0f), 4.0f, GetStatusColor(node->children[i]->status), 8);
 
                 ax::NodeEditor::EndPin();
                 ax::NodeEditor::PopStyleVar();
@@ -218,10 +272,10 @@ namespace Botcraft
             draw_list->AddRect(
                 node_rect_min,
                 node_rect_max,
-                ImColor(170, 170, 170, 255),
+                GetStatusColor(node->status),
                 ax::NodeEditor::GetStyle().NodeRounding,
                 ImDrawFlags_RoundCornersAll,
-                1.5f);
+                2.5f);
 
 
             ax::NodeEditor::PopStyleVar();
@@ -266,6 +320,7 @@ namespace Botcraft
                 output[this_node_index]->out_attr_ids.push_back(current_index++);
 
                 // Set parent/child relationship
+                child_tree.front()->parent = output[this_node_index].get();
                 output[this_node_index]->children.push_back(child_tree.front().get());
 
                 // Copy the child tree node in this output
@@ -563,13 +618,33 @@ namespace Botcraft
             case BehaviourNodeType::Tree:
                 return ImColor(60, 40, 0);
             case BehaviourNodeType::Leaf:
-                return ImColor(0, 100, 0);
+                return ImColor(0, 50, 0);
             case BehaviourNodeType::Composite:
                 return ImColor(40, 75, 125);
             case BehaviourNodeType::Decorator:
                 return ImColor(100, 40, 125);
-                break;
             }
+
+            // Never reached
+            return ImColor();
+        }
+
+        ImColor GetStatusColor(const ImNodeStatus s)
+        {
+            switch (s)
+            {
+            case ImNodeStatus::Idle:
+                return ImColor(225, 225, 225);
+            case ImNodeStatus::Success:
+                return ImColor(25, 225, 25);
+            case ImNodeStatus::Failure:
+                return ImColor(225, 25, 25);
+            case ImNodeStatus::Running:
+                return ImColor(255, 255, 0);
+            }
+
+            // Never reached
+            return ImColor();
         }
     }
 }

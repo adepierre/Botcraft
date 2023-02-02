@@ -122,7 +122,7 @@ class CustomDecorator : public Decorator<Context>
 {
     using Decorator<Context>::Decorator;
 public:
-    virtual const Status Tick(Context& context) const override
+    virtual Status TickImpl(Context& context) const override
     {
         this->TickChild(context);
 
@@ -237,7 +237,7 @@ class CustomComposite : public Composite<Context>
 {
     using Composite<Context>::Composite;
 public:
-    virtual const Status Tick(Context& context) const override
+    virtual Status TickImpl(Context& context) const override
     {
         for (size_t i = 0; i < this->GetNumChildren(); ++i)
         {

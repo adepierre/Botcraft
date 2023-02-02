@@ -65,6 +65,10 @@ namespace Botcraft
             //Apply the transformations to get the good face from the base one
             switch (orientation)
             {
+            case Orientation::None:
+            case Orientation::Bottom:
+                // No rotation needed
+                break;
             case Orientation::Top:
                 model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
                 model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -225,6 +229,9 @@ namespace Botcraft
             //Apply the transformations to get the good face from the base one
             switch (orientation)
             {
+            case Orientation::None:
+            case Orientation::Bottom:
+                // No rotation needed
             case Orientation::Top:
                 model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
                 model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));

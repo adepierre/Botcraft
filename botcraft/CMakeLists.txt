@@ -204,6 +204,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Utilities/Logger.hpp
     include/botcraft/Utilities/NBTUtilities.hpp
     include/botcraft/Utilities/SleepUtilities.hpp
+    include/botcraft/Utilities/Templates.hpp
 )
 
 set(botcraft_PRIVATE_HDR

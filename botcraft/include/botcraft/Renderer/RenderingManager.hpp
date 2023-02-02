@@ -76,7 +76,14 @@ namespace Botcraft
             // Take a screenshot of the current frame and save it to path
             void Screenshot(const std::string &path);
 
-            void SetCurrentBehaviourTree(const BaseNode* root);
+#if USE_IMGUI
+            void SetCurrentBehaviourTree(const BaseNode* root) const;
+            void ResetBehaviourState() const;
+            void BehaviourStartTick() const;
+            void BehaviourEndTick(const bool b) const;
+            void BehaviourTickChild(const size_t i) const;
+#endif
+
 
         protected:
             void WaitForRenderingUpdate();

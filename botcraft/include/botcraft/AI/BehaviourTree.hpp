@@ -8,6 +8,7 @@
 
 #include "botcraft/AI/BaseNode.hpp"
 #include "botcraft/AI/Status.hpp"
+#include "botcraft/Utilities/Templates.hpp"
 
 // A behaviour tree implementation following this blog article
 // https://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
@@ -17,13 +18,37 @@
 
 namespace Botcraft
 {
+    // Define some templates functions used as update
+    // notifications during node ticking
+    GENERATE_CHECK_HAS_FUNC(OnNodeStartTick);
+    GENERATE_CHECK_HAS_FUNC(OnNodeEndTick);
+    GENERATE_CHECK_HAS_FUNC(OnNodeTickChild);
+
     template<typename Context>
     class Node : public BaseNode
     {
         using BaseNode::BaseNode;
     public:
         virtual ~Node() {}
-        virtual const Status Tick(Context& context) const = 0;
+        Status Tick(Context& context) const
+        {
+            if constexpr (has_OnNodeStartTick<Context, void()>)
+            {
+                context.OnNodeStartTick();
+            }
+
+            const Status result = this->TickImpl(context);
+
+            if constexpr (has_OnNodeEndTick<Context, void(Status)>)
+            {
+                context.OnNodeEndTick(result);
+            }
+
+            return result;
+        }
+
+    protected:
+        virtual Status TickImpl(Context& context) const = 0;
     };
 
 
@@ -49,7 +74,7 @@ namespace Botcraft
             return children.size();
         }
 
-        virtual const BaseNode * GetChild(const size_t index) const
+        virtual const BaseNode* GetChild(const size_t index) const override
         {
             return children[index].get();
         }
@@ -65,6 +90,11 @@ namespace Botcraft
             if (children[index] == nullptr)
             {
                 throw std::runtime_error(std::string("Nullptr child in ") + this->GetFullDescriptor() + " at index " + std::to_string(index));
+            }
+
+            if constexpr (has_OnNodeTickChild<Context, void(size_t)>)
+            {
+                context.OnNodeTickChild(index);
             }
 
             try
@@ -104,7 +134,7 @@ namespace Botcraft
             return child == nullptr ? 0 : 1;
         }
 
-        virtual const BaseNode* GetChild(const size_t index) const
+        virtual const BaseNode* GetChild(const size_t index) const override
         {
             return child.get();
         }
@@ -115,6 +145,11 @@ namespace Botcraft
             if (child == nullptr)
             {
                 throw std::runtime_error("Nullptr child in decorator " + this->GetFullDescriptor());
+            }
+
+            if constexpr (has_OnNodeTickChild<Context, void(size_t)>)
+            {
+                context.OnNodeTickChild(0);
             }
 
             try
@@ -159,12 +194,12 @@ namespace Botcraft
             return 0;
         }
 
-        virtual const BaseNode* GetChild(const size_t index) const
+        virtual const BaseNode* GetChild(const size_t index) const override
         {
             return nullptr;
         }
 
-        virtual const Status Tick(Context& context) const override
+        virtual Status TickImpl(Context& context) const override
         {
             try
             {
@@ -204,17 +239,23 @@ namespace Botcraft
             return root == nullptr ? 0 : 1;
         }
 
-        virtual const BaseNode* GetChild(const size_t index) const
+        virtual const BaseNode* GetChild(const size_t index) const override
         {
             return root.get();
         }
 
-        virtual const Status Tick(Context& context) const override
+        virtual Status TickImpl(Context& context) const override
         {
             if (root == nullptr)
             {
                 throw std::runtime_error(std::string("Nullptr tree when trying to tick tree ") + this->GetFullDescriptor());
             }
+
+            if constexpr (has_OnNodeTickChild<Context, void(size_t)>)
+            {
+                context.OnNodeTickChild(0);
+            }
+
             try
             {
                 return root->Tick(context);
@@ -243,7 +284,7 @@ namespace Botcraft
     {
         using Composite<Context>::Composite;
     public:
-        virtual const Status Tick(Context& context) const override
+        virtual Status TickImpl(Context& context) const override
         {
             for (size_t i = 0; i < this->GetNumChildren(); ++i)
             {
@@ -266,7 +307,7 @@ namespace Botcraft
     {
         using Composite<Context>::Composite;
     public:
-        virtual const Status Tick(Context& context) const override
+        virtual Status TickImpl(Context& context) const override
         {
             for (size_t i = 0; i < this->GetNumChildren(); ++i)
             {
@@ -292,7 +333,7 @@ namespace Botcraft
     {
         using Decorator<Context>::Decorator;
     public:
-        virtual const Status Tick(Context& context) const override
+        virtual Status TickImpl(Context& context) const override
         {
             return this->TickChild(context) == Status::Failure ? Status::Success : Status::Failure;
         }
@@ -307,7 +348,7 @@ namespace Botcraft
     {
         using Decorator<Context>::Decorator;
     public:
-        virtual const Status Tick(Context& context) const override
+        virtual Status TickImpl(Context& context) const override
         {
             this->TickChild(context);
             return Status::Success;
@@ -324,7 +365,7 @@ namespace Botcraft
     public:
         Repeater(const std::string& s, const size_t n_) : Decorator<Context>(s), n(n_) {}
 
-        virtual const Status Tick(Context& context) const override
+        virtual Status TickImpl(Context& context) const override
         {
             Status child_status = Status::Failure;
             size_t counter = 0;

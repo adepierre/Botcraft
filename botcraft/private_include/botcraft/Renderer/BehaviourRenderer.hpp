@@ -32,6 +32,11 @@ namespace Botcraft
             void Render() const;
             void CleanUp();
 
+            void ResetBehaviourState();
+            void BehaviourStartTick();
+            void BehaviourEndTick(const bool b);
+            void BehaviourTickChild(const size_t i);
+
         private:
             void RenderNode(const size_t index) const;
 
@@ -40,6 +45,8 @@ namespace Botcraft
             std::unique_ptr<ax::NodeEditor::Config> config;
             std::vector<std::unique_ptr<ImNode>> nodes;
             mutable std::mutex mutex;
+
+            ImNode* active_node;
         };
     }
 }

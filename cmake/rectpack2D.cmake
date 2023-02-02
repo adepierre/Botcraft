@@ -1,5 +1,5 @@
 # Check if rectpack2d folder is empty and clone submodule if needed
-file(GLOB RESULT "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/rectpack2d/src")
+file(GLOB RESULT "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/rectpack2D/src")
 list(LENGTH RESULT RES_LEN)
 if(RES_LEN EQUAL 0)
     message(STATUS "rectpack2D not found, cloning it...")

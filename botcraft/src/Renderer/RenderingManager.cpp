@@ -352,12 +352,32 @@ namespace Botcraft
             take_screenshot = true;
         }
 
-        void RenderingManager::SetCurrentBehaviourTree(const BaseNode* root)
-        {
 #if USE_IMGUI
+        void RenderingManager::SetCurrentBehaviourTree(const BaseNode* root) const
+        {
             behaviour_renderer->SetCurrentBehaviourTree(root);
-#endif
         }
+
+        void RenderingManager::ResetBehaviourState() const
+        {
+            behaviour_renderer->ResetBehaviourState();
+        }
+
+        void RenderingManager::BehaviourStartTick() const
+        {
+            behaviour_renderer->BehaviourStartTick();
+        }
+
+        void RenderingManager::BehaviourEndTick(const bool b) const
+        {
+            behaviour_renderer->BehaviourEndTick(b);
+        }
+
+        void RenderingManager::BehaviourTickChild(const size_t i) const
+        {
+            behaviour_renderer->BehaviourTickChild(i);
+        }
+#endif
 
         bool RenderingManager::Init(const bool headless)
         {

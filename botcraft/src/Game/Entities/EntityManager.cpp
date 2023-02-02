@@ -5,10 +5,6 @@
 
 #include "botcraft/Utilities/Logger.hpp"
 
-#if USE_GUI
-#include "botcraft/Renderer/RenderingManager.hpp"
-#endif
-
 namespace Botcraft
 {
     EntityManager::EntityManager()
@@ -42,13 +38,6 @@ namespace Botcraft
         std::lock_guard<std::mutex> lock(entity_manager_mutex);
         entities[entity->GetEntityID()] = entity;
     }
-
-#if USE_GUI
-    void EntityManager::SetRenderingManager(std::shared_ptr<Renderer::RenderingManager> rendering_manager_)
-    {
-        rendering_manager = rendering_manager;
-    }
-#endif
 
     std::mutex& EntityManager::GetMutex()
     {
@@ -100,12 +89,6 @@ namespace Botcraft
         
         if (msg.GetEntityId() == local_player->GetEntityID())
         {
-#ifdef USE_GUI
-            if (rendering_manager)
-            {
-                rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
-            }
-#endif // USE_GUI
             local_player->GetMutex().unlock();
         }
     }
@@ -133,12 +116,6 @@ namespace Botcraft
 
         if (msg.GetEntityId() == local_player->GetEntityID())
         {
-#ifdef USE_GUI
-            if (rendering_manager)
-            {
-                rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
-            }
-#endif // USE_GUI
             local_player->GetMutex().unlock();
         }
     }
@@ -163,12 +140,6 @@ namespace Botcraft
 
         if (msg.GetEntityId() == local_player->GetEntityID())
         {
-#ifdef USE_GUI
-            if (rendering_manager)
-            {
-                rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
-            }
-#endif // USE_GUI
             local_player->GetMutex().unlock();
         }
     }
@@ -181,13 +152,6 @@ namespace Botcraft
         (msg.GetRelativeArguments() & 0x04) ? local_player->SetZ(local_player->GetPosition().z + msg.GetZ()) : local_player->SetZ(msg.GetZ());
         (msg.GetRelativeArguments() & 0x08) ? local_player->SetYaw(local_player->GetYaw() + msg.GetYRot()) : local_player->SetYaw(msg.GetYRot());
         (msg.GetRelativeArguments() & 0x10) ? local_player->SetPitch(local_player->GetPitch() + msg.GetXRot()) : local_player->SetPitch(msg.GetXRot());
-
-#ifdef USE_GUI
-        if (rendering_manager)
-        {
-            rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
-        }
-#endif // USE_GUI
     }
 
     void EntityManager::Handle(ProtocolCraft::ClientboundAddEntityPacket& msg)
@@ -312,12 +276,6 @@ namespace Botcraft
 
         if (msg.GetId_() == local_player->GetEntityID())
         {
-#ifdef USE_GUI
-            if (rendering_manager)
-            {
-                rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
-            }
-#endif // USE_GUI
             local_player->GetMutex().unlock();
         }
     }
