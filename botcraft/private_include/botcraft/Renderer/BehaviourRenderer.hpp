@@ -29,7 +29,7 @@ namespace Botcraft
 
             void SetCurrentBehaviourTree(const BaseNode* root);
             void Init();
-            void Render() const;
+            void Render();
             void CleanUp();
 
             void ResetBehaviourState();
@@ -38,7 +38,7 @@ namespace Botcraft
             void BehaviourTickChild(const size_t i);
 
         private:
-            void RenderNode(const size_t index) const;
+            void RenderNode(const size_t index);
 
         private:
             ax::NodeEditor::EditorContext* context;
@@ -47,6 +47,7 @@ namespace Botcraft
             mutable std::mutex mutex;
 
             ImNode* active_node;
+            bool recompute_node_position;
         };
     }
 }

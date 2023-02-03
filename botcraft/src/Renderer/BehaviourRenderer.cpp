@@ -7,6 +7,8 @@
 static constexpr float TREE_SPACING_VERTICAL = 50.0f;
 static constexpr float TREE_SPACING_HORIZONTAL = 150.0f;
 static constexpr float MIN_NODE_WIDTH = 200.0f;
+static constexpr float PIN_RADIUS = 5.0f;
+static constexpr float LINK_THICKNESS = 4.0f;
 
 namespace Botcraft
 {
@@ -38,6 +40,7 @@ namespace Botcraft
             float y = 0.0f;
 
             ImNodeStatus status = ImNodeStatus::Idle;
+            bool visible = true;
 
             ImNode(const int id_, const BehaviourNodeType t,
                 const std::string& name_, const std::string& classname_) :
@@ -69,8 +72,11 @@ namespace Botcraft
         void SetRealNodePos(TreePosNode* node, std::vector<float>& max_width_depth);
         ImColor GetNodeColor(const BehaviourNodeType type);
         ImColor GetStatusColor(const ImNodeStatus s);
+        void ToggleNodeVisibility(ImNode* node, const bool b);
 
-        BehaviourRenderer::BehaviourRenderer() : context(nullptr), config(nullptr), active_node(nullptr)
+        BehaviourRenderer::BehaviourRenderer() :
+            context(nullptr), config(nullptr), active_node(nullptr),
+            recompute_node_position(false)
         {
 
         }
@@ -84,6 +90,7 @@ namespace Botcraft
         {
             std::scoped_lock<std::mutex> lock(mutex);
             nodes = UnrollTreeStructure(root);
+            recompute_node_position = true;
         }
 
         void BehaviourRenderer::Init()
@@ -95,7 +102,7 @@ namespace Botcraft
             context = ax::NodeEditor::CreateEditor(config.get());
         }
 
-        void BehaviourRenderer::Render() const
+        void BehaviourRenderer::Render()
         {
             std::scoped_lock<std::mutex> lock(mutex);
             if (context == nullptr)
@@ -110,6 +117,7 @@ namespace Botcraft
             ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_Flow, GetStatusColor(ImNodeStatus::Running));
             ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_FlowMarker, GetStatusColor(ImNodeStatus::Running));
             ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_PinRect, ImColor(0,0,0,0));
+            ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_Bg, ImColor(60, 60, 70, 100));
 
             ax::NodeEditor::Begin("Behaviour");
 
@@ -128,9 +136,13 @@ namespace Botcraft
                 }
             }
 
-            if (nodes.size() > 1 && nodes.back()->x == 0.0f && nodes.back()->y == 0.0f)
+            if (recompute_node_position)
             {
-                PlaceNodesBuchheim(nodes.front().get());
+                if (nodes.size() > 1)
+                {
+                    PlaceNodesBuchheim(nodes.front().get());
+                }
+                recompute_node_position = false;
             }
 
             // Draw all links between nodes
@@ -139,7 +151,11 @@ namespace Botcraft
             {
                 for (size_t i = 0; i < node->out_attr_ids.size(); ++i)
                 {
-                    ax::NodeEditor::Link(current_link_id++, node->out_attr_ids[i], node->children[i]->in_attr_id, GetStatusColor(node->children[i]->status), 3.0f);
+                    if (!node->children[i]->visible)
+                    {
+                        continue;
+                    }
+                    ax::NodeEditor::Link(current_link_id++, node->out_attr_ids[i], node->children[i]->in_attr_id, GetStatusColor(node->children[i]->status), LINK_THICKNESS);
                     if (node->children[i]->status == ImNodeStatus::Running)
                     {
                         ax::NodeEditor::Flow(current_link_id - 1);
@@ -149,6 +165,7 @@ namespace Botcraft
 
             ax::NodeEditor::End();
 
+            ax::NodeEditor::PopStyleColor();
             ax::NodeEditor::PopStyleColor();
             ax::NodeEditor::PopStyleColor();
             ax::NodeEditor::PopStyleColor();
@@ -209,9 +226,17 @@ namespace Botcraft
             }
         }
 
-        void BehaviourRenderer::RenderNode(const size_t index) const
+        void BehaviourRenderer::RenderNode(const size_t index)
         {
             ImNode* node = nodes[index].get();
+
+            if (!node->visible)
+            {
+                return;
+            }
+
+            const ImVec2 mouse_pos = ImGui::GetMousePos();
+            const bool mouse_left_click = ImGui::IsMouseClicked(ImGuiMouseButton_Left);
 
             ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar::StyleVar_NodePadding, ImVec4(0, 4, 0, 8));
             ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar::StyleVar_NodeRounding, 4.0f);
@@ -244,7 +269,7 @@ namespace Botcraft
                 const ImVec2 size = ImGui::GetItemRectSize();
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
                 const ImVec2 p = ImGui::GetCursorScreenPos();
-                draw_list->AddCircleFilled(ImVec2(p.x, p.y - size.y + 2.0f), 4.0f, GetStatusColor(node->status), 8);
+                draw_list->AddCircleFilled(ImVec2(p.x, p.y - size.y + 0.5f * PIN_RADIUS), PIN_RADIUS, GetStatusColor(node->status), 8);
 
                 ax::NodeEditor::EndPin();
                 ax::NodeEditor::PopStyleVar();
@@ -267,11 +292,30 @@ namespace Botcraft
                 ax::NodeEditor::BeginPin(node->out_attr_ids[i], ax::NodeEditor::PinKind::Output);
 
                 ImGui::Dummy(ImVec2(std::max(1.0f, std::max(MIN_NODE_WIDTH - pins_width, title_bar_width - pins_width)), ImGui::GetTextLineHeight()));
+                const ImVec2 size = ImGui::GetItemRectSize();
 
-                ImVec2 size = ImGui::GetItemRectSize();
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
                 ImVec2 p = ImGui::GetCursorScreenPos();
-                draw_list->AddCircleFilled(ImVec2(p.x + size.x, p.y - size.y + 2.0f), 4.0f, GetStatusColor(node->children[i]->status), 8);
+                const ImVec2 circle_center(p.x + size.x, p.y - size.y + 0.5f * PIN_RADIUS);
+                // If click in the pin, then toggle on/off the visibility of this child
+                if (mouse_left_click &&
+                    (
+                        (mouse_pos.x - circle_center.x) * (mouse_pos.x - circle_center.x) +
+                        (mouse_pos.y - circle_center.y) * (mouse_pos.y - circle_center.y)
+                    ) < PIN_RADIUS * PIN_RADIUS)
+                {
+                    ToggleNodeVisibility(node->children[i], !node->children[i]->visible);
+                    recompute_node_position = true;
+                }
+
+                if (node->children[i]->visible)
+                {
+                    draw_list->AddCircleFilled(circle_center, PIN_RADIUS, GetStatusColor(node->children[i]->status), 8);
+                }
+                else
+                {
+                    draw_list->AddCircle(circle_center, PIN_RADIUS, GetStatusColor(node->children[i]->status), 8);
+                }
 
                 ax::NodeEditor::EndPin();
                 ax::NodeEditor::PopStyleVar();
@@ -282,6 +326,7 @@ namespace Botcraft
                 ImGui::Dummy(ImVec2(std::max(1.0f, std::max(MIN_NODE_WIDTH - pins_width, title_bar_width - pins_width)), ImGui::GetTextLineHeight()));
             }
             ImGui::EndGroup();
+
             ax::NodeEditor::EndNode();
 
             ImVec2 node_rect_min = ImGui::GetItemRectMin();
@@ -373,9 +418,13 @@ namespace Botcraft
                 ancestor = this;
 
                 children.reserve(real_node->children.size());
+                int sibling_index = 1;
                 for (int i = 0; i < real_node->children.size(); ++i)
                 {
-                    children.push_back(std::make_unique<TreePosNode>(real_node->children[i], this, depth + 1, i + 1));
+                    if (real_node->children[i]->visible)
+                    {
+                        children.push_back(std::make_unique<TreePosNode>(real_node->children[i], this, depth + 1, sibling_index++));
+                    }
                 }
                 parent = parent_;
                 thread = nullptr;
@@ -674,6 +723,15 @@ namespace Botcraft
 
             // Never reached
             return ImColor();
+        }
+
+        void ToggleNodeVisibility(ImNode* node, const bool b)
+        {
+            node->visible = b;
+            for (size_t i = 0; i < node->children.size(); ++i)
+            {
+                ToggleNodeVisibility(node->children[i], b);
+            }
         }
     }
 }
