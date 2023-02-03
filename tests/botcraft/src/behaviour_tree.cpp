@@ -459,11 +459,11 @@ TEST_CASE("Exceptions")
         catch (const std::exception& ex)
         {
             CHECK_THAT(ex.what(), Catch::Matchers::Equals(
-                std::string("In ") + typeid(Inverter<int>).name() + "\n" +
-                "In " + typeid(Sequence<int>).name() + " while Ticking child 1\n" +
-                "In " + typeid(Selector<int>).name() + " while Ticking child 2\n" +
-                "In " + typeid(Repeater<int>).name() + "\n" +
-                "In " + typeid(CustomComposite<int>).name() + " while Ticking child 3\n" +
+                std::string("In Inverter\n") +
+                "In Sequence while Ticking child 1\n" +
+                "In Selector while Ticking child 2\n" +
+                "In Repeater\n" +
+                "In CustomComposite while Ticking child 3\n" +
                 "Exception to catch")
             );
         }
@@ -504,11 +504,11 @@ TEST_CASE("Exceptions")
         {
             CHECK_THAT(ex.what(), Catch::Matchers::Equals(
                 std::string("In tree \"tree\"\n") +
-                "In \"inverter\" (" + typeid(Inverter<int>).name() + ")\n" +
-                "In \"sequence\" (" + typeid(Sequence<int>).name() + ") while Ticking child 1\n" +
-                "In \"selector 1\" (" + typeid(Selector<int>).name() + ") while Ticking child 2\n" +
-                "In \"repeater\" (" + typeid(Repeater<int>).name() + ")\n" +
-                "In \"custom composite\" (" + typeid(CustomComposite<int>).name() + ") while Ticking child 3\n" +
+                "In \"inverter\" (Inverter)\n" +
+                "In \"sequence\" (Sequence) while Ticking child 1\n" +
+                "In \"selector 1\" (Selector) while Ticking child 2\n" +
+                "In \"repeater\" (Repeater)\n" +
+                "In \"custom composite\" (CustomComposite) while Ticking child 3\n" +
                 "In leaf \"leaf 23\"\n" +
                 "Exception to catch")
             );

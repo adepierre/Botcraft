@@ -6,6 +6,7 @@
 
 static constexpr float TREE_SPACING_VERTICAL = 50.0f;
 static constexpr float TREE_SPACING_HORIZONTAL = 150.0f;
+static constexpr float MIN_NODE_WIDTH = 200.0f;
 
 namespace Botcraft
 {
@@ -108,6 +109,7 @@ namespace Botcraft
             ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_SelectedNodeBorderWidth, 10.0f);
             ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_Flow, GetStatusColor(ImNodeStatus::Running));
             ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_FlowMarker, GetStatusColor(ImNodeStatus::Running));
+            ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_PinRect, ImColor(0,0,0,0));
 
             ax::NodeEditor::Begin("Behaviour");
 
@@ -147,6 +149,7 @@ namespace Botcraft
 
             ax::NodeEditor::End();
 
+            ax::NodeEditor::PopStyleColor();
             ax::NodeEditor::PopStyleColor();
             ax::NodeEditor::PopStyleColor();
             ax::NodeEditor::PopStyleVar();
@@ -221,9 +224,12 @@ namespace Botcraft
             ImGui::Dummy(ImVec2(1, 0));
             ImGui::SameLine();
             ImGui::TextUnformatted(node->name.c_str());
+            ImGui::SameLine();
+            ImGui::Dummy(ImVec2(1, 0));
             ImGui::Dummy(ImVec2(0, ax::NodeEditor::GetStyle().NodePadding.y));
             ImGui::EndGroup();
-            ImVec2 title_bar_rect_max = ImGui::GetItemRectMax();
+            const float title_bar_max_y = ImGui::GetItemRectMax().y;
+            const float title_bar_width = ImGui::GetItemRectSize().x;
 
             // In Pin
             ImGui::BeginGroup();
@@ -235,9 +241,9 @@ namespace Botcraft
 
                 ImGui::Dummy(ImVec2(1, ImGui::GetTextLineHeight()));
 
-                ImVec2 size = ImGui::GetItemRectSize();
+                const ImVec2 size = ImGui::GetItemRectSize();
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
-                ImVec2 p = ImGui::GetCursorScreenPos();
+                const ImVec2 p = ImGui::GetCursorScreenPos();
                 draw_list->AddCircleFilled(ImVec2(p.x, p.y - size.y + 2.0f), 4.0f, GetStatusColor(node->status), 8);
 
                 ax::NodeEditor::EndPin();
@@ -245,10 +251,13 @@ namespace Botcraft
                 ax::NodeEditor::PopStyleVar();
             }
             ImGui::EndGroup();
+            float pins_width = ImGui::GetItemRectSize().x;
 
             ImGui::SameLine();
             ImGui::TextUnformatted(node->classname.c_str());
             ImGui::SameLine();
+            pins_width += ImGui::GetItemRectSize().x;
+
 
             ImGui::BeginGroup();
             for (int i = 0; i < node->out_attr_ids.size(); ++i)
@@ -257,7 +266,7 @@ namespace Botcraft
                 ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_PivotSize, ImVec2(0, 0));
                 ax::NodeEditor::BeginPin(node->out_attr_ids[i], ax::NodeEditor::PinKind::Output);
 
-                ImGui::Dummy(ImVec2(1, ImGui::GetTextLineHeight()));
+                ImGui::Dummy(ImVec2(std::max(1.0f, std::max(MIN_NODE_WIDTH - pins_width, title_bar_width - pins_width)), ImGui::GetTextLineHeight()));
 
                 ImVec2 size = ImGui::GetItemRectSize();
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -267,6 +276,10 @@ namespace Botcraft
                 ax::NodeEditor::EndPin();
                 ax::NodeEditor::PopStyleVar();
                 ax::NodeEditor::PopStyleVar();
+            }
+            if (node->out_attr_ids.size() == 0)
+            {
+                ImGui::Dummy(ImVec2(std::max(1.0f, std::max(MIN_NODE_WIDTH - pins_width, title_bar_width - pins_width)), ImGui::GetTextLineHeight()));
             }
             ImGui::EndGroup();
             ax::NodeEditor::EndNode();
@@ -279,7 +292,7 @@ namespace Botcraft
             //Draw header background
             draw_list->AddRectFilled(
                 ImVec2(node_rect_min.x, node_rect_min.y),
-                ImVec2(node_rect_max.x, title_bar_rect_max.y),
+                ImVec2(node_rect_max.x, title_bar_max_y),
                 GetNodeColor(node->type),
                 ax::NodeEditor::GetStyle().NodeRounding,
                 ImDrawFlags_RoundCornersTop);
