@@ -158,6 +158,10 @@ namespace Botcraft
             if (rendering_manager != nullptr)
             {
                 rendering_manager->BehaviourStartTick();
+                while (rendering_manager->IsBehaviourGUIPaused())
+                {
+                    Yield();
+                }
             }
         }
 

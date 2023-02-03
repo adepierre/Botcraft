@@ -36,9 +36,11 @@ namespace Botcraft
             void BehaviourStartTick();
             void BehaviourEndTick(const bool b);
             void BehaviourTickChild(const size_t i);
+            bool IsBehaviourPaused() const;
 
         private:
             void RenderNode(const size_t index);
+            void NavigateToActiveNode() const;
 
         private:
             ax::NodeEditor::EditorContext* context;
@@ -48,6 +50,8 @@ namespace Botcraft
 
             ImNode* active_node;
             bool recompute_node_position;
+            bool paused;
+            bool step;
         };
     }
 }

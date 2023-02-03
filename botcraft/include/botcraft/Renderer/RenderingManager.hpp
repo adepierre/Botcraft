@@ -82,6 +82,7 @@ namespace Botcraft
             void BehaviourStartTick() const;
             void BehaviourEndTick(const bool b) const;
             void BehaviourTickChild(const size_t i) const;
+            bool IsBehaviourGUIPaused() const;
 #endif
 
 

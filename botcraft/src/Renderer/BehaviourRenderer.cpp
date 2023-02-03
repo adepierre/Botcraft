@@ -76,7 +76,7 @@ namespace Botcraft
 
         BehaviourRenderer::BehaviourRenderer() :
             context(nullptr), config(nullptr), active_node(nullptr),
-            recompute_node_position(false)
+            recompute_node_position(false), paused(false), step(false)
         {
 
         }
@@ -111,6 +111,69 @@ namespace Botcraft
             }
 
             ax::NodeEditor::SetCurrentEditor(context);
+
+            if (paused)
+            {
+                if (ImGui::ArrowButton("Play button", ImGuiDir_Right))
+                {
+                    paused = false;
+                }
+            }
+            else
+            {
+                if (ImGui::Button("##Pause button", ImVec2(ImGui::GetFrameHeight(), ImGui::GetFrameHeight())))
+                {
+                    paused = true;
+                }
+                // Draw pause icon (two rects) on button
+                const ImVec2 button_min_rect = ImGui::GetItemRectMin();
+                const ImVec2 button_size = ImGui::GetItemRectSize();
+                
+                ImDrawList* draw_list = ImGui::GetWindowDrawList();
+                draw_list->AddRectFilled(
+                    ImVec2(button_min_rect.x + 0.2f * button_size.x, button_min_rect.y + 0.1f * button_size.y),
+                    ImVec2(button_min_rect.x + 0.4f * button_size.x, button_min_rect.y + 0.9f * button_size.y),
+                    ImGui::GetColorU32(ImGuiCol_Text)
+                );
+                draw_list->AddRectFilled(
+                    ImVec2(button_min_rect.x + 0.6f * button_size.x, button_min_rect.y + 0.1f * button_size.y),
+                    ImVec2(button_min_rect.x + 0.8f * button_size.x, button_min_rect.y + 0.9f * button_size.y),
+                    ImGui::GetColorU32(ImGuiCol_Text)
+                );
+            }
+            const bool disabled = !paused;
+            if (disabled)
+            {
+                ImGui::BeginDisabled();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("##Step button", ImVec2(ImGui::GetFrameHeight(), ImGui::GetFrameHeight())))
+            {
+                paused = false;
+                step = true;
+            }
+            // Draw step icon (rect + triangle) on button
+            const ImVec2 button_min_rect = ImGui::GetItemRectMin();
+            const ImVec2 button_size = ImGui::GetItemRectSize();
+            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            draw_list->AddRectFilled(
+                ImVec2(button_min_rect.x + 0.15f * button_size.x, button_min_rect.y + 0.2f * button_size.y),
+                ImVec2(button_min_rect.x + 0.3f * button_size.x, button_min_rect.y + 0.8f * button_size.y),
+                ImGui::GetColorU32(ImGuiCol_Text)
+            );
+            
+            const ImVec2 triangle_center = ImVec2(button_min_rect.x + 0.7f * button_size.x, button_min_rect.y + 0.5f * button_size.y);
+            
+            draw_list->AddTriangleFilled(
+                ImVec2(triangle_center.x + 0.205f * button_size.x, triangle_center.y),
+                ImVec2(triangle_center.x - 0.205f * button_size.x, triangle_center.y + 0.237f * button_size.y),
+                ImVec2(triangle_center.x - 0.205f * button_size.x, triangle_center.y - 0.237f * button_size.y),
+                ImGui::GetColorU32(ImGuiCol_Text)
+            );
+            if (disabled)
+            {
+                ImGui::EndDisabled();
+            }
 
             ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_FlowDuration, 0.5f);
             ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_SelectedNodeBorderWidth, 10.0f);
@@ -164,6 +227,17 @@ namespace Botcraft
             }
 
             ax::NodeEditor::End();
+            if (paused)
+            {
+                const ImVec2 node_editor_min_rect = ImGui::GetItemRectMin();
+                const ImVec2 node_editor_max_rect = ImGui::GetItemRectMax();
+                ImDrawList* draw_list = ImGui::GetWindowDrawList();
+                draw_list->AddRect(
+                    node_editor_min_rect,
+                    node_editor_max_rect,
+                    ImColor(5,195,221)
+                );
+            }
 
             ax::NodeEditor::PopStyleColor();
             ax::NodeEditor::PopStyleColor();
@@ -171,6 +245,17 @@ namespace Botcraft
             ax::NodeEditor::PopStyleColor();
             ax::NodeEditor::PopStyleVar();
             ax::NodeEditor::PopStyleVar();
+
+            if (paused && ImGui::IsKeyPressed(ImGuiKey_F5))
+            {
+                paused = false;
+                step = false;
+            }
+            if (paused && ImGui::IsKeyPressed(ImGuiKey_F10))
+            {
+                paused = false;
+                step = true;
+            }
 
             ax::NodeEditor::SetCurrentEditor(nullptr);
         }
@@ -182,6 +267,10 @@ namespace Botcraft
             context = nullptr;
             config.reset();
             nodes.clear();
+            active_node = nullptr;
+            recompute_node_position = true;
+            paused = false;
+            step = false;
         }
 
         void BehaviourRenderer::ResetBehaviourState()
@@ -201,6 +290,33 @@ namespace Botcraft
             if (active_node != nullptr)
             {
                 active_node->status = ImNodeStatus::Running;
+
+                if (active_node->visible)
+                {
+                    ax::NodeEditor::SetCurrentEditor(context);
+                    if (ax::NodeEditor::IsNodeSelected(active_node->id))
+                    {
+                        paused = true;
+                        NavigateToActiveNode();
+                    }
+                    else if (paused || step)
+                    {
+                        NavigateToActiveNode();
+                    }
+                    ax::NodeEditor::SetCurrentEditor(nullptr);
+
+                    if (step)
+                    {
+                        paused = true;
+                        step = false;
+                    }
+                }
+                // If current node is not visible, don't stop to it
+                else
+                {
+                    step = paused || step;
+                    paused = false;
+                }
             }
         }
 
@@ -224,6 +340,12 @@ namespace Botcraft
             {
                 active_node = active_node->children[i];
             }
+        }
+
+        bool BehaviourRenderer::IsBehaviourPaused() const
+        {
+            std::scoped_lock<std::mutex> lock(mutex);
+            return paused;
         }
 
         void BehaviourRenderer::RenderNode(const size_t index)
@@ -357,6 +479,47 @@ namespace Botcraft
             ax::NodeEditor::PopStyleVar();
 
             ax::NodeEditor::SetNodePosition(node->id, ImVec2(node->x, node->y));
+        }
+
+        void BehaviourRenderer::NavigateToActiveNode() const
+        {
+            // Get all currently selected elements
+            std::vector<ax::NodeEditor::NodeId> selected_nodes;
+            std::vector<ax::NodeEditor::LinkId> selected_links;
+
+            selected_nodes.resize(ax::NodeEditor::GetSelectedObjectCount());
+            selected_links.resize(ax::NodeEditor::GetSelectedObjectCount());
+
+            const int node_count = ax::NodeEditor::GetSelectedNodes(selected_nodes.data(), static_cast<int>(selected_nodes.size()));
+            const int link_count = ax::NodeEditor::GetSelectedLinks(selected_links.data(), static_cast<int>(selected_links.size()));
+
+            selected_nodes.resize(node_count);
+            selected_links.resize(link_count);
+
+            // Deselect everything
+            for (const auto& nid : selected_nodes)
+            {
+                ax::NodeEditor::DeselectNode(nid);
+            }
+            for (const auto& lid : selected_links)
+            {
+                ax::NodeEditor::DeselectLink(lid);
+            }
+
+            // select active node
+            ax::NodeEditor::SelectNode(active_node->id);
+            ax::NodeEditor::NavigateToSelection();
+            ax::NodeEditor::DeselectNode(active_node->id);
+
+            // Reselect everything
+            for (const auto& nid : selected_nodes)
+            {
+                ax::NodeEditor::SelectNode(nid, true);
+            }
+            for (const auto& lid : selected_links)
+            {
+                ax::NodeEditor::SelectLink(lid, true);
+            }
         }
 
 

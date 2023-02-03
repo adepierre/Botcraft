@@ -377,6 +377,11 @@ namespace Botcraft
         {
             behaviour_renderer->BehaviourTickChild(i);
         }
+
+        bool RenderingManager::IsBehaviourGUIPaused() const
+        {
+            return behaviour_renderer->IsBehaviourPaused();
+        }
 #endif
 
         bool RenderingManager::Init(const bool headless)
