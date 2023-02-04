@@ -527,6 +527,11 @@ namespace Botcraft
         {
             std::vector<std::unique_ptr<ImNode>> output;
 
+            if (node == nullptr)
+            {
+                return output;
+            }
+
             int current_index = index;
 
             output.push_back(std::make_unique<ImNode>(current_index++, node->GetNodeType(), node->GetName(), node->GetClassName()));

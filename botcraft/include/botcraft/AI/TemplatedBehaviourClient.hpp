@@ -134,7 +134,7 @@ namespace Botcraft
 
         void OnTreeChanged(const BaseNode* root)
         {
-            const std::string& tree_name = root->GetName();
+            const std::string& tree_name = root != nullptr ? root->GetName() : "nullptr";
             LOG_INFO("Behaviour tree changed" << (tree_name.empty() ? " (anonymous tree)" : (" to " + tree_name)));
 #if USE_IMGUI
             if (rendering_manager != nullptr)

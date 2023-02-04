@@ -168,7 +168,7 @@ namespace Botcraft
     };
 
     template<typename Context>
-    class Leaf : public Node<Context>
+    class Leaf final : public Node<Context>
     {
     public:
         Leaf() = delete;
@@ -199,6 +199,7 @@ namespace Botcraft
             return nullptr;
         }
 
+    protected:
         virtual Status TickImpl(Context& context) const override
         {
             try
@@ -221,7 +222,7 @@ namespace Botcraft
     };
 
     template<typename Context>
-    class BehaviourTree : public Node<Context>
+    class BehaviourTree final : public Node<Context>
     {
         using Node<Context>::Node;
     public:
@@ -244,6 +245,7 @@ namespace Botcraft
             return root.get();
         }
 
+    protected:
         virtual Status TickImpl(Context& context) const override
         {
             if (root == nullptr)
@@ -280,10 +282,10 @@ namespace Botcraft
     /// Equivalent to a logical AND.
     /// @tparam Context The tree context type
     template<typename Context>
-    class Sequence : public Composite<Context>
+    class Sequence final : public Composite<Context>
     {
         using Composite<Context>::Composite;
-    public:
+    protected:
         virtual Status TickImpl(Context& context) const override
         {
             for (size_t i = 0; i < this->GetNumChildren(); ++i)
@@ -303,10 +305,10 @@ namespace Botcraft
     /// Equivalent to a logical OR.
     /// @tparam Context The tree context type
     template<typename Context>
-    class Selector : public Composite<Context>
+    class Selector final : public Composite<Context>
     {
         using Composite<Context>::Composite;
-    public:
+    protected:
         virtual Status TickImpl(Context& context) const override
         {
             for (size_t i = 0; i < this->GetNumChildren(); ++i)
@@ -329,10 +331,10 @@ namespace Botcraft
     /// @brief A Decorator that inverts the result of its child.
     /// @tparam Context The tree context type
     template<typename Context>
-    class Inverter : public Decorator<Context>
+    class Inverter final : public Decorator<Context>
     {
         using Decorator<Context>::Decorator;
-    public:
+    protected:
         virtual Status TickImpl(Context& context) const override
         {
             return this->TickChild(context) == Status::Failure ? Status::Success : Status::Failure;
@@ -344,10 +346,10 @@ namespace Botcraft
     /// Can be combined with an inverter for Failure.
     /// @tparam Context The tree context type
     template<typename Context>
-    class Succeeder : public Decorator<Context>
+    class Succeeder final : public Decorator<Context>
     {
         using Decorator<Context>::Decorator;
-    public:
+    protected:
         virtual Status TickImpl(Context& context) const override
         {
             this->TickChild(context);
@@ -360,11 +362,12 @@ namespace Botcraft
     /// Always returns success.
     /// @tparam Context The tree context type
     template<typename Context>
-    class Repeater : public Decorator<Context>
+    class Repeater final : public Decorator<Context>
     {
     public:
         Repeater(const std::string& s, const size_t n_) : Decorator<Context>(s), n(n_) {}
 
+    protected:
         virtual Status TickImpl(Context& context) const override
         {
             Status child_status = Status::Failure;

@@ -596,3 +596,60 @@ TEST_CASE("Nested")
         CHECK(i == 6);
     }
 }
+
+struct CustomContext
+{
+    void OnNodeStartTick()
+    {
+        num_start_tick += 1;
+    }
+
+    void OnNodeEndTick(const Status s)
+    {
+        num_end_tick += 1;
+        if (s == Status::Success)
+        {
+            num_success_tick += 1;
+        }
+        else if (s == Status::Failure)
+        {
+            num_failure_tick += 1;
+        }
+    }
+
+    void OnNodeTickChild(const size_t index)
+    {
+        num_child_tick += 1;
+    }
+
+    int num_start_tick = 0;
+    int num_end_tick = 0;
+    int num_success_tick = 0;
+    int num_failure_tick = 0;
+    int num_child_tick = 0;
+};
+
+TEST_CASE("NodeCallbacks")
+{
+    auto tree = Builder<CustomContext>()
+        .sequence()
+            .selector()
+                .leaf([](CustomContext& c) { return Status::Failure; })
+                .leaf([](CustomContext& c) { return Status::Failure; })
+                .leaf([](CustomContext& c) { return Status::Success; })
+                .leaf([](CustomContext& c) { return Status::Failure; })
+            .end()
+            .inverter().leaf([](CustomContext& c) { return Status::Failure; })
+            .leaf([](CustomContext& c) { return Status::Success; })
+        .end();
+
+    CustomContext context;
+    const Status s = tree->Tick(context);
+
+    CHECK(s == Status::Success);
+    CHECK(context.num_start_tick == 9);
+    CHECK(context.num_end_tick == 9);
+    CHECK(context.num_success_tick == 6);
+    CHECK(context.num_failure_tick == 3);
+    CHECK(context.num_child_tick == 8);
+}
