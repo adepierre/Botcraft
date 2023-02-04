@@ -33,7 +33,8 @@ Main features are listed below. To see the evolution of the project, check the [
 - World data
 - Full entity support (type, data and metadata)
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
-- Bot programming with a behaviour tree system (see [the wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
+- Bot programming with a behaviour tree system (see the [wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
+- extremely resource efficient (CPU/RAM) AFK bots
 - Bot control with mouse and keyboard
 
 Available bot behaviours includes:
@@ -45,6 +46,14 @@ Available bot behaviours includes:
 - Villager trading (only for versions 1.14+)
 - Crafting
 
+### Not supported
+
+- Anti-cheat evasion: if a server owners doesn't allow bots and has an anti-cheat detection system, nothing in Botcraft should be made in order to prevent ban from happening. Only use Botcraft on your own servers or ask permission first if you don't want your account to be banned.
+- Modded servers: Botcraft aims to be compatible with vanilla server first. When possible, modded servers are also (partially) supported, but given the large diversity of servers and mods, Botcraft does not aim to work on every possible server/mod combination.
+
+
+### Nice gifs
+
 Example with 10 survival bots collaborating on a pixel art build. They are all in survival, so they have to pick the right blocks in the chests, eat food and obviously can't fly. There is no global supervision, and they can't communicate with each other.
 
 ![](Visuals/mapart.gif)
@@ -52,6 +61,10 @@ Example with 10 survival bots collaborating on a pixel art build. They are all i
 Complex pathfinding example. The bot has to climb through various blocks as well as fall in water or vines.
 
 ![](Visuals/pathfinding_climb.gif)
+
+Integrated behaviour explorer UI. It supports navigation (translation, zoom, subtree hiding), current and previous nodes status indicator, breakpoints and step by step mode for easy debugging. For more details, see the [behaviour system wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system).
+
+![](Visuals/btree_debugger.gif)
 
 Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 
