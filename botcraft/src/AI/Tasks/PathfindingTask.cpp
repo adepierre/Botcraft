@@ -1,7 +1,6 @@
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
 #include "botcraft/AI/BehaviourClient.hpp"
-#include "botcraft/AI/BehaviourTree.hpp"
 
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
@@ -1220,7 +1219,7 @@ namespace Botcraft
 
     Status GoToBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
         "GoTo.goal", "GoTo.dist_tolerance", "GoTo.min_end_dist",
         "GoTo.speed", "GoTo.allow_jump" };
 
@@ -1258,7 +1257,7 @@ namespace Botcraft
 
     Status LookAtBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        const std::array variable_names = {
             "LookAt.target",
             "LookAt.set_pitch"
         };

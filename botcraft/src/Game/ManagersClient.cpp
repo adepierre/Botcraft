@@ -161,7 +161,6 @@ namespace Botcraft
         {
             rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
             network_manager->AddHandler(rendering_manager.get());
-            entity_manager->SetRenderingManager(rendering_manager);
         }
         physics_manager = std::make_shared<PhysicsManager>(rendering_manager, entity_manager, world, network_manager);
 #else

@@ -93,7 +93,7 @@ namespace Botcraft
     {
         if (!error)
         {
-            LOG_INFO("Connected to server.");
+            LOG_INFO("Connection to server established.");
             socket.async_read_some(asio::buffer(read_msg.data(), read_msg.size()),
                 std::bind(&TCP_Com::handle_read, this,
                 std::placeholders::_1, std::placeholders::_2));

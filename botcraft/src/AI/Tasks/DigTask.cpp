@@ -2,7 +2,6 @@
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/AI/Blackboard.hpp"
 #include "botcraft/AI/BehaviourClient.hpp"
-#include "botcraft/AI/BehaviourTree.hpp"
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
@@ -215,7 +214,7 @@ namespace Botcraft
 
     Status DigBlackboard(BehaviourClient& c)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
             "Dig.pos",
             "Dig.send_swing",
             "Dig.face"

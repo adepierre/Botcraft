@@ -10,13 +10,6 @@ namespace Botcraft
     class Entity;
     class LocalPlayer;
 
-#if USE_GUI
-    namespace Renderer
-    {
-        class RenderingManager;
-    }
-#endif
-
     class EntityManager : public ProtocolCraft::Handler
     {
     public:
@@ -27,9 +20,6 @@ namespace Botcraft
         std::shared_ptr<Entity> GetEntity(const int id) const;
         void AddEntity(const std::shared_ptr<Entity>& entity);
 
-#if USE_GUI
-        void SetRenderingManager(std::shared_ptr<Renderer::RenderingManager> rendering_manager_);
-#endif
         std::mutex& GetMutex();
 
     protected:
@@ -72,9 +62,5 @@ namespace Botcraft
         std::shared_ptr<LocalPlayer> local_player;
 
         std::mutex entity_manager_mutex;
-
-#if USE_GUI
-        std::shared_ptr<Renderer::RenderingManager> rendering_manager;
-#endif
     };
 } // Botcraft

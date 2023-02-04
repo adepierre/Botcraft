@@ -1,11 +1,13 @@
 project(botcraft)
 
 set(botcraft_PUBLIC_HDR
-    include/botcraft/AI/TemplatedBehaviourClient.hpp
+    include/botcraft/AI/BaseNode.hpp
     include/botcraft/AI/BehaviourClient.hpp
     include/botcraft/AI/BehaviourTree.hpp
     include/botcraft/AI/Blackboard.hpp
     include/botcraft/AI/SimpleBehaviourClient.hpp
+    include/botcraft/AI/Status.hpp
+    include/botcraft/AI/TemplatedBehaviourClient.hpp
     
     include/botcraft/AI/Tasks/AllTasks.hpp
     include/botcraft/AI/Tasks/BaseTasks.hpp
@@ -202,6 +204,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Utilities/Logger.hpp
     include/botcraft/Utilities/NBTUtilities.hpp
     include/botcraft/Utilities/SleepUtilities.hpp
+    include/botcraft/Utilities/Templates.hpp
 )
 
 set(botcraft_PRIVATE_HDR
@@ -219,6 +222,7 @@ set(botcraft_PRIVATE_HDR
 )
 
 set(botcraft_SRC
+    src/AI/BaseNode.cpp
     src/AI/BehaviourClient.cpp
     src/AI/SimpleBehaviourClient.cpp
     
@@ -428,6 +432,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             
     list(APPEND botcraft_PRIVATE_HDR
             private_include/botcraft/Renderer/Atlas.hpp
+            private_include/botcraft/Renderer/BehaviourRenderer.hpp
             private_include/botcraft/Renderer/BlockRenderable.hpp
             private_include/botcraft/Renderer/Camera.hpp
             private_include/botcraft/Renderer/Chunk.hpp
@@ -440,6 +445,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             
     list(APPEND botcraft_SRC
             src/Renderer/Atlas.cpp
+            src/Renderer/BehaviourRenderer.cpp
             src/Renderer/BlockRenderable.cpp
             src/Renderer/Camera.cpp
             src/Renderer/Chunk.cpp

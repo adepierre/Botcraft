@@ -12,7 +12,8 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-static bool imgui_demo = false;
+
+#include "botcraft/Renderer/BehaviourRenderer.hpp"
 #endif
 
 #include "botcraft/Renderer/Atlas.hpp"
@@ -53,12 +54,14 @@ namespace Botcraft
             inventory_manager = inventory_manager_;
             entity_manager = entity_manager_;
 
-            for (int i = 0; i < isKeyPressed.size(); ++i)
+            for (int i = 0; i < is_key_pressed.size(); ++i)
             {
-                isKeyPressed[i] = false;
+                is_key_pressed[i] = false;
             }
 #if USE_IMGUI
             inventory_open = false;
+            behaviour_open = false;
+            behaviour_renderer = std::make_unique<BehaviourRenderer>();
 #endif
 
             mouse_last_x = window_width / 2.0f;
@@ -84,7 +87,6 @@ namespace Botcraft
             running = true;
             rendering_thread = std::thread(&RenderingManager::Run, this, headless);
             thread_updating_renderable = std::thread(&RenderingManager::WaitForRenderingUpdate, this);
-
         }
 
         RenderingManager::~RenderingManager()
@@ -136,15 +138,10 @@ namespace Botcraft
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
 
-                if (imgui_demo)
-                {
-                    ImGui::ShowDemoWindow(&imgui_demo);
-                }
-
                 {
                     ImGui::SetNextWindowPos(ImVec2(0, 0));
                     ImGui::SetNextWindowSize(ImVec2(290, 70));
-                    ImGui::Begin("Position");
+                    ImGui::Begin("Position", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
                     ImGui::Text("%f, %f, %f", world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y - 1.62f, world_renderer->GetCamera()->GetPosition().z);
                     ImGui::Text("Yaw: %f  ||  ", world_renderer->GetCamera()->GetYaw());
                     ImGui::SameLine();
@@ -154,7 +151,7 @@ namespace Botcraft
                 {
                     ImGui::SetNextWindowPos(ImVec2(0, 75));
                     ImGui::SetNextWindowSize(ImVec2(290, 70));
-                    ImGui::Begin("Targeted cube");
+                    ImGui::Begin("Targeted cube", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
                     Position raycasted_pos;
                     Position raycasted_normal;
                     const Blockstate* raycasted_blockstate;
@@ -211,7 +208,7 @@ namespace Botcraft
                 {
                     ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), 0.0f), 0, ImVec2(1.0f, 0.0f));
                     ImGui::SetNextWindowSize(ImVec2(180.0f, 170.0f));
-                    ImGui::Begin("Rendering");
+                    ImGui::Begin("Rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
                     ImGui::Text("Lim. FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
                     ImGui::Text("Real FPS: %.1f (%.2fms)", 1.0 / real_fps, real_fps * 1000.0);
                     ImGui::Text("Loaded sections: %i", num_chunks);
@@ -230,12 +227,22 @@ namespace Botcraft
                 glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef USE_IMGUI
+                // Draw the behaviour if it's open
+                if (behaviour_open)
+                {
+                    ImGui::SetNextWindowPos(ImVec2(15.0f, 15.0f), 0, ImVec2(0.0f, 0.0f));
+                    ImGui::SetNextWindowSize(ImVec2(current_window_width - 30.0f, current_window_height - 30.0f));
+                    ImGui::Begin("Behaviour", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+                    behaviour_renderer->Render();
+                    ImGui::End();
+                }
+
                 // Draw the inventory if it's open
                 if (inventory_open)
                 {
                     ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), static_cast<float>(current_window_height)), 0, ImVec2(1.0f, 1.0f));
-                    ImGui::SetNextWindowSize(ImVec2(300.0f, 450.0f));
-                    ImGui::Begin("Inventory");
+                    ImGui::SetNextWindowSize(ImVec2(300.0f, current_window_height - 175.0f));
+                    ImGui::Begin("Inventory", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
                     if (inventory_manager && inventory_manager->GetPlayerInventory())
                     {
                         const std::map<short, ProtocolCraft::Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
@@ -312,6 +319,7 @@ namespace Botcraft
             my_shader.reset();
 
 #ifdef USE_IMGUI
+            behaviour_renderer->CleanUp();
             // ImGui cleaning
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
@@ -343,6 +351,38 @@ namespace Botcraft
             screenshot_path = path;
             take_screenshot = true;
         }
+
+#if USE_IMGUI
+        void RenderingManager::SetCurrentBehaviourTree(const BaseNode* root) const
+        {
+            behaviour_renderer->SetCurrentBehaviourTree(root);
+        }
+
+        void RenderingManager::ResetBehaviourState() const
+        {
+            behaviour_renderer->ResetBehaviourState();
+        }
+
+        void RenderingManager::BehaviourStartTick() const
+        {
+            behaviour_renderer->BehaviourStartTick();
+        }
+
+        void RenderingManager::BehaviourEndTick(const bool b) const
+        {
+            behaviour_renderer->BehaviourEndTick(b);
+        }
+
+        void RenderingManager::BehaviourTickChild(const size_t i) const
+        {
+            behaviour_renderer->BehaviourTickChild(i);
+        }
+
+        bool RenderingManager::IsBehaviourGUIPaused() const
+        {
+            return behaviour_renderer->IsBehaviourPaused();
+        }
+#endif
 
         bool RenderingManager::Init(const bool headless)
         {
@@ -387,8 +427,10 @@ namespace Botcraft
             // ---------------------------------------
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
-            ImGuiIO &io = ImGui::GetIO();
 
+            behaviour_renderer->Init();
+
+            ImGuiIO &io = ImGui::GetIO();
             io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
             // Style
@@ -399,7 +441,7 @@ namespace Botcraft
             ImGui_ImplOpenGL3_Init("#version 330");
 #endif
 
-            my_shader = std::unique_ptr<Shader>(new Shader);
+            my_shader = std::make_unique<Shader>();
 
             glEnable(GL_DEPTH_TEST);
             //glEnable(GL_CULL_FACE); 
@@ -440,44 +482,59 @@ namespace Botcraft
 
             this_object->mouse_last_x = xpos;
             this_object->mouse_last_y = ypos;
+#if USE_IMGUI
+            if (this_object->inventory_open || this_object->behaviour_open)
+            {
+                return;
+            }
+#endif
             this_object->MouseCallback(xoffset, yoffset);
         }
 
         void RenderingManager::InternalProcessInput(GLFWwindow *window)
         {
-            isKeyPressed[static_cast<int>(KEY_CODE::FORWARD)] = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
-            isKeyPressed[static_cast<int>(KEY_CODE::BACKWARD)] = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
-            isKeyPressed[static_cast<int>(KEY_CODE::RIGHT)] = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
-            isKeyPressed[static_cast<int>(KEY_CODE::LEFT)] = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
-            isKeyPressed[static_cast<int>(KEY_CODE::SPACE)] = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
-            isKeyPressed[static_cast<int>(KEY_CODE::SHIFT)] = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
-            isKeyPressed[static_cast<int>(KEY_CODE::CTRL)] = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS;
-            isKeyPressed[static_cast<int>(KEY_CODE::ESC)] = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
-            isKeyPressed[static_cast<int>(KEY_CODE::MOUSE_LEFT)] = glfwGetKey(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-            const bool isInventoryKeyPressed = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::FORWARD)] = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::BACKWARD)] = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::RIGHT)] = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::LEFT)] = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::SPACE)] = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::SHIFT)] = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::CTRL)] = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::ESC)] = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+            is_key_pressed[static_cast<int>(KEY_CODE::MOUSE_LEFT)] = glfwGetKey(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+            const bool is_inventory_key_pressed = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
 
             // Toggle inventory if E was not pressed during previous frame and is during this one
-            const bool toggleInventory = (!isKeyPressed[static_cast<int>(KEY_CODE::INVENTORY)] && isInventoryKeyPressed);
+            const bool toggle_inventory = (!is_key_pressed[static_cast<int>(KEY_CODE::INVENTORY)] && is_inventory_key_pressed);
             // Save current value just like others
-            isKeyPressed[static_cast<int>(KEY_CODE::INVENTORY)] = isInventoryKeyPressed;
+            is_key_pressed[static_cast<int>(KEY_CODE::INVENTORY)] = is_inventory_key_pressed;
+
+
+            const bool is_behaviour_key_pressed = glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS;
+
+            // Toggle behaviour if B was not pressed during previous frame and is during this one
+            const bool toggle_behaviour = (!is_key_pressed[static_cast<int>(KEY_CODE::BEHAVIOUR)] && is_behaviour_key_pressed);
+            // Save current value just like others
+            is_key_pressed[static_cast<int>(KEY_CODE::BEHAVIOUR)] = is_behaviour_key_pressed;
 
 #ifdef USE_IMGUI
-            if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-            {
-                imgui_demo = !imgui_demo;
-            }
-
-            if (toggleInventory)
+            if (toggle_inventory)
             {
                 inventory_open = !inventory_open;
-                if (inventory_open)
-                {
-                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                }
-                else
-                {
-                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                }
+            }
+
+            if (toggle_behaviour)
+            {
+                behaviour_open = !behaviour_open;
+            }
+
+            if (inventory_open || behaviour_open)
+            {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+            else
+            {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             }
 #endif
 
@@ -487,12 +544,9 @@ namespace Botcraft
                 take_screenshot = true;
             }
 
-            KeyboardCallback(isKeyPressed, deltaTime);
+            KeyboardCallback(is_key_pressed, deltaTime);
         }
 
-        /*
-        *  Packet handling methods
-        */
         void RenderingManager::AddChunkToUpdate(const int x, const int z)
         {
             const std::vector<Position> chunk_pos = { {Position(x, 0, z), Position(x - 1, 0, z),
@@ -617,6 +671,9 @@ namespace Botcraft
             }
         }
 
+        /*
+        *  Packet handling methods
+        */
         void RenderingManager::Handle(ProtocolCraft::Message& msg)
         {
 

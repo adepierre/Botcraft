@@ -2,7 +2,6 @@
 #include "botcraft/AI/Blackboard.hpp"
 #include "botcraft/AI/Tasks/EntitiesTasks.hpp"
 #include "botcraft/AI/BehaviourClient.hpp"
-#include "botcraft/AI/BehaviourTree.hpp"
 
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
@@ -83,10 +82,10 @@ namespace Botcraft
 
     Status InteractEntityBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
             "InteractEntity.entity_id",
-            "InteractEntity.hand", 
-            "InteractEntity.swing" 
+            "InteractEntity.hand",
+            "InteractEntity.swing"
         };
 
         Blackboard& blackboard = client.GetBlackboard();

@@ -29,8 +29,9 @@ namespace Botcraft
 
     Status SayBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-            "Say.msg" };
+        constexpr std::array variable_names = {
+            "Say.msg"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -130,8 +131,11 @@ namespace Botcraft
 
     Status InteractWithBlockBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-            "InteractWithBlock.pos" , "InteractWithBlock.face", "InteractWithBlock.animation" };
+        constexpr std::array variable_names = {
+            "InteractWithBlock.pos",
+            "InteractWithBlock.face",
+            "InteractWithBlock.animation"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -152,8 +156,9 @@ namespace Botcraft
 
     Status CheckBlackboardBoolDataBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-            "CheckBlackboardBoolData.key" };
+        constexpr std::array variable_names = {
+            "CheckBlackboardBoolData.key"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -172,8 +177,9 @@ namespace Botcraft
 
     Status RemoveBlackboardDataBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
-            "RemoveBlackboardData.key" };
+        constexpr std::array variable_names = {
+            "RemoveBlackboardData.key"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -197,9 +203,10 @@ namespace Botcraft
 
     Status CopyBlackboardDataBlackboard(BehaviourClient& client)
     {
-        const std::vector<std::string> variable_names = {
+        constexpr std::array variable_names = {
             "CopyBlackboardData.src",
-            "CopyBlackboardData.dst"};
+            "CopyBlackboardData.dst"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 

@@ -118,7 +118,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             return;
         }
 
-        auto tree = Builder<ChatCommandClient>()
+        auto tree = Builder<ChatCommandClient>("goto tree")
             .sequence()
                 // Perform the pathfinding in a Selector,
                 // so it exits as soon as one leaf
@@ -129,16 +129,15 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                     // possibilities to create a leaf. Note that
                     // only the lambda solution can use default
                     // parameters for the last bool value
-                    .leaf([=](ChatCommandClient& c) { return GoTo(c, target_position, 0, 0, speed); })
-                    .leaf(GoTo, target_position, 0, 0, speed, true)
-                    .leaf(std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, speed, true))
+                    .leaf("go to lambda", [=](ChatCommandClient& c) { return GoTo(c, target_position, 0, 0, speed); })
+                    .leaf("go to function", GoTo, target_position, 0, 0, speed, true)
+                    .leaf("go to std bind", std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, speed, true))
                     // If goto fails, say something in chat
                     .leaf(Say, "Pathfinding failed :(")
                 .end()
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         SetBehaviourTree(tree);
     }
@@ -206,16 +205,13 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
         }
         LOG_INFO("Asked to place a block at " << pos << " (" << item << ")");
 
-        auto tree = Builder<ChatCommandClient>()
+        auto tree = Builder<ChatCommandClient>("place block")
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
-                .succeeder()
-                    .leaf(PlaceBlock, item, pos, PlayerDiggingFace::Up, true, true)
-                .end()
+                .succeeder().leaf(PlaceBlock, item, pos, PlayerDiggingFace::Up, true, true)
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         SetBehaviourTree(tree);
     }
@@ -241,16 +237,13 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             return;
         }
 
-        auto tree = Builder<ChatCommandClient>()
+        auto tree = Builder<ChatCommandClient>("dig")
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
-                .succeeder()
-                    .leaf(Dig, pos, true, PlayerDiggingFace::Up)
-                .end()
+                .succeeder().leaf("diggy diggy hole", Dig, pos, true, PlayerDiggingFace::Up)
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         SetBehaviourTree(tree);
     }
@@ -275,29 +268,26 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             return;
         }
 
-        auto tree = Builder<ChatCommandClient>()
+        auto tree = Builder<ChatCommandClient>("interact")
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
-                .succeeder()
-                    .sequence()
-                        .leaf(GoTo, pos, 4, 1, 4.317f, true)
-                        // Set interaction position in the blackboard
-                        .leaf(SetBlackboardData<Position>, "InteractWithBlock.pos", pos)
-                        .selector()
-                            // Perform action using the data in the blackboard
-                            .leaf(InteractWithBlockBlackboard)
-                            // Say something if it fails
-                            .leaf(Say, "Interacting failed :(")
-                        .end()
-                        // Remove interaction position in the blackboard because
-                        // we don't want to leave a mess (and to show how to do it)
-                        .leaf(RemoveBlackboardData, "InteractWithBlock.pos")
+                .succeeder().sequence()
+                    .leaf("go next to block", GoTo, pos, 4, 1, 4.317f, true)
+                    // Set interaction position in the blackboard
+                    .leaf(SetBlackboardData<Position>, "InteractWithBlock.pos", pos)
+                    .selector()
+                        // Perform action using the data in the blackboard
+                        .leaf("interact with block", InteractWithBlockBlackboard)
+                        // Say something if it fails
+                        .leaf(Say, "Interacting failed :(")
                     .end()
+                    // Remove interaction position in the blackboard because
+                    // we don't want to leave a mess (and to show how to do it)
+                    .leaf(RemoveBlackboardData, "InteractWithBlock.pos")
                 .end()
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-            .end()
-            .build();
+            .end();
 
         SetBehaviourTree(tree);
     }

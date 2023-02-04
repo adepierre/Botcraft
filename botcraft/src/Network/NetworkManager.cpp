@@ -146,7 +146,7 @@ namespace Botcraft
                     com->SendPacket(compressed_msg);
                 }
 #else
-                throw(std::runtime_error("Program compiled without ZLIB. Cannot send compressed message"));
+                throw std::runtime_error("Program compiled without ZLIB. Cannot send compressed message");
 #endif
             }
         }
@@ -265,57 +265,70 @@ namespace Botcraft
     void NetworkManager::WaitForNewPackets()
     {
         Logger::GetInstance().RegisterThread("NetworkPacketProcessing");
-        while (state != ProtocolCraft::ConnectionState::None)
+        try
         {
+            while (state != ProtocolCraft::ConnectionState::None)
             {
-                std::unique_lock<std::mutex> lck(mutex_process);
-                process_condition.wait(lck);
-            }
-            while (!packets_to_process.empty())
-            {
-                std::vector<unsigned char> packet;
-                { // process_guard scope
-                    std::lock_guard<std::mutex> process_guard(mutex_process);
-                    if (!packets_to_process.empty())
-                    {
-                        packet = packets_to_process.front();
-                        packets_to_process.pop();
-                    }
-                }
-                if (packet.size() > 0)
                 {
-                    if (compression == -1)
-                    {
-                        ProcessPacket(packet);
-                    }
-                    else
-                    {
-#ifdef USE_COMPRESSION
-                        size_t length = packet.size();
-                        ProtocolCraft::ReadIterator iter = packet.begin();
-                        int data_length = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length);
-
-                        //Packet not compressed
-                        if (data_length == 0)
+                    std::unique_lock<std::mutex> lck(mutex_process);
+                    process_condition.wait(lck);
+                }
+                while (!packets_to_process.empty())
+                {
+                    std::vector<unsigned char> packet;
+                    { // process_guard scope
+                        std::lock_guard<std::mutex> process_guard(mutex_process);
+                        if (!packets_to_process.empty())
                         {
-                            //Erase the first 0
-                            packet.erase(packet.begin());
+                            packet = packets_to_process.front();
+                            packets_to_process.pop();
+                        }
+                    }
+                    if (packet.size() > 0)
+                    {
+                        if (compression == -1)
+                        {
                             ProcessPacket(packet);
                         }
-                        //Packet compressed
                         else
                         {
-                            const int size_varint = static_cast<int>(packet.size() - length);
+#ifdef USE_COMPRESSION
+                            size_t length = packet.size();
+                            ProtocolCraft::ReadIterator iter = packet.begin();
+                            int data_length = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length);
 
-                            std::vector<unsigned char> uncompressed_msg = Decompress(packet, size_varint);
-                            ProcessPacket(uncompressed_msg);
-                        }
+                            //Packet not compressed
+                            if (data_length == 0)
+                            {
+                                //Erase the first 0
+                                packet.erase(packet.begin());
+                                ProcessPacket(packet);
+                            }
+                            //Packet compressed
+                            else
+                            {
+                                const int size_varint = static_cast<int>(packet.size() - length);
+
+                                std::vector<unsigned char> uncompressed_msg = Decompress(packet, size_varint);
+                                ProcessPacket(uncompressed_msg);
+                            }
 #else
-                        throw(std::runtime_error("Program compiled without USE_COMPRESSION. Cannot read compressed message"));
+                            throw std::runtime_error("Program compiled without USE_COMPRESSION. Cannot read compressed message");
 #endif
+                        }
                     }
                 }
             }
+        }
+        catch (const std::exception& e)
+        {
+            LOG_FATAL("Exception: " << e.what());
+            throw;
+        }
+        catch (...)
+        {
+            LOG_FATAL("Unknown exception");
+            throw;
         }
     }
 
@@ -369,8 +382,7 @@ namespace Botcraft
     {
         if (authentifier == nullptr)
         {
-            throw(std::runtime_error("Authentication asked while no valid account has been provided, make sure to connect with a valid Mojang or Microsoft Account"));
-            return;
+            throw std::runtime_error("Authentication asked while no valid account has been provided, make sure to connect with a valid Microsoft Account, or to a server with online-mode=false");
         }
 
 #ifdef USE_ENCRYPTION
@@ -420,7 +432,7 @@ namespace Botcraft
         // Enable encryption from now on
         com->SetEncrypter(encrypter);
 #else
-        throw(std::runtime_error("Your version of botcraft doesn't support encryption. Either run your server with online-mode=false or recompile botcraft"));
+        throw std::runtime_error("Your version of botcraft doesn't support encryption. Either run your server with online-mode=false or recompile botcraft");
 #endif
     }
 

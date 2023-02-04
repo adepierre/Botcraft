@@ -9,7 +9,7 @@ namespace Botcraft
     {
         if (handler == nullptr)
         {
-            throw(std::runtime_error("Trying to assign a nullptr to AsyncHandler"));
+            throw std::runtime_error("Trying to assign a nullptr to AsyncHandler");
             return;
         }
         main_handler = handler;
@@ -39,26 +39,39 @@ namespace Botcraft
     void AsyncHandler::DequeueMsg()
     {
         Logger::GetInstance().RegisterThread("AsyncHandlerMsgProcessing");
-        while (processing)
+        try
         {
-            // Wait for the signal that there is
-            // some chunk data
+            while (processing)
             {
-                std::unique_lock<std::mutex> lck(processing_mutex);
-                processing_condition_variable.wait(lck);
-            }
-            while (!msg_to_process.empty())
-            {
-                std::shared_ptr<ProtocolCraft::Message> msg;
-                // Get the data from the queue
+                // Wait for the signal that there is
+                // some chunk data
                 {
-                    std::lock_guard<std::mutex> process_guard(processing_mutex);
-                    msg = std::move(msg_to_process.front());
-                    msg_to_process.pop();
+                    std::unique_lock<std::mutex> lck(processing_mutex);
+                    processing_condition_variable.wait(lck);
                 }
+                while (!msg_to_process.empty())
+                {
+                    std::shared_ptr<ProtocolCraft::Message> msg;
+                    // Get the data from the queue
+                    {
+                        std::lock_guard<std::mutex> process_guard(processing_mutex);
+                        msg = std::move(msg_to_process.front());
+                        msg_to_process.pop();
+                    }
 
-                msg->Dispatch(main_handler);
+                    msg->Dispatch(main_handler);
+                }
             }
+        }
+        catch (const std::exception& e)
+        {
+            LOG_FATAL("Exception: " << e.what());
+            throw;
+        }
+        catch (...)
+        {
+            LOG_FATAL("Unknown exception");
+            throw;
         }
     }
 
