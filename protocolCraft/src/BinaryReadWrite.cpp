@@ -8,7 +8,7 @@ namespace ProtocolCraft
     {
         if (length < size)
         {
-            throw(std::runtime_error("Not enough input in ReadRawString"));
+            throw std::runtime_error("Not enough input in ReadRawString");
         }
         else
         {
@@ -30,7 +30,7 @@ namespace ProtocolCraft
     {
         if (length < desired_length)
         {
-            throw(std::runtime_error("Not enough input in ReadByteArray"));
+            throw std::runtime_error("Not enough input in ReadByteArray");
         }
         else
         {
@@ -56,7 +56,7 @@ namespace ProtocolCraft
 
         if (length < size)
         {
-            throw(std::runtime_error("Not enough input in ReadData<std::string>"));
+            throw std::runtime_error("Not enough input in ReadData<std::string>");
         }
         else
         {
@@ -81,7 +81,7 @@ namespace ProtocolCraft
         {
             if (numRead >= length)
             {
-                throw(std::runtime_error("Not enough input in ReadData<VarInt>"));
+                throw std::runtime_error("Not enough input in ReadData<VarInt>");
             }
 
             read = *(iter + numRead);
@@ -93,7 +93,7 @@ namespace ProtocolCraft
 
             if (numRead > 5)
             {
-                throw(std::runtime_error("VarInt is too big in ReadData<VarInt>"));
+                throw std::runtime_error("VarInt is too big in ReadData<VarInt>");
             }
 
         } while ((read & 128) != 0);//0b10000000
@@ -116,7 +116,7 @@ namespace ProtocolCraft
         {
             if (numRead >= length)
             {
-                throw(std::runtime_error("Not enough input in ReadData<VarLong>"));
+                throw std::runtime_error("Not enough input in ReadData<VarLong>");
             }
 
             read = *(iter + numRead);
@@ -128,7 +128,7 @@ namespace ProtocolCraft
 
             if (numRead > 10)
             {
-                throw(std::runtime_error("VarLong is too big in ReadData<VarLong>"));
+                throw std::runtime_error("VarLong is too big in ReadData<VarLong>");
             }
 
         } while ((read & 128) != 0);//0b10000000
@@ -144,7 +144,7 @@ namespace ProtocolCraft
     {
         if (length < 16)
         {
-            throw(std::runtime_error("Not enough input in ReadData<UUID>"));
+            throw std::runtime_error("Not enough input in ReadData<UUID>");
         }
         else
         {

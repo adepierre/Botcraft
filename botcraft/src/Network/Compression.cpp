@@ -17,7 +17,7 @@ namespace Botcraft
 
         if (compressed_size > MAX_COMPRESSED_PACKET_LEN)
         {
-            throw(std::runtime_error("Incoming packet is too big"));
+            throw std::runtime_error("Incoming packet is too big");
         }
 
         std::vector<unsigned char> compressed_data(compressed_size);
@@ -25,7 +25,7 @@ namespace Botcraft
 
         if (status != Z_OK)
         {
-            throw(std::runtime_error("Error compressing packet"));
+            throw std::runtime_error("Error compressing packet");
         }
 
         compressed_data.resize(compressed_size);
@@ -51,7 +51,7 @@ namespace Botcraft
         int res = inflateInit(&strm);
         if (res != Z_OK)
         {
-            throw(std::runtime_error("inflateInit failed: " + std::string(strm.msg)));
+            throw std::runtime_error("inflateInit failed: " + std::string(strm.msg));
         }
 
         for (;;)
@@ -76,7 +76,7 @@ namespace Botcraft
                 break;
             default:
                 inflateEnd(&strm);
-                throw(std::runtime_error("Inflate decompression failed: " + std::string(strm.msg)));
+                throw std::runtime_error("Inflate decompression failed: " + std::string(strm.msg));
                 break;
             }
         }

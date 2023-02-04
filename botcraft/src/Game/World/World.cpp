@@ -1074,7 +1074,7 @@ namespace Botcraft
 
         if (direction.x == 0 && direction.y == 0 && direction.z == 0)
         {
-            throw(std::runtime_error("Raycasting with null direction"));
+            throw std::runtime_error("Raycasting with null direction");
         }
 
         const float radius = max_radius / static_cast<float>(std::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z));

@@ -18,7 +18,7 @@ namespace ProtocolCraft
         }
         else
         {
-            throw(std::runtime_error("Unknown type of PositionSource: " + position_source_type.GetName()));
+            throw std::runtime_error("Unknown type of PositionSource: " + position_source_type.GetName());
         }
     }
 }
