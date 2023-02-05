@@ -101,7 +101,7 @@ git clone https://github.com/adepierre/Botcraft.git
 cd Botcraft
 mkdir build
 cd build
-cmake -DGAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_BUILD_TESTS=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
+cmake -DBOTCRAFT_GAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_BUILD_TESTS=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
 cmake --build . --config Release
 ctest -C Release
 ```
@@ -111,7 +111,7 @@ At this point, you should have all the examples compiled and ready to run and th
 You can check [this discussion](https://github.com/adepierre/Botcraft/discussions/45#discussioncomment-1142555) for an example of how to use botcraft with your own code. In case you need help, you can try to ask on the [community discord server](https://discord.gg/wECVsTbjA9).
 
 There are several cmake options you can modify:
-- GAME_VERSION [1.XX.X or latest]
+- BOTCRAFT_GAME_VERSION [1.XX.X or latest]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
 - BOTCRAFT_BUILD_TESTS [ON/OFF]
 - BOTCRAFT_OUTPUT_DIR [PATH] Base output build path. Binaries, assets and libs will be created in subfolders of this path (default: top project dir)

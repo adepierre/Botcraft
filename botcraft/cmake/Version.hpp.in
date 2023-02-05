@@ -3,4 +3,4 @@
 #include <string>
 
 const int protocol_version = ${PROTOCOL_VERSION};
-const std::string game_version = "${GAME_VERSION}";
+const std::string game_version = "${BOTCRAFT_GAME_VERSION}";

@@ -647,11 +647,11 @@ export(EXPORT botcraft-targets
 
 # Copy asset files into install binary folder
 if (BOTCRAFT_DOWNLOAD_MC_ASSETS)
-    install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}"
+    install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}"
         DESTINATION "${CMAKE_INSTALL_BINDIR}/Assets"
     )
 else()
-    install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${GAME_VERSION}"
+    install(DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}"
         DESTINATION "${CMAKE_INSTALL_BINDIR}/Assets"
         PATTERN "minecraft" EXCLUDE
     )

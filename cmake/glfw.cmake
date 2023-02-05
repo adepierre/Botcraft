@@ -12,7 +12,6 @@ if(NOT TARGET glfw)
 
     file(GLOB RESULT "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glfw/include")
     list(LENGTH RESULT RES_LEN)
-    message(STATUS ${RES_LEN})
     if(RES_LEN EQUAL 0)
         message(STATUS "Glfw not found, cloning it...")
         execute_process(COMMAND git submodule update --init -- 3rdparty/glfw WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")

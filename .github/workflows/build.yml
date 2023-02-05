@@ -55,7 +55,7 @@ jobs:
         run: >
           cmake -G "${{ matrix.config.generator }}"
           -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-          -DGAME_VERSION=latest
+          -DBOTCRAFT_GAME_VERSION=latest
           -DBOTCRAFT_USE_OPENGL_GUI=ON
           -DBOTCRAFT_USE_IMGUI=ON
           -DBOTCRAFT_COMPRESSION=ON

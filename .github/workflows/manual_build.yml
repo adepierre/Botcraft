@@ -48,7 +48,7 @@ jobs:
         run: >
           cmake -G "${{ matrix.config.generator }}"
           -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-          -DGAME_VERSION=${{ github.event.inputs.minecraft_version }}
+          -DBOTCRAFT_GAME_VERSION=${{ github.event.inputs.minecraft_version }}
           -DBOTCRAFT_USE_OPENGL_GUI=ON
           -DBOTCRAFT_USE_IMGUI=ON
           -DBOTCRAFT_COMPRESSION=ON

@@ -1,14 +1,14 @@
 #!/bin/bash
 
-if [ -d "Assets/${GAME_VERSION}/minecraft/" ]
+if [ -d "Assets/${BOTCRAFT_GAME_VERSION}/minecraft/" ]
 then
-    echo "Minecraft ${GAME_VERSION} assets already downloaded"
+    echo "Minecraft ${BOTCRAFT_GAME_VERSION} assets already downloaded"
 else
-    echo "Downloading Minecraft ${GAME_VERSION} assets..."
+    echo "Downloading Minecraft ${BOTCRAFT_GAME_VERSION} assets..."
     mkdir tmp/
-    curl --output tmp/client.jar --url ${VERSION_CLIENTURL}
+    curl --output tmp/client.jar --url ${VERSION_CLIENT_URL}
     unzip -q tmp/client.jar -d tmp/ 'assets/minecraft/blockstates/**' 'assets/minecraft/models/block/**' 'assets/minecraft/textures/block/**' 'assets/minecraft/textures/entity/**'
-    cp -r tmp/assets/minecraft/ Assets/${GAME_VERSION}/
+    cp -r tmp/assets/minecraft/ Assets/${BOTCRAFT_GAME_VERSION}/
     rm -rf ./tmp/
     echo Done!
 fi
