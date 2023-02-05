@@ -5,7 +5,7 @@
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/SleepUtilities.hpp"
-#if USE_IMGUI
+#if USE_GUI
 #include "botcraft/Renderer/RenderingManager.hpp"
 #endif
 
@@ -136,7 +136,7 @@ namespace Botcraft
         {
             const std::string& tree_name = root != nullptr ? root->GetName() : "nullptr";
             LOG_INFO("Behaviour tree changed" << (tree_name.empty() ? " (anonymous tree)" : (" to " + tree_name)));
-#if USE_IMGUI
+#if USE_GUI
             if (rendering_manager != nullptr)
             {
                 rendering_manager->SetCurrentBehaviourTree(root);
@@ -144,7 +144,7 @@ namespace Botcraft
 #endif
         }
 
-#if USE_IMGUI
+#if USE_GUI
         void OnFullTreeStart()
         {
             if (rendering_manager != nullptr)
@@ -192,7 +192,7 @@ namespace Botcraft
                 {
                     if (tree)
                     {
-#if USE_IMGUI
+#if USE_GUI
                         OnFullTreeStart();
 #endif
                         tree->Tick(static_cast<TDerived&>(*this));

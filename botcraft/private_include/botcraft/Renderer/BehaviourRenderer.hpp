@@ -1,5 +1,6 @@
-#if USE_IMGUI
 #pragma once
+
+#if USE_IMGUI
 #include <memory>
 #include <vector>
 #include <mutex>
@@ -27,11 +28,11 @@ namespace Botcraft
             BehaviourRenderer();
             ~BehaviourRenderer();
 
-            void SetCurrentBehaviourTree(const BaseNode* root);
             void Init();
             void Render();
             void CleanUp();
 
+            void SetCurrentBehaviourTree(const BaseNode* root);
             void ResetBehaviourState();
             void BehaviourStartTick();
             void BehaviourEndTick(const bool b);
@@ -52,6 +53,24 @@ namespace Botcraft
             bool recompute_node_position;
             bool paused;
             bool step;
+        };
+    }
+}
+#else
+namespace Botcraft
+{
+    class BaseNode;
+    namespace Renderer
+    {
+        class BehaviourRenderer
+        {
+        public:
+            void SetCurrentBehaviourTree(const BaseNode* root) {}
+            void ResetBehaviourState() {}
+            void BehaviourStartTick() {}
+            void BehaviourEndTick(const bool b) {}
+            void BehaviourTickChild(const size_t i) {}
+            bool IsBehaviourPaused() const { return false; }
         };
     }
 }

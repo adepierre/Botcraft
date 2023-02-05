@@ -86,13 +86,6 @@ namespace Botcraft
 
         }
 
-        void BehaviourRenderer::SetCurrentBehaviourTree(const BaseNode* root)
-        {
-            std::scoped_lock<std::mutex> lock(mutex);
-            nodes = UnrollTreeStructure(root);
-            recompute_node_position = true;
-        }
-
         void BehaviourRenderer::Init()
         {
             std::scoped_lock<std::mutex> lock(mutex);
@@ -271,6 +264,13 @@ namespace Botcraft
             recompute_node_position = true;
             paused = false;
             step = false;
+        }
+
+        void BehaviourRenderer::SetCurrentBehaviourTree(const BaseNode* root)
+        {
+            std::scoped_lock<std::mutex> lock(mutex);
+            nodes = UnrollTreeStructure(root);
+            recompute_node_position = true;
         }
 
         void BehaviourRenderer::ResetBehaviourState()

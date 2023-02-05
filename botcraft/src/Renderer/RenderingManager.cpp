@@ -12,17 +12,17 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-
-#include "botcraft/Renderer/BehaviourRenderer.hpp"
 #endif
 
+
 #include "botcraft/Renderer/Atlas.hpp"
-#include "botcraft/Renderer/Shader.hpp"
-#include "botcraft/Renderer/ImageSaver.hpp"
-#include "botcraft/Renderer/WorldRenderer.hpp"
+#include "botcraft/Renderer/BehaviourRenderer.hpp"
 #include "botcraft/Renderer/Camera.hpp"
 #include "botcraft/Renderer/Chunk.hpp"
+#include "botcraft/Renderer/ImageSaver.hpp"
+#include "botcraft/Renderer/Shader.hpp"
 #include "botcraft/Renderer/TransparentChunk.hpp"
+#include "botcraft/Renderer/WorldRenderer.hpp"
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/World.hpp"
@@ -58,11 +58,10 @@ namespace Botcraft
             {
                 is_key_pressed[i] = false;
             }
-#if USE_IMGUI
+
             inventory_open = false;
             behaviour_open = false;
             behaviour_renderer = std::make_unique<BehaviourRenderer>();
-#endif
 
             mouse_last_x = window_width / 2.0f;
             mouse_last_y = window_height / 2.0f;
@@ -352,7 +351,6 @@ namespace Botcraft
             take_screenshot = true;
         }
 
-#if USE_IMGUI
         void RenderingManager::SetCurrentBehaviourTree(const BaseNode* root) const
         {
             behaviour_renderer->SetCurrentBehaviourTree(root);
@@ -382,7 +380,6 @@ namespace Botcraft
         {
             return behaviour_renderer->IsBehaviourPaused();
         }
-#endif
 
         bool RenderingManager::Init(const bool headless)
         {
@@ -482,12 +479,12 @@ namespace Botcraft
 
             this_object->mouse_last_x = xpos;
             this_object->mouse_last_y = ypos;
-#if USE_IMGUI
+
             if (this_object->inventory_open || this_object->behaviour_open)
             {
                 return;
             }
-#endif
+
             this_object->MouseCallback(xoffset, yoffset);
         }
 
