@@ -168,7 +168,8 @@
         "stack_size": 1
     },
     "minecraft:bamboo_sign": {
-        "id": 828
+        "id": 828,
+        "stack_size": 1
     },
     "minecraft:bamboo_slab": {
         "id": 225

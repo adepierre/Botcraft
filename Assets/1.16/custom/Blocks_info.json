@@ -1038,7 +1038,7 @@
         ]
     },
     {
-        "hardness": 0.5,
+        "hardness": 1.5,
         "name": "minecraft:sticky_piston",
         "render": "block",
         "solid": true,
@@ -1119,7 +1119,7 @@
         ]
     },
     {
-        "hardness": 0.5,
+        "hardness": 1.5,
         "name": "minecraft:piston",
         "render": "block",
         "solid": true,
@@ -1130,7 +1130,7 @@
         ]
     },
     {
-        "hardness": -1,
+        "hardness": 1.5,
         "name": "minecraft:piston_head",
         "render": "block",
         "solid": true,
@@ -1367,7 +1367,7 @@
         "hardness": -1,
         "name": "minecraft:moving_piston",
         "render": "none",
-        "solid": false,
+        "solid": true,
         "transparent": false
     },
     {
@@ -1621,7 +1621,7 @@
         ]
     },
     {
-        "hardness": -1,
+        "hardness": 0,
         "name": "minecraft:fire",
         "render": "block",
         "solid": false,
@@ -1631,7 +1631,7 @@
         ]
     },
     {
-        "hardness": -1,
+        "hardness": 0,
         "name": "minecraft:soul_fire",
         "render": "block",
         "solid": false,
@@ -1931,7 +1931,7 @@
         "hardness": 0.5,
         "name": "minecraft:lever",
         "render": "block",
-        "solid": true,
+        "solid": false,
         "transparent": true,
         "tools": [
             "any"
@@ -2520,7 +2520,7 @@
         ]
     },
     {
-        "hardness": 1.5,
+        "hardness": 0.75,
         "name": "minecraft:infested_stone",
         "render": "block",
         "solid": true,
@@ -2531,7 +2531,7 @@
         ]
     },
     {
-        "hardness": 2,
+        "hardness": 1,
         "name": "minecraft:infested_cobblestone",
         "render": "block",
         "solid": true,
@@ -2542,7 +2542,7 @@
         ]
     },
     {
-        "hardness": 1.5,
+        "hardness": 0.75,
         "name": "minecraft:infested_stone_bricks",
         "render": "block",
         "solid": true,
@@ -2553,7 +2553,7 @@
         ]
     },
     {
-        "hardness": 1.5,
+        "hardness": 0.75,
         "name": "minecraft:infested_mossy_stone_bricks",
         "render": "block",
         "solid": true,
@@ -2564,7 +2564,7 @@
         ]
     },
     {
-        "hardness": 1.5,
+        "hardness": 0.75,
         "name": "minecraft:infested_cracked_stone_bricks",
         "render": "block",
         "solid": true,
@@ -2575,7 +2575,7 @@
         ]
     },
     {
-        "hardness": 1.5,
+        "hardness": 0.75,
         "name": "minecraft:infested_chiseled_stone_bricks",
         "render": "block",
         "solid": true,
@@ -2847,7 +2847,7 @@
         "hardness": 0,
         "name": "minecraft:nether_wart",
         "render": "block",
-        "solid": true,
+        "solid": false,
         "transparent": true,
         "tools": [
             "any"
@@ -2975,7 +2975,7 @@
         "hardness": 0,
         "name": "minecraft:tripwire_hook",
         "render": "block",
-        "solid": true,
+        "solid": false,
         "transparent": true,
         "tools": [
             "any"
@@ -5294,7 +5294,7 @@
         ]
     },
     {
-        "hardness": 0.8,
+        "hardness": 3,
         "name": "minecraft:end_stone_bricks",
         "render": "block",
         "solid": true,
@@ -5328,7 +5328,7 @@
         "hardness": -2,
         "name": "minecraft:end_gateway",
         "render": "other",
-        "solid": true,
+        "solid": false,
         "transparent": false
     },
     {
@@ -6686,7 +6686,7 @@
         ]
     },
     {
-        "hardness": 0.8,
+        "hardness": 3,
         "name": "minecraft:end_stone_brick_stairs",
         "render": "block",
         "solid": true,
@@ -6826,7 +6826,7 @@
         ]
     },
     {
-        "hardness": 0.8,
+        "hardness": 3,
         "name": "minecraft:end_stone_brick_slab",
         "render": "block",
         "solid": true,
@@ -7006,7 +7006,7 @@
         ]
     },
     {
-        "hardness": 0.8,
+        "hardness": 3,
         "name": "minecraft:end_stone_brick_wall",
         "render": "block",
         "solid": true,
@@ -7216,7 +7216,7 @@
         ]
     },
     {
-        "hardness": 1,
+        "hardness": 2,
         "name": "minecraft:stripped_warped_stem",
         "render": "block",
         "solid": true,
@@ -7249,7 +7249,7 @@
         ]
     },
     {
-        "hardness": 1,
+        "hardness": 0.4,
         "name": "minecraft:warped_nylium",
         "render": "block",
         "solid": true,
@@ -7311,7 +7311,7 @@
         ]
     },
     {
-        "hardness": 1,
+        "hardness": 2,
         "name": "minecraft:stripped_crimson_stem",
         "render": "block",
         "solid": true,
@@ -7344,7 +7344,7 @@
         ]
     },
     {
-        "hardness": 1,
+        "hardness": 0.4,
         "name": "minecraft:crimson_nylium",
         "render": "block",
         "solid": true,
@@ -7871,7 +7871,7 @@
         ]
     },
     {
-        "hardness": 2,
+        "hardness": 1.5,
         "name": "minecraft:blackstone_wall",
         "render": "block",
         "solid": true,
@@ -7921,7 +7921,7 @@
         ]
     },
     {
-        "hardness": 2,
+        "hardness": 1.5,
         "name": "minecraft:chiseled_polished_blackstone",
         "render": "block",
         "solid": true,
@@ -7951,7 +7951,7 @@
         ]
     },
     {
-        "hardness": 2,
+        "hardness": 1.5,
         "name": "minecraft:polished_blackstone_brick_wall",
         "render": "block",
         "solid": true,
@@ -8004,7 +8004,7 @@
         "hardness": 0.5,
         "name": "minecraft:polished_blackstone_button",
         "render": "block",
-        "solid": true,
+        "solid": false,
         "transparent": true,
         "tools": [
             "pickaxe"

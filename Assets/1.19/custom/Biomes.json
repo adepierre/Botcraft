@@ -79,7 +79,7 @@
         "name": "Old Growth Birch Forest",
         "rainfall": 0.6,
         "temperature": 0.6,
-		"biomeType": "DarkForest"
+        "biomeType": "DarkForest"
     },
     {
         "id": 13,
@@ -164,21 +164,21 @@
         "name": "Badlands",
         "rainfall": 0.0,
         "temperature": 2.0,
-		"biomeType": "Badlands"
+        "biomeType": "Badlands"
     },
     {
         "id": 27,
         "name": "Eroded Badlands",
         "rainfall": 0.0,
         "temperature": 2.0,
-		"biomeType": "Badlands"
+        "biomeType": "Badlands"
     },
     {
         "id": 28,
         "name": "Wooded Badlands",
         "rainfall": 0.0,
         "temperature": 2.0,
-		"biomeType": "Badlands"
+        "biomeType": "Badlands"
     },
     {
         "id": 29,

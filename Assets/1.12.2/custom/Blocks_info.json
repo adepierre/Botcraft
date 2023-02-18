@@ -317,7 +317,7 @@
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5,
+        "hardness": 1.5,
         "tools": [
             "any",
             "pickaxe"
@@ -366,7 +366,7 @@
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5,
+        "hardness": 1.5,
         "tools": [
             "any",
             "pickaxe"
@@ -377,7 +377,7 @@
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": -1,
+        "hardness": 1.5,
         "tools": [
             "any"
         ]
@@ -558,7 +558,7 @@
         "transparent": true,
         "solid": false,
         "render": "block",
-        "hardness": -1,
+        "hardness": 0,
         "tools": [
             "any"
         ]
@@ -753,7 +753,7 @@
     {
         "name": "minecraft:lever",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "block",
         "hardness": 0.5,
         "tools": [
@@ -1240,7 +1240,7 @@
     {
         "name": "minecraft:nether_wart",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "block",
         "hardness": 0,
         "tools": [
@@ -1400,7 +1400,7 @@
     {
         "name": "minecraft:tripwire_hook",
         "transparent": true,
-        "solid": true,
+        "solid": false,
         "render": "block",
         "hardness": 0,
         "tools": [
@@ -2222,7 +2222,7 @@
     {
         "name": "minecraft:end_gateway",
         "transparent": false,
-        "solid": true,
+        "solid": false,
         "render": "other",
         "hardness": -2
     },
