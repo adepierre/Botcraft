@@ -547,7 +547,7 @@ namespace Botcraft
                 }
             }
 #else
-            const int x = (block_entities[i].GetPackedXZ() & 15) << 4;
+            const int x = (block_entities[i].GetPackedXZ() >> 4) & 15;
             const int z = (block_entities[i].GetPackedXZ() & 15);
             // And what about the type ???
             block_entities_data[Position((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, block_entities[i].GetY(), (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = std::make_shared<NBT::Value>(block_entities[i].GetTag());
