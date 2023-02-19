@@ -327,7 +327,7 @@ namespace Botcraft
                 Particle,
 #endif
 #if PROTOCOL_VERSION > 404
-                VillagerDataTYpe,
+                VillagerDataType,
                 OptionalUint,
                 PoseType,
 #endif
@@ -438,7 +438,7 @@ namespace Botcraft
                 break;
 #endif
 #if PROTOCOL_VERSION > 404
-            case EntityMetadataTypes::VillagerDataTYpe:
+            case EntityMetadataTypes::VillagerDataType:
                 value = VillagerData{
                     ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length), // villager_type
                     ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length), // villager_profession
