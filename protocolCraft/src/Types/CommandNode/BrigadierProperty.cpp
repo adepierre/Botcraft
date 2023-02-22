@@ -9,7 +9,9 @@
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyEntity.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyScoreHolder.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyResourceOrTag.hpp"
+#if PROTOCOL_VERSION < 759
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyRange.hpp"
+#endif
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyNone.hpp"
 
 namespace ProtocolCraft
