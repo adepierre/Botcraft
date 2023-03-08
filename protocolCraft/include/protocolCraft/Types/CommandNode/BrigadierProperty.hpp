@@ -9,6 +9,74 @@
 
 namespace ProtocolCraft
 {
+#if PROTOCOL_VERSION > 758
+    enum class BrigadierPropertyType
+    {
+        None = -1,
+        Bool,
+        Float,
+        Double,
+        Integer,
+        Long,
+        String,
+        Entity,
+        GameProfile,
+        BlockPos,
+        ColumnPos,
+        Vec3,
+        Vec2,
+        BlockState,
+        BlockPredicate,
+        ItemStack,
+        ItemPredicate,
+        Color,
+        Component,
+        Message,
+        NbtCompoundTag,
+        NbtTag,
+        NbtPath,
+        Objective,
+        ObjectiveCriteria,
+        Operation,
+        Particle,
+        Angle,
+        Rotation,
+        ScoreboardSlot,
+        ScoreHolder,
+        Swizzle,
+        Team,
+        ItemSlot,
+        ResourceLocation,
+#if PROTOCOL_VERSION < 761
+        MobEffect,
+#endif
+        Function,
+        EntityAnchor,
+        IntRange,
+        FloatRange,
+#if PROTOCOL_VERSION < 761
+        ItemEnchantment,
+        EntitySummon,
+#endif
+        Dimension,
+#if PROTOCOL_VERSION > 760
+        Gamemode,
+#endif
+        Time,
+        ResourceOrTag,
+#if PROTOCOL_VERSION > 760
+        ResourceOrTagKey,
+#endif
+        Resource,
+#if PROTOCOL_VERSION > 760
+        ResourceKey,
+#endif
+        TemplateMirror,
+        TemplateRotation,
+        Uuid,
+    };
+#endif
+
     class BrigadierProperty : public NetworkType
     {
     public:
@@ -17,7 +85,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 759
         static std::shared_ptr<BrigadierProperty> CreateProperties(const Identifier& parser_identifier);
 #else
-        static std::shared_ptr<BrigadierProperty> CreateProperties(const int parser_id);
+        static std::shared_ptr<BrigadierProperty> CreateProperties(const BrigadierPropertyType parser_id);
 #endif
     };
 }

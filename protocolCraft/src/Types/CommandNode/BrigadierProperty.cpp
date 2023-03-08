@@ -70,33 +70,82 @@ namespace ProtocolCraft
         }
     }
 #else
-    std::shared_ptr<BrigadierProperty> BrigadierProperty::CreateProperties(const int parser_id)
+    std::shared_ptr<BrigadierProperty> BrigadierProperty::CreateProperties(const BrigadierPropertyType parser_id)
     {
         switch (parser_id)
         {
-        case 1:
+        case BrigadierPropertyType::None:
+            return nullptr;
+        case BrigadierPropertyType::Float:
             return std::make_shared<BrigadierPropertyFloat>();
-        case 2:
+        case BrigadierPropertyType::Double:
             return std::make_shared<BrigadierPropertyDouble>();
-        case 3:
+        case BrigadierPropertyType::Integer:
             return std::make_shared<BrigadierPropertyInteger>();
-        case 4:
+        case BrigadierPropertyType::Long:
             return std::make_shared<BrigadierPropertyLong>();
-        case 5:
+        case BrigadierPropertyType::String:
             return std::make_shared<BrigadierPropertyString>();
-        case 6:
+        case BrigadierPropertyType::Entity:
             return std::make_shared<BrigadierPropertyEntity>();
-        case 29:
+        case BrigadierPropertyType::ScoreHolder:
             return std::make_shared<BrigadierPropertyScoreHolder>();
+        case BrigadierPropertyType::ResourceOrTag:
+        case BrigadierPropertyType::Resource:
 #if PROTOCOL_VERSION > 760
-        case 41:
-        case 42:
+        case BrigadierPropertyType::ResourceOrTagKey:
+        case BrigadierPropertyType::ResourceKey:
 #endif
-        case 43:
-        case 44:
             return std::make_shared<BrigadierPropertyResourceOrTag>();
-        default:
+        case BrigadierPropertyType::Bool:
+        case BrigadierPropertyType::GameProfile:
+        case BrigadierPropertyType::BlockPos:
+        case BrigadierPropertyType::ColumnPos:
+        case BrigadierPropertyType::Vec3:
+        case BrigadierPropertyType::Vec2:
+        case BrigadierPropertyType::BlockState:
+        case BrigadierPropertyType::BlockPredicate:
+        case BrigadierPropertyType::ItemStack:
+        case BrigadierPropertyType::ItemPredicate:
+        case BrigadierPropertyType::Color:
+        case BrigadierPropertyType::Component:
+        case BrigadierPropertyType::Message:
+        case BrigadierPropertyType::NbtCompoundTag:
+        case BrigadierPropertyType::NbtTag:
+        case BrigadierPropertyType::NbtPath:
+        case BrigadierPropertyType::Objective:
+        case BrigadierPropertyType::ObjectiveCriteria:
+        case BrigadierPropertyType::Operation:
+        case BrigadierPropertyType::Particle:
+        case BrigadierPropertyType::Angle:
+        case BrigadierPropertyType::Rotation:
+        case BrigadierPropertyType::ScoreboardSlot:
+        case BrigadierPropertyType::Swizzle:
+        case BrigadierPropertyType::Team:
+        case BrigadierPropertyType::ItemSlot:
+        case BrigadierPropertyType::ResourceLocation:
+#if PROTOCOL_VERSION < 761
+        case BrigadierPropertyType::MobEffect:
+#endif
+        case BrigadierPropertyType::Function:
+        case BrigadierPropertyType::EntityAnchor:
+#if PROTOCOL_VERSION < 761
+        case BrigadierPropertyType::ItemEnchantment:
+        case BrigadierPropertyType::EntitySummon:
+#endif
+        case BrigadierPropertyType::IntRange:
+        case BrigadierPropertyType::FloatRange:
+        case BrigadierPropertyType::Dimension:
+#if PROTOCOL_VERSION > 760
+        case BrigadierPropertyType::Gamemode:
+#endif
+        case BrigadierPropertyType::Time:
+        case BrigadierPropertyType::TemplateMirror:
+        case BrigadierPropertyType::TemplateRotation:
+        case BrigadierPropertyType::Uuid:
             return std::make_shared<BrigadierPropertyNone>();
+        default:
+            return nullptr;
         }
     }
 #endif

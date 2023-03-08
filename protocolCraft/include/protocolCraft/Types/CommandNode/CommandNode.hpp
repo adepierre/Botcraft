@@ -129,7 +129,7 @@ namespace ProtocolCraft
                 properties = BrigadierProperty::CreateProperties(parser);
 #else
                 parser_id = ReadData<VarInt>(iter, length);
-                properties = BrigadierProperty::CreateProperties(parser_id);
+                properties = BrigadierProperty::CreateProperties(static_cast<BrigadierPropertyType>(parser_id));
 #endif
                 properties->Read(iter, length);
                 if (flags & 0x10)
