@@ -124,7 +124,7 @@ jobs:
             echo "If you're on Windows < 10, the script wont work and you'll have to do it manually as curl and tar commands have only been added recently." >> release_note.txt
             echo Linux version is compiled using Ubuntu with all dependencies included and should work on other distributions. You might have to install the unzip command to run the script though. >> release_note.txt
             echo -en '\n' >> release_note.txt
-            echo "If you'd like to get the precompiled binaries for another version of the game, just open an issue or ask on [the discord server](https://discord.gg/wECVsTbjA9). There is an automatic workflow to build it, but I need to trigger it manually." >> release_note.txt
+            echo "💡 If you need binaries for a previous version of Minecraft, you can open [an issue using this link](https://github.com/${{ github.repository }}/issues/new?assignees=&labels=version+request&template=version-request.yml&title=%5BVersion+request%5D) and it will be automagically generated for you." >> release_note.txt
             echo -en '\n' >> release_note.txt
             echo **Changes:** >> release_note.txt
 
