@@ -10,11 +10,11 @@ namespace ProtocolCraft
     {
         if (position_source_type.GetName() == "block")
         {
-            return std::shared_ptr<BlockPositionSource>(new BlockPositionSource);
+            return std::make_shared<BlockPositionSource>();
         }
         else if (position_source_type.GetName() == "entity")
         {
-            return std::shared_ptr<EntityPositionSource>(new EntityPositionSource);
+            return std::make_shared<EntityPositionSource>();
         }
         else
         {
