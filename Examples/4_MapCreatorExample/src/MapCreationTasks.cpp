@@ -731,12 +731,13 @@ Status LoadNBT(BehaviourClient& c, const std::string& path, const Position& offs
     try
     {
         std::ifstream infile(path, std::ios_base::binary);
+        infile.unsetf(std::ios::skipws);
         infile >> loaded_file;
         infile.close();
     }
-    catch (const std::exception&)
+    catch (const std::exception& e)
     {
-        LOG_ERROR("Error loading NBT file. Make sure the file is uncompressed (you can change the extension to .zip and simply unzip it)");
+        LOG_ERROR("Error loading NBT file " << e.what());
         return Status::Failure;
     }
 

@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#include "protocolCraft/Utilities/GZip.hpp"
 
 namespace ProtocolCraft
 {
@@ -28,6 +29,7 @@ namespace ProtocolCraft
                 std::istream_iterator<unsigned char>(is),
                 std::istream_iterator<unsigned char>()
             );
+
             ReadIterator iter = file_content.begin();
             size_t length = file_content.size();
 
@@ -38,7 +40,18 @@ namespace ProtocolCraft
 
         void Value::ReadImpl(ReadIterator& iter, size_t& length)
         {
-            Tag::ReadImpl(iter, length);
+            // Check for GZIP minimal header size and magic number
+            if (length > 10 && *iter == 0x1F && *(iter + 1) == 0x8B)
+            {
+                const std::vector<unsigned char> decompressed = ExtractGZip(iter, length);
+                ReadIterator decomp_iter = decompressed.begin();
+                size_t decomp_length = decompressed.size();
+                Tag::ReadImpl(decomp_iter, decomp_length);
+            }
+            else
+            {
+                Tag::ReadImpl(iter, length);
+            }
 
             if (is<TagEnd>())
             {

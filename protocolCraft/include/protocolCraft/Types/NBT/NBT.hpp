@@ -14,7 +14,6 @@ namespace ProtocolCraft
 
             bool HasData() const;
 
-            // TODO: add methods to deal with compressed files?
             friend std::istream& operator>>(std::istream& is, Value& v);
 
         protected:

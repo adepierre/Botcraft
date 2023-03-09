@@ -307,9 +307,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Vibrations/PositionSource.hpp
     include/protocolCraft/Types/Vibrations/VibrationPath.hpp
     
-    include/protocolCraft/Utilities/TupleCat.hpp
+    include/protocolCraft/Utilities/GZip.hpp
     include/protocolCraft/Utilities/Json.hpp
     include/protocolCraft/Utilities/RecursiveWrapper.hpp
+    include/protocolCraft/Utilities/TupleCat.hpp
 )
 
 set(protocolCraft_SRC 
@@ -343,6 +344,7 @@ set(protocolCraft_SRC
     
     src/Types/Vibrations/PositionSource.cpp
     
+    src/Utilities/GZip.cpp
     src/Utilities/Json.cpp
 )
 
@@ -397,7 +399,12 @@ target_include_directories(protocolCraft
     PUBLIC 
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:include>"
-        )
+)
+
+if(BOTCRAFT_COMPRESSION)
+    target_link_libraries(protocolCraft PRIVATE ZLIB::ZLIB)
+    target_compile_definitions(protocolCraft PRIVATE USE_COMPRESSION=1)
+endif(BOTCRAFT_COMPRESSION)
 
 # Installation stuff
 include(GNUInstallDirs)

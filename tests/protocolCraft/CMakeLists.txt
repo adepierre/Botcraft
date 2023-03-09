@@ -11,6 +11,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2WithMain)
 target_link_libraries(${PROJECT_NAME} PRIVATE protocolCraft)
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Tests)
 
+if(BOTCRAFT_COMPRESSION)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USE_COMPRESSION=1)
+endif(BOTCRAFT_COMPRESSION)
+
 # Output the test executable next to the examples and library files
 if(MSVC)
     # To avoid having folder for each configuration when building with Visual
