@@ -70,4 +70,23 @@ function(get_mc_version_urls game_version)
     set(VERSION_SERVER_URL ${VERSION_SERVER_URL} PARENT_SCOPE)
 endfunction()
 
-get_mc_version_urls(${BOTCRAFT_GAME_VERSION})
+function(download_mc_server url path)
+    if(NOT EXISTS ${path})
+        message(STATUS "Downloading server.jar...")
+        file(DOWNLOAD
+            ${url}                   # URL
+            ${path}                  # Path
+            STATUS DOWNLOAD_STATUS   # Status code
+            SHOW_PROGRESS
+        )
+
+        # Separate the returned status code, and error message
+        list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+        list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+
+        if(NOT ${STATUS_CODE} EQUAL 0)
+            # Exit CMake if the download failed, printing the error message.
+            message(FATAL_ERROR "Error occurred during server.jar download: ${ERROR_MESSAGE}")
+        endif()
+    endif()
+endfunction()

@@ -6,16 +6,14 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 cmake_policy(SET CMP0074 NEW)
 
-# All building options
-
+# All cmake options
 option(BOTCRAFT_USE_OPENGL_GUI "Activate if you want to use OpenGL renderer" OFF)
-if(BOTCRAFT_USE_OPENGL_GUI)
-    option(BOTCRAFT_USE_IMGUI "Activate if you want to use display information on screen with ImGui" OFF)
-endif()
+option(BOTCRAFT_USE_IMGUI "Activate if you want to use display information on screen with ImGui" OFF)
 option(BOTCRAFT_COMPRESSION "Activate if compression is enabled on the server" ON)
 option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in online mode" ON)
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
 option(BOTCRAFT_BUILD_TESTS "Activate if you want to build tests" OFF)
+option(BOTCRAFT_BUILD_TESTS_ONLINE "Activate if you want to enable additional on server tests (requires Java)" OFF)
 option(BOTCRAFT_WINDOWS_BETTER_SLEEP "Set to true to use better thread sleep on Windows" OFF)
 option(BOTCRAFT_USE_PRECOMPILED_HEADERS "Set to true to precompile botcraft headers, reducing compilation time with MSVC and Clang, ignored on GCC" ON)
 
@@ -44,11 +42,12 @@ message(STATUS "Selected game version: " ${BOTCRAFT_GAME_VERSION} " || Protocol:
 
 # Automatically retrieve client/server URLs for the selected game version
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/mc_urls.cmake")
+get_mc_version_urls(${BOTCRAFT_GAME_VERSION})
 
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/version.txt" ${BOTCRAFT_GAME_VERSION})
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/protocol.txt" ${PROTOCOL_VERSION})
 
-# Do all the asset related stuffs
+# Do all the assets related stuffs
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/assets.cmake")
 
 # Add Asio
@@ -67,22 +66,22 @@ endif(BOTCRAFT_ENCRYPTION)
 if(BOTCRAFT_USE_OPENGL_GUI)
     # Add OpenGL
     find_package(OpenGL REQUIRED)
-    
+
     # Add glad
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/glad.cmake")
-    
+
     #Add GLFW
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/glfw.cmake")
-    
+
     # Add GLM
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/glm.cmake")
-    
+
     # Add stb_image
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/stb_image.cmake")
-    
+
     # Add rectpack2D
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/rectpack2D.cmake")
-    
+
     if(BOTCRAFT_USE_IMGUI)
         # Add Dear Imgui
         include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/imgui.cmake")
@@ -102,5 +101,25 @@ endif()
 if (BOTCRAFT_BUILD_TESTS)
     include(CTest)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/catch2.cmake")
+
+    if(BOTCRAFT_BUILD_TESTS_ONLINE)
+        # Make sure JRE is present to run the test server
+        if(BOTCRAFT_GAME_VERSION VERSION_LESS "1.17")
+            find_package(Java 8 COMPONENTS Runtime)
+        else()
+            find_package(Java 17 COMPONENTS Runtime)
+        endif()
+
+        if(NOT Java_FOUND)
+            message(WARNING "Java not found. Online tests will be built, but won't be able to run on this machine. You can disable online tests by setting BOTCRAFT_BUILD_TESTS_ONLINE to OFF")
+        endif()
+
+        #Add subprocess
+        include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/subprocess.cmake")
+
+        # Make sure server.jar is present
+        download_mc_server(${VERSION_SERVER_URL} "${BOTCRAFT_OUTPUT_DIR}/bin/server_jars/server_${BOTCRAFT_GAME_VERSION}.jar")
+    endif()
+
     add_subdirectory(tests)
 endif()

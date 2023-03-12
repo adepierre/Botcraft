@@ -37,6 +37,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          java-package: jre
+
       - name: Install GLFW deps
         if: ${{ matrix.config.name == 'Linux' }}
         run: |
@@ -59,6 +65,7 @@ jobs:
           -DBOTCRAFT_ENCRYPTION=ON
           -DBOTCRAFT_BUILD_EXAMPLES=ON
           -DBOTCRAFT_BUILD_TESTS=ON
+          -DBOTCRAFT_BUILD_TESTS_ONLINE=ON
           -DBOTCRAFT_WINDOWS_BETTER_SLEEP=ON
           -DBOTCRAFT_FORCE_LOCAL_ZLIB=ON
           -DBOTCRAFT_FORCE_LOCAL_OPENSSL=ON

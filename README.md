@@ -48,7 +48,7 @@ Available bot behaviours includes:
 
 ### Not supported
 
-- Anti-cheat evasion: if a server owners doesn't allow bots and has an anti-cheat detection system, nothing in Botcraft should be made in order to prevent ban from happening. Only use Botcraft on your own servers or ask permission first if you don't want your account to be banned.
+- Anti-cheat evasion: Botcraft actions are most of the time vanilla-like, but not human-like. Only use Botcraft on your own servers or ask permission first if you don't want your account to be banned.
 - Modded servers: Botcraft aims to be compatible with vanilla server first. When possible, modded servers are also (partially) supported, but given the large diversity of servers and mods, Botcraft does not aim to work on every possible server/mod combination.
 
 
@@ -73,7 +73,7 @@ Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 The code is cross-platform and requires a C++17 compiler, as well as git and CMake. I try to keep the number of external libraries for the core part of the library very low. This is less true for the rendering part or testing.
 Dependencies are included either directly(\*) or as git submodules(†). All libraries marked as optional can be disabled using cmake options.
 
-You *don't* have to clone recursively, download nor install any of them: the cmake build system is made to do that for you automatically for each dependency that is not already found on your system.
+You *don't* have to clone recursively, download nor install any of them: the cmake build system is made to do that for you automatically for each dependency that is not already found on your system. The only exception is Java to launch the test server if enabled.
 
 - [asio](https://think-async.com/Asio/)† for low-level TCP
 
@@ -90,7 +90,9 @@ Optional dependencies (rendering):
 - [stb_image](https://github.com/nothings/stb)\* for texture loading and screenshot saving
 
 Optional dependencies (testing)
-- [catch2](https://github.com/catchorg/Catch2)† for tests
+- [catch2](https://github.com/catchorg/Catch2)† for tests management
+- [subprocess.h](https://github.com/sheredom/subprocess.h)\* to launch the vanilla test server
+- [Java](https://www.java.com/) 8 for Minecraft < 1.17, 17 for Minecraft 1.17+ to run the vanilla test server
 
 
 ## Building and testing
@@ -101,12 +103,12 @@ git clone https://github.com/adepierre/Botcraft.git
 cd Botcraft
 mkdir build
 cd build
-cmake -DBOTCRAFT_GAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_BUILD_TESTS=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
+cmake -DBOTCRAFT_GAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_BUILD_TESTS=ON -DBOTCRAFT_BUILD_TESTS_ONLINE=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
 cmake --build . --config Release
 ctest -C Release
 ```
 
-At this point, you should have all the examples compiled and ready to run and the tests performed. Plese note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual. For a detailed Windows building tutorial, see this [wiki](https://github.com/adepierre/Botcraft/wiki/Detailed-installation-guide) page.
+At this point, you should have all the examples compiled and ready to run and the tests performed. Please note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual. For a detailed Windows building tutorial, see this [wiki](https://github.com/adepierre/Botcraft/wiki/Detailed-installation-guide) page.
 
 You can check [this discussion](https://github.com/adepierre/Botcraft/discussions/45#discussioncomment-1142555) for an example of how to use botcraft with your own code. In case you need help, you can try to ask on the [community discord server](https://discord.gg/wECVsTbjA9).
 
@@ -114,6 +116,7 @@ There are several cmake options you can modify:
 - BOTCRAFT_GAME_VERSION [1.XX.X or latest]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
 - BOTCRAFT_BUILD_TESTS [ON/OFF]
+- BOTCRAFT_BUILD_TESTS_ONLINE [ON/OFF] To build additional tests. Requires java and launches a local vanilla server.
 - BOTCRAFT_OUTPUT_DIR [PATH] Base output build path. Binaries, assets and libs will be created in subfolders of this path (default: top project dir)
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
 - BOTCRAFT_ENCRYPTION [ON/OFF] Add encryption ability, must be ON to connect to a server in online mode
