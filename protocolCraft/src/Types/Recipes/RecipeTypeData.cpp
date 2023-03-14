@@ -10,6 +10,10 @@
 #include "protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeDataSmithing.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp"
+#if PROTOCOL_VERSION > 761
+#include "protocolCraft/Types/Recipes/RecipeTypeDataSmithingTransform.hpp"
+#include "protocolCraft/Types/Recipes/RecipeTypeDataSmithingTrim.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -54,6 +58,16 @@ namespace ProtocolCraft
         else if (recipe_type.GetFull() == "minecraft:smithing")
         {
             return std::make_shared<RecipeTypeDataSmithing>();
+        }
+#endif
+#if PROTOCOL_VERSION > 761
+        else if (recipe_type.GetFull() == "minecraft:smithing_transform")
+        {
+            return std::make_shared<RecipeTypeDataSmithingTransform>();
+        }
+        else if (recipe_type.GetFull() == "minecraft:smithing_trim")
+        {
+            return std::make_shared<RecipeTypeDataSmithingTrim>();
         }
 #endif
         else

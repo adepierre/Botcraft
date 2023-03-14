@@ -33,6 +33,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x40;
 #elif PROTOCOL_VERSION == 761 // 1.19.3
         static constexpr int packet_id = 0x3F;
+#elif PROTOCOL_VERSION == 762 // 1.19.4
+static constexpr int packet_id = 0x43;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -150,7 +152,7 @@ namespace ProtocolCraft
             for (int i = 0; i < data_size; ++i)
             {
                 const long long int data = ReadData<VarLong>(iter, length);
-                positions[i] = data & 0xFFFl;
+                positions[i] = static_cast<short>(data & 0xFFFl);
                 states[i] = static_cast<int>(data >> 12);
             }
 #endif
@@ -172,7 +174,11 @@ namespace ProtocolCraft
             WriteData<VarInt>(static_cast<int>(positions.size()), container);
             for (int i = 0; i < positions.size(); ++i)
             {
+#if PROTOCOL_VERSION < 762
                 WriteData<VarLong>((states[i] << 12) | positions[i], container);
+#else
+                WriteData<VarLong>((static_cast<long long int>(states[i]) << 12) | static_cast<long long int>(positions[i]), container);
+#endif
             }
 #endif
         }

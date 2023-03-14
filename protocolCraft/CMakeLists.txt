@@ -43,9 +43,11 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundBlockEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundBlockUpdatePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundBossEventPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundBundlePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundChangeDifficultyPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundChatPreviewPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundChunksBiomesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundClearTitlesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCommandsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCommandSuggestionsPacket.hpp
@@ -58,6 +60,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomChatCompletionsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomPayloadPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomSoundPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundDamageEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDeleteChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDisconnectPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDisguisedChatPacket.hpp
@@ -66,6 +69,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundForgetLevelChunkPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundGameEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundHorseScreenOpenPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundHurtAnimationPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundInitializeBorderPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundKeepAlivePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkPacket.hpp
@@ -224,6 +228,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/AdvancementProgress.hpp
     include/protocolCraft/Types/BlockEntityInfo.hpp
     include/protocolCraft/Types/BlockEntityTag.hpp
+    include/protocolCraft/Types/ChunkBiomeData.hpp
     include/protocolCraft/Types/ClientboundLevelChunkPacketData.hpp
     include/protocolCraft/Types/ClientboundLightUpdatePacketData.hpp
     include/protocolCraft/Types/CriterionProgress.hpp
@@ -298,6 +303,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Recipes/RecipeTypeDataShapeless.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmelting.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmithing.hpp
+    include/protocolCraft/Types/Recipes/RecipeTypeDataSmithingTransform.hpp
+    include/protocolCraft/Types/Recipes/RecipeTypeDataSmithingTrim.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp
     

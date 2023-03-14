@@ -212,6 +212,12 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoUpdatePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 761
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundBundlePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundChunksBiomesPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundDamageEventPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundHurtAnimationPacket.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -428,6 +434,12 @@ namespace ProtocolCraft
         ClientboundPlayerInfoRemovePacket,
         ClientboundPlayerInfoUpdatePacket,
         ClientboundUpdateEnabledFeaturesPacket,
+#endif
+#if PROTOCOL_VERSION > 760
+        ClientboundBundlePacket,
+        ClientboundChunksBiomesPacket,
+        ClientboundDamageEventPacket,
+        ClientboundHurtAnimationPacket,
 #endif
         ClientboundSetCarriedItemPacket
     >;
