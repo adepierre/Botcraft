@@ -109,6 +109,11 @@ namespace ProtocolCraft
         case ParticleType::Firework:
         case ParticleType::Fishing:
         case ParticleType::Flame:
+#if PROTOCOL_VERSION > 761
+        case ParticleType::DrippingCherryLeaves:
+        case ParticleType::FallingCherryLeaves:
+        case ParticleType::LandingCherryLeaves:
+#endif
 #if PROTOCOL_VERSION > 758
         case ParticleType::SculkSoul:
         case ParticleType::SculkChargePop:

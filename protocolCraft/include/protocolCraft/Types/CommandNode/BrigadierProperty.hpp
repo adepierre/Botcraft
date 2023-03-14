@@ -73,6 +73,9 @@ namespace ProtocolCraft
 #endif
         TemplateMirror,
         TemplateRotation,
+#if PROTOCOL_VERSION > 761
+        Heightmap,
+#endif
         Uuid,
     };
 #endif

@@ -262,6 +262,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/CommandNode/BrigadierPropertyResourceOrTag.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyScoreHolder.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyString.hpp
+    include/protocolCraft/Types/CommandNode/BrigadierPropertyTime.hpp
     include/protocolCraft/Types/CommandNode/CommandNode.hpp
     
     include/protocolCraft/Types/GameProfile/GameProfile.hpp
