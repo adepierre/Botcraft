@@ -12,21 +12,21 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Message.hpp
     include/protocolCraft/MessageFactory.hpp
     include/protocolCraft/NetworkType.hpp
-    
+
     include/protocolCraft/Messages/Handshaking/Serverbound/ServerboundClientIntentionPacket.hpp
-    
-    
+
+
     include/protocolCraft/Messages/Login/Clientbound/ClientboundCustomQueryPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundGameProfilePacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundHelloPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundLoginCompressionPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundLoginDisconnectPacket.hpp
-    
+
     include/protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryPacket.hpp
     include/protocolCraft/Messages/Login/Serverbound/ServerboundHelloPacket.hpp
     include/protocolCraft/Messages/Login/Serverbound/ServerboundKeyPacket.hpp
-    
-    
+
+
     include/protocolCraft/Messages/Play/Clientbound/ClientboundAddEntityPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundAddExperienceOrbPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundAddGlobalEntityPacket.hpp
@@ -153,7 +153,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateRecipesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateTagsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUseBedPacket.hpp
-    
+
     include/protocolCraft/Messages/Play/Serverbound/ServerboundAcceptTeleportationPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundBlockEntityTagQuery.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChangeDifficultyPacket.hpp
@@ -210,15 +210,15 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundTeleportToEntityPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundUseItemOnPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundUseItemPacket.hpp
-    
-    
+
+
     include/protocolCraft/Messages/Status/Clientbound/ClientboundPongResponsePacket.hpp
     include/protocolCraft/Messages/Status/Clientbound/ClientboundStatusResponsePacket.hpp
-    
+
     include/protocolCraft/Messages/Status/Serverbound/ServerboundPingRequestPacket.hpp
     include/protocolCraft/Messages/Status/Serverbound/ServerboundStatusRequestPacket.hpp
-    
-    
+
+
     include/protocolCraft/Types/Advancement.hpp
     include/protocolCraft/Types/AdvancementDisplay.hpp
     include/protocolCraft/Types/AdvancementProgress.hpp
@@ -238,7 +238,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/SaltSignature.hpp
     include/protocolCraft/Types/Slot.hpp
     include/protocolCraft/Types/Trade.hpp
-    
+
     include/protocolCraft/Types/Chat/Chat.hpp
     include/protocolCraft/Types/Chat/ChatMessageContent.hpp
     include/protocolCraft/Types/Chat/ChatSender.hpp
@@ -250,7 +250,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Chat/RemoteChatSessionData.hpp
     include/protocolCraft/Types/Chat/SignedMessageHeader.hpp
     include/protocolCraft/Types/Chat/SignedMessageBody.hpp
-    
+
     include/protocolCraft/Types/CommandNode/BrigadierProperty.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyDouble.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyEntity.hpp
@@ -263,14 +263,14 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/CommandNode/BrigadierPropertyScoreHolder.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyString.hpp
     include/protocolCraft/Types/CommandNode/CommandNode.hpp
-    
+
     include/protocolCraft/Types/GameProfile/GameProfile.hpp
     include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp
     include/protocolCraft/Types/GameProfile/ProfilePublicKey.hpp
-    
+
     include/protocolCraft/Types/NBT/NBT.hpp
     include/protocolCraft/Types/NBT/Tag.hpp
-    
+
     include/protocolCraft/Types/Particles/BlockcrackParticle.hpp
     include/protocolCraft/Types/Particles/BlockdustParticle.hpp
     include/protocolCraft/Types/Particles/BlockMarkerParticle.hpp
@@ -285,7 +285,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Particles/SculkChargeParticle.hpp
     include/protocolCraft/Types/Particles/ShriekParticle.hpp
     include/protocolCraft/Types/Particles/VibrationParticle.hpp
-            
+
     include/protocolCraft/Types/Recipes/Ingredient.hpp
     include/protocolCraft/Types/Recipes/Recipe.hpp
     include/protocolCraft/Types/Recipes/RecipeBookSettings.hpp
@@ -299,14 +299,14 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmithing.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp
     include/protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp
-    
+
     include/protocolCraft/Types/Sound/SoundEvent.hpp
-    
+
     include/protocolCraft/Types/Vibrations/BlockPositionSource.hpp
     include/protocolCraft/Types/Vibrations/EntityPositionSource.hpp
     include/protocolCraft/Types/Vibrations/PositionSource.hpp
     include/protocolCraft/Types/Vibrations/VibrationPath.hpp
-    
+
     include/protocolCraft/Utilities/GZip.hpp
     include/protocolCraft/Utilities/Json.hpp
     include/protocolCraft/Utilities/RecursiveWrapper.hpp
@@ -317,14 +317,14 @@ set(protocolCraft_SRC
     src/BaseMessage.cpp
     src/BinaryReadWrite.cpp
     src/MessageFactory.cpp
-    
+
     src/Types/Chat/Chat.cpp
-    
+
     src/Types/CommandNode/BrigadierProperty.cpp
-    
+
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp
-    
+
     src/Types/Particles/BlockcrackParticle.cpp
     src/Types/Particles/BlockdustParticle.cpp
     src/Types/Particles/BlockMarkerParticle.cpp
@@ -339,11 +339,11 @@ set(protocolCraft_SRC
     src/Types/Particles/SculkChargeParticle.cpp
     src/Types/Particles/ShriekParticle.cpp
     src/Types/Particles/VibrationParticle.cpp
-    
+
     src/Types/Recipes/RecipeTypeData.cpp
-    
+
     src/Types/Vibrations/PositionSource.cpp
-    
+
     src/Utilities/GZip.cpp
     src/Utilities/Json.cpp
 )
@@ -356,7 +356,7 @@ if(MSVC)
         string(REPLACE "/" "\\" source_path_msvc "${source_path_header}")
         source_group("${source_path_msvc}" FILES "${source}")
     endforeach()
-    
+
     foreach(source IN LISTS protocolCraft_SRC)
         get_filename_component(source_path "${source}" PATH)
         string(REPLACE "src" "Source Files" source_path "${source_path}")

@@ -103,22 +103,22 @@ if (BOTCRAFT_BUILD_TESTS)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/catch2.cmake")
 
     if(BOTCRAFT_BUILD_TESTS_ONLINE)
-        # Make sure JRE is present to run the test server
+        # Add subprocess
+        include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/subprocess.cmake")
+
+        # Check if JRE is present to run the test server
         if(BOTCRAFT_GAME_VERSION VERSION_LESS "1.17")
-            find_package(Java 8 COMPONENTS Runtime)
+            find_package(Java 8 QUIET COMPONENTS Runtime)
         else()
-            find_package(Java 17 COMPONENTS Runtime)
+            find_package(Java 17 QUIET COMPONENTS Runtime)
         endif()
 
         if(NOT Java_FOUND)
             message(WARNING "Java not found. Online tests will be built, but won't be able to run on this machine. You can disable online tests by setting BOTCRAFT_BUILD_TESTS_ONLINE to OFF")
         endif()
 
-        #Add subprocess
-        include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/subprocess.cmake")
-
         # Make sure server.jar is present
-        download_mc_server(${VERSION_SERVER_URL} "${BOTCRAFT_OUTPUT_DIR}/bin/server_jars/server_${BOTCRAFT_GAME_VERSION}.jar")
+        download_mc_server(${VERSION_SERVER_URL} "${BOTCRAFT_OUTPUT_DIR}/bin/test_server_files/server_jars/server_${BOTCRAFT_GAME_VERSION}.jar")
     endif()
 
     add_subdirectory(tests)
