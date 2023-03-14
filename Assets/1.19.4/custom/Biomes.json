@@ -1,0 +1,401 @@
+[
+    {
+        "id": 0,
+        "name": "The Void",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 1,
+        "name": "Plains",
+        "rainfall": 0.4,
+        "temperature": 0.8
+    },
+    {
+        "id": 2,
+        "name": "Sunflower Plains",
+        "rainfall": 0.4,
+        "temperature": 0.8
+    },
+    {
+        "id": 3,
+        "name": "Snowy Plains",
+        "rainfall": 0.5,
+        "temperature": 0.0
+    },
+    {
+        "id": 4,
+        "name": "Ice Spikes",
+        "rainfall": 0.5,
+        "temperature": 0.0
+    },
+    {
+        "id": 5,
+        "name": "Desert",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 6,
+        "name": "Swamp",
+        "rainfall": 0.9,
+        "temperature": 0.8,
+        "biomeType": "Swamp"
+    },
+    {
+        "id": 7,
+        "name": "Mangrove Swamp",
+        "rainfall": 0.9,
+        "temperature": 0.8,
+        "biomeType": "Swamp"
+    },
+    {
+        "id": 8,
+        "name": "Forest",
+        "rainfall": 0.8,
+        "temperature": 0.7
+    },
+    {
+        "id": 9,
+        "name": "Flower Forest",
+        "rainfall": 0.8,
+        "temperature": 0.7
+    },
+    {
+        "id": 10,
+        "name": "Birch Forest",
+        "rainfall": 0.6,
+        "temperature": 0.6
+    },
+    {
+        "id": 11,
+        "name": "Dark Forest",
+        "rainfall": 0.8,
+        "temperature": 0.7,
+        "biomeType": "DarkForest"
+    },
+    {
+        "id": 12,
+        "name": "Old Growth Birch Forest",
+        "rainfall": 0.6,
+        "temperature": 0.6,
+        "biomeType": "DarkForest"
+    },
+    {
+        "id": 13,
+        "name": "Old Growth Pine Taiga",
+        "rainfall": 0.8,
+        "temperature": 0.3
+    },
+    {
+        "id": 14,
+        "name": "Old Growth Spruce Taiga",
+        "rainfall": 0.8,
+        "temperature": 0.25
+    },
+    {
+        "id": 15,
+        "name": "Taiga",
+        "rainfall": 0.8,
+        "temperature": 0.25
+    },
+    {
+        "id": 16,
+        "name": "Snowy Taiga",
+        "rainfall": 0.4,
+        "temperature": -0.5
+    },
+    {
+        "id": 17,
+        "name": "Savanna",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 18,
+        "name": "Savanna Plateau",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 19,
+        "name": "Windswept Hills",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 20,
+        "name": "Windswept Gravelly Hills",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 21,
+        "name": "Windswept Forest",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 22,
+        "name": "Windswept Savanna",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 23,
+        "name": "Jungle",
+        "rainfall": 0.9,
+        "temperature": 0.95
+    },
+    {
+        "id": 24,
+        "name": "Sparse Jungle",
+        "rainfall": 0.8,
+        "temperature": 0.95
+    },
+    {
+        "id": 25,
+        "name": "Bamboo Jungle",
+        "rainfall": 0.9,
+        "temperature": 0.95
+    },
+    {
+        "id": 26,
+        "name": "Badlands",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+        "biomeType": "Badlands"
+    },
+    {
+        "id": 27,
+        "name": "Eroded Badlands",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+        "biomeType": "Badlands"
+    },
+    {
+        "id": 28,
+        "name": "Wooded Badlands",
+        "rainfall": 0.0,
+        "temperature": 2.0,
+        "biomeType": "Badlands"
+    },
+    {
+        "id": 29,
+        "name": "Meadow",
+        "rainfall": 0.8,
+        "temperature": 0.5
+    },
+    {
+        "id": 30,
+        "name": "Grove",
+        "rainfall": 0.8,
+        "temperature": -0.2
+    },
+    {
+        "id": 31,
+        "name": "Snowy Slopes",
+        "rainfall": 0.9,
+        "temperature": -0.3
+    },
+    {
+        "id": 32,
+        "name": "Frozen Peaks",
+        "rainfall": 0.9,
+        "temperature": -0.7
+    },
+    {
+        "id": 33,
+        "name": "Jagged Peaks",
+        "rainfall": 0.9,
+        "temperature": -0.7
+    },
+    {
+        "id": 34,
+        "name": "Stony Peaks",
+        "rainfall": 0.3,
+        "temperature": 1.0
+    },
+    {
+        "id": 35,
+        "name": "River",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 36,
+        "name": "Frozen River",
+        "rainfall": 0.5,
+        "temperature": 0.0,
+        "biomeType": "FrozenOcean"
+    },
+    {
+        "id": 37,
+        "name": "Beach",
+        "rainfall": 0.4,
+        "temperature": 0.8
+    },
+    {
+        "id": 38,
+        "name": "Snowy Beach",
+        "rainfall": 0.3,
+        "temperature": 0.05
+    },
+    {
+        "id": 39,
+        "name": "Stony Shore",
+        "rainfall": 0.3,
+        "temperature": 0.2
+    },
+    {
+        "id": 40,
+        "name": "Warm Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5,
+        "biomeType": "WarmOcean"
+    },
+    {
+        "id": 41,
+        "name": "Lukewarm Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5,
+        "biomeType": "LukewarmOcean"
+    },
+    {
+        "id": 42,
+        "name": "Deep Lukewarm Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5,
+        "biomeType": "LukewarmOcean"
+    },
+    {
+        "id": 43,
+        "name": "Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 44,
+        "name": "Deep Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 45,
+        "name": "Cold Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5,
+        "biomeType": "ColdOcean"
+    },
+    {
+        "id": 46,
+        "name": "Deep Cold Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5,
+        "biomeType": "ColdOcean"
+    },
+    {
+        "id": 47,
+        "name": "Frozen Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.0,
+        "biomeType": "FrozenOcean"
+    },
+    {
+        "id": 48,
+        "name": "Deep Frozen Ocean",
+        "rainfall": 0.5,
+        "temperature": 0.5,
+        "biomeType": "FrozenOcean"
+    },
+    {
+        "id": 49,
+        "name": "Mushroom Fields",
+        "rainfall": 1.0,
+        "temperature": 0.9
+    },
+    {
+        "id": 50,
+        "name": "Dripstone Caves",
+        "rainfall": 0.4,
+        "temperature": 0.8
+    },
+    {
+        "id": 51,
+        "name": "Lush Caves",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 52,
+        "name": "Deep Dark",
+        "rainfall": 0.4,
+        "temperature": 0.8
+    },
+    {
+        "id": 53,
+        "name": "Nether Wastes",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 54,
+        "name": "Warped Forest",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 55,
+        "name": "Crimson Forest",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 56,
+        "name": "Soul Sand Valley",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 57,
+        "name": "Basalt Deltas",
+        "rainfall": 0.0,
+        "temperature": 2.0
+    },
+    {
+        "id": 58,
+        "name": "The End",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 59,
+        "name": "End Highlands",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 60,
+        "name": "End Midlands",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 61,
+        "name": "Small End Islands",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 62,
+        "name": "End Barrens",
+        "rainfall": 0.5,
+        "temperature": 0.5
+    },
+    {
+        "id": 63,
+        "name": "Cherry Grove",
+        "rainfall": 0.8,
+        "temperature": 0.5
+    }
+]
