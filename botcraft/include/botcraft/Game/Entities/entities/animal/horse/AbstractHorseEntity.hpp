@@ -7,7 +7,11 @@ namespace Botcraft
     class AbstractHorseEntity : public AnimalEntity
     {
     protected:
+#if PROTOCOL_VERSION < 762
         static constexpr int metadata_count = 2;
+#else
+        static constexpr int metadata_count = 1;
+#endif
         static const std::array<std::string, metadata_count> metadata_names;
         static constexpr int hierarchy_metadata_count = AnimalEntity::metadata_count + AnimalEntity::hierarchy_metadata_count;
 
@@ -23,10 +27,14 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         char GetDataIdFlags() const;
+#if PROTOCOL_VERSION < 762
         const std::optional<ProtocolCraft::UUID>& GetDataIdOwnerUuid() const;
+#endif
 
         void SetDataIdFlags(const char data_id_flags);
+#if PROTOCOL_VERSION < 762
         void SetDataIdOwnerUuid(const std::optional<ProtocolCraft::UUID>& data_id_owner_uuid);
+#endif
 
     };
 }

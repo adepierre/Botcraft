@@ -435,7 +435,7 @@ namespace ProtocolCraft
         ClientboundPlayerInfoUpdatePacket,
         ClientboundUpdateEnabledFeaturesPacket,
 #endif
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 761
         ClientboundBundlePacket,
         ClientboundChunksBiomesPacket,
         ClientboundDamageEventPacket,

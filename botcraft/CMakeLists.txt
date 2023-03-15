@@ -81,6 +81,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/horse/HorseEntity.hpp
     include/botcraft/Game/Entities/entities/monster/HuskEntity.hpp
     include/botcraft/Game/Entities/entities/monster/IllusionerEntity.hpp
+    include/botcraft/Game/Entities/entities/InteractionEntity.hpp
     include/botcraft/Game/Entities/entities/animal/IronGolemEntity.hpp
     include/botcraft/Game/Entities/entities/item/ItemEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ItemFrameEntity.hpp
@@ -124,6 +125,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/horse/SkeletonHorseEntity.hpp
     include/botcraft/Game/Entities/entities/monster/SlimeEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/SmallFireballEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/sniffer/SnifferEntity.hpp
     include/botcraft/Game/Entities/entities/animal/SnowGolemEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/SnowballEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/SpectralArrowEntity.hpp
@@ -296,6 +298,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/horse/HorseEntity.cpp
     src/Game/Entities/entities/monster/HuskEntity.cpp
     src/Game/Entities/entities/monster/IllusionerEntity.cpp
+    src/Game/Entities/entities/InteractionEntity.cpp
     src/Game/Entities/entities/animal/IronGolemEntity.cpp
     src/Game/Entities/entities/item/ItemEntity.cpp
     src/Game/Entities/entities/decoration/ItemFrameEntity.cpp
@@ -339,6 +342,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/horse/SkeletonHorseEntity.cpp
     src/Game/Entities/entities/monster/SlimeEntity.cpp
     src/Game/Entities/entities/projectile/SmallFireballEntity.cpp
+    src/Game/Entities/entities/animal/sniffer/SnifferEntity.cpp
     src/Game/Entities/entities/animal/SnowGolemEntity.cpp
     src/Game/Entities/entities/projectile/SnowballEntity.cpp
     src/Game/Entities/entities/projectile/SpectralArrowEntity.cpp

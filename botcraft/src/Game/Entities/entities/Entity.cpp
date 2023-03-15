@@ -87,6 +87,9 @@
 #include "botcraft/Game/Entities/entities/animal/horse/HorseEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/HuskEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/IllusionerEntity.hpp"
+#if PROTOCOL_VERSION > 761
+#include "botcraft/Game/Entities/entities/InteractionEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/animal/IronGolemEntity.hpp"
 #include "botcraft/Game/Entities/entities/item/ItemEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/ItemFrameEntity.hpp"
@@ -149,6 +152,9 @@
 #include "botcraft/Game/Entities/entities/animal/horse/SkeletonHorseEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/SlimeEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/SmallFireballEntity.hpp"
+#if PROTOCOL_VERSION > 761
+#include "botcraft/Game/Entities/entities/animal/sniffer/SnifferEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/animal/SnowGolemEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/SnowballEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/SpectralArrowEntity.hpp"
@@ -322,6 +328,9 @@ namespace Botcraft
                 DirectionType,
                 OptionalUUID,
                 BlockstateType,
+#if PROTOCOL_VERSION > 761
+                OptionalBlockstate,
+#endif
                 NBT,
 #if PROTOCOL_VERSION > 340
                 Particle,
@@ -336,6 +345,11 @@ namespace Botcraft
                 FrogVariant,
                 OptionalGlobalPos,
                 PaintingVariant,
+#endif
+#if PROTOCOL_VERSION > 761
+                SnifferState,
+                Vec3,
+                Quaternion,
 #endif
             };
 
@@ -427,6 +441,18 @@ namespace Botcraft
             case EntityMetadataTypes::BlockstateType:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
+#if PROTOCOL_VERSION > 761
+            case EntityMetadataTypes::OptionalBlockstate:
+                if (const int n = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length))
+                {
+                    value = std::optional<int>(n);
+                }
+                else
+                {
+                    value = std::optional<int>();
+                }
+                break;
+#endif
             case EntityMetadataTypes::NBT:
                 value = ProtocolCraft::NBT::Value();
                 std::any_cast<ProtocolCraft::NBT::Value&>(value).Read(iter, length);
@@ -469,7 +495,7 @@ namespace Botcraft
                     dimension.Read(iter, length);
                     ProtocolCraft::NetworkPosition pos;
                     pos.Read(iter, length);
-                    
+
                     value = std::optional<GlobalPos>({
                             dimension,
                             pos
@@ -483,6 +509,28 @@ namespace Botcraft
             case EntityMetadataTypes::PaintingVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
+#endif
+#if PROTOCOL_VERSION > 761
+            case EntityMetadataTypes::SnifferState:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+            case EntityMetadataTypes::Vec3:
+            {
+                const float x = ProtocolCraft::ReadData<float>(iter, length);
+                const float y = ProtocolCraft::ReadData<float>(iter, length);
+                const float z = ProtocolCraft::ReadData<float>(iter, length);
+                value = Vector3<float>(x, y, z);
+            }
+            break;
+            case EntityMetadataTypes::Quaternion:
+            {
+                const float x = ProtocolCraft::ReadData<float>(iter, length);
+                const float y = ProtocolCraft::ReadData<float>(iter, length);
+                const float z = ProtocolCraft::ReadData<float>(iter, length);
+                const float w = ProtocolCraft::ReadData<float>(iter, length);
+                value = std::array<float, 4>{x, y, z, w};
+            }
+            break;
 #endif
             default:
                 LOG_ERROR("Unknown type in entity metadata : " << type << ".Stopping current metadata parsing.");
