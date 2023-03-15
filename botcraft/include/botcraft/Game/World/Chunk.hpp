@@ -93,8 +93,15 @@ namespace Botcraft
         void SetBiome(const int x, const int y, const int z, const int new_biome);
         void SetBiome(const int i, const int new_biome);
 #endif
+#if PROTOCOL_VERSION > 761
+        void LoadBiomesData(const std::vector<unsigned char>& data);
+#endif
         void UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction);
         
+    private:
+#if PROTOCOL_VERSION > 756
+        void LoadSectionBiomeData(const int section_y, ProtocolCraft::ReadIterator& iter, size_t& length);
+#endif
     private:
         std::vector<std::shared_ptr<Section> > sections;
 #if PROTOCOL_VERSION < 358

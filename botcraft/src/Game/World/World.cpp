@@ -1167,4 +1167,24 @@ namespace Botcraft
         SetBlockEntityData(msg.GetPos(), msg.GetTag());
     }
 
+#if PROTOCOL_VERSION > 761
+    void World::Handle(ProtocolCraft::ClientboundChunksBiomesPacket& msg)
+    {
+        std::lock_guard<std::mutex> world_guard(world_mutex);
+
+        for (const auto& chunk_data : msg.GetChunkBiomeData())
+        {
+            std::shared_ptr<Chunk> chunk = GetChunk(chunk_data.GetX(), chunk_data.GetZ());
+            if (chunk)
+            {
+                chunk->LoadBiomesData(chunk_data.GetBuffer());
+            }
+            else
+            {
+                LOG_WARNING("Trying to load biomes data in non loaded chunk (" << chunk_data.GetX() << ", " << chunk_data.GetZ() << ")");
+            }
+        }
+    }
+#endif
+
 } // Botcraft
