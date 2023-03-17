@@ -56,6 +56,12 @@
 #if PROTOCOL_VERSION > 340
 #include "botcraft/Game/Entities/entities/monster/DrownedEntity.hpp"
 #endif
+#if PROTOCOL_VERSION > 761
+#include "botcraft/Game/Entities/entities/DisplayBlockDisplayEntity.hpp"
+#include "botcraft/Game/Entities/entities/DisplayEntity.hpp"
+#include "botcraft/Game/Entities/entities/DisplayItemDisplayEntity.hpp"
+#include "botcraft/Game/Entities/entities/DisplayTextDisplayEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/monster/ElderGuardianEntity.hpp"
 #include "botcraft/Game/Entities/entities/boss/enderdragon/EndCrystalEntity.hpp"
 #include "botcraft/Game/Entities/entities/boss/enderdragon/EnderDragonEntity.hpp"
@@ -988,6 +994,13 @@ namespace Botcraft
         return false;
     }
 
+#if PROTOCOL_VERSION > 761
+    bool Entity::IsDisplay() const
+    {
+        return false;
+    }
+#endif
+
     bool Entity::IsTamableAnimal() const
     {
         return false;
@@ -1188,6 +1201,14 @@ namespace Botcraft
             return std::make_shared<CowEntity>();
         case EntityType::Creeper:
             return std::make_shared<CreeperEntity>();
+#if PROTOCOL_VERSION > 761
+        case EntityType::DisplayBlockDisplay:
+            return std::make_shared<DisplayBlockDisplayEntity>();
+        case EntityType::DisplayItemDisplay:
+            return std::make_shared<DisplayItemDisplayEntity>();
+        case EntityType::DisplayTextDisplay:
+            return std::make_shared<DisplayTextDisplayEntity>();
+#endif
 #if PROTOCOL_VERSION > 340
         case EntityType::Dolphin:
             return std::make_shared<DolphinEntity>();

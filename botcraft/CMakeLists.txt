@@ -57,6 +57,10 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/DolphinEntity.hpp
     include/botcraft/Game/Entities/entities/animal/horse/DonkeyEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/DragonFireballEntity.hpp
+    include/botcraft/Game/Entities/entities/DisplayBlockDisplayEntity.hpp
+    include/botcraft/Game/Entities/entities/DisplayEntity.hpp
+    include/botcraft/Game/Entities/entities/DisplayItemDisplayEntity.hpp
+    include/botcraft/Game/Entities/entities/DisplayTextDisplayEntity.hpp
     include/botcraft/Game/Entities/entities/monster/DrownedEntity.hpp
     include/botcraft/Game/Entities/entities/monster/ElderGuardianEntity.hpp
     include/botcraft/Game/Entities/entities/boss/enderdragon/EndCrystalEntity.hpp
@@ -274,6 +278,10 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/DolphinEntity.cpp
     src/Game/Entities/entities/animal/horse/DonkeyEntity.cpp
     src/Game/Entities/entities/projectile/DragonFireballEntity.cpp
+    src/Game/Entities/entities/DisplayBlockDisplayEntity.cpp
+    src/Game/Entities/entities/DisplayEntity.cpp
+    src/Game/Entities/entities/DisplayItemDisplayEntity.cpp
+    src/Game/Entities/entities/DisplayTextDisplayEntity.cpp
     src/Game/Entities/entities/monster/DrownedEntity.cpp
     src/Game/Entities/entities/monster/ElderGuardianEntity.cpp
     src/Game/Entities/entities/boss/enderdragon/EndCrystalEntity.cpp
