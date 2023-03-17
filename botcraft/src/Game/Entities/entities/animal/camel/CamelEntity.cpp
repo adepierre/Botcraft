@@ -12,7 +12,11 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDash(true);
+#if PROTOCOL_VERSION < 762
         SetLastPoseChangeTick(-52);
+#else
+        SetLastPoseChangeTick(0);
+#endif
     }
 
     CamelEntity::~CamelEntity()

@@ -176,6 +176,9 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundLightUpdatePacket& msg) override;
 #endif
         virtual void Handle(ProtocolCraft::ClientboundBlockEntityDataPacket& msg) override;
+#if PROTOCOL_VERSION > 761
+        virtual void Handle(ProtocolCraft::ClientboundChunksBiomesPacket& msg) override;
+#endif
 
     private:
         int cached_x;

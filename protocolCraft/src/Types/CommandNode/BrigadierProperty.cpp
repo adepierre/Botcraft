@@ -9,6 +9,9 @@
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyEntity.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyScoreHolder.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyResourceOrTag.hpp"
+#if PROTOCOL_VERSION > 761
+#include "protocolCraft/Types/CommandNode/BrigadierPropertyTime.hpp"
+#endif
 #if PROTOCOL_VERSION < 759
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyRange.hpp"
 #endif
@@ -90,6 +93,10 @@ namespace ProtocolCraft
             return std::make_shared<BrigadierPropertyEntity>();
         case BrigadierPropertyType::ScoreHolder:
             return std::make_shared<BrigadierPropertyScoreHolder>();
+#if PROTOCOL_VERSION > 761
+        case BrigadierPropertyType::Time:
+            return std::make_shared<BrigadierPropertyTime>();
+#endif
         case BrigadierPropertyType::ResourceOrTag:
         case BrigadierPropertyType::Resource:
 #if PROTOCOL_VERSION > 760
@@ -139,9 +146,14 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760
         case BrigadierPropertyType::Gamemode:
 #endif
+#if PROTOCOL_VERSION < 762
         case BrigadierPropertyType::Time:
+#endif
         case BrigadierPropertyType::TemplateMirror:
         case BrigadierPropertyType::TemplateRotation:
+#if PROTOCOL_VERSION > 761
+        case BrigadierPropertyType::Heightmap:
+#endif
         case BrigadierPropertyType::Uuid:
             return std::make_shared<BrigadierPropertyNone>();
         default:

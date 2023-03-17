@@ -47,6 +47,13 @@ namespace ProtocolCraft
             result = result_;
         }
 
+#if PROTOCOL_VERSION > 761
+        void SetShowNotification(const bool show_notification_)
+        {
+            show_notification = show_notification_;
+        }
+#endif
+
 
         int GetWidth() const
         {
@@ -80,6 +87,13 @@ namespace ProtocolCraft
             return result;
         }
 
+#if PROTOCOL_VERSION > 761
+        bool GetShowNotification() const
+        {
+            return show_notification;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
@@ -96,6 +110,9 @@ namespace ProtocolCraft
                 ingredients[i] = ReadData<Ingredient>(iter, length);
             }
             result = ReadData<Slot>(iter, length);
+#if PROTOCOL_VERSION > 761
+            show_notification = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -111,6 +128,9 @@ namespace ProtocolCraft
                 WriteData<Ingredient>(ingredients[i], container);
             }
             WriteData<Slot>(result, container);
+#if PROTOCOL_VERSION > 761
+            WriteData<bool>(show_notification, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -125,6 +145,9 @@ namespace ProtocolCraft
 #endif
             output["ingredients"] = ingredients;
             output["result"] = result;
+#if PROTOCOL_VERSION > 761
+            output["show_notification"] = show_notification;
+#endif
 
             return output;
         }
@@ -138,6 +161,9 @@ namespace ProtocolCraft
 #endif
         std::vector<Ingredient> ingredients;
         Slot result;
+#if PROTOCOL_VERSION > 761
+        bool show_notification;
+#endif
     };
 }
 #endif

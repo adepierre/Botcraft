@@ -341,4 +341,10 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundPlayerInfoUpdatePacket>;
     template class BaseMessage<ClientboundUpdateEnabledFeaturesPacket>;
 #endif
+#if PROTOCOL_VERSION > 761
+    template class BaseMessage<ClientboundBundlePacket>;
+    template class BaseMessage<ClientboundChunksBiomesPacket>;
+    template class BaseMessage<ClientboundDamageEventPacket>;
+    template class BaseMessage<ClientboundHurtAnimationPacket>;
+#endif
 }

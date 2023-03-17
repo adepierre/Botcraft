@@ -42,10 +42,23 @@ namespace ProtocolCraft
         "entity_effect",
         "explosion_emitter",
         "explosion",
+#if PROTOCOL_VERSION > 758
+        "sonic_boom",
+#endif
         "falling_dust",
         "firework",
         "fishing",
         "flame",
+#if PROTOCOL_VERSION > 761
+        "dripping_cherry_leaves",
+        "falling_cherry_leaves",
+        "landing_cherry_leaves",
+#endif
+#if PROTOCOL_VERSION > 758
+        "sculk_soul",
+        "sculk_charge",
+        "sculk_charge_pop",
+#endif
 #if PROTOCOL_VERSION > 734
         "soul_fire_flame",
         "soul",
@@ -129,6 +142,9 @@ namespace ProtocolCraft
         "wax_off",
         "electric_spark",
         "scrape",
+#endif
+#if PROTOCOL_VERSION > 758
+        "shriek",
 #endif
     };
 #else

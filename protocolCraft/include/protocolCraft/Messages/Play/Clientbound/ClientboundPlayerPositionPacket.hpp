@@ -29,6 +29,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x39;
 #elif PROTOCOL_VERSION == 761 // 1.19.3
         static constexpr int packet_id = 0x38;
+#elif PROTOCOL_VERSION == 762 // 1.19.4
+static constexpr int packet_id = 0x3C;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -74,7 +76,7 @@ namespace ProtocolCraft
             id_ = id__;
         }
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 762
         void SetDismountVehicle(const bool dismount_vehicle_)
         {
             dismount_vehicle = dismount_vehicle_;
@@ -117,7 +119,7 @@ namespace ProtocolCraft
             return id_;
         }
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 762
         bool GetDismountVehicle() const
         {
             return dismount_vehicle;
@@ -134,7 +136,7 @@ namespace ProtocolCraft
             xRot = ReadData<float>(iter, length);
             relative_arguments = ReadData<char>(iter, length);
             id_ = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 762
             dismount_vehicle = ReadData<bool>(iter, length);
 #endif
         }
@@ -148,7 +150,7 @@ namespace ProtocolCraft
             WriteData<float>(xRot, container);
             WriteData<char>(relative_arguments, container);
             WriteData<VarInt>(id_, container);
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 762
             WriteData<bool>(dismount_vehicle, container);
 #endif
         }
@@ -164,7 +166,7 @@ namespace ProtocolCraft
             output["xRot"] = xRot;
             output["relative_arguments"] = relative_arguments;
             output["id_"] = id_;
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 762
             output["dismount_vehicle"] = dismount_vehicle;
 #endif
 
@@ -179,7 +181,7 @@ namespace ProtocolCraft
         float xRot;
         char relative_arguments;
         int id_;
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 762
         bool dismount_vehicle;
 #endif
     };
