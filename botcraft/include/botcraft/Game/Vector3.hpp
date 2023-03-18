@@ -40,6 +40,21 @@ namespace Botcraft
             z = static_cast<T>(position.z);
         }
 
+        Vector3(const std::vector<T>& v)
+        {
+            assert(v.size() == 3);
+            x = v[0];
+            y = v[1];
+            z = v[2];
+        }
+
+        Vector3(const std::array<T, 3>& v)
+        {
+            x = v[0];
+            y = v[1];
+            z = v[2];
+        }
+
         T x;
         T y;
         T z;

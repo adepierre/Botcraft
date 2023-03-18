@@ -74,5 +74,5 @@ add_test(
 # Copy runtime files to bin output folder
 if(NOT IS_DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin/test_server_files/runtime")
     message(STATUS "Copying runtime online test files to bin folder...")
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/runtime" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/test_server_files")
 endif()
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/runtime" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/test_server_files")

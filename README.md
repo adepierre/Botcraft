@@ -116,7 +116,7 @@ There are several cmake options you can modify:
 - BOTCRAFT_GAME_VERSION [1.XX.X or latest]
 - BOTCRAFT_BUILD_EXAMPLES [ON/OFF]
 - BOTCRAFT_BUILD_TESTS [ON/OFF]
-- BOTCRAFT_BUILD_TESTS_ONLINE [ON/OFF] To build additional tests. Requires java and launches a local vanilla server.
+- BOTCRAFT_BUILD_TESTS_ONLINE [ON/OFF] To build additional tests. Requires BOTCRAFT_COMPRESSION and java to launch a local vanilla server.
 - BOTCRAFT_OUTPUT_DIR [PATH] Base output build path. Binaries, assets and libs will be created in subfolders of this path (default: top project dir)
 - BOTCRAFT_COMPRESSION [ON/OFF] Add compression ability, must be ON to connect to a server with compression enabled
 - BOTCRAFT_ENCRYPTION [ON/OFF] Add encryption ability, must be ON to connect to a server in online mode

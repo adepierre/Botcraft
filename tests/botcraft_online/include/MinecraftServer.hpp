@@ -10,7 +10,7 @@
 
 struct subprocess_s;
 
-struct MinecrafServerOptions
+struct MinecraftServerOptions
 {
     std::string argv0 = "";
 };
@@ -27,7 +27,7 @@ private:
     MinecraftServer& operator=(const MinecraftServer&) = delete;
 
 public:
-    static MinecrafServerOptions options;
+    static MinecraftServerOptions options;
     static MinecraftServer& GetInstance();
 
     void Initialize();
@@ -46,6 +46,10 @@ public:
     /// @brief Write a line to subprocess stdin. Not thread-safe.
     /// @param input Line to write
     void SendLine(const std::string& input);
+
+    /// @brief server_path getter
+    /// @return The path in which the server is running
+    const std::filesystem::path& GetServerPath() const;
 
 private:
     /// @brief Terminate the subprocess
@@ -71,4 +75,6 @@ private:
     std::unique_ptr<subprocess_s> subprocess;
 
     bool running;
+
+    std::filesystem::path server_path;
 };

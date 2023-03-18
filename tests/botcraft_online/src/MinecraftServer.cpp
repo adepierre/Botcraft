@@ -10,28 +10,28 @@
 #include <regex>
 #include <fstream>
 
-const std::filesystem::path server_files_path = "../../test_server_files";
+const std::filesystem::path server_relative_files_path = "../../test_server_files";
 
-MinecrafServerOptions MinecraftServer::options;
+MinecraftServerOptions MinecraftServer::options;
 
 MinecraftServer::MinecraftServer()
 {
     running = false;
     const std::filesystem::path current_path = std::filesystem::current_path();
     const std::filesystem::path exe_path = std::filesystem::path(options.argv0).is_absolute() ? options.argv0 : (current_path / options.argv0);
-    const std::filesystem::path test_server_path = exe_path.parent_path() / "test_servers" / game_version;
+    server_path = std::filesystem::canonical(exe_path.parent_path() / "test_servers" / game_version);
 
-    if (std::filesystem::exists(test_server_path))
+    if (std::filesystem::exists(server_path))
     {
-        std::filesystem::remove_all(test_server_path);
+        std::filesystem::remove_all(server_path);
     }
-    std::filesystem::create_directories(test_server_path);
+    std::filesystem::create_directories(server_path);
 
-    InitServerFolder(test_server_path);
+    InitServerFolder(server_path);
 
     // Change current path to launch server in the dedicated folder
-    std::filesystem::current_path(std::filesystem::canonical(test_server_path));
-    const std::filesystem::path jar_path = server_files_path / "server_jars" / ("server_" + game_version + ".jar");
+    std::filesystem::current_path(server_path);
+    const std::filesystem::path jar_path = server_relative_files_path / "server_jars" / ("server_" + game_version + ".jar");
     const char* command_line[] = { "java", "-Xmx1024M", "-Xms1024M", "-jar", jar_path.string().c_str(), "nogui", NULL};
 
     subprocess = std::make_unique<subprocess_s>();
@@ -170,6 +170,11 @@ void MinecraftServer::SendLine(const std::string& input)
     std::fflush(p_stdin);
 }
 
+const std::filesystem::path& MinecraftServer::GetServerPath() const
+{
+    return server_path;
+}
+
 void MinecraftServer::Kill()
 {
     int result = subprocess_terminate(subprocess.get());
@@ -211,7 +216,7 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
     if (std::ofstream bash = std::ofstream(path / "start.sh"))
 #endif
     {
-        bash << "java -Xmx1024M -Xms1024M -jar " << server_files_path.string() << "/server_jars/server_" << game_version << ".jar nogui\n";
+        bash << "java -Xmx1024M -Xms1024M -jar " << server_relative_files_path.string() << "/server_jars/server_" << game_version << ".jar nogui\n";
     }
     else
     {
@@ -271,15 +276,22 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
         throw std::runtime_error("Unable to create server.properties");
     }
 
-    // Setup level.dat
     std::filesystem::create_directories(path / "world");
-    std::filesystem::copy_file(path / server_files_path / "runtime" / "level.dat", path / "world" / "level.dat");
+    // Setup level.dat
+    std::filesystem::copy_file(path / server_relative_files_path / "runtime" / "level.dat", path / "world" / "level.dat");
+
+    // Setup structures files
+    //TODO: change folder for 1.13+ versions
+    std::filesystem::copy(
+        path / server_relative_files_path / "runtime" / "structures",
+        path / "world" / "structures",
+        std::filesystem::copy_options::recursive);
 }
 
 void MinecraftServer::SetGamerule(const std::string& gamerule, const std::string& value)
 {
     SendLine("gamerule " + gamerule + " " + value);
-    WaitLine(".*: Game ?rule " + gamerule + " (?:(?:is now set to:)|(?:has been updated to)) " + value + ".*", 2000);
+    WaitLine(".*: Game ?rule " + gamerule + " (?:is now set to:|has been updated to) " + value + ".*", 2000);
 }
 
 void MinecraftServer::InitServerGamerules()

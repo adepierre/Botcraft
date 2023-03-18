@@ -102,7 +102,7 @@ if (BOTCRAFT_BUILD_TESTS)
     include(CTest)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/catch2.cmake")
 
-    if(BOTCRAFT_BUILD_TESTS_ONLINE)
+    if(BOTCRAFT_BUILD_TESTS_ONLINE AND BOTCRAFT_COMPRESSION)
         # Add subprocess
         include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/subprocess.cmake")
 
@@ -119,6 +119,8 @@ if (BOTCRAFT_BUILD_TESTS)
 
         # Make sure server.jar is present
         download_mc_server(${VERSION_SERVER_URL} "${BOTCRAFT_OUTPUT_DIR}/bin/test_server_files/server_jars/server_${BOTCRAFT_GAME_VERSION}.jar")
+    elseif(BOTCRAFT_BUILD_TESTS_ONLINE)
+        message(WARNING "Online tests require BOTCRAFT_COMPRESSION")
     endif()
 
     add_subdirectory(tests)

@@ -1,3 +1,5 @@
 add_subdirectory(botcraft)
-add_subdirectory(botcraft_online)
+if(BOTCRAFT_BUILD_TESTS_ONLINE AND BOTCRAFT_COMPRESSION)
+    add_subdirectory(botcraft_online)
+endif()
 add_subdirectory(protocolCraft)
