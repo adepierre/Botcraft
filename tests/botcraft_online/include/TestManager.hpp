@@ -114,11 +114,12 @@ private:
 
     friend class TestManagerListener;
     void testRunStarting(Catch::TestRunInfo const& test_run_info);
-    void testRunEnded(Catch::TestRunStats const& test_run_info);
     void testCaseStarting(Catch::TestCaseInfo const& test_info);
-    void testCaseEnded(Catch::TestCaseStats const& test_case_stats);
+    void testCasePartialStarting(Catch::TestCaseInfo const& test_info, uint64_t part_number);
     void sectionStarting(Catch::SectionInfo const& section_info);
-    void sectionEnded(Catch::SectionStats const& section_stats);
+    void testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number);
+    void testCaseEnded(Catch::TestCaseStats const& test_case_stats);
+    void testRunEnded(Catch::TestRunStats const& test_run_info);
 
 private:
     /// @brief Offset in the world for current section/test
@@ -128,7 +129,7 @@ private:
 
     /// @brief Index of the next bot to be created
     int bot_index;
-    /// @brief Bot used to load chunk before any set block operation
+    /// @brief Bot used to load chunks before running commands on them
     std::unique_ptr<Botcraft::ConnectionClient> chunk_loader;
     /// @brief Name of the bot used as chunk loader
     std::string chunk_loader_name;
@@ -137,17 +138,9 @@ private:
     int current_test_index;
     /// @brief Size of the loaded structure for current test
     Botcraft::Position current_test_size;
-    /// @brief Name of the current test
-    std::string current_test_name;
-    /// @brief Whether or not all assertions in the current test passed
-    bool current_test_success;
 
-    /// @brief Index of the current section in the current test
-    int current_section_index;
     /// @brief Store names of all running (potentially) nested sections
     std::vector<std::string> section_stack;
-    /// @brief Current depth level of the running section
-    int current_section_stack_depth;
     /// @brief Position of the header for current section
     Botcraft::Position current_header_position;
 };
@@ -160,9 +153,10 @@ class TestManagerListener : public Catch::EventListenerBase
     using Catch::EventListenerBase::EventListenerBase;
 
     void testRunStarting(Catch::TestRunInfo const& test_run_info) override;
-    void testRunEnded(Catch::TestRunStats const& test_run_info) override;
     void testCaseStarting(Catch::TestCaseInfo const& test_info) override;
-    void testCaseEnded(Catch::TestCaseStats const& test_case_stats) override;
+    void testCasePartialStarting(Catch::TestCaseInfo const& test_info, uint64_t part_number);
     void sectionStarting(Catch::SectionInfo const& section_info) override;
-    void sectionEnded(Catch::SectionStats const& section_stats) override;
+    void testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number);
+    void testCaseEnded(Catch::TestCaseStats const& test_case_stats) override;
+    void testRunEnded(Catch::TestRunStats const& test_run_info) override;
 };

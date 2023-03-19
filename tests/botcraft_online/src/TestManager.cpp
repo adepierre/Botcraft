@@ -10,14 +10,12 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
+#include <iostream>
 
 TestManager::TestManager()
 {
 	current_offset = {spacing_x, 2, 2 * spacing_z };
-	current_test_success = false;
 	current_test_index = 0;
-	current_section_index = 0;
-	current_section_stack_depth = 0;
 	bot_index = 0;
 }
 
@@ -215,6 +213,52 @@ void TestManager::testRunStarting(Catch::TestRunInfo const& test_run_info)
 	SetGameMode(chunk_loader_name, Botcraft::GameType::Spectator);
 }
 
+void TestManager::testCaseStarting(Catch::TestCaseInfo const& test_info)
+{
+	// Retrieve test structure size
+	current_test_size = GetStructureSize(test_info.name);
+	LoadStructure("_header_running", Botcraft::Position(current_offset.x, 0, spacing_z - header_size.z));
+	current_offset.z = 2 * spacing_z;
+}
+
+void TestManager::testCasePartialStarting(Catch::TestCaseInfo const& test_info, uint64_t part_number)
+{
+	// Load header
+	current_header_position = current_offset - Botcraft::Position(0, 2, 0);
+	LoadStructure("_header_running", current_header_position);
+	current_offset.z += header_size.z;
+	// Load test structure
+	LoadStructure(test_info.name, current_offset + Botcraft::Position(0, -1, 0), Botcraft::Position(0, 1, 0));
+}
+
+void TestManager::sectionStarting(Catch::SectionInfo const& section_info)
+{
+	section_stack.push_back(section_info.name);
+}
+
+void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number)
+{
+	// Replace header with proper test result
+	LoadStructure(test_case_stats.totals.assertions.allPassed() ? "_header_success" : "_header_fail", current_header_position);
+	// Create TP sign for the partial that just ended
+	CreateTPSign(Botcraft::Position(-2 * (current_test_index + 1), 2, -2 * (part_number + 2)), Botcraft::Vector3(current_offset.x, 2, current_offset.z - 1), section_stack, "north");
+	// Create back to spawn sign for the section that just ended
+	CreateTPSign(Botcraft::Position(current_offset.x, 2, current_offset.z - 1), Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2 * (static_cast<int>(part_number) + 2)), section_stack, "south");
+	current_offset.z += current_test_size.z + spacing_z;
+	section_stack.clear();
+}
+
+void TestManager::testCaseEnded(Catch::TestCaseStats const& test_case_stats)
+{
+	LoadStructure(test_case_stats.totals.assertions.allPassed() ? "_header_success" : "_header_fail", Botcraft::Position(current_offset.x, 0, spacing_z - header_size.z));
+	// Create Sign to TP to current test
+	CreateTPSign(Botcraft::Position(-2 * (current_test_index + 1), 2, -2), Botcraft::Vector3(current_offset.x, 2, spacing_z - 1), { test_case_stats.testInfo->name }, "north");
+	// Create sign to TP to TP back to spawn
+	CreateTPSign(Botcraft::Position(current_offset.x, 2, spacing_z - 1), Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2), { test_case_stats.testInfo->name }, "south");
+	current_test_index += 1;
+	current_offset.x += std::max(current_test_size.x, header_size.x) + spacing_x;
+}
+
 void TestManager::testRunEnded(Catch::TestRunStats const& test_run_info)
 {
 	if (chunk_loader)
@@ -222,61 +266,6 @@ void TestManager::testRunEnded(Catch::TestRunStats const& test_run_info)
 		chunk_loader->Disconnect();
 	}
 }
-
-void TestManager::testCaseStarting(Catch::TestCaseInfo const& test_info)
-{
-	// Retrieve test structure size
-	current_test_size = GetStructureSize(test_info.name);
-	LoadStructure("_header_running", Botcraft::Position(current_offset.x, 0, spacing_z - header_size.z));current_test_name = test_info.name;
-	current_test_success = true;
-	current_offset.z = 2 * spacing_z;
-	current_section_index = 0;
-}
-
-void TestManager::testCaseEnded(Catch::TestCaseStats const& test_case_stats)
-{
-	LoadStructure(current_test_success ? "_header_success" : "_header_fail", Botcraft::Position(current_offset.x, 0, spacing_z - header_size.z));
-	// Create Sign to TP to current test
-	CreateTPSign(Botcraft::Position(-2 * (current_test_index + 1), 2, -2), Botcraft::Vector3(current_offset.x, 2, spacing_z - 1), { current_test_name }, "north");
-	// Create sign to TP to TP back to spawn
-	CreateTPSign(Botcraft::Position(current_offset.x, 2, spacing_z - 1), Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2), { current_test_name }, "south");
-	current_test_index += 1;
-	current_offset.x += std::max(current_test_size.x, header_size.x) + spacing_x;
-}
-
-void TestManager::sectionStarting(Catch::SectionInfo const& section_info)
-{
-	if (current_section_stack_depth == 0)
-	{
-		// Load header
-		current_header_position = current_offset - Botcraft::Position(0, 2, 0);
-		LoadStructure("_header_running", current_header_position);
-		current_offset.z += header_size.z;
-		// Load test structure
-		LoadStructure(current_test_name, current_offset + Botcraft::Position(0, -1, 0), Botcraft::Position(0, 1, 0));
-	}
-	section_stack.push_back(section_info.name);
-	current_section_stack_depth += 1;
-}
-
-void TestManager::sectionEnded(Catch::SectionStats const& section_stats)
-{
-	current_section_stack_depth -= 1;
-	if (current_section_stack_depth == 0)
-	{
-		// Replace header with proper test result
-		LoadStructure(section_stats.assertions.allOk() ? "_header_success" : "_header_fail", current_header_position);
-		// Create TP sign for the section that just ended
-		CreateTPSign(Botcraft::Position(-2 * (current_test_index + 1), 2, -2 * (current_section_index + 2)), Botcraft::Vector3(current_offset.x, 2, current_offset.z - 1), section_stack, "north");
-		// Create back to spawn sign for the section that just ended
-		CreateTPSign(Botcraft::Position(current_offset.x, 2, current_offset.z - 1), Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2 * (current_section_index + 2)), section_stack, "south");
-		current_test_success &= section_stats.assertions.allOk();
-		current_offset.z += current_test_size.z + spacing_z;
-		current_section_index += 1;
-		section_stack.clear();
-	}
-}
-
 
 
 
@@ -286,19 +275,14 @@ void TestManagerListener::testRunStarting(Catch::TestRunInfo const& test_run_inf
 	TestManager::GetInstance().testRunStarting(test_run_info);
 }
 
-void TestManagerListener::testRunEnded(Catch::TestRunStats const& test_run_info)
-{
-	TestManager::GetInstance().testRunEnded(test_run_info);
-}
-
 void TestManagerListener::testCaseStarting(Catch::TestCaseInfo const& test_info)
 {
 	TestManager::GetInstance().testCaseStarting(test_info);
 }
 
-void TestManagerListener::testCaseEnded(Catch::TestCaseStats const& test_case_stats)
+void TestManagerListener::testCasePartialStarting(Catch::TestCaseInfo const& test_info, uint64_t part_number)
 {
-	TestManager::GetInstance().testCaseEnded(test_case_stats);
+	TestManager::GetInstance().testCasePartialStarting(test_info, part_number);
 }
 
 void TestManagerListener::sectionStarting(Catch::SectionInfo const& section_info)
@@ -306,8 +290,18 @@ void TestManagerListener::sectionStarting(Catch::SectionInfo const& section_info
 	TestManager::GetInstance().sectionStarting(section_info);
 }
 
-void TestManagerListener::sectionEnded(Catch::SectionStats const& section_stats)
+void TestManagerListener::testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number)
 {
-	TestManager::GetInstance().sectionEnded(section_stats);
+	TestManager::GetInstance().testCasePartialEnded(test_case_stats, part_number);
+}
+
+void TestManagerListener::testCaseEnded(Catch::TestCaseStats const& test_case_stats)
+{
+	TestManager::GetInstance().testCaseEnded(test_case_stats);
+}
+
+void TestManagerListener::testRunEnded(Catch::TestRunStats const& test_run_info)
+{
+	TestManager::GetInstance().testRunEnded(test_run_info);
 }
 CATCH_REGISTER_LISTENER(TestManagerListener)
