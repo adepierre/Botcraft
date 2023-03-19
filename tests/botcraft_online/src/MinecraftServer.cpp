@@ -264,6 +264,9 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
 #if USE_COMPRESSION
         server_props << "network-compression-threshold=256" << "\n";
 #else
+        // This should technically never happen as we need
+        // compression support for protocolCraft to read
+        // structures NBT files
         server_props << "network-compression-threshold=-1" << "\n";
 #endif
         server_props << "online-mode=false" << "\n";
@@ -316,4 +319,5 @@ void MinecraftServer::InitServerGamerules()
     SetGamerule("mobGriefing", "false");
     SetGamerule("randomTickSpeed", "0");
     SetGamerule("spawnRadius", "0");
+    SetGamerule("spectatorsGenerateChunks", "true");
 }
