@@ -11,6 +11,7 @@
 #include <botcraft/Game/Vector3.hpp>
 #include <botcraft/Game/Enums.hpp>
 #include <botcraft/Game/ConnectionClient.hpp>
+#include <botcraft/Game/World/World.hpp>
 #include <botcraft/Utilities/SleepUtilities.hpp>
 
 
