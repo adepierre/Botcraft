@@ -5,6 +5,8 @@
 
 #include <protocolCraft/Types/NBT/NBT.hpp>
 
+#include <botcraft/Network/NetworkManager.hpp>
+
 #include <fstream>
 #include <sstream>
 #include <regex>
@@ -16,6 +18,7 @@ TestManager::TestManager()
 	current_test_index = 0;
 	current_section_index = 0;
 	current_section_stack_depth = 0;
+	bot_index = 0;
 }
 
 TestManager::~TestManager()
@@ -38,6 +41,7 @@ const Botcraft::Position& TestManager::GetCurrentOffset() const
 #if PROTOCOL_VERSION == 340
 void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant, const std::map<std::string, std::string>& metadata) const
 {
+	MakeSureLoaded(pos);
 	std::stringstream command;
 	command
 		<< "setblock" << " "
@@ -74,6 +78,48 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
 	MinecraftServer::GetInstance().WaitLine(".*: Block placed.*", 2000);
 }
 #endif
+
+void TestManager::SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const
+{
+	std::string gamemode_string;
+	switch (gamemode)
+	{
+	case Botcraft::GameType::Survival:
+		gamemode_string = "survival";
+		break;
+	case Botcraft::GameType::Creative:
+		gamemode_string = "creative";
+		break;
+	case Botcraft::GameType::Adventure:
+		gamemode_string = "adventure";
+		break;
+	case Botcraft::GameType::Spectator:
+		gamemode_string = "spectator";
+		break;
+	default:
+		return;
+	}
+	std::stringstream command;
+	command
+		<< "gamemode" << " "
+		<< gamemode_string << " "
+		<< name;
+	MinecraftServer::GetInstance().SendLine(command.str());
+	MinecraftServer::GetInstance().WaitLine(".*? Set " + name + "'s game mode to.*", 2000);
+}
+
+void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<double>& pos) const
+{
+	std::stringstream command;
+	command
+		<< "teleport" << " "
+		<< name << " "
+		<< pos.x << " "
+		<< pos.y << " "
+		<< pos.z << " ";
+	MinecraftServer::GetInstance().SendLine(command.str());
+	MinecraftServer::GetInstance().WaitLine(".*?Teleported " + name + " to.*", 2000);
+}
 
 Botcraft::Position TestManager::GetStructureSize(const std::string& filename) const
 {
@@ -153,12 +199,28 @@ void TestManager::LoadStructure(const std::string& filename, const Botcraft::Pos
 	SetBlock("redstone_block", pos + Botcraft::Position(0, 1, 0));
 }
 
+void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
+{
+	Teleport(chunk_loader_name, pos);
+}
+
 void TestManager::testRunStarting(Catch::TestRunInfo const& test_run_info)
 {
 	// Make sure the server is running and ready before the first test run
 	MinecraftServer::GetInstance().Initialize();
 	// Retrieve header size
 	header_size = GetStructureSize("_header_running");
+	chunk_loader = GetBot();
+	chunk_loader_name = chunk_loader->GetNetworkManager()->GetMyName();
+	SetGameMode(chunk_loader_name, Botcraft::GameType::Spectator);
+}
+
+void TestManager::testRunEnded(Catch::TestRunStats const& test_run_info)
+{
+	if (chunk_loader)
+	{
+		chunk_loader->Disconnect();
+	}
 }
 
 void TestManager::testCaseStarting(Catch::TestCaseInfo const& test_info)
@@ -222,6 +284,11 @@ void TestManager::sectionEnded(Catch::SectionStats const& section_stats)
 void TestManagerListener::testRunStarting(Catch::TestRunInfo const& test_run_info)
 {
 	TestManager::GetInstance().testRunStarting(test_run_info);
+}
+
+void TestManagerListener::testRunEnded(Catch::TestRunStats const& test_run_info)
+{
+	TestManager::GetInstance().testRunEnded(test_run_info);
 }
 
 void TestManagerListener::testCaseStarting(Catch::TestCaseInfo const& test_info)

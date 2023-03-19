@@ -6,8 +6,13 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <mutex>
 
 #include <botcraft/Game/Vector3.hpp>
+#include <botcraft/Game/Enums.hpp>
+#include <botcraft/Game/ConnectionClient.hpp>
+#include <botcraft/Utilities/SleepUtilities.hpp>
+
 
 /// @brief Singleton class that organizes the layout of the tests
 /// in the world and sets them up.
@@ -35,6 +40,55 @@ public:
 #if PROTOCOL_VERSION == 340
     void SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant = 0, const std::map<std::string, std::string>& metadata = {}) const;
 #endif
+    void SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const;
+
+    void Teleport(const std::string& name, const Botcraft::Vector3<double>& pos) const;
+
+    template<class ClientType = Botcraft::ConnectionClient,
+        std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
+    std::unique_ptr<ClientType> GetBot()
+    {
+        std::unique_ptr<ClientType> client;
+        if constexpr (std::is_same_v<ClientType, Botcraft::ConnectionClient>)
+        {
+            client = std::make_unique<ClientType>();
+        }
+        else
+        {
+            client = std::make_unique<ClientType>(false);
+        }
+
+        const std::string botname = "botcraft_" + std::to_string(bot_index++);
+        client->Connect("127.0.0.1:25565", botname);
+        MinecraftServer::GetInstance().WaitLine(".*?" + botname + " joined the game.*", 2000);
+
+        if constexpr (std::is_same_v<ClientType, Botcraft::ConnectionClient>)
+        {
+            return client;
+        }
+        else
+        {
+            // If this is not a ConnectionClient, wait for all the chunks to be loaded
+            const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+            while (true)
+            {
+                // Something went wrong
+                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 5000)
+                {
+                    throw std::runtime_error(botname + " took too long to load world");
+                }
+                {
+                    std::lock_guard<std::mutex> world_lock(client->GetWorld()->GetMutex());
+                    if (client->GetWorld()->GetAllChunks().size() >= 36) // view-distance 5 --> 6x6
+                    {
+                        break;
+                    }
+                }
+                Botcraft::SleepFor(std::chrono::milliseconds(10));
+            }
+            return client;
+        }
+    }
 
 private:
     /// @brief Read a NBT structure file and extract its size
@@ -53,43 +107,48 @@ private:
     /// @param load_offset offset to load the structure to (w.r.t pos), default to (0,0,0)
     void LoadStructure(const std::string& filename, const Botcraft::Position& pos, const Botcraft::Position& load_offset = Botcraft::Position()) const;
 
+    /// @brief Make sure a block is loaded on the server by teleporting the chunk_loader
+    /// @param pos The position to load
+    void MakeSureLoaded(const Botcraft::Position& pos) const;
+
     friend class TestManagerListener;
     void testRunStarting(Catch::TestRunInfo const& test_run_info);
+    void testRunEnded(Catch::TestRunStats const& test_run_info);
     void testCaseStarting(Catch::TestCaseInfo const& test_info);
     void testCaseEnded(Catch::TestCaseStats const& test_case_stats);
     void sectionStarting(Catch::SectionInfo const& section_info);
     void sectionEnded(Catch::SectionStats const& section_stats);
 
 private:
-    /// @brief Offset in the world for current test
+    /// @brief Offset in the world for current section/test
     Botcraft::Position current_offset;
-
-    /// @brief Size of the loaded structure for current test
-    Botcraft::Position current_test_size;
-
-    /// @brief Name of the current test
-    std::string current_test_name;
-
-    /// @brief Index of the current test in the world
-    int current_test_index;
-
-    /// @brief Index of the current section in the current test
-    int current_section_index;
-
-    /// @brief Whether or not all assertions in the current test passed
-    bool current_test_success;
-
-    /// @brief Position of the header for current test
-    Botcraft::Position current_header_position;
-
     /// @brief Size of the header structure
     Botcraft::Position header_size;
 
+    /// @brief Index of the next bot to be created
+    int bot_index;
+    /// @brief Bot used to load chunk before any set block operation
+    std::unique_ptr<Botcraft::ConnectionClient> chunk_loader;
+    /// @brief Name of the bot used as chunk loader
+    std::string chunk_loader_name;
+
+    /// @brief Index of the current test in the world
+    int current_test_index;
+    /// @brief Size of the loaded structure for current test
+    Botcraft::Position current_test_size;
+    /// @brief Name of the current test
+    std::string current_test_name;
+    /// @brief Whether or not all assertions in the current test passed
+    bool current_test_success;
+
+    /// @brief Index of the current section in the current test
+    int current_section_index;
     /// @brief Store names of all running (potentially) nested sections
     std::vector<std::string> section_stack;
-
     /// @brief Current depth level of the running section
     int current_section_stack_depth;
+    /// @brief Position of the header for current section
+    Botcraft::Position current_header_position;
 };
 
 /// @brief Catch2 listener to get test events and pass them to the main singleton
@@ -100,6 +159,7 @@ class TestManagerListener : public Catch::EventListenerBase
     using Catch::EventListenerBase::EventListenerBase;
 
     void testRunStarting(Catch::TestRunInfo const& test_run_info) override;
+    void testRunEnded(Catch::TestRunStats const& test_run_info) override;
     void testCaseStarting(Catch::TestCaseInfo const& test_info) override;
     void testCaseEnded(Catch::TestCaseStats const& test_case_stats) override;
     void sectionStarting(Catch::SectionInfo const& section_info) override;

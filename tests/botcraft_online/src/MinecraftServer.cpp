@@ -272,6 +272,7 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
         server_props << "online-mode=false" << "\n";
         server_props << "spawn-monsters=false" << "\n";
         server_props << "spawn-protection=0" << "\n";
+        server_props << "view-distance=5" << "\n";
     }
     else
     {
