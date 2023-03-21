@@ -41,6 +41,14 @@ public:
 #if PROTOCOL_VERSION == 340
     void SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant = 0, const std::map<std::string, std::string>& metadata = {}) const;
 #endif
+    /// @brief Create a book with given content at pos
+    /// @param pos Position of the item frame/lectern
+    /// @param pages Content of the pages of the book
+    /// @param facing Orientation of the item frame/lectern (book is toward this direction)
+    /// @param title Title of the book
+    /// @param author Author of the book
+    /// @param description Description of the book (minecraft tooltip)
+    void CreateBook(const Botcraft::Position& pos, const std::vector<std::string>& pages, const std::string& facing = "north", const std::string& title = "", const std::string& author = "", const std::vector<std::string>& description = {});
     void SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const;
 
     void Teleport(const std::string& name, const Botcraft::Vector3<double>& pos) const;
@@ -117,6 +125,7 @@ private:
     void testCaseStarting(Catch::TestCaseInfo const& test_info);
     void testCasePartialStarting(Catch::TestCaseInfo const& test_info, uint64_t part_number);
     void sectionStarting(Catch::SectionInfo const& section_info);
+    void assertionEnded(Catch::AssertionStats const& assertion_stats);
     void testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number);
     void testCaseEnded(Catch::TestCaseStats const& test_case_stats);
     void testRunEnded(Catch::TestRunStats const& test_run_info);
@@ -138,6 +147,8 @@ private:
     int current_test_index;
     /// @brief Size of the loaded structure for current test
     Botcraft::Position current_test_size;
+    /// @brief All failed assertions in this test case so far
+    std::vector<std::string> current_test_case_failures;
 
     /// @brief Store names of all running (potentially) nested sections
     std::vector<std::string> section_stack;
@@ -156,6 +167,7 @@ class TestManagerListener : public Catch::EventListenerBase
     void testCaseStarting(Catch::TestCaseInfo const& test_info) override;
     void testCasePartialStarting(Catch::TestCaseInfo const& test_info, uint64_t part_number);
     void sectionStarting(Catch::SectionInfo const& section_info) override;
+    void assertionEnded(Catch::AssertionStats const& assertion_stats) override;
     void testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number);
     void testCaseEnded(Catch::TestCaseStats const& test_case_stats) override;
     void testRunEnded(Catch::TestRunStats const& test_run_info) override;

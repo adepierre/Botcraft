@@ -12,6 +12,8 @@
 #include <regex>
 #include <iostream>
 
+std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements = { {'"', "\\\""}, {'\n', "\\n"} });
+
 TestManager::TestManager()
 {
 	current_offset = {spacing_x, 2, 2 * spacing_z };
@@ -61,7 +63,7 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
 				v.find(':') != std::string::npos)
 			{
 				// Make sure the whole string is between quotes and all internal quotes are escaped
-				command << "\"" << std::regex_replace(v, std::regex("\\\\?\""), "\\\"") << "\"";
+				command << "\"" << ReplaceCharacters(v) << "\"";
 			}
 			else
 			{
@@ -76,6 +78,80 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
 	MinecraftServer::GetInstance().WaitLine(".*: Block placed.*", 2000);
 }
 #endif
+
+void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<std::string>& pages, const std::string& facing, const std::string& title, const std::string& author, const std::vector<std::string>& description)
+{
+	int facing_id = 0;
+	if (facing == "south")
+	{
+		facing_id = 0;
+	}
+	else if (facing == "west")
+	{
+		facing_id = 1;
+	}
+	else if (facing == "north")
+	{
+		facing_id = 2;
+	}
+	else if (facing == "east")
+	{
+		facing_id = 3;
+	}
+
+	std::stringstream command;
+
+	command
+		<< "summon" << " "
+		<< "minecraft:item_frame" << " "
+		<< pos.x << " "
+		<< pos.y << " "
+		<< pos.z << " "
+		<< "{Facing:" << facing_id << ","
+		<< "Item:{"
+			<< "id:\"written_book\"" << ","
+			<< "Count:1" << ","
+			<< "tag:{"
+				<< "pages:[";
+	for (size_t i = 0; i < pages.size(); ++i)
+	{
+		command
+			<< "\"{"
+			<< "\\\"text\\\"" << ":" << "\\\"" << ReplaceCharacters(pages[i], { {'\n', "\\\\n"}, {'"', "\\\""} }) << "\\\""
+			<< "}\"" << ((i < pages.size() - 1) ? "," : "");
+	}
+	command << "]";
+	if (!title.empty())
+	{
+		command << ","
+			<< "title" << ":" << "\"" << ReplaceCharacters(title) << "\"";
+	}
+	if (!author.empty())
+	{
+		command << ","
+			<< "author" << ":" << "\"" << ReplaceCharacters(author) << "\"";
+	}
+	if (!description.empty())
+	{
+		command << "," << "display" << ":"
+			<< "{Lore:[";
+		for (size_t i = 0; i < description.size(); ++i)
+		{
+			command
+				<< "\""
+				<< ReplaceCharacters(description[i])
+				<< "\"" << ((i < description.size() - 1) ? "," : "");
+		}
+		command << "]}";
+	}
+	command
+		<< "}" // tag
+		<< "}" // Item
+		<< "}"; // Main
+
+	MinecraftServer::GetInstance().SendLine(command.str());
+	MinecraftServer::GetInstance().WaitLine(".*?: Object successfully summoned.*", 2000);
+}
 
 void TestManager::SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const
 {
@@ -229,11 +305,26 @@ void TestManager::testCasePartialStarting(Catch::TestCaseInfo const& test_info, 
 	current_offset.z += header_size.z;
 	// Load test structure
 	LoadStructure(test_info.name, current_offset + Botcraft::Position(0, -1, 0), Botcraft::Position(0, 1, 0));
+	current_test_case_failures.clear();
+	section_stack.clear();
 }
 
 void TestManager::sectionStarting(Catch::SectionInfo const& section_info)
 {
 	section_stack.push_back(section_info.name);
+}
+
+void TestManager::assertionEnded(Catch::AssertionStats const& assertion_stats)
+{
+	if (!assertion_stats.assertionResult.succeeded())
+	{
+		const std::filesystem::path file_path = std::filesystem::relative(assertion_stats.assertionResult.getSourceInfo().file, BOTCRAFT_ROOT_SOURCE_DIR);
+		current_test_case_failures.push_back(
+			ReplaceCharacters(file_path.string(), {{'\\', "/"}}) + ":" +
+			std::to_string(assertion_stats.assertionResult.getSourceInfo().line) + "\n\n" +
+			assertion_stats.assertionResult.getExpressionInMacro()
+		);
+	}
 }
 
 void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number)
@@ -244,8 +335,32 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
 	CreateTPSign(Botcraft::Position(-2 * (current_test_index + 1), 2, -2 * (part_number + 2)), Botcraft::Vector3(current_offset.x, 2, current_offset.z - 1), section_stack, "north");
 	// Create back to spawn sign for the section that just ended
 	CreateTPSign(Botcraft::Position(current_offset.x, 2, current_offset.z - 1), Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2 * (static_cast<int>(part_number) + 2)), section_stack, "south");
+	if (!test_case_stats.totals.assertions.allPassed())
+	{
+		CreateBook(
+			Botcraft::Position(current_offset.x + 1, 2, current_offset.z - header_size.z),
+			current_test_case_failures,
+			"north",
+			test_case_stats.testInfo->name + "#" + std::to_string(part_number),
+			"Botcraft Test Framework",
+			section_stack
+		);
+	}
+	else
+	{
+		const std::filesystem::path file_path = std::filesystem::relative(test_case_stats.testInfo->lineInfo.file, BOTCRAFT_ROOT_SOURCE_DIR);
+		CreateBook(
+			Botcraft::Position(current_offset.x + 1, 2, current_offset.z - header_size.z),
+			{ ReplaceCharacters(file_path.string(), {{'\\', "/"}}) + ":" +
+			std::to_string(test_case_stats.testInfo->lineInfo.line) + "\n\n" +
+			"All passed! :)" },
+			"north",
+			test_case_stats.testInfo->name + "#" + std::to_string(part_number),
+			"Botcraft Test Framework",
+			section_stack
+		);
+	}
 	current_offset.z += current_test_size.z + spacing_z;
-	section_stack.clear();
 }
 
 void TestManager::testCaseEnded(Catch::TestCaseStats const& test_case_stats)
@@ -290,6 +405,11 @@ void TestManagerListener::sectionStarting(Catch::SectionInfo const& section_info
 	TestManager::GetInstance().sectionStarting(section_info);
 }
 
+void TestManagerListener::assertionEnded(Catch::AssertionStats const& assertion_stats)
+{
+	TestManager::GetInstance().assertionEnded(assertion_stats);
+}
+
 void TestManagerListener::testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number)
 {
 	TestManager::GetInstance().testCasePartialEnded(test_case_stats, part_number);
@@ -305,3 +425,29 @@ void TestManagerListener::testRunEnded(Catch::TestRunStats const& test_run_info)
 	TestManager::GetInstance().testRunEnded(test_run_info);
 }
 CATCH_REGISTER_LISTENER(TestManagerListener)
+
+std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements)
+{
+	std::string output;
+	output.reserve(in.size());
+
+	for (size_t i = 0; i < in.size(); ++i)
+	{
+		bool found = false;
+		for (size_t j = 0; j < replacements.size(); ++j)
+		{
+			if (replacements[j].first == in[i])
+			{
+				output += replacements[j].second;
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+		{
+			output += in[i];
+		}
+	}
+
+	return output;
+}
