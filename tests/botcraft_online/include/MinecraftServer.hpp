@@ -13,6 +13,7 @@ struct subprocess_s;
 struct MinecraftServerOptions
 {
     std::string argv0 = "";
+    int view_distance = 5;
 };
 
 /// @brief Singleton wrapper around a Minecraft server subprocess instance.

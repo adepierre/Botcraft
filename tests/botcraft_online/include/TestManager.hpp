@@ -55,7 +55,7 @@ public:
 
     template<class ClientType = Botcraft::ConnectionClient,
         std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
-    std::unique_ptr<ClientType> GetBot()
+    std::unique_ptr<ClientType> GetBot(std::string& botname, int& id, Botcraft::Vector3<double>& pos)
     {
         std::unique_ptr<ClientType> client;
         if constexpr (std::is_same_v<ClientType, Botcraft::ConnectionClient>)
@@ -67,10 +67,16 @@ public:
             client = std::make_unique<ClientType>(false);
         }
 
-        const std::string botname = "botcraft_" + std::to_string(bot_index++);
+        botname = "botcraft_" + std::to_string(bot_index++);
         client->Connect("127.0.0.1:25565", botname);
+
+        std::vector<std::string> captured = MinecraftServer::GetInstance().WaitLine(".*?" + botname + ".*? logged in with entity id (\\d+) at \\(([\\d.,]+), ([\\d.,]+), ([\\d.,]+)\\).*", 2000);
+        id = std::stoi(captured[1]);
+        pos = Botcraft::Vector3(std::stod(captured[2]), std::stod(captured[3]), std::stod(captured[4]));
+
         MinecraftServer::GetInstance().WaitLine(".*?" + botname + " joined the game.*", 2000);
 
+        std::cout << captured.size() << std::endl;
         if constexpr (std::is_same_v<ClientType, Botcraft::ConnectionClient>)
         {
             return client;
@@ -79,6 +85,7 @@ public:
         {
             // If this is not a ConnectionClient, wait for all the chunks to be loaded
             const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+            const int num_chunk_to_load = (MinecraftServer::options.view_distance + 1) * (MinecraftServer::options.view_distance + 1);
             while (true)
             {
                 // Something went wrong
@@ -88,7 +95,7 @@ public:
                 }
                 {
                     std::lock_guard<std::mutex> world_lock(client->GetWorld()->GetMutex());
-                    if (client->GetWorld()->GetAllChunks().size() >= 36) // view-distance 5 --> 6x6
+                    if (client->GetWorld()->GetAllChunks().size() >= num_chunk_to_load)
                     {
                         break;
                     }
@@ -97,6 +104,25 @@ public:
             }
             return client;
         }
+    }
+
+    template<class ClientType = Botcraft::ConnectionClient,
+        std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
+    std::unique_ptr<ClientType> GetBot(std::string& botname)
+    {
+        int id;
+        Botcraft::Vector3<double> pos;
+        return GetBot(botname, id, pos);
+    }
+
+    template<class ClientType = Botcraft::ConnectionClient,
+        std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
+    std::unique_ptr<ClientType> GetBot()
+    {
+        std::string botname;
+        int id;
+        Botcraft::Vector3<double> pos;
+        return GetBot(botname, id, pos);
     }
 
 private:
@@ -108,7 +134,8 @@ private:
     /// @param src Position of the sign.
     /// @param dst TP destination coordinates
     /// @param texts A list of strings to display on the sign
-    void CreateTPSign(const Botcraft::Position& src, const Botcraft::Vector3<double>& dst, const std::vector<std::string>& texts, const std::string& facing = "north") const;
+    /// @param color Text color for lines > 0
+    void CreateTPSign(const Botcraft::Position& src, const Botcraft::Vector3<double>& dst, const std::vector<std::string>& texts, const std::string& facing = "north", const std::string& color = "black") const;
 
     /// @brief Load a structure block into the world
     /// @param filename The structure block to load. If it doesn't exist, will use "_default" instead
@@ -142,6 +169,10 @@ private:
     std::unique_ptr<Botcraft::ConnectionClient> chunk_loader;
     /// @brief Name of the bot used as chunk loader
     std::string chunk_loader_name;
+    /// @brief entity id of the chunk loader bot
+    int chunk_loader_id;
+    /// @brief position of the chunk loader bot
+    mutable Botcraft::Vector3<double> chunk_loader_position;
 
     /// @brief Index of the current test in the world
     int current_test_index;
