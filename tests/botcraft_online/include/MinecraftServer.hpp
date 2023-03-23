@@ -48,9 +48,9 @@ public:
     /// @param input Line to write
     void SendLine(const std::string& input);
 
-    /// @brief server_path getter
-    /// @return The path in which the server is running
-    const std::filesystem::path& GetServerPath() const;
+    /// @brief Path to the folder holding the structure files
+    /// @return The path in which the server loads the structures
+    std::filesystem::path GetStructurePath() const;
 
 private:
     /// @brief Terminate the subprocess

@@ -14,6 +14,8 @@
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Utilities/SleepUtilities.hpp>
 
+#include "MinecraftServer.hpp"
+
 
 /// @brief Singleton class that organizes the layout of the tests
 /// in the world and sets them up.
@@ -27,9 +29,9 @@ private:
     TestManager& operator=(const TestManager&) = delete;
 
     /// @brief Spacing between tests
-    static constexpr int spacing_x = 10;
+    static constexpr int spacing_x = 3;
     /// @brief Spacing between sections
-    static constexpr int spacing_z = 5;
+    static constexpr int spacing_z = 3;
 
 public:
     static TestManager& GetInstance();
@@ -38,9 +40,12 @@ public:
     /// @return The offset in the world of the currently running section
     const Botcraft::Position& GetCurrentOffset() const;
 
-#if PROTOCOL_VERSION == 340
+#if PROTOCOL_VERSION > 340
+    void SetBlock(const std::string& name, const Botcraft::Position& pos, const std::map<std::string, std::string>& blockstates = {}, const std::map<std::string, std::string>& metadata = {}) const;
+#else
     void SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant = 0, const std::map<std::string, std::string>& metadata = {}) const;
 #endif
+
     /// @brief Create a book with given content at pos
     /// @param pos Position of the item frame/lectern
     /// @param pages Content of the pages of the book
@@ -76,7 +81,6 @@ public:
 
         MinecraftServer::GetInstance().WaitLine(".*?" + botname + " joined the game.*", 2000);
 
-        std::cout << captured.size() << std::endl;
         if constexpr (std::is_same_v<ClientType, Botcraft::ConnectionClient>)
         {
             return client;
@@ -93,6 +97,8 @@ public:
                 {
                     throw std::runtime_error(botname + " took too long to load world");
                 }
+                // If the client has not received ClientboundGameProfilePacket yet world is still nullptr
+                if (client->GetWorld())
                 {
                     std::lock_guard<std::mutex> world_lock(client->GetWorld()->GetMutex());
                     if (client->GetWorld()->GetAllChunks().size() >= num_chunk_to_load)
@@ -112,7 +118,7 @@ public:
     {
         int id;
         Botcraft::Vector3<double> pos;
-        return GetBot(botname, id, pos);
+        return GetBot<ClientType>(botname, id, pos);
     }
 
     template<class ClientType = Botcraft::ConnectionClient,
@@ -122,7 +128,7 @@ public:
         std::string botname;
         int id;
         Botcraft::Vector3<double> pos;
-        return GetBot(botname, id, pos);
+        return GetBot<ClientType>(botname, id, pos);
     }
 
 private:

@@ -38,9 +38,11 @@ const Botcraft::Position& TestManager::GetCurrentOffset() const
 	return current_offset;
 }
 
-
-#if PROTOCOL_VERSION == 340
+#if PROTOCOL_VERSION > 340
+void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const std::map<std::string, std::string>& blockstates, const std::map<std::string, std::string>& metadata) const
+#else
 void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant, const std::map<std::string, std::string>& metadata) const
+#endif
 {
 	MakeSureLoaded(pos);
 	std::stringstream command;
@@ -49,12 +51,39 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
 		<< pos.x << " "
 		<< pos.y << " "
 		<< pos.z << " "
-		<< ((name.size() > 10 && name.substr(0, 10) == "minecraft:") ? "" : "minecraft:") << name << " "
+		<< ((name.size() > 10 && name.substr(0, 10) == "minecraft:") ? "" : "minecraft:") << name;
+#if PROTOCOL_VERSION > 340
+	if (!blockstates.empty())
+	{
+		command << "[";
+		int index = 0;
+		for (const auto& [k, v] : blockstates)
+		{
+			command << k << "=";
+			if (v.find(' ') != std::string::npos ||
+				v.find(',') != std::string::npos ||
+				v.find(':') != std::string::npos)
+			{
+				// Make sure the whole string is between quotes and all internal quotes are escaped
+				command << "\"" << ReplaceCharacters(v) << "\"";
+			}
+			else
+			{
+				command << v;
+			}
+			command << (index == blockstates.size() - 1 ? "" : ",");
+			index += 1;
+		}
+		command << "]";
+	}
+#else
+	command << " "
 		<< block_variant << " "
-		<< "replace";
+		<< "replace" << " ";
+#endif
 	if (!metadata.empty())
 	{
-		command << " {";
+		command << "{";
 		int index = 0;
 		for (const auto& [k, v] : metadata)
 		{
@@ -75,10 +104,20 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
 		}
 		command << "}";
 	}
-	MinecraftServer::GetInstance().SendLine(command.str());
-	MinecraftServer::GetInstance().WaitLine(".*: Block placed.*", 2000);
-}
+#if PROTOCOL_VERSION > 340
+	command << " replace";
 #endif
+	MinecraftServer::GetInstance().SendLine(command.str());
+#if PROTOCOL_VERSION > 340
+	MinecraftServer::GetInstance().WaitLine(
+		".*: Changed the block at "
+		+ std::to_string(pos.x) + ", "
+		+ std::to_string(pos.y) + ", "
+		+ std::to_string(pos.z) + ".*", 2000);
+#else
+	MinecraftServer::GetInstance().WaitLine(".*: Block placed.*", 2000);
+#endif
+}
 
 void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<std::string>& pages, const std::string& facing, const std::string& title, const std::string& author, const std::vector<std::string>& description)
 {
@@ -103,13 +142,24 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
 	std::stringstream command;
 
 	command
+#if PROTOCOL_VERSION < 477
 		<< "summon" << " "
 		<< "minecraft:item_frame" << " "
+#else
+		<< "setblock" << " "
+#endif
 		<< pos.x << " "
 		<< pos.y << " "
 		<< pos.z << " "
+#if PROTOCOL_VERSION < 477
 		<< "{Facing:" << facing_id << ","
 		<< "Item:{"
+#else
+		<< "minecraft:lectern"
+		<< "[facing=" << facing << ",has_book=true]"
+		<< "{"
+		<< "Book:{"
+#endif
 			<< "id:\"written_book\"" << ","
 			<< "Count:1" << ","
 			<< "tag:{"
@@ -118,7 +168,7 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
 	{
 		command
 			<< "\"{"
-			<< "\\\"text\\\"" << ":" << "\\\"" << ReplaceCharacters(pages[i], { {'\n', "\\\\n"}, {'"', "\\\""} }) << "\\\""
+			<< "\\\"text\\\"" << ":" << "\\\"" << ReplaceCharacters(pages[i], { {'\n', "\\\\n"}, {'"', "\\\\\\\""} }) << "\\\""
 			<< "}\"" << ((i < pages.size() - 1) ? "," : "");
 	}
 	command << "]";
@@ -140,7 +190,13 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
 		{
 			command
 				<< "\""
+#if PROTOCOL_VERSION < 735
+				// Just a list of strings is working before 1.16(?)
 				<< ReplaceCharacters(description[i])
+#else
+				// After, a JSON text element is required
+				<< "{" << "\\\"text\\\"" << ":" << "\\\"" << ReplaceCharacters(description[i], { { '\n', "\\\\n"}, { '"', "\\\\\\\"" } }) << "\\\"" << "}"
+#endif
 				<< "\"" << ((i < description.size() - 1) ? "," : "");
 		}
 		command << "]}";
@@ -151,7 +207,17 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
 		<< "}"; // Main
 
 	MinecraftServer::GetInstance().SendLine(command.str());
+#if PROTOCOL_VERSION > 340 && PROTOCOL_VERSION < 477
+	MinecraftServer::GetInstance().WaitLine(".*?: Summoned new Item Frame.*", 2000);
+#elif PROTOCOL_VERSION == 340
 	MinecraftServer::GetInstance().WaitLine(".*?: Object successfully summoned.*", 2000);
+#else
+	MinecraftServer::GetInstance().WaitLine(
+		".*: Changed the block at "
+		+ std::to_string(pos.x) + ", "
+		+ std::to_string(pos.y) + ", "
+		+ std::to_string(pos.z) + ".*", 2000);
+#endif
 }
 
 void TestManager::SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const
@@ -191,14 +257,15 @@ void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<doub
 		<< name << " "
 		<< pos.x << " "
 		<< pos.y << " "
-		<< pos.z << " ";
+		<< pos.z;
 	MinecraftServer::GetInstance().SendLine(command.str());
 	MinecraftServer::GetInstance().WaitLine(".*?Teleported " + name + " to.*", 2000);
 }
 
 Botcraft::Position TestManager::GetStructureSize(const std::string& filename) const
 {
-	const std::filesystem::path filepath = MinecraftServer::GetInstance().GetServerPath() / "world" / "structures" / (filename + ".nbt");
+	const std::filesystem::path filepath = MinecraftServer::GetInstance().GetStructurePath() / (filename + ".nbt");
+
 	if (!std::filesystem::exists(filepath))
 	{
 		return GetStructureSize("_default");
@@ -216,8 +283,30 @@ Botcraft::Position TestManager::GetStructureSize(const std::string& filename) co
 
 void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Vector3<double>& dst, const std::vector<std::string>& texts, const std::string& facing, const std::string& color) const
 {
+	Botcraft::Position offset_target;
+	int block_rotation = 0;
+	if (facing == "north")
+	{
+		block_rotation = 0;
+		offset_target = dst + Botcraft::Position(0, 0, -1);
+	}
+	else if (facing == "south")
+	{
+		block_rotation = 8;
+		offset_target = dst + Botcraft::Position(0, 0, 1);
+	}
+	else if (facing == "east")
+	{
+		block_rotation = 12;
+		offset_target = dst + Botcraft::Position(-1, 0, 0);
+	}
+	else if (facing == "west")
+	{
+		block_rotation = 4;
+		offset_target = dst + Botcraft::Position(1, 0, 0);
+	}
 	std::map<std::string, std::string> lines;
-	for (size_t i = 0; i < std::min(texts.size(), 4ULL); ++i)
+	for (size_t i = 0; i < std::min(texts.size(), static_cast<size_t>(4)); ++i)
 	{
 		std::stringstream line;
 		line
@@ -230,8 +319,14 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 				<< "\"color\"" << ":" << "\"" << "black" << "\"" << ","
 				<< "\"clickEvent\"" << ":" << "{"
 					<< "\"action\"" << ":" << "\"run_command\"" << ","
-					// TODO: add "facing" args on /teleport for 1.13+
-					<< "\"value\"" << ":" << "\"teleport @s " << dst.x << " " << dst.y << " " << dst.z << "\""
+					<< "\"value\"" << ":" << "\""
+#if PROTOCOL_VERSION > 340
+					<< "teleport @s" << " " << offset_target.x << " " << offset_target.y << " " << offset_target.z
+					<< " " << "facing" << " " << dst.x << " " << dst.y << " " << dst.z
+#else
+					<< "teleport @s" << " " << dst.x << " " << dst.y << " " << dst.z
+#endif
+					<< "\""
 				<< "}";
 		}
 		else
@@ -243,41 +338,58 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 		line << "}";
 		lines.insert({ "Text" + std::to_string(i + 1), line.str() });
 	}
+	// There is a bug in version 1.14 (and prereleases) that requires all 4 lines
+	// to be specified or the server can't read the text. See: https://bugs.mojang.com/browse/MC-144316
+#if PROTOCOL_VERSION > 459 && PROTOCOL_VERSION < 478
+	for (size_t i = texts.size(); i < 4ULL; ++i)
+	{
+		lines.insert({ "Text" + std::to_string(i + 1), "{\"text\":\"\"}" });
+	}
+#endif
 
-	int block_variant = 0;
-	if (facing == "north")
-	{
-		block_variant = 0;
-	}
-	else if (facing == "south")
-	{
-		block_variant = 8;
-	}
-	else if (facing == "east")
-	{
-		block_variant = 12;
-	}
-	else if (facing == "west")
-	{
-		block_variant = 4;
-	}
-
-	SetBlock("standing_sign", src, block_variant, lines);
+	SetBlock(
+#if PROTOCOL_VERSION < 393
+		"standing_sign",
+#elif PROTOCOL_VERSION < 477
+		"sign",
+#else
+		"oak_sign",
+#endif
+		src,
+#if PROTOCOL_VERSION > 340
+		{
+			{ "rotation", std::to_string(block_rotation) }
+		},
+#else
+		block_rotation,
+#endif
+		lines
+	);
 }
 
 void TestManager::LoadStructure(const std::string& filename, const Botcraft::Position& pos, const Botcraft::Position& load_offset) const
 {
-	const std::string& loaded = std::filesystem::exists(MinecraftServer::GetInstance().GetServerPath() / "world" / "structures" / (filename + ".nbt")) ?
-		filename :
+	const std::string& loaded = std::filesystem::exists(MinecraftServer::GetInstance().GetStructurePath() / (filename + ".nbt")) ?
+			filename :
 		"_default";
-	SetBlock("structure_block", pos, 0, {
-		{"mode", "LOAD"},
-		{"name", loaded},
-		{"posX", std::to_string(load_offset.x)},
-		{"posY", std::to_string(load_offset.y)},
-		{"posZ", std::to_string(load_offset.z)},
-		{"showboundingbox", "1"}
-	});
+
+	SetBlock(
+		"structure_block",
+		pos,
+#if PROTOCOL_VERSION > 340
+		{},
+#else
+		0,
+#endif
+		{
+			{"mode", "LOAD"},
+			{"name", loaded},
+			{"posX", std::to_string(load_offset.x)},
+			{"posY", std::to_string(load_offset.y)},
+			{"posZ", std::to_string(load_offset.z)},
+			{"showboundingbox", "1"}
+		}
+	);
 	SetBlock("redstone_block", pos + Botcraft::Position(0, 1, 0));
 }
 
@@ -332,7 +444,7 @@ void TestManager::assertionEnded(Catch::AssertionStats const& assertion_stats)
 {
 	if (!assertion_stats.assertionResult.succeeded())
 	{
-		const std::filesystem::path file_path = std::filesystem::relative(assertion_stats.assertionResult.getSourceInfo().file, BOTCRAFT_ROOT_SOURCE_DIR);
+		const std::filesystem::path file_path = std::filesystem::relative(assertion_stats.assertionResult.getSourceInfo().file, BASE_SOURCE_DIR);
 		current_test_case_failures.push_back(
 			ReplaceCharacters(file_path.string(), {{'\\', "/"}}) + ":" +
 			std::to_string(assertion_stats.assertionResult.getSourceInfo().line) + "\n\n" +
@@ -363,20 +475,6 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
 		CreateBook(
 			Botcraft::Position(current_offset.x + 1, 2, current_offset.z - header_size.z),
 			current_test_case_failures,
-			"north",
-			test_case_stats.testInfo->name + "#" + std::to_string(part_number),
-			"Botcraft Test Framework",
-			section_stack
-		);
-	}
-	else
-	{
-		const std::filesystem::path file_path = std::filesystem::relative(test_case_stats.testInfo->lineInfo.file, BOTCRAFT_ROOT_SOURCE_DIR);
-		CreateBook(
-			Botcraft::Position(current_offset.x + 1, 2, current_offset.z - header_size.z),
-			{ ReplaceCharacters(file_path.string(), {{'\\', "/"}}) + ":" +
-			std::to_string(test_case_stats.testInfo->lineInfo.line) + "\n\n" +
-			"All passed! :)" },
 			"north",
 			test_case_stats.testInfo->name + "#" + std::to_string(part_number),
 			"Botcraft Test Framework",

@@ -10,6 +10,8 @@ set(SRC_FILES
 
     src/MinecraftServer.cpp
     src/TestManager.cpp
+
+    src/tests/self-tests.cpp
 )
 
 add_executable(${PROJECT_NAME} ${HDR_FILES} ${SRC_FILES})
@@ -19,7 +21,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE botcraft)
 target_link_libraries(${PROJECT_NAME} PRIVATE subprocess)
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 get_filename_component(BOTCRAFT_ROOT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
-target_compile_definitions(${PROJECT_NAME} PRIVATE BOTCRAFT_ROOT_SOURCE_DIR="${BOTCRAFT_ROOT_SOURCE_DIR}")
+target_compile_definitions(${PROJECT_NAME} PRIVATE BASE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/src/tests")
 if(BOTCRAFT_COMPRESSION)
     target_compile_definitions(${PROJECT_NAME} PRIVATE USE_COMPRESSION=1)
 endif(BOTCRAFT_COMPRESSION)

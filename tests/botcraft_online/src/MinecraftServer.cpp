@@ -18,8 +18,8 @@ MinecraftServer::MinecraftServer()
 {
     running = false;
     const std::filesystem::path current_path = std::filesystem::current_path();
-    const std::filesystem::path exe_path = std::filesystem::path(options.argv0).is_absolute() ? options.argv0 : (current_path / options.argv0);
-    server_path = std::filesystem::canonical(exe_path.parent_path() / "test_servers" / game_version);
+    const std::filesystem::path exe_path = std::filesystem::path(options.argv0).is_absolute() ? std::filesystem::path(options.argv0) : (current_path / options.argv0);
+    server_path = exe_path.parent_path() / "test_servers" / game_version;
 
     if (std::filesystem::exists(server_path))
     {
@@ -27,12 +27,13 @@ MinecraftServer::MinecraftServer()
     }
     std::filesystem::create_directories(server_path);
 
+    server_path = std::filesystem::canonical(server_path);
     InitServerFolder(server_path);
 
     // Change current path to launch server in the dedicated folder
     std::filesystem::current_path(server_path);
-    const std::filesystem::path jar_path = server_relative_files_path / "server_jars" / ("server_" + game_version + ".jar");
-    const char* command_line[] = { "java", "-Xmx1024M", "-Xms1024M", "-jar", jar_path.string().c_str(), "nogui", NULL};
+    const std::string jar_path = (server_relative_files_path / "server_jars" / ("server_" + game_version + ".jar")).string();
+    const char* command_line[] = { "java", "-Xmx1024M", "-Xms1024M", "-jar", jar_path.c_str(), "nogui", NULL};
 
     subprocess = std::make_unique<subprocess_s>();
     int result = subprocess_create(command_line,
@@ -43,14 +44,13 @@ MinecraftServer::MinecraftServer()
         subprocess_option_search_user_path,
         subprocess.get()
     );
+    // Restore current path to previous value
+    std::filesystem::current_path(current_path);
     if (result != 0)
     {
         LOG_FATAL("Error starting wrapped server process");
         throw std::runtime_error("Error starting wrapped server process");
     }
-    // Restore current path to previous value
-    std::filesystem::current_path(current_path);
-
     running = true;
     read_thread = std::thread(&MinecraftServer::InternalThreadRead, this);
 }
@@ -170,9 +170,13 @@ void MinecraftServer::SendLine(const std::string& input)
     std::fflush(p_stdin);
 }
 
-const std::filesystem::path& MinecraftServer::GetServerPath() const
+std::filesystem::path MinecraftServer::GetStructurePath() const
 {
-    return server_path;
+#if PROTOCOL_VERSION > 340
+    return server_path / "world" / "generated" / "minecraft" / "structures";
+#else
+    return server_path / "world" / "structures";
+#endif
 }
 
 void MinecraftServer::Kill()
@@ -280,15 +284,23 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
         throw std::runtime_error("Unable to create server.properties");
     }
 
+#if PROTOCOL_VERSION > 340
+    std::filesystem::create_directories(path / "world" / "generated" / "minecraft");
+#else
     std::filesystem::create_directories(path / "world");
+#endif
+
     // Setup level.dat
     std::filesystem::copy_file(path / server_relative_files_path / "runtime" / "level.dat", path / "world" / "level.dat");
 
     // Setup structures files
-    //TODO: change folder for 1.13+ versions
     std::filesystem::copy(
         path / server_relative_files_path / "runtime" / "structures",
+#if PROTOCOL_VERSION > 340
+        path / "world" / "generated" / "minecraft" / "structures",
+#else
         path / "world" / "structures",
+#endif
         std::filesystem::copy_options::recursive);
 }
 
