@@ -305,7 +305,7 @@ namespace Botcraft
             }
             port = data.GetPort();
 
-            LOG_INFO("SRV DNS lookup successful!")
+            LOG_INFO("SRV DNS lookup successful!");
             return;
         }
         LOG_WARNING("SRV DNS lookup failed to find an address");

@@ -168,7 +168,7 @@ namespace Botcraft
                 if (!success)
                 {
                     glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                    LOG_ERROR("Shader compilation error of type: " << type << '\n' << infoLog)
+                    LOG_ERROR("Shader compilation error of type: " << type << '\n' << infoLog);
                 }
             }
             else
@@ -177,7 +177,7 @@ namespace Botcraft
                 if (!success)
                 {
                     glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                    LOG_ERROR("Shader program linking error of type: " << type << '\n' << infoLog)
+                    LOG_ERROR("Shader program linking error of type: " << type << '\n' << infoLog);
                 }
             }
         }

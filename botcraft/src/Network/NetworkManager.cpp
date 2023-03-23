@@ -95,6 +95,11 @@ namespace Botcraft
 
     NetworkManager::~NetworkManager()
     {
+        Close();
+    }
+
+    void NetworkManager::Close()
+    {
         state = ProtocolCraft::ConnectionState::None;
 
         if (com)

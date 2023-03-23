@@ -26,6 +26,10 @@ namespace Botcraft
     void ConnectionClient::Disconnect()
     {
         should_be_closed = true;
+        if (network_manager)
+        {
+            network_manager->Close();
+        }
         network_manager.reset();
     }
 

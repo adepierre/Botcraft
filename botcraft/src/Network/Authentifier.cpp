@@ -93,7 +93,7 @@ namespace Botcraft
                 LOG_ERROR("Unable to get player certificates");
                 return false;
             }
-            LOG_INFO("Player certificates obtained!")
+            LOG_INFO("Player certificates obtained!");
 #endif
             return true;
         }
@@ -160,7 +160,7 @@ namespace Botcraft
             LOG_ERROR("Unable to get player certificates");
             return false;
         }
-        LOG_INFO("Player certificates obtained!")
+        LOG_INFO("Player certificates obtained!");
 #endif
 
         LOG_INFO("Authentication completed!");

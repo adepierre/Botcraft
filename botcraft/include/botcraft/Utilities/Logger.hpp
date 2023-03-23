@@ -32,7 +32,7 @@ constexpr const char* file_name(const char* path)
     << " [" << logger.GetThreadName(std::this_thread::get_id()) << "(" << std::this_thread::get_id() << ")] " \
     << file_name(__FILE__) << '(' << __LINE__ << "): " << osstream << '\n'; \
     logger.Log(logger_ostringstream.str()); \
-} while(0);
+} while(0)
 
 #define LOG_TRACE(osstream) LOG(osstream, Botcraft::LogLevel::Trace)
 #define LOG_DEBUG(osstream) LOG(osstream, Botcraft::LogLevel::Debug)

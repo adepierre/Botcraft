@@ -740,7 +740,7 @@ namespace Botcraft
             // Check that the trade is not locked
             if (trades[trade_index].GetNumberOfTradesUses() >= trades[trade_index].GetMaximumNumberOfTradeUses())
             {
-                LOG_WARNING("Failed trading (trade locked)")
+                LOG_WARNING("Failed trading (trade locked)");
                 return Status::Failure;
             }
         }

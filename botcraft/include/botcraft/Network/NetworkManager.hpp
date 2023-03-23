@@ -30,6 +30,8 @@ namespace Botcraft
         NetworkManager(const ProtocolCraft::ConnectionState constant_connection_state);
         ~NetworkManager();
 
+        void Close();
+
         void AddHandler(ProtocolCraft::Handler* h);
         void Send(const std::shared_ptr<ProtocolCraft::Message> msg);
         const ProtocolCraft::ConnectionState GetConnectionState() const;
