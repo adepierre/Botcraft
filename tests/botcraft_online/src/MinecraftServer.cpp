@@ -3,6 +3,7 @@
 #include <subprocess/subprocess.h>
 
 #include <botcraft/Utilities/Logger.hpp>
+#include <botcraft/Utilities/SleepUtilities.hpp>
 #include <botcraft/Version.hpp>
 
 #include <stdexcept>
@@ -116,9 +117,8 @@ std::vector<std::string> MinecraftServer::WaitLine(const std::string& regex, con
         return { "" };
     }
 
-    auto start = std::chrono::steady_clock::now();
-    while (timeout_ms == 0 || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() < timeout_ms)
-    {
+    std::vector<std::string> output;
+    if (Botcraft::WaitForCondition([&]()
         {
             std::unique_lock<std::mutex> lock(internal_read_mutex);
             if (lines.size() > 0)
@@ -128,23 +128,27 @@ std::vector<std::string> MinecraftServer::WaitLine(const std::string& regex, con
                 if (regex.empty())
                 {
                     LOG_DEBUG("Line caught (no regex):\n" << line);
-                    return { line };
+                    output = { line };
+                    return true;
                 }
                 std::smatch match;
                 if (std::regex_match(line, match, std::regex(regex)))
                 {
-                    std::vector<std::string> output(match.size());
+                    output.resize(match.size());
                     for (size_t i = 0; i < match.size(); ++i)
                     {
                         output[i] = match[i].str();
                     }
                     LOG_DEBUG("Line caught using regex [" << regex << "]:\n" << line);
-                    return output;
+                    return true;
                 }
             }
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            return false;
+        }, timeout_ms))
+    {
+        return output;
     }
+
     if (regex.empty())
     {
         LOG_FATAL("Timeout waiting for server to output a line");

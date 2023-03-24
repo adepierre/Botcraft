@@ -220,35 +220,6 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
 #endif
 }
 
-void TestManager::SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const
-{
-	std::string gamemode_string;
-	switch (gamemode)
-	{
-	case Botcraft::GameType::Survival:
-		gamemode_string = "survival";
-		break;
-	case Botcraft::GameType::Creative:
-		gamemode_string = "creative";
-		break;
-	case Botcraft::GameType::Adventure:
-		gamemode_string = "adventure";
-		break;
-	case Botcraft::GameType::Spectator:
-		gamemode_string = "spectator";
-		break;
-	default:
-		return;
-	}
-	std::stringstream command;
-	command
-		<< "gamemode" << " "
-		<< gamemode_string << " "
-		<< name;
-	MinecraftServer::GetInstance().SendLine(command.str());
-	MinecraftServer::GetInstance().WaitLine(".*? Set " + name + "'s game mode to.*", 2000);
-}
-
 void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<double>& pos) const
 {
 	std::stringstream command;
@@ -369,8 +340,9 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 
 void TestManager::LoadStructure(const std::string& filename, const Botcraft::Position& pos, const Botcraft::Position& load_offset) const
 {
-	const std::string& loaded = std::filesystem::exists(MinecraftServer::GetInstance().GetStructurePath() / (filename + ".nbt")) ?
-			filename :
+	const std::string no_space_filename = ReplaceCharacters(filename, { {' ', "_"} });
+	const std::string& loaded = std::filesystem::exists(MinecraftServer::GetInstance().GetStructurePath() / (no_space_filename + ".nbt")) ?
+		no_space_filename :
 		"_default";
 
 	SetBlock(
@@ -405,14 +377,43 @@ void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
 	chunk_loader_position = pos;
 }
 
+void TestManager::SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const
+{
+	std::string gamemode_string;
+	switch (gamemode)
+	{
+	case Botcraft::GameType::Survival:
+		gamemode_string = "survival";
+		break;
+	case Botcraft::GameType::Creative:
+		gamemode_string = "creative";
+		break;
+	case Botcraft::GameType::Adventure:
+		gamemode_string = "adventure";
+		break;
+	case Botcraft::GameType::Spectator:
+		gamemode_string = "spectator";
+		break;
+	default:
+		return;
+	}
+	std::stringstream command;
+	command
+		<< "gamemode" << " "
+		<< gamemode_string << " "
+		<< name;
+	MinecraftServer::GetInstance().SendLine(command.str());
+	MinecraftServer::GetInstance().WaitLine(".*? Set " + name + "'s game mode to.*", 2000);
+}
+
+
 void TestManager::testRunStarting(Catch::TestRunInfo const& test_run_info)
 {
 	// Make sure the server is running and ready before the first test run
 	MinecraftServer::GetInstance().Initialize();
 	// Retrieve header size
 	header_size = GetStructureSize("_header_running");
-	chunk_loader = GetBot(chunk_loader_name, chunk_loader_id, chunk_loader_position);
-	SetGameMode(chunk_loader_name, Botcraft::GameType::Spectator);
+	chunk_loader = GetBot<Botcraft::ConnectionClient>(chunk_loader_name, chunk_loader_id, chunk_loader_position, Botcraft::GameType::Spectator);
 }
 
 void TestManager::testCaseStarting(Catch::TestCaseInfo const& test_info)
@@ -448,7 +449,9 @@ void TestManager::assertionEnded(Catch::AssertionStats const& assertion_stats)
 		current_test_case_failures.push_back(
 			ReplaceCharacters(file_path.string(), {{'\\', "/"}}) + ":" +
 			std::to_string(assertion_stats.assertionResult.getSourceInfo().line) + "\n\n" +
-			assertion_stats.assertionResult.getExpressionInMacro()
+			assertion_stats.assertionResult.getExpressionInMacro() + "\n\n"
+			"with expansion:" + "\n" +
+			assertion_stats.assertionResult.getExpandedExpression()
 		);
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <functional>
 
 namespace Botcraft
 {
@@ -11,4 +12,6 @@ namespace Botcraft
     {
         SleepUntil(std::chrono::steady_clock::now() + time);
     }
+
+    bool WaitForCondition(const std::function<bool()>& condition, const long long int timeout_ms = 0);
 }

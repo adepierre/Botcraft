@@ -3,6 +3,7 @@ project(botcraft_online_tests)
 set(HDR_FILES
     include/MinecraftServer.hpp
     include/TestManager.hpp
+    include/Utils.hpp
 )
 
 set(SRC_FILES 
@@ -10,6 +11,7 @@ set(SRC_FILES
 
     src/MinecraftServer.cpp
     src/TestManager.cpp
+    src/Utils.cpp
 
     src/tests/self-tests.cpp
 )

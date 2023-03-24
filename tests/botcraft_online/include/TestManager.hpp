@@ -10,7 +10,7 @@
 
 #include <botcraft/Game/Vector3.hpp>
 #include <botcraft/Game/Enums.hpp>
-#include <botcraft/Game/ConnectionClient.hpp>
+#include <botcraft/Game/ManagersClient.hpp>
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Utilities/SleepUtilities.hpp>
 
@@ -54,13 +54,12 @@ public:
     /// @param author Author of the book
     /// @param description Description of the book (minecraft tooltip)
     void CreateBook(const Botcraft::Position& pos, const std::vector<std::string>& pages, const std::string& facing = "north", const std::string& title = "", const std::string& author = "", const std::vector<std::string>& description = {});
-    void SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const;
 
     void Teleport(const std::string& name, const Botcraft::Vector3<double>& pos) const;
 
-    template<class ClientType = Botcraft::ConnectionClient,
+    template<class ClientType = Botcraft::ManagersClient,
         std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
-    std::unique_ptr<ClientType> GetBot(std::string& botname, int& id, Botcraft::Vector3<double>& pos)
+    std::unique_ptr<ClientType> GetBot(std::string& botname, int& id, Botcraft::Vector3<double>& pos, const Botcraft::GameType gamemode = Botcraft::GameType::Survival)
     {
         std::unique_ptr<ClientType> client;
         if constexpr (std::is_same_v<ClientType, Botcraft::ConnectionClient>)
@@ -81,6 +80,11 @@ public:
 
         MinecraftServer::GetInstance().WaitLine(".*?" + botname + " joined the game.*", 2000);
 
+        if (gamemode != Botcraft::GameType::Survival)
+        {
+            SetGameMode(botname, gamemode);
+        }
+
         if constexpr (std::is_same_v<ClientType, Botcraft::ConnectionClient>)
         {
             return client;
@@ -88,47 +92,45 @@ public:
         else
         {
             // If this is not a ConnectionClient, wait for all the chunks to be loaded
-            const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
             const int num_chunk_to_load = (MinecraftServer::options.view_distance + 1) * (MinecraftServer::options.view_distance + 1);
-            while (true)
-            {
-                // Something went wrong
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 5000)
+            if (!Botcraft::WaitForCondition([&]()
                 {
-                    throw std::runtime_error(botname + " took too long to load world");
-                }
-                // If the client has not received ClientboundGameProfilePacket yet world is still nullptr
-                if (client->GetWorld())
-                {
-                    std::lock_guard<std::mutex> world_lock(client->GetWorld()->GetMutex());
-                    if (client->GetWorld()->GetAllChunks().size() >= num_chunk_to_load)
+                    // If the client has not received ClientboundGameProfilePacket yet world is still nullptr
+                    if (client->GetWorld())
                     {
-                        break;
+                        std::lock_guard<std::mutex> world_lock(client->GetWorld()->GetMutex());
+                        if (client->GetWorld()->GetAllChunks().size() >= num_chunk_to_load)
+                        {
+                            return true;
+                        }
                     }
-                }
-                Botcraft::SleepFor(std::chrono::milliseconds(10));
+                    return false;
+                }, 5000))
+            {
+                throw std::runtime_error(botname + " took too long to load world");
             }
+
             return client;
         }
     }
 
-    template<class ClientType = Botcraft::ConnectionClient,
+    template<class ClientType = Botcraft::ManagersClient,
         std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
-    std::unique_ptr<ClientType> GetBot(std::string& botname)
+    std::unique_ptr<ClientType> GetBot(std::string& botname, const Botcraft::GameType gamemode = Botcraft::GameType::Survival)
     {
         int id;
         Botcraft::Vector3<double> pos;
-        return GetBot<ClientType>(botname, id, pos);
+        return GetBot<ClientType>(botname, id, pos, gamemode);
     }
 
-    template<class ClientType = Botcraft::ConnectionClient,
+    template<class ClientType = Botcraft::ManagersClient,
         std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
-    std::unique_ptr<ClientType> GetBot()
+    std::unique_ptr<ClientType> GetBot(const Botcraft::GameType gamemode = Botcraft::GameType::Survival)
     {
         std::string botname;
         int id;
         Botcraft::Vector3<double> pos;
-        return GetBot<ClientType>(botname, id, pos);
+        return GetBot<ClientType>(botname, id, pos, gamemode);
     }
 
 private:
@@ -152,6 +154,12 @@ private:
     /// @brief Make sure a block is loaded on the server by teleporting the chunk_loader
     /// @param pos The position to load
     void MakeSureLoaded(const Botcraft::Position& pos) const;
+
+    /// @brief Set a bot gamemode
+    /// @param name Bot name
+    /// @param gamemode Target game mode
+    void SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const;
+
 
     friend class TestManagerListener;
     void testRunStarting(Catch::TestRunInfo const& test_run_info);
