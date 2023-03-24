@@ -14,6 +14,7 @@ set(SRC_FILES
     src/Utils.cpp
 
     src/tests/self-tests.cpp
+    src/tests/world.cpp
 )
 
 add_executable(${PROJECT_NAME} ${HDR_FILES} ${SRC_FILES})
