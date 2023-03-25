@@ -1,394 +1,394 @@
 [
     {
         "id": 0,
-        "name": "The Void",
+        "name": "the_void",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 1,
-        "name": "Plains",
+        "name": "plains",
         "rainfall": 0.4,
         "temperature": 0.8
     },
     {
         "id": 2,
-        "name": "Sunflower Plains",
+        "name": "sunflower_plains",
         "rainfall": 0.4,
         "temperature": 0.8
     },
     {
         "id": 3,
-        "name": "Snowy Plains",
+        "name": "snowy_plains",
         "rainfall": 0.5,
         "temperature": 0.0
     },
     {
         "id": 4,
-        "name": "Ice Spikes",
+        "name": "ice_spikes",
         "rainfall": 0.5,
         "temperature": 0.0
     },
     {
         "id": 5,
-        "name": "Desert",
+        "name": "desert",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 6,
-        "name": "Swamp",
+        "name": "swamp",
         "rainfall": 0.9,
         "temperature": 0.8,
         "biomeType": "Swamp"
     },
     {
         "id": 7,
-        "name": "Mangrove Swamp",
+        "name": "mangrove_swamp",
         "rainfall": 0.9,
         "temperature": 0.8,
         "biomeType": "Swamp"
     },
     {
         "id": 8,
-        "name": "Forest",
+        "name": "forest",
         "rainfall": 0.8,
         "temperature": 0.7
     },
     {
         "id": 9,
-        "name": "Flower Forest",
+        "name": "flower_forest",
         "rainfall": 0.8,
         "temperature": 0.7
     },
     {
         "id": 10,
-        "name": "Birch Forest",
+        "name": "birch_forest",
         "rainfall": 0.6,
         "temperature": 0.6
     },
     {
         "id": 11,
-        "name": "Dark Forest",
+        "name": "dark_forest",
         "rainfall": 0.8,
         "temperature": 0.7,
         "biomeType": "DarkForest"
     },
     {
         "id": 12,
-        "name": "Old Growth Birch Forest",
+        "name": "old_growth_birch_forest",
         "rainfall": 0.6,
         "temperature": 0.6,
         "biomeType": "DarkForest"
     },
     {
         "id": 13,
-        "name": "Old Growth Pine Taiga",
+        "name": "old_growth_pine_taiga",
         "rainfall": 0.8,
         "temperature": 0.3
     },
     {
         "id": 14,
-        "name": "Old Growth Spruce Taiga",
+        "name": "old_growth_spruce_taiga",
         "rainfall": 0.8,
         "temperature": 0.25
     },
     {
         "id": 15,
-        "name": "Taiga",
+        "name": "taiga",
         "rainfall": 0.8,
         "temperature": 0.25
     },
     {
         "id": 16,
-        "name": "Snowy Taiga",
+        "name": "snowy_taiga",
         "rainfall": 0.4,
         "temperature": -0.5
     },
     {
         "id": 17,
-        "name": "Savanna",
+        "name": "savanna",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 18,
-        "name": "Savanna Plateau",
+        "name": "savanna_plateau",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 19,
-        "name": "Windswept Hills",
+        "name": "windswept_hills",
         "rainfall": 0.3,
         "temperature": 0.2
     },
     {
         "id": 20,
-        "name": "Windswept Gravelly Hills",
+        "name": "windswept_gravelly_hills",
         "rainfall": 0.3,
         "temperature": 0.2
     },
     {
         "id": 21,
-        "name": "Windswept Forest",
+        "name": "windswept_forest",
         "rainfall": 0.3,
         "temperature": 0.2
     },
     {
         "id": 22,
-        "name": "Windswept Savanna",
+        "name": "windswept_savanna",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 23,
-        "name": "Jungle",
+        "name": "jungle",
         "rainfall": 0.9,
         "temperature": 0.95
     },
     {
         "id": 24,
-        "name": "Sparse Jungle",
+        "name": "sparse_jungle",
         "rainfall": 0.8,
         "temperature": 0.95
     },
     {
         "id": 25,
-        "name": "Bamboo Jungle",
+        "name": "bamboo_jungle",
         "rainfall": 0.9,
         "temperature": 0.95
     },
     {
         "id": 26,
-        "name": "Badlands",
+        "name": "badlands",
         "rainfall": 0.0,
         "temperature": 2.0,
         "biomeType": "Badlands"
     },
     {
         "id": 27,
-        "name": "Eroded Badlands",
+        "name": "eroded_badlands",
         "rainfall": 0.0,
         "temperature": 2.0,
         "biomeType": "Badlands"
     },
     {
         "id": 28,
-        "name": "Wooded Badlands",
+        "name": "wooded_badlands",
         "rainfall": 0.0,
         "temperature": 2.0,
         "biomeType": "Badlands"
     },
     {
         "id": 29,
-        "name": "Meadow",
+        "name": "meadow",
         "rainfall": 0.8,
         "temperature": 0.5
     },
     {
         "id": 30,
-        "name": "Grove",
+        "name": "grove",
         "rainfall": 0.8,
         "temperature": -0.2
     },
     {
         "id": 31,
-        "name": "Snowy Slopes",
+        "name": "snowy_slopes",
         "rainfall": 0.9,
         "temperature": -0.3
     },
     {
         "id": 32,
-        "name": "Frozen Peaks",
+        "name": "frozen_peaks",
         "rainfall": 0.9,
         "temperature": -0.7
     },
     {
         "id": 33,
-        "name": "Jagged Peaks",
+        "name": "jagged_peaks",
         "rainfall": 0.9,
         "temperature": -0.7
     },
     {
         "id": 34,
-        "name": "Stony Peaks",
+        "name": "stony_peaks",
         "rainfall": 0.3,
         "temperature": 1.0
     },
     {
         "id": 35,
-        "name": "River",
+        "name": "river",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 36,
-        "name": "Frozen River",
+        "name": "frozen_river",
         "rainfall": 0.5,
         "temperature": 0.0,
         "biomeType": "FrozenOcean"
     },
     {
         "id": 37,
-        "name": "Beach",
+        "name": "beach",
         "rainfall": 0.4,
         "temperature": 0.8
     },
     {
         "id": 38,
-        "name": "Snowy Beach",
+        "name": "snowy_beach",
         "rainfall": 0.3,
         "temperature": 0.05
     },
     {
         "id": 39,
-        "name": "Stony Shore",
+        "name": "stony_shore",
         "rainfall": 0.3,
         "temperature": 0.2
     },
     {
         "id": 40,
-        "name": "Warm Ocean",
+        "name": "warm_ocean",
         "rainfall": 0.5,
         "temperature": 0.5,
         "biomeType": "WarmOcean"
     },
     {
         "id": 41,
-        "name": "Lukewarm Ocean",
+        "name": "lukewarm_ocean",
         "rainfall": 0.5,
         "temperature": 0.5,
         "biomeType": "LukewarmOcean"
     },
     {
         "id": 42,
-        "name": "Deep Lukewarm Ocean",
+        "name": "deep_lukewarm_ocean",
         "rainfall": 0.5,
         "temperature": 0.5,
         "biomeType": "LukewarmOcean"
     },
     {
         "id": 43,
-        "name": "Ocean",
+        "name": "ocean",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 44,
-        "name": "Deep Ocean",
+        "name": "deep_ocean",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 45,
-        "name": "Cold Ocean",
+        "name": "cold_ocean",
         "rainfall": 0.5,
         "temperature": 0.5,
         "biomeType": "ColdOcean"
     },
     {
         "id": 46,
-        "name": "Deep Cold Ocean",
+        "name": "deep_cold_ocean",
         "rainfall": 0.5,
         "temperature": 0.5,
         "biomeType": "ColdOcean"
     },
     {
         "id": 47,
-        "name": "Frozen Ocean",
+        "name": "frozen_ocean",
         "rainfall": 0.5,
         "temperature": 0.0,
         "biomeType": "FrozenOcean"
     },
     {
         "id": 48,
-        "name": "Deep Frozen Ocean",
+        "name": "deep_frozen_ocean",
         "rainfall": 0.5,
         "temperature": 0.5,
         "biomeType": "FrozenOcean"
     },
     {
         "id": 49,
-        "name": "Mushroom Fields",
+        "name": "mushroom_fields",
         "rainfall": 1.0,
         "temperature": 0.9
     },
     {
         "id": 50,
-        "name": "Dripstone Caves",
+        "name": "dripstone_caves",
         "rainfall": 0.4,
         "temperature": 0.8
     },
     {
         "id": 51,
-        "name": "Lush Caves",
+        "name": "lush_caves",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 52,
-        "name": "Deep Dark",
+        "name": "deep_dark",
         "rainfall": 0.4,
         "temperature": 0.8
     },
     {
         "id": 53,
-        "name": "Nether Wastes",
+        "name": "nether_wastes",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 54,
-        "name": "Warped Forest",
+        "name": "warped_forest",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 55,
-        "name": "Crimson Forest",
+        "name": "crimson_forest",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 56,
-        "name": "Soul Sand Valley",
+        "name": "soul_sand_valley",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 57,
-        "name": "Basalt Deltas",
+        "name": "basalt_deltas",
         "rainfall": 0.0,
         "temperature": 2.0
     },
     {
         "id": 58,
-        "name": "The End",
+        "name": "the_end",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 59,
-        "name": "End Highlands",
+        "name": "end_highlands",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 60,
-        "name": "End Midlands",
+        "name": "end_midlands",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 61,
-        "name": "Small End Islands",
+        "name": "small_end_islands",
         "rainfall": 0.5,
         "temperature": 0.5
     },
     {
         "id": 62,
-        "name": "End Barrens",
+        "name": "end_barrens",
         "rainfall": 0.5,
         "temperature": 0.5
     }

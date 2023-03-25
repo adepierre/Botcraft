@@ -28,6 +28,11 @@ namespace Botcraft
     {
     }
 
+    const std::string& Biome::GetName() const
+    {
+        return name;
+    }
+
     const unsigned int Biome::GetColorMultiplier(const int height, const bool is_grass) const
     {
         if (height <= sea_level)

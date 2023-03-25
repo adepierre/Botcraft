@@ -25,6 +25,8 @@ namespace Botcraft
         Biome(const std::string &name_, const float temperature_,
               const float rainfall_, const BiomeType biome_type_);
         ~Biome();
+
+        const std::string& GetName() const;
         
         // Height is the y value of the block
         const unsigned int GetColorMultiplier(const int height, const bool is_grass) const;
