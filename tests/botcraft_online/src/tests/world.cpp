@@ -4,6 +4,13 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <botcraft/Game/AssetsManager.hpp>
+
+#if PROTOCOL_VERSION > 760
+#include <sstream>
+#endif
+
+
 TEST_CASE("block names")
 {
 	std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot();
@@ -75,5 +82,72 @@ TEST_CASE("block states")
 			CHECK(block->GetBlockstate()->GetName() == std::get<1>(pos_block_variables_values[i]));
 			CHECK(block->GetBlockstate()->GetVariableValue(std::get<2>(pos_block_variables_values[i])) == std::get<3>(pos_block_variables_values[i]));
 		}
+	}
+}
+
+// Botcraft biome data extraction is bugged for 1.19.3+
+#if PROTOCOL_VERSION > 760
+TEST_CASE("biomes", "[!mayfail]")
+#else
+TEST_CASE("biomes")
+#endif
+{
+	std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot();
+
+	SECTION("base biome")
+	{
+		int biome_id;
+		std::lock_guard<std::mutex> lock(bot->GetWorld()->GetMutex());
+		REQUIRE_NOTHROW(biome_id = bot->GetWorld()->GetBiome(TestManager::GetInstance().GetCurrentOffset()));
+		const Botcraft::Biome* biome = Botcraft::AssetsManager::getInstance().GetBiome(biome_id);
+		CHECK(biome->GetName() == "plains");
+	}
+#if PROTOCOL_VERSION > 760
+	SECTION("changed biome")
+	{
+		const Botcraft::Position start_pos = TestManager::GetInstance().GetCurrentOffset();
+		const Botcraft::Position end_pos = start_pos + Botcraft::Position(2, 2, 2);
+		std::stringstream command;
+		command
+			<< "fillbiome" << " "
+			<< start_pos.x << " "
+			<< start_pos.y << " "
+			<< start_pos.z << " "
+			<< end_pos.x << " "
+			<< end_pos.y << " "
+			<< end_pos.z << " "
+			<< "desert";
+		MinecraftServer::GetInstance().SendLine(command.str());
+		MinecraftServer::GetInstance().WaitLine(".* biome entries set between .*");
+
+		int biome_id;
+		const Botcraft::Biome* biome;
+		std::lock_guard<std::mutex> lock(bot->GetWorld()->GetMutex());
+		REQUIRE_NOTHROW(biome_id = bot->GetWorld()->GetBiome(start_pos));
+		biome = Botcraft::AssetsManager::getInstance().GetBiome(biome_id);
+		CHECK(biome->GetName() == "desert");
+		REQUIRE_NOTHROW(biome_id = bot->GetWorld()->GetBiome(end_pos));
+		biome = Botcraft::AssetsManager::getInstance().GetBiome(biome_id);
+		CHECK(biome->GetName() == "desert");
+	}
+#endif
+}
+
+TEST_CASE("block entity")
+{
+	std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot();
+
+	std::shared_ptr<ProtocolCraft::NBT::Value> nbt;
+
+	std::lock_guard<std::mutex> lock(bot->GetWorld()->GetMutex());
+	REQUIRE_NOTHROW(nbt = bot->GetWorld()->GetBlockEntityData(TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1)));
+
+	std::vector<std::string> expected_lines = { "Hello", "world", "", "!" };
+
+	for (size_t i = 0; i < expected_lines.size(); ++i)
+	{
+		const std::string& line = (*nbt)["Text" + std::to_string(i+1)].get<std::string>();
+		const ProtocolCraft::Json::Value content = ProtocolCraft::Json::Parse(line);
+		CHECK(content["text"].get_string() == expected_lines[i]);
 	}
 }
