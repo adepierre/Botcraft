@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string GiantEntity::GetName() const
     {
-        return "Giant";
+        return "giant";
     }
 
     EntityType GiantEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string GiantEntity::GetClassName()
     {
-        return "Giant";
+        return "giant";
     }
 
     EntityType GiantEntity::GetClassType()

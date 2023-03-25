@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string ThrownEggEntity::GetName() const
     {
-        return "ThrownEgg";
+        return "egg";
     }
 
     EntityType ThrownEggEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string ThrownEggEntity::GetClassName()
     {
-        return "ThrownEgg";
+        return "egg";
     }
 
     EntityType ThrownEggEntity::GetClassType()

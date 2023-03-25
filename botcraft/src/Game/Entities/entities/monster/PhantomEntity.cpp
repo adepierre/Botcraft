@@ -21,7 +21,7 @@ namespace Botcraft
 
     std::string PhantomEntity::GetName() const
     {
-        return "Phantom";
+        return "phantom";
     }
 
     EntityType PhantomEntity::GetType() const
@@ -42,7 +42,7 @@ namespace Botcraft
 
     std::string PhantomEntity::GetClassName()
     {
-        return "Phantom";
+        return "phantom";
     }
 
     EntityType PhantomEntity::GetClassType()

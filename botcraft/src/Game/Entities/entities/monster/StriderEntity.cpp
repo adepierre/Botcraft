@@ -25,7 +25,7 @@ namespace Botcraft
 
     std::string StriderEntity::GetName() const
     {
-        return "Strider";
+        return "strider";
     }
 
     EntityType StriderEntity::GetType() const
@@ -46,7 +46,7 @@ namespace Botcraft
 
     std::string StriderEntity::GetClassName()
     {
-        return "Strider";
+        return "strider";
     }
 
     EntityType StriderEntity::GetClassType()

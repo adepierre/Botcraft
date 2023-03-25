@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string VexEntity::GetName() const
     {
-        return "Vex";
+        return "vex";
     }
 
     EntityType VexEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string VexEntity::GetClassName()
     {
-        return "Vex";
+        return "vex";
     }
 
     EntityType VexEntity::GetClassType()

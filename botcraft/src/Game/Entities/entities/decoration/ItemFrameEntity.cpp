@@ -22,7 +22,7 @@ namespace Botcraft
 
     std::string ItemFrameEntity::GetName() const
     {
-        return "ItemFrame";
+        return "item_frame";
     }
 
     EntityType ItemFrameEntity::GetType() const
@@ -43,7 +43,7 @@ namespace Botcraft
 
     std::string ItemFrameEntity::GetClassName()
     {
-        return "ItemFrame";
+        return "item_frame";
     }
 
     EntityType ItemFrameEntity::GetClassType()

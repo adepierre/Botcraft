@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string StrayEntity::GetName() const
     {
-        return "Stray";
+        return "stray";
     }
 
     EntityType StrayEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string StrayEntity::GetClassName()
     {
-        return "Stray";
+        return "stray";
     }
 
     EntityType StrayEntity::GetClassType()

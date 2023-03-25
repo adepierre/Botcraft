@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string ThrownEnderpearlEntity::GetName() const
     {
-        return "ThrownEnderpearl";
+        return "ender_pearl";
     }
 
     EntityType ThrownEnderpearlEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string ThrownEnderpearlEntity::GetClassName()
     {
-        return "ThrownEnderpearl";
+        return "ender_pearl";
     }
 
     EntityType ThrownEnderpearlEntity::GetClassType()

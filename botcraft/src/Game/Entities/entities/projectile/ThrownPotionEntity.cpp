@@ -24,7 +24,7 @@ namespace Botcraft
 
     std::string ThrownPotionEntity::GetName() const
     {
-        return "ThrownPotion";
+        return "potion";
     }
 
     EntityType ThrownPotionEntity::GetType() const
@@ -45,7 +45,7 @@ namespace Botcraft
 
     std::string ThrownPotionEntity::GetClassName()
     {
-        return "ThrownPotion";
+        return "potion";
     }
 
     EntityType ThrownPotionEntity::GetClassType()

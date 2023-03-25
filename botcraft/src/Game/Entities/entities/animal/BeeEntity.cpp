@@ -23,7 +23,7 @@ namespace Botcraft
 
     std::string BeeEntity::GetName() const
     {
-        return "Bee";
+        return "bee";
     }
 
     EntityType BeeEntity::GetType() const
@@ -44,7 +44,7 @@ namespace Botcraft
 
     std::string BeeEntity::GetClassName()
     {
-        return "Bee";
+        return "bee";
     }
 
     EntityType BeeEntity::GetClassType()

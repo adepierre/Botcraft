@@ -24,7 +24,7 @@ namespace Botcraft
 
     std::string LlamaEntity::GetName() const
     {
-        return "Llama";
+        return "llama";
     }
 
     EntityType LlamaEntity::GetType() const
@@ -45,7 +45,7 @@ namespace Botcraft
 
     std::string LlamaEntity::GetClassName()
     {
-        return "Llama";
+        return "llama";
     }
 
     EntityType LlamaEntity::GetClassType()

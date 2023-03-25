@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string PigZombieEntity::GetName() const
     {
-        return "PigZombieEntity";
+        return "zombie_pigman";
     }
 
     EntityType PigZombieEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string PigZombieEntity::GetClassName()
     {
-        return "PigZombieEntity";
+        return "zombie_pigman";
     }
 
     EntityType PigZombieEntity::GetClassType()

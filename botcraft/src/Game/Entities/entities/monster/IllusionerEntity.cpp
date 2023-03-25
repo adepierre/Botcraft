@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string IllusionerEntity::GetName() const
     {
-        return "Illusioner";
+        return "illusioner";
     }
 
     EntityType IllusionerEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string IllusionerEntity::GetClassName()
     {
-        return "Illusioner";
+        return "illusioner";
     }
 
     EntityType IllusionerEntity::GetClassType()

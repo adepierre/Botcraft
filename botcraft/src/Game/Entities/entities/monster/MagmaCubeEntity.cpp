@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string MagmaCubeEntity::GetName() const
     {
-        return "MagmaCube";
+        return "magma_cube";
     }
 
     EntityType MagmaCubeEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string MagmaCubeEntity::GetClassName()
     {
-        return "MagmaCube";
+        return "magma_cube";
     }
 
     EntityType MagmaCubeEntity::GetClassType()

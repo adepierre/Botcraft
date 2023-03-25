@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string FallingBlockEntity::GetName() const
     {
-        return "FallingBlockEntity";
+        return "falling_block";
     }
 
     EntityType FallingBlockEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string FallingBlockEntity::GetClassName()
     {
-        return "FallingBlockEntity";
+        return "falling_block";
     }
 
     EntityType FallingBlockEntity::GetClassType()

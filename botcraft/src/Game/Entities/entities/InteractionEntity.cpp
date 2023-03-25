@@ -25,7 +25,7 @@ namespace Botcraft
 
     std::string InteractionEntity::GetName() const
     {
-        return "Interaction";
+        return "interaction";
     }
 
     EntityType InteractionEntity::GetType() const
@@ -46,7 +46,7 @@ namespace Botcraft
 
     std::string InteractionEntity::GetClassName()
     {
-        return "Interaction";
+        return "interaction";
     }
 
     EntityType InteractionEntity::GetClassType()

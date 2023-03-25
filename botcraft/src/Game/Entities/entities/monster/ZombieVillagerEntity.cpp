@@ -30,7 +30,7 @@ namespace Botcraft
 
     std::string ZombieVillagerEntity::GetName() const
     {
-        return "ZombieVillager";
+        return "zombie_villager";
     }
 
     EntityType ZombieVillagerEntity::GetType() const
@@ -51,7 +51,7 @@ namespace Botcraft
 
     std::string ZombieVillagerEntity::GetClassName()
     {
-        return "ZombieVillager";
+        return "zombie_villager";
     }
 
     EntityType ZombieVillagerEntity::GetClassType()

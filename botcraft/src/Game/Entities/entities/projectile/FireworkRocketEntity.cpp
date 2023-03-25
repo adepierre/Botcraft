@@ -30,7 +30,7 @@ namespace Botcraft
 
     std::string FireworkRocketEntity::GetName() const
     {
-        return "FireworkRocketEntity";
+        return "firework_rocket";
     }
 
     EntityType FireworkRocketEntity::GetType() const
@@ -51,7 +51,7 @@ namespace Botcraft
 
     std::string FireworkRocketEntity::GetClassName()
     {
-        return "FireworkRocketEntity";
+        return "firework_rocket";
     }
 
     EntityType FireworkRocketEntity::GetClassType()

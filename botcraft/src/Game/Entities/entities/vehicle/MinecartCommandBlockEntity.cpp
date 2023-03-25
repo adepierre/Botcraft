@@ -22,7 +22,7 @@ namespace Botcraft
 
     std::string MinecartCommandBlockEntity::GetName() const
     {
-        return "MinecartCommandBlock";
+        return "command_block_minecart";
     }
 
     EntityType MinecartCommandBlockEntity::GetType() const
@@ -43,7 +43,7 @@ namespace Botcraft
 
     std::string MinecartCommandBlockEntity::GetClassName()
     {
-        return "MinecartCommandBlock";
+        return "command_block_minecart";
     }
 
     EntityType MinecartCommandBlockEntity::GetClassType()

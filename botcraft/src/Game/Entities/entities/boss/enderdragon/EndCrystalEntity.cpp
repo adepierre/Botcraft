@@ -22,7 +22,7 @@ namespace Botcraft
 
     std::string EndCrystalEntity::GetName() const
     {
-        return "EndCrystal";
+        return "end_crystal";
     }
 
     EntityType EndCrystalEntity::GetType() const
@@ -43,7 +43,7 @@ namespace Botcraft
 
     std::string EndCrystalEntity::GetClassName()
     {
-        return "EndCrystal";
+        return "end_crystal";
     }
 
     EntityType EndCrystalEntity::GetClassType()

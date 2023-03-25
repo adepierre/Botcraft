@@ -26,7 +26,7 @@ namespace Botcraft
 
     std::string AllayEntity::GetName() const
     {
-        return "Allay";
+        return "allay";
     }
 
     EntityType AllayEntity::GetType() const
@@ -47,7 +47,7 @@ namespace Botcraft
 
     std::string AllayEntity::GetClassName()
     {
-        return "Allay";
+        return "allay";
     }
 
     EntityType AllayEntity::GetClassType()

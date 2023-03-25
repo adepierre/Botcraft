@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string RavagerEntity::GetName() const
     {
-        return "Ravager";
+        return "ravager";
     }
 
     EntityType RavagerEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string RavagerEntity::GetClassName()
     {
-        return "Ravager";
+        return "ravager";
     }
 
     EntityType RavagerEntity::GetClassType()

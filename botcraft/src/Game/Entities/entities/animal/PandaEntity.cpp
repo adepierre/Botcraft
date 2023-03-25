@@ -31,7 +31,7 @@ namespace Botcraft
 
     std::string PandaEntity::GetName() const
     {
-        return "Panda";
+        return "panda";
     }
 
     EntityType PandaEntity::GetType() const
@@ -52,7 +52,7 @@ namespace Botcraft
 
     std::string PandaEntity::GetClassName()
     {
-        return "Panda";
+        return "panda";
     }
 
     EntityType PandaEntity::GetClassType()

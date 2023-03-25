@@ -21,7 +21,7 @@ namespace Botcraft
 
     std::string TropicalFishEntity::GetName() const
     {
-        return "TropicalFish";
+        return "tropical_fish";
     }
 
     EntityType TropicalFishEntity::GetType() const
@@ -42,7 +42,7 @@ namespace Botcraft
 
     std::string TropicalFishEntity::GetClassName()
     {
-        return "TropicalFish";
+        return "tropical_fish";
     }
 
     EntityType TropicalFishEntity::GetClassType()

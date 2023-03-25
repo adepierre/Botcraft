@@ -24,7 +24,7 @@ namespace Botcraft
 
     std::string EyeOfEnderEntity::GetName() const
     {
-        return "EyeOfEnder";
+        return "eye_of_ender";
     }
 
     EntityType EyeOfEnderEntity::GetType() const
@@ -45,7 +45,7 @@ namespace Botcraft
 
     std::string EyeOfEnderEntity::GetClassName()
     {
-        return "EyeOfEnder";
+        return "eye_of_ender";
     }
 
     EntityType EyeOfEnderEntity::GetClassType()

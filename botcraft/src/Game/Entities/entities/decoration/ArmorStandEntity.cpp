@@ -32,7 +32,7 @@ namespace Botcraft
 
     std::string ArmorStandEntity::GetName() const
     {
-        return "ArmorStand";
+        return "armor_stand";
     }
 
     EntityType ArmorStandEntity::GetType() const
@@ -53,7 +53,7 @@ namespace Botcraft
 
     std::string ArmorStandEntity::GetClassName()
     {
-        return "ArmorStand";
+        return "armor_stand";
     }
 
     EntityType ArmorStandEntity::GetClassType()

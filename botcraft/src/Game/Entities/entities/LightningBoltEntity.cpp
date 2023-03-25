@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string LightningBoltEntity::GetName() const
     {
-        return "LightningBolt";
+        return "lightning_bolt";
     }
 
     EntityType LightningBoltEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string LightningBoltEntity::GetClassName()
     {
-        return "LightningBolt";
+        return "lightning_bolt";
     }
 
     EntityType LightningBoltEntity::GetClassType()

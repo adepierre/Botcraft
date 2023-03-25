@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string EvokerFangsEntity::GetName() const
     {
-        return "EvokerFangs";
+        return "evoker_fangs";
     }
 
     EntityType EvokerFangsEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string EvokerFangsEntity::GetClassName()
     {
-        return "EvokerFangs";
+        return "evoker_fangs";
     }
 
     EntityType EvokerFangsEntity::GetClassType()

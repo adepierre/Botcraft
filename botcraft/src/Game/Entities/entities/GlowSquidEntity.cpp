@@ -21,7 +21,7 @@ namespace Botcraft
 
     std::string GlowSquidEntity::GetName() const
     {
-        return "GlowSquid";
+        return "glow_squid";
     }
 
     EntityType GlowSquidEntity::GetType() const
@@ -42,7 +42,7 @@ namespace Botcraft
 
     std::string GlowSquidEntity::GetClassName()
     {
-        return "GlowSquid";
+        return "glow_squid";
     }
 
     EntityType GlowSquidEntity::GetClassType()

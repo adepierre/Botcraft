@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string BatEntity::GetName() const
     {
-        return "Bat";
+        return "bat";
     }
 
     EntityType BatEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string BatEntity::GetClassName()
     {
-        return "Bat";
+        return "bat";
     }
 
     EntityType BatEntity::GetClassType()

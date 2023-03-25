@@ -26,7 +26,7 @@ namespace Botcraft
 
     std::string WitherBossEntity::GetName() const
     {
-        return "WitherBoss";
+        return "wither";
     }
 
     EntityType WitherBossEntity::GetType() const
@@ -47,7 +47,7 @@ namespace Botcraft
 
     std::string WitherBossEntity::GetClassName()
     {
-        return "WitherBoss";
+        return "wither";
     }
 
     EntityType WitherBossEntity::GetClassType()

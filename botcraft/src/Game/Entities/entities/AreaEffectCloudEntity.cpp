@@ -40,7 +40,7 @@ namespace Botcraft
 
     std::string AreaEffectCloudEntity::GetName() const
     {
-        return "AreaEffectCloud";
+        return "area_effect_cloud";
     }
 
     EntityType AreaEffectCloudEntity::GetType() const
@@ -61,7 +61,7 @@ namespace Botcraft
 
     std::string AreaEffectCloudEntity::GetClassName()
     {
-        return "AreaEffectCloud";
+        return "area_effect_cloud";
     }
 
     EntityType AreaEffectCloudEntity::GetClassType()

@@ -26,7 +26,7 @@ namespace Botcraft
 
     std::string FishingHookEntity::GetName() const
     {
-        return "FishingHook";
+        return "fishing_bobber";
     }
 
     EntityType FishingHookEntity::GetType() const
@@ -47,7 +47,7 @@ namespace Botcraft
 
     std::string FishingHookEntity::GetClassName()
     {
-        return "FishingHook";
+        return "fishing_bobber";
     }
 
     EntityType FishingHookEntity::GetClassType()

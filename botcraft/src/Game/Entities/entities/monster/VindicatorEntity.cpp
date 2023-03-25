@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string VindicatorEntity::GetName() const
     {
-        return "Vindicator";
+        return "vindicator";
     }
 
     EntityType VindicatorEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string VindicatorEntity::GetClassName()
     {
-        return "Vindicator";
+        return "vindicator";
     }
 
     EntityType VindicatorEntity::GetClassType()

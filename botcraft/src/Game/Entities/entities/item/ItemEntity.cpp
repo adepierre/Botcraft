@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string ItemEntity::GetName() const
     {
-        return "ItemEntity";
+        return "item";
     }
 
     EntityType ItemEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string ItemEntity::GetClassName()
     {
-        return "ItemEntity";
+        return "item";
     }
 
     EntityType ItemEntity::GetClassType()

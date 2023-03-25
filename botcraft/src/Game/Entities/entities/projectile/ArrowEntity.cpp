@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string ArrowEntity::GetName() const
     {
-        return "Arrow";
+        return "arrow";
     }
 
     EntityType ArrowEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string ArrowEntity::GetClassName()
     {
-        return "Arrow";
+        return "arrow";
     }
 
     EntityType ArrowEntity::GetClassType()

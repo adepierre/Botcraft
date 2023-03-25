@@ -21,7 +21,7 @@ namespace Botcraft
 
     std::string HoglinEntity::GetName() const
     {
-        return "Hoglin";
+        return "hoglin";
     }
 
     EntityType HoglinEntity::GetType() const
@@ -42,7 +42,7 @@ namespace Botcraft
 
     std::string HoglinEntity::GetClassName()
     {
-        return "Hoglin";
+        return "hoglin";
     }
 
     EntityType HoglinEntity::GetClassType()

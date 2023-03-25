@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string GlowItemFrameEntity::GetName() const
     {
-        return "GlowItemFrame";
+        return "glow_item_frame";
     }
 
     EntityType GlowItemFrameEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string GlowItemFrameEntity::GetClassName()
     {
-        return "GlowItemFrame";
+        return "glow_item_frame";
     }
 
     EntityType GlowItemFrameEntity::GetClassType()

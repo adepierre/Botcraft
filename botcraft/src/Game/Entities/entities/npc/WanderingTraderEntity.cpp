@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string WanderingTraderEntity::GetName() const
     {
-        return "WanderingTrader";
+        return "wandering_trader";
     }
 
     EntityType WanderingTraderEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string WanderingTraderEntity::GetClassName()
     {
-        return "WanderingTrader";
+        return "wandering_trader";
     }
 
     EntityType WanderingTraderEntity::GetClassType()

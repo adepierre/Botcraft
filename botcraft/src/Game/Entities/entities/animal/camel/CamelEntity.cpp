@@ -27,7 +27,7 @@ namespace Botcraft
 
     std::string CamelEntity::GetName() const
     {
-        return "Camel";
+        return "camel";
     }
 
     EntityType CamelEntity::GetType() const
@@ -48,7 +48,7 @@ namespace Botcraft
 
     std::string CamelEntity::GetClassName()
     {
-        return "Camel";
+        return "camel";
     }
 
     EntityType CamelEntity::GetClassType()

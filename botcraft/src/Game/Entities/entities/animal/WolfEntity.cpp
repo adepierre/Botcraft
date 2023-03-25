@@ -34,7 +34,7 @@ namespace Botcraft
 
     std::string WolfEntity::GetName() const
     {
-        return "Wolf";
+        return "wolf";
     }
 
     EntityType WolfEntity::GetType() const
@@ -55,7 +55,7 @@ namespace Botcraft
 
     std::string WolfEntity::GetClassName()
     {
-        return "Wolf";
+        return "wolf";
     }
 
     EntityType WolfEntity::GetClassType()

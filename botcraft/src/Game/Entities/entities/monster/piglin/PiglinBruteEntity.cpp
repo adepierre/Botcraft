@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string PiglinBruteEntity::GetName() const
     {
-        return "PiglinBrute";
+        return "piglin_brute";
     }
 
     EntityType PiglinBruteEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string PiglinBruteEntity::GetClassName()
     {
-        return "PiglinBrute";
+        return "piglin_brute";
     }
 
     EntityType PiglinBruteEntity::GetClassType()

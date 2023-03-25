@@ -30,7 +30,7 @@ namespace Botcraft
 
     std::string PlayerEntity::GetName() const
     {
-        return "Player";
+        return "player";
     }
 
     EntityType PlayerEntity::GetType() const
@@ -51,7 +51,7 @@ namespace Botcraft
 
     std::string PlayerEntity::GetClassName()
     {
-        return "Player";
+        return "player";
     }
 
     EntityType PlayerEntity::GetClassType()

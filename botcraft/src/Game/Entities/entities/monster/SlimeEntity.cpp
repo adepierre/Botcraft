@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string SlimeEntity::GetName() const
     {
-        return "Slime";
+        return "slime";
     }
 
     EntityType SlimeEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string SlimeEntity::GetClassName()
     {
-        return "Slime";
+        return "slime";
     }
 
     EntityType SlimeEntity::GetClassType()

@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string MarkerEntity::GetName() const
     {
-        return "Marker";
+        return "marker";
     }
 
     EntityType MarkerEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string MarkerEntity::GetClassName()
     {
-        return "Marker";
+        return "marker";
     }
 
     EntityType MarkerEntity::GetClassType()

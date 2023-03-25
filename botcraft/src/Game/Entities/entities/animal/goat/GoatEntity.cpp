@@ -29,7 +29,7 @@ namespace Botcraft
 
     std::string GoatEntity::GetName() const
     {
-        return "Goat";
+        return "goat";
     }
 
     EntityType GoatEntity::GetType() const
@@ -50,7 +50,7 @@ namespace Botcraft
 
     std::string GoatEntity::GetClassName()
     {
-        return "Goat";
+        return "goat";
     }
 
     EntityType GoatEntity::GetClassType()

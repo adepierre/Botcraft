@@ -21,7 +21,7 @@ namespace Botcraft
 
     std::string PufferfishEntity::GetName() const
     {
-        return "Pufferfish";
+        return "pufferfish";
     }
 
     EntityType PufferfishEntity::GetType() const
@@ -42,7 +42,7 @@ namespace Botcraft
 
     std::string PufferfishEntity::GetClassName()
     {
-        return "Pufferfish";
+        return "pufferfish";
     }
 
     EntityType PufferfishEntity::GetClassType()

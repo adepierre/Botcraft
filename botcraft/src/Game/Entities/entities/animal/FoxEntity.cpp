@@ -27,7 +27,7 @@ namespace Botcraft
 
     std::string FoxEntity::GetName() const
     {
-        return "Fox";
+        return "fox";
     }
 
     EntityType FoxEntity::GetType() const
@@ -48,7 +48,7 @@ namespace Botcraft
 
     std::string FoxEntity::GetClassName()
     {
-        return "Fox";
+        return "fox";
     }
 
     EntityType FoxEntity::GetClassType()

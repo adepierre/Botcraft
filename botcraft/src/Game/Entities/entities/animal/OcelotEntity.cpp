@@ -28,7 +28,7 @@ namespace Botcraft
 
     std::string OcelotEntity::GetName() const
     {
-        return "Ocelot";
+        return "ocelot";
     }
 
     EntityType OcelotEntity::GetType() const
@@ -49,7 +49,7 @@ namespace Botcraft
 
     std::string OcelotEntity::GetClassName()
     {
-        return "Ocelot";
+        return "ocelot";
     }
 
     EntityType OcelotEntity::GetClassType()

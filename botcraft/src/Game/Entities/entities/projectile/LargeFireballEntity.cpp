@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string LargeFireballEntity::GetName() const
     {
-        return "LargeFireball";
+        return "fireball";
     }
 
     EntityType LargeFireballEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string LargeFireballEntity::GetClassName()
     {
-        return "LargeFireball";
+        return "fireball";
     }
 
     EntityType LargeFireballEntity::GetClassType()

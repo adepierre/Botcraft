@@ -22,7 +22,7 @@ namespace Botcraft
 
     std::string PigEntity::GetName() const
     {
-        return "Pig";
+        return "pig";
     }
 
     EntityType PigEntity::GetType() const
@@ -43,7 +43,7 @@ namespace Botcraft
 
     std::string PigEntity::GetClassName()
     {
-        return "Pig";
+        return "pig";
     }
 
     EntityType PigEntity::GetClassType()

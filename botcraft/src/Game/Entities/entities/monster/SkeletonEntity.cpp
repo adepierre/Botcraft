@@ -24,7 +24,7 @@ namespace Botcraft
 
     std::string SkeletonEntity::GetName() const
     {
-        return "Skeleton";
+        return "skeleton";
     }
 
     EntityType SkeletonEntity::GetType() const
@@ -45,7 +45,7 @@ namespace Botcraft
 
     std::string SkeletonEntity::GetClassName()
     {
-        return "Skeleton";
+        return "skeleton";
     }
 
     EntityType SkeletonEntity::GetClassType()

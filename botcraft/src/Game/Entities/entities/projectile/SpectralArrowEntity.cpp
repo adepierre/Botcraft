@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string SpectralArrowEntity::GetName() const
     {
-        return "SpectralArrow";
+        return "spectral_arrow";
     }
 
     EntityType SpectralArrowEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string SpectralArrowEntity::GetClassName()
     {
-        return "SpectralArrow";
+        return "spectral_arrow";
     }
 
     EntityType SpectralArrowEntity::GetClassType()

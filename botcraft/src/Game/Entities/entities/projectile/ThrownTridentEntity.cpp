@@ -27,7 +27,7 @@ namespace Botcraft
 
     std::string ThrownTridentEntity::GetName() const
     {
-        return "ThrownTrident";
+        return "trident";
     }
 
     EntityType ThrownTridentEntity::GetType() const
@@ -48,7 +48,7 @@ namespace Botcraft
 
     std::string ThrownTridentEntity::GetClassName()
     {
-        return "ThrownTrident";
+        return "trident";
     }
 
     EntityType ThrownTridentEntity::GetClassType()

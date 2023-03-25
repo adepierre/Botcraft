@@ -25,7 +25,7 @@ namespace Botcraft
 
     std::string AxolotlEntity::GetName() const
     {
-        return "Axolotl";
+        return "axolotl";
     }
 
     EntityType AxolotlEntity::GetType() const
@@ -46,7 +46,7 @@ namespace Botcraft
 
     std::string AxolotlEntity::GetClassName()
     {
-        return "Axolotl";
+        return "axolotl";
     }
 
     EntityType AxolotlEntity::GetClassType()

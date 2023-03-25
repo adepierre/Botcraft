@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string HuskEntity::GetName() const
     {
-        return "Husk";
+        return "husk";
     }
 
     EntityType HuskEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string HuskEntity::GetClassName()
     {
-        return "Husk";
+        return "husk";
     }
 
     EntityType HuskEntity::GetClassType()

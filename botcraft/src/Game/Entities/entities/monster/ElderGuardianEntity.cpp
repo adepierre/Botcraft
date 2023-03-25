@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string ElderGuardianEntity::GetName() const
     {
-        return "ElderGuardian";
+        return "elder_guardian";
     }
 
     EntityType ElderGuardianEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string ElderGuardianEntity::GetClassName()
     {
-        return "ElderGuardian";
+        return "elder_guardian";
     }
 
     EntityType ElderGuardianEntity::GetClassType()

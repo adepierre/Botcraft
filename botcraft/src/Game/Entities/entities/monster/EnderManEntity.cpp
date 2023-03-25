@@ -28,7 +28,7 @@ namespace Botcraft
 
     std::string EnderManEntity::GetName() const
     {
-        return "EnderMan";
+        return "enderman";
     }
 
     EntityType EnderManEntity::GetType() const
@@ -49,7 +49,7 @@ namespace Botcraft
 
     std::string EnderManEntity::GetClassName()
     {
-        return "EnderMan";
+        return "enderman";
     }
 
     EntityType EnderManEntity::GetClassType()

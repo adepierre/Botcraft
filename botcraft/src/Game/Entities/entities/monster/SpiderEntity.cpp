@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string SpiderEntity::GetName() const
     {
-        return "Spider";
+        return "spider";
     }
 
     EntityType SpiderEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string SpiderEntity::GetClassName()
     {
-        return "Spider";
+        return "spider";
     }
 
     EntityType SpiderEntity::GetClassType()

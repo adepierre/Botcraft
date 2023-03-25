@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string MuleEntity::GetName() const
     {
-        return "Mule";
+        return "mule";
     }
 
     EntityType MuleEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string MuleEntity::GetClassName()
     {
-        return "Mule";
+        return "mule";
     }
 
     EntityType MuleEntity::GetClassType()

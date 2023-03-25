@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string LeashFenceKnotEntity::GetName() const
     {
-        return "LeashFenceKnotEntity";
+        return "leash_knot";
     }
 
     EntityType LeashFenceKnotEntity::GetType() const
@@ -40,7 +40,7 @@ namespace Botcraft
 
     std::string LeashFenceKnotEntity::GetClassName()
     {
-        return "LeashFenceKnotEntity";
+        return "leash_knot";
     }
 
     EntityType LeashFenceKnotEntity::GetClassType()

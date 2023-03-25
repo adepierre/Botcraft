@@ -27,7 +27,7 @@ namespace Botcraft
 
     std::string CatEntity::GetName() const
     {
-        return "Cat";
+        return "cat";
     }
 
     EntityType CatEntity::GetType() const
@@ -48,7 +48,7 @@ namespace Botcraft
 
     std::string CatEntity::GetClassName()
     {
-        return "Cat";
+        return "cat";
     }
 
     EntityType CatEntity::GetClassType()

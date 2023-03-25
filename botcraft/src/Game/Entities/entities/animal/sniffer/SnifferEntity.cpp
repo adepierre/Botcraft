@@ -23,7 +23,7 @@ namespace Botcraft
 
     std::string SnifferEntity::GetName() const
     {
-        return "Sniffer";
+        return "sniffer";
     }
 
     EntityType SnifferEntity::GetType() const
@@ -44,7 +44,7 @@ namespace Botcraft
 
     std::string SnifferEntity::GetClassName()
     {
-        return "Sniffer";
+        return "sniffer";
     }
 
     EntityType SnifferEntity::GetClassType()

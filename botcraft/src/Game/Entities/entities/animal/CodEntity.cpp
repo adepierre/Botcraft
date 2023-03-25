@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string CodEntity::GetName() const
     {
-        return "Cod";
+        return "cod";
     }
 
     EntityType CodEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string CodEntity::GetClassName()
     {
-        return "Cod";
+        return "cod";
     }
 
     EntityType CodEntity::GetClassType()

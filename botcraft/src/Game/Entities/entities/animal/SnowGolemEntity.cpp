@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string SnowGolemEntity::GetName() const
     {
-        return "SnowGolem";
+        return "snow_golem";
     }
 
     EntityType SnowGolemEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string SnowGolemEntity::GetClassName()
     {
-        return "SnowGolem";
+        return "snow_golem";
     }
 
     EntityType SnowGolemEntity::GetClassType()

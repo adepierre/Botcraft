@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string CowEntity::GetName() const
     {
-        return "Cow";
+        return "cow";
     }
 
     EntityType CowEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string CowEntity::GetClassName()
     {
-        return "Cow";
+        return "cow";
     }
 
     EntityType CowEntity::GetClassType()

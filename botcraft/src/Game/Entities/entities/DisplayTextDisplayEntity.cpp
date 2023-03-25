@@ -29,7 +29,7 @@ namespace Botcraft
 
     std::string DisplayTextDisplayEntity::GetName() const
     {
-        return "DisplayTextDisplay";
+        return "text_display";
     }
 
     EntityType DisplayTextDisplayEntity::GetType() const
@@ -50,7 +50,7 @@ namespace Botcraft
 
     std::string DisplayTextDisplayEntity::GetClassName()
     {
-        return "DisplayTextDisplay";
+        return "text_display";
     }
 
     EntityType DisplayTextDisplayEntity::GetClassType()

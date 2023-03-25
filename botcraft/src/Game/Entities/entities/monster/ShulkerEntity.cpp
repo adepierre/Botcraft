@@ -30,7 +30,7 @@ namespace Botcraft
 
     std::string ShulkerEntity::GetName() const
     {
-        return "Shulker";
+        return "shulker";
     }
 
     EntityType ShulkerEntity::GetType() const
@@ -51,7 +51,7 @@ namespace Botcraft
 
     std::string ShulkerEntity::GetClassName()
     {
-        return "Shulker";
+        return "shulker";
     }
 
     EntityType ShulkerEntity::GetClassType()

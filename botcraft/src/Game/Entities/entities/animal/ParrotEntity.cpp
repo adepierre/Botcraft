@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string ParrotEntity::GetName() const
     {
-        return "Parrot";
+        return "parrot";
     }
 
     EntityType ParrotEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string ParrotEntity::GetClassName()
     {
-        return "Parrot";
+        return "parrot";
     }
 
     EntityType ParrotEntity::GetClassType()

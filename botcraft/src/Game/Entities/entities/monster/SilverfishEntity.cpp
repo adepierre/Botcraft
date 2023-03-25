@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string SilverfishEntity::GetName() const
     {
-        return "Silverfish";
+        return "silverfish";
     }
 
     EntityType SilverfishEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string SilverfishEntity::GetClassName()
     {
-        return "Silverfish";
+        return "silverfish";
     }
 
     EntityType SilverfishEntity::GetClassType()

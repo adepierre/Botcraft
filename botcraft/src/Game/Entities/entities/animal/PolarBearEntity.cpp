@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string PolarBearEntity::GetName() const
     {
-        return "PolarBear";
+        return "polar_bear";
     }
 
     EntityType PolarBearEntity::GetType() const
@@ -45,7 +45,7 @@ namespace Botcraft
 
     std::string PolarBearEntity::GetClassName()
     {
-        return "PolarBear";
+        return "polar_bear";
     }
 
     EntityType PolarBearEntity::GetClassType()

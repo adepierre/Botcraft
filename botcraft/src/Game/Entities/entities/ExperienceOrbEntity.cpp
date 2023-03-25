@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string ExperienceOrbEntity::GetName() const
     {
-        return "ExperienceOrb";
+        return "experience_orb";
     }
 
     EntityType ExperienceOrbEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string ExperienceOrbEntity::GetClassName()
     {
-        return "ExperienceOrb";
+        return "experience_orb";
     }
 
     EntityType ExperienceOrbEntity::GetClassType()

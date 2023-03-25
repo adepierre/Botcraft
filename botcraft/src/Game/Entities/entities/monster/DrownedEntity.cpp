@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string DrownedEntity::GetName() const
     {
-        return "Drowned";
+        return "drowned";
     }
 
     EntityType DrownedEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string DrownedEntity::GetClassName()
     {
-        return "Drowned";
+        return "drowned";
     }
 
     EntityType DrownedEntity::GetClassType()

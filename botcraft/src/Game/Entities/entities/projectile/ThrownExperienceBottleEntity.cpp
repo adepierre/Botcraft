@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string ThrownExperienceBottleEntity::GetName() const
     {
-        return "ThrownExperienceBottle";
+        return "experience_bottle";
     }
 
     EntityType ThrownExperienceBottleEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string ThrownExperienceBottleEntity::GetClassName()
     {
-        return "ThrownExperienceBottle";
+        return "experience_bottle";
     }
 
     EntityType ThrownExperienceBottleEntity::GetClassType()

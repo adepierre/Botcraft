@@ -21,7 +21,7 @@ namespace Botcraft
 
     std::string WardenEntity::GetName() const
     {
-        return "Warden";
+        return "warden";
     }
 
     EntityType WardenEntity::GetType() const
@@ -42,7 +42,7 @@ namespace Botcraft
 
     std::string WardenEntity::GetClassName()
     {
-        return "Warden";
+        return "warden";
     }
 
     EntityType WardenEntity::GetClassType()

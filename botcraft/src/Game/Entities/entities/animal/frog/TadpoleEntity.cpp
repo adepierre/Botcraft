@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string TadpoleEntity::GetName() const
     {
-        return "Tadpole";
+        return "tadpole";
     }
 
     EntityType TadpoleEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string TadpoleEntity::GetClassName()
     {
-        return "Tadpole";
+        return "tadpole";
     }
 
     EntityType TadpoleEntity::GetClassType()

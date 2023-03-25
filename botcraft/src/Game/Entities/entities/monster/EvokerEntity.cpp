@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string EvokerEntity::GetName() const
     {
-        return "Evoker";
+        return "evoker";
     }
 
     EntityType EvokerEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string EvokerEntity::GetClassName()
     {
-        return "Evoker";
+        return "evoker";
     }
 
     EntityType EvokerEntity::GetClassType()

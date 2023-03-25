@@ -24,7 +24,7 @@ namespace Botcraft
 
     std::string MushroomCowEntity::GetName() const
     {
-        return "MushroomCow";
+        return "mooshroom";
     }
 
     EntityType MushroomCowEntity::GetType() const
@@ -45,7 +45,7 @@ namespace Botcraft
 
     std::string MushroomCowEntity::GetClassName()
     {
-        return "MushroomCow";
+        return "mooshroom";
     }
 
     EntityType MushroomCowEntity::GetClassType()

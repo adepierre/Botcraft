@@ -23,7 +23,7 @@ namespace Botcraft
 
     std::string FrogEntity::GetName() const
     {
-        return "Frog";
+        return "frog";
     }
 
     EntityType FrogEntity::GetType() const
@@ -44,7 +44,7 @@ namespace Botcraft
 
     std::string FrogEntity::GetClassName()
     {
-        return "Frog";
+        return "frog";
     }
 
     EntityType FrogEntity::GetClassType()

@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string GhastEntity::GetName() const
     {
-        return "Ghast";
+        return "ghast";
     }
 
     EntityType GhastEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string GhastEntity::GetClassName()
     {
-        return "Ghast";
+        return "ghast";
     }
 
     EntityType GhastEntity::GetClassType()

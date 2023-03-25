@@ -16,7 +16,7 @@ namespace Botcraft
 
     std::string ChestBoatEntity::GetName() const
     {
-        return "ChestBoat";
+        return "chest_boat";
     }
 
     EntityType ChestBoatEntity::GetType() const
@@ -37,7 +37,7 @@ namespace Botcraft
 
     std::string ChestBoatEntity::GetClassName()
     {
-        return "ChestBoat";
+        return "chest_boat";
     }
 
     EntityType ChestBoatEntity::GetClassType()

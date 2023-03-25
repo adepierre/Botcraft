@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string SnowballEntity::GetName() const
     {
-        return "Snowball";
+        return "snowball";
     }
 
     EntityType SnowballEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string SnowballEntity::GetClassName()
     {
-        return "Snowball";
+        return "snowball";
     }
 
     EntityType SnowballEntity::GetClassType()

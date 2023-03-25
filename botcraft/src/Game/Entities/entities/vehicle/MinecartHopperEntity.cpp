@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string MinecartHopperEntity::GetName() const
     {
-        return "MinecartHopper";
+        return "hopper_minecart";
     }
 
     EntityType MinecartHopperEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string MinecartHopperEntity::GetClassName()
     {
-        return "MinecartHopper";
+        return "hopper_minecart";
     }
 
     EntityType MinecartHopperEntity::GetClassType()

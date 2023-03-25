@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string PrimedTntEntity::GetName() const
     {
-        return "PrimedTnt";
+        return "tnt";
     }
 
     EntityType PrimedTntEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string PrimedTntEntity::GetClassName()
     {
-        return "PrimedTnt";
+        return "tnt";
     }
 
     EntityType PrimedTntEntity::GetClassType()

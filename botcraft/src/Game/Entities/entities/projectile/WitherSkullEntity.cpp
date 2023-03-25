@@ -20,7 +20,7 @@ namespace Botcraft
 
     std::string WitherSkullEntity::GetName() const
     {
-        return "WitherSkull";
+        return "wither_skull";
     }
 
     EntityType WitherSkullEntity::GetType() const
@@ -41,7 +41,7 @@ namespace Botcraft
 
     std::string WitherSkullEntity::GetClassName()
     {
-        return "WitherSkull";
+        return "wither_skull";
     }
 
     EntityType WitherSkullEntity::GetClassType()

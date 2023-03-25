@@ -24,7 +24,7 @@ namespace Botcraft
 
     std::string CreeperEntity::GetName() const
     {
-        return "Creeper";
+        return "creeper";
     }
 
     EntityType CreeperEntity::GetType() const
@@ -45,7 +45,7 @@ namespace Botcraft
 
     std::string CreeperEntity::GetClassName()
     {
-        return "Creeper";
+        return "creeper";
     }
 
     EntityType CreeperEntity::GetClassType()

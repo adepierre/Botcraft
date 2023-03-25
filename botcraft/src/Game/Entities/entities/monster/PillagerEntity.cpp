@@ -21,7 +21,7 @@ namespace Botcraft
 
     std::string PillagerEntity::GetName() const
     {
-        return "Pillager";
+        return "pillager";
     }
 
     EntityType PillagerEntity::GetType() const
@@ -42,7 +42,7 @@ namespace Botcraft
 
     std::string PillagerEntity::GetClassName()
     {
-        return "Pillager";
+        return "pillager";
     }
 
     EntityType PillagerEntity::GetClassType()

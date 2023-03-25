@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string DragonFireballEntity::GetName() const
     {
-        return "DragonFireball";
+        return "dragon_fireball";
     }
 
     EntityType DragonFireballEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string DragonFireballEntity::GetClassName()
     {
-        return "DragonFireball";
+        return "dragon_fireball";
     }
 
     EntityType DragonFireballEntity::GetClassType()

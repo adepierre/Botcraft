@@ -25,7 +25,7 @@ namespace Botcraft
 
     std::string DolphinEntity::GetName() const
     {
-        return "Dolphin";
+        return "dolphin";
     }
 
     EntityType DolphinEntity::GetType() const
@@ -46,7 +46,7 @@ namespace Botcraft
 
     std::string DolphinEntity::GetClassName()
     {
-        return "Dolphin";
+        return "dolphin";
     }
 
     EntityType DolphinEntity::GetClassType()

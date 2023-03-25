@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string CaveSpiderEntity::GetName() const
     {
-        return "CaveSpider";
+        return "cave_spider";
     }
 
     EntityType CaveSpiderEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string CaveSpiderEntity::GetClassName()
     {
-        return "CaveSpider";
+        return "cave_spider";
     }
 
     EntityType CaveSpiderEntity::GetClassType()

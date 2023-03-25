@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string LlamaSpitEntity::GetName() const
     {
-        return "LlamaSpit";
+        return "llama_spit";
     }
 
     EntityType LlamaSpitEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string LlamaSpitEntity::GetClassName()
     {
-        return "LlamaSpit";
+        return "llama_spit";
     }
 
     EntityType LlamaSpitEntity::GetClassType()

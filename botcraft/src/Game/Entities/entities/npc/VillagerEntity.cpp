@@ -28,7 +28,7 @@ namespace Botcraft
 
     std::string VillagerEntity::GetName() const
     {
-        return "Villager";
+        return "villager";
     }
 
     EntityType VillagerEntity::GetType() const
@@ -49,7 +49,7 @@ namespace Botcraft
 
     std::string VillagerEntity::GetClassName()
     {
-        return "Villager";
+        return "villager";
     }
 
     EntityType VillagerEntity::GetClassType()

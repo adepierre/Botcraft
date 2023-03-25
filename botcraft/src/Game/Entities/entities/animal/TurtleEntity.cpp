@@ -31,7 +31,7 @@ namespace Botcraft
 
     std::string TurtleEntity::GetName() const
     {
-        return "Turtle";
+        return "turtle";
     }
 
     EntityType TurtleEntity::GetType() const
@@ -52,7 +52,7 @@ namespace Botcraft
 
     std::string TurtleEntity::GetClassName()
     {
-        return "Turtle";
+        return "turtle";
     }
 
     EntityType TurtleEntity::GetClassType()

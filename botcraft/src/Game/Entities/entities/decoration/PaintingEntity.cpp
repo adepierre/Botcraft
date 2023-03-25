@@ -24,7 +24,7 @@ namespace Botcraft
 
     std::string PaintingEntity::GetName() const
     {
-        return "Painting";
+        return "painting";
     }
 
     EntityType PaintingEntity::GetType() const
@@ -45,7 +45,7 @@ namespace Botcraft
 
     std::string PaintingEntity::GetClassName()
     {
-        return "Painting";
+        return "painting";
     }
 
     EntityType PaintingEntity::GetClassType()

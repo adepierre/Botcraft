@@ -22,7 +22,7 @@ namespace Botcraft
 
     std::string GuardianEntity::GetName() const
     {
-        return "Guardian";
+        return "guardian";
     }
 
     EntityType GuardianEntity::GetType() const
@@ -43,7 +43,7 @@ namespace Botcraft
 
     std::string GuardianEntity::GetClassName()
     {
-        return "Guardian";
+        return "guardian";
     }
 
     EntityType GuardianEntity::GetClassType()

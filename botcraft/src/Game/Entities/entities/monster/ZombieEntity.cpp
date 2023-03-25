@@ -34,7 +34,7 @@ namespace Botcraft
 
     std::string ZombieEntity::GetName() const
     {
-        return "Zombie";
+        return "zombie";
     }
 
     EntityType ZombieEntity::GetType() const
@@ -55,7 +55,7 @@ namespace Botcraft
 
     std::string ZombieEntity::GetClassName()
     {
-        return "Zombie";
+        return "zombie";
     }
 
     EntityType ZombieEntity::GetClassType()

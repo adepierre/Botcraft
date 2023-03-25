@@ -15,7 +15,7 @@ namespace Botcraft
 
     std::string EndermiteEntity::GetName() const
     {
-        return "Endermite";
+        return "endermite";
     }
 
     EntityType EndermiteEntity::GetType() const
@@ -36,7 +36,7 @@ namespace Botcraft
 
     std::string EndermiteEntity::GetClassName()
     {
-        return "Endermite";
+        return "endermite";
     }
 
     EntityType EndermiteEntity::GetClassType()
