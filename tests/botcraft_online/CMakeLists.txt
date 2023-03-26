@@ -13,6 +13,7 @@ set(SRC_FILES
     src/TestManager.cpp
     src/Utils.cpp
 
+    src/tests/entities.cpp
     src/tests/self-tests.cpp
     src/tests/world.cpp
 )

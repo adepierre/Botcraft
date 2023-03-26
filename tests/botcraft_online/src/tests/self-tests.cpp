@@ -30,7 +30,9 @@ TEST_CASE("create block")
 TEST_CASE("create book")
 {
 	const Botcraft::Position& pos = TestManager::GetInstance().GetCurrentOffset();
+#if PROTOCOL_VERSION < 477
 	CHECK_NOTHROW(TestManager::GetInstance().SetBlock("anvil", pos + Botcraft::Position(1, 0, 1)));
+#endif
 	REQUIRE_NOTHROW(TestManager::GetInstance().CreateBook(pos + Botcraft::Position(1, 0, 0), { "hello", "", "hello page 3" }, "north", "Title", "author", { "desc1", "desc2" }));
 }
 
