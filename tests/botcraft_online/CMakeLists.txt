@@ -14,6 +14,7 @@ set(SRC_FILES
     src/Utils.cpp
 
     src/tests/entities.cpp
+    src/tests/physics.cpp
     src/tests/self-tests.cpp
     src/tests/world.cpp
 )
