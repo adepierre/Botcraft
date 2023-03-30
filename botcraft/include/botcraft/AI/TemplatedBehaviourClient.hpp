@@ -132,6 +132,52 @@ namespace Botcraft
             behaviour_cond_var.wait(lock);
         }
 
+        /// @brief Set a tree to execute the given action once and block until done.
+        /// This will change the current tree. BehaviourStep should **NOT** be called
+        /// by another thread simultaneously. It means you shloud **NOT** call
+        /// RunBehaviourUntilClosed when using this sync version.
+        /// @param ...args Parameters passed to create tree leaf
+        template<typename... Args>
+        void SyncAction(Args&&... args)
+        {
+            // Make sure the behaviour thread is running
+            if (!behaviour_thread.joinable())
+            {
+                StartBehaviour();
+            }
+
+            // Set the tree
+            SetBehaviourTree(Builder<TDerived>()
+		        .sequence()
+			        .succeeder().leaf(args...)
+			        .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
+		        .end());
+
+            // Perform one step to get out of the Yield lock
+            BehaviourStep();
+
+            // Wait for the tree to be set as active one
+            if (!WaitForCondition([&]()
+                {
+                    return tree != nullptr;
+                }, 500))
+            {
+                LOG_WARNING("Timeout waiting for tree swapping in SyncAction");
+                return;
+            }
+
+            // Run until tree is ticked once and reset to nullptr
+            while(tree != nullptr && !should_be_closed)
+            {
+                std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+                std::chrono::steady_clock::time_point end = start + std::chrono::milliseconds(10);
+
+                BehaviourStep();
+
+                SleepUntil(end);
+            }
+        }
+
         void OnTreeChanged(const BaseNode* root)
         {
             const std::string& tree_name = root != nullptr ? root->GetName() : "nullptr";

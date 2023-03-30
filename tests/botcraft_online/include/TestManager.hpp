@@ -8,6 +8,7 @@
 #include <map>
 #include <mutex>
 
+#include <botcraft/AI/BehaviourClient.hpp>
 #include <botcraft/Game/Vector3.hpp>
 #include <botcraft/Game/Enums.hpp>
 #include <botcraft/Game/ManagersClient.hpp>
@@ -108,6 +109,11 @@ public:
                 }, 5000))
             {
                 throw std::runtime_error(botname + " took too long to load world");
+            }
+
+            if constexpr (std::is_base_of_v<Botcraft::BehaviourClient, ClientType>)
+            {
+                client->StartBehaviour();
             }
 
             return client;

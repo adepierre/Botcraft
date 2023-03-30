@@ -11,12 +11,13 @@ set(SRC_FILES
 
     src/MinecraftServer.cpp
     src/TestManager.cpp
-    src/Utils.cpp
 
     src/tests/entities.cpp
     src/tests/physics.cpp
     src/tests/self-tests.cpp
     src/tests/world.cpp
+
+    src/tests/tasks/base_tasks.cpp
 )
 
 add_executable(${PROJECT_NAME} ${HDR_FILES} ${SRC_FILES})
