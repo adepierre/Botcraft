@@ -316,6 +316,7 @@ void MinecraftServer::SetGamerule(const std::string& gamerule, const std::string
 
 void MinecraftServer::InitServerGamerules()
 {
+    SetGamerule("announceAdvancements", "false");
 #if PROTOCOL_VERSION > 485 // 1.14.2
     SetGamerule("disableRaids", "true");
 #endif

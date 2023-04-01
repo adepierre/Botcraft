@@ -252,7 +252,7 @@ Botcraft::Position TestManager::GetStructureSize(const std::string& filename) co
 	return nbt["size"].as_list_of<int>();
 }
 
-void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Vector3<double>& dst, const std::vector<std::string>& texts, const std::string& facing, const std::string& color) const
+void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Vector3<double>& dst, const std::vector<std::string>& texts, const std::string& facing, const TestSucess success) const
 {
 	Botcraft::Position offset_target;
 	int block_rotation = 0;
@@ -275,6 +275,22 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 	{
 		block_rotation = 4;
 		offset_target = dst + Botcraft::Position(1, 0, 0);
+	}
+	std::string text_color;
+	switch (success)
+	{
+	case TestSucess::None:
+		text_color = "black";
+		break;
+	case TestSucess::Success:
+		text_color = "dark_green";
+		break;
+	case TestSucess::Failure:
+		text_color = "red";
+		break;
+	case TestSucess::ExpectedFailure:
+		text_color = "gold";
+		break;
 	}
 	std::map<std::string, std::string> lines;
 	for (size_t i = 0; i < std::min(texts.size(), static_cast<size_t>(4)); ++i)
@@ -304,7 +320,7 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 		{
 			line
 				<< "\"underlined\"" << ":" << "true" << ","
-				<< "\"color\"" << ":" << "\"" << color << "\"";
+				<< "\"color\"" << ":" << "\"" << text_color << "\"";
 		}
 		line << "}";
 		lines.insert({ "Text" + std::to_string(i + 1), line.str() });
@@ -460,18 +476,18 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
 {
 	const bool passed = test_case_stats.totals.assertions.allPassed();
 	// Replace header with proper test result
-	LoadStructure(passed ? "_header_success" : "_header_fail", current_header_position);
+	LoadStructure(passed ? "_header_success" : (test_case_stats.testInfo->okToFail() ? "_header_expected_fail" : "_header_fail"), current_header_position);
 	// Create TP sign for the partial that just ended
 	CreateTPSign(
 		Botcraft::Position(-2 * (current_test_index + 1), 2, -2 * (part_number + 2)),
 		Botcraft::Vector3(current_offset.x, 2, current_offset.z - 1),
-		section_stack, "north", passed ? "dark_green" : "red"
+		section_stack, "north", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
 	);
 	// Create back to spawn sign for the section that just ended
 	CreateTPSign(
 		Botcraft::Position(current_offset.x, 2, current_offset.z - 1),
 		Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2 * (static_cast<int>(part_number) + 2)),
-		section_stack, "south", passed ? "dark_green" : "red"
+		section_stack, "south", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
 	);
 	if (!passed)
 	{
@@ -485,25 +501,33 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
 		);
 	}
 	current_offset.z += current_test_size.z + spacing_z;
+	
+	// Kill all items that could exist on the floor
+	MinecraftServer::GetInstance().SendLine("kill @e[type=item]");
+#if PROTOCOL_VERSION > 340
+	// In 1.12.2 server sends one line per entity killed so we can't wait without knowing
+	// how many there were. Just assume the command worked
+	MinecraftServer::GetInstance().WaitLine(".*?: (?:Killed|No entity was found).*", 2000);
+#endif
 }
 
 void TestManager::testCaseEnded(Catch::TestCaseStats const& test_case_stats)
 {
 	const bool passed = test_case_stats.totals.assertions.allPassed();
-	LoadStructure(passed ? "_header_success" : "_header_fail", Botcraft::Position(current_offset.x, 0, spacing_z - header_size.z));
+	LoadStructure(passed ? "_header_success" : (test_case_stats.testInfo->okToFail() ? "_header_expected_fail" : "_header_fail"), Botcraft::Position(current_offset.x, 0, spacing_z - header_size.z));
 	// Create Sign to TP to current test
 	CreateTPSign(
 		Botcraft::Position(-2 * (current_test_index + 1), 2, -2),
 		Botcraft::Vector3(current_offset.x, 2, spacing_z - 1),
 		{ std::filesystem::path(test_case_stats.testInfo->lineInfo.file).stem().string(), test_case_stats.testInfo->name },
-		"north", passed ? "dark_green" : "red"
+		"north", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
 	);
 	// Create sign to TP to TP back to spawn
 	CreateTPSign(
 		Botcraft::Position(current_offset.x, 2, spacing_z - 1),
 		Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2),
 		{ std::filesystem::path(test_case_stats.testInfo->lineInfo.file).stem().string(), test_case_stats.testInfo->name },
-		"south", passed ? "dark_green" : "red"
+		"south", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
 	);
 	current_test_index += 1;
 	current_offset.x += std::max(current_test_size.x, header_size.x) + spacing_x;

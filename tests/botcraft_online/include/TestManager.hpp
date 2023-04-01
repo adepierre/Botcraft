@@ -81,7 +81,7 @@ public:
 
         MinecraftServer::GetInstance().WaitLine(".*?" + botname + " joined the game.*", 2000);
 
-        if (gamemode != Botcraft::GameType::Survival)
+        if (gamemode != Botcraft::GameType::Creative)
         {
             SetGameMode(botname, gamemode);
         }
@@ -140,6 +140,14 @@ public:
     }
 
 private:
+    enum class TestSucess
+    {
+        None,
+        Success,
+        Failure,
+        ExpectedFailure
+    };
+
     /// @brief Read a NBT structure file and extract its size
     /// @return A X/Y/Z size Vector3
     Botcraft::Position GetStructureSize(const std::string& filename) const;
@@ -148,8 +156,8 @@ private:
     /// @param src Position of the sign.
     /// @param dst TP destination coordinates
     /// @param texts A list of strings to display on the sign
-    /// @param color Text color for lines > 0
-    void CreateTPSign(const Botcraft::Position& src, const Botcraft::Vector3<double>& dst, const std::vector<std::string>& texts, const std::string& facing = "north", const std::string& color = "black") const;
+    /// @param success A TestSuccess result, will define wood and/or text color depending on minecraft version
+    void CreateTPSign(const Botcraft::Position& src, const Botcraft::Vector3<double>& dst, const std::vector<std::string>& texts, const std::string& facing = "north", const TestSucess success = TestSucess::None) const;
 
     /// @brief Load a structure block into the world
     /// @param filename The structure block to load. If it doesn't exist, will use "_default" instead
