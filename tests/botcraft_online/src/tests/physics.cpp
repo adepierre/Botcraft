@@ -16,6 +16,7 @@ TEST_CASE("gravity")
 	std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot(Botcraft::Vector3<double>(1.0, 2.0, 1.0));
 	std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
 
+	CHECK_FALSE(local_player->GetOnGround());
 	CHECK(Botcraft::WaitForCondition([&]()
 		{
 			std::lock_guard<std::mutex> lock(local_player->GetMutex());
