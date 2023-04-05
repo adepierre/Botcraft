@@ -18,7 +18,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
 	std::string botname;
 	std::unique_ptr<ClientType> bot = TestManager::GetInstance().GetBot<ClientType>(botname);
 
-	const Botcraft::Position pos = TestManager::GetInstance().GetCurrentOffset() + offset;
+	const Botcraft::Vector3<double> pos = offset + TestManager::GetInstance().GetCurrentOffset();
 	TestManager::GetInstance().Teleport(botname, pos);
 
 	// Wait for bot to register teleportation

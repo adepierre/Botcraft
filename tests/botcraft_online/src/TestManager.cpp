@@ -10,7 +10,6 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
-#include <iostream>
 
 std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements = { {'"', "\\\""}, {'\n', "\\n"} });
 
@@ -235,7 +234,8 @@ void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<doub
 
 Botcraft::Position TestManager::GetStructureSize(const std::string& filename) const
 {
-	const std::filesystem::path filepath = MinecraftServer::GetInstance().GetStructurePath() / (filename + ".nbt");
+	const std::string no_space_filename = ReplaceCharacters(filename, { {' ', "_"} });
+	const std::filesystem::path filepath = MinecraftServer::GetInstance().GetStructurePath() / (no_space_filename + ".nbt");
 
 	if (!std::filesystem::exists(filepath))
 	{
@@ -479,14 +479,14 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
 	LoadStructure(passed ? "_header_success" : (test_case_stats.testInfo->okToFail() ? "_header_expected_fail" : "_header_fail"), current_header_position);
 	// Create TP sign for the partial that just ended
 	CreateTPSign(
-		Botcraft::Position(-2 * (current_test_index + 1), 2, -2 * (part_number + 2)),
+		Botcraft::Position(-2 * (current_test_index + 1), 2, -2 * part_number - 5),
 		Botcraft::Vector3(current_offset.x, 2, current_offset.z - 1),
 		section_stack, "north", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
 	);
 	// Create back to spawn sign for the section that just ended
 	CreateTPSign(
 		Botcraft::Position(current_offset.x, 2, current_offset.z - 1),
-		Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2 * (static_cast<int>(part_number) + 2)),
+		Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2 * static_cast<int>(part_number) - 5),
 		section_stack, "south", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
 	);
 	if (!passed)
