@@ -9,8 +9,6 @@
 #include <botcraft/AI/Tasks/DigTask.hpp>
 #include <botcraft/Game/Inventory/InventoryManager.hpp>
 
-#include <sstream>
-
 void TestDig(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const Botcraft::Position& pos, const double time_s)
 {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
