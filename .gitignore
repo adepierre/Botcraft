@@ -1,5 +1,4 @@
-/build/
-/build_all_versions/
+/build*/
 /bin/
 /lib/
 /install/

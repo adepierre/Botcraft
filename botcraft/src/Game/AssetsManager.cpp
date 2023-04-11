@@ -101,12 +101,12 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 347
-    const Item* AssetsManager::GetItem(const int id, const unsigned char damage) const
+    const Item* AssetsManager::GetItem(const std::pair<int, unsigned char> id) const
     {
-        auto it = items.find(id);
+        auto it = items.find(id.first);
         if (it != items.end())
         {
-            auto it2 = it->second.find(damage);
+            auto it2 = it->second.find(id.second);
             if (it2 != it->second.end())
             {
                 return it2->second.get();

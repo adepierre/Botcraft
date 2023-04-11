@@ -29,7 +29,7 @@ TEST_CASE("gravity")
 
 TEST_CASE("collisions")
 {
-	std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot(Botcraft::Vector3<double>(2.5, 1.01, 2.5));
+	std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot(Botcraft::Vector3<double>(2.5, 1.51, 2.5));
 
 	std::vector<std::pair<std::string, Botcraft::Vector3<double>>> directions = {
 		{"south", Botcraft::Vector3<double>(0.0, 0.0, 1.0)},
@@ -39,6 +39,12 @@ TEST_CASE("collisions")
 	};
 
 	std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+	// Wait the bot to be on ground
+	Botcraft::WaitForCondition([&]()
+		{
+			std::lock_guard<std::mutex> lock(local_player->GetMutex());
+			return local_player->GetY() - TestManager::GetInstance().GetCurrentOffset().y < 1.2;
+		}, 2000);
 	const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 	for (size_t i = 0; i < directions.size(); ++i)
 	{

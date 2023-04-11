@@ -40,7 +40,7 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 347
         const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Item> > >& Items() const;
-        const Item* GetItem(const int id, const unsigned char damage) const;
+        const Item* GetItem(const std::pair<int, unsigned char> id) const;
 #else
         const std::unordered_map<int, std::unique_ptr<Item> >& Items() const;
         const Item* GetItem(const int id) const;

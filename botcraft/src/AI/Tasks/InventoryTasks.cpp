@@ -515,7 +515,7 @@ namespace Botcraft
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
 
         const char current_stack_size = inventory_manager->GetOffHand().GetItemCount();
-        std::shared_ptr<ServerboundUseItemPacket> use_item_msg(new ServerboundUseItemPacket);
+        std::shared_ptr<ServerboundUseItemPacket> use_item_msg = std::make_shared<ServerboundUseItemPacket>();
         use_item_msg->SetHand(static_cast<int>(Hand::Left));
 #if PROTOCOL_VERSION > 758
         {
@@ -1281,7 +1281,7 @@ namespace Botcraft
             short dst_index = -1;
             {
                 std::lock_guard<std::mutex> inventory_manager_lock(inventory_manager->GetMutex());
-                for (short i = Window::INVENTORY_OFFHAND_INDEX; i > Window::INVENTORY_STORAGE_START; --i)
+                for (short i = Window::INVENTORY_STORAGE_START; i < Window::INVENTORY_OFFHAND_INDEX; ++i)
                 {
                     const Slot& dst_slot = player_inventory->GetSlot(i);
                     if (dst_slot.IsEmptySlot())
@@ -1289,7 +1289,7 @@ namespace Botcraft
                         continue;
                     }
                     // If this slot is not empty, and not full,
-                    // check if "lower" slot with same items that
+                    // check if "upper" slot with same items that
                     // could fit in it
 #if PROTOCOL_VERSION < 350
                     const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetBlockID()).at(static_cast<unsigned char>(dst_slot.GetItemDamage()))->GetStackSize() - dst_slot.GetItemCount();
@@ -1301,7 +1301,7 @@ namespace Botcraft
                         continue;
                     }
 
-                    for (short j = Window::INVENTORY_STORAGE_START; j < i; ++j)
+                    for (short j = i+1; j < Window::INVENTORY_OFFHAND_INDEX+1; ++j)
                     {
                         const Slot& src_slot = player_inventory->GetSlot(j);
                         if (!src_slot.IsEmptySlot()

@@ -29,18 +29,6 @@ void TestDig(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const Botcra
 	CHECK_THAT(elapsed_time, Catch::Matchers::WithinAbs(time_s, 0.2));
 }
 
-void GiveItem(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const std::string& item, const std::string& item_pretty_name, const int quantity = 1)
-{
-	const std::string& botname = bot->GetNetworkManager()->GetMyName();
-	MinecraftServer::GetInstance().SendLine("give " + botname + " " + item);
-	MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave " + std::to_string(quantity) + ") \\[" + item_pretty_name + "\\](?: \\* " + std::to_string(quantity) + ")? to " + botname + ".*", 2000);
-	Botcraft::WaitForCondition([&]()
-		{
-			std::lock_guard<std::mutex> lock(bot->GetInventoryManager()->GetMutex());
-			return !bot->GetInventoryManager()->GetHotbarSelected().IsEmptySlot();
-		}, 2000);
-}
-
 TEST_CASE("dig pickaxe")
 {
 	std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1,0,1));
