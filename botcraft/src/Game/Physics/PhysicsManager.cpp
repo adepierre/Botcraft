@@ -51,9 +51,9 @@ namespace Botcraft
         }
     }
 
-    void PhysicsManager::SetShouldFallInVoid(const bool b)
+    void PhysicsManager::SetHasGravity(const bool b)
     {
-        should_fall_in_void = b;
+        has_gravity = b;
     }
 
 
@@ -113,7 +113,7 @@ namespace Botcraft
                         }
 
                         //Avoid forever falling if position is in the void
-                        if (!should_fall_in_void && local_player->GetPosition().y <= world->GetMinY())
+                        if (!has_gravity && local_player->GetPosition().y <= world->GetMinY())
                         {
                             local_player->SetY(world->GetMinY());
                             local_player->SetSpeedY(0.0);
@@ -312,7 +312,7 @@ namespace Botcraft
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
         // If currently climbing, then no gravity and just remove Y speed
-        local_player->SetSpeed(Vector3<double>(local_player->GetSpeedX() * 0.91, local_player->GetIsClimbing() ? 0.0 : (local_player->GetSpeedY() - 0.08) * 0.98, local_player->GetSpeedZ() * 0.91));
+        local_player->SetSpeed(Vector3<double>(local_player->GetSpeedX() * 0.91, (local_player->GetIsClimbing() || !has_gravity) ? 0.0 : (local_player->GetSpeedY() - 0.08) * 0.98, local_player->GetSpeedZ() * 0.91));
 
         if (local_player->GetOnGround())
         {

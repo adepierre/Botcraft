@@ -6,6 +6,8 @@
 #include <protocolCraft/Types/NBT/NBT.hpp>
 
 #include <botcraft/Network/NetworkManager.hpp>
+#include <botcraft/Game/Entities/EntityManager.hpp>
+#include <botcraft/Game/Entities/LocalPlayer.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -18,7 +20,6 @@ TestManager::TestManager()
 	current_offset = {spacing_x, 2, 2 * spacing_z };
 	current_test_index = 0;
 	bot_index = 0;
-	chunk_loader_id = -1;
 }
 
 TestManager::~TestManager()
@@ -383,13 +384,45 @@ void TestManager::LoadStructure(const std::string& filename, const Botcraft::Pos
 
 void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
 {
-	// Don't teleport if we're close enough
-	const double threshold_dist = Botcraft::CHUNK_WIDTH * (MinecraftServer::options.view_distance - 3);
-	if (pos.SqrDist(chunk_loader_position) < threshold_dist * threshold_dist)
+	std::shared_ptr<Botcraft::World> world = chunk_loader->GetWorld();
 	{
-		return;
+		std::lock_guard<std::mutex> lock(world->GetMutex());
+		if (chunk_loader->GetWorld()->IsLoaded(pos))
+		{
+			return;
+		}
 	}
+
 	Teleport(chunk_loader_name, pos);
+
+	// Wait for bot to load center and corner view_distance blocks
+	const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(Botcraft::CHUNK_WIDTH)));
+	const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(Botcraft::CHUNK_WIDTH)));
+	const int view_distance = MinecraftServer::options.view_distance;
+	std::vector<std::pair<int, int>> wait_loaded = {
+		{chunk_x * Botcraft::CHUNK_WIDTH, chunk_z * Botcraft::CHUNK_WIDTH},
+		{(chunk_x + view_distance) * Botcraft::CHUNK_WIDTH - 1, (chunk_z + view_distance) * Botcraft::CHUNK_WIDTH - 1},
+		{(chunk_x - view_distance) * Botcraft::CHUNK_WIDTH, (chunk_z + view_distance) * Botcraft::CHUNK_WIDTH - 1},
+		{(chunk_x + view_distance) * Botcraft::CHUNK_WIDTH - 1, (chunk_z - view_distance) * Botcraft::CHUNK_WIDTH},
+		{(chunk_x - view_distance) * Botcraft::CHUNK_WIDTH, (chunk_z - view_distance) * Botcraft::CHUNK_WIDTH}
+	};
+
+	if (!Botcraft::WaitForCondition([&]()
+		{
+			std::lock_guard<std::mutex> lock(world->GetMutex());
+			for (size_t i = 0; i < wait_loaded.size(); ++i)
+			{
+				if (!world->IsLoaded(Botcraft::Position(wait_loaded[i].first, pos.y, wait_loaded[i].second)))
+				{
+					return false;
+				}
+			}
+			return true;
+		}, 5000))
+	{
+		throw std::runtime_error("Timeout waiting " + chunk_loader_name + " to load surroundings");
+	}
+
 	chunk_loader_position = pos;
 }
 
@@ -429,7 +462,7 @@ void TestManager::testRunStarting(Catch::TestRunInfo const& test_run_info)
 	MinecraftServer::GetInstance().Initialize();
 	// Retrieve header size
 	header_size = GetStructureSize("_header_running");
-	chunk_loader = GetBot<Botcraft::ConnectionClient>(chunk_loader_name, chunk_loader_id, chunk_loader_position, Botcraft::GameType::Spectator);
+	chunk_loader = GetBot(chunk_loader_name, chunk_loader_position, Botcraft::GameType::Spectator);
 }
 
 void TestManager::testCaseStarting(Catch::TestCaseInfo const& test_info)

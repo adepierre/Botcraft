@@ -207,7 +207,7 @@ namespace Botcraft
         creative_mode = msg.GetFlags() & 0x08;
         if (physics_manager)
         {
-            physics_manager->SetShouldFallInVoid(!creative_mode);
+            physics_manager->SetHasGravity(!allow_flying);
         }
 
         std::shared_ptr<ServerboundClientInformationPacket> settings_msg = std::make_shared<ServerboundClientInformationPacket>();

@@ -129,6 +129,15 @@ public:
         return GetBot<ClientType>(botname, id, pos, gamemode);
     }
 
+
+    template<class ClientType = Botcraft::ManagersClient,
+        std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
+    std::unique_ptr<ClientType> GetBot(std::string& botname, Botcraft::Vector3<double>& pos, const Botcraft::GameType gamemode = Botcraft::GameType::Survival)
+    {
+        int id;
+        return GetBot<ClientType>(botname, id, pos, gamemode);
+    }
+
     template<class ClientType = Botcraft::ManagersClient,
         std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
     std::unique_ptr<ClientType> GetBot(const Botcraft::GameType gamemode = Botcraft::GameType::Survival)
@@ -194,11 +203,9 @@ private:
     /// @brief Index of the next bot to be created
     int bot_index;
     /// @brief Bot used to load chunks before running commands on them
-    std::unique_ptr<Botcraft::ConnectionClient> chunk_loader;
+    std::unique_ptr<Botcraft::ManagersClient> chunk_loader;
     /// @brief Name of the bot used as chunk loader
     std::string chunk_loader_name;
-    /// @brief entity id of the chunk loader bot
-    int chunk_loader_id;
     /// @brief position of the chunk loader bot
     mutable Botcraft::Vector3<double> chunk_loader_position;
 
