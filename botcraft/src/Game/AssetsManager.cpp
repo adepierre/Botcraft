@@ -111,6 +111,10 @@ namespace Botcraft
             {
                 return it2->second.get();
             }
+            else if (it->second.find(0) != it->second.end())
+            {
+                return it->second.at(0).get();
+            }
             else
             {
                 return nullptr;

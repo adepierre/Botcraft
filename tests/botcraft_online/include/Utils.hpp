@@ -36,7 +36,8 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
 	std::shared_ptr<Botcraft::World> world = bot->GetWorld();
 	const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(Botcraft::CHUNK_WIDTH)));
 	const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(Botcraft::CHUNK_WIDTH)));
-	const int view_distance = MinecraftServer::options.view_distance;
+	// -1 because sometimes corner chunks are not sent
+	const int view_distance = MinecraftServer::options.view_distance - 1;
 	std::vector<std::pair<int, int>> wait_loaded = {
 		{chunk_x * Botcraft::CHUNK_WIDTH, chunk_z * Botcraft::CHUNK_WIDTH},
 		{(chunk_x + view_distance) * Botcraft::CHUNK_WIDTH - 1, (chunk_z + view_distance) * Botcraft::CHUNK_WIDTH - 1},

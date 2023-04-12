@@ -206,8 +206,6 @@ private:
     std::unique_ptr<Botcraft::ManagersClient> chunk_loader;
     /// @brief Name of the bot used as chunk loader
     std::string chunk_loader_name;
-    /// @brief position of the chunk loader bot
-    mutable Botcraft::Vector3<double> chunk_loader_position;
 
     /// @brief Index of the current test in the world
     int current_test_index;

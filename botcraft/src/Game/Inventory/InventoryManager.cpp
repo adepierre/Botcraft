@@ -576,6 +576,10 @@ namespace Botcraft
                 break;
             }
         }
+        else if (msg.GetType() == "minecraft:crafting_table")
+        {
+            type = InventoryType::Crafting;
+        }
         else
         {
             LOG_ERROR("Not implemented container type : " << msg.GetType());

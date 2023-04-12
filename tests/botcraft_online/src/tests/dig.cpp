@@ -71,7 +71,7 @@ TEST_CASE("dig pickaxe")
 #else
 		MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 2");
 #endif
-		MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)) to " + botname + ".*", 2000);
+		MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 2000);
 
 		SECTION("golden pick")
 		{
@@ -112,7 +112,7 @@ TEST_CASE("dig underwater")
 #else
 		MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 2");
 #endif
-		MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)) to " + botname + ".*", 2000);
+		MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 2000);
 
 		SECTION("golden pick")
 		{

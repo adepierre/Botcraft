@@ -8,6 +8,7 @@
 #include <botcraft/Network/NetworkManager.hpp>
 #include <botcraft/Game/Entities/EntityManager.hpp>
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
+#include <botcraft/Utilities/Logger.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -398,7 +399,8 @@ void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
 	// Wait for bot to load center and corner view_distance blocks
 	const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(Botcraft::CHUNK_WIDTH)));
 	const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(Botcraft::CHUNK_WIDTH)));
-	const int view_distance = MinecraftServer::options.view_distance;
+	// -1 because sometimes corner chunks are not sent
+	const int view_distance = MinecraftServer::options.view_distance - 1;
 	std::vector<std::pair<int, int>> wait_loaded = {
 		{chunk_x * Botcraft::CHUNK_WIDTH, chunk_z * Botcraft::CHUNK_WIDTH},
 		{(chunk_x + view_distance) * Botcraft::CHUNK_WIDTH - 1, (chunk_z + view_distance) * Botcraft::CHUNK_WIDTH - 1},
@@ -422,8 +424,6 @@ void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
 	{
 		throw std::runtime_error("Timeout waiting " + chunk_loader_name + " to load surroundings");
 	}
-
-	chunk_loader_position = pos;
 }
 
 void TestManager::SetGameMode(const std::string& name, const Botcraft::GameType gamemode) const
@@ -462,7 +462,7 @@ void TestManager::testRunStarting(Catch::TestRunInfo const& test_run_info)
 	MinecraftServer::GetInstance().Initialize();
 	// Retrieve header size
 	header_size = GetStructureSize("_header_running");
-	chunk_loader = GetBot(chunk_loader_name, chunk_loader_position, Botcraft::GameType::Spectator);
+	chunk_loader = GetBot(chunk_loader_name, Botcraft::GameType::Spectator);
 }
 
 void TestManager::testCaseStarting(Catch::TestCaseInfo const& test_info)
