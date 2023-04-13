@@ -76,11 +76,19 @@ jobs:
           -DBOTCRAFT_FORCE_LOCAL_GLFW=ON
           -DBOTCRAFT_FORCE_LOCAL_GLAD=ON
           -DBOTCRAFT_FORCE_LOCAL_CATCH=ON
-          -DBOTCRAFT_DOWNLOAD_MC_ASSETS=OFF
+          -DBOTCRAFT_INSTALL_MC_ASSETS=OFF
           -DBOTCRAFT_USE_PRECOMPILED_HEADERS=ON
+          -DBOTCRAFT_OUTPUT_DIR=output
           -DCMAKE_INSTALL_PREFIX=install/botcraft
           -S $GITHUB_WORKSPACE
           -B .
+
+      - name: Retrieve MC game version
+        id: mc-version
+        uses: juliangruber/read-file-action@v1
+        with:
+          path:
+            ${{ runner.workspace }}/build/version.txt
 
       - name: Build all
         shell: bash
@@ -88,8 +96,22 @@ jobs:
         run: cmake --build . --config $BUILD_TYPE --parallel 2
 
       - name: Run tests
+        shell: bash
         working-directory: ${{ runner.workspace }}/build
-        run: ctest -C $BUILD_TYPE
+        run: ctest -C $BUILD_TYPE -VV
+        id: test
+
+      - name: Prepare test server world download
+        if: success() || steps.test.conclusion == 'failure'
+        working-directory: ${{ runner.workspace }}/build/output/bin/test_servers
+        run: cmake -E rm -rf -- ${{ steps.mc-version.outputs.content }}/libraries ${{ steps.mc-version.outputs.content }}/versions
+
+      - name: Upload test server
+        if: success() || steps.test.conclusion == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: test_server_${{ matrix.config.name }}_${{ steps.mc-version.outputs.content }}
+          path: ${{ runner.workspace }}/build/output/bin/test_servers
 
       - name: Create install
         shell: bash
@@ -115,14 +137,6 @@ jobs:
           name: MC-version
           path: ${{ runner.workspace }}/build/version.txt
           retention-days: 1
-
-      - name: Retrieve MC game version
-        if: ${{ matrix.config.name == 'Linux' }}
-        id: mc-version
-        uses: juliangruber/read-file-action@v1
-        with:
-          path:
-            ${{ runner.workspace }}/build/version.txt
 
       - name: Create release note
         if: ${{ matrix.config.name == 'Linux' }}

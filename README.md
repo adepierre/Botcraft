@@ -33,9 +33,10 @@ Main features are listed below. To see the evolution of the project, check the [
 - World data
 - Full entity support (type, data and metadata)
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
-- Bot programming with a behaviour tree system (see the [wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
+- Bot programming with a behaviour tree system ([wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - extremely resource efficient (CPU/RAM) AFK bots
 - Bot control with mouse and keyboard
+- Custom framework to easily test the bot behaviours on a vanilla server ([wiki page](https://github.com/adepierre/Botcraft/wiki/Test-framework) for details)
 
 Available bot behaviours includes:
 - Path finding (including ladder/scaffholding climbing)

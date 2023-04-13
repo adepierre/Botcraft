@@ -1,6 +1,6 @@
 # Check if the minecraft assets folder already exists for the current version
 # If not, download the client and extract the assets
-if(BOTCRAFT_DOWNLOAD_MC_ASSETS AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft")
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft")
     message(STATUS "Downloading assets for version " ${BOTCRAFT_GAME_VERSION} " from " ${VERSION_CLIENT_URL} "...")
     file(DOWNLOAD "${VERSION_CLIENT_URL}" "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/client.jar")
     message(STATUS "Extracting assets...")
@@ -36,41 +36,34 @@ if(NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/custom
 endif()
 
 # Copying Minecraft assets
-if (BOTCRAFT_DOWNLOAD_MC_ASSETS)
-    # Blockstates
-    if(NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/blockstates")
-        message(STATUS "Copying minecraft blockstates...")
-        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/blockstates" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/")
+# Blockstates
+if(NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/blockstates")
+    message(STATUS "Copying minecraft blockstates...")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/blockstates" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/")
+endif()
+
+# Block models
+if(NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/models/block")
+    message(STATUS "Copying minecraft block models...")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/models/block" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/models")
+endif()
+
+# Textures
+if(BOTCRAFT_USE_OPENGL_GUI)
+    # Blocks
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/blocks" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/blocks")
+        message(STATUS "Copying minecraft block textures...")
+        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/blocks" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures")
+    elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/block" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/block")
+        message(STATUS "Copying minecraft block textures...")
+        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/block" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures")
     endif()
 
-    # Block models
-    if(NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/models/block")
-        message(STATUS "Copying minecraft block models...")
-        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/models/block" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/models")
+    # Entities
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/entity" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/entity")
+        message(STATUS "Copying minecraft entity textures...")
+        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/entity" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures")
     endif()
-
-    # Textures
-    if(BOTCRAFT_USE_OPENGL_GUI)
-        # Blocks
-        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/blocks" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/blocks")
-            message(STATUS "Copying minecraft block textures...")
-            file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/blocks" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures")
-        elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/block" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/block")
-            message(STATUS "Copying minecraft block textures...")
-            file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/block" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures")
-        endif()
-
-        # Entities
-        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/entity" AND NOT EXISTS "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/entity")
-            message(STATUS "Copying minecraft entity textures...")
-            file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures/entity" DESTINATION "${BOTCRAFT_OUTPUT_DIR}/bin/Assets/${BOTCRAFT_GAME_VERSION}/minecraft/textures")
-        endif()
-
-    endif()
-endif(BOTCRAFT_DOWNLOAD_MC_ASSETS)
-    
-    
-    
-    
+endif()
 
 set(ASSET_DIR ./Assets/${BOTCRAFT_GAME_VERSION})
