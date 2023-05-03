@@ -40,7 +40,7 @@ namespace Botcraft
 #else
         /// @brief Initialize the encryption context for this connection
         /// @param pub_key Server public key
-        /// @param input_challenge Server input challenge
+        /// @param input_nonce Server input nonce
         /// @param raw_shared_secret Output shared secret
         /// @param encrypted_shared_secret Shared secret encrypted using server public key
         /// @param encrypted_challenge Output encrypted challenge

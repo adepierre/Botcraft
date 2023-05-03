@@ -132,9 +132,11 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION > 758
         /// @brief Update the cached player certificates for the given login
-        /// @param login The login we want to update the data for 
+        /// @param login The login we want to update the data for
         /// @param private_k New private key
         /// @param public_k New public key
+        /// @param signature_v1 Signature v1 of the given login
+        /// @param signature_v2 Signature v2 of the given login
         /// @param expiration New keys expiration date
         void UpdateCachedPlayerCertificates(const std::string& login, const std::string& private_k,
             const std::string& public_k, const std::string& signature_v1,

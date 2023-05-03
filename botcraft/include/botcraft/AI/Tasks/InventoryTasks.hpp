@@ -198,7 +198,7 @@ namespace Botcraft
     /// @brief Check if item_name is present in inventory
     /// @param client The client performing the action
     /// @param item_name Item name
-    /// @param min_quantity Min quantity to have
+    /// @param quantity Min quantity to have
     /// @return Success if inventory quantity is >= quantity else Failure
     Status HasItemInInventory(BehaviourClient& client, const std::string& item_name, const int quantity = 1);
 

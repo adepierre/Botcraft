@@ -84,7 +84,7 @@ namespace Botcraft
         /// @param tool_efficiency Level of efficiency enchantment on the tool
         /// @param haste Level of haste applied to the player
         /// @param fatigue Level of mining fatigue applied to the player
-        /// @param not_on_ground Boolean indicating whether or not the player is currently on the ground
+        /// @param on_ground Boolean indicating whether or not the player is currently on the ground
         /// @param head_in_fluid_wo_aqua_affinity Boolean indicating whether or not the player head is currently in fluid without aqua affinity enchantment
         /// @return The time required to mine this block in these conditions, or -1 if can't be mined
         float GetMiningTimeSeconds(const ToolType tool_type, const ToolMaterial tool_material,

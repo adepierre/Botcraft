@@ -404,9 +404,10 @@ namespace Botcraft
         /// @brief To add a named leaf
         /// @tparam S std::string convertible type
         /// @tparam ...Args leaf function and params
-        /// @tparam  Do not use this template if first param is not a string
-        /// @param ...args 
-        /// @return 
+        /// @tparam Do not use this template if first param is not a string
+        /// @param s Leaf name
+        /// @param ...args leaf function and params
+        /// @return A composite builder to continue building the tree
         template<
             typename S,
             typename... Args,

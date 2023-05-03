@@ -17,7 +17,7 @@ struct MinecraftServerOptions
 };
 
 /// @brief Singleton wrapper around a Minecraft server subprocess instance.
-/// Built to be used in a single-threaded way (à la catch2).
+/// Built to be used in a single-threaded way (to follow catch2 requirements).
 class MinecraftServer
 {
 private:

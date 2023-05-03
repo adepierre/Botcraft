@@ -72,6 +72,7 @@ Botcraft::Status CopyRandomFromVectorBlackboardData(Botcraft::BehaviourClient& c
 }
 
 /// @brief Break carrots/potatoes, collect the items, replant
+/// @param client The client performing the action
 /// @param blocks_pos_blackboard Blackboard address of the vector of positions of blocks
 /// @param item_name Name of the item we want to collect
 /// @return Success if blocks are broken, items gathered and crops replanted, Failure otherwise

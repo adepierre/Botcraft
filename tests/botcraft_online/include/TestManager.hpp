@@ -165,6 +165,7 @@ private:
     /// @param src Position of the sign.
     /// @param dst TP destination coordinates
     /// @param texts A list of strings to display on the sign
+    /// @param facing The direction the sign will face
     /// @param success A TestSuccess result, will define wood and/or text color depending on minecraft version
     void CreateTPSign(const Botcraft::Position& src, const Botcraft::Vector3<double>& dst, const std::vector<std::string>& texts, const std::string& facing = "north", const TestSucess success = TestSucess::None) const;
 
