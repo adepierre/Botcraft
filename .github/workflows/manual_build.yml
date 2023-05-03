@@ -43,11 +43,15 @@ jobs:
           java-version: '17'
           java-package: jre
 
-      - name: Install GLFW deps
+      - name: Install Linux deps
         if: ${{ matrix.config.name == 'Linux' }}
         run: |
           sudo apt update
           sudo apt install -y xorg-dev
+          wget https://github.com/doxygen/doxygen/releases/download/Release_1_9_6/doxygen-1.9.6.linux.bin.tar.gz
+          tar xzvf doxygen-1.9.6.linux.bin.tar.gz
+          cd doxygen-1.9.6
+          sudo make install
 
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
