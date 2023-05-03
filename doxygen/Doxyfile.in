@@ -13,6 +13,12 @@ OUTPUT_DIRECTORY       = ${BOTCRAFT_OUTPUT_DIR}/doc
 HTML_OUTPUT            = ${BOTCRAFT_GAME_VERSION}
 OUTPUT_LANGUAGE        = English
 
+# html
+HTML_COLORSTYLE        = LIGHT
+HTML_HEADER            = ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/header.html
+HTML_EXTRA_STYLESHEET  = ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen-awesome.css ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen-awesome-sidebar-only.css ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen-awesome-sidebar-only-darkmode-toggle.css
+HTML_EXTRA_FILES       = ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen-awesome-darkmode-toggle.js ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen-awesome-fragment-copy-button.js ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen-awesome-paragraph-link.js
+
 # reference
 REFERENCED_BY_RELATION = YES
 REFERENCES_RELATION    = YES
