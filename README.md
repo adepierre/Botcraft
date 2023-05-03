@@ -1,5 +1,6 @@
 ![Build status](https://github.com/adepierre/Botcraft/actions/workflows/build.yml/badge.svg)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/wECVsTbjA9)
+[![Documentation](https://badgen.net/badge/%F0%9F%93%96/documentation/black)]()
 
 # Botcraft
 
@@ -74,7 +75,7 @@ Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 The code is cross-platform and requires a C++17 compiler, as well as git and CMake. I try to keep the number of external libraries for the core part of the library very low. This is less true for the rendering part or testing.
 Dependencies are included either directly(\*) or as git submodules(†). All libraries marked as optional can be disabled using cmake options.
 
-You *don't* have to clone recursively, download nor install any of them: the cmake build system is made to do that for you automatically for each dependency that is not already found on your system. The only exception is Java to launch the test server if enabled.
+You *don't* have to clone recursively, download nor install any of them: the cmake build system is made to do that for you automatically for each dependency that is not already found on your system. The only exceptions are Java to launch the test server if enabled and doxygen to generate the doc.
 
 - [asio](https://think-async.com/Asio/)† for low-level TCP
 
@@ -95,6 +96,10 @@ Optional dependencies (testing)
 - [subprocess.h](https://github.com/sheredom/subprocess.h)\* to launch the vanilla test server
 - [Java](https://www.java.com/) 8 for Minecraft < 1.17, 17 for Minecraft 1.17+ to run the vanilla test server
 
+Optional dependencies (doc generation)
+- [doxygen](https://www.doxygen.nl/) for documentation generation
+- [doxygen-awesome-css](https://github.com/jothepro/doxygen-awesome-css)\* for documentation layout
+
 
 ## Building and testing
 
@@ -107,9 +112,10 @@ cd build
 cmake -DBOTCRAFT_GAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_BUILD_TESTS=ON -DBOTCRAFT_BUILD_TESTS_ONLINE=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
 cmake --build . --config Release
 ctest -C Release
+cmake --build . --target doc_doxygen
 ```
 
-At this point, you should have all the examples compiled and ready to run and the tests performed. Please note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual. For a detailed Windows building tutorial, see this [wiki](https://github.com/adepierre/Botcraft/wiki/Detailed-installation-guide) page.
+At this point, you should have all the examples compiled and ready to run, the tests performed and the documentation generated. Please note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual. For a detailed Windows building tutorial, see this [wiki](https://github.com/adepierre/Botcraft/wiki/Detailed-installation-guide) page.
 
 You can check [this discussion](https://github.com/adepierre/Botcraft/discussions/45#discussioncomment-1142555) for an example of how to use botcraft with your own code. In case you need help, you can try to ask on the [community discord server](https://discord.gg/wECVsTbjA9).
 
@@ -125,6 +131,7 @@ There are several cmake options you can modify:
 - BOTCRAFT_USE_IMGUI [ON/OFF] If ON, additional information will be displayed on the GUI (need BOTCRAFT_USE_OPENGL_GUI to be ON)
 - BOTCRAFT_WINDOWS_BETTER_SLEEP [ON/OFF] If ON, thread sleep durations will be more accurate (only for Windows 10/11, no effect on other OS)
 - BOTCRAFT_USE_PRECOMPILED_HEADERS [ON/OFF] If ON, will use precompiled headers to speed up compilation process (ignored on GCC as precompiled headers slow down the build process)
+- BOTCRAFT_BUILD_DOC [ON/OFF] If ON, a target to generate the documentation will be added
 
 ## Examples
 

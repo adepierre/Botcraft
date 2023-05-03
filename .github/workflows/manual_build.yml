@@ -74,6 +74,7 @@ jobs:
           -DBOTCRAFT_FORCE_LOCAL_CATCH=ON
           -DBOTCRAFT_INSTALL_MC_ASSETS=OFF
           -DBOTCRAFT_USE_PRECOMPILED_HEADERS=ON
+          -DBOTCRAFT_BUILD_DOC=ON
           -DBOTCRAFT_OUTPUT_DIR=output
           -DCMAKE_INSTALL_PREFIX=install/botcraft
           -S $GITHUB_WORKSPACE
@@ -119,6 +120,24 @@ jobs:
           path: ${{ runner.workspace }}/build/install/botcraft.zip
           retention-days: 1
 
+      - name: Generate doc
+        if: ${{ matrix.config.name == 'Linux' }}
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --build . --target doc_doxygen
+
+      - name: Create doc archive
+        if: ${{ matrix.config.name == 'Linux' }}
+        working-directory: ${{ runner.workspace }}/build/output/doc
+        run: cmake -E tar "cf" "doc.zip" --format=zip ${{ github.event.inputs.minecraft_version }}/
+
+      - name: Upload doc
+        if: ${{ matrix.config.name == 'Linux' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: botcraft-doc
+          path: ${{ runner.workspace }}/build/output/doc/doc.zip
+          retention-days: 1
+
   upload-artifacts:
     runs-on: ubuntu-latest
     needs: build
@@ -149,6 +168,20 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: windows/botcraft.zip
           asset_name: botcraft-windows-${{ github.event.inputs.minecraft_version }}.zip
+          tag: latest
+
+      - name: Download doc artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: botcraft-doc
+          path: doc
+
+      - name: Upload doc to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: doc/doc.zip
+          asset_name: botcraft-doc-${{ github.event.inputs.minecraft_version }}.zip
           tag: latest
 
       - name: Comment on associated issue
