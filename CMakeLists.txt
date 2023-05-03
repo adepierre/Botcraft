@@ -16,6 +16,7 @@ option(BOTCRAFT_BUILD_TESTS "Activate if you want to build tests" OFF)
 option(BOTCRAFT_BUILD_TESTS_ONLINE "Activate if you want to enable additional on server tests (requires Java)" OFF)
 option(BOTCRAFT_WINDOWS_BETTER_SLEEP "Set to true to use better thread sleep on Windows" OFF)
 option(BOTCRAFT_USE_PRECOMPILED_HEADERS "Set to true to precompile botcraft headers, reducing compilation time with MSVC and Clang, ignored on GCC" ON)
+option(BOTCRAFT_BUILD_DOC "Build documentation (requires Doxygen)" ON)
 
 option(BOTCRAFT_FORCE_LOCAL_ZLIB "Set to true to force using a local install of zlib even if already present on the system" OFF)
 option(BOTCRAFT_FORCE_LOCAL_OPENSSL "Set to true to force using a local install of openssl even if already present on the system" OFF)
@@ -125,3 +126,8 @@ if (BOTCRAFT_BUILD_TESTS)
 
     add_subdirectory(tests)
 endif()
+
+# Add doc generation if enabled
+if (BOTCRAFT_BUILD_DOC)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/doxygen.cmake")
+endif(BOTCRAFT_BUILD_DOC)

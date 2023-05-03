@@ -2,6 +2,7 @@
 /bin/
 /lib/
 /install/
+/doc/
 /Assets/*/minecraft/
 /Assets/*/server*/
 /Assets/*/client.jar

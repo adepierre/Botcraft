@@ -1,0 +1,41 @@
+# Doxyfile 1.9.6
+
+# Basic settings:
+PROJECT_NAME           = "Botcraft for ${BOTCRAFT_GAME_VERSION}"
+STRIP_FROM_PATH        = ${CMAKE_CURRENT_SOURCE_DIR}
+INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/botcraft ${CMAKE_CURRENT_SOURCE_DIR}/protocolCraft ${DOXYGEN_MAIN_PAGE}
+RECURSIVE              = YES
+PREDEFINED             = ${DOXYGEN_PREDEFINED}
+USE_MDFILE_AS_MAINPAGE = ${DOXYGEN_MAIN_PAGE}
+
+# output
+OUTPUT_DIRECTORY       = ${BOTCRAFT_OUTPUT_DIR}/doc
+HTML_OUTPUT            = ${BOTCRAFT_GAME_VERSION}
+OUTPUT_LANGUAGE        = English
+
+# reference
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+# extract all please
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_PRIV_VIRTUAL   = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_METHODS  = YES
+
+# disable latex
+GENERATE_LATEX         = NO
+USE_PDFLATEX           = NO
+
+# brief description from first sentence
+JAVADOC_AUTOBRIEF      = YES
+
+# stl
+BUILTIN_STL_SUPPORT    = YES
+
+# misc
+SOURCE_BROWSER         = YES
+STRIP_CODE_COMMENTS    = NO
+GENERATE_TREEVIEW      = YES
+QUIET                  = NO
