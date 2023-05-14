@@ -3,6 +3,7 @@
 #include "Utils.hpp"
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
 #include <botcraft/AI/Tasks/BaseTasks.hpp>
@@ -49,4 +50,25 @@ TEST_CASE("interact")
 			const Botcraft::Block* block = world->GetBlock(lamp);
 			return IsLitRedstoneLamp(block);
 		}, 2000));
+}
+
+TEST_CASE("get day time")
+{
+	std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
+
+	auto day_time = GENERATE(1000, 5000, 10000, 15000, 20000, 23500);
+
+	// Sent time set command
+	MinecraftServer::GetInstance().SendLine("time set " + std::to_string(day_time));
+	MinecraftServer::GetInstance().WaitLine(".*: Set the time to " + std::to_string(day_time) + ".*", 2000);
+
+	Botcraft::WaitForCondition([&]()
+	{
+		return bot->GetDayTime() == day_time;
+	}, 2000);
+	CHECK(bot->GetDayTime() == day_time);
+
+	// Reset the time to day
+	MinecraftServer::GetInstance().SendLine("time set day");
+	MinecraftServer::GetInstance().WaitLine(".*: Set the time to 1000.*", 2000);
 }

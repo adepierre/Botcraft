@@ -231,6 +231,7 @@ namespace Botcraft
 
     void ManagersClient::Handle(ProtocolCraft::ClientboundSetTimePacket& msg)
     {
-        day_time = msg.GetDayTime() % 24000;
+        // abs because the server multiplies by -1 when the sun will stop
+        day_time = std::abs(msg.GetDayTime()) % 24000;
     }
 } //Botcraft
