@@ -289,7 +289,7 @@ namespace Botcraft
         return SetItemInHand(client, item_name, hand);
     }
 
-    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const PlayerDiggingFace face, const bool wait_confirmation, const bool allow_midair_placing)
+    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, std::optional<PlayerDiggingFace> face, const bool wait_confirmation, const bool allow_midair_placing)
     {
         std::shared_ptr<World> world = client.GetWorld();
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
@@ -325,19 +325,58 @@ namespace Botcraft
             Position(1, 0, 0), Position(-1, 0, 0)
             });
 
-        // Check if block is air
         bool midair_placing = true;
+        // If no face specified
+        if (!face.has_value())
+        {
+            if (allow_midair_placing) // Then we don't care and default to Up
+            {
+                face = PlayerDiggingFace::Up;
+            }
+            else
+            {
+                std::vector<PlayerDiggingFace> face_candidates; // Faces next to a block
+                for (int face = 0; face < 6; face++)
+                {
+                    const Block *neighbour_block = world->GetBlock(pos + neighbour_offsets[face]);
+                    if (!neighbour_block->GetBlockstate()->IsAir())
+                    {
+                        face_candidates.push_back(static_cast<PlayerDiggingFace>(face));
+                    }
+                }
+                if (face_candidates.size() == 0)
+                {
+                    LOG_WARNING("Can't place a block in midair at " << pos);
+                    return Status::Failure;
+                }
+                Vector3<double> player_orientation;
+                {
+                    std::lock_guard<std::mutex> lock(local_player->GetMutex());
+                    player_orientation = local_player->GetFrontVector();
+                }
+                std::sort( // Find the face face closest to player looking direction
+                    face_candidates.begin(), face_candidates.end(), [&](PlayerDiggingFace a, PlayerDiggingFace b) -> bool
+                    {
+                        Vector3<double> a_offset =  neighbour_offsets[static_cast<int>(a)];
+                        Vector3<double> b_offset = neighbour_offsets[static_cast<int>(b)];
+                        Vector3<double> a_to_player = a_offset - pos; 
+                        Vector3<double> b_to_player = b_offset - pos;
+                        return player_orientation.dot(a_to_player) > player_orientation.dot(b_to_player); });
+                face = face_candidates.front();
+            }
+        } else
+        // Check if block is air
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
 
-            const Block* block = world->GetBlock(pos);
+            const Block *block = world->GetBlock(pos);
 
             if (block && !block->GetBlockstate()->IsAir())
             {
                 return Status::Failure;
             }
 
-            const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[static_cast<int>(face)]);
+            const Block *neighbour_block = world->GetBlock(pos + neighbour_offsets[static_cast<int>(face.value())]);
             midair_placing = !neighbour_block || neighbour_block->GetBlockstate()->IsAir();
 
             if (!allow_midair_placing && midair_placing)
@@ -381,12 +420,12 @@ namespace Botcraft
         }
 
         // If cheating is not allowed, adjust the placing position to the block containing the face we're placing against
-        const Position placing_pos = (allow_midair_placing && midair_placing) ? pos : (pos + neighbour_offsets[static_cast<int>(face)]);
+        const Position placing_pos = (allow_midair_placing && midair_placing) ? pos : (pos + neighbour_offsets[static_cast<int>(face.value())]);
 
         std::shared_ptr<ServerboundUseItemOnPacket> place_block_msg = std::make_shared<ServerboundUseItemOnPacket>();
         place_block_msg->SetLocation(placing_pos.ToNetworkPosition());
-        place_block_msg->SetDirection(static_cast<int>(face));
-        switch (face)
+        place_block_msg->SetDirection(static_cast<int>(face.value()));
+        switch (face.value())
         {
         case PlayerDiggingFace::Down:
             place_block_msg->SetCursorPositionX(0.5f);
