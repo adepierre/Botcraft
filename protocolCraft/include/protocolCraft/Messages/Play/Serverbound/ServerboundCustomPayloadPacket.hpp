@@ -2,6 +2,8 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
+#include "protocolCraft/Utilities/PluginLoader.hpp"
+
 namespace ProtocolCraft
 {
     class ServerboundCustomPayloadPacket : public BaseMessage<ServerboundCustomPayloadPacket>
@@ -46,9 +48,14 @@ static constexpr int packet_id = 0x0D;
             identifier = identifier_;
         }
 
-        void SetData(const std::vector<unsigned char>& data_)
+        void SetRawData(const std::vector<unsigned char>& raw_data_)
         {
-            data = data_;
+            raw_data = raw_data_;
+        }
+
+        void SetParsedData(const std::shared_ptr<NetworkType>& parsed_data_)
+        {
+            parsed_data = parsed_data_;
         }
 
 
@@ -57,9 +64,14 @@ static constexpr int packet_id = 0x0D;
             return identifier;
         }
 
-        const std::vector<unsigned char>& GetData() const
+        const std::vector<unsigned char>& GetRawData() const
         {
-            return data;
+            return raw_data;
+        }
+
+        const std::shared_ptr<NetworkType>& GetParsedData() const
+        {
+            return parsed_data;
         }
 
 
@@ -67,13 +79,29 @@ static constexpr int packet_id = 0x0D;
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             identifier = ReadData<std::string>(iter, length);
-            data = ReadByteArray(iter, length, length);
+            parsed_data = CreateObjectFromPlugin(identifier.c_str());
+            if (parsed_data == nullptr)
+            {
+                raw_data = ReadByteArray(iter, length, length);
+            }
+            else
+            {
+                raw_data.clear();
+                parsed_data->Read(iter, length);
+            }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(identifier, container);
-            WriteByteArray(data, container);
+            if (parsed_data == nullptr)
+            {
+                WriteByteArray(raw_data, container);
+            }
+            else
+            {
+                parsed_data->Write(container);
+            }
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -81,14 +109,22 @@ static constexpr int packet_id = 0x0D;
             Json::Value output;
 
             output["identifier"] = identifier;
-            output["data"] ="Vector of " + std::to_string(data.size()) + " unsigned chars";
+            if (parsed_data == nullptr)
+            {
+                output["data"] = "Vector of " + std::to_string(raw_data.size()) + " unsigned chars";
+            }
+            else
+            {
+                output["data"] = parsed_data->Serialize();
+            }
 
             return output;
         }
 
     private:
         std::string identifier;
-        std::vector<unsigned char> data;
+        std::vector<unsigned char> raw_data;
+        std::shared_ptr<NetworkType> parsed_data;
 
     };
 } //ProtocolCraft
