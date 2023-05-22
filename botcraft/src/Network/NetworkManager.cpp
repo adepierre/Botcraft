@@ -1,4 +1,5 @@
 #include <functional>
+#include <optional>
 
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Network/TCP_Com.hpp"
@@ -459,7 +460,7 @@ namespace Botcraft
         {
             std::shared_ptr<ProtocolCraft::ServerboundCustomQueryPacket> custom_query_response = std::make_shared<ProtocolCraft::ServerboundCustomQueryPacket>();
             custom_query_response->SetTransactionId(msg.GetTransactionId());
-            custom_query_response->SetData({});
+            custom_query_response->SetData(std::nullopt);
             Send(custom_query_response);
             return;
         }
