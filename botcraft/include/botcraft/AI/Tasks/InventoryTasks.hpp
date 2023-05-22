@@ -79,11 +79,11 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @param item_name The item to place
     /// @param pos The location where we want to place the block
-    /// @param face The face on which the block is placed. If not specified the optimal placing face will be automatically detected
+    /// @param face The face on which the block is placed. If not specified the optimal placing face will be automatically detected as the closest one to the player facing direction on a non-air block
     /// @param wait_confirmation If true, waits for the server to send the new block in pos
     /// @param allow_midair_placing If false, task will fail if the neighbour block matching face is air
     /// @return Success if placement attempt was made (and confirmed by the server if wait_confirmation is true), Failure otherwise
-    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const std::optional<PlayerDiggingFace> face = std::nullopt, const bool wait_confirmation = false, const bool allow_midair_placing = false);
+    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, std::optional<PlayerDiggingFace> face = std::nullopt, const bool wait_confirmation = false, const bool allow_midair_placing = false);
 
     /// @brief Same thing as PlaceBlock, but reads its parameters from the blackboard
     /// @param client The client performing the action
