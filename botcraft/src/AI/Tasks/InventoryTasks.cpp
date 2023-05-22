@@ -336,12 +336,14 @@ namespace Botcraft
             else
             {
                 std::vector<PlayerDiggingFace> face_candidates; // Faces next to a block
-                for (int face = 0; face < 6; face++)
+                face_candidates.reserve(6);
+                for (int face_idx = 0; face_idx < 6; face_idx++)
                 {
-                    const Block *neighbour_block = world->GetBlock(pos + neighbour_offsets[face]);
-                    if (!neighbour_block->GetBlockstate()->IsAir())
+                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                    const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[face_idx]);
+                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
                     {
-                        face_candidates.push_back(static_cast<PlayerDiggingFace>(face));
+                        face_candidates.push_back(static_cast<PlayerDiggingFace>(face_idx));
                     }
                 }
                 if (face_candidates.size() == 0)
@@ -359,8 +361,8 @@ namespace Botcraft
                     {
                         Vector3<double> a_offset =  neighbour_offsets[static_cast<int>(a)];
                         Vector3<double> b_offset = neighbour_offsets[static_cast<int>(b)];
-                        Vector3<double> a_to_player = a_offset - pos; 
-                        Vector3<double> b_to_player = b_offset - pos;
+                        Vector3<double> a_to_player = a_offset - pos + Vector3<double>(0.5); 
+                        Vector3<double> b_to_player = b_offset - pos + Vector3<double>(0.5);
                         return player_orientation.dot(a_to_player) > player_orientation.dot(b_to_player); });
                 face = face_candidates.front();
             }
@@ -369,14 +371,14 @@ namespace Botcraft
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
 
-            const Block *block = world->GetBlock(pos);
+            const Block* block = world->GetBlock(pos);
 
             if (block && !block->GetBlockstate()->IsAir())
             {
                 return Status::Failure;
             }
 
-            const Block *neighbour_block = world->GetBlock(pos + neighbour_offsets[static_cast<int>(face.value())]);
+            const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[static_cast<int>(face.value())]);
             midair_placing = !neighbour_block || neighbour_block->GetBlockstate()->IsAir();
 
             if (!allow_midair_placing && midair_placing)
