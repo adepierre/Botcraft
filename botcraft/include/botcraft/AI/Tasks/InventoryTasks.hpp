@@ -79,7 +79,7 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @param item_name The item to place
     /// @param pos The location where we want to place the block
-    /// @param face The face on which the block is placed. Of not specified the optimal placing face will be automatically detected
+    /// @param face The face on which the block is placed. If not specified the optimal placing face will be automatically detected
     /// @param wait_confirmation If true, waits for the server to send the new block in pos
     /// @param allow_midair_placing If false, task will fail if the neighbour block matching face is air
     /// @return Success if placement attempt was made (and confirmed by the server if wait_confirmation is true), Failure otherwise
