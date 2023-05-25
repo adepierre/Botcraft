@@ -27,6 +27,8 @@
 #include "protocolCraft/Types/Particles/FallingDustParticle.hpp"
 #endif
 
+#include <stdexcept>
+
 namespace ProtocolCraft
 {
     Particle::Particle()
@@ -44,9 +46,6 @@ namespace ProtocolCraft
     {
         switch (type)
         {
-        case ParticleType::None:
-            return nullptr;
-            break;
         case ParticleType::Block:
             return std::make_shared<BlockParticle>();
 #if PROTOCOL_VERSION > 756
@@ -200,7 +199,7 @@ namespace ProtocolCraft
 #endif
             return std::make_shared<NoDataTypedParticle>(type);
         default:
-            return nullptr;
+            throw std::runtime_error("Unable to create particle with id: " + std::to_string(static_cast<int>(type)) + ".");
         }
     }
 #else //1.12.2
@@ -208,8 +207,6 @@ namespace ProtocolCraft
     {
         switch (type)
         {
-        case ParticleType::None:
-            return nullptr;
         case ParticleType::Iconcrack:
             return std::make_shared<IconcrackParticle>();
         case ParticleType::Blockcrack:
@@ -265,7 +262,7 @@ namespace ProtocolCraft
         case ParticleType::Spit:
             return std::make_shared<NoDataTypedParticle>(type);
         default:
-            return nullptr;
+            throw std::runtime_error("Unable to create particle with id: " + std::to_string(static_cast<int>(type)) + ".");
         }
     }
 #endif

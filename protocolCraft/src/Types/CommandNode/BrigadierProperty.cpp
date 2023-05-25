@@ -17,6 +17,8 @@
 #endif
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyNone.hpp"
 
+#include <stdexcept>
+
 namespace ProtocolCraft
 {
     BrigadierProperty::~BrigadierProperty()
@@ -67,6 +69,11 @@ namespace ProtocolCraft
         {
             return std::make_shared<BrigadierPropertyRange>();
         }
+        else if (parser_identifier.GetFull() == "forge:modid" ||
+                 parser_identifier.GetFull() == "forge:enum")
+        {
+            throw std::runtime_error("Unable to create command node parser with id: " + parser_identifier.GetFull() + ". Modded protocol is not supported.");
+        }
         else
         {
             return std::make_shared<BrigadierPropertyNone>();
@@ -77,8 +84,6 @@ namespace ProtocolCraft
     {
         switch (parser_id)
         {
-        case BrigadierPropertyType::None:
-            return nullptr;
         case BrigadierPropertyType::Float:
             return std::make_shared<BrigadierPropertyFloat>();
         case BrigadierPropertyType::Double:
@@ -157,7 +162,7 @@ namespace ProtocolCraft
         case BrigadierPropertyType::Uuid:
             return std::make_shared<BrigadierPropertyNone>();
         default:
-            return nullptr;
+            throw std::runtime_error("Unable to create command node parser with id: " + std::to_string(parser_id) + ". Are you using a mod? Modded protocol is not supported.");
         }
     }
 #endif

@@ -4,6 +4,8 @@
 #include "protocolCraft/Types/Vibrations/BlockPositionSource.hpp"
 #include "protocolCraft/Types/Vibrations/EntityPositionSource.hpp"
 
+#include <stdexcept>
+
 namespace ProtocolCraft
 {
     std::shared_ptr<PositionSource> PositionSource::CreatePositionSource(const Identifier& position_source_type)
@@ -18,7 +20,7 @@ namespace ProtocolCraft
         }
         else
         {
-            throw std::runtime_error("Unknown type of PositionSource: " + position_source_type.GetName());
+            throw std::runtime_error("Unable to create position source with type: " + position_source_type.GetFull());
         }
     }
 }
