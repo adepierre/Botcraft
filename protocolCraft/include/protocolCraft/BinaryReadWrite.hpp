@@ -43,6 +43,7 @@ namespace ProtocolCraft
 
     std::vector<unsigned char> ReadByteArray(ReadIterator &iter, size_t &length, const size_t &desired_length);
     void WriteByteArray(const std::vector<unsigned char> &my_array, WriteContainer &container);
+    void WriteByteArray(const unsigned char* data, const size_t& length, WriteContainer& container);
 
     template <typename T>
     T ChangeEndianness(const T& in)

@@ -19,6 +19,7 @@ Precompiled binaries for the latest game version can be found in the [latest rel
   * [ProtocolCraft](#protocolcraft)
   * [Clients](#clients)
   * [Connection](#connection)
+  * [Mod support](#mod-support)
   * [License](#license)
 
 ## Features
@@ -51,7 +52,7 @@ Available bot behaviours includes:
 ### Not supported
 
 - Anti-cheat evasion: Botcraft actions are most of the time vanilla-like, but not human-like. Only use Botcraft on your own servers or ask permission first if you don't want your account to be banned.
-- Modded servers: Botcraft aims to be compatible with vanilla server first. When possible, modded servers are also (partially) supported, but given the large diversity of servers and mods, Botcraft does not aim to work on every possible server/mod combination.
+- Modded servers: Botcraft aims to be compatible with vanilla server first. When possible, modded servers are also (partially) supported, but given the large diversity of servers and mods, Botcraft does not aim to work on every possible server/mod combination. See [mod support](#mod-support) section for details.
 
 
 ### Nice gifs
@@ -155,6 +156,10 @@ Botcraft has multiple ``XXXClient`` classes you can inherit from depending on wh
 ## Connection
 
 Botcraft supports both servers in offline ("cracked") and online mode. If the server is in online mode, a valid Microsoft account (Mojang account are not valid anymore) owning the game is required. Detailed information about how to connect with offline or  Microsoft accounts can be found in the [wiki page](https://github.com/adepierre/Botcraft/wiki/Connection).
+
+## Mod support
+
+Botcraft is developped and tested to be compatible with vanilla servers. It might be able to connect to other servers (e.g. Fabric) if there is no mods or server only mods (e.g. performance mods). However, as soon as a mod needs to communicate with the client, things might get tricky. All the exchanges related to this mod will happen on a dedicated "registered channel", and ProtocolCraft will only expose them as raw byte arrays and you will have to implement a custom parsing/serialization code. For more details on how to do that, see the dedicated [wiki page](https://github.com/adepierre/Botcraft/wiki/Mod-support).
 
 ## License
 

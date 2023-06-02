@@ -49,6 +49,11 @@ namespace ProtocolCraft
         container.insert(container.end(), my_array.begin(), my_array.end());
     }
 
+    void WriteByteArray(const unsigned char* data, const size_t& length, WriteContainer& container)
+    {
+        container.insert(container.end(), data, data + length);
+    }
+
     template<>
     std::string ReadData(ReadIterator& iter, size_t& length)
     {

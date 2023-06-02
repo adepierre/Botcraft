@@ -1,8 +1,8 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-
-#include "protocolCraft/Utilities/PluginLoader.hpp"
+#include "protocolCraft/Utilities/Plugins/PluginLoader.hpp"
+#include "protocolCraft/Utilities/Plugins/PluginObject.hpp"
 
 namespace ProtocolCraft
 {
@@ -53,7 +53,7 @@ namespace ProtocolCraft
             raw_data = raw_data_;
         }
 
-        void SetParsedData(const std::shared_ptr<NetworkType>& parsed_data_)
+        void SetParsedData(const std::shared_ptr<PluginObject>& parsed_data_)
         {
             parsed_data = parsed_data_;
         }
@@ -69,7 +69,7 @@ namespace ProtocolCraft
             return raw_data;
         }
 
-        const std::shared_ptr<NetworkType>& GetParsedData() const
+        const std::shared_ptr<PluginObject>& GetParsedData() const
         {
             return parsed_data;
         }
@@ -87,7 +87,11 @@ namespace ProtocolCraft
             else
             {
                 raw_data.clear();
-                parsed_data->Read(iter, length);
+                unsigned long long int data_size = static_cast<unsigned long long int>(length);
+                const unsigned char* data_ptr = &(*iter);
+                parsed_data->Read(data_ptr, data_size);
+                iter += length - data_size;
+                length = static_cast<size_t>(data_size);
             }
         }
 
@@ -100,7 +104,9 @@ namespace ProtocolCraft
             }
             else
             {
-                parsed_data->Write(container);
+                unsigned long long int serialized_length = 0;
+                const unsigned char* serialized = parsed_data->Write(serialized_length);
+                WriteByteArray(serialized, static_cast<size_t>(serialized_length), container);
             }
         }
 
@@ -115,7 +121,8 @@ namespace ProtocolCraft
             }
             else
             {
-                output["data"] = parsed_data->Serialize();
+                const std::string json_serialized(parsed_data->Serialize());
+                output["data"] = Json::Parse(json_serialized);
             }
 
             return output;
@@ -124,7 +131,7 @@ namespace ProtocolCraft
     private:
         std::string identifier;
         std::vector<unsigned char> raw_data;
-        std::shared_ptr<NetworkType> parsed_data;
+        std::shared_ptr<PluginObject> parsed_data;
 
     };
 } //ProtocolCraft

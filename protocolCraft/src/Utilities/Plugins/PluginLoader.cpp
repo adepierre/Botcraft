@@ -1,9 +1,10 @@
-#include "protocolCraft/Utilities/PluginLoader.hpp"
-#include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/Plugins/PluginLoader.hpp"
+#include "protocolCraft/Utilities/Plugins/PluginObject.hpp"
 
 #include <filesystem>
 #include <functional>
 #include <unordered_map>
+#include <string_view>
 
 #ifdef _WIN32
 #define NOMINMAX
@@ -22,8 +23,8 @@ namespace ProtocolCraft
 
 		// These are the expected signatures to load from the plugins.
 		// We assume they are exposed with these names and signatures.
-		NetworkType* (*GetPluginObject)(const char* identifier) = 0;
-		void (*DestroyPluginObject)(NetworkType* object) = 0;
+		PluginObject* (*GetPluginObject)(const char* identifier) = 0;
+		void (*DestroyPluginObject)(PluginObject* object) = 0;
 
 		template<typename F>
 #ifdef _WIN32
@@ -87,7 +88,7 @@ namespace ProtocolCraft
 				}
 			}
 
-			std::shared_ptr<NetworkType> CreatePluginObject(const char* identifier)
+			std::shared_ptr<PluginObject> CreatePluginObject(const char* identifier)
 			{
 				const auto it = cached_identifier_to_plugin.find(identifier);
 				// First time we encounter this identifier
@@ -95,11 +96,11 @@ namespace ProtocolCraft
 				{
 					for (const auto& [k, v] : GetPluginObject_funcs)
 					{
-						NetworkType* ptr = v(identifier);
+						PluginObject* ptr = v(identifier);
 						if (ptr != nullptr)
 						{
 							cached_identifier_to_plugin[identifier] = k;
-							return std::shared_ptr<NetworkType>(ptr, DestroyPluginObject_funcs[k]);
+							return std::shared_ptr<PluginObject>(ptr, DestroyPluginObject_funcs[k]);
 						}
 					}
 					// No plugin for this identifier
@@ -108,10 +109,10 @@ namespace ProtocolCraft
 				// We know this identifier exists in a known plugin
 				else if (!it->second.empty())
 				{
-					NetworkType* raw_ptr = GetPluginObject_funcs[it->second](identifier);
+					PluginObject* raw_ptr = GetPluginObject_funcs[it->second](identifier);
 					if (raw_ptr != nullptr)
 					{
-						return std::shared_ptr<NetworkType>(raw_ptr, DestroyPluginObject_funcs[it->second]);
+						return std::shared_ptr<PluginObject>(raw_ptr, DestroyPluginObject_funcs[it->second]);
 					}
 				}
 				// If we reach this, we know there is no plugin with this identifier
@@ -124,14 +125,14 @@ namespace ProtocolCraft
 #else
 			std::unordered_map<std::string, void*> plugins;
 #endif
-			std::unordered_map<std::string, std::function<NetworkType* (const char*)>> GetPluginObject_funcs;
-			std::unordered_map<std::string, std::function<void(NetworkType*)>> DestroyPluginObject_funcs;
+			std::unordered_map<std::string, std::function<PluginObject* (const char*)>> GetPluginObject_funcs;
+			std::unordered_map<std::string, std::function<void(PluginObject*)>> DestroyPluginObject_funcs;
 
 			std::unordered_map<std::string, std::string> cached_identifier_to_plugin;
 		};
 	}
 
-	std::shared_ptr<NetworkType> CreateObjectFromPlugin(const char* identifier)
+	std::shared_ptr<PluginObject> CreateObjectFromPlugin(const char* identifier)
 	{
 		static Internal::PluginLoader loader;
 		return loader.CreatePluginObject(identifier);

@@ -162,7 +162,7 @@ namespace ProtocolCraft
         case BrigadierPropertyType::Uuid:
             return std::make_shared<BrigadierPropertyNone>();
         default:
-            throw std::runtime_error("Unable to create command node parser with id: " + std::to_string(parser_id) + ". Are you using a mod? Modded protocol is not supported.");
+            throw std::runtime_error("Unable to create command node parser with id: " + std::to_string(static_cast<int>(parser_id)) + ". Are you using a mod? Modded protocol is not supported.");
         }
     }
 #endif

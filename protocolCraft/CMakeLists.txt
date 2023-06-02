@@ -317,9 +317,11 @@ set(protocolCraft_PUBLIC_HDR
 
     include/protocolCraft/Utilities/GZip.hpp
     include/protocolCraft/Utilities/Json.hpp
-    include/protocolCraft/Utilities/PluginLoader.hpp
     include/protocolCraft/Utilities/RecursiveWrapper.hpp
     include/protocolCraft/Utilities/TupleCat.hpp
+
+    include/protocolCraft/Utilities/Plugins/PluginLoader.hpp
+    include/protocolCraft/Utilities/Plugins/PluginObject.hpp
 )
 
 set(protocolCraft_SRC 
@@ -355,7 +357,8 @@ set(protocolCraft_SRC
 
     src/Utilities/GZip.cpp
     src/Utilities/Json.cpp
-    src/Utilities/PluginLoader.cpp
+
+    src/Utilities/Plugins/PluginLoader.cpp
 )
 
 # To have a nice files structure in Visual Studio
