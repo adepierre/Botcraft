@@ -88,16 +88,22 @@ namespace Botcraft
 
         void BehaviourRenderer::Init()
         {
-            std::scoped_lock<std::mutex> lock(mutex);
-            config = std::make_unique<ax::NodeEditor::Config>();
-            config->SettingsFile = nullptr;
-            config->DragButtonIndex = 3;
-            context = ax::NodeEditor::CreateEditor(config.get());
+            {
+                std::scoped_lock<std::mutex> lock(nodes_mutex);
+                config = std::make_unique<ax::NodeEditor::Config>();
+                config->SettingsFile = nullptr;
+                config->DragButtonIndex = 3;
+                context = ax::NodeEditor::CreateEditor(config.get());
+            }
+            // Nothing to init for blackboard
+            // {
+            //    std::scoped_lock<std::mutex> lock(blackboard_mutex);
+            // }
         }
 
-        void BehaviourRenderer::Render()
+        void BehaviourRenderer::RenderNodes()
         {
-            std::scoped_lock<std::mutex> lock(mutex);
+            std::scoped_lock<std::mutex> lock(nodes_mutex);
             if (context == nullptr)
             {
                 return;
@@ -253,29 +259,45 @@ namespace Botcraft
             ax::NodeEditor::SetCurrentEditor(nullptr);
         }
 
+        void BehaviourRenderer::RenderBlackboard()
+        {
+            std::scoped_lock<std::mutex> lock(blackboard_mutex);
+            for (const auto& [k, v] : blackboard)
+            {
+                ImGui::Text("%s: %s", k.c_str(), v.c_str());
+            }
+        }
+
         void BehaviourRenderer::CleanUp()
         {
-            std::scoped_lock<std::mutex> lock(mutex);
-            ax::NodeEditor::DestroyEditor(context);
-            context = nullptr;
-            config.reset();
-            nodes.clear();
-            active_node = nullptr;
-            recompute_node_position = true;
-            paused = false;
-            step = false;
+            {
+                std::scoped_lock<std::mutex> lock(nodes_mutex);
+                ax::NodeEditor::DestroyEditor(context);
+                context = nullptr;
+                config.reset();
+                nodes.clear();
+                active_node = nullptr;
+                recompute_node_position = true;
+                paused = false;
+                step = false;
+            }
+
+            {
+                std::scoped_lock<std::mutex> lock(blackboard_mutex);
+                blackboard.clear();
+            }
         }
 
         void BehaviourRenderer::SetCurrentBehaviourTree(const BaseNode* root)
         {
-            std::scoped_lock<std::mutex> lock(mutex);
+            std::scoped_lock<std::mutex> lock(nodes_mutex);
             nodes = UnrollTreeStructure(root);
             recompute_node_position = true;
         }
 
         void BehaviourRenderer::ResetBehaviourState()
         {
-            std::scoped_lock<std::mutex> lock(mutex);
+            std::scoped_lock<std::mutex> lock(nodes_mutex);
             for (const auto& node : nodes)
             {
                 node->status = ImNodeStatus::Idle;
@@ -286,7 +308,7 @@ namespace Botcraft
 
         void BehaviourRenderer::BehaviourStartTick()
         {
-            std::scoped_lock<std::mutex> lock(mutex);
+            std::scoped_lock<std::mutex> lock(nodes_mutex);
             if (active_node != nullptr)
             {
                 active_node->status = ImNodeStatus::Running;
@@ -322,7 +344,7 @@ namespace Botcraft
 
         void BehaviourRenderer::BehaviourEndTick(const bool b)
         {
-            std::scoped_lock<std::mutex> lock(mutex);
+            std::scoped_lock<std::mutex> lock(nodes_mutex);
             if (active_node != nullptr)
             {
                 active_node->status = b ? ImNodeStatus::Success : ImNodeStatus::Failure;
@@ -335,7 +357,7 @@ namespace Botcraft
 
         void BehaviourRenderer::BehaviourTickChild(const size_t i)
         {
-            std::scoped_lock<std::mutex> lock(mutex);
+            std::scoped_lock<std::mutex> lock(nodes_mutex);
             if (active_node != nullptr)
             {
                 active_node = active_node->children[i];
@@ -344,7 +366,7 @@ namespace Botcraft
 
         bool BehaviourRenderer::IsBehaviourPaused() const
         {
-            std::scoped_lock<std::mutex> lock(mutex);
+            std::scoped_lock<std::mutex> lock(nodes_mutex);
             return paused;
         }
 
@@ -901,6 +923,40 @@ namespace Botcraft
                 ToggleNodeVisibility(node->children[i], b);
             }
         }
-    }
+
+        void BehaviourRenderer::ResetBlackboard()
+        {
+            std::scoped_lock<std::mutex> lock(blackboard_mutex);
+            blackboard = {};
+        }
+
+        void BehaviourRenderer::UpdateBlackboardValue(const std::string& key, const std::any& value)
+        {
+            std::scoped_lock<std::mutex> lock(blackboard_mutex);
+            // TODO: something cleaner would be nice
+            if (!value.has_value())
+            {
+                blackboard[key] = "empty";
+            }
+            else if (value.type() == typeid(std::string))
+            {
+                blackboard[key] = std::any_cast<std::string>(value);
+            }
+            else if (value.type() == typeid(const char*))
+            {
+                blackboard[key] = std::any_cast<const char*>(value);
+            }
+            else
+            {
+                blackboard[key] = value.type().name();
+            }
+        }
+
+        void BehaviourRenderer::RemoveBlackboardValue(const std::string& key)
+        {
+            std::scoped_lock<std::mutex> lock(blackboard_mutex);
+            blackboard.erase(key);
+        }
+}
 }
 #endif

@@ -229,10 +229,18 @@ namespace Botcraft
                 // Draw the behaviour if it's open
                 if (behaviour_open)
                 {
+                    const int blackboard_width = static_cast<int>((static_cast<float>(current_window_width) - 30.0f) / 5.0f);
+
                     ImGui::SetNextWindowPos(ImVec2(15.0f, 15.0f), 0, ImVec2(0.0f, 0.0f));
-                    ImGui::SetNextWindowSize(ImVec2(current_window_width - 30.0f, current_window_height - 30.0f));
+                    ImGui::SetNextWindowSize(ImVec2(blackboard_width, current_window_height - 30.0f));
+                    ImGui::Begin("Blackboard", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoCollapse);
+                    behaviour_renderer->RenderBlackboard();
+                    ImGui::End();
+
+                    ImGui::SetNextWindowPos(ImVec2(15.0f + blackboard_width, 15.0f), 0, ImVec2(0.0f, 0.0f));
+                    ImGui::SetNextWindowSize(ImVec2(current_window_width - blackboard_width - 30.0f, current_window_height - 30.0f));
                     ImGui::Begin("Behaviour", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-                    behaviour_renderer->Render();
+                    behaviour_renderer->RenderNodes();
                     ImGui::End();
                 }
 
@@ -379,6 +387,21 @@ namespace Botcraft
         bool RenderingManager::IsBehaviourGUIPaused() const
         {
             return behaviour_renderer->IsBehaviourPaused();
+        }
+
+        void RenderingManager::ResetBlackboard() const
+        {
+            behaviour_renderer->ResetBlackboard();
+        }
+
+        void RenderingManager::UpdateBlackboardValue(const std::string& key, const std::any& value) const
+        {
+            behaviour_renderer->UpdateBlackboardValue(key, value);
+        }
+
+        void RenderingManager::RemoveBlackboardValue(const std::string& key) const
+        {
+            behaviour_renderer->RemoveBlackboardValue(key);
         }
 
         bool RenderingManager::Init(const bool headless)

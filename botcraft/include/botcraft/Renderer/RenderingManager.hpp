@@ -7,6 +7,7 @@
 #include <memory>
 #include <thread>
 #include <condition_variable>
+#include <any>
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/Vector3.hpp"
@@ -80,6 +81,10 @@ namespace Botcraft
             void BehaviourEndTick(const bool b) const;
             void BehaviourTickChild(const size_t i) const;
             bool IsBehaviourGUIPaused() const;
+
+            void ResetBlackboard() const;
+            void UpdateBlackboardValue(const std::string& key, const std::any& value) const;
+            void RemoveBlackboardValue(const std::string& key) const;
 
 
         protected:
