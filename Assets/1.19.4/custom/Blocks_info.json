@@ -198,7 +198,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:oak_sapling",
         "render": "block",
         "solid": false,
@@ -208,7 +208,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:spruce_sapling",
         "render": "block",
         "solid": false,
@@ -218,7 +218,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:birch_sapling",
         "render": "block",
         "solid": false,
@@ -228,7 +228,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:jungle_sapling",
         "render": "block",
         "solid": false,
@@ -238,7 +238,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:acacia_sapling",
         "render": "block",
         "solid": false,
@@ -248,7 +248,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dark_oak_sapling",
         "render": "block",
         "solid": false,
@@ -637,7 +637,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             },
             "hoe",
             {
@@ -657,7 +657,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             },
             "hoe",
             {
@@ -677,7 +677,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             },
             "hoe",
             {
@@ -697,7 +697,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             },
             "hoe",
             {
@@ -717,7 +717,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             },
             "hoe",
             {
@@ -737,7 +737,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             },
             "hoe",
             {
@@ -1057,16 +1057,16 @@
         "tools": [
             {
                 "tool": "sword",
-                "multiplier": 15.0
+                "multiplier": 15
             },
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             }
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:grass",
         "render": "block",
         "solid": false,
@@ -1078,7 +1078,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:fern",
         "render": "block",
         "solid": false,
@@ -1089,7 +1089,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_bush",
         "render": "block",
         "solid": false,
@@ -1099,7 +1099,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:seagrass",
         "render": "block",
         "solid": false,
@@ -1109,7 +1109,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:tall_seagrass",
         "render": "block",
         "solid": false,
@@ -1149,7 +1149,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1163,7 +1163,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1177,7 +1177,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1191,7 +1191,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1205,7 +1205,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1219,7 +1219,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1233,7 +1233,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1247,7 +1247,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1261,7 +1261,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1275,7 +1275,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1289,7 +1289,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1303,7 +1303,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1317,7 +1317,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1331,7 +1331,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1345,7 +1345,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1359,7 +1359,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 5.0
+                "multiplier": 5
             }
         ]
     },
@@ -1371,7 +1371,7 @@
         "transparent": false
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dandelion",
         "render": "block",
         "solid": false,
@@ -1381,7 +1381,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:poppy",
         "render": "block",
         "solid": false,
@@ -1391,7 +1391,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:blue_orchid",
         "render": "block",
         "solid": false,
@@ -1401,7 +1401,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:allium",
         "render": "block",
         "solid": false,
@@ -1411,7 +1411,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:azure_bluet",
         "render": "block",
         "solid": false,
@@ -1421,7 +1421,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:red_tulip",
         "render": "block",
         "solid": false,
@@ -1431,7 +1431,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:orange_tulip",
         "render": "block",
         "solid": false,
@@ -1441,7 +1441,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:white_tulip",
         "render": "block",
         "solid": false,
@@ -1451,7 +1451,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:pink_tulip",
         "render": "block",
         "solid": false,
@@ -1461,7 +1461,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:oxeye_daisy",
         "render": "block",
         "solid": false,
@@ -1471,7 +1471,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:cornflower",
         "render": "block",
         "solid": false,
@@ -1481,7 +1481,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:wither_rose",
         "render": "block",
         "solid": false,
@@ -1491,7 +1491,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:lily_of_the_valley",
         "render": "block",
         "solid": false,
@@ -1501,7 +1501,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:brown_mushroom",
         "render": "block",
         "solid": false,
@@ -1511,7 +1511,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:red_mushroom",
         "render": "block",
         "solid": false,
@@ -1557,7 +1557,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:tnt",
         "render": "block",
         "solid": true,
@@ -1601,7 +1601,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:torch",
         "render": "block",
         "solid": false,
@@ -1611,7 +1611,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:wall_torch",
         "render": "block",
         "solid": false,
@@ -1673,7 +1673,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:redstone_wire",
         "render": "block",
         "solid": false,
@@ -1721,7 +1721,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:wheat",
         "render": "block",
         "solid": false,
@@ -2037,7 +2037,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:redstone_torch",
         "render": "block",
         "solid": false,
@@ -2047,7 +2047,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:redstone_wall_torch",
         "render": "block",
         "solid": false,
@@ -2120,7 +2120,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:sugar_cane",
         "render": "block",
         "solid": false,
@@ -2215,7 +2215,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:soul_torch",
         "render": "block",
         "solid": false,
@@ -2225,7 +2225,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:soul_wall_torch",
         "render": "block",
         "solid": false,
@@ -2284,7 +2284,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:repeater",
         "render": "block",
         "solid": false,
@@ -2700,7 +2700,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:attached_pumpkin_stem",
         "render": "block",
         "solid": false,
@@ -2710,7 +2710,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:attached_melon_stem",
         "render": "block",
         "solid": false,
@@ -2720,7 +2720,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:pumpkin_stem",
         "render": "block",
         "solid": false,
@@ -2730,7 +2730,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:melon_stem",
         "render": "block",
         "solid": false,
@@ -2751,7 +2751,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 1.0
+                "multiplier": 1
             },
             {
                 "tool": "sword",
@@ -2803,7 +2803,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:lily_pad",
         "render": "block",
         "solid": true,
@@ -2844,7 +2844,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:nether_wart",
         "render": "block",
         "solid": false,
@@ -2972,7 +2972,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:tripwire_hook",
         "render": "block",
         "solid": false,
@@ -2982,7 +2982,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:tripwire",
         "render": "block",
         "solid": false,
@@ -3075,7 +3075,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:flower_pot",
         "render": "block",
         "solid": true,
@@ -3085,7 +3085,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_oak_sapling",
         "render": "block",
         "solid": true,
@@ -3095,7 +3095,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_spruce_sapling",
         "render": "block",
         "solid": true,
@@ -3105,7 +3105,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_birch_sapling",
         "render": "block",
         "solid": true,
@@ -3115,7 +3115,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_jungle_sapling",
         "render": "block",
         "solid": true,
@@ -3125,7 +3125,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_acacia_sapling",
         "render": "block",
         "solid": true,
@@ -3135,7 +3135,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_dark_oak_sapling",
         "render": "block",
         "solid": true,
@@ -3145,7 +3145,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_fern",
         "render": "block",
         "solid": true,
@@ -3156,7 +3156,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_dandelion",
         "render": "block",
         "solid": true,
@@ -3166,7 +3166,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_poppy",
         "render": "block",
         "solid": true,
@@ -3176,7 +3176,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_blue_orchid",
         "render": "block",
         "solid": true,
@@ -3186,7 +3186,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_allium",
         "render": "block",
         "solid": true,
@@ -3196,7 +3196,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_azure_bluet",
         "render": "block",
         "solid": true,
@@ -3206,7 +3206,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_red_tulip",
         "render": "block",
         "solid": true,
@@ -3216,7 +3216,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_orange_tulip",
         "render": "block",
         "solid": true,
@@ -3226,7 +3226,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_white_tulip",
         "render": "block",
         "solid": true,
@@ -3236,7 +3236,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_pink_tulip",
         "render": "block",
         "solid": true,
@@ -3246,7 +3246,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_oxeye_daisy",
         "render": "block",
         "solid": true,
@@ -3256,7 +3256,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_cornflower",
         "render": "block",
         "solid": true,
@@ -3266,7 +3266,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_lily_of_the_valley",
         "render": "block",
         "solid": true,
@@ -3276,7 +3276,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_wither_rose",
         "render": "block",
         "solid": true,
@@ -3286,7 +3286,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_red_mushroom",
         "render": "block",
         "solid": true,
@@ -3296,7 +3296,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_brown_mushroom",
         "render": "block",
         "solid": true,
@@ -3306,7 +3306,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_dead_bush",
         "render": "block",
         "solid": true,
@@ -3316,7 +3316,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_cactus",
         "render": "block",
         "solid": true,
@@ -3326,7 +3326,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:carrots",
         "render": "block",
         "solid": false,
@@ -3336,7 +3336,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potatoes",
         "render": "block",
         "solid": false,
@@ -3593,7 +3593,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:comparator",
         "render": "block",
         "solid": false,
@@ -4047,7 +4047,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:slime_block",
         "render": "block",
         "solid": true,
@@ -4376,7 +4376,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:sunflower",
         "render": "block",
         "solid": false,
@@ -4386,7 +4386,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:lilac",
         "render": "block",
         "solid": false,
@@ -4396,7 +4396,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:rose_bush",
         "render": "block",
         "solid": false,
@@ -4406,7 +4406,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:peony",
         "render": "block",
         "solid": false,
@@ -4416,7 +4416,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:tall_grass",
         "render": "block",
         "solid": false,
@@ -4427,7 +4427,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:large_fern",
         "render": "block",
         "solid": false,
@@ -5232,7 +5232,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:end_rod",
         "render": "block",
         "solid": true,
@@ -5304,7 +5304,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:beetroots",
         "render": "block",
         "solid": false,
@@ -6087,7 +6087,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:kelp",
         "render": "block",
         "solid": false,
@@ -6097,7 +6097,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:kelp_plant",
         "render": "block",
         "solid": false,
@@ -6238,7 +6238,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_tube_coral",
         "render": "block",
         "solid": false,
@@ -6248,7 +6248,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_brain_coral",
         "render": "block",
         "solid": false,
@@ -6258,7 +6258,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_bubble_coral",
         "render": "block",
         "solid": false,
@@ -6268,7 +6268,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_fire_coral",
         "render": "block",
         "solid": false,
@@ -6278,7 +6278,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_horn_coral",
         "render": "block",
         "solid": false,
@@ -6288,7 +6288,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:tube_coral",
         "render": "block",
         "solid": false,
@@ -6298,7 +6298,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:brain_coral",
         "render": "block",
         "solid": false,
@@ -6308,7 +6308,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:bubble_coral",
         "render": "block",
         "solid": false,
@@ -6318,7 +6318,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:fire_coral",
         "render": "block",
         "solid": false,
@@ -6328,7 +6328,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:horn_coral",
         "render": "block",
         "solid": false,
@@ -6338,7 +6338,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_tube_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6348,7 +6348,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_brain_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6358,7 +6358,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_bubble_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6368,7 +6368,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_fire_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6378,7 +6378,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_horn_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6388,7 +6388,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:tube_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6398,7 +6398,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:brain_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6408,7 +6408,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:bubble_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6418,7 +6418,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:fire_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6428,7 +6428,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:horn_coral_wall_fan",
         "render": "block",
         "solid": false,
@@ -6438,7 +6438,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_tube_coral_fan",
         "render": "block",
         "solid": false,
@@ -6448,7 +6448,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_brain_coral_fan",
         "render": "block",
         "solid": false,
@@ -6458,7 +6458,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_bubble_coral_fan",
         "render": "block",
         "solid": false,
@@ -6468,7 +6468,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_fire_coral_fan",
         "render": "block",
         "solid": false,
@@ -6478,7 +6478,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:dead_horn_coral_fan",
         "render": "block",
         "solid": false,
@@ -6488,7 +6488,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:tube_coral_fan",
         "render": "block",
         "solid": false,
@@ -6498,7 +6498,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:brain_coral_fan",
         "render": "block",
         "solid": false,
@@ -6508,7 +6508,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:bubble_coral_fan",
         "render": "block",
         "solid": false,
@@ -6518,7 +6518,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:fire_coral_fan",
         "render": "block",
         "solid": false,
@@ -6528,7 +6528,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:horn_coral_fan",
         "render": "block",
         "solid": false,
@@ -6538,7 +6538,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:sea_pickle",
         "render": "block",
         "solid": true,
@@ -6569,7 +6569,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:bamboo_sapling",
         "render": "block",
         "solid": false,
@@ -6579,7 +6579,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:bamboo",
         "render": "block",
         "solid": true,
@@ -6589,12 +6589,12 @@
             "axe",
             {
                 "tool": "sword",
-                "multiplier": 30.0
+                "multiplier": 30
             }
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_bamboo",
         "render": "block",
         "solid": true,
@@ -7015,7 +7015,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:scaffolding",
         "render": "block",
         "solid": false,
@@ -7184,7 +7184,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:sweet_berry_bush",
         "render": "block",
         "solid": false,
@@ -7248,7 +7248,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:warped_fungus",
         "render": "block",
         "solid": false,
@@ -7269,7 +7269,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:warped_roots",
         "render": "block",
         "solid": false,
@@ -7279,7 +7279,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:nether_sprouts",
         "render": "block",
         "solid": false,
@@ -7343,7 +7343,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:crimson_fungus",
         "render": "block",
         "solid": false,
@@ -7364,7 +7364,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:weeping_vines",
         "render": "block",
         "solid": false,
@@ -7375,7 +7375,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:weeping_vines_plant",
         "render": "block",
         "solid": false,
@@ -7386,7 +7386,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:twisting_vines",
         "render": "block",
         "solid": false,
@@ -7397,7 +7397,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:twisting_vines_plant",
         "render": "block",
         "solid": false,
@@ -7408,7 +7408,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:crimson_roots",
         "render": "block",
         "solid": false,
@@ -7718,7 +7718,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:honey_block",
         "render": "block",
         "solid": true,
@@ -7790,7 +7790,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_crimson_fungus",
         "render": "block",
         "solid": true,
@@ -7800,7 +7800,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_warped_fungus",
         "render": "block",
         "solid": true,
@@ -7810,7 +7810,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_crimson_roots",
         "render": "block",
         "solid": true,
@@ -7820,7 +7820,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_warped_roots",
         "render": "block",
         "solid": true,
@@ -8090,7 +8090,7 @@
             },
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             }
         ]
     },
@@ -8109,7 +8109,7 @@
             },
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             }
         ]
     },
@@ -8162,12 +8162,12 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 1.0
+                "multiplier": 1
             }
         ]
     },
     {
-        "hardness": 2.0,
+        "hardness": 2,
         "name": "minecraft:water_cauldron",
         "render": "block",
         "solid": true,
@@ -8177,7 +8177,7 @@
         ]
     },
     {
-        "hardness": 2.0,
+        "hardness": 2,
         "name": "minecraft:lava_cauldron",
         "render": "block",
         "solid": true,
@@ -8187,7 +8187,7 @@
         ]
     },
     {
-        "hardness": 2.0,
+        "hardness": 2,
         "name": "minecraft:powder_snow_cauldron",
         "render": "block",
         "solid": true,
@@ -8680,7 +8680,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:oxidized_copper",
         "render": "block",
         "solid": true,
@@ -8693,7 +8693,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:weathered_copper",
         "render": "block",
         "solid": true,
@@ -8706,7 +8706,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:exposed_copper",
         "render": "block",
         "solid": true,
@@ -8719,7 +8719,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:copper_block",
         "render": "block",
         "solid": true,
@@ -8732,7 +8732,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:copper_ore",
         "render": "block",
         "solid": true,
@@ -8758,7 +8758,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:oxidized_cut_copper",
         "render": "block",
         "solid": true,
@@ -8771,7 +8771,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:weathered_cut_copper",
         "render": "block",
         "solid": true,
@@ -8784,7 +8784,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:exposed_cut_copper",
         "render": "block",
         "solid": true,
@@ -8797,7 +8797,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:cut_copper",
         "render": "block",
         "solid": true,
@@ -8810,7 +8810,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:oxidized_cut_copper_stairs",
         "render": "block",
         "solid": true,
@@ -8823,7 +8823,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:weathered_cut_copper_stairs",
         "render": "block",
         "solid": true,
@@ -8836,7 +8836,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:exposed_cut_copper_stairs",
         "render": "block",
         "solid": true,
@@ -8849,7 +8849,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:cut_copper_stairs",
         "render": "block",
         "solid": true,
@@ -8862,7 +8862,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:oxidized_cut_copper_slab",
         "render": "block",
         "solid": true,
@@ -8875,7 +8875,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:weathered_cut_copper_slab",
         "render": "block",
         "solid": true,
@@ -8888,7 +8888,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:exposed_cut_copper_slab",
         "render": "block",
         "solid": true,
@@ -8901,7 +8901,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:cut_copper_slab",
         "render": "block",
         "solid": true,
@@ -8914,7 +8914,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_copper_block",
         "render": "block",
         "solid": true,
@@ -8927,7 +8927,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_weathered_copper",
         "render": "block",
         "solid": true,
@@ -8940,7 +8940,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_exposed_copper",
         "render": "block",
         "solid": true,
@@ -8953,7 +8953,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_oxidized_copper",
         "render": "block",
         "solid": true,
@@ -8966,7 +8966,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_oxidized_cut_copper",
         "render": "block",
         "solid": true,
@@ -8979,7 +8979,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_weathered_cut_copper",
         "render": "block",
         "solid": true,
@@ -8992,7 +8992,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_exposed_cut_copper",
         "render": "block",
         "solid": true,
@@ -9005,7 +9005,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_cut_copper",
         "render": "block",
         "solid": true,
@@ -9018,7 +9018,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_oxidized_cut_copper_stairs",
         "render": "block",
         "solid": true,
@@ -9031,7 +9031,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_weathered_cut_copper_stairs",
         "render": "block",
         "solid": true,
@@ -9044,7 +9044,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_exposed_cut_copper_stairs",
         "render": "block",
         "solid": true,
@@ -9057,7 +9057,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_cut_copper_stairs",
         "render": "block",
         "solid": true,
@@ -9070,7 +9070,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_oxidized_cut_copper_slab",
         "render": "block",
         "solid": true,
@@ -9083,7 +9083,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_weathered_cut_copper_slab",
         "render": "block",
         "solid": true,
@@ -9096,7 +9096,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_exposed_cut_copper_slab",
         "render": "block",
         "solid": true,
@@ -9109,7 +9109,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:waxed_cut_copper_slab",
         "render": "block",
         "solid": true,
@@ -9122,7 +9122,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:lightning_rod",
         "render": "block",
         "solid": true,
@@ -9166,7 +9166,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:cave_vines_plant",
         "render": "block",
         "solid": false,
@@ -9177,7 +9177,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:spore_blossom",
         "render": "block",
         "solid": false,
@@ -9187,7 +9187,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:azalea",
         "render": "block",
         "solid": true,
@@ -9197,7 +9197,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:flowering_azalea",
         "render": "block",
         "solid": true,
@@ -9250,7 +9250,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:small_dripleaf",
         "render": "block",
         "solid": false,
@@ -9281,7 +9281,7 @@
         ]
     },
     {
-        "hardness": 3.0,
+        "hardness": 3,
         "name": "minecraft:deepslate",
         "render": "block",
         "solid": true,
@@ -9502,7 +9502,7 @@
         ]
     },
     {
-        "hardness": 5.0,
+        "hardness": 5,
         "name": "minecraft:raw_iron_block",
         "render": "block",
         "solid": true,
@@ -9515,7 +9515,7 @@
         ]
     },
     {
-        "hardness": 5.0,
+        "hardness": 5,
         "name": "minecraft:raw_copper_block",
         "render": "block",
         "solid": true,
@@ -9528,7 +9528,7 @@
         ]
     },
     {
-        "hardness": 5.0,
+        "hardness": 5,
         "name": "minecraft:raw_gold_block",
         "render": "block",
         "solid": true,
@@ -9541,7 +9541,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_azalea_bush",
         "render": "block",
         "solid": true,
@@ -9551,7 +9551,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_flowering_azalea_bush",
         "render": "block",
         "solid": true,
@@ -9561,7 +9561,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:frogspawn",
         "render": "block",
         "solid": false,
@@ -9630,7 +9630,7 @@
             },
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             }
         ]
     },
@@ -10381,7 +10381,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:cherry_sapling",
         "render": "block",
         "solid": false,
@@ -10456,7 +10456,7 @@
             "any",
             {
                 "tool": "shears",
-                "multiplier": 15.0
+                "multiplier": 15
             },
             "hoe",
             {
@@ -10466,7 +10466,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:torchflower",
         "render": "block",
         "solid": false,
@@ -10542,7 +10542,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_torchflower",
         "render": "block",
         "solid": true,
@@ -10552,7 +10552,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:potted_cherry_sapling",
         "render": "block",
         "solid": true,
@@ -10628,7 +10628,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:torchflower_crop",
         "render": "block",
         "solid": false,
@@ -10638,7 +10638,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:pink_petals",
         "render": "block",
         "solid": false,
@@ -10648,7 +10648,7 @@
         ]
     },
     {
-        "hardness": 0.0,
+        "hardness": 0,
         "name": "minecraft:decorated_pot",
         "render": "block",
         "solid": true,
