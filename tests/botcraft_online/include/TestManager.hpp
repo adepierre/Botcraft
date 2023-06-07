@@ -42,9 +42,9 @@ public:
     const Botcraft::Position& GetCurrentOffset() const;
 
 #if PROTOCOL_VERSION > 340
-    void SetBlock(const std::string& name, const Botcraft::Position& pos, const std::map<std::string, std::string>& blockstates = {}, const std::map<std::string, std::string>& metadata = {}) const;
+    void SetBlock(const std::string& name, const Botcraft::Position& pos, const std::map<std::string, std::string>& blockstates = {}, const std::map<std::string, std::string>& metadata = {}, const bool escape_metadata = true) const;
 #else
-    void SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant = 0, const std::map<std::string, std::string>& metadata = {}) const;
+    void SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant = 0, const std::map<std::string, std::string>& metadata = {}, const bool escape_metadata = true) const;
 #endif
 
     /// @brief Create a book with given content at pos

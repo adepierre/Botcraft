@@ -118,7 +118,7 @@ TEST_CASE("biomes")
 			<< end_pos.z << " "
 			<< "desert";
 		MinecraftServer::GetInstance().SendLine(command.str());
-		MinecraftServer::GetInstance().WaitLine(".* biome entries set between .*");
+		MinecraftServer::GetInstance().WaitLine(".* biome (?:entry/)?entries set between .*", 2000);
 
 		int biome_id;
 		const Botcraft::Biome* biome;
@@ -133,7 +133,11 @@ TEST_CASE("biomes")
 #endif
 }
 
+#if PROTOCOL_VERSION < 763
 TEST_CASE("block entity")
+#else
+TEST_CASE("block entity 1_20")
+#endif
 {
 	std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot();
 
@@ -143,11 +147,23 @@ TEST_CASE("block entity")
 	REQUIRE_NOTHROW(nbt = bot->GetWorld()->GetBlockEntityData(TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1)));
 
 	std::vector<std::string> expected_lines = { "Hello", "world", "", "!" };
+#if PROTOCOL_VERSION > 762
+	std::vector<std::string> expected_lines_back = { "Hello", "back", "", "!" };
+#endif
 
 	for (size_t i = 0; i < expected_lines.size(); ++i)
 	{
+#if PROTOCOL_VERSION < 763
 		const std::string& line = (*nbt)["Text" + std::to_string(i+1)].get<std::string>();
 		const ProtocolCraft::Json::Value content = ProtocolCraft::Json::Parse(line);
 		CHECK(content["text"].get_string() == expected_lines[i]);
+#else
+		const std::string& front_line = (*nbt)["front_text"]["messages"].as_list_of<std::string>()[i];
+		const std::string& back_line = (*nbt)["back_text"]["messages"].as_list_of<std::string>()[i];
+		const ProtocolCraft::Json::Value front_content = ProtocolCraft::Json::Parse(front_line);
+		const ProtocolCraft::Json::Value back_content = ProtocolCraft::Json::Parse(back_line);
+		CHECK(front_content["text"].get_string() == expected_lines[i]);
+		CHECK(back_content["text"].get_string() == expected_lines_back[i]);
+#endif
 	}
 }

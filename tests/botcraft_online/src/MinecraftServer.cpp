@@ -117,6 +117,8 @@ std::vector<std::string> MinecraftServer::WaitLine(const std::string& regex, con
         return { "" };
     }
 
+    std::chrono::steady_clock::time_point time_check = std::chrono::steady_clock::now();
+    const std::chrono::steady_clock::time_point start = time_check;
     std::vector<std::string> output;
     if (Botcraft::WaitForCondition([&]()
         {
@@ -141,6 +143,15 @@ std::vector<std::string> MinecraftServer::WaitLine(const std::string& regex, con
                     }
                     LOG_DEBUG("Line caught using regex [" << regex << "]:\n" << line);
                     return true;
+                }
+            }
+            if (timeout_ms == 0)
+            {
+                std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+                if (std::chrono::duration_cast<std::chrono::seconds>(now - time_check).count() > 30)
+                {
+                    time_check = now;
+                    LOG_WARNING("Waiting for a server line matching [" << regex << "] since " << std::chrono::duration_cast<std::chrono::seconds>(now - start).count() << " seconds. Infinite loop?");
                 }
             }
             return false;

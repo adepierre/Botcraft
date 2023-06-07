@@ -40,9 +40,9 @@ const Botcraft::Position& TestManager::GetCurrentOffset() const
 }
 
 #if PROTOCOL_VERSION > 340
-void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const std::map<std::string, std::string>& blockstates, const std::map<std::string, std::string>& metadata) const
+void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const std::map<std::string, std::string>& blockstates, const std::map<std::string, std::string>& metadata, const bool escape_metadata) const
 #else
-void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant, const std::map<std::string, std::string>& metadata) const
+void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant, const std::map<std::string, std::string>& metadata, const bool escape_metadata) const
 #endif
 {
 	MakeSureLoaded(pos);
@@ -89,9 +89,11 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
 		for (const auto& [k, v] : metadata)
 		{
 			command << k << ":";
-			if (v.find(' ') != std::string::npos ||
-				v.find(',') != std::string::npos ||
-				v.find(':') != std::string::npos)
+			if (escape_metadata &&
+				(v.find(' ') != std::string::npos ||
+				 v.find(',') != std::string::npos ||
+				 v.find(':') != std::string::npos)
+				)
 			{
 				// Make sure the whole string is between quotes and all internal quotes are escaped
 				command << "\"" << ReplaceCharacters(v) << "\"";
@@ -294,7 +296,12 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 		text_color = "gold";
 		break;
 	}
+#if PROTOCOL_VERSION < 763
 	std::map<std::string, std::string> lines;
+#else
+	std::vector<std::string> lines;
+	lines.reserve(4);
+#endif
 	for (size_t i = 0; i < std::min(texts.size(), static_cast<size_t>(4)); ++i)
 	{
 		std::stringstream line;
@@ -325,7 +332,11 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 				<< "\"color\"" << ":" << "\"" << text_color << "\"";
 		}
 		line << "}";
+#if PROTOCOL_VERSION < 763
 		lines.insert({ "Text" + std::to_string(i + 1), line.str() });
+#else
+		lines.push_back(line.str());
+#endif
 	}
 	// There is a bug in version 1.14 (and prereleases) that requires all 4 lines
 	// to be specified or the server can't read the text. See: https://bugs.mojang.com/browse/MC-144316
@@ -334,6 +345,27 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 	{
 		lines.insert({ "Text" + std::to_string(i + 1), "{\"text\":\"\"}" });
 	}
+#endif
+#if PROTOCOL_VERSION > 762 // In 1.20 texts are sent as a list with exactly 4 elements
+	std::stringstream text_content;
+	text_content << "{\"messages\":[";
+	for (size_t i = 0; i < 4ULL; ++i)
+	{
+		if (i < lines.size())
+		{
+			text_content << "\"" << ReplaceCharacters(lines[i]) << "\"";
+		}
+		else
+		{
+			text_content << "\"" << ReplaceCharacters("{\"text\":\"\"}") << "\"";
+		}
+		if (i != 3ULL)
+		{
+			text_content << ",";
+		}
+	}
+	text_content << "]}";
+	const std::string text_content_str = text_content.str();
 #endif
 
 	SetBlock(
@@ -352,7 +384,16 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 #else
 		block_rotation,
 #endif
+#if PROTOCOL_VERSION < 763
 		lines
+#else
+		{
+			{ "is_waxed", "true" },
+			{ "front_text", text_content_str },
+			{ "back_text", text_content_str },
+		},
+		false
+#endif
 	);
 }
 
