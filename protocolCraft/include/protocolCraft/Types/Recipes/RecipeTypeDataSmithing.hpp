@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 732
+#if PROTOCOL_VERSION > 732 && PROTOCOL_VERSION < 763
 #include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #include "protocolCraft/Types/Slot.hpp"

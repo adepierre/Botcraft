@@ -21,6 +21,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x34;
 #elif PROTOCOL_VERSION == 762 // 1.19.4
         static constexpr int packet_id = 0x38;
+#elif PROTOCOL_VERSION == 763 // 1.20
+        static constexpr int packet_id = 0x38;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -37,10 +39,12 @@ namespace ProtocolCraft
             player_id = player_id_;
         }
 
+#if PROTOCOL_VERSION < 763
         void SetKillerId(const int killer_id_)
         {
             killer_id = killer_id_;
         }
+#endif
 
         void SetMessage(const Chat& message_)
         {
@@ -54,10 +58,12 @@ namespace ProtocolCraft
             return player_id;
         }
 
+#if PROTOCOL_VERSION < 763
         int GetKillerId() const
         {
             return killer_id;
         }
+#endif
 
         const Chat& GetMessage() const
         {
@@ -69,14 +75,18 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             player_id = ReadData<VarInt>(iter, length);
+#if PROTOCOL_VERSION < 763
             killer_id = ReadData<int>(iter, length);
+#endif
             message = ReadData<Chat>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(player_id, container);
+#if PROTOCOL_VERSION < 763
             WriteData<int>(killer_id, container);
+#endif
             WriteData<Chat>(message, container);
         }
 
@@ -85,7 +95,9 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["player_id"] = player_id;
+#if PROTOCOL_VERSION < 763
             output["killer_id"] = killer_id;
+#endif
             output["message"] = message;
 
             return output;
@@ -93,7 +105,9 @@ namespace ProtocolCraft
 
     private:
         int player_id;
+#if PROTOCOL_VERSION < 763
         int killer_id;
+#endif
         Chat message;
 
     };

@@ -55,10 +55,13 @@ namespace ProtocolCraft
         Firework,
         Fishing,
         Flame,
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 && PROTOCOL_VERSION < 763
         DrippingCherryLeaves,
         FallingCherryLeaves,
         LandingCherryLeaves,
+#endif
+#if PROTOCOL_VERSION > 762
+        CherryLeaves,
 #endif
 #if PROTOCOL_VERSION > 758
         SculkSoul,
@@ -151,6 +154,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
         Shriek,
+#endif
+#if PROTOCOL_VERSION > 762
+        EggCrack,
 #endif
     };
 #else

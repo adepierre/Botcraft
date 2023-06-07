@@ -35,6 +35,13 @@ namespace ProtocolCraft
             requirements = requirements_;
         }
 
+#if PROTOCOL_VERSION > 762
+        void SetSendsTelemetryEvent(const bool sends_telemetry_event_)
+        {
+            sends_telemetry_event = sends_telemetry_event_;
+        }
+#endif
+
 
         const std::optional<Identifier>& GetParentId() const
         {
@@ -56,6 +63,13 @@ namespace ProtocolCraft
             return requirements;
         }
 
+#if PROTOCOL_VERSION > 762
+        bool GetSendsTelemetryEvent() const
+        {
+            return sends_telemetry_event;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
@@ -68,6 +82,9 @@ namespace ProtocolCraft
                     return ReadVector<std::string>(i, l);
                 }
             );
+#if PROTOCOL_VERSION > 762
+            sends_telemetry_event = ReadData<bool>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -81,6 +98,9 @@ namespace ProtocolCraft
                     WriteVector<std::string>(v, c);
                 }
             );
+#if PROTOCOL_VERSION > 762
+            WriteData<bool>(sends_telemetry_event, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -97,6 +117,9 @@ namespace ProtocolCraft
             }
             output["criteria"] = criteria;
             output["requirements"] = requirements;
+#if PROTOCOL_VERSION > 762
+            output["sends_telemetry_event"] = sends_telemetry_event;
+#endif
 
             return output;
         }
@@ -106,5 +129,8 @@ namespace ProtocolCraft
         std::optional<AdvancementDisplay> display_data;
         std::vector<Identifier> criteria;
         std::vector<std::vector<std::string> > requirements;
+#if PROTOCOL_VERSION > 762
+        bool sends_telemetry_event;
+#endif
     };
 }

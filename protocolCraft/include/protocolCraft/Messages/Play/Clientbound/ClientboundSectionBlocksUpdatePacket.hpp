@@ -35,6 +35,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x3F;
 #elif PROTOCOL_VERSION == 762 // 1.19.4
         static constexpr int packet_id = 0x43;
+#elif PROTOCOL_VERSION == 763 // 1.20
+        static constexpr int packet_id = 0x43;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -71,10 +73,12 @@ namespace ProtocolCraft
             section_pos = section_pos_;
         }
 
+#if PROTOCOL_VERSION < 763
         void SetSuppressLightUpdates(const bool suppress_light_updates_)
         {
             suppress_light_updates = suppress_light_updates_;
         }
+#endif
 
         void SetPositions(const std::vector<short>& positions_)
         {
@@ -86,6 +90,7 @@ namespace ProtocolCraft
             states = states_;
         }
 #endif
+
 
 #if PROTOCOL_VERSION < 739
         int GetChunkX() const
@@ -113,10 +118,12 @@ namespace ProtocolCraft
             return section_pos;
         }
 
+#if PROTOCOL_VERSION < 763
         bool GetSuppressLightUpdates() const
         {
             return suppress_light_updates;
         }
+#endif
 
         const std::vector<short>& GetPositions() const
         {
@@ -145,7 +152,9 @@ namespace ProtocolCraft
             }
 #else
             section_pos = ReadData<long long int>(iter, length);
+#if PROTOCOL_VERSION < 763
             suppress_light_updates = ReadData<bool>(iter, length);
+#endif
             const int data_size = ReadData<VarInt>(iter, length);
             positions = std::vector<short>(data_size);
             states = std::vector<int>(data_size);
@@ -170,7 +179,9 @@ namespace ProtocolCraft
             }
 #else
             WriteData<long long int>(section_pos, container);
+#if PROTOCOL_VERSION < 763
             WriteData<bool>(suppress_light_updates, container);
+#endif
             WriteData<VarInt>(static_cast<int>(positions.size()), container);
             for (int i = 0; i < positions.size(); ++i)
             {
@@ -195,7 +206,9 @@ namespace ProtocolCraft
             output["records"] = records;
 #else
             output["section_pos"] = section_pos;
+#if PROTOCOL_VERSION < 763
             output["suppress_light_updates"] = suppress_light_updates;
+#endif
             output["positions"] = positions;
             output["states"] = states;
 #endif
@@ -211,7 +224,9 @@ namespace ProtocolCraft
         std::vector<Record> records;
 #else
         long long int section_pos;
+#if PROTOCOL_VERSION < 763
         bool suppress_light_updates;
+#endif
         std::vector<short> positions;
         std::vector<int> states;
 #endif

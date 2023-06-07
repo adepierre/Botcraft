@@ -39,6 +39,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x3D;
 #elif PROTOCOL_VERSION == 762 // 1.19.4
         static constexpr int packet_id = 0x41;
+#elif PROTOCOL_VERSION == 763 // 1.20
+        static constexpr int packet_id = 0x41;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -132,6 +134,14 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 762
+        void SetPortalCooldown(const int portal_cooldown_)
+        {
+            portal_cooldown = portal_cooldown_;
+        }
+#endif
+
+
 #if PROTOCOL_VERSION > 729
 #if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
         const NBT::Value& GetDimensionType() const
@@ -216,6 +226,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 762
+        int GetPortalCooldown() const
+        {
+            return portal_cooldown;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
@@ -252,6 +269,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
             last_death_location = ReadOptional<GlobalPos>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 762
+            portal_cooldown = ReadData<VarInt>(iter, length);
 #endif
         }
 
@@ -290,6 +310,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
             WriteOptional<GlobalPos>(last_death_location, container);
+#endif
+#if PROTOCOL_VERSION > 762
+            WriteData<VarInt>(portal_cooldown, container);
 #endif
         }
 
@@ -330,6 +353,9 @@ namespace ProtocolCraft
                 output["last_death_location"] = last_death_location.value();
             }
 #endif
+#if PROTOCOL_VERSION > 762
+            output["portal_cooldown"] = portal_cooldown;
+#endif
 
             return output;
     }
@@ -366,6 +392,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
         std::optional<GlobalPos> last_death_location;
+#endif
+#if PROTOCOL_VERSION > 762
+        int portal_cooldown;
 #endif
     };
 } //ProtocolCraft

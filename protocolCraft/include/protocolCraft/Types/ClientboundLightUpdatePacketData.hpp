@@ -14,10 +14,12 @@ namespace ProtocolCraft
         }
 
 
+#if PROTOCOL_VERSION < 763
         void SetTrustEdges(const bool trust_edges_)
         {
             trust_edges = trust_edges_;
         }
+#endif
 
         void SetSkyYMask(const std::vector<unsigned long long int>& sky_Y_mask_)
         {
@@ -50,10 +52,12 @@ namespace ProtocolCraft
         }
 
 
+#if PROTOCOL_VERSION < 763
         bool GetTrustEdges() const
         {
             return trust_edges;
         }
+#endif
 
         const std::vector<unsigned long long int>& GetSkyYMask() const
         {
@@ -88,7 +92,9 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
+#if PROTOCOL_VERSION < 763
             trust_edges = ReadData<bool>(iter, length);
+#endif
             
             sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
             block_Y_mask = ReadVector<unsigned long long int>(iter, length);
@@ -112,7 +118,9 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
+#if PROTOCOL_VERSION < 763
             WriteData<bool>(trust_edges, container);
+#endif
 
             WriteVector<unsigned long long int>(sky_Y_mask, container);
             WriteVector<unsigned long long int>(block_Y_mask, container);
@@ -138,7 +146,9 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
+#if PROTOCOL_VERSION < 763
             output["trust_edges"] = trust_edges;
+#endif
             output["sky_Y_mask"] = sky_Y_mask;
             output["block_Y_mask"] = block_Y_mask;
             output["empty_sky_Y_mask"] = empty_sky_Y_mask;
@@ -150,7 +160,9 @@ namespace ProtocolCraft
         }
 
     private:
+#if PROTOCOL_VERSION < 763
         bool trust_edges;
+#endif
 
         std::vector<unsigned long long int> sky_Y_mask;
         std::vector<unsigned long long int> block_Y_mask;

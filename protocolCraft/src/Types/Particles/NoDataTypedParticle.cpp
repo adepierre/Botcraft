@@ -49,10 +49,13 @@ namespace ProtocolCraft
         "firework",
         "fishing",
         "flame",
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 && PROTOCOL_VERSION < 763
         "dripping_cherry_leaves",
         "falling_cherry_leaves",
         "landing_cherry_leaves",
+#endif
+#if PROTOCOL_VERSION > 762
+        "cherry_leaves",
 #endif
 #if PROTOCOL_VERSION > 758
         "sculk_soul",
@@ -145,6 +148,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
         "shriek",
+#endif
+#if PROTOCOL_VERSION > 762
+        "egg_crack",
 #endif
     };
 #else

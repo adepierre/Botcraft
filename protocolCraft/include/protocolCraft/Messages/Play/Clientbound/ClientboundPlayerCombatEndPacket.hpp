@@ -21,6 +21,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x32;
 #elif PROTOCOL_VERSION == 762 // 1.19.4
         static constexpr int packet_id = 0x36;
+#elif PROTOCOL_VERSION == 763 // 1.20
+        static constexpr int packet_id = 0x36;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -31,10 +33,12 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION < 763
         void SetKillerId(const int killer_id_)
         {
             killer_id = killer_id_;
         }
+#endif
 
         void SetDuration(const int duration_)
         {
@@ -42,10 +46,12 @@ namespace ProtocolCraft
         }
 
 
+#if PROTOCOL_VERSION < 763
         int GetKillerId() const
         {
             return killer_id;
         }
+#endif
 
         int GetDuration() const
         {
@@ -57,13 +63,17 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             duration = ReadData<VarInt>(iter, length);
+#if PROTOCOL_VERSION < 763
             killer_id = ReadData<int>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(duration, container);
+#if PROTOCOL_VERSION < 763
             WriteData<int>(killer_id, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -71,13 +81,17 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["duration"] = duration;
+#if PROTOCOL_VERSION < 763
             output["killer_id"] = killer_id;
+#endif
 
             return output;
         }
 
     private:
+#if PROTOCOL_VERSION < 763
         int killer_id;
+#endif
         int duration;
 
     };

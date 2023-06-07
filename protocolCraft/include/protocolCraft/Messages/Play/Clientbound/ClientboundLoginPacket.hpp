@@ -36,6 +36,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x24;
 #elif PROTOCOL_VERSION == 762 // 1.19.4
         static constexpr int packet_id = 0x28;
+#elif PROTOCOL_VERSION == 763 // 1.20
+        static constexpr int packet_id = 0x28;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -179,6 +181,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 762
+        void SetPortalCooldown(const int portal_cooldown_)
+        {
+            portal_cooldown = portal_cooldown_;
+        }
+#endif
+
 
         int GetPlayerId() const
         {
@@ -312,6 +321,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 762
+        int GetPortalCooldown() const
+        {
+            return portal_cooldown;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
@@ -365,6 +381,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
             last_death_location = ReadOptional<GlobalPos>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 762
+            portal_cooldown = ReadData<VarInt>(iter, length);
 #endif
         }
 
@@ -421,6 +440,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758
             WriteOptional<GlobalPos>(last_death_location, container);
 #endif
+#if PROTOCOL_VERSION > 762
+            WriteData<VarInt>(portal_cooldown, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -469,6 +491,9 @@ namespace ProtocolCraft
             {
                 output["last_death_location"] = last_death_location.value();
             }
+#endif
+#if PROTOCOL_VERSION > 762
+            output["portal_cooldown"] = portal_cooldown;
 #endif
 
             return output;
@@ -521,6 +546,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758
         std::optional<GlobalPos> last_death_location;
+#endif
+#if PROTOCOL_VERSION > 762
+        int portal_cooldown;
 #endif
     };
 } //ProtocolCraft

@@ -108,10 +108,13 @@ namespace ProtocolCraft
         case ParticleType::Firework:
         case ParticleType::Fishing:
         case ParticleType::Flame:
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 && PROTOCOL_VERSION < 763
         case ParticleType::DrippingCherryLeaves:
         case ParticleType::FallingCherryLeaves:
         case ParticleType::LandingCherryLeaves:
+#endif
+#if PROTOCOL_VERSION > 762
+        case ParticleType::CherryLeaves:
 #endif
 #if PROTOCOL_VERSION > 758
         case ParticleType::SculkSoul:
@@ -196,6 +199,9 @@ namespace ProtocolCraft
         case ParticleType::WaxOff:
         case ParticleType::ElectricSpark:
         case ParticleType::Scrape:
+#endif
+#if PROTOCOL_VERSION > 762
+        case ParticleType::EggCrack:
 #endif
             return std::make_shared<NoDataTypedParticle>(type);
         default:

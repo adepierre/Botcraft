@@ -10,6 +10,8 @@ namespace ProtocolCraft
     public:
 #if PROTOCOL_VERSION == 762 // 1.19.4
         static constexpr int packet_id = 0x21;
+#elif PROTOCOL_VERSION == 763 // 1.20
+        static constexpr int packet_id = 0x21;
 #else
 #error "Protocol version not implemented"
 #endif

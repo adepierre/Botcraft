@@ -54,7 +54,7 @@ namespace ProtocolCraft
             return std::make_shared<RecipeTypeDataStoneCutting>();
         }
 #endif
-#if PROTOCOL_VERSION > 732
+#if PROTOCOL_VERSION > 732 && PROTOCOL_VERSION < 763
         else if (recipe_type.GetFull() == "minecraft:smithing")
         {
             return std::make_shared<RecipeTypeDataSmithing>();
