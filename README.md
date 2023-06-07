@@ -28,7 +28,7 @@ Main features are listed below. To see the evolution of the project, check the [
 
 - Connection to minecraft server (both offline "cracked" mode and online connection with ~~Mojang or~~ Microsoft account)
 - DNS server name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.19.4 supported
+- All official releases from 1.12.2 to 1.20 supported
 - Compression
 - Signed chat system for 1.19+ versions
 - Physics and collisions
