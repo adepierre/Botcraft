@@ -210,6 +210,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Utilities/Logger.hpp
     include/botcraft/Utilities/NBTUtilities.hpp
     include/botcraft/Utilities/SleepUtilities.hpp
+    include/botcraft/Utilities/StdAnyUtilities.hpp
     include/botcraft/Utilities/Templates.hpp
 )
 
@@ -432,6 +433,7 @@ set(botcraft_SRC
     src/Utilities/Logger.cpp
     src/Utilities/NBTUtilities.cpp
     src/Utilities/SleepUtilities.cpp
+    src/Utilities/StdAnyUtilities.cpp
     src/Utilities/StringUtilities.cpp
 )
 

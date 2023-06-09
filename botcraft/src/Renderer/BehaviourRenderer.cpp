@@ -2,6 +2,8 @@
 #include "botcraft/Renderer/BehaviourRenderer.hpp"
 #include "botcraft/AI/BaseNode.hpp"
 
+#include "botcraft/Utilities/StdAnyUtilities.hpp"
+
 #include <imgui_node_editor.h>
 
 static constexpr float TREE_SPACING_VERTICAL = 50.0f;
@@ -933,23 +935,7 @@ namespace Botcraft
         void BehaviourRenderer::UpdateBlackboardValue(const std::string& key, const std::any& value)
         {
             std::scoped_lock<std::mutex> lock(blackboard_mutex);
-            // TODO: something cleaner would be nice
-            if (!value.has_value())
-            {
-                blackboard[key] = "empty";
-            }
-            else if (value.type() == typeid(std::string))
-            {
-                blackboard[key] = std::any_cast<std::string>(value);
-            }
-            else if (value.type() == typeid(const char*))
-            {
-                blackboard[key] = std::any_cast<const char*>(value);
-            }
-            else
-            {
-                blackboard[key] = value.type().name();
-            }
+            blackboard[key] = AnyParser::ToString(value);
         }
 
         void BehaviourRenderer::RemoveBlackboardValue(const std::string& key)
