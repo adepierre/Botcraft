@@ -18,7 +18,7 @@ namespace Botcraft
         Climbable
     };
 
-    const BlockGoThroughState GetBlockGoThroughState(const Block* block)
+    BlockGoThroughState GetBlockGoThroughState(const Block* block)
     {
         if (block == nullptr)
         {
@@ -33,7 +33,7 @@ namespace Botcraft
         return block->GetBlockstate()->IsSolid() ? BlockGoThroughState::Solid : BlockGoThroughState::Empty;
     }
 
-    const std::vector<Position> FindPath(BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump)
+    std::vector<Position> FindPath(BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump)
     {
         struct PathNode
         {
@@ -1120,8 +1120,8 @@ namespace Botcraft
         return true;
     }
 
-    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance,
-        const int min_end_dist, const float speed, const bool allow_jump)
+
+    Status GoToImpl(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const float speed, const bool allow_jump)
     {
         std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
         std::shared_ptr<World> world = client.GetWorld();
@@ -1217,11 +1217,36 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const float speed, const bool allow_jump)
+    {
+        constexpr std::array variable_names = {
+            "GoTo.goal",
+            "GoTo.dist_tolerance",
+            "GoTo.min_end_dist",
+            "GoTo.speed",
+            "GoTo.allow_jump"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<Position>(variable_names[0], goal);
+        blackboard.Set<int>(variable_names[1], dist_tolerance);
+        blackboard.Set<int>(variable_names[2], min_end_dist);
+        blackboard.Set<float>(variable_names[3], speed);
+        blackboard.Set<bool>(variable_names[4], allow_jump);
+
+        return GoToImpl(client, goal, dist_tolerance, min_end_dist, speed, allow_jump);
+    }
+
     Status GoToBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-        "GoTo.goal", "GoTo.dist_tolerance", "GoTo.min_end_dist",
-        "GoTo.speed", "GoTo.allow_jump" };
+            "GoTo.goal",
+            "GoTo.dist_tolerance",
+            "GoTo.min_end_dist",
+            "GoTo.speed",
+            "GoTo.allow_jump"
+        };
 
         Blackboard& blackboard = client.GetBlackboard();
 
@@ -1234,10 +1259,11 @@ namespace Botcraft
         const float speed = blackboard.Get(variable_names[3], 4.317f);
         const bool allow_jump = blackboard.Get(variable_names[4], true);
 
-        return GoTo(client, goal, dist_tolerance, min_end_dist, speed, allow_jump);
+        return GoToImpl(client, goal, dist_tolerance, min_end_dist, speed, allow_jump);
     }
 
-    Status LookAt(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
+
+    Status LookAtImpl(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
     {
         {
             std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
@@ -1255,6 +1281,21 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status LookAt(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
+    {
+        const std::array variable_names = {
+            "LookAt.target",
+            "LookAt.set_pitch"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<Vector3<double>>(variable_names[0], target);
+        blackboard.Set<bool>(variable_names[1], set_pitch);
+
+        return LookAtImpl(client, target, set_pitch);
+    }
+
     Status LookAtBlackboard(BehaviourClient& client)
     {
         const std::array variable_names = {
@@ -1270,6 +1311,6 @@ namespace Botcraft
         // Optional
         const bool set_pitch = blackboard.Get(variable_names[1], true);
 
-        return LookAt(client, target, set_pitch);
+        return LookAtImpl(client, target, set_pitch);
     }
 }

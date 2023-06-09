@@ -17,7 +17,7 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    Status ClickSlotInContainer(BehaviourClient& client, const short container_id, const short slot_id, const int click_type, const char button_num)
+    Status ClickSlotInContainerImpl(BehaviourClient& client, const short container_id, const short slot_id, const int click_type, const char button_num)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
@@ -58,6 +58,26 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status ClickSlotInContainer(BehaviourClient& client, const short container_id, const short slot_id, const int click_type, const char button_num)
+    {
+        constexpr std::array variable_names = {
+               "ClickSlotInContainer.container_id",
+               "ClickSlotInContainer.slot_id",
+               "ClickSlotInContainer.click_type",
+               "ClickSlotInContainer.button_num"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        blackboard.Set<short>(variable_names[0], container_id);
+        blackboard.Set<short>(variable_names[1], slot_id);
+        blackboard.Set<int>(variable_names[2], click_type);
+        blackboard.Set<char>(variable_names[3], button_num);
+
+        return ClickSlotInContainerImpl(client, container_id, slot_id, click_type, button_num);
+    }
+
     Status ClickSlotInContainerBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -75,10 +95,11 @@ namespace Botcraft
         const int click_type = blackboard.Get<int>(variable_names[2]);
         const char button_num = blackboard.Get<char>(variable_names[3]);
 
-        return ClickSlotInContainer(client, container_id, slot_id, click_type, button_num);
+        return ClickSlotInContainerImpl(client, container_id, slot_id, click_type, button_num);
     }
 
-    Status SwapItemsInContainer(BehaviourClient& client, const short container_id, const short first_slot, const short second_slot)
+
+    Status SwapItemsInContainerImpl(BehaviourClient& client, const short container_id, const short first_slot, const short second_slot)
     {
         // Left click on the first slot, transferring the slot to the cursor
         if (ClickSlotInContainer(client, container_id, first_slot, 0, 0) == Status::Failure)
@@ -104,6 +125,23 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status SwapItemsInContainer(BehaviourClient& client, const short container_id, const short first_slot, const short second_slot)
+    {
+        constexpr std::array variable_names = {
+               "SwapItemsInContainer.container_id",
+               "SwapItemsInContainer.first_slot",
+               "SwapItemsInContainer.second_slot"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<short>(variable_names[0], container_id);
+        blackboard.Set<short>(variable_names[1], first_slot);
+        blackboard.Set<short>(variable_names[2], second_slot);
+
+        return SwapItemsInContainerImpl(client, container_id, first_slot, second_slot);
+    }
+
     Status SwapItemsInContainerBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -119,10 +157,11 @@ namespace Botcraft
         const short first_slot = blackboard.Get<short>(variable_names[1]);
         const short second_slot = blackboard.Get<short>(variable_names[2]);
 
-        return SwapItemsInContainer(client, container_id, first_slot, second_slot);
+        return SwapItemsInContainerImpl(client, container_id, first_slot, second_slot);
     }
 
-    Status DropItemsFromContainer(BehaviourClient& client, const short container_id, const short slot_id, const short num_to_keep)
+
+    Status DropItemsFromContainerImpl(BehaviourClient& client, const short container_id, const short slot_id, const short num_to_keep)
     {
         if (ClickSlotInContainer(client, container_id, slot_id, 0, 0) == Status::Failure)
         {
@@ -156,6 +195,23 @@ namespace Botcraft
         return ClickSlotInContainer(client, container_id, slot_id, 0, 0);
     }
 
+    Status DropItemsFromContainer(BehaviourClient& client, const short container_id, const short slot_id, const short num_to_keep)
+    {
+        constexpr std::array variable_names = {
+               "DropItemsFromContainer.container_id",
+               "DropItemsFromContainer.slot_id",
+               "DropItemsFromContainer.num_to_keep"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<short>(variable_names[0], container_id);
+        blackboard.Set<short>(variable_names[1], slot_id);
+        blackboard.Set<short>(variable_names[2], num_to_keep);
+
+        return DropItemsFromContainerImpl(client, container_id, slot_id, num_to_keep);
+    }
+
     Status DropItemsFromContainerBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -173,12 +229,12 @@ namespace Botcraft
         // Optional
         const short num_to_keep = blackboard.Get<short>(variable_names[2], 0);
 
-        return DropItemsFromContainer(client, container_id, slot_id, num_to_keep);
+        return DropItemsFromContainerImpl(client, container_id, slot_id, num_to_keep);
     }
 
-    Status PutOneItemInContainerSlot(BehaviourClient& client, const short container_id, const short source_slot, const short destination_slot)
-    {
 
+    Status PutOneItemInContainerSlotImpl(BehaviourClient& client, const short container_id, const short source_slot, const short destination_slot)
+    {
         // Left click on the first slot, transferring the slot to the cursor
         if (ClickSlotInContainer(client, container_id, source_slot, 0, 0) == Status::Failure)
         {
@@ -203,6 +259,23 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status PutOneItemInContainerSlot(BehaviourClient& client, const short container_id, const short source_slot, const short destination_slot)
+    {
+        constexpr std::array variable_names = {
+               "PutOneItemInContainerSlot.container_id",
+               "PutOneItemInContainerSlot.source_slot",
+               "PutOneItemInContainerSlot.destination_slot"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<short>(variable_names[0], container_id);
+        blackboard.Set<short>(variable_names[1], source_slot);
+        blackboard.Set<short>(variable_names[2], destination_slot);
+
+        return PutOneItemInContainerSlotImpl(client, container_id, source_slot, destination_slot);
+    }
+
     Status PutOneItemInContainerSlotBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -218,10 +291,11 @@ namespace Botcraft
         const short source_slot = blackboard.Get<short>(variable_names[1]);
         const short destination_slot = blackboard.Get<short>(variable_names[2]);
 
-        return PutOneItemInContainerSlot(client, container_id, source_slot, destination_slot);
+        return PutOneItemInContainerSlotImpl(client, container_id, source_slot, destination_slot);
     }
 
-    Status SetItemInHand(BehaviourClient& client, const std::string& item_name, const Hand hand)
+
+    Status SetItemInHandImpl(BehaviourClient& client, const std::string& item_name, const Hand hand)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
@@ -273,6 +347,21 @@ namespace Botcraft
         return SwapItemsInContainer(client, Window::PLAYER_INVENTORY_INDEX, inventory_correct_slot_index, inventory_destination_slot_index);
     }
 
+    Status SetItemInHand(BehaviourClient& client, const std::string& item_name, const Hand hand)
+    {
+        constexpr std::array variable_names = {
+            "SetItemInHand.item_name",
+            "SetItemInHand.hand"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::string>(variable_names[0], item_name);
+        blackboard.Set<Hand>(variable_names[1], hand);
+
+        return SetItemInHandImpl(client, item_name, hand);
+    }
+
     Status SetItemInHandBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -286,10 +375,11 @@ namespace Botcraft
         const std::string& item_name = blackboard.Get<std::string>(variable_names[0]);
         const Hand hand = blackboard.Get<Hand>(variable_names[1], Hand::Right);
 
-        return SetItemInHand(client, item_name, hand);
+        return SetItemInHandImpl(client, item_name, hand);
     }
 
-    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const PlayerDiggingFace face, const bool wait_confirmation, const bool allow_midair_placing)
+
+    Status PlaceBlockImpl(BehaviourClient& client, const std::string& item_name, const Position& pos, const PlayerDiggingFace face, const bool wait_confirmation, const bool allow_midair_placing)
     {
         std::shared_ptr<World> world = client.GetWorld();
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
@@ -479,6 +569,27 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const PlayerDiggingFace face, const bool wait_confirmation, const bool allow_midair_placing)
+    {
+        constexpr std::array variable_names = {
+               "PlaceBlock.item_name",
+               "PlaceBlock.pos",
+               "PlaceBlock.face",
+               "PlaceBlock.wait_confirmation",
+               "PlaceBlock.allow_midair_placing"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::string>(variable_names[0], item_name);
+        blackboard.Set<Position>(variable_names[1], pos);
+        blackboard.Set<PlayerDiggingFace>(variable_names[2], face);
+        blackboard.Set<bool>(variable_names[3], wait_confirmation);
+        blackboard.Set<bool>(variable_names[4], allow_midair_placing);
+
+        return PlaceBlockImpl(client, item_name, pos, face, wait_confirmation, allow_midair_placing);
+    }
+
     Status PlaceBlockBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -501,10 +612,11 @@ namespace Botcraft
         const bool allow_midair_placing = blackboard.Get<bool>(variable_names[4], false);
 
 
-        return PlaceBlock(client, item_name, pos, face, wait_confirmation, allow_midair_placing);
+        return PlaceBlockImpl(client, item_name, pos, face, wait_confirmation, allow_midair_placing);
     }
 
-    Status Eat(BehaviourClient& client, const std::string& food_name, const bool wait_confirmation)
+
+    Status EatImpl(BehaviourClient& client, const std::string& food_name, const bool wait_confirmation)
     {
         if (SetItemInHand(client, food_name, Hand::Left) == Status::Failure)
         {
@@ -545,6 +657,21 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status Eat(BehaviourClient& client, const std::string& food_name, const bool wait_confirmation)
+    {
+        constexpr std::array variable_names = {
+               "Eat.food_name",
+               "Eat.wait_confirmation"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::string>(variable_names[0], food_name);
+        blackboard.Set<bool>(variable_names[1], wait_confirmation);
+
+        return EatImpl(client, food_name, wait_confirmation);
+    }
+
     Status EatBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -561,10 +688,11 @@ namespace Botcraft
         const bool wait_confirmation = blackboard.Get<bool>(variable_names[1], false);
 
 
-        return Eat(client, food_name, wait_confirmation);
+        return EatImpl(client, food_name, wait_confirmation);
     }
 
-    Status OpenContainer(BehaviourClient& client, const Position& pos)
+
+    Status OpenContainerImpl(BehaviourClient& client, const Position& pos)
     {
         // Open the container
         if (InteractWithBlock(client, pos, PlayerDiggingFace::Up) == Status::Failure)
@@ -589,6 +717,19 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status OpenContainer(BehaviourClient& client, const Position& pos)
+    {
+        constexpr std::array variable_names = {
+               "OpenContainer.pos"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<Position>(variable_names[0], pos);
+
+        return OpenContainerImpl(client, pos);
+    }
+
     Status OpenContainerBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -601,10 +742,11 @@ namespace Botcraft
         const Position& pos = blackboard.Get<Position>(variable_names[0]);
 
 
-        return OpenContainer(client, pos);
+        return OpenContainerImpl(client, pos);
     }
 
-    Status CloseContainer(BehaviourClient& client, const short container_id)
+
+    Status CloseContainerImpl(BehaviourClient& client, const short container_id)
     {
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
@@ -626,6 +768,19 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status CloseContainer(BehaviourClient& client, const short container_id)
+    {
+        constexpr std::array variable_names = {
+               "CloseContainer.container_id"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<short>(variable_names[0], container_id);
+
+        return CloseContainerImpl(client, container_id);
+    }
+
     Status CloseContainerBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -638,10 +793,11 @@ namespace Botcraft
         const short container_id = blackboard.Get<short>(variable_names[0], -1);
 
 
-        return CloseContainer(client, container_id);
+        return CloseContainerImpl(client, container_id);
     }
 
-    Status LogInventoryContent(BehaviourClient& client, const LogLevel level)
+
+    Status LogInventoryContentImpl(BehaviourClient& client, const LogLevel level)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
@@ -658,8 +814,21 @@ namespace Botcraft
         return Status::Success;
     }
 
-    Status LogInventoryContentBlackboard(BehaviourClient& client)
+    Status LogInventoryContent(BehaviourClient& client, const LogLevel level)
     {        
+        constexpr std::array variable_names = {
+               "LogInventoryContent.level"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<LogLevel>(variable_names[0], level);
+
+        return LogInventoryContentImpl(client, level);
+    }
+
+    Status LogInventoryContentBlackboard(BehaviourClient& client)
+    {
         constexpr std::array variable_names = {
                "LogInventoryContent.level"
         };
@@ -669,11 +838,12 @@ namespace Botcraft
         //Optional
         const LogLevel level = blackboard.Get<LogLevel>(variable_names[0], LogLevel::Info);
 
-        return LogInventoryContent(client, level);
+        return LogInventoryContentImpl(client, level);
     }
 
+
 #if PROTOCOL_VERSION > 451
-    Status Trade(BehaviourClient& client, const int item_id, const bool buy, const int trade_id)
+    Status TradeImpl(BehaviourClient& client, const int item_id, const bool buy, const int trade_id)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
@@ -863,6 +1033,23 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status Trade(BehaviourClient& client, const int item_id, const bool buy, const int trade_id)
+    {
+        constexpr std::array variable_names = {
+               "Trade.item_id",
+               "Trade.buy",
+               "Trade.trade_id"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<int>(variable_names[0], item_id);
+        blackboard.Set<bool>(variable_names[1], buy);
+        blackboard.Set<int>(variable_names[2], trade_id);
+
+        return TradeImpl(client, item_id, buy, trade_id);
+    }
+
     Status TradeBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -880,10 +1067,11 @@ namespace Botcraft
         //Optional
         const int trade_id = blackboard.Get<int>(variable_names[2], -1);
 
-        return Trade(client, item_id, buy, trade_id);
+        return TradeImpl(client, item_id, buy, trade_id);
     }
 
-    Status TradeName(BehaviourClient& client, const std::string& item_name, const bool buy, const int trade_id)
+
+    Status TradeNameImpl(BehaviourClient& client, const std::string& item_name, const bool buy, const int trade_id)
     {
         // Get item id corresponding to the name
         const int item_id = AssetsManager::getInstance().GetItemID(item_name);
@@ -893,7 +1081,24 @@ namespace Botcraft
             return Status::Failure;
         }
 
-        return Trade(client, item_id, buy, trade_id);
+        return TradeImpl(client, item_id, buy, trade_id);
+    }
+
+    Status TradeName(BehaviourClient& client, const std::string& item_name, const bool buy, const int trade_id)
+    {
+        constexpr std::array variable_names = {
+               "TradeName.item_name",
+               "TradeName.buy",
+               "TradeName.trade_id"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::string>(variable_names[0], item_name);
+        blackboard.Set<bool>(variable_names[1], buy);
+        blackboard.Set<int>(variable_names[2], trade_id);
+
+        return TradeNameImpl(client, item_name, buy, trade_id);
     }
 
     Status TradeNameBlackboard(BehaviourClient& client)
@@ -913,14 +1118,14 @@ namespace Botcraft
         // Optional
         const int trade_id = blackboard.Get<int>(variable_names[2], -1);
 
-        return TradeName(client, item_name, buy, trade_id);
+        return TradeNameImpl(client, item_name, buy, trade_id);
     }
 #endif
 
 #if PROTOCOL_VERSION < 350
-    Status Craft(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft)
+    Status CraftImpl(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft)
 #else
-    Status Craft(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft)
+    Status CraftImpl(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft)
 #endif
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
@@ -1153,6 +1358,29 @@ namespace Botcraft
         return Status::Success;
     }
 
+#if PROTOCOL_VERSION < 350
+    Status Craft(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft)
+#else
+    Status Craft(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft)
+#endif
+    {
+        constexpr std::array variable_names = {
+               "Craft.inputs",
+               "Craft.allow_inventory_craft"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+#if PROTOCOL_VERSION < 350
+        blackboard.Set<std::array<std::array<std::pair<int, unsigned char>, 3>, 3>>(variable_names[0], inputs);
+#else
+        blackboard.Set<std::array<std::array<int, 3>, 3>>(variable_names[0], inputs);
+#endif
+        blackboard.Set<bool>(variable_names[1], allow_inventory_craft);
+
+        return CraftImpl(client, inputs, allow_inventory_craft);
+    }
+
     Status CraftBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -1172,10 +1400,11 @@ namespace Botcraft
         // Optional
         const bool allow_inventory_craft = blackboard.Get<bool>(variable_names[1], true);
 
-        return Craft(client, inputs, allow_inventory_craft);
+        return CraftImpl(client, inputs, allow_inventory_craft);
     }
 
-    Status CraftNamed(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)
+
+    Status CraftNamedImpl(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         const AssetsManager& assets_manager = AssetsManager::getInstance();
 #if PROTOCOL_VERSION < 350
@@ -1197,6 +1426,21 @@ namespace Botcraft
         return Craft(client, inputs_ids, allow_inventory_craft);
     }
 
+    Status CraftNamed(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)
+    {
+        constexpr std::array variable_names = {
+               "CraftNamed.inputs",
+               "CraftNamed.allow_inventory_craft"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::array<std::array<std::string, 3>, 3>>(variable_names[0], inputs);
+        blackboard.Set<bool>(variable_names[1], allow_inventory_craft);
+
+        return CraftNamedImpl(client, inputs, allow_inventory_craft);
+    }
+
     Status CraftNamedBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -1212,10 +1456,11 @@ namespace Botcraft
         // Optional
         const bool allow_inventory_craft = blackboard.Get<bool>(variable_names[1], true);
 
-        return CraftNamed(client, inputs, allow_inventory_craft);
+        return CraftNamedImpl(client, inputs, allow_inventory_craft);
     }
 
-    Status HasItemInInventory(BehaviourClient& client, const std::string& item_name, const int quantity)
+
+    Status HasItemInInventoryImpl(BehaviourClient& client, const std::string& item_name, const int quantity)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
@@ -1252,6 +1497,20 @@ namespace Botcraft
         return Status::Failure;
     }
 
+    Status HasItemInInventory(BehaviourClient& client, const std::string& item_name, const int quantity)
+    {
+        constexpr std::array variable_names = {
+               "HasItemInInventory.item_name",
+               "HasItemInInventory.quantity"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+        blackboard.Set<std::string>(variable_names[0], item_name);
+        blackboard.Set<int>(variable_names[1], quantity);
+
+        return HasItemInInventoryImpl(client, item_name, quantity);
+    }
+
     Status HasItemInInventoryBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -1267,8 +1526,9 @@ namespace Botcraft
         // Optional
         const int quantity = blackboard.Get<int>(variable_names[1], 1);
 
-        return HasItemInInventory(client, item_name, quantity);
+        return HasItemInInventoryImpl(client, item_name, quantity);
     }
+
 
     Status SortInventory(BehaviourClient& client)
     {
