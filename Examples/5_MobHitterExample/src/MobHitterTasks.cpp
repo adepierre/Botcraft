@@ -14,7 +14,7 @@ Status HitCloseHostiles(BehaviourClient& c)
     std::shared_ptr<NetworkManager> network_manager = c.GetNetworkManager();
     Blackboard& blackboard = c.GetBlackboard();
     
-    const OnDestructRef<std::map<int, std::chrono::steady_clock::time_point>> last_time_hit_wrapper = blackboard.GetRef("Entities.LastTimeHit", std::map<int, std::chrono::steady_clock::time_point>());
+    const NotifyOnEndUseRef<std::map<int, std::chrono::steady_clock::time_point>> last_time_hit_wrapper = blackboard.GetRef("Entities.LastTimeHit", std::map<int, std::chrono::steady_clock::time_point>());
     std::map<int, std::chrono::steady_clock::time_point>& last_time_hit = last_time_hit_wrapper.ref();
 
     Vector3<double> player_pos;
@@ -64,7 +64,7 @@ Status HitCloseHostiles(BehaviourClient& c)
 
 Status CleanLastTimeHit(BehaviourClient& c)
 {
-    const OnDestructRef<std::map<int, std::chrono::steady_clock::time_point>> last_time_hit_wrapper = c.GetBlackboard().GetRef("Entities.LastTimeHit", std::map<int, std::chrono::steady_clock::time_point>());
+    const NotifyOnEndUseRef<std::map<int, std::chrono::steady_clock::time_point>> last_time_hit_wrapper = c.GetBlackboard().GetRef("Entities.LastTimeHit", std::map<int, std::chrono::steady_clock::time_point>());
     std::map<int, std::chrono::steady_clock::time_point>& last_time_hit = last_time_hit_wrapper.ref();
 
     auto now = std::chrono::steady_clock::now();

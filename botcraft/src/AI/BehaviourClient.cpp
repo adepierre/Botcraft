@@ -21,7 +21,7 @@ namespace Botcraft
         return blackboard;
     }
 
-    void BehaviourClient::OnReset() const
+    void BehaviourClient::OnReset()
     {
 #if USE_GUI
         if (rendering_manager != nullptr)
@@ -31,7 +31,7 @@ namespace Botcraft
 #endif
     }
 
-    void BehaviourClient::OnValueChanged(const std::string& key, const std::any& value) const
+    void BehaviourClient::OnValueChanged(const std::string& key, const std::any& value)
     {
 #if USE_GUI
         if (rendering_manager != nullptr)
@@ -41,7 +41,7 @@ namespace Botcraft
 #endif
     }
 
-    void BehaviourClient::OnValueRemoved(const std::string& key) const
+    void BehaviourClient::OnValueRemoved(const std::string& key)
     {
 #if USE_GUI
         if (rendering_manager != nullptr)

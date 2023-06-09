@@ -20,9 +20,9 @@ namespace Botcraft
         Blackboard& GetBlackboard();
 
     public:
-        void OnReset() const override;
-        void OnValueChanged(const std::string& key, const std::any& value) const override;
-        void OnValueRemoved(const std::string& key) const override;
+        void OnReset() override;
+        void OnValueChanged(const std::string& key, const std::any& value) override;
+        void OnValueRemoved(const std::string& key) override;
 
     protected:
         Blackboard blackboard;
