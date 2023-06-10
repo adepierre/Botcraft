@@ -38,7 +38,17 @@ namespace Botcraft
             return it->second(value);
         }
 
+        return DefaultToString(value);
+    }
+
+    std::string AnyParser::DefaultToString(const std::any& value)
+    {
         // TODO: demangle name if available (?)
         return value.type().name();
+    }
+
+    void AnyParser::RegisterType(const std::type_index& index, const std::function<std::string(const std::any&)>& f)
+    {
+        registered_types[index] = f;
     }
 }

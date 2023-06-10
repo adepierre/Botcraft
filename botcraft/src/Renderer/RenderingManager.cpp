@@ -229,7 +229,7 @@ namespace Botcraft
                 // Draw the behaviour if it's open
                 if (behaviour_open)
                 {
-                    const int blackboard_width = static_cast<int>((static_cast<float>(current_window_width) - 30.0f) / 3.0f);
+                    const int blackboard_width = static_cast<int>((static_cast<float>(current_window_width) - 30.0f) / 4.0f);
 
                     ImGui::SetNextWindowPos(ImVec2(15.0f, 15.0f), 0, ImVec2(0.0f, 0.0f));
                     ImGui::SetNextWindowSize(ImVec2(blackboard_width, current_window_height - 30.0f));

@@ -9,6 +9,8 @@
 #include <mutex>
 #include <map>
 
+#include "protocolCraft/Utilities/Json.hpp"
+
 namespace ax
 {
     namespace NodeEditor
@@ -63,7 +65,7 @@ namespace Botcraft
             bool paused;
             bool step;
 
-            std::map<std::string, std::string> blackboard;
+            ProtocolCraft::Json::Value blackboard;
             mutable std::mutex blackboard_mutex;
         };
     }

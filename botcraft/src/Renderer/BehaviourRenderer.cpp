@@ -3,6 +3,7 @@
 #include "botcraft/AI/BaseNode.hpp"
 
 #include "botcraft/Utilities/StdAnyUtilities.hpp"
+#include "botcraft/Utilities/StringUtilities.hpp"
 
 #include <imgui_node_editor.h>
 
@@ -11,6 +12,9 @@ static constexpr float TREE_SPACING_HORIZONTAL = 150.0f;
 static constexpr float MIN_NODE_WIDTH = 200.0f;
 static constexpr float PIN_RADIUS = 5.0f;
 static constexpr float LINK_THICKNESS = 4.0f;
+
+static constexpr double BLACKBOARD_HIGHLIGHT_DURATION = 0.5;
+static const ImVec4 BLACKBOARD_HIGHLIGHT_COLOR = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 namespace Botcraft
 {
@@ -97,10 +101,11 @@ namespace Botcraft
                 config->DragButtonIndex = 3;
                 context = ax::NodeEditor::CreateEditor(config.get());
             }
-            // Nothing to init for blackboard
-            // {
-            //    std::scoped_lock<std::mutex> lock(blackboard_mutex);
-            // }
+
+            // Reset blackboard is already thread safe
+            {
+                ResetBlackboard();
+            }
         }
 
         void BehaviourRenderer::RenderNodes()
@@ -129,7 +134,7 @@ namespace Botcraft
                 // Draw pause icon (two rects) on button
                 const ImVec2 button_min_rect = ImGui::GetItemRectMin();
                 const ImVec2 button_size = ImGui::GetItemRectSize();
-                
+
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
                 draw_list->AddRectFilled(
                     ImVec2(button_min_rect.x + 0.2f * button_size.x, button_min_rect.y + 0.1f * button_size.y),
@@ -162,9 +167,9 @@ namespace Botcraft
                 ImVec2(button_min_rect.x + 0.3f * button_size.x, button_min_rect.y + 0.8f * button_size.y),
                 ImGui::GetColorU32(ImGuiCol_Text)
             );
-            
+
             const ImVec2 triangle_center = ImVec2(button_min_rect.x + 0.7f * button_size.x, button_min_rect.y + 0.5f * button_size.y);
-            
+
             draw_list->AddTriangleFilled(
                 ImVec2(triangle_center.x + 0.205f * button_size.x, triangle_center.y),
                 ImVec2(triangle_center.x - 0.205f * button_size.x, triangle_center.y + 0.237f * button_size.y),
@@ -180,7 +185,7 @@ namespace Botcraft
             ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_SelectedNodeBorderWidth, 10.0f);
             ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_Flow, GetStatusColor(ImNodeStatus::Running));
             ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_FlowMarker, GetStatusColor(ImNodeStatus::Running));
-            ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_PinRect, ImColor(0,0,0,0));
+            ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_PinRect, ImColor(0, 0, 0, 0));
             ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_Bg, ImColor(60, 60, 70, 100));
 
             ax::NodeEditor::Begin("Behaviour");
@@ -236,7 +241,7 @@ namespace Botcraft
                 draw_list->AddRect(
                     node_editor_min_rect,
                     node_editor_max_rect,
-                    ImColor(5,195,221)
+                    ImColor(5, 195, 221)
                 );
             }
 
@@ -261,13 +266,78 @@ namespace Botcraft
             ax::NodeEditor::SetCurrentEditor(nullptr);
         }
 
+        ImVec4 ColorInterpolation(const ImVec4& a, const ImVec4& b, const float t)
+        {
+            if (t < 0.0f)
+            {
+                return a;
+            }
+            if (t >= 1.0f)
+            {
+                return b;
+            }
+
+            return ImVec4(
+                (1 - t) * a.x + t * b.x,
+                (1 - t) * a.y + t * b.y,
+                (1 - t) * a.z + t * b.z,
+                (1 - t) * a.w + t * b.w
+            );
+        }
+
+        void RecursiveRenderBlackboardJsonNode(const std::string& name, ProtocolCraft::Json::Value& node)
+        {
+            ImGui::PushID(&node);
+            if (node.contains("children"))
+            {
+                // If expanded, display children
+                ImGui::PushStyleColor(ImGuiCol_Text, ColorInterpolation(ImGui::GetStyle().Colors[ImGuiCol_Text], BLACKBOARD_HIGHLIGHT_COLOR, node["timer"].get<double>() / BLACKBOARD_HIGHLIGHT_DURATION));
+                const bool item_clicked = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_SpanFullWidth);
+                ImGui::PopStyleColor();
+                if (item_clicked)
+                {
+                    ProtocolCraft::Json::Object& children = node["children"].get_object();
+                    for (auto& [k, v] : children)
+                    {
+                        RecursiveRenderBlackboardJsonNode(k, v);
+                    }
+                    ImGui::TreePop();
+                }
+            }
+            else
+            {
+                ImGui::PushStyleColor(ImGuiCol_Text, ColorInterpolation(ImGui::GetStyle().Colors[ImGuiCol_Text], BLACKBOARD_HIGHLIGHT_COLOR, node["timer"].get<double>() / BLACKBOARD_HIGHLIGHT_DURATION));
+                if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_SpanFullWidth))
+                {
+                    if (ImGui::TreeNodeEx(node["content"].get_string().c_str(), ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanFullWidth))
+                    {
+                        // Do something when value is clicked?
+                    }
+                    ImGui::TreePop();
+                }
+                ImGui::PopStyleColor();
+            }
+            ImGui::PopID();
+        }
+
+        void RecursiveUpdateTimerBlackboardJsonNode(ProtocolCraft::Json::Value& node)
+        {
+            node["timer"] = std::max(0.0, node["timer"].get<double>() - ImGui::GetIO().DeltaTime);
+            if (node.contains("children"))
+            {
+                ProtocolCraft::Json::Object& children = node["children"].get_object();
+                for (auto& [_, v] : children)
+                {
+                    RecursiveUpdateTimerBlackboardJsonNode(v);
+                }
+            }
+        }
+
         void BehaviourRenderer::RenderBlackboard()
         {
             std::scoped_lock<std::mutex> lock(blackboard_mutex);
-            for (const auto& [k, v] : blackboard)
-            {
-                ImGui::Text("%s: %s", k.c_str(), v.c_str());
-            }
+            RecursiveRenderBlackboardJsonNode("Blackboard", blackboard);
+            RecursiveUpdateTimerBlackboardJsonNode(blackboard);
         }
 
         void BehaviourRenderer::CleanUp()
@@ -284,10 +354,7 @@ namespace Botcraft
                 step = false;
             }
 
-            {
-                std::scoped_lock<std::mutex> lock(blackboard_mutex);
-                blackboard.clear();
-            }
+            ResetBlackboard();
         }
 
         void BehaviourRenderer::SetCurrentBehaviourTree(const BaseNode* root)
@@ -929,20 +996,88 @@ namespace Botcraft
         void BehaviourRenderer::ResetBlackboard()
         {
             std::scoped_lock<std::mutex> lock(blackboard_mutex);
-            blackboard = {};
+            blackboard = { { "children", ProtocolCraft::Json::Object() }, { "timer", BLACKBOARD_HIGHLIGHT_DURATION } };
         }
 
         void BehaviourRenderer::UpdateBlackboardValue(const std::string& key, const std::any& value)
         {
+            std::vector<std::string> splitted = SplitString(key, '.');
+            // Empty key
+            if (splitted.size() == 0)
+            {
+                return;
+            }
+
             std::scoped_lock<std::mutex> lock(blackboard_mutex);
-            blackboard[key] = AnyParser::ToString(value);
+
+            bool changed = false;
+            ProtocolCraft::Json::Value* current_json = &blackboard;
+            for (size_t i = 0; i < splitted.size(); ++i)
+            {
+                // Create intermediary nodes
+                if (!(*current_json)["children"].contains(splitted[i]))
+                {
+                    changed = true;
+                    if (i < splitted.size() - 1)
+                    {
+                        (*current_json)["children"][splitted[i]] = { { "children", {} }, { "timer", 0.0 } };
+                    }
+                    else
+                    {
+                        (*current_json)["children"][splitted[i]] = { { "content", ""}, { "timer", 0.0 }};
+                    }
+                }
+                current_json = &(*current_json)["children"][splitted[i]];
+            }
+            const std::string new_content = AnyParser::ToString(value);
+            changed = changed || (*current_json)["content"].get_string() != new_content;
+
+            if (changed)
+            {
+                // Go down all values to update timers
+                current_json = &blackboard;
+                for (size_t i = 0; i < splitted.size(); ++i)
+                {
+                    (*current_json)["timer"] = BLACKBOARD_HIGHLIGHT_DURATION;
+                    current_json = &(*current_json)["children"][splitted[i]];
+                }
+
+                // Update leaf value
+                (*current_json)["timer"] = BLACKBOARD_HIGHLIGHT_DURATION;
+                (*current_json)["content"] = new_content;
+            }
         }
 
         void BehaviourRenderer::RemoveBlackboardValue(const std::string& key)
         {
+            std::vector<std::string> splitted = SplitString(key, '.');
+            // Empty key
+            if (splitted.size() == 0)
+            {
+                return;
+            }
+
             std::scoped_lock<std::mutex> lock(blackboard_mutex);
-            blackboard.erase(key);
+
+            // From bottom to top, update the timer and remove the child
+            // if no more siblings, mark parent for removal too
+            bool remove = true;
+            for (int depth = static_cast<int>(splitted.size()) - 1; depth > -1; --depth)
+            {
+                // Go down depth level
+                ProtocolCraft::Json::Value* json_element = &blackboard;
+                for (size_t i = 0; i < depth; ++i)
+                {
+                    json_element = &(*json_element)["children"][splitted[i]];
+                }
+                (*json_element)["timer"] = BLACKBOARD_HIGHLIGHT_DURATION;
+                if (remove)
+                {
+                    (*json_element)["children"].get_object().erase(splitted[depth]);
+                    remove = (*json_element)["children"].size() == 0;
+                }
+            }
         }
-}
+    }
 }
 #endif
