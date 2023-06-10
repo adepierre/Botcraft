@@ -4,6 +4,7 @@
 #include "botcraft/AI/SimpleBehaviourClient.hpp"
 #include "botcraft/AI/Tasks/AllTasks.hpp"
 #include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/StdAnyUtilities.hpp"
 
 #include "DispenserFarmTasks.hpp"
 
@@ -19,6 +20,8 @@ void ShowHelp(const char* argv0)
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateTree();
+
+void RegisterBlackboardTypesToDebugger();
 
 int main(int argc, char* argv[])
 {
@@ -72,6 +75,9 @@ int main(int argc, char* argv[])
                 }
             }
         }
+
+        // Add some types to blackboard debugger
+        RegisterBlackboardTypesToDebugger();
 
         auto dispenser_farm_tree = CreateTree();
 
@@ -386,6 +392,15 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
 {
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>("main")
         .sequence()
+            .leaf("go to", Botcraft::GoTo, Botcraft::Position(50,-63,50), 0, 0, 4.317f, false)
+            .leaf("go to", Botcraft::GoTo, Botcraft::Position(52,-63,50), 0, 0, 4.317f, false)
+            .leaf("go to", Botcraft::GoTo, Botcraft::Position(52,-63,52), 0, 0, 4.317f, false)
+            .leaf("go to", Botcraft::GoTo, Botcraft::Position(50,-63,52), 0, 0, 4.317f, false)
+            .leaf("place block", Botcraft::PlaceBlock, "minecraft:dirt", Botcraft::Position(51,-62,51), Botcraft::PlayerDiggingFace::Up, true, false)
+            .leaf("break block", Botcraft::Dig, Botcraft::Position(51, -62, 51), true, Botcraft::PlayerDiggingFace::Up)
+        .end();
+    return Botcraft::Builder<Botcraft::SimpleBehaviourClient>("main")
+        .sequence()
             .selector()
                 .leaf("check if initialized in blackboard", Botcraft::CheckBlackboardBoolData, "DispenserFarmBot.initialized")
                 .sequence()
@@ -407,4 +422,38 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .tree(CreateCollectCobblestoneTree())
             .tree(CreateCraftDispenserTree())
         .end();
+}
+
+void RegisterBlackboardTypesToDebugger()
+{
+    // Register a custom parser for small vectors of int (to print them in the blackboard debugger)
+    Botcraft::AnyParser::RegisterType<std::vector<int>>([](const std::any& f) {
+        const std::vector<int>& v = std::any_cast<const std::vector<int>&>(f);
+        if (v.size() > 10)
+        {
+            return Botcraft::AnyParser::DefaultToString(f);
+        }
+        std::stringstream s;
+        s << '[';
+        for (size_t i = 0; i < v.size(); ++i)
+        {
+            s << v[i] << (i == v.size() - 1 ? ']' : ',');
+        }
+        return s.str();
+    });
+    // Register a custom parser for small vectors of Position (to print them in the blackboard debugger)
+    Botcraft::AnyParser::RegisterType(std::type_index(typeid(std::vector<Botcraft::Position>)), [](const std::any& f) {
+        const std::vector<Botcraft::Position>& v = std::any_cast<const std::vector<Botcraft::Position>&>(f);
+        if (v.size() > 10)
+        {
+            return "Vector of " + std::to_string(v.size()) + " block Positions";
+        }
+        std::stringstream s;
+        s << "[\n";
+        for (size_t i = 0; i < v.size(); ++i)
+        {
+            s << "\t" << v[i] << (i == v.size() - 1 ? "\n]" : ",\n");
+        }
+        return s.str();
+    });
 }

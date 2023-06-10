@@ -14,7 +14,7 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    Status InteractEntity(BehaviourClient& client, const int entity_id, const Hand hand, const bool swing)
+    Status InteractEntityImpl(BehaviourClient& client, const int entity_id, const Hand hand, const bool swing)
     {
         std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
 
@@ -80,6 +80,23 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status InteractEntity(BehaviourClient& client, const int entity_id, const Hand hand, const bool swing)
+    {
+        constexpr std::array variable_names = {
+            "InteractEntity.entity_id",
+            "InteractEntity.hand",
+            "InteractEntity.swing"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<int>(variable_names[0], entity_id);
+        blackboard.Set<Hand>(variable_names[1], hand);
+        blackboard.Set<bool>(variable_names[2], swing);
+
+        return InteractEntityImpl(client, entity_id, hand, swing);
+    }
+
     Status InteractEntityBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -97,6 +114,6 @@ namespace Botcraft
         const Hand hand = blackboard.Get<Hand>(variable_names[1], Hand::Main);
         const bool swing = blackboard.Get<bool>(variable_names[2], false);
 
-        return InteractEntity(client, entity_id, hand, swing);
+        return InteractEntityImpl(client, entity_id, hand, swing);
     }
 }

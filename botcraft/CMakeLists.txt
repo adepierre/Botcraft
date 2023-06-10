@@ -210,6 +210,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Utilities/Logger.hpp
     include/botcraft/Utilities/NBTUtilities.hpp
     include/botcraft/Utilities/SleepUtilities.hpp
+    include/botcraft/Utilities/StdAnyUtilities.hpp
     include/botcraft/Utilities/Templates.hpp
 )
 
@@ -230,6 +231,7 @@ set(botcraft_PRIVATE_HDR
 set(botcraft_SRC
     src/AI/BaseNode.cpp
     src/AI/BehaviourClient.cpp
+    src/AI/Blackboard.cpp
     src/AI/SimpleBehaviourClient.cpp
     
     src/AI/Tasks/BaseTasks.cpp
@@ -420,8 +422,8 @@ set(botcraft_SRC
     
     src/Game/Physics/PhysicsManager.cpp
     
-    src/Network/Authentifier.cpp
     src/Network/AESEncrypter.cpp
+    src/Network/Authentifier.cpp
     src/Network/Compression.cpp
     src/Network/LastSeenMessagesTracker.cpp
     src/Network/NetworkManager.cpp
@@ -430,8 +432,9 @@ set(botcraft_SRC
     src/Utilities/AsyncHandler.cpp
     src/Utilities/Logger.cpp
     src/Utilities/NBTUtilities.cpp
-    src/Utilities/StringUtilities.cpp
     src/Utilities/SleepUtilities.cpp
+    src/Utilities/StdAnyUtilities.cpp
+    src/Utilities/StringUtilities.cpp
 )
 
 if(BOTCRAFT_USE_OPENGL_GUI)

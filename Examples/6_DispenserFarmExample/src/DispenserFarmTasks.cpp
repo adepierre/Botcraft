@@ -300,6 +300,11 @@ Status CheckFrostWalkerMob(BehaviourClient& client)
 Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboard, const std::string& item_to_keep)
 {
     Blackboard& blackboard = client.GetBlackboard();
+
+    // Set input parameters for debugger
+    blackboard.Set<std::string>("CleanChest.chest_pos_blackboard", chest_pos_blackboard);
+    blackboard.Set<std::string>("CleanChest.item_to_keep", item_to_keep);
+
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
     const Position& pos = blackboard.Get<Position>(chest_pos_blackboard);
@@ -684,6 +689,12 @@ Status MineCobblestone(BehaviourClient& client)
 
 Status TakeFromChest(BehaviourClient& client, const std::string& item_name, const int N)
 {
+    Blackboard& blackboard = client.GetBlackboard();
+
+    // Set input parameters for debugger
+    blackboard.Set<std::string>("TakeFromChest.item_name", item_name);
+    blackboard.Set<int>("TakeFromChest.N", N);
+
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
     short container_id;
@@ -752,8 +763,13 @@ Status TakeFromChest(BehaviourClient& client, const std::string& item_name, cons
 
 Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks_pos_blackboard, const std::string& item_name)
 {
-    std::shared_ptr<World> world = client.GetWorld();
     Blackboard& blackboard = client.GetBlackboard();
+
+    // Set input parameters for debugger
+    blackboard.Set<std::string>("CollectCropsAndReplant.blocks_pos_blackboard", blocks_pos_blackboard);
+    blackboard.Set<std::string>("CollectCropsAndReplant.item_name", item_name);
+
+    std::shared_ptr<World> world = client.GetWorld();
 
     const std::vector<Position>& positions = blackboard.Get<std::vector<Position>>(blocks_pos_blackboard);
 
@@ -874,6 +890,10 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
 Status DestroyItems(BehaviourClient& client, const std::string& item_name)
 {
     Blackboard& blackboard = client.GetBlackboard();
+
+    // Set input parameters for debugger
+    blackboard.Set<std::string>("DestroyItems.item_name", item_name);
+
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
     std::shared_ptr<Window> inventory = inventory_manager->GetPlayerInventory();
 
@@ -914,7 +934,7 @@ Status DestroyItems(BehaviourClient& client, const std::string& item_name)
 
     for (int i = 0; i < slots_to_remove.size(); ++i)
     {
-        if (DropItemsFromContainer(client, 0/*Window::PLAYER_INVENTORY_INDEX*/, slots_to_remove[i]) == Status::Failure)
+        if (DropItemsFromContainer(client, Window::PLAYER_INVENTORY_INDEX, slots_to_remove[i]) == Status::Failure)
         {
             LOG_WARNING("Error trying to drop the items on the cactus");
             return Status::Failure;

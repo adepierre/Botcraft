@@ -18,7 +18,7 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    Status Dig(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face)
+    Status DigImpl(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face)
     {
         std::shared_ptr<LocalPlayer> local_player = c.GetEntityManager()->GetLocalPlayer();
         Vector3<double> hand_pos;
@@ -212,6 +212,23 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status Dig(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face)
+    {
+        constexpr std::array variable_names = {
+            "Dig.pos",
+            "Dig.send_swing",
+            "Dig.face"
+        };
+
+        Blackboard& blackboard = c.GetBlackboard();
+
+        blackboard.Set<Position>(variable_names[0], pos);
+        blackboard.Set<bool>(variable_names[1], send_swing);
+        blackboard.Set<PlayerDiggingFace>(variable_names[2], face);
+
+        return DigImpl(c, pos, send_swing, face);
+    }
+
     Status DigBlackboard(BehaviourClient& c)
     {
         constexpr std::array variable_names = {
@@ -229,6 +246,6 @@ namespace Botcraft
         const bool send_swing = blackboard.Get<bool>(variable_names[1], false);
         const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[2], PlayerDiggingFace::Up);
 
-        return Dig(c, pos, send_swing, face);
+        return DigImpl(c, pos, send_swing, face);
     }
 }

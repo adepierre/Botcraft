@@ -15,16 +15,31 @@ namespace Botcraft
         return Status::Success;
     }
 
+
     Status Disconnect(BehaviourClient& client)
     {
         client.SetShouldBeClosed(true);
         return Status::Success;
     }
 
-    Status Say(BehaviourClient& client, const std::string& msg)
+
+    Status SayImpl(BehaviourClient& client, const std::string& msg)
     {
         client.SendChatMessage(msg);
         return Status::Success;
+    }
+
+    Status Say(BehaviourClient& client, const std::string& msg)
+    {
+        constexpr std::array variable_names = {
+            "Say.msg"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::string>(variable_names[0], msg);
+
+        return SayImpl(client, msg);
     }
 
     Status SayBlackboard(BehaviourClient& client)
@@ -38,10 +53,11 @@ namespace Botcraft
         // Mandatory
         const std::string& msg = blackboard.Get<std::string>(variable_names[0]);
 
-        return Say(client, msg);
+        return SayImpl(client, msg);
     }
 
-    Status InteractWithBlock(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face, const bool animation)
+
+    Status InteractWithBlockImpl(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face, const bool animation)
     {
         std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
 
@@ -129,6 +145,23 @@ namespace Botcraft
         return Status::Success;
     }
 
+    Status InteractWithBlock(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face, const bool animation)
+    {
+        constexpr std::array variable_names = {
+            "InteractWithBlock.pos",
+            "InteractWithBlock.face",
+            "InteractWithBlock.animation"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<Position>(variable_names[0], pos);
+        blackboard.Set<PlayerDiggingFace>(variable_names[1], face);
+        blackboard.Set<bool>(variable_names[2], animation);
+
+        return InteractWithBlockImpl(client, pos, face, animation);
+    }
+
     Status InteractWithBlockBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
@@ -146,12 +179,26 @@ namespace Botcraft
         const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[1], PlayerDiggingFace::Up);
         const bool animation = blackboard.Get(variable_names[2], false);
 
-        return InteractWithBlock(client, pos, face, animation);
+        return InteractWithBlockImpl(client, pos, face, animation);
+    }
+
+
+    Status CheckBlackboardBoolDataImpl(BehaviourClient& client, const std::string& key)
+    {
+        return client.GetBlackboard().Get(key, false) ? Status::Success : Status::Failure;
     }
 
     Status CheckBlackboardBoolData(BehaviourClient& client, const std::string& key)
     {
-        return client.GetBlackboard().Get(key, false) ? Status::Success : Status::Failure;
+        constexpr std::array variable_names = {
+            "CheckBlackboardBoolData.key"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::string>(variable_names[0], key);
+
+        return CheckBlackboardBoolDataImpl(client, key);
     }
 
     Status CheckBlackboardBoolDataBlackboard(BehaviourClient& client)
@@ -165,14 +212,28 @@ namespace Botcraft
         // Mandatory
         const std::string& key = blackboard.Get<std::string>(variable_names[0]);
 
-        return CheckBlackboardBoolData(client, key);
+        return CheckBlackboardBoolDataImpl(client, key);
     }
 
-    Status RemoveBlackboardData(BehaviourClient& client, const std::string& key)
+
+    Status RemoveBlackboardDataImpl(BehaviourClient& client, const std::string& key)
     {
         client.GetBlackboard().Erase(key);
 
         return Status::Success;
+    }
+
+    Status RemoveBlackboardData(BehaviourClient& client, const std::string& key)
+    {
+        constexpr std::array variable_names = {
+            "RemoveBlackboardData.key"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::string>(variable_names[0], key);
+
+        return RemoveBlackboardDataImpl(client, key);
     }
 
     Status RemoveBlackboardDataBlackboard(BehaviourClient& client)
@@ -186,19 +247,36 @@ namespace Botcraft
         // Mandatory
         const std::string& key = blackboard.Get<std::string>(variable_names[0]);
 
-        return RemoveBlackboardData(client, key);
+        return RemoveBlackboardDataImpl(client, key);
     }
+
 
     Status IsHungry(BehaviourClient& client)
     {
         return client.GetEntityManager()->GetLocalPlayer()->GetFood() < 20.0f ? Status::Success : Status::Failure;
     }
 
-    Status CopyBlackboardData(BehaviourClient& client, const std::string& src, const std::string& dst)
+
+    Status CopyBlackboardDataImpl(BehaviourClient& client, const std::string& src, const std::string& dst)
     {
         client.GetBlackboard().Copy(src, dst);
 
         return Status::Success;
+    }
+
+    Status CopyBlackboardData(BehaviourClient& client, const std::string& src, const std::string& dst)
+    {
+        constexpr std::array variable_names = {
+            "CopyBlackboardData.src",
+            "CopyBlackboardData.dst"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<std::string>(variable_names[0], src);
+        blackboard.Set<std::string>(variable_names[1], dst);
+
+        return CopyBlackboardDataImpl(client, src, dst);
     }
 
     Status CopyBlackboardDataBlackboard(BehaviourClient& client)
@@ -214,8 +292,9 @@ namespace Botcraft
         const std::string& src = blackboard.Get<std::string>(variable_names[0]);
         const std::string& dst = blackboard.Get<std::string>(variable_names[1]);
 
-        return CopyBlackboardData(client, src, dst);
+        return CopyBlackboardDataImpl(client, src, dst);
     }
+
 
     Status IsNightTime(BehaviourClient& client)
     {

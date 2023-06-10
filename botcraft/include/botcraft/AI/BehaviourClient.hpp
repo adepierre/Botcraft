@@ -9,7 +9,7 @@ namespace Botcraft
     /// kind of data and a virtual Yield function.
     /// You should **not** inherit from this class, but from TemplatedBehaviourClient
     /// or SimpleBehaviourClient instead.
-    class BehaviourClient : public ManagersClient
+    class BehaviourClient : public ManagersClient, private BlackboardObserver
     {
     public:
         BehaviourClient(const bool use_renderer_);
@@ -18,6 +18,11 @@ namespace Botcraft
         virtual void Yield() = 0;
 
         Blackboard& GetBlackboard();
+
+    public:
+        void OnReset() override;
+        void OnValueChanged(const std::string& key, const std::any& value) override;
+        void OnValueRemoved(const std::string& key) override;
 
     protected:
         Blackboard blackboard;

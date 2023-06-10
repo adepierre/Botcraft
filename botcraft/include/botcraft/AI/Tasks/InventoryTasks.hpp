@@ -23,6 +23,7 @@ namespace Botcraft
     /// @return Success if the slots is clicked (for versions < 1.17 and the server confirms it), Failure otherwise
     Status ClickSlotInContainerBlackboard(BehaviourClient& client);
 
+
     /// @brief Swap two slots in a given container
     /// @param client The client performing the action
     /// @param container_id Container ID
@@ -35,6 +36,7 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Success if the two slots have been correctly swapped, Failure otherwise
     Status SwapItemsInContainerBlackboard(BehaviourClient& client);
+
 
     /// @brief Drop item out of inventory
     /// @param client The client performing the action
@@ -49,6 +51,7 @@ namespace Botcraft
     /// @return Success if items were correctly dropped, Failure otherwise
     Status DropItemsFromContainerBlackboard(BehaviourClient& client);
 
+
     /// @brief Take one item from source_slot, and put it on destination_slot
     /// @param client The client performing the action
     /// @param container_id Container ID
@@ -62,6 +65,7 @@ namespace Botcraft
     /// @return Success if the item is correctly set, Failure otherwise
     Status PutOneItemInContainerSlotBlackboard(BehaviourClient& client);
 
+
     /// @brief Try to set a given item in the given hand
     /// @param client The client performing the action
     /// @param item_name Item name to place in hand
@@ -73,6 +77,7 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Success if the item is now in hand, Failure otherwise
     Status SetItemInHandBlackboard(BehaviourClient& client);
+
 
     /// @brief Try to place the item at given pos. If too far, will try
     /// to pathfind toward the position first.
@@ -90,17 +95,19 @@ namespace Botcraft
     /// @return Success if placement attempt was made (and confirmed by the server if wait_confirmation is true), Failure otherwise
     Status PlaceBlockBlackboard(BehaviourClient& client);
 
+
     /// @brief Search for food item in the inventory and eat it
     /// @param client The client performing the action
     /// @param food_name The item to eat
     /// @param wait_confirmation If true, waits for the eaten stack to be reduced by 1 before returning Success
-    /// @return 
-    Status Eat(BehaviourClient& client, const std::string& food_name, const bool wait_confirmation = false);
+    /// @return Success if the item was eaten (and confirmed if wait_confirmation is true), Failure otherwise
+    Status Eat(BehaviourClient& client, const std::string& food_name, const bool wait_confirmation = true);
 
     /// @brief Same thing as Eat, but reads its parameters from the blackboard
     /// @param client The client performing the action
     /// @return Success if the item was eaten (and confirmed if wait_confirmation is true), Failure otherwise
     Status EatBlackboard(BehaviourClient& client);
+
 
     /// @brief Open a container at a given position
     /// @param client The client performing the action
@@ -113,6 +120,7 @@ namespace Botcraft
     /// @return Success if the container is opened, Failure otherwise
     Status OpenContainerBlackboard(BehaviourClient& client);
 
+
     /// @brief Close an opened container
     /// @param client The client performing the action
     /// @param container_id The id of the container to close, if -1, will close the first one found
@@ -124,6 +132,7 @@ namespace Botcraft
     /// @return Always return Success
     Status CloseContainerBlackboard(BehaviourClient& client);
 
+
     /// @brief Log all the inventory content at given log level
     /// @param client The client performing the action
     /// @param level Desired log level
@@ -134,6 +143,7 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Always return Success
     Status LogInventoryContentBlackboard(BehaviourClient& client);
+
 
 #if PROTOCOL_VERSION > 451
     /// @brief Buy or sell an item, assuming a trading window is currently opened.
@@ -151,6 +161,7 @@ namespace Botcraft
     /// @return Success if the exchange went sucessfully, Failure otherwise
     Status TradeBlackboard(BehaviourClient& client);
 
+
     /// @brief Buy or sell an item, assuming a trading window is currently opened.
     /// @param client The client performing the action
     /// @param item_name Item to buy/sell
@@ -161,11 +172,12 @@ namespace Botcraft
     /// @return Success if the exchange went sucessfully, Failure otherwise
     Status TradeName(BehaviourClient& client, const std::string& item_name, const bool buy, const int trade_id = -1);
 
-    /// @brief Same thing as Trade, but reads its parameters from the blackboard
+    /// @brief Same thing as TradeName, but reads its parameters from the blackboard
     /// @param client The client performing the action
     /// @return Success if the exchange went sucessfully, Failure otherwise
     Status TradeNameBlackboard(BehaviourClient& client);
 #endif
+
 
     /// @brief Put item in a crafting container and click on the output, storing it in the inventory.
     /// @param client The client performing the action
@@ -183,6 +195,7 @@ namespace Botcraft
     /// @return Success if item is crafted, Failure otherwise
     Status CraftBlackboard(BehaviourClient& client);
 
+
     /// @brief Put item in a crafting container and click on the output, storing it in the inventory.
     /// @param client The client performing the action
     /// @param inputs Input items names in a 3x3 grid, inputs[0][1] refers to first line, second column
@@ -195,6 +208,7 @@ namespace Botcraft
     /// @return Success if item is crafted, Failure otherwise
     Status CraftNamedBlackboard(BehaviourClient& client);
 
+
     /// @brief Check if item_name is present in inventory
     /// @param client The client performing the action
     /// @param item_name Item name
@@ -206,6 +220,7 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Success if inventory quantity is >= quantity else Failure
     Status HasItemInInventoryBlackboard(BehaviourClient& client);
+
 
     /// @brief Clean the inventory stacking same items together
     /// @param client The client performing the action
