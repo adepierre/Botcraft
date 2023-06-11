@@ -90,7 +90,6 @@ namespace Botcraft
         /// ```
         /// @tparam T Any type, must match the type stored at key
         /// @param key key to retrieve the value from
-        /// @param default_value The default value to return if key is not found
         /// @return The stored value
         template<class T>
         NotifyOnEndUseRef<T> GetRef(const std::string& key)
