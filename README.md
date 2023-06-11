@@ -1,14 +1,25 @@
-![Build status](https://github.com/adepierre/Botcraft/actions/workflows/build.yml/badge.svg)
-[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/wECVsTbjA9)
-[![Documentation](https://badgen.net/badge/%F0%9F%93%96/documentation/black)](https://adepierre.github.io/Botcraft/)
+<p align="center" style="margin-bottom: 0px !important;">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="Visuals/logo_white.svg">
+        <source media="(prefers-color-scheme: light)" srcset="Visuals/logo.svg">
+        <img width="400" src="Visuals/logo.svg" alt="Botcraft logo" align="center">
+    </picture>
+</p>
+<h1 align="center" style="margin-top: 0px;">Bocraft</h1>
 
-# Botcraft
+<p align="center">Just another Minecraft bots library</p>
 
-Botcraft is a cross-platform C++ library to connect and interact with Minecraft servers with (optional) integrated OpenGL renderer.
+<div align="center">
+![Build status](https://github.com/adepierre/Botcraft/actions/workflows/build.yml/badge.svg) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/wECVsTbjA9) [![Documentation](https://badgen.net/badge/%F0%9F%93%96/documentation/black)](https://adepierre.github.io/Botcraft/)
+</div>
 
-This is a "learn-by-doing" code, with some lines dating back to 2017 and never changed since. A lot of things should be improved or refactored. I only code this on my free time, when I feel like it, so don't expect it to be a fully-featured commercial grade library. I share the code because I think it can be interesting for other people, but the goal is not to make it a widely adopted library, or even a useful one. I just do it for fun, it's more a shared private repo than a real team open source project. If you're looking for more features, there are alternative libraries by people with much more time (and probably talent) than myself.
+<p align="center" style="margin-bottom: 0px !important;">
+  <!-- <img width="100" src="Visuals/XXX.gif" alt="botcraft illustration gif" align="center"> TODO: add a nice gif -->
+</p>
 
-Precompiled binaries for the latest game version can be found in the [latest release](https://github.com/adepierre/Botcraft/releases/tag/latest) for both Windows and Linux. To compile it yourself, you can check the [Building](#building-and-testing) section.
+This is a "learn-by-doing" pet project I develop on my free time when I feel like it. I share the code for people that might be interested but it's more a "shared private repo" than a real open source community project.
+
+Precompiled binaries of the library and examples can be found in the [latest release](https://github.com/adepierre/Botcraft/releases/tag/latest) for both Windows and Linux. To compile it yourself, you can check the [Building](#building-and-testing) section.
 
 ## Content
 
@@ -43,7 +54,7 @@ Main features are listed below. To see the evolution of the project, check the [
 Available bot behaviours includes:
 - Path finding (including ladder/scaffholding climbing)
 - Block breaking
-- Inventory managing (including with chest)
+- Inventory managing (including interactions with chest/anvil/brewing stand...)
 - Block placing
 - Block interaction (button, lever etc...)
 - Villager trading (only for versions 1.14+)
@@ -139,7 +150,7 @@ There are several cmake options you can modify:
 Examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, sends Hello World! in the chat then disconnect
 - [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI enabled. Mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering, or in a real server.
-- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obeys commands sent through vanilla chat. Should work with chat from vanilla and non-vanilla servers (paper, forge ...)
+- [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obeys commands sent through chat. Should work with chat from vanilla and non-vanilla servers (paper, forge ...)
 - [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Highly CPU/RAM efficient AFK only bot. Simply connect to a server and stay still doing nothing.
 - [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same (due to concurrent access). Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
 - [5_MobHitterExample](Examples/5_MobHitterExample): Entity processing example. Attack every monster in range, with a per-entity cooldown of 0.5s. /!\ This is only an example about entities, no eating is performed, so would starve to death pretty quickly if used as-is.
