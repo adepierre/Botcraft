@@ -392,15 +392,6 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
 {
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>("main")
         .sequence()
-            .leaf("go to", Botcraft::GoTo, Botcraft::Position(50,-63,50), 0, 0, 4.317f, false)
-            .leaf("go to", Botcraft::GoTo, Botcraft::Position(52,-63,50), 0, 0, 4.317f, false)
-            .leaf("go to", Botcraft::GoTo, Botcraft::Position(52,-63,52), 0, 0, 4.317f, false)
-            .leaf("go to", Botcraft::GoTo, Botcraft::Position(50,-63,52), 0, 0, 4.317f, false)
-            .leaf("place block", Botcraft::PlaceBlock, "minecraft:dirt", Botcraft::Position(51,-62,51), Botcraft::PlayerDiggingFace::Up, true, false)
-            .leaf("break block", Botcraft::Dig, Botcraft::Position(51, -62, 51), true, Botcraft::PlayerDiggingFace::Up)
-        .end();
-    return Botcraft::Builder<Botcraft::SimpleBehaviourClient>("main")
-        .sequence()
             .selector()
                 .leaf("check if initialized in blackboard", Botcraft::CheckBlackboardBoolData, "DispenserFarmBot.initialized")
                 .sequence()
