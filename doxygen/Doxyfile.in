@@ -1,12 +1,15 @@
 # Doxyfile 1.9.6
 
 # Basic settings:
-PROJECT_NAME           = "Botcraft for ${BOTCRAFT_GAME_VERSION}"
+PROJECT_NAME           = Botcraft
+PROJECT_NUMBER         = ${BOTCRAFT_GAME_VERSION}
 STRIP_FROM_PATH        = ${CMAKE_CURRENT_SOURCE_DIR}
-INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/botcraft ${CMAKE_CURRENT_SOURCE_DIR}/protocolCraft ${DOXYGEN_MAIN_PAGE}
+INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/botcraft ${CMAKE_CURRENT_SOURCE_DIR}/protocolCraft ${DOXYGEN_MAIN_PAGE} ${DOXYGEN_WIKI_FOLDER}
 RECURSIVE              = YES
 PREDEFINED             = ${DOXYGEN_PREDEFINED}
 USE_MDFILE_AS_MAINPAGE = ${DOXYGEN_MAIN_PAGE}
+PROJECT_LOGO           = ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/logo_favicon.png
+LAYOUT_FILE            = ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/DoxygenLayout.xml
 
 # output
 OUTPUT_DIRECTORY       = ${BOTCRAFT_OUTPUT_DIR}/doc

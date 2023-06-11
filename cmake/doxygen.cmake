@@ -24,9 +24,15 @@ if (DOXYGEN_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen/main.md.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen/main.md)
 
     set(DOXYGEN_MAIN_PAGE ${CMAKE_CURRENT_BINARY_DIR}/doxygen/main.md)
+    set(DOXYGEN_WIKI_FOLDER ${CMAKE_CURRENT_BINARY_DIR}/doxygen/wiki)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile)
 
     add_custom_target(doc_doxygen
+        COMMAND ${CMAKE_COMMAND} -E echo "Removing previous wiki files..."
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_CURRENT_BINARY_DIR}/doxygen/wiki
+        COMMAND ${CMAKE_COMMAND} -E echo "Downloading latest version of repo wiki pages..."
+        COMMAND git clone --depth 1 https://github.com/adepierre/Botcraft.wiki.git ${DOXYGEN_WIKI_FOLDER}
+        COMMAND ${CMAKE_COMMAND} -E echo "Running doxygen..."
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating documentation with Doxygen"
