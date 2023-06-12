@@ -382,7 +382,7 @@ namespace Botcraft
             {
                 active_node->status = ImNodeStatus::Running;
 
-                if (active_node->visible)
+                if (context != nullptr && active_node->visible)
                 {
                     ax::NodeEditor::SetCurrentEditor(context);
                     if (ax::NodeEditor::IsNodeSelected(active_node->id))
