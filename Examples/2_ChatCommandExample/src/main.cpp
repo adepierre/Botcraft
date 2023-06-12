@@ -15,6 +15,17 @@ void ShowHelp(const char* argv0)
         << std::endl;
 }
 
+struct Args
+{
+    bool help = false;
+    std::string address = "127.0.0.1:25565";
+    std::string login = "BCChatCommand";
+
+    int return_code = 0;
+};
+
+Args ParseCommandLine(int argc, char* argv[]);
+
 int main(int argc, char* argv[])
 {
     try
@@ -25,46 +36,23 @@ int main(int argc, char* argv[])
         // Add a name to this thread for logging
         Botcraft::Logger::GetInstance().RegisterThread("main");
 
-        std::string address = "127.0.0.1:25565";
-        std::string login = "BCChatCommand";
-
+        Args args;
         if (argc == 1)
         {
             LOG_WARNING("No command arguments. Using default options.");
             ShowHelp(argv[0]);
         }
-
-        for (int i = 1; i < argc; ++i)
+        else
         {
-            std::string arg = argv[i];
-            if (arg == "-h" || arg == "--help")
+            args = ParseCommandLine(argc, argv);
+            if (args.help)
             {
                 ShowHelp(argv[0]);
                 return 0;
             }
-            else if (arg == "--address")
+            if (args.return_code != 0)
             {
-                if (i + 1 < argc)
-                {
-                    address = argv[++i];
-                }
-                else
-                {
-                    LOG_FATAL("--address requires an argument");
-                    return 1;
-                }
-            }
-            else if (arg == "--login")
-            {
-                if (i + 1 < argc)
-                {
-                    login = argv[++i];
-                }
-                else
-                {
-                    LOG_FATAL("--login requires an argument");
-                    return 1;
-                }
+                return args.return_code;
             }
         }
 
@@ -72,7 +60,7 @@ int main(int argc, char* argv[])
         client.SetAutoRespawn(true);
 
         LOG_INFO("Starting connection process");
-        client.Connect(address, login);
+        client.Connect(args.address, args.login);
 
         client.RunBehaviourUntilClosed();
 
@@ -90,4 +78,46 @@ int main(int argc, char* argv[])
         LOG_FATAL("Unknown exception");
         return 2;
     }
+}
+
+Args ParseCommandLine(int argc, char* argv[])
+{
+    Args args;
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        if (arg == "-h" || arg == "--help")
+        {
+            ShowHelp(argv[0]);
+            args.help = true;
+            return args;
+        }
+        else if (arg == "--address")
+        {
+            if (i + 1 < argc)
+            {
+                args.address = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--address requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--login")
+        {
+            if (i + 1 < argc)
+            {
+                args.login = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--login requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+    }
+    return args;
 }

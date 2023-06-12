@@ -19,9 +19,20 @@ void ShowHelp(const char* argv0)
         << std::endl;
 }
 
-std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateTree();
-
 void RegisterBlackboardTypesToDebugger();
+
+struct Args
+{
+    bool help = false;
+    std::string address = "127.0.0.1:25565";
+    std::string login = "BCDispenserGuy";
+
+    int return_code = 0;
+};
+
+Args ParseCommandLine(int argc, char* argv[]);
+
+std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateTree();
 
 int main(int argc, char* argv[])
 {
@@ -32,52 +43,28 @@ int main(int argc, char* argv[])
         Botcraft::Logger::GetInstance().SetFilename("");
         // Add a name to this thread for logging
         Botcraft::Logger::GetInstance().RegisterThread("main");
+        // Add some types to blackboard debugger
+        RegisterBlackboardTypesToDebugger();
 
-        std::string address = "127.0.0.1:25565";
-        std::string login = "BCDispenserGuy";
-
+        Args args;
         if (argc == 1)
         {
             LOG_WARNING("No command arguments. Using default options.");
             ShowHelp(argv[0]);
         }
-
-        for (int i = 1; i < argc; ++i)
+        else
         {
-            std::string arg = argv[i];
-            if (arg == "-h" || arg == "--help")
+            args = ParseCommandLine(argc, argv);
+            if (args.help)
             {
                 ShowHelp(argv[0]);
                 return 0;
             }
-            else if (arg == "--address")
+            if (args.return_code != 0)
             {
-                if (i + 1 < argc)
-                {
-                    address = argv[++i];
-                }
-                else
-                {
-                    LOG_FATAL("--address requires an argument");
-                    return 1;
-                }
-            }
-            else if (arg == "--login")
-            {
-                if (i + 1 < argc)
-                {
-                    login = argv[++i];
-                }
-                else
-                {
-                    LOG_FATAL("--login requires an argument");
-                    return 1;
-                }
+                return args.return_code;
             }
         }
-
-        // Add some types to blackboard debugger
-        RegisterBlackboardTypesToDebugger();
 
         auto dispenser_farm_tree = CreateTree();
 
@@ -85,7 +72,7 @@ int main(int argc, char* argv[])
         client.SetAutoRespawn(true);
 
         LOG_INFO("Starting connection process");
-        client.Connect(address, login);
+        client.Connect(args.address, args.login);
 
         // Wait 10 seconds then start executing the tree
         Botcraft::SleepFor(std::chrono::seconds(10));
@@ -109,6 +96,81 @@ int main(int argc, char* argv[])
     }
 }
 
+void RegisterBlackboardTypesToDebugger()
+{
+    // Register a custom parser for small vectors of int (to print them in the blackboard debugger)
+    Botcraft::AnyParser::RegisterType<std::vector<int>>([](const std::any& f) {
+        const std::vector<int>& v = std::any_cast<const std::vector<int>&>(f);
+        if (v.size() > 10)
+        {
+            return Botcraft::AnyParser::DefaultToString(f);
+        }
+        std::stringstream s;
+        s << '[';
+        for (size_t i = 0; i < v.size(); ++i)
+        {
+            s << v[i] << (i == v.size() - 1 ? ']' : ',');
+        }
+        return s.str();
+        });
+    // Register a custom parser for small vectors of Position (to print them in the blackboard debugger)
+    Botcraft::AnyParser::RegisterType(std::type_index(typeid(std::vector<Botcraft::Position>)), [](const std::any& f) {
+        const std::vector<Botcraft::Position>& v = std::any_cast<const std::vector<Botcraft::Position>&>(f);
+        if (v.size() > 10)
+        {
+            return "Vector of " + std::to_string(v.size()) + " block Positions";
+        }
+        std::stringstream s;
+        s << "[\n";
+        for (size_t i = 0; i < v.size(); ++i)
+        {
+            s << "\t" << v[i] << (i == v.size() - 1 ? "\n]" : ",\n");
+        }
+        return s.str();
+        });
+}
+
+Args ParseCommandLine(int argc, char* argv[])
+{
+    Args args;
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        if (arg == "-h" || arg == "--help")
+        {
+            ShowHelp(argv[0]);
+            args.help = true;
+            return args;
+        }
+        else if (arg == "--address")
+        {
+            if (i + 1 < argc)
+            {
+                args.address = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--address requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--login")
+        {
+            if (i + 1 < argc)
+            {
+                args.login = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--login requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+    }
+    return args;
+}
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateBuyTree(const std::string& item_name, const std::string& blackboard_entity_location)
 {
@@ -413,38 +475,4 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .tree(CreateCollectCobblestoneTree())
             .tree(CreateCraftDispenserTree())
         .end();
-}
-
-void RegisterBlackboardTypesToDebugger()
-{
-    // Register a custom parser for small vectors of int (to print them in the blackboard debugger)
-    Botcraft::AnyParser::RegisterType<std::vector<int>>([](const std::any& f) {
-        const std::vector<int>& v = std::any_cast<const std::vector<int>&>(f);
-        if (v.size() > 10)
-        {
-            return Botcraft::AnyParser::DefaultToString(f);
-        }
-        std::stringstream s;
-        s << '[';
-        for (size_t i = 0; i < v.size(); ++i)
-        {
-            s << v[i] << (i == v.size() - 1 ? ']' : ',');
-        }
-        return s.str();
-    });
-    // Register a custom parser for small vectors of Position (to print them in the blackboard debugger)
-    Botcraft::AnyParser::RegisterType(std::type_index(typeid(std::vector<Botcraft::Position>)), [](const std::any& f) {
-        const std::vector<Botcraft::Position>& v = std::any_cast<const std::vector<Botcraft::Position>&>(f);
-        if (v.size() > 10)
-        {
-            return "Vector of " + std::to_string(v.size()) + " block Positions";
-        }
-        std::stringstream s;
-        s << "[\n";
-        for (size_t i = 0; i < v.size(); ++i)
-        {
-            s << "\t" << v[i] << (i == v.size() - 1 ? "\n]" : ",\n");
-        }
-        return s.str();
-    });
 }

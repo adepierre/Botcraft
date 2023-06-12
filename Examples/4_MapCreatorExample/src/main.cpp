@@ -11,6 +11,8 @@
 #include "CustomBehaviourTree.hpp"
 #include "MapCreationTasks.hpp"
 
+using namespace Botcraft;
+
 void ShowHelp(const char* argv0)
 {
     std::cout << "Usage: " << argv0 << " <options>\n"
@@ -25,138 +27,73 @@ void ShowHelp(const char* argv0)
         << std::endl;
 }
 
-using namespace Botcraft;
+struct Args
+{
+    bool help = false;
+    std::string address = "127.0.0.1:25565";
+    int num_bot = 5;
+    int num_world = 1;
+    std::string nbt_file = "";
+    Position offset = Position(0, 0, 0);
+    std::string temp_block = "minecraft:slime_block";
+
+    int return_code = 0;
+};
+
+Args ParseCommandLine(int argc, char* argv[]);
 
 std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(const std::string& food_name,
-    const std::string& nbt_path, const Botcraft::Position& offset, const std::string& temp_block, const bool detailed);
+    const std::string& nbt_path, const Position& offset, const std::string& temp_block, const bool detailed);
 
 int main(int argc, char* argv[])
 {
     try
     {
         // Init logging, log everything >= Info, only to console, no file
-        Botcraft::Logger::GetInstance().SetLogLevel(Botcraft::LogLevel::Info);
-        Botcraft::Logger::GetInstance().SetFilename("");
+        Logger::GetInstance().SetLogLevel(LogLevel::Info);
+        Logger::GetInstance().SetFilename("");
         // Add a name to this thread for logging
-        Botcraft::Logger::GetInstance().RegisterThread("main");
+        Logger::GetInstance().RegisterThread("main");
 
-        std::string address = "127.0.0.1:25565";
-        int num_bot = 5;
-        int num_world = 1;
-        std::string nbt_file = "";
-        Botcraft::Position offset(0, 0, 0);
-        std::string temp_block = "minecraft:slime_block";
-
-        std::vector<std::string> base_names = { "BotAuFeu", "Botager", "Botiron", "BotEnTouche", "BotDeVin", "BotAuxRoses", "BotronMinet", "Botmobile", "Botman", "Botentiel" };
-
+        Args args;
         if (argc == 1)
         {
             LOG_WARNING("No command arguments. Using default options.");
             ShowHelp(argv[0]);
         }
-
-        for (int i = 1; i < argc; ++i)
+        else
         {
-            std::string arg = argv[i];
-            if (arg == "-h" || arg == "--help")
+            args = ParseCommandLine(argc, argv);
+            if (args.help)
             {
                 ShowHelp(argv[0]);
                 return 0;
             }
-            else if (arg == "--address")
+            if (args.return_code != 0)
             {
-                if (i + 1 < argc)
-                {
-                    address = argv[++i];
-                }
-                else
-                {
-                    LOG_FATAL("--address requires an argument");
-                    return 1;
-                }
-            }
-            else if (arg == "--numbot")
-            {
-                if (i + 1 < argc)
-                {
-                    num_bot = std::stoi(argv[++i]);
-                }
-                else
-                {
-                    LOG_FATAL("--numbot requires an argument");
-                    return 1;
-                }
-            }
-            else if (arg == "--numworld")
-            {
-                if (i + 1 < argc)
-                {
-                    num_world = std::stoi(argv[++i]);
-                }
-                else
-                {
-                    LOG_FATAL("--numworld requires an argument");
-                    return 1;
-                }
-            }
-            else if (arg == "--nbt")
-            {
-                if (i + 1 < argc)
-                {
-                    nbt_file = argv[++i];
-                }
-                else
-                {
-                    LOG_FATAL("--nbt requires an argument");
-                    return 1;
-                }
-            }
-            else if (arg == "--offset")
-            {
-                if (i + 3 < argc)
-                {
-                    int x = std::stoi(argv[++i]);
-                    int y = std::stoi(argv[++i]);
-                    int z = std::stoi(argv[++i]);
-                    offset = Botcraft::Position(x, y, z);
-                }
-                else
-                {
-                    LOG_FATAL("--offset requires 3 arguments");
-                    return 1;
-                }
-            }
-            else if (arg == "--tempblock")
-            {
-                if (i + 1 < argc)
-                {
-                    temp_block = argv[++i];
-                }
-                else
-                {
-                    LOG_FATAL("--tempblock requires an argument");
-                    return 1;
-                }
+                return args.return_code;
             }
         }
 
-        auto map_art_detailed_behaviour_tree = GenerateMapArtCreatorTree("minecraft:golden_carrot", nbt_file, offset, temp_block, true);
-        auto map_art_behaviour_tree = GenerateMapArtCreatorTree("minecraft:golden_carrot", nbt_file, offset, temp_block, false);
+        const std::vector<std::string> base_names = { "BotAuFeu", "Botager", "Botiron", "BotEnTouche", "BotDeVin", "BotAuxRoses", "BotronMinet", "Botmobile", "Botman", "Botentiel" };
 
-        std::vector<std::shared_ptr<Botcraft::World> > shared_worlds(num_world);
-        for (int i = 0; i < num_world; i++)
+        auto map_art_detailed_behaviour_tree = GenerateMapArtCreatorTree("minecraft:golden_carrot", args.nbt_file, args.offset, args.temp_block, true);
+        auto map_art_behaviour_tree = GenerateMapArtCreatorTree("minecraft:golden_carrot", args.nbt_file, args.offset, args.temp_block, false);
+
+        std::vector<std::shared_ptr<World> > shared_worlds(args.num_world);
+        for (int i = 0; i < args.num_world; i++)
         {
-            shared_worlds[i] = std::shared_ptr<Botcraft::World>(new Botcraft::World(true, false));
+            shared_worlds[i] = std::make_shared<World>(true, false);
         }
-        std::vector<std::string> names(num_bot);
-        std::vector<std::shared_ptr<SimpleBehaviourClient> > clients(num_bot);
-        for (int i = 0; i < num_bot; ++i)
+        std::vector<std::string> names(args.num_bot);
+        std::vector<std::shared_ptr<SimpleBehaviourClient> > clients(args.num_bot);
+        for (int i = 0; i < args.num_bot; ++i)
         {
             names[i] = base_names[i] + (i < base_names.size() ? "" : ("_" + std::to_string(i / base_names.size())));
             clients[i] = std::make_shared<SimpleBehaviourClient>(false);
-            clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
+            clients[i]->SetSharedWorld(shared_worlds[i % args.num_world]);
             clients[i]->SetAutoRespawn(true);
-            clients[i]->Connect(address, names[i], false);
+            clients[i]->Connect(args.address, names[i], false);
             clients[i]->StartBehaviour();
             clients[i]->SetBehaviourTree(i == 0 ? map_art_detailed_behaviour_tree : map_art_behaviour_tree);
         }
@@ -175,9 +112,9 @@ int main(int argc, char* argv[])
                     clients[i]->Disconnect();
                     clients[i].reset();
                     clients[i] = std::make_shared<SimpleBehaviourClient>(false);
-                    clients[i]->SetSharedWorld(shared_worlds[i % num_world]);
+                    clients[i]->SetSharedWorld(shared_worlds[i % args.num_world]);
                     clients[i]->SetAutoRespawn(true);
-                    clients[i]->Connect(address, names[i], false);
+                    clients[i]->Connect(args.address, names[i], false);
 
                     // Restart client[i] in 10 seconds
                     LOG_INFO(names[i] << " has been stopped. Scheduling a restart in 10 seconds...");
@@ -237,11 +174,107 @@ int main(int argc, char* argv[])
         LOG_FATAL("Unknown exception");
         return 2;
     }
+}
 
+Args ParseCommandLine(int argc, char* argv[])
+{
+    Args args;
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        if (arg == "-h" || arg == "--help")
+        {
+            ShowHelp(argv[0]);
+            args.help = true;
+            return args;
+        }
+        else if (arg == "--address")
+        {
+            if (i + 1 < argc)
+            {
+                args.address = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--address requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--numbot")
+        {
+            if (i + 1 < argc)
+            {
+                args.num_bot = std::stoi(argv[++i]);
+            }
+            else
+            {
+                LOG_FATAL("--numbot requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--numworld")
+        {
+            if (i + 1 < argc)
+            {
+                args.num_world = std::stoi(argv[++i]);
+            }
+            else
+            {
+                LOG_FATAL("--numworld requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--nbt")
+        {
+            if (i + 1 < argc)
+            {
+                args.nbt_file = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--nbt requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--offset")
+        {
+            if (i + 3 < argc)
+            {
+                int x = std::stoi(argv[++i]);
+                int y = std::stoi(argv[++i]);
+                int z = std::stoi(argv[++i]);
+                args.offset = Position(x, y, z);
+            }
+            else
+            {
+                LOG_FATAL("--offset requires 3 arguments");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--tempblock")
+        {
+            if (i + 1 < argc)
+            {
+                args.temp_block = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--tempblock requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+    }
+    return args;
 }
 
 std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(const std::string& food_name,
-    const std::string& nbt_path, const Botcraft::Position& offset, const std::string& temp_block, const bool detailed)
+    const std::string& nbt_path, const Position& offset, const std::string& temp_block, const bool detailed)
 {
     auto loading_tree = Builder<SimpleBehaviourClient>("loading")
         .selector()
@@ -271,10 +304,10 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
             // Get some food, then eat
             .sequence()
                 .selector()
-                    .leaf(SetItemInHand, food_name, Botcraft::Hand::Left)
+                    .leaf(SetItemInHand, food_name, Hand::Left)
                     .sequence()
                         .leaf("get food", GetSomeFood, food_name)
-                        .leaf(SetItemInHand, food_name, Botcraft::Hand::Left)
+                        .leaf(SetItemInHand, food_name, Hand::Left)
                     .end()
                     .leaf(WarnConsole, "Can't find food anywhere!")
                 .end()
