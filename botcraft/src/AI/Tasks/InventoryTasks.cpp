@@ -359,12 +359,12 @@ namespace Botcraft
                 std::sort( // Find the face face closest to player looking direction
                     face_candidates.begin(), face_candidates.end(), [&](PlayerDiggingFace a, PlayerDiggingFace b) -> bool
                     {
-                        Vector3<double> a_offset =  neighbour_offsets[static_cast<int>(a)];
+                        Vector3<double> a_offset = neighbour_offsets[static_cast<int>(a)];
                         Vector3<double> b_offset = neighbour_offsets[static_cast<int>(b)];
-                        Vector3<double> a_to_player = a_offset - pos + Vector3<double>(0.5); 
-                        Vector3<double> b_to_player = b_offset - pos + Vector3<double>(0.5);
-                        return player_orientation.dot(a_to_player) > player_orientation.dot(b_to_player); });
-                face = face_candidates.front();
+                        return player_orientation.dot(a_offset) < player_orientation.dot(b_offset); // a < b because a negative dot product means the vectors are in opposite directions IE the player is looking at the face.
+                    }
+                );
+                face = face_candidates.front(); // This does not guarantees that the choosed PlayerDiggingFace is facing the player IE player_orientation.dot(face) can be greater or equal than 0.
             }
         } else
         // Check if block is air
