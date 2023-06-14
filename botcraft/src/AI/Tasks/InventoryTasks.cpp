@@ -361,10 +361,12 @@ namespace Botcraft
                     {
                         Vector3<double> a_offset = neighbour_offsets[static_cast<int>(a)];
                         Vector3<double> b_offset = neighbour_offsets[static_cast<int>(b)];
-                        return player_orientation.dot(a_offset) < player_orientation.dot(b_offset); // a < b because a negative dot product means the vectors are in opposite directions IE the player is looking at the face.
+                        return player_orientation.dot(a_offset) > player_orientation.dot(b_offset); 
+                        // a > b because a negative dot product means the vectors are in opposite directions IE the player is looking at the face.
+                        // But because we place the block in the inner faces we negate the result.
                     }
                 );
-                face = face_candidates.front(); // This does not guarantees that the choosed PlayerDiggingFace is facing the player IE player_orientation.dot(face) can be greater or equal than 0.
+                face = face_candidates.front(); // This does not guarantees that the choosed PlayerDiggingFace is facing the player IE player_orientation.dot(face) can be less or equal than 0.
             }
         } else
         // Check if block is air
