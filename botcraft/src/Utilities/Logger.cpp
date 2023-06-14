@@ -1,3 +1,4 @@
+#include "botcraft/Utilities/EnumUtilities.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
 #include <fstream>
@@ -6,6 +7,8 @@
 
 namespace Botcraft
 {
+    DEFINE_ENUM_STRINGIFYER_RANGE(LogLevel, LogLevel::Trace, LogLevel::None);
+
     Logger::Logger()
     {
         filename = "";

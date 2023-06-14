@@ -53,6 +53,7 @@ namespace Botcraft
         Fatal,
         None
     };
+    std::ostream& operator<<(std::ostream& os, const LogLevel v);
 
     class Logger
     {

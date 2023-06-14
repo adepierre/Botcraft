@@ -59,6 +59,7 @@ namespace Botcraft
         Left = 1,
         Off = 1
     };
+    std::ostream& operator<<(std::ostream& os, const Hand v);
 
     enum class TintType
     {
@@ -101,6 +102,7 @@ namespace Botcraft
         East        // +X
     };
     typedef Direction PlayerDiggingFace;
+    std::ostream& operator<<(std::ostream& os, const Direction v);
 
     // Types are detailed in registries, see https://wiki.vg/Inventory
 

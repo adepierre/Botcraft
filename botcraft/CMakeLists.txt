@@ -207,6 +207,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Network/LastSeenMessagesTracker.hpp
     
     include/botcraft/Utilities/AsyncHandler.hpp
+    include/botcraft/Utilities/EnumUtilities.hpp
     include/botcraft/Utilities/Logger.hpp
     include/botcraft/Utilities/NBTUtilities.hpp
     include/botcraft/Utilities/SleepUtilities.hpp
@@ -242,8 +243,9 @@ set(botcraft_SRC
     
     src/Game/AABB.cpp
     src/Game/AssetsManager.cpp
-    src/Game/ManagersClient.cpp
     src/Game/ConnectionClient.cpp
+    src/Game/Enums.cpp
+    src/Game/ManagersClient.cpp
     src/Game/Model.cpp
     
     src/Game/World/Biome.cpp
