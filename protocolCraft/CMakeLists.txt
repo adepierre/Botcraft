@@ -434,7 +434,8 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/protocolCraft"
 )
 
 install(EXPORT protocolCraft-targets
-    FILE protocolCraft-targets.cmake
+    # lowercase as required by find_package
+    FILE protocolcraft-targets.cmake
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft"
 )
 
@@ -442,17 +443,19 @@ include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/protocolCraft-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake"
+    # lowercase as required by find_package
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolcraft-config.cmake"
     INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft"
 )
 
 install(
     FILES 
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolcraft-config.cmake"
     DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft"
 )
 
 export(EXPORT protocolCraft-targets
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolCraft-targets.cmake"
+    # lowercase as required by find_package
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolcraft-targets.cmake"
 )
