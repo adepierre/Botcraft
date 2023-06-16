@@ -54,7 +54,7 @@ Botcraft::Status WarnConsole(Botcraft::BehaviourClient& c, const std::string& ms
 /// @param c The client performing the action
 /// @param path The path to the unzipped NBT file
 /// @param offset Starting offset position to build the structure
-/// @param temp_block Minecraft item/block name used as scafholding block in the NBT
+/// @param temp_block Minecraft item/block name used as scaffolding block in the NBT
 /// @param log_info Whether or not the loading information should be logged
 /// @return Success if the file was correctly loaded, failure otherwise
 Botcraft::Status LoadNBT(Botcraft::BehaviourClient& c, const std::string& path, const Botcraft::Position& offset, const std::string& temp_block, const bool log_info);

@@ -23,7 +23,7 @@ void ShowHelp(const char* argv0)
         << "\t--numworld\tNumber of parallel world to use, less worlds saves RAM, but slows the bots down, default: 1\n"
         << "\t--nbt\tnbt filename to load, default: empty\n"
         << "\t--offset\t3 ints, offset for the first block, default: 0 0 0\n"
-        << "\t--tempblock\tname of the scafholding block, default: minecraft:slime_block\n"
+        << "\t--tempblock\tname of the scaffolding block, default: minecraft:slime_block\n"
         << std::endl;
 }
 
