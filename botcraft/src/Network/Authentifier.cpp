@@ -377,10 +377,10 @@ namespace Botcraft
 
         for (int i = 0; i < 4; ++i)
         {
-            bytes_1_big_endian[i] = static_cast<unsigned char>((1 >> (4 * (3 - i))) & 0xFF);
-            message_sent_index_bytes[i] = static_cast<unsigned char>((message_sent_index >> (4 * (3 - i))) & 0xFF);
-            message_size_bytes[i] = static_cast<unsigned char>((static_cast<int>(message.size()) >> (4 * (3 - i))) & 0xFF);
-            last_seen_size_bytes[i] = static_cast<unsigned char>((static_cast<int>(last_seen.size()) >> (4 * (3 - i))) & 0xFF);
+            bytes_1_big_endian[i] = static_cast<unsigned char>((1 >> (8 * (3 - i))) & 0xFF);
+            message_sent_index_bytes[i] = static_cast<unsigned char>((message_sent_index >> (8 * (3 - i))) & 0xFF);
+            message_size_bytes[i] = static_cast<unsigned char>((static_cast<int>(message.size()) >> (8 * (3 - i))) & 0xFF);
+            last_seen_size_bytes[i] = static_cast<unsigned char>((static_cast<int>(last_seen.size()) >> (8 * (3 - i))) & 0xFF);
         }
 
         // Compute hash
