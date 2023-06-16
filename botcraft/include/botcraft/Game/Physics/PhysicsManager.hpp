@@ -33,6 +33,7 @@ namespace Botcraft
         void StartPhysics();
         void StopPhysics();
         void SetHasGravity(const bool b);
+        bool GetHasGravity() const;
 
     private:
         void RunSyncPos();
@@ -49,7 +50,7 @@ namespace Botcraft
 
         std::atomic<bool> should_run;
 
-        bool has_gravity;
+        std::atomic<bool> has_gravity;
 
         std::thread thread_physics;//Thread running to compute position and send it to the server every 50 ms (20 ticks/s)
     };

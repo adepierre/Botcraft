@@ -132,6 +132,11 @@ namespace Botcraft
         return inventory_manager;
     }
 
+    std::shared_ptr<PhysicsManager> ManagersClient::GetPhysicsManager() const
+    {
+        return physics_manager;
+    }
+
     const bool ManagersClient::GetCreativeMode() const
     {
         return creative_mode;
@@ -171,7 +176,7 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundChangeDifficultyPacket &msg)
     {
-        difficulty = (Difficulty)msg.GetDifficulty();
+        difficulty = static_cast<Difficulty>(msg.GetDifficulty());
 #if PROTOCOL_VERSION > 463
         difficulty_locked = msg.GetLocked();
 #endif
@@ -179,7 +184,7 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundLoginPacket &msg)
     {
-        game_mode = (GameType)(msg.GetGameType() & 0x03);
+        game_mode = static_cast<GameType>(msg.GetGameType() & 0x03);
 #if PROTOCOL_VERSION > 737
         is_hardcore = msg.GetHardcore();
 #else
@@ -187,7 +192,7 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION < 464
-        difficulty = (Difficulty)msg.GetDifficulty();
+        difficulty = static_cast<Difficulty>(msg.GetDifficulty());
 #endif
     }
 

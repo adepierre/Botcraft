@@ -56,6 +56,11 @@ namespace Botcraft
         has_gravity = b;
     }
 
+    bool PhysicsManager::GetHasGravity() const
+    {
+        return has_gravity;
+    }
+
 
 
     void PhysicsManager::RunSyncPos()

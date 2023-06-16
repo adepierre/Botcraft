@@ -160,8 +160,16 @@ TEST_CASE("fall pathfinding")
 
 TEST_CASE("full pathfinding")
 {
-	std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(0.0, 1.01, 0.0));
-	
+	std::unique_ptr<Botcraft::SimpleBehaviourClient> bot;
+	SECTION("survival")
+	{
+		bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(0.0, 1.01, 0.0));
+	}
+	SECTION("creative")
+	{
+		bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(0.0, 1.01, 0.0), Botcraft::GameType::Creative);
+	}
+
 	const Botcraft::Position delta(2, 3, 24);
 
 	std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();

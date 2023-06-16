@@ -6,8 +6,10 @@
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Game/Physics/PhysicsManager.hpp"
 
 #include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/MiscUtilities.hpp"
 
 namespace Botcraft
 {
@@ -1125,12 +1127,25 @@ namespace Botcraft
     {
         std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
         std::shared_ptr<World> world = client.GetWorld();
+        std::shared_ptr<PhysicsManager> physics_manager = client.GetPhysicsManager();
+        // Enable gravity in case we are in creative mode
+        const bool has_gravity = physics_manager->GetHasGravity();
+        physics_manager->SetHasGravity(true);
+        // Reset gravity when returning
+        Utils::OnEndScope reset_gravity([physics_manager, has_gravity]() { if (physics_manager != nullptr) physics_manager->SetHasGravity(has_gravity); });
+
         Position current_position;
         do
         {
             // Wait until we are on the ground or climbing
+            const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
             while (!local_player->GetOnGround() && !local_player->GetIsClimbing())
             {
+                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 2000)
+                {
+                    LOG_WARNING("Timeout waiting for the bot to land on the floor between two block move. Staying at " << local_player->GetPosition());
+                    return Status::Failure;
+                }
                 client.Yield();
             }
 

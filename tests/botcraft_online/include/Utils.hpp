@@ -13,10 +13,10 @@
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
 
 template<class ClientType = Botcraft::ManagersClient>
-std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset = { 0,0,0 })
+std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset = { 0,0,0 }, const Botcraft::GameType gamemode = Botcraft::GameType::Survival)
 {
 	std::string botname;
-	std::unique_ptr<ClientType> bot = TestManager::GetInstance().GetBot<ClientType>(botname);
+	std::unique_ptr<ClientType> bot = TestManager::GetInstance().GetBot<ClientType>(botname, gamemode);
 
 	const Botcraft::Vector3<double> pos = offset + TestManager::GetInstance().GetCurrentOffset();
 	TestManager::GetInstance().Teleport(botname, pos);
@@ -36,7 +36,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
 	std::shared_ptr<Botcraft::World> world = bot->GetWorld();
 	const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(Botcraft::CHUNK_WIDTH)));
 	const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(Botcraft::CHUNK_WIDTH)));
-	// -1 because sometimes corner chunks are not sent
+	// -1 because sometimes corner chunks are not sent, depending on where you are on the current chunk
 	const int view_distance = MinecraftServer::options.view_distance - 1;
 	std::vector<std::pair<int, int>> wait_loaded = {
 		{chunk_x * Botcraft::CHUNK_WIDTH, chunk_z * Botcraft::CHUNK_WIDTH},
@@ -65,7 +65,6 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
 }
 
 #include <botcraft/Game/AssetsManager.hpp>
-#include <botcraft/AI/SimpleBehaviourClient.hpp>
 #include <botcraft/Game/Inventory/InventoryManager.hpp>
 #include <botcraft/Game/Inventory/Window.hpp>
 

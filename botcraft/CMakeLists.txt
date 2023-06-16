@@ -209,6 +209,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Utilities/AsyncHandler.hpp
     include/botcraft/Utilities/EnumUtilities.hpp
     include/botcraft/Utilities/Logger.hpp
+    include/botcraft/Utilities/MiscUtilities.hpp
     include/botcraft/Utilities/NBTUtilities.hpp
     include/botcraft/Utilities/SleepUtilities.hpp
     include/botcraft/Utilities/StdAnyUtilities.hpp

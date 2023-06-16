@@ -45,6 +45,7 @@ namespace Botcraft
         std::shared_ptr<World> GetWorld() const;
         std::shared_ptr<EntityManager> GetEntityManager() const;
         std::shared_ptr<InventoryManager> GetInventoryManager() const;
+        std::shared_ptr<PhysicsManager> GetPhysicsManager() const;
         const bool GetCreativeMode() const;
 
         /// @brief Get the current tick
