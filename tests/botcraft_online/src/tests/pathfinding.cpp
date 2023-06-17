@@ -186,3 +186,43 @@ TEST_CASE("full pathfinding")
 		CHECK_THAT(local_player->GetHealth(), Catch::Matchers::WithinAbs(20.0, 0.01));
 	}
 }
+
+TEST_CASE("hazardous pathfinding")
+{
+	Botcraft::GameType gamemode;
+	float expected_time_s;
+
+	SECTION("creative")
+	{
+		gamemode = Botcraft::GameType::Creative;
+		// Can take direct route through lava ==> faster
+		expected_time_s = 3.1f;
+	}
+
+	SECTION("survival")
+	{
+		gamemode = Botcraft::GameType::Survival;
+		// Has to avoid lava and magma blocks ==> slower
+		expected_time_s = 4.7f;
+	}
+
+	std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1.0, 1.01, 0.0), gamemode);
+	const Botcraft::Position delta(0, 4, 2);
+
+	std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+	Botcraft::Vector3<double> init_position;
+	{
+		std::lock_guard<std::mutex> lock(local_player->GetMutex());
+		init_position = local_player->GetPosition();
+	}
+
+	const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+	bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 4.317f, true);
+	{
+		const float time_taken = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() / 1000.0f;
+		std::lock_guard<std::mutex> lock(local_player->GetMutex());
+		CHECK_THAT(local_player->GetPosition().SqrDist(init_position + delta), Catch::Matchers::WithinAbs(0.0, 0.1));
+		CHECK_THAT(local_player->GetHealth(), Catch::Matchers::WithinAbs(20.0, 0.01));
+		CHECK_THAT(time_taken, Catch::Matchers::WithinAbs(expected_time_s, 0.5));
+	}
+}

@@ -13,26 +13,36 @@
 
 namespace Botcraft
 {
-    enum class BlockGoThroughState: char
+    enum class BlockPathfindingState: char
     {
+        /// @brief Can go through
         Empty,
+        /// @brief Can walk on, can't go through
         Solid,
-        Climbable
+        /// @brief Can go through, can climb
+        Climbable,
+        /// @brief Can't walk on, can't go through
+        Hazardous
     };
 
-    BlockGoThroughState GetBlockGoThroughState(const Block* block)
+    BlockPathfindingState GetBlockGoThroughState(const Block* block, const bool take_damage)
     {
         if (block == nullptr)
         {
-            return BlockGoThroughState::Empty;
+            return BlockPathfindingState::Empty;
+        }
+
+        if (take_damage && block->GetBlockstate()->IsHazardous())
+        {
+            return BlockPathfindingState::Hazardous;
         }
 
         if (block->GetBlockstate()->IsClimbable())
         {
-            return BlockGoThroughState::Climbable;
+            return BlockPathfindingState::Climbable;
         }
 
-        return block->GetBlockstate()->IsSolid() ? BlockGoThroughState::Solid : BlockGoThroughState::Empty;
+        return block->GetBlockstate()->IsSolid() ? BlockPathfindingState::Solid : BlockPathfindingState::Empty;
     }
 
     std::vector<Position> FindPath(BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump)
@@ -70,6 +80,7 @@ namespace Botcraft
         int count_visit = 0;
 
         std::shared_ptr<World> world = client.GetWorld();
+        const bool takes_damage = !client.GetCreativeMode();
 
         while (!nodes_to_explore.empty())
         {
@@ -85,9 +96,9 @@ namespace Botcraft
             }
 
             // Get the state around the player in the given location
-            std::array<BlockGoThroughState, 6> vertical_surroundings = {
-                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
-                BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid
+            std::array<BlockPathfindingState, 6> vertical_surroundings = {
+                BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
+                BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid
             };
 
             // Assuming the player is standing on 3 (feeet on 2 and head on 1)
@@ -101,25 +112,25 @@ namespace Botcraft
                 std::lock_guard<std::mutex> world_guard(world->GetMutex());
 
                 const Block* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
-                vertical_surroundings[0] = GetBlockGoThroughState(block);
+                vertical_surroundings[0] = GetBlockGoThroughState(block, takes_damage);
                 block = world->GetBlock(current_node.pos + Position(0, 1, 0));
-                vertical_surroundings[1] = GetBlockGoThroughState(block);
+                vertical_surroundings[1] = GetBlockGoThroughState(block, takes_damage);
                 // Our feet block (should be climbable or empty)
                 block = world->GetBlock(current_node.pos);
-                vertical_surroundings[2] = GetBlockGoThroughState(block);
+                vertical_surroundings[2] = GetBlockGoThroughState(block, takes_damage);
 
-                // if 3 is solid, no down pathfinding is possible,
+                // if 3 is solid or hazardous, no down pathfinding is possible,
                 // so we can skip a few checks
                 block = world->GetBlock(current_node.pos + Position(0, -1, 0));
-                vertical_surroundings[3] = GetBlockGoThroughState(block);
+                vertical_surroundings[3] = GetBlockGoThroughState(block, takes_damage);
 
                 // If we can move down, we need 4 and 5
-                if (vertical_surroundings[3] != BlockGoThroughState::Solid)
+                if (vertical_surroundings[3] != BlockPathfindingState::Solid && vertical_surroundings[3] != BlockPathfindingState::Hazardous)
                 {
                     block = world->GetBlock(current_node.pos + Position(0, -2, 0));
-                    vertical_surroundings[4] = GetBlockGoThroughState(block);
+                    vertical_surroundings[4] = GetBlockGoThroughState(block, takes_damage);
                     block = world->GetBlock(current_node.pos + Position(0, -3, 0));
-                    vertical_surroundings[5] = GetBlockGoThroughState(block);
+                    vertical_surroundings[5] = GetBlockGoThroughState(block, takes_damage);
                 }
             }
 
@@ -131,9 +142,11 @@ namespace Botcraft
             // ?
             // ?
             // ?
-            if (vertical_surroundings[2] == BlockGoThroughState::Climbable
-                && vertical_surroundings[1] != BlockGoThroughState::Solid
-                && vertical_surroundings[0] != BlockGoThroughState::Solid
+            if (vertical_surroundings[2] == BlockPathfindingState::Climbable
+                && vertical_surroundings[1] != BlockPathfindingState::Solid
+                && vertical_surroundings[1] != BlockPathfindingState::Hazardous
+                && vertical_surroundings[0] != BlockPathfindingState::Solid
+                && vertical_surroundings[0] != BlockPathfindingState::Hazardous
                 )
             {
                 const float new_cost = cost[current_node.pos] + 1.0f;
@@ -155,10 +168,11 @@ namespace Botcraft
             // o
             // ?
             // ?
-            if (vertical_surroundings[3] == BlockGoThroughState::Solid
-                && vertical_surroundings[2] == BlockGoThroughState::Empty
-                && vertical_surroundings[1] == BlockGoThroughState::Climbable
-                && vertical_surroundings[0] != BlockGoThroughState::Solid
+            if (vertical_surroundings[3] == BlockPathfindingState::Solid
+                && vertical_surroundings[2] == BlockPathfindingState::Empty
+                && vertical_surroundings[1] == BlockPathfindingState::Climbable
+                && vertical_surroundings[0] != BlockPathfindingState::Solid
+                && vertical_surroundings[0] != BlockPathfindingState::Hazardous
                 )
             {
                 const float new_cost = cost[current_node.pos] + 1.5f;
@@ -180,7 +194,7 @@ namespace Botcraft
             // -
             // ?
             // ?
-            if (vertical_surroundings[3] == BlockGoThroughState::Climbable)
+            if (vertical_surroundings[3] == BlockPathfindingState::Climbable)
             {
                 const float new_cost = cost[current_node.pos] + 1.0f;
                 const Position new_pos = current_node.pos + Position(0, -1, 0);
@@ -201,9 +215,10 @@ namespace Botcraft
             // -
             //  
             // o
-            if (vertical_surroundings[3] == BlockGoThroughState::Climbable
-                && vertical_surroundings[4] == BlockGoThroughState::Empty
-                && vertical_surroundings[5] != BlockGoThroughState::Empty
+            if (vertical_surroundings[3] == BlockPathfindingState::Climbable
+                && vertical_surroundings[4] == BlockPathfindingState::Empty
+                && vertical_surroundings[5] != BlockPathfindingState::Empty
+                && vertical_surroundings[5] != BlockPathfindingState::Hazardous
                 )
             {
                 const float new_cost = cost[current_node.pos] + 2.0f;
@@ -227,10 +242,11 @@ namespace Botcraft
             //  
             //  
             // o
-            if (vertical_surroundings[2] == BlockGoThroughState::Climbable
-                && vertical_surroundings[3] == BlockGoThroughState::Empty
-                && vertical_surroundings[4] == BlockGoThroughState::Empty
-                && vertical_surroundings[5] != BlockGoThroughState::Empty
+            if (vertical_surroundings[2] == BlockPathfindingState::Climbable
+                && vertical_surroundings[3] == BlockPathfindingState::Empty
+                && vertical_surroundings[4] == BlockPathfindingState::Empty
+                && vertical_surroundings[5] != BlockPathfindingState::Empty
+                && vertical_surroundings[5] != BlockPathfindingState::Hazardous
                 )
             {
                 const float new_cost = cost[current_node.pos] + 2.0f;
@@ -255,9 +271,9 @@ namespace Botcraft
             //  
             // Special case here, we can drop down
             // if there is a climbable at the bottom
-            if (vertical_surroundings[3] == BlockGoThroughState::Climbable
-                && vertical_surroundings[4] == BlockGoThroughState::Empty
-                && vertical_surroundings[5] == BlockGoThroughState::Empty
+            if (vertical_surroundings[3] == BlockPathfindingState::Climbable
+                && vertical_surroundings[4] == BlockPathfindingState::Empty
+                && vertical_surroundings[5] == BlockPathfindingState::Empty
                 )
             {
                 std::lock_guard<std::mutex> world_guard(world->GetMutex());
@@ -303,14 +319,14 @@ namespace Botcraft
                 const Position next_next_location = next_location + neighbour_offsets[i];
 
                 // Get the state around the player in the given location
-                std::array<BlockGoThroughState, 12> horizontal_surroundings = {
-                    BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
-                    BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
-                    BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid,
-                    BlockGoThroughState::Solid, BlockGoThroughState::Solid, BlockGoThroughState::Solid
+                std::array<BlockPathfindingState, 12> horizontal_surroundings = {
+                    BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
+                    BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
+                    BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
+                    BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid
                 };
 
-                // Assuming the player is standing on 3 (feeet on 2 and head on 1)
+                // Assuming the player is standing on v3 (feeet on v2 and head on v1)
                 // v0   0   6 --> ?  ?  ?
                 // v1   1   7 --> x  ?  ?
                 // v2   2   8 --> x  ?  ?
@@ -323,40 +339,40 @@ namespace Botcraft
                     // if 1 is solid, no horizontal pathfinding is possible,
                     // so we can skip a lot of checks
                     const Block* block = world->GetBlock(next_location + Position(0, 1, 0));
-                    horizontal_surroundings[1] = GetBlockGoThroughState(block);
-                    const bool horizontal_movement = horizontal_surroundings[1] != BlockGoThroughState::Solid;
+                    horizontal_surroundings[1] = GetBlockGoThroughState(block, takes_damage);
+                    const bool horizontal_movement = horizontal_surroundings[1] != BlockPathfindingState::Solid && horizontal_surroundings[1] != BlockPathfindingState::Hazardous;
 
                     // If we can move horizontally, we need the full column
                     if (horizontal_movement)
                     {
                         block = world->GetBlock(next_location + Position(0, 2, 0));
-                        horizontal_surroundings[0] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[0] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_location);
-                        horizontal_surroundings[2] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[2] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_location + Position(0, -1, 0));
-                        horizontal_surroundings[3] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[3] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_location + Position(0, -2, 0));
-                        horizontal_surroundings[4] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[4] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_location + Position(0, -3, 0));
-                        horizontal_surroundings[5] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[5] = GetBlockGoThroughState(block, takes_damage);
                     }
 
                     // You can't make large jumps if your feet are in a climbable block
                     // If we can jump, then we need the third column
-                    if (allow_jump && vertical_surroundings[2] != BlockGoThroughState::Climbable)
+                    if (allow_jump && vertical_surroundings[2] != BlockPathfindingState::Climbable)
                     {
                         block = world->GetBlock(next_next_location + Position(0, 2, 0));
-                        horizontal_surroundings[6] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[6] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_next_location + Position(0, 1, 0));
-                        horizontal_surroundings[7] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[7] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_next_location);
-                        horizontal_surroundings[8] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[8] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_next_location + Position(0, -1, 0));
-                        horizontal_surroundings[9] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[9] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_next_location + Position(0, -2, 0));
-                        horizontal_surroundings[10] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[10] = GetBlockGoThroughState(block, takes_damage);
                         block = world->GetBlock(next_next_location + Position(0, -3, 0));
-                        horizontal_surroundings[11] = GetBlockGoThroughState(block);
+                        horizontal_surroundings[11] = GetBlockGoThroughState(block, takes_damage);
                     }
                 }
 
@@ -371,9 +387,12 @@ namespace Botcraft
                 //--- o  ?
                 //    ?  ?
                 //    ?  ?
-                if (horizontal_surroundings[1] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[2] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[3] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[1] != BlockPathfindingState::Solid
+                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
+                    && horizontal_surroundings[2] != BlockPathfindingState::Solid
+                    && horizontal_surroundings[2] != BlockPathfindingState::Hazardous
+                    && horizontal_surroundings[3] != BlockPathfindingState::Empty
+                    && horizontal_surroundings[3] != BlockPathfindingState::Hazardous
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 1.0f;
@@ -395,12 +414,14 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (vertical_surroundings[0] != BlockGoThroughState::Solid
-                    && vertical_surroundings[1] == BlockGoThroughState::Empty
-                    && vertical_surroundings[2] == BlockGoThroughState::Empty
-                    && vertical_surroundings[3] == BlockGoThroughState::Solid
-                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[1] == BlockGoThroughState::Climbable
+                if (vertical_surroundings[0] != BlockPathfindingState::Solid
+                    && vertical_surroundings[0] != BlockPathfindingState::Hazardous
+                    && vertical_surroundings[1] == BlockPathfindingState::Empty
+                    && vertical_surroundings[2] == BlockPathfindingState::Empty
+                    && vertical_surroundings[3] == BlockPathfindingState::Solid
+                    && horizontal_surroundings[0] != BlockPathfindingState::Solid
+                    && horizontal_surroundings[0] != BlockPathfindingState::Hazardous
+                    && horizontal_surroundings[1] == BlockPathfindingState::Climbable
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -422,13 +443,17 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (vertical_surroundings[0] != BlockGoThroughState::Solid
-                    && vertical_surroundings[1] == BlockGoThroughState::Empty
-                    && vertical_surroundings[2] == BlockGoThroughState::Empty
-                    && vertical_surroundings[3] == BlockGoThroughState::Solid
-                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[1] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[2] != BlockGoThroughState::Empty
+                if (vertical_surroundings[0] != BlockPathfindingState::Solid
+                    && vertical_surroundings[0] != BlockPathfindingState::Hazardous
+                    && vertical_surroundings[1] == BlockPathfindingState::Empty
+                    && vertical_surroundings[2] == BlockPathfindingState::Empty
+                    && vertical_surroundings[3] == BlockPathfindingState::Solid
+                    && horizontal_surroundings[0] != BlockPathfindingState::Solid
+                    && horizontal_surroundings[0] != BlockPathfindingState::Hazardous
+                    && horizontal_surroundings[1] != BlockPathfindingState::Solid
+                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
+                    && horizontal_surroundings[2] != BlockPathfindingState::Empty
+                    && horizontal_surroundings[2] != BlockPathfindingState::Hazardous
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -450,10 +475,12 @@ namespace Botcraft
                 //---    ?
                 //    o  ?
                 //    ?  ?
-                if (horizontal_surroundings[1] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[3] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[4] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[1] != BlockPathfindingState::Solid
+                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
+                    && horizontal_surroundings[2] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[3] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[4] != BlockPathfindingState::Empty
+                    && horizontal_surroundings[4] != BlockPathfindingState::Hazardous
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -475,11 +502,13 @@ namespace Botcraft
                 //---    ?
                 //       ?
                 //    o  ?
-                if (horizontal_surroundings[1] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[3] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[4] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[5] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[1] != BlockPathfindingState::Solid
+                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
+                    && horizontal_surroundings[2] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[3] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[4] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[5] != BlockPathfindingState::Empty
+                    && horizontal_surroundings[5] != BlockPathfindingState::Hazardous
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 3.5f;
@@ -503,11 +532,12 @@ namespace Botcraft
                 //       ?
                 // Special case here, we can drop down
                 // if there is a climbable at the bottom
-                if (horizontal_surroundings[1] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[3] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[4] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[5] == BlockGoThroughState::Empty
+                if (horizontal_surroundings[1] != BlockPathfindingState::Solid
+                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
+                    && horizontal_surroundings[2] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[3] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[4] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[5] == BlockPathfindingState::Empty
                     )
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
@@ -546,7 +576,20 @@ namespace Botcraft
 
                 // If we can't make jumps, don't bother explore the rest
                 // of the cases
-                if (!allow_jump || vertical_surroundings[2] == BlockGoThroughState::Climbable)
+                if (!allow_jump
+                    || vertical_surroundings[0] == BlockPathfindingState::Solid       // Block above
+                    || vertical_surroundings[0] == BlockPathfindingState::Hazardous   // Block above
+                    || vertical_surroundings[1] != BlockPathfindingState::Empty       // Block above
+                    || vertical_surroundings[2] != BlockPathfindingState::Empty       // Feet inside climbable
+                    || vertical_surroundings[3] != BlockPathfindingState::Solid       // Feet on climbable/empty
+                    || horizontal_surroundings[0] == BlockPathfindingState::Solid     // Block above next column
+                    || horizontal_surroundings[0] == BlockPathfindingState::Hazardous // Hazard above next column
+                    || horizontal_surroundings[1] != BlockPathfindingState::Empty     // Non empty block in next column, can't jump through it
+                    || horizontal_surroundings[2] != BlockPathfindingState::Empty     // Non empty block in next column, can't jump through it
+                    || horizontal_surroundings[6] == BlockPathfindingState::Solid     // Block above nextnext column
+                    || horizontal_surroundings[6] == BlockPathfindingState::Hazardous // Hazard above nextnext column
+                    || horizontal_surroundings[7] != BlockPathfindingState::Empty     // Non empty block in nextnext column, can't jump through it
+                    )
                 {
                     continue;
                 }
@@ -555,23 +598,16 @@ namespace Botcraft
                 // -  -  -
                 // x      
                 // x     o
-                //---    ?
+                //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (vertical_surroundings[0] != BlockGoThroughState::Solid
-                    && vertical_surroundings[1] == BlockGoThroughState::Empty
-                    && vertical_surroundings[2] == BlockGoThroughState::Empty
-                    && vertical_surroundings[3] == BlockGoThroughState::Solid
-                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[1] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[6] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[7] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[3] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[8] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[8] != BlockPathfindingState::Empty
+                    && horizontal_surroundings[8] != BlockPathfindingState::Hazardous
                     )
                 {
-                    const float new_cost = cost[current_node.pos] + 3.5f;
+                    // 4 > 3.5 as if horizontal_surroundings[3] is solid we prefer to walk then jump instead of big jump
+                    // but if horizontal_surroundings[3] is hazardous we can jump over it
+                    const float new_cost = cost[current_node.pos] + 4.0f;
                     const Position new_pos = next_next_location + Position(0, 1, 0);
                     auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
@@ -590,17 +626,9 @@ namespace Botcraft
                 //--- ?  o
                 //    ?  ?
                 //    ?  ?
-                if (vertical_surroundings[0] != BlockGoThroughState::Solid
-                    && vertical_surroundings[1] == BlockGoThroughState::Empty
-                    && vertical_surroundings[2] == BlockGoThroughState::Empty
-                    && vertical_surroundings[3] == BlockGoThroughState::Solid
-                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[1] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[6] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[7] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[8] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[9] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[8] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[9] != BlockPathfindingState::Empty
+                    && horizontal_surroundings[9] != BlockPathfindingState::Hazardous
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -621,19 +649,10 @@ namespace Botcraft
                 //--- ?   
                 //    ?  o
                 //    ?  ?
-                if (vertical_surroundings[0] != BlockGoThroughState::Solid
-                    && vertical_surroundings[1] == BlockGoThroughState::Empty
-                    && vertical_surroundings[2] == BlockGoThroughState::Empty
-                    && vertical_surroundings[3] == BlockGoThroughState::Solid
-                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[1] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[4] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[6] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[7] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[8] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[9] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[10] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[8] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[9] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[10] != BlockPathfindingState::Empty
+                    && horizontal_surroundings[10] != BlockPathfindingState::Hazardous
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 4.5f;
@@ -655,19 +674,11 @@ namespace Botcraft
                 //--- ?   
                 //    ?   
                 //    ?  o
-                if (vertical_surroundings[0] != BlockGoThroughState::Solid
-                    && vertical_surroundings[1] == BlockGoThroughState::Empty
-                    && vertical_surroundings[2] == BlockGoThroughState::Empty
-                    && vertical_surroundings[3] == BlockGoThroughState::Solid
-                    && horizontal_surroundings[0] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[1] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[2] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[6] != BlockGoThroughState::Solid
-                    && horizontal_surroundings[7] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[8] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[9] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[10] == BlockGoThroughState::Empty
-                    && horizontal_surroundings[11] != BlockGoThroughState::Empty
+                if (horizontal_surroundings[8] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[9] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[10] == BlockPathfindingState::Empty
+                    && horizontal_surroundings[11] != BlockPathfindingState::Empty
+                    && horizontal_surroundings[11] != BlockPathfindingState::Hazardous
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 5.5f;
