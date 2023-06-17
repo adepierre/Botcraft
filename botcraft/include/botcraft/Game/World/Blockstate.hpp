@@ -34,14 +34,22 @@ namespace Botcraft
 #else
         int id = -1;
 #endif
-        bool transparent = false;//
-        bool solid = false;//
+        /// @brief True if not a full 1x1x1 block OR at least one face texture has transparency
+        bool transparent = false;
+        /// @brief True if can't go through it
+        bool solid = false;
+        /// @brief True for water and lava
         bool fluid = false;
-        bool climbable = false;//
+        /// @brief True if can be used as a ladder
+        bool climbable = false;
+        /// @brief True if the model is a custom one (chests/banners etc...)
         bool custom = false;
-        float hardness = -2.0f;//
+        /// @brief True if block can hurt when walking in/on it
+        bool hazardous = false;
+        /// @brief Digging hardness
+        float hardness = -2.0f;
         TintType tint_type = TintType::None;
-        std::string name = "";//
+        std::string name = "";
         std::string path = "";
         std::vector<std::string> variables = std::vector<std::string>(0);
         bool any_tool_harvest = false;
@@ -75,6 +83,7 @@ namespace Botcraft
         const bool IsTransparent() const;
         const bool IsFluid() const;
         const bool IsClimbable() const;
+        const bool IsHazardous() const;
         const float GetHardness() const;
         const TintType GetTintType() const;
 
@@ -108,6 +117,7 @@ namespace Botcraft
         bool solid;
         bool fluid;
         bool climbable;
+        bool hazardous;
         float hardness;
         TintType tint_type;
         std::string m_name;

@@ -306,6 +306,11 @@ namespace Botcraft
                 blockstate_properties[name].climbable = info["climbable"].get<bool>();
             }
 
+            if (info.contains("hazardous") && info["hazardous"].is_bool())
+            {
+                blockstate_properties[name].hazardous = info["hazardous"].get<bool>();
+            }
+
             // Get breaking tools info
             if (info.contains("tools") && info["tools"].is_array())
             {
@@ -450,6 +455,7 @@ namespace Botcraft
                 false, //fluid
                 false, //climbable
                 false, //custom
+                false, //hazardous
                 -2.0f, //hardness
                 TintType::None, //tint_type
                 "default", //name
@@ -464,6 +470,7 @@ namespace Botcraft
                 false, //fluid
                 false, //climbable
                 false, //custom
+                false, //hazardous
                 -2.0f, //hardness
                 TintType::None, //tint_type
                 "default", //name

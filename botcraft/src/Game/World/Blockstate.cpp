@@ -250,6 +250,7 @@ namespace Botcraft
         solid = properties.solid;
         fluid = properties.fluid;
         climbable = properties.climbable;
+        hazardous = properties.hazardous;
         hardness = properties.hardness;
         tint_type = properties.tint_type;
         m_name = properties.name;
@@ -563,6 +564,7 @@ namespace Botcraft
         transparent = properties.transparent;
         solid = properties.solid;
         climbable = properties.climbable;
+        hazardous = properties.hazardous;
         hardness = properties.hardness;
         fluid = properties.fluid;
         tint_type = properties.tint_type;
@@ -653,6 +655,11 @@ namespace Botcraft
     const bool Blockstate::IsClimbable() const
     {
         return climbable;
+    }
+
+    const bool Blockstate::IsHazardous() const
+    {
+        return hazardous;
     }
 
     const float Blockstate::GetHardness() const

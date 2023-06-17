@@ -281,6 +281,7 @@
         "solid": false,
         "texture": "block/lava_still",
         "transparent": true,
+        "hazardous": true,
         "climbable": true
     },
     {
@@ -1625,6 +1626,7 @@
         "name": "minecraft:fire",
         "render": "block",
         "solid": false,
+        "hazardous": true,
         "transparent": true,
         "tools": [
             "any"
@@ -1635,6 +1637,7 @@
         "name": "minecraft:soul_fire",
         "render": "block",
         "solid": false,
+        "hazardous": true,
         "transparent": true,
         "tools": [
             "any"
@@ -5351,6 +5354,7 @@
         "render": "block",
         "solid": true,
         "transparent": false,
+        "hazardous": true,
         "tools": [
             "pickaxe"
         ]
@@ -7167,6 +7171,7 @@
         "render": "block",
         "solid": true,
         "transparent": true,
+        "hazardous": true,
         "tools": [
             "any",
             "axe"
@@ -7178,6 +7183,7 @@
         "render": "block",
         "solid": true,
         "transparent": true,
+        "hazardous": true,
         "tools": [
             "any",
             "axe"
@@ -7189,6 +7195,7 @@
         "render": "block",
         "solid": false,
         "transparent": true,
+        "hazardous": true,
         "tools": [
             "any"
         ]
