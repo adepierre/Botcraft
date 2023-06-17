@@ -207,14 +207,14 @@ namespace ProtocolCraft
         }
 
     private:
-        char flags;
+        char flags = 0;
         std::vector<int> children;
-        int redirect_node;
+        int redirect_node = 0;
         std::string name;
 #if PROTOCOL_VERSION < 759
         Identifier parser;
 #else
-        int parser_id;
+        int parser_id = 0;
 #endif
         std::shared_ptr<BrigadierProperty> properties;
         Identifier suggestions_type;

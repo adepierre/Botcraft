@@ -157,17 +157,17 @@ namespace ProtocolCraft
         }
 
     private:
-        bool is_gui_open;
-        bool is_filtering_craftable;
+        bool is_gui_open = false;
+        bool is_filtering_craftable = false;
 #if PROTOCOL_VERSION > 356
-        bool is_furnace_gui_open;
-        bool is_furnace_filtering_craftable;
+        bool is_furnace_gui_open = false;
+        bool is_furnace_filtering_craftable = false;
 #endif
 #if PROTOCOL_VERSION > 736
-        bool is_blasting_furnace_gui_open;
-        bool is_blasting_furnace_filtering_craftable;
-        bool is_smoker_gui_open;
-        bool is_smoker_filtering_craftable;
+        bool is_blasting_furnace_gui_open = false;
+        bool is_blasting_furnace_filtering_craftable = false;
+        bool is_smoker_gui_open = false;
+        bool is_smoker_filtering_craftable = false;
 #endif
     };
 }

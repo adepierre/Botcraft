@@ -85,9 +85,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int protocol_version;
+        int protocol_version = 0;
         std::string host_name;
-        unsigned short port;
-        int intention;
+        unsigned short port = 0;
+        int intention = 0;
     };
 } //ProtocolCraft

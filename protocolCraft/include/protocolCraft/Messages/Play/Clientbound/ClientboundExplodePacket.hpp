@@ -259,19 +259,19 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 761
-        float x;
-        float y;
-        float z;
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
 #else
-        double x;
-        double y;
-        double z;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
 #endif
-        float power;
+        float power = 0.0f;
         std::vector<NetworkPosition> to_blow;
-        float knockback_x;
-        float knockback_y;
-        float knockback_z;
+        float knockback_x = 0.0f;
+        float knockback_y = 0.0f;
+        float knockback_z = 0.0f;
 
     };
 } //ProtocolCraft

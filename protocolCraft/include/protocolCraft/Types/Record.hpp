@@ -73,9 +73,9 @@ namespace ProtocolCraft
         }
 
     private:
-        unsigned char horizontal_position;
-        unsigned char y_coordinate;
-        int block_id;
+        unsigned char horizontal_position = 0;
+        unsigned char y_coordinate = 0;
+        int block_id = 0;
     };
 }
 #endif

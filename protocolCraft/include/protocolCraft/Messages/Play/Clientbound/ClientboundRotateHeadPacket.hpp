@@ -89,8 +89,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
-        Angle y_head_rot;
+        int entity_id = 0;
+        Angle y_head_rot = 0;
 
     };
 } //ProtocolCraft

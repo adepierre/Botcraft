@@ -180,13 +180,13 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 452
-        unsigned char container_id;
+        unsigned char container_id = 0;
         std::string type;
-        unsigned char number_of_slots;
-        int id_;
+        unsigned char number_of_slots = 0;
+        int id_ = 0;
 #else
-        int container_id;
-        int type;
+        int container_id = 0;
+        int type = 0;
 #endif
         Chat title;
     };

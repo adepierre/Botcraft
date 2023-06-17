@@ -99,9 +99,9 @@ namespace ProtocolCraft
         }
 
     private:
-        char container_id;
-        int size;
-        int entity_id;
+        char container_id = 0;
+        int size = 0;
+        int entity_id = 0;
 
     };
 } //ProtocolCraft

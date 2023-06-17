@@ -99,7 +99,7 @@ namespace ProtocolCraft
     private:
         std::string group;
 #if PROTOCOL_VERSION > 760
-        int cooking_book_category;
+        int cooking_book_category = 0;
 #endif
         std::vector<Ingredient> ingredients;
         Slot result;

@@ -85,9 +85,9 @@ namespace ProtocolCraft
         }
 
     private:
-        unsigned char packed_XZ;
-        short y;
-        int type;
+        unsigned char packed_XZ = 0;
+        short y = 0;
+        int type = 0;
         NBT::Value tag;
     };
 } // ProtocolCraft

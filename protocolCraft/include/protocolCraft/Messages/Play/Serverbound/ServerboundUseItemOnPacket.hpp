@@ -200,16 +200,16 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition location;
-        int direction;
-        float cursor_position_x;
-        float cursor_position_y;
-        float cursor_position_z;
+        int direction = 0;
+        float cursor_position_x = 0.0f;
+        float cursor_position_y = 0.0f;
+        float cursor_position_z = 0.0f;
 #if PROTOCOL_VERSION > 452
-        bool inside;
+        bool inside = false;
 #endif
-        int hand;
+        int hand = 0;
 #if PROTOCOL_VERSION > 758
-        int sequence;
+        int sequence = 0;
 #endif
 
     };

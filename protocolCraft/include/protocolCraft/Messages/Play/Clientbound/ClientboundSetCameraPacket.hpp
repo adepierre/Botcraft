@@ -76,7 +76,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int camera_id;
+        int camera_id = 0;
 
     };
 } //ProtocolCraft

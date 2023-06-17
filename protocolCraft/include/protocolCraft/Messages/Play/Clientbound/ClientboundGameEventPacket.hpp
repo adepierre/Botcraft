@@ -89,8 +89,8 @@ namespace ProtocolCraft
         }
 
     private:
-        unsigned char type;
-        float param;
+        unsigned char type = 0;
+        float param = 0.0f;
 
     };
 } //ProtocolCraft

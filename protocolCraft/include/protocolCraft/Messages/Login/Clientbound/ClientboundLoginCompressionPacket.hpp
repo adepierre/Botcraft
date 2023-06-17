@@ -46,6 +46,6 @@ namespace ProtocolCraft
         }
 
     private:
-        int compression_threshold;
+        int compression_threshold = 0;
     };
 } //ProtocolCraft

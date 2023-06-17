@@ -183,13 +183,13 @@ namespace ProtocolCraft
 
     private:
         std::string command;
-        long long int timestamp;
+        long long int timestamp = 0;
 #if PROTOCOL_VERSION > 759
-        long long int salt;
+        long long int salt = 0;
 #endif
         std::map<std::string, std::vector<unsigned char> > argument_signatures;
 #if PROTOCOL_VERSION < 761
-        bool signed_preview;
+        bool signed_preview = false;
 #endif
 #if PROTOCOL_VERSION > 759
         LastSeenMessagesUpdate last_seen_messages;

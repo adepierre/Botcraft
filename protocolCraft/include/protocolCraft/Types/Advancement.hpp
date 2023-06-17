@@ -130,7 +130,7 @@ namespace ProtocolCraft
         std::vector<Identifier> criteria;
         std::vector<std::vector<std::string> > requirements;
 #if PROTOCOL_VERSION > 762
-        bool sends_telemetry_event;
+        bool sends_telemetry_event = false;
 #endif
     };
 }

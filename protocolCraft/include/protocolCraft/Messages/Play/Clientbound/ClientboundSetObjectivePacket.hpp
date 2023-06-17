@@ -169,8 +169,8 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 349
         std::string render_type;
 #else
-        int render_type;
+        int render_type = 0;
 #endif
-        char method;
+        char method = 0;
     };
 } //ProtocolCraft

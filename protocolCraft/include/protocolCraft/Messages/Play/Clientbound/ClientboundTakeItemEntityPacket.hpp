@@ -102,9 +102,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int item_id;
-        int player_id;
-        int amount;
+        int item_id = 0;
+        int player_id = 0;
+        int amount = 0;
 
     };
 } //ProtocolCraft

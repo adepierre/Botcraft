@@ -66,7 +66,7 @@ namespace ProtocolCraft
         }
 
     private:
-        double size;
+        double size = 0.0;
 
     };
 } //ProtocolCraft

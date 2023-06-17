@@ -103,9 +103,9 @@ namespace ProtocolCraft
 
     private:
         Chat message;
-        char type;
+        char type = 0;
 #if PROTOCOL_VERSION > 717
-        UUID sender;
+        UUID sender = {};
 #endif
     };
 } //ProtocolCraft

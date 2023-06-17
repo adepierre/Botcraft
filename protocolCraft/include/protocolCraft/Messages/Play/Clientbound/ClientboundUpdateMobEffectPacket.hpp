@@ -179,15 +179,15 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
+        int entity_id = 0;
 #if PROTOCOL_VERSION < 758
-        char effect_id;
+        char effect_id = 0;
 #else
-        int effect_id;
+        int effect_id = 0;
 #endif
-        char effect_amplifier;
-        int effect_duration_ticks;
-        char flags;
+        char effect_amplifier = 0;
+        int effect_duration_ticks = 0;
+        char flags = 0;
 #if PROTOCOL_VERSION > 758
         std::optional<NBT::Value> factor_data;
 #endif

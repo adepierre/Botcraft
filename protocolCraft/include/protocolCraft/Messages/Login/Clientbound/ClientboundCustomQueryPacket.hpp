@@ -79,7 +79,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int transaction_id;
+        int transaction_id = 0;
         Identifier identifier;
         std::vector<unsigned char> data;
     };

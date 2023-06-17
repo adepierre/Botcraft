@@ -82,7 +82,7 @@ namespace ProtocolCraft
         }
 
     private:
-        long long int timestamp;
+        long long int timestamp = 0;
         std::vector<unsigned char> key;
         std::vector<unsigned char> signature;
     };

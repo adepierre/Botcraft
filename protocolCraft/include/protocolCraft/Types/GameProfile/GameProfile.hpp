@@ -83,7 +83,7 @@ namespace ProtocolCraft
         }
 
     private:
-        UUID uuid;
+        UUID uuid = {};
         std::string name;
         std::vector<GameProfileProperty> properties;
     };

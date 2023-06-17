@@ -69,8 +69,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        float yaw;
+        int id_ = 0;
+        float yaw = 0.0f;
     };
 } //ProtocolCraft
 #endif

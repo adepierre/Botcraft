@@ -153,16 +153,16 @@ namespace ProtocolCraft
         }
 
     private:
-        int width;
-        int height;
+        int width = 0;
+        int height = 0;
         std::string group;
 #if PROTOCOL_VERSION > 760
-        int cooking_book_category;
+        int cooking_book_category = 0;
 #endif
         std::vector<Ingredient> ingredients;
         Slot result;
 #if PROTOCOL_VERSION > 761
-        bool show_notification;
+        bool show_notification = false;
 #endif
     };
 }

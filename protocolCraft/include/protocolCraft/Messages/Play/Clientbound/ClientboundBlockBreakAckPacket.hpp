@@ -101,9 +101,9 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
-        int state;
-        int action;
-        bool all_good;
+        int state = 0;
+        int action = 0;
+        bool all_good = false;
     };
 } //ProtocolCraft
 

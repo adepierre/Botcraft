@@ -76,7 +76,7 @@ namespace ProtocolCraft
         }
 
     private:
-        UUID uuid;
+        UUID uuid = {};
 
     };
 } //ProtocolCraft

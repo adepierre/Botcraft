@@ -248,15 +248,15 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 350
-        short block_id;
-        short item_damage;
+        short block_id = 0;
+        short item_damage = 0;
 #elif PROTOCOL_VERSION < 402
-        short item_id;
+        short item_id = 0;
 #elif PROTOCOL_VERSION >= 402
-        bool present;
-        short item_id;
+        bool present = false;
+        short item_id = 0;
 #endif
-        char item_count;
+        char item_count = 0;
         NBT::Value nbt;
     };
 } // ProtocolCraft

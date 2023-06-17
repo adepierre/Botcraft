@@ -231,14 +231,14 @@ namespace ProtocolCraft
         }
 
     private:
-        unsigned char container_id;
+        unsigned char container_id = 0;
 #if PROTOCOL_VERSION > 755
-        int state_id;
+        int state_id = 0;
 #endif
-        short slot_num;
-        char button_num;
+        short slot_num = 0;
+        char button_num = 0;
 #if PROTOCOL_VERSION < 755
-        short uid;
+        short uid = 0;
 #endif
 #if PROTOCOL_VERSION < 755
         Slot item_stack;
@@ -248,7 +248,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 754
         std::map<short, Slot> changed_slots;
 #endif
-        int click_type;
+        int click_type = 0;
 
     };
 } //ProtocolCraft

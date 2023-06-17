@@ -70,8 +70,8 @@ namespace ProtocolCraft
         }
 
     private:
-        UUID uuid;
-        double amount;
-        char operation;
+        UUID uuid = {};
+        double amount = 0.0;
+        char operation = 0;
     };
 }

@@ -252,25 +252,25 @@ namespace ProtocolCraft
     }
 
     private:
-        int id_;
-        UUID uuid;
+        int id_ = 0;
+        UUID uuid = {};
 #if PROTOCOL_VERSION < 458
-        char type;
+        char type = 0;
 #else
-        int type;
+        int type = 0;
 #endif
-        double x;
-        double y;
-        double z;
-        short xa;
-        short ya;
-        short za;
-        Angle x_rot;
-        Angle y_rot;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        short xa = 0;
+        short ya = 0;
+        short za = 0;
+        Angle x_rot = 0;
+        Angle y_rot = 0;
 #if PROTOCOL_VERSION > 758
-        Angle y_head_rot;
+        Angle y_head_rot = 0;
 #endif
-        int data;
+        int data = 0;
 
     };
 } //ProtocolCraft

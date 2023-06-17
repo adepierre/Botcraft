@@ -61,7 +61,7 @@ namespace ProtocolCraft
         }
 
     private:
-        long long int salt;
+        long long int salt = 0;
         std::vector<unsigned char> signature;
     };
 } // ProtocolCraft

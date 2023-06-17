@@ -111,11 +111,11 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        double x;
-        double y;
-        double z;
-        char type;
+        int id_ = 0;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        char type = 0;
 
     };
 } //ProtocolCraft

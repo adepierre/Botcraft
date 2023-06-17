@@ -102,7 +102,7 @@ namespace ProtocolCraft
     private:
         NetworkPosition location;
 #if PROTOCOL_VERSION > 754
-        float angle;
+        float angle = 0.0f;
 #endif
 
     };

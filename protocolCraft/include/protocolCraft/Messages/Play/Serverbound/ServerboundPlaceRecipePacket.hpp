@@ -123,13 +123,13 @@ namespace ProtocolCraft
         }
 
     private:
-        char container_id;
+        char container_id = 0;
 #if PROTOCOL_VERSION < 348
-        int recipe;
+        int recipe = 0;
 #else
         Identifier recipe;
 #endif
-        bool shift_down;
+        bool shift_down = false;
 
     };
 } //ProtocolCraft

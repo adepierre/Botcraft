@@ -72,7 +72,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int query_id;
+        int query_id = 0;
         std::string query;
     };
 } //ProtocolCraft

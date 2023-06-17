@@ -247,11 +247,11 @@ namespace ProtocolCraft
     private:
         std::string message;
 #if PROTOCOL_VERSION > 758
-        long long int timestamp;
+        long long int timestamp = 0;
 #if PROTOCOL_VERSION < 760
         SaltSignature salt_signature;
 #else
-        long long int salt;
+        long long int salt = 0;
 #if PROTOCOL_VERSION < 761
         std::vector<unsigned char> signature;
 #else
@@ -259,7 +259,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION < 761
-        bool signed_preview;
+        bool signed_preview = false;
 #endif
 #endif
 #if PROTOCOL_VERSION > 759

@@ -115,10 +115,10 @@ namespace ProtocolCraft
         }
 
     private:
-        double x;
-        double y;
-        double z;
-        bool on_ground;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        bool on_ground = false;
 
     };
 } //ProtocolCraft

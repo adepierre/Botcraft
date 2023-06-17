@@ -170,13 +170,13 @@ namespace ProtocolCraft
         Slot input_item_1;
         Slot output_item;
         std::optional<Slot> input_item_2;
-        bool trade_disabled;
-        int number_of_trades_uses;
-        int maximum_number_of_trade_uses;
-        int xp;
-        int special_price;
-        float price_multiplier;
-        int demand;
+        bool trade_disabled = false;
+        int number_of_trades_uses = 0;
+        int maximum_number_of_trade_uses = 0;
+        int xp = 0;
+        int special_price = 0;
+        float price_multiplier = 0.0f;
+        int demand = 0;
     };
 } // ProtocolCraft
 #endif

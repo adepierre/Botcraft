@@ -102,7 +102,7 @@ namespace ProtocolCraft
 #else
         std::string key;
 #endif
-        double value;
+        double value = 0.0;
         std::vector<EntityModifierData> modifiers;
     };
 }

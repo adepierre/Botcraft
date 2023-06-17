@@ -73,7 +73,7 @@ namespace ProtocolCraft
         }
 
     private:
-        char difficulty;
+        char difficulty = 0;
 
     };
 } //ProtocolCraft

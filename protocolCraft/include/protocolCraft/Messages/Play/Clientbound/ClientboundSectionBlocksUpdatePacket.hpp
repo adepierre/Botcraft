@@ -218,14 +218,14 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 739
-        int chunk_x;
-        int chunk_z;
-        int record_count;
+        int chunk_x = 0;
+        int chunk_z = 0;
+        int record_count = 0;
         std::vector<Record> records;
 #else
-        long long int section_pos;
+        long long int section_pos = 0;
 #if PROTOCOL_VERSION < 763
-        bool suppress_light_updates;
+        bool suppress_light_updates = false;
 #endif
         std::vector<short> positions;
         std::vector<int> states;

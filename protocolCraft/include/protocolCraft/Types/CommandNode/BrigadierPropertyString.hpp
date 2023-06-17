@@ -45,7 +45,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int read_type;
+        int read_type = 0;
     };
 }
 #endif

@@ -134,8 +134,8 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 759
-        int primary;
-        int secondary;
+        int primary = 0;
+        int secondary = 0;
 #else
         std::optional<int> primary;
         std::optional<int> secondary;

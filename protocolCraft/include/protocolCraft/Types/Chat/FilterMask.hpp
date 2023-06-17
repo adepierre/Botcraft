@@ -68,7 +68,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int type;
+        int type = 0;
         std::vector<long long int> mask;
     };
 }

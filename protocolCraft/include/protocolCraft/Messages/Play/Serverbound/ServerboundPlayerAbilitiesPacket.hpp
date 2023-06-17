@@ -112,10 +112,10 @@ namespace ProtocolCraft
         }
 
     private:
-        char flags;
+        char flags = 0;
 #if PROTOCOL_VERSION < 727
-        float flying_speed;
-        float walking_speed;
+        float flying_speed = 0.0f;
+        float walking_speed = 0.0f;
 #endif
 
     };

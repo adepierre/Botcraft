@@ -128,11 +128,11 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        double x;
-        double y;
-        double z;
-        short value_;
+        int id_ = 0;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        short value_ = 0;
 
     };
 } //ProtocolCraft

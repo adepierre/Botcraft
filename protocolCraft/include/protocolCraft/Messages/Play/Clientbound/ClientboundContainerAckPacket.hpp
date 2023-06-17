@@ -87,9 +87,9 @@ namespace ProtocolCraft
         }
 
     private:
-        char container_id;
-        short uid;
-        bool accepted;
+        char container_id = 0;
+        short uid = 0;
+        bool accepted = false;
     };
 } //ProtocolCraft
 #endif

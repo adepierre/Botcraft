@@ -176,16 +176,16 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 761
-        int sound;
+        int sound = 0;
 #else
         SoundEvent sound;
 #endif
-        int source;
-        int id_;
-        float volume;
-        float pitch;
+        int source = 0;
+        int id_ = 0;
+        float volume = 0.0f;
+        float pitch = 0.0f;
 #if PROTOCOL_VERSION > 758
-        long long int seed;
+        long long int seed = 0;
 #endif
 
     };

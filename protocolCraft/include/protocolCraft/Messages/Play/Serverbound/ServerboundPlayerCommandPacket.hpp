@@ -102,9 +102,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        int action;
-        int data;
+        int id_ = 0;
+        int action = 0;
+        int data = 0;
 
     };
 } //ProtocolCraft

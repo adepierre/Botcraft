@@ -34,9 +34,9 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION > 392
-        int state;
+        int state = 0;
 #else
-        int argument1;
+        int argument1 = 0;
 #endif
         
     };

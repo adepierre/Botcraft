@@ -102,9 +102,9 @@ namespace ProtocolCraft
         }
 
     private:
-        unsigned char container_id;
-        short id_;
-        short value;
+        unsigned char container_id = 0;
+        short id_ = 0;
+        short value = 0;
 
     };
 } //ProtocolCraft

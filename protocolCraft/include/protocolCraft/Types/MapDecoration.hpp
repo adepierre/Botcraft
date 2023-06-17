@@ -152,14 +152,14 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 373
-        char rot_and_type;
+        char rot_and_type = 0;
 #else
-        int type;
+        int type = 0;
 #endif
-        char x;
-        char z;
+        char x = 0;
+        char z = 0;
 #if PROTOCOL_VERSION > 372
-        char rot;
+        char rot = 0;
 #endif
 #if PROTOCOL_VERSION > 363
         std::optional<Chat> display_name;

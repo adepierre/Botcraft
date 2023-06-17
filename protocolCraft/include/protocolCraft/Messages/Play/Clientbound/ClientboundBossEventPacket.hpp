@@ -222,13 +222,13 @@ namespace ProtocolCraft
         }
 
     private:
-        UUID id_;
-        int operation;
+        UUID id_ = {};
+        int operation = 0;
         Chat name_;
-        float pct;
-        int color;
-        int overlay;
-        unsigned char flags;
+        float pct = 0.0f;
+        int color = 0;
+        int overlay = 0;
+        unsigned char flags = 0;
 
     };
 } //ProtocolCraft

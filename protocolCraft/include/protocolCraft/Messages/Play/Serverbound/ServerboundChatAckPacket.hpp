@@ -90,7 +90,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761
         LastSeenMessagesUpdate last_seen_messages;
 #else
-        int offset;
+        int offset = 0;
 #endif
 
     };

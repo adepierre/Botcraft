@@ -34,10 +34,10 @@ namespace ProtocolCraft
         virtual Json::Value SerializeImpl() const override;
 
     private:
-        float red;
-        float green;
-        float blue;
-        float scale;
+        float red = 0.0f;
+        float green = 0.0f;
+        float blue = 0.0f;
+        float scale = 0.0f;
         
     };
 }

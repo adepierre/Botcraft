@@ -116,10 +116,10 @@ namespace ProtocolCraft
         }
 
     private:
-        int type;
+        int type = 0;
         NetworkPosition pos;
-        int data;
-        bool global_event;
+        int data = 0;
+        bool global_event = false;
 
     };
 } //ProtocolCraft

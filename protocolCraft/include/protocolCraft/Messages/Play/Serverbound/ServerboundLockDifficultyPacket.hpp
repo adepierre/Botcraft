@@ -73,7 +73,7 @@ namespace ProtocolCraft
         }
 
     private:
-        bool locked;
+        bool locked = false;
 
     };
 } //ProtocolCraft

@@ -233,18 +233,18 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        UUID uuid;
-        int type;
-        double x;
-        double y;
-        double z;
-        short xd;
-        short yd;
-        short zd;
-        Angle y_rot;
-        Angle x_rot;
-        Angle y_head_rot;
+        int id_ = 0;
+        UUID uuid = {};
+        int type = 0;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        short xd = 0;
+        short yd = 0;
+        short zd = 0;
+        Angle y_rot = 0;
+        Angle x_rot = 0;
+        Angle y_head_rot = 0;
 #if PROTOCOL_VERSION < 550
         std::vector<unsigned char> raw_metadata;
 #endif

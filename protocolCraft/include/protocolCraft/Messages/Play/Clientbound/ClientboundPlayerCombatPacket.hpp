@@ -138,10 +138,10 @@ namespace ProtocolCraft
         }
 
     private:
-        int event_;
-        int player_id;
-        int killer_id;
-        int duration;
+        int event_ = 0;
+        int player_id = 0;
+        int killer_id = 0;
+        int duration = 0;
         Chat message;
 
     };

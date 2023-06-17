@@ -102,9 +102,9 @@ namespace ProtocolCraft
         }
 
     private:
-        float xxa;
-        float zza;
-        unsigned char flags;
+        float xxa = 0.0f;
+        float zza = 0.0f;
+        unsigned char flags = 0;
 
     };
 } //ProtocolCraft

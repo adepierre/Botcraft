@@ -104,9 +104,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int player_id;
+        int player_id = 0;
 #if PROTOCOL_VERSION < 763
-        int killer_id;
+        int killer_id = 0;
 #endif
         Chat message;
 

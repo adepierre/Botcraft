@@ -119,8 +119,8 @@ namespace ProtocolCraft
 #else
         std::string content;
 #endif
-        long long int timestamp;
-        long long int salt;
+        long long int timestamp = 0;
+        long long int salt = 0;
         std::vector<LastSeenMessagesEntry> last_seen;
     };
 } // ProtocolCraft

@@ -89,8 +89,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int item;
-        int duration;
+        int item = 0;
+        int duration = 0;
 
     };
 } //ProtocolCraft

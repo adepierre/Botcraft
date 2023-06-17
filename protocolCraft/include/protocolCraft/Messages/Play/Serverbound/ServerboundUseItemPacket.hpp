@@ -99,9 +99,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int hand;
+        int hand = 0;
 #if PROTOCOL_VERSION > 758
-        int sequence;
+        int sequence = 0;
 #endif
 
     };

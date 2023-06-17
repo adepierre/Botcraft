@@ -255,20 +255,20 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 569
-        float x;
-        float y;
-        float z;
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
 #else
-        double x;
-        double y;
-        double z;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
 #endif
-        float x_dist;
-        float y_dist;
-        float z_dist;
-        float max_speed;
-        int count;
-        bool override_limiter;
+        float x_dist = 0.0f;
+        float y_dist = 0.0f;
+        float z_dist = 0.0f;
+        float max_speed = 0.0f;
+        int count = 0;
+        bool override_limiter = false;
         std::shared_ptr<Particle> particle;
 
     };

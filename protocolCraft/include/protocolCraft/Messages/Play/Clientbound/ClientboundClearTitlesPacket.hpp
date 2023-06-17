@@ -64,7 +64,7 @@ namespace ProtocolCraft
     }
 
     private:
-        bool reset_times;
+        bool reset_times = false;
 
     };
 } //ProtocolCraft

@@ -156,14 +156,14 @@ namespace ProtocolCraft
         }
 
     private:
-        double new_center_x;
-        double new_center_z;
-        double old_size;
-        double new_size;
-        long long int lerp_time;
-        int new_absolute_max_size;
-        int warning_blocks;
-        int warning_time;
+        double new_center_x = 0.0;
+        double new_center_z = 0.0;
+        double old_size = 0.0;
+        double new_size = 0.0;
+        long long int lerp_time = 0;
+        int new_absolute_max_size = 0;
+        int warning_blocks = 0;
+        int warning_time = 0;
 
     };
 } //ProtocolCraft

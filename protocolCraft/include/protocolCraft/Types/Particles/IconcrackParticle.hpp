@@ -32,9 +32,9 @@ namespace ProtocolCraft
         virtual Json::Value SerializeImpl() const override;
         
     private:
-        int argument1;
+        int argument1 = 0;
         
-        int argument2;
+        int argument2 = 0;
         
     };
 }

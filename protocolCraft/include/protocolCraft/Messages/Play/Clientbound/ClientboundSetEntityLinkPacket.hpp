@@ -89,8 +89,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int source_id;
-        int dest_id;
+        int source_id = 0;
+        int dest_id = 0;
 
     };
 } //ProtocolCraft

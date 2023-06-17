@@ -93,9 +93,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int book_type;
-        bool is_open;
-        bool is_filtering;
+        int book_type = 0;
+        bool is_open = false;
+        bool is_filtering = false;
     };
 } //ProtocolCraft
 #endif

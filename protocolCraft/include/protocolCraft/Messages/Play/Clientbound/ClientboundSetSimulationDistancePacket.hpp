@@ -63,7 +63,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int simulation_distance;
+        int simulation_distance = 0;
 
     };
 } //ProtocolCraft

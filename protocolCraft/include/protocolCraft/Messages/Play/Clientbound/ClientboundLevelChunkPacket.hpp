@@ -272,13 +272,13 @@ namespace ProtocolCraft
         }
 
     private:
-        int x;
-        int z;
+        int x = 0;
+        int z = 0;
 #if PROTOCOL_VERSION > 730 && PROTOCOL_VERSION < 745
-        bool ignore_old_data;
+        bool ignore_old_data = false;
 #endif
 #if PROTOCOL_VERSION < 755
-        int available_sections;
+        int available_sections = 0;
 #else
         std::vector<unsigned long long int> available_sections;
 #endif
@@ -291,7 +291,7 @@ namespace ProtocolCraft
         std::vector<unsigned char> buffer;
         std::vector<NBT::Value> block_entities_tags;
 #if PROTOCOL_VERSION < 755
-        bool full_chunk;
+        bool full_chunk = false;
 #endif
     };
 } //ProtocolCraft

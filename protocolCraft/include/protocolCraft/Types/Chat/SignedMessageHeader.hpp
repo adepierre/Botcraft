@@ -75,7 +75,7 @@ namespace ProtocolCraft
 
     private:
         std::optional<std::vector<unsigned char>> previous_signature;
-        UUID sender;
+        UUID sender = {};
     };
 } // ProtocolCraft
 #endif

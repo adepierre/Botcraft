@@ -92,9 +92,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int fade_in;
-        int stay;
-        int fade_out;
+        int fade_in = 0;
+        int stay = 0;
+        int fade_out = 0;
 
     };
 } //ProtocolCraft

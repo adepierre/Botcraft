@@ -124,7 +124,7 @@ namespace ProtocolCraft
     private:
         NetworkPosition pos;
 #if PROTOCOL_VERSION > 762
-        bool is_front_text;
+        bool is_front_text = false;
 #endif
         std::array<std::string, 4> lines;
 

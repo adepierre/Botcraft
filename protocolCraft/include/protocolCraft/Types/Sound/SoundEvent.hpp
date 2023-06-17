@@ -96,7 +96,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int sound_id;
+        int sound_id = 0;
         Identifier location;
         std::optional<float> range;
     };

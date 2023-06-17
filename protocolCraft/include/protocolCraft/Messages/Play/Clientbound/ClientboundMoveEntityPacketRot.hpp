@@ -113,9 +113,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
-        unsigned char yRot;
-        unsigned char xRot;
-        bool on_ground;
+        int entity_id = 0;
+        unsigned char yRot = 0;
+        unsigned char xRot = 0;
+        bool on_ground = false;
     };
 } //ProtocolCraft

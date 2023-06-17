@@ -51,7 +51,7 @@ namespace ProtocolCraft
 #else
         Identifier destination_type;
         std::shared_ptr<PositionSource> destination;
-        int arrival_in_ticks;
+        int arrival_in_ticks = 0;
 #endif
         
     };

@@ -140,8 +140,8 @@ namespace ProtocolCraft
 
     private:
         std::string name;
-        int game_mode;
-        int latency;
+        int game_mode = 0;
+        int latency = 0;
         std::optional<Chat> display_name;
         std::vector<GameProfileProperty> properties;
 #if PROTOCOL_VERSION > 758

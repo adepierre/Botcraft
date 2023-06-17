@@ -101,9 +101,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity;
+        int entity = 0;
         std::string command;
-        bool track_output;
+        bool track_output = false;
 
     };
 } //ProtocolCraft

@@ -94,7 +94,7 @@ namespace ProtocolCraft
         NetworkPosition origin;
         Identifier destination_type;
         std::shared_ptr<PositionSource> destination;
-        int arrival_in_ticks;
+        int arrival_in_ticks = 0;
     };
 } // ProtocolCraft
 #endif

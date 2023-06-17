@@ -90,9 +90,9 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 763
-        int killer_id;
+        int killer_id = 0;
 #endif
-        int duration;
+        int duration = 0;
 
     };
 } //ProtocolCraft

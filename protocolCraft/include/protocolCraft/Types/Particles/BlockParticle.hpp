@@ -28,7 +28,7 @@ namespace ProtocolCraft
         virtual Json::Value SerializeImpl() const override;
         
     private:
-        int state;
+        int state = 0;
     };
 }
 #endif

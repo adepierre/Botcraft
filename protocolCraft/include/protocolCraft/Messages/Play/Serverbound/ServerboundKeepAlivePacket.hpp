@@ -74,6 +74,6 @@ namespace ProtocolCraft
         }
 
     private:
-        long long int id_;
+        long long int id_ = 0;
     };
 } //ProtocolCraft

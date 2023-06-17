@@ -90,7 +90,7 @@ namespace ProtocolCraft
         }
 
     private:
-        short slot_num;
+        short slot_num = 0;
         Slot item_stack;
 
     };

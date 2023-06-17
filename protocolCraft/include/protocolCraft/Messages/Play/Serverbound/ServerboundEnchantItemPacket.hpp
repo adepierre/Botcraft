@@ -68,8 +68,8 @@ namespace ProtocolCraft
         }
 
     private:
-        char container_id;
-        char enchantment;
+        char container_id = 0;
+        char enchantment = 0;
 
     };
 } //ProtocolCraft

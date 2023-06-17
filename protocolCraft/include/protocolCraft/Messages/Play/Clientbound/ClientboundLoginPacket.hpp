@@ -500,16 +500,16 @@ namespace ProtocolCraft
         }
 
     private:
-        int player_id;
+        int player_id = 0;
 #if PROTOCOL_VERSION > 551
-        long long int seed;
+        long long int seed = 0;
 #endif
 #if PROTOCOL_VERSION > 737
-        bool hardcore;
+        bool hardcore = false;
 #endif
-        unsigned char game_type;
+        unsigned char game_type = 0;
 #if PROTOCOL_VERSION > 718
-        unsigned char previous_game_type;
+        unsigned char previous_game_type = 0;
         std::vector<Identifier> levels;
         NBT::Value registry_holder;
 #if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
@@ -519,36 +519,36 @@ namespace ProtocolCraft
 #endif
         Identifier dimension;
 #else
-        int dimension;
+        int dimension = 0;
 #endif
-        unsigned char difficulty;
+        unsigned char difficulty = 0;
 #if PROTOCOL_VERSION < 749
-        unsigned char max_players;
+        unsigned char max_players = 0;
 #else
-        int max_players;
+        int max_players = 0;
 #endif
 #if PROTOCOL_VERSION < 719
         std::string level_type;
 #endif
 #if PROTOCOL_VERSION >= 477
-        int chunk_radius;
+        int chunk_radius = 0;
 #endif
 #if PROTOCOL_VERSION > 756
-        int simulation_distance;
+        int simulation_distance = 0;
 #endif
-        bool reduced_debug_info;
+        bool reduced_debug_info = false;
 #if PROTOCOL_VERSION > 565
-        bool show_death_screen;
+        bool show_death_screen = false;
 #endif
 #if PROTOCOL_VERSION > 718
-        bool is_debug;
-        bool is_flat;
+        bool is_debug = false;
+        bool is_flat = false;
 #endif
 #if PROTOCOL_VERSION > 758
         std::optional<GlobalPos> last_death_location;
 #endif
 #if PROTOCOL_VERSION > 762
-        int portal_cooldown;
+        int portal_cooldown = 0;
 #endif
     };
 } //ProtocolCraft

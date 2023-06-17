@@ -73,7 +73,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int transaction_id;
+        int transaction_id = 0;
         std::optional<std::vector<unsigned char>> data;
     };
 } // ProtocolCraft

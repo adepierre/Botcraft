@@ -139,12 +139,12 @@ namespace ProtocolCraft
         }
 
     private:
-        int container_id;
+        int container_id = 0;
         std::vector<Trade> offers;
-        int villager_level;
-        int villager_xp;
-        bool show_progress;
-        bool can_restock;
+        int villager_level = 0;
+        int villager_xp = 0;
+        bool show_progress = false;
+        bool can_restock = false;
 
     };
 } //ProtocolCraft

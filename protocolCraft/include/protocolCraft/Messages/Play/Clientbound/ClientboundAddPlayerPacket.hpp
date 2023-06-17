@@ -177,13 +177,13 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
-        UUID player_id;
-        double x;
-        double y;
-        double z;
-        Angle yRot;
-        Angle xRot;
+        int entity_id = 0;
+        UUID player_id = {};
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        Angle yRot = 0;
+        Angle xRot = 0;
 #if PROTOCOL_VERSION < 550
         std::vector<unsigned char> raw_metadata;
 #endif

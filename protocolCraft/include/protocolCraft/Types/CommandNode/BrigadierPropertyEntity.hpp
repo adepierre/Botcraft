@@ -45,7 +45,7 @@ namespace ProtocolCraft
         }
 
     private:
-        char flags;
+        char flags = 0;
     };
 }
 #endif

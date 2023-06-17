@@ -128,11 +128,11 @@ namespace ProtocolCraft
         }
 
     private:
-        double x;
-        double y;
-        double z;
-        float yRot;
-        float xRot;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        float yRot = 0.0f;
+        float xRot = 0.0f;
 
     };
 } //ProtocolCraft

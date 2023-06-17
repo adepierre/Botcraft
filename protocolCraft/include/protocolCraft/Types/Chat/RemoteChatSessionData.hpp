@@ -59,7 +59,7 @@ namespace ProtocolCraft
         }
 
     private:
-        UUID uuid;
+        UUID uuid = {};
         ProfilePublicKey profile_public_key;
     };
 }

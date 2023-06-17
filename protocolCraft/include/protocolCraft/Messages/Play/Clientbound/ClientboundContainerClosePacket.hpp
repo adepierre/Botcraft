@@ -76,7 +76,7 @@ namespace ProtocolCraft
         }
 
     private:
-        unsigned char container_id;
+        unsigned char container_id = 0;
 
     };
 } //ProtocolCraft

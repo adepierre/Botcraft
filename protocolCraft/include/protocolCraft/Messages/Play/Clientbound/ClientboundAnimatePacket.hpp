@@ -89,8 +89,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        unsigned char action;
+        int id_ = 0;
+        unsigned char action = 0;
 
     };
 } //ProtocolCraft

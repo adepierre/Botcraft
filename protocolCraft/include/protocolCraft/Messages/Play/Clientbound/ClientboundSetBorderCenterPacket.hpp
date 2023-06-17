@@ -79,8 +79,8 @@ namespace ProtocolCraft
         }
 
     private:
-        double new_center_x;
-        double new_center_z;
+        double new_center_x = 0.0;
+        double new_center_z = 0.0;
 
     };
 } //ProtocolCraft

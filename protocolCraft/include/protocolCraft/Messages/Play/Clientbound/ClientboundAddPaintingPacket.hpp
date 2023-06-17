@@ -146,14 +146,14 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        UUID uuid;
+        int id_ = 0;
+        UUID uuid = {};
         NetworkPosition pos;
-        char direction;
+        char direction = 0;
 #if PROTOCOL_VERSION < 353
         std::string title;
 #else
-        int motive;
+        int motive = 0;
 #endif
 
     };

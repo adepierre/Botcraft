@@ -152,12 +152,12 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        double x;
-        double y;
-        double z;
-        unsigned char yRot;
-        unsigned char xRot;
-        bool on_ground;
+        int id_ = 0;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        unsigned char yRot = 0;
+        unsigned char xRot = 0;
+        bool on_ground = false;
     };
 } //ProtocolCraft

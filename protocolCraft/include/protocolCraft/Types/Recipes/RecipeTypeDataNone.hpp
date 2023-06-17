@@ -58,7 +58,7 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION > 760
-        int cooking_book_category;
+        int cooking_book_category = 0;
 #endif
     };
 }

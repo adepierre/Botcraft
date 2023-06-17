@@ -87,7 +87,7 @@ namespace ProtocolCraft
         }
 
     private:
-        long long int game_time;
-        long long int day_time;
+        long long int game_time = 0;
+        long long int day_time = 0;
     };
 } //ProtocolCraft

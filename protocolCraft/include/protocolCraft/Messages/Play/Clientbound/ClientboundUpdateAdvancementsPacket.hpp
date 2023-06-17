@@ -131,7 +131,7 @@ namespace ProtocolCraft
         }
 
     private:
-        bool reset;
+        bool reset = false;
         std::map<Identifier, Advancement> added;
         std::vector<Identifier> removed;
         std::map<Identifier, AdvancementProgress> progress;

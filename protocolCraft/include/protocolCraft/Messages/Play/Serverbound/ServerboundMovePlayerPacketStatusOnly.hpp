@@ -65,7 +65,7 @@ namespace ProtocolCraft
         }
 
     private:
-        bool on_ground;
+        bool on_ground = false;
 
     };
 } //ProtocolCraft

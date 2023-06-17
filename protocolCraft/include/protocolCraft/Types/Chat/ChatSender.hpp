@@ -76,7 +76,7 @@ namespace ProtocolCraft
         }
 
     private:
-        UUID uuid;
+        UUID uuid = {};
         Chat name;
         std::optional<Chat> team_name;
     };

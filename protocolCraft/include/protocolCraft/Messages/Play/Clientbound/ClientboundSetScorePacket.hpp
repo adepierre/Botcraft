@@ -132,7 +132,7 @@ namespace ProtocolCraft
     private:
         std::string owner;
         std::string objective_name;
-        int score;
+        int score = 0;
         SetScoreMethod method;
 
     };

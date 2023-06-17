@@ -127,10 +127,10 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
-        char direction;
-        int action;
+        char direction = 0;
+        int action = 0;
 #if PROTOCOL_VERSION > 758
-        int sequence;
+        int sequence = 0;
 #endif
     };
 } //ProtocolCraft

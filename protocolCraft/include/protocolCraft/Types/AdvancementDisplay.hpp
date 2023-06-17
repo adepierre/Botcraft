@@ -150,10 +150,10 @@ namespace ProtocolCraft
         Chat title;
         Chat description;
         Slot icon;
-        int frame_type;
-        int flags;
+        int frame_type = 0;
+        int flags = 0;
         Identifier background_texture;
-        float x_coord;
-        float y_coord;
+        float x_coord = 0.0f;
+        float y_coord = 0.0f;
     };
 }

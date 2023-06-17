@@ -28,7 +28,7 @@ namespace ProtocolCraft
         virtual Json::Value SerializeImpl() const override;
         
     private:
-        float roll;
+        float roll = 0.0f;
     };
 }
 #endif

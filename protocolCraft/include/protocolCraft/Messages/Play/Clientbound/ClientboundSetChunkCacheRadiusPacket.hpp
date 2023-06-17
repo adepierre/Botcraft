@@ -73,7 +73,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int radius;
+        int radius = 0;
 
     };
 } //ProtocolCraft

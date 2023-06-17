@@ -45,7 +45,7 @@ namespace ProtocolCraft
         }
 
     private:
-        bool decimals;
+        bool decimals = false;
     };
 }
 #endif

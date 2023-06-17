@@ -105,9 +105,9 @@ namespace ProtocolCraft
     private:
         Chat content;
 #if PROTOCOL_VERSION < 760
-        int type_id;
+        int type_id = 0;
 #else
-        bool overlay;
+        bool overlay = false;
 #endif
     };
 } //ProtocolCraft

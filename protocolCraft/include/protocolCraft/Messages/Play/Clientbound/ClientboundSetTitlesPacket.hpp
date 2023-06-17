@@ -172,9 +172,9 @@ namespace ProtocolCraft
     private:
         SetTitlesType type;
         Chat text;
-        int fade_in_time;
-        int stay_time;
-        int fade_out_time;
+        int fade_in_time = 0;
+        int stay_time = 0;
+        int fade_out_time = 0;
 
     };
 } //ProtocolCraft

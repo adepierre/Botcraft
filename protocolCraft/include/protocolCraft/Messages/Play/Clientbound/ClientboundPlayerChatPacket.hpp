@@ -294,16 +294,16 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 760
         Chat signed_content;
         std::optional<Chat> unsigned_content;
-        int type_id;
+        int type_id = 0;
         ChatSender sender;
-        long long int timestamp;
+        long long int timestamp = 0;
         SaltSignature salt_signature;
 #else
 #if PROTOCOL_VERSION < 761
         PlayerChatMessage message;
 #else
-        UUID sender;
-        int index;
+        UUID sender = {};
+        int index = 0;
         std::optional<std::vector<unsigned char>> signature;
         SignedMessageBody body;
         std::optional<Chat> unsigned_content;

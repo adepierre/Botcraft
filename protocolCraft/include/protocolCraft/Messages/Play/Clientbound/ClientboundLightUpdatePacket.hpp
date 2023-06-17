@@ -331,14 +331,14 @@ namespace ProtocolCraft
         }
 
     private:
-        int x;
-        int z;
+        int x = 0;
+        int z = 0;
 #if PROTOCOL_VERSION < 757
 #if PROTOCOL_VERSION < 755
-        int sky_Y_mask;
-        int block_Y_mask;
-        int empty_sky_Y_mask;
-        int empty_block_Y_mask;
+        int sky_Y_mask = 0;
+        int block_Y_mask = 0;
+        int empty_sky_Y_mask = 0;
+        int empty_block_Y_mask = 0;
 #else
         std::vector<unsigned long long int> sky_Y_mask;
         std::vector<unsigned long long int> block_Y_mask;
@@ -348,7 +348,7 @@ namespace ProtocolCraft
         std::vector<std::vector<char> > sky_updates;
         std::vector<std::vector<char> > block_updates;
 #if PROTOCOL_VERSION > 722
-        bool trust_edges;
+        bool trust_edges = false;
 #endif
 #else
         ClientboundLightUpdatePacketData light_data;

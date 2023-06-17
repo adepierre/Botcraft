@@ -69,9 +69,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int source_entity_id;
+        int source_entity_id = 0;
 #if PROTOCOL_VERSION > 758
-        float y_offset;
+        float y_offset = 0.0f;
 #endif
     };
 }

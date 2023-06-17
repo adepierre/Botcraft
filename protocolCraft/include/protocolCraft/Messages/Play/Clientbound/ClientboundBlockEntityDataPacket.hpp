@@ -126,9 +126,9 @@ namespace ProtocolCraft
     private:
         NetworkPosition pos;
 #if PROTOCOL_VERSION < 757
-        unsigned char type;
+        unsigned char type = 0;
 #else
-        int type;
+        int type = 0;
 #endif
         NBT::Value tag;
     };

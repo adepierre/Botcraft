@@ -88,8 +88,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int transaction_id;
-        int entity_id;
+        int transaction_id = 0;
+        int entity_id = 0;
 
     };
 } //ProtocolCraft

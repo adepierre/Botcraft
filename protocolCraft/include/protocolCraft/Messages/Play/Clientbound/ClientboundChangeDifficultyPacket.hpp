@@ -97,10 +97,10 @@ namespace ProtocolCraft
         }
 
     private:
-        int difficulty;
+        int difficulty = 0;
 
 #if PROTOCOL_VERSION >= 477
-        bool locked;
+        bool locked = false;
 #endif
     };
 } //ProtocolCraft

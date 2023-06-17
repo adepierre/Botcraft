@@ -54,7 +54,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
+        int entity_id = 0;
 
     };
 } //ProtocolCraft

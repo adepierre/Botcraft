@@ -166,13 +166,13 @@ namespace ProtocolCraft
     private:
 #if PROTOCOL_VERSION < 756
         Slot book;
-        bool signing;
+        bool signing = false;
 #else
         std::vector<std::string> pages;
         std::optional<std::string> title;
 #endif
 #if PROTOCOL_VERSION > 393
-        int slot;
+        int slot = 0;
 #endif
 
     };

@@ -129,11 +129,11 @@ namespace ProtocolCraft
         }
 
     private:
-        unsigned char container_id;
+        unsigned char container_id = 0;
         std::vector<Slot> items;
 #if PROTOCOL_VERSION > 755
         Slot carried_item;
-        int state_id;
+        int state_id = 0;
 #endif
     };
 } //ProtocolCraft

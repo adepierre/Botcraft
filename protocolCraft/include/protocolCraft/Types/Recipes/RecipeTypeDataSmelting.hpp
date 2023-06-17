@@ -124,12 +124,12 @@ namespace ProtocolCraft
     private:
         std::string group;
 #if PROTOCOL_VERSION > 760
-        int cooking_book_category;
+        int cooking_book_category = 0;
 #endif
         Ingredient ingredient;
         Slot result;
-        float experience;
-        int cooking_time;
+        float experience = 0.0f;
+        int cooking_time = 0;
     };
 }
 #endif

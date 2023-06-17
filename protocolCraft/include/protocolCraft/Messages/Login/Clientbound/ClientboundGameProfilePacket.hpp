@@ -114,7 +114,7 @@ namespace ProtocolCraft
         GameProfile game_profile;
 #else
 #if PROTOCOL_VERSION > 706
-        UUID uuid;
+        UUID uuid = {};
 #else
         // This uuid is not a normal uuid but a regular string
         std::string uuid;

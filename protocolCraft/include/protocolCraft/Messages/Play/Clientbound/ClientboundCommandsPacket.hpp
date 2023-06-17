@@ -90,7 +90,7 @@ namespace ProtocolCraft
 
     private:
         std::vector<CommandNode> nodes;
-        int root_index;
+        int root_index = 0;
 
     };
 } //ProtocolCraft

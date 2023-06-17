@@ -171,9 +171,9 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION > 356
-        int id_;
-        int start;
-        int length_;
+        int id_ = 0;
+        int start = 0;
+        int length_ = 0;
 #endif
         std::vector<std::string> suggestions;
 #if PROTOCOL_VERSION > 356

@@ -75,7 +75,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int item;
+        int item = 0;
 
     };
 } //ProtocolCraft

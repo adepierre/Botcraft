@@ -72,7 +72,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int action;
+        int action = 0;
         std::vector<std::string> entries;
 
     };

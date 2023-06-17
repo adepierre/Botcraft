@@ -100,9 +100,9 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 761
-        UUID profile_id;
+        UUID profile_id = {};
 #else
-        int id;
+        int id = 0;
 #endif
         std::vector<unsigned char> last_signature;
     };

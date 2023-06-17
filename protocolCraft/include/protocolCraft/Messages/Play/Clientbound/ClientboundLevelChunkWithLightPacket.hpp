@@ -107,8 +107,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int x;
-        int z;
+        int x = 0;
+        int z = 0;
         ClientboundLevelChunkPacketData chunk_data;
         ClientboundLightUpdatePacketData light_data;
     };

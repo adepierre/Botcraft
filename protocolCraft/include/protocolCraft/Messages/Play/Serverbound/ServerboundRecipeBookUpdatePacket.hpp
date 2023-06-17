@@ -244,23 +244,23 @@ namespace ProtocolCraft
         }
 
     private:
-        int purpose;
+        int purpose = 0;
 #if PROTOCOL_VERSION > 375
         Identifier recipe;
 #else
-        int recipe;
+        int recipe = 0;
 #endif
-        bool gui_open;
-        bool filtering_craftable;
+        bool gui_open = false;
+        bool filtering_craftable = false;
 #if PROTOCOL_VERSION > 358
-        bool furnace_gui_open;
-        bool furnace_filtering_craftable;
+        bool furnace_gui_open = false;
+        bool furnace_filtering_craftable = false;
 #endif
 #if PROTOCOL_VERSION > 450
-        bool blast_furnace_gui_open;
-        bool blast_furnace_filtering_craftable;
-        bool smoker_gui_open;
-        bool smoker_filtering_craftable;
+        bool blast_furnace_gui_open = false;
+        bool blast_furnace_filtering_craftable = false;
+        bool smoker_gui_open = false;
+        bool smoker_filtering_craftable = false;
 #endif
 
     };

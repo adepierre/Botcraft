@@ -89,6 +89,6 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
-        int blockstate;
+        int blockstate = 0;
     };
 } //ProtocolCraft

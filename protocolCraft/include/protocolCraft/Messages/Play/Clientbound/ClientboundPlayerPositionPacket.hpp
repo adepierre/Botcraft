@@ -176,15 +176,15 @@ namespace ProtocolCraft
         }
 
     private:
-        double x;
-        double y;
-        double z;
-        float yRot;
-        float xRot;
-        char relative_arguments;
-        int id_;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        float yRot = 0.0f;
+        float xRot = 0.0f;
+        char relative_arguments = 0;
+        int id_ = 0;
 #if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 762
-        bool dismount_vehicle;
+        bool dismount_vehicle = false;
 #endif
     };
 }

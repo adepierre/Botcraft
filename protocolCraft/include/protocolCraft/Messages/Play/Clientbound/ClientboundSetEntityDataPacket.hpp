@@ -89,7 +89,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
+        int id_ = 0;
         std::vector<unsigned char> packed_items;
 
     };

@@ -95,8 +95,8 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
-        int levels;
-        bool keep_jigsaws;
+        int levels = 0;
+        bool keep_jigsaws = false;
     };
 } //ProtocolCraft
 #endif

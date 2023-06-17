@@ -92,9 +92,9 @@ namespace ProtocolCraft
         }
 
     private:
-        double old_size;
-        double new_size;
-        long long int lerp_time;
+        double old_size = 0.0;
+        double new_size = 0.0;
+        long long int lerp_time = 0;
 
     };
 } //ProtocolCraft

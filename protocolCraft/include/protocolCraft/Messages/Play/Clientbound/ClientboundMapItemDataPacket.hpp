@@ -265,23 +265,23 @@ namespace ProtocolCraft
         }
 
     private:
-        int map_id;
-        char scale;
+        int map_id = 0;
+        char scale = 0;
 #if PROTOCOL_VERSION < 755
-        bool tracking_position;
+        bool tracking_position = false;
 #endif
 #if PROTOCOL_VERSION > 451
-        bool locked;
+        bool locked = false;
 #endif
 #if PROTOCOL_VERSION > 754
         std::optional<std::vector<MapDecoration>> decorations;
 #else
         std::vector<MapDecoration> decorations;
 #endif
-        unsigned char start_x;
-        unsigned char start_z;
-        unsigned char width;
-        unsigned char height;
+        unsigned char start_x = 0;
+        unsigned char start_z = 0;
+        unsigned char width = 0;
+        unsigned char height = 0;
         std::vector<unsigned char> map_colors;
     };
 } //ProtocolCraft

@@ -72,8 +72,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int x;
-        int z;
+        int x = 0;
+        int z = 0;
         std::vector<unsigned char> buffer;
     };
 }

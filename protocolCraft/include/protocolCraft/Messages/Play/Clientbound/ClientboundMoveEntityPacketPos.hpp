@@ -126,10 +126,10 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
-        short x_a;
-        short y_a;
-        short z_a;
-        bool on_ground;
+        int entity_id = 0;
+        short x_a = 0;
+        short y_a = 0;
+        short z_a = 0;
+        bool on_ground = false;
     };
 } //ProtocolCraft

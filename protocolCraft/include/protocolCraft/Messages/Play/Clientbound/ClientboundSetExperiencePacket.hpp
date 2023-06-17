@@ -102,9 +102,9 @@ namespace ProtocolCraft
         }
 
     private:
-        float experience_progress;
-        int total_experience;
-        int experience_level;
+        float experience_progress = 0.0f;
+        int total_experience = 0;
+        int experience_level = 0;
 
     };
 } //ProtocolCraft

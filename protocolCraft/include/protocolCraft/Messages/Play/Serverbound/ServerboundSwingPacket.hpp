@@ -76,7 +76,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int hand;
+        int hand = 0;
 
     };
 } //ProtocolCraft

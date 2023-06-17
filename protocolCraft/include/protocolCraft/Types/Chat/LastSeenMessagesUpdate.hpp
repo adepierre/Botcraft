@@ -112,7 +112,7 @@ namespace ProtocolCraft
         std::vector<LastSeenMessagesEntry> last_seen;
         std::optional<LastSeenMessagesEntry> last_received;
 #else
-        int offset;
+        int offset = 0;
         std::bitset<20> acknowledged;
 #endif
     };

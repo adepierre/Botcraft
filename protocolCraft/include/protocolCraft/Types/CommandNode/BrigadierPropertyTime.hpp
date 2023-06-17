@@ -47,7 +47,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int min;
+        int min = 0;
     };
 }
 #endif

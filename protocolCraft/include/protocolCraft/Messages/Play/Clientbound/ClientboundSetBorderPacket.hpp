@@ -253,14 +253,14 @@ namespace ProtocolCraft
 
     private:
         SetBorderType action;
-        int new_absolute_max_size;
-        double new_center_x;
-        double new_center_z;
-        double new_size;
-        double old_size;
-        long long int lerp_time;
-        int warning_blocks;
-        int warning_time;
+        int new_absolute_max_size = 0;
+        double new_center_x = 0.0;
+        double new_center_z = 0.0;
+        double new_size = 0.0;
+        double old_size = 0.0;
+        long long int lerp_time = 0;
+        int warning_blocks = 0;
+        int warning_time = 0;
 
     };
 } //ProtocolCraft

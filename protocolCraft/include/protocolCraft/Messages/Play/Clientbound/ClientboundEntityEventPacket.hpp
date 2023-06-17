@@ -89,8 +89,8 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
-        char event_id;
+        int entity_id = 0;
+        char event_id = 0;
 
     };
 } //ProtocolCraft

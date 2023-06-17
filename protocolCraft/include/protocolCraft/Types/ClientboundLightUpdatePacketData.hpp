@@ -161,7 +161,7 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 763
-        bool trust_edges;
+        bool trust_edges = false;
 #endif
 
         std::vector<unsigned long long int> sky_Y_mask;

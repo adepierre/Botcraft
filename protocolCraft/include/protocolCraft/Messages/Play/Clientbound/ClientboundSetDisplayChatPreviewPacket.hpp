@@ -56,7 +56,7 @@ namespace ProtocolCraft
         }
 
     private:
-        bool enabled;
+        bool enabled = false;
 
     };
 } //ProtocolCraft

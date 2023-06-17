@@ -76,7 +76,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int chat_type;
+        int chat_type = 0;
         Chat name;
         std::optional<Chat> target_name;
     };

@@ -100,8 +100,8 @@ namespace ProtocolCraft
         }
 
     private:
-        float health;
-        int food;
-        float food_saturation;
+        float health = 0.0f;
+        int food = 0;
+        float food_saturation = 0.0f;
     };
 } //ProtocolCraft

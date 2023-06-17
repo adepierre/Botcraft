@@ -181,14 +181,14 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
-        int action;
-        float location_x;
-        float location_y;
-        float location_z;
-        int hand;
+        int entity_id = 0;
+        int action = 0;
+        float location_x = 0.0f;
+        float location_y = 0.0f;
+        float location_z = 0.0f;
+        int hand = 0;
 #if PROTOCOL_VERSION > 722
-        bool using_secondary_action;
+        bool using_secondary_action = false;
 #endif
 
     };

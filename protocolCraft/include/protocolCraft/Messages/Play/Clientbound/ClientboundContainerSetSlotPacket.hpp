@@ -126,11 +126,11 @@ namespace ProtocolCraft
         }
 
     private:
-        char container_id;
-        short slot;
+        char container_id = 0;
+        short slot = 0;
         Slot item_stack;
 #if PROTOCOL_VERSION > 755
-        int state_id;
+        int state_id = 0;
 #endif
 
     };

@@ -102,9 +102,9 @@ namespace ProtocolCraft
         }
 
     private:
-        float yRot;
-        float xRot;
-        bool on_ground;
+        float yRot = 0.0f;
+        float xRot = 0.0f;
+        bool on_ground = false;
 
     };
 } //ProtocolCraft

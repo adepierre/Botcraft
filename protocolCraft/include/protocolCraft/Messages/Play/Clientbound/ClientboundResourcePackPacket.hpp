@@ -133,7 +133,7 @@ namespace ProtocolCraft
         std::string url;
         std::string hash;
 #if PROTOCOL_VERSION > 754
-        bool required;
+        bool required = false;
         std::optional<Chat> prompt;
 #endif
 

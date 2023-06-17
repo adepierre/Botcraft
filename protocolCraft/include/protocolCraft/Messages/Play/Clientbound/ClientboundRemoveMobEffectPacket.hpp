@@ -111,11 +111,11 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
+        int entity_id = 0;
 #if PROTOCOL_VERSION < 758
-        char effect;
+        char effect = 0;
 #else
-        int effect;
+        int effect = 0;
 #endif
 
     };

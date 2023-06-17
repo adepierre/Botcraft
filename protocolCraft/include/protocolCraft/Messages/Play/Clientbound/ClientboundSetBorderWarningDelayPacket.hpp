@@ -66,7 +66,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int warning_delay;
+        int warning_delay = 0;
 
     };
 } //ProtocolCraft

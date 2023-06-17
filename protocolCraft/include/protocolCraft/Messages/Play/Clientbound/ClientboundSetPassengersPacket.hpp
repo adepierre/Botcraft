@@ -99,7 +99,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int vehicle;
+        int vehicle = 0;
         std::vector<int> passengers;
 
     };

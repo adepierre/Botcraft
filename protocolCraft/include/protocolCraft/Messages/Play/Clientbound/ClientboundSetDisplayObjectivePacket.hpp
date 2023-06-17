@@ -90,7 +90,7 @@ namespace ProtocolCraft
         }
 
     private:
-        char slot;
+        char slot = 0;
         std::string objective_name;
 
     };

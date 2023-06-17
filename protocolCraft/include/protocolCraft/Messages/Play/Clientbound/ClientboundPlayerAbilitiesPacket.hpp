@@ -100,8 +100,8 @@ namespace ProtocolCraft
         }
 
     private:
-        char flags;
-        float flying_speed;
-        float walking_speed;
+        char flags = 0;
+        float flying_speed = 0.0f;
+        float walking_speed = 0.0f;
     };
 }

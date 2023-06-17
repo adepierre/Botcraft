@@ -97,7 +97,7 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION > 760
-        int message_signature_id;
+        int message_signature_id = 0;
 #endif
         std::vector<unsigned char> message_signature;
     };

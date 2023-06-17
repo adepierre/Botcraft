@@ -115,10 +115,10 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
-        short x_a;
-        short y_a;
-        short z_a;
+        int id_ = 0;
+        short x_a = 0;
+        short y_a = 0;
+        short z_a = 0;
 
     };
 } //ProtocolCraft

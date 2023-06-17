@@ -137,7 +137,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
+        int entity_id = 0;
 #if PROTOCOL_VERSION > 730
         std::vector<std::pair<unsigned char, Slot> > slots;
 #else

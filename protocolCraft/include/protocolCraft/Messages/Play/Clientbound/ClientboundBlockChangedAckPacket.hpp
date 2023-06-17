@@ -60,7 +60,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int sequence;
+        int sequence = 0;
     };
 } //ProtocolCraft
 

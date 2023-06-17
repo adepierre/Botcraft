@@ -185,16 +185,16 @@ namespace ProtocolCraft
 
     private:
         std::string language;
-        char view_distance;
-        int chat_visibility;
-        bool chat_colors;
-        unsigned char model_customisation;
-        int main_hand;
+        char view_distance = 0;
+        int chat_visibility = 0;
+        bool chat_colors = false;
+        unsigned char model_customisation = 0;
+        int main_hand = 0;
 #if PROTOCOL_VERSION > 754
-        bool text_filtering_enabled;
+        bool text_filtering_enabled = false;
 #endif
 #if PROTOCOL_VERSION > 756
-        bool allow_listing;
+        bool allow_listing = false;
 #endif
     };
 } //ProtocolCraft

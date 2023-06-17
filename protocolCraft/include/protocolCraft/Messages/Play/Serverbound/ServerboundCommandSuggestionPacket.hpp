@@ -141,11 +141,11 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION > 344
-        int id_;
+        int id_ = 0;
 #endif
         std::string command;
 #if PROTOCOL_VERSION < 345
-        bool assume_command;
+        bool assume_command = false;
         std::optional<NetworkPosition> looked_at_block;
 #endif
 

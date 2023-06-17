@@ -93,9 +93,9 @@ namespace ProtocolCraft
         }
 
     private:
-        char flags;
-        int min;
-        int max;
+        char flags = 0;
+        int min = 0;
+        int max = 0;
     };
 }
 #endif

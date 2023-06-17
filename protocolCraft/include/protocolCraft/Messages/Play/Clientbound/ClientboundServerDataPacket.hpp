@@ -191,10 +191,10 @@ namespace ProtocolCraft
         std::optional<std::vector<unsigned char>> icon_bytes;
 #endif
 #if PROTOCOL_VERSION < 761
-        bool previews_chat;
+        bool previews_chat = false;
 #endif
 #if PROTOCOL_VERSION > 759
-        bool enforces_secure_chat;
+        bool enforces_secure_chat = false;
 #endif
 
     };

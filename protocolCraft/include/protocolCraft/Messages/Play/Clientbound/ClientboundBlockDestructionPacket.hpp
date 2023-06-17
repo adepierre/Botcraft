@@ -103,9 +103,9 @@ namespace ProtocolCraft
         }
 
     private:
-        int id_;
+        int id_ = 0;
         NetworkPosition pos;
-        char progress;
+        char progress = 0;
 
     };
 } //ProtocolCraft

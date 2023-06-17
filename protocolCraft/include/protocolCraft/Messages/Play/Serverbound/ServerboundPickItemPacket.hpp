@@ -75,7 +75,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int slot;
+        int slot = 0;
 
     };
 } //ProtocolCraft

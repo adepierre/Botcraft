@@ -131,10 +131,10 @@ namespace ProtocolCraft
         }
 
     private:
-        int entity_id;
-        int source_type_id;
-        int source_cause_id;
-        int source_direct_id;
+        int entity_id = 0;
+        int source_type_id = 0;
+        int source_cause_id = 0;
+        int source_direct_id = 0;
         std::optional<std::array<double, 3>> source_position;
     };
 } //ProtocolCraft

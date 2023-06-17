@@ -89,7 +89,7 @@ namespace ProtocolCraft
         }
 
     private:
-        int transaction_id;
+        int transaction_id = 0;
         NetworkPosition pos;
 
     };

@@ -117,8 +117,8 @@ namespace ProtocolCraft
     private:
         NetworkPosition pos;
         std::string command;
-        int mode;
-        char flags;
+        int mode = 0;
+        char flags = 0;
 
     };
 } //ProtocolCraft

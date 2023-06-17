@@ -228,17 +228,17 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
-        int update_type;
-        int mode;
+        int update_type = 0;
+        int mode = 0;
         std::string name_;
         NetworkPosition offset;
         NetworkPosition size;
-        int mirror;
-        int rotation;
+        int mirror = 0;
+        int rotation = 0;
         std::string data;
-        float integrity;
-        long long int seed;
-        char flags;
+        float integrity = 0.0f;
+        long long int seed = 0;
+        char flags = 0;
 
     };
 } //ProtocolCraft

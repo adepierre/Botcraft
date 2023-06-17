@@ -89,8 +89,8 @@ namespace ProtocolCraft
         }
 
     private:
-        bool left;
-        bool right;
+        bool left = false;
+        bool right = false;
 
     };
 } //ProtocolCraft

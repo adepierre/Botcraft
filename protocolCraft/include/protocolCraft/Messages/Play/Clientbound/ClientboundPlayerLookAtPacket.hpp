@@ -162,13 +162,13 @@ namespace ProtocolCraft
         }
 
     private:
-        double x;
-        double y;
-        double z;
-        int entity;
-        int from_anchor;
-        int to_anchor;
-        bool at_entity;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        int entity = 0;
+        int from_anchor = 0;
+        int to_anchor = 0;
+        bool at_entity = false;
 
     };
 } //ProtocolCraft

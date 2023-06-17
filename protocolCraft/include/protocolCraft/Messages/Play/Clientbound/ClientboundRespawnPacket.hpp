@@ -369,32 +369,32 @@ namespace ProtocolCraft
 #endif
         Identifier dimension;
 #else
-        int dimension;
+        int dimension = 0;
 #endif
 #if PROTOCOL_VERSION > 551
-        long long int seed;
+        long long int seed = 0;
 #endif
 #if PROTOCOL_VERSION < 477
-        int difficulty;
+        int difficulty = 0;
 #endif
-        int player_game_type;
+        int player_game_type = 0;
 #if PROTOCOL_VERSION < 730
         std::string level_type;
 #else
-        int previous_player_game_type;
-        bool is_debug;
-        bool is_flat;
+        int previous_player_game_type = 0;
+        bool is_debug = false;
+        bool is_flat = false;
 #if PROTOCOL_VERSION < 761
-        bool keep_all_player_data;
+        bool keep_all_player_data = false;
 #else
-        unsigned char data_to_keep;
+        unsigned char data_to_keep = 0;
 #endif
 #endif
 #if PROTOCOL_VERSION > 758
         std::optional<GlobalPos> last_death_location;
 #endif
 #if PROTOCOL_VERSION > 762
-        int portal_cooldown;
+        int portal_cooldown = 0;
 #endif
     };
 } //ProtocolCraft

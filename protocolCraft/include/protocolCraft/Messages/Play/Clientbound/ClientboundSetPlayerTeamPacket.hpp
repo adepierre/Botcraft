@@ -289,13 +289,13 @@ namespace ProtocolCraft
         std::string nametag_visibility;
         std::string collision_rule;
 #if PROTOCOL_VERSION < 375
-        char color;
+        char color = 0;
 #else
-        int color;
+        int color = 0;
 #endif
         std::vector<std::string> players;
-        char method;
-        char options;
+        char method = 0;
+        char options = 0;
 
     };
 } //ProtocolCraft

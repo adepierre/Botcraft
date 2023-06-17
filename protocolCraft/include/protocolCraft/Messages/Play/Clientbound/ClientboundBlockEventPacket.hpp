@@ -117,9 +117,9 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
-        unsigned char b0;
-        unsigned char b1;
-        int block;
+        unsigned char b0 = 0;
+        unsigned char b1 = 0;
+        int block = 0;
 
     };
 } //ProtocolCraft
