@@ -318,7 +318,7 @@ namespace Botcraft
                 const Position next_location = current_node.pos + neighbour_offsets[i];
                 const Position next_next_location = next_location + neighbour_offsets[i];
 
-                // Get the state around the player in the given location
+                // Get the state around the player in the given direction
                 std::array<BlockPathfindingState, 12> horizontal_surroundings = {
                     BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
                     BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
@@ -393,6 +393,10 @@ namespace Botcraft
                     && horizontal_surroundings[2] != BlockPathfindingState::Hazardous
                     && horizontal_surroundings[3] != BlockPathfindingState::Empty
                     && horizontal_surroundings[3] != BlockPathfindingState::Hazardous
+                    && (horizontal_surroundings[3] != BlockPathfindingState::Climbable    // We can't go from above a climbable to above
+                        || vertical_surroundings[3] != BlockPathfindingState::Climbable   // another one to avoid "walking on water"
+                        || horizontal_surroundings[2] == BlockPathfindingState::Climbable // except if one or both "leg level" blocks
+                        || vertical_surroundings[2] == BlockPathfindingState::Climbable)  // are also climbables
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 1.0f;

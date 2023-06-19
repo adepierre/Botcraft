@@ -226,3 +226,32 @@ TEST_CASE("hazardous pathfinding")
 		CHECK_THAT(time_taken, Catch::Matchers::WithinAbs(expected_time_s, 0.5));
 	}
 }
+
+TEST_CASE("water walking pathfinding")
+{
+	std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(2.0, 2.01, 0.0));
+	const Botcraft::Position delta(0, 0, 6);
+	const Botcraft::Position string_control_check_delta(0, 2, 3);
+
+	std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+	std::shared_ptr<Botcraft::World> world = bot->GetWorld();
+
+	Botcraft::Vector3<double> init_position;
+	{
+		std::lock_guard<std::mutex> lock(local_player->GetMutex());
+		init_position = local_player->GetPosition();
+	}
+	Botcraft::Position init_position_int = Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z));
+
+	bot->SyncAction(Botcraft::GoTo, init_position_int + delta, 0, 0, 4.317f, true);
+	{
+		std::lock_guard<std::mutex> lock(local_player->GetMutex());
+		CHECK_THAT(local_player->GetPosition().SqrDist(init_position + delta), Catch::Matchers::WithinAbs(0.0, 0.1));
+		{
+			std::lock_guard<std::mutex> lock(world->GetMutex());
+			LOG_INFO("\n" << init_position_int + string_control_check_delta << "\n");
+			const Botcraft::Block* should_be_air = world->GetBlock(init_position_int + string_control_check_delta);
+			CHECK((should_be_air == nullptr || should_be_air->GetBlockstate()->IsAir())); // Extra parenthesis as || is not supported without in catch2
+		}
+	}
+}
