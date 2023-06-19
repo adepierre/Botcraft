@@ -378,7 +378,7 @@ if(MSVC)
     endforeach()
 endif()
 
-add_library(protocolCraft STATIC ${protocolCraft_SRC} ${protocolCraft_PUBLIC_HDR})
+add_library(protocolCraft SHARED ${protocolCraft_SRC} ${protocolCraft_PUBLIC_HDR})
 set_property(TARGET protocolCraft PROPERTY CXX_STANDARD 17)
 set_property(TARGET protocolCraft PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_target_properties(protocolCraft PROPERTIES DEBUG_POSTFIX "_d")
@@ -418,6 +418,9 @@ if(BOTCRAFT_COMPRESSION)
     target_link_libraries(protocolCraft PRIVATE ZLIB::ZLIB)
     target_compile_definitions(protocolCraft PRIVATE USE_COMPRESSION=1)
 endif(BOTCRAFT_COMPRESSION)
+
+# Add DL lib for linux compilation
+target_link_libraries(protocolCraft PUBLIC ${CMAKE_DL_LIBS})
 
 # Installation stuff
 include(GNUInstallDirs)
