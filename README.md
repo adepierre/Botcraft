@@ -17,7 +17,7 @@
   <!-- <img width="100" src="Visuals/XXX.gif" alt="botcraft illustration gif" align="center"> TODO: add a nice gif -->
 </p>
 
-This is a "learn-by-doing" pet project I develop on my free time when I feel like it. I share the code for people that might be interested but it's more a "shared private repo" than a real open source community project.
+This is a "learn-by-doing" pet project I develop on my free time when I feel like it. I share the code for people that might be interested but it's more a "shared private repo" than a real open source community project. I usually try to push updates on master every first week of each month, and as soon as they are ready for new Minecraft version support updates.
 
 Precompiled binaries of the library and examples can be found in the [latest release](https://github.com/adepierre/Botcraft/releases/tag/latest) for both Windows and Linux. To compile it yourself, you can check the [Building](#building-and-testing) section.
 
@@ -52,11 +52,12 @@ Main features are listed below. To see the evolution of the project, check the [
 - Custom framework to easily test the bot behaviours on a vanilla server ([wiki page](https://github.com/adepierre/Botcraft/wiki/Test-framework) for details)
 
 Available bot behaviours includes:
-- Path finding (including ladder/scaffholding climbing)
-- Block breaking
+- Path finding (including ladder/scaffolding climbing)
+- Block breaking (including with correct tool/haste effects)
 - Inventory managing (including interactions with chest/anvil/brewing stand...)
-- Block placing
-- Block interaction (button, lever etc...)
+- Block placing (vanilla or mid-air)
+- Item use (fishing rods, food ...)
+- Block interaction (button, lever, bed etc...)
 - Villager trading (only for versions 1.14+)
 - Crafting
 
