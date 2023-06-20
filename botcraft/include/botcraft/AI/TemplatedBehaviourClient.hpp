@@ -148,10 +148,10 @@ namespace Botcraft
 
             // Set the tree
             SetBehaviourTree(Builder<TDerived>()
-		        .sequence()
-			        .succeeder().leaf(args...)
-			        .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-		        .end());
+                .sequence()
+                    .succeeder().leaf(args...)
+                    .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
+                .end());
 
             // Perform one step to get out of the Yield lock
             BehaviourStep();
