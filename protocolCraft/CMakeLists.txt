@@ -404,6 +404,10 @@ else()
     set_target_properties(protocolCraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/lib")
 endif(MSVC)
 
+if (MSVC)
+    target_compile_options(protocolCraft PRIVATE "$<$<CONFIG:Debug>:/bigobj>")
+endif (MSVC)
+
 # Set version
 target_compile_definitions(protocolCraft PUBLIC PROTOCOL_VERSION=${PROTOCOL_VERSION})
 

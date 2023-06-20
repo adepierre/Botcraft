@@ -536,6 +536,10 @@ else()
     set_target_properties(botcraft PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/lib")
 endif(MSVC)
 
+if (MSVC)
+    target_compile_options(botcraft PRIVATE "$<$<CONFIG:Debug>:/bigobj>")
+endif (MSVC)
+
 # Set version header
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/include/botcraft/Version.hpp")
 
