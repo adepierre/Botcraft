@@ -196,7 +196,7 @@ TEST_CASE("hazardous pathfinding")
     {
         gamemode = Botcraft::GameType::Creative;
         // Can take direct route through lava ==> faster
-        expected_time_s = 3.1f;
+        expected_time_s = 3.0f;
     }
 
     SECTION("survival")

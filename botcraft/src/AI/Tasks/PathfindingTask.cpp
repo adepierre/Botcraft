@@ -1221,7 +1221,7 @@ namespace Botcraft
 
             for (int i = 0; i < path.size(); ++i)
             {
-                const bool succeeded = Move(client, local_player, path[i], speed, 2.0);
+                const bool succeeded = Move(client, local_player, path[i], speed, 0.5f * speed);
 
                 // If something went wrong, break and
                 // replan the whole path to the goal
