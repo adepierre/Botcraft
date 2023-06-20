@@ -30,11 +30,11 @@ namespace ProtocolCraft
 
         std::optional<RemoteChatSessionData> chat_session;
 
-        int game_mode;
+        int game_mode = 0;
 
-        bool listed;
+        bool listed = false;
 
-        int latency;
+        int latency = 0;
 
         std::optional<Chat> display_name;
     };
