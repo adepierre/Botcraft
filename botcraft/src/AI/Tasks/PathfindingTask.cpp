@@ -15,15 +15,26 @@ namespace Botcraft
 {
     enum class BlockPathfindingState: char
     {
-        /// @brief Can go through
-        Empty,
+        Empty = 0,
         /// @brief Can walk on, can't go through
-        Solid,
-        /// @brief Can go through, can climb
-        Climbable,
-        /// @brief Can't walk on, can't go through
-        Hazardous
+        Solid = 1 << 0,
+        /// @brief Take damage if walk through/on
+        Hazardous = 1 << 1,
+        /// @brief Can climb up/down
+        Climbable = 1 << 2,
+        /// @brief Can climb but can't walk on
+        Fluid = 1 << 3
     };
+
+    BlockPathfindingState operator|(const BlockPathfindingState a, const BlockPathfindingState b)
+    {
+        return static_cast<BlockPathfindingState>(static_cast<char>(a) | static_cast<char>(b));
+    }
+
+    bool operator&(const BlockPathfindingState a, const BlockPathfindingState b)
+    {
+        return (static_cast<char>(a) & static_cast<char>(b)) > 0;
+    }
 
     BlockPathfindingState GetBlockGoThroughState(const Block* block, const bool take_damage)
     {
@@ -35,6 +46,11 @@ namespace Botcraft
         if (take_damage && block->GetBlockstate()->IsHazardous())
         {
             return BlockPathfindingState::Hazardous;
+        }
+
+        if (block->GetBlockstate()->IsFluid())
+        {
+            return BlockPathfindingState::Climbable | BlockPathfindingState::Fluid;
         }
 
         if (block->GetBlockstate()->IsClimbable())
@@ -88,9 +104,12 @@ namespace Botcraft
             PathNode current_node = nodes_to_explore.top();
             nodes_to_explore.pop();
 
-            if (count_visit > 15000 ||
+            if (// If we exceeded the search budget
+                count_visit > 15000 ||
+                // If we reached the goal AND we started further than min_end_dist
                 (std::abs(end.x - start.x) + std::abs(end.z - start.z) >= min_end_dist && current_node.pos == end) ||
-                (std::abs(end.x - start.x) + std::abs(end.z - start.z) < min_end_dist) && (std::abs(end.x - current_node.pos.x) + std::abs(end.z - current_node.pos.z) >= min_end_dist))
+                // If we started closer than min_end_dist AND are now far enough
+                (std::abs(end.x - start.x) + std::abs(end.z - start.z) < min_end_dist) && (std::abs(end.x - current_node.pos.x) + std::abs(end.z - current_node.pos.z) >= min_end_dist)) 
             {
                 break;
             }
@@ -142,7 +161,7 @@ namespace Botcraft
             // ?
             // ?
             // ?
-            if (vertical_surroundings[2] == BlockPathfindingState::Climbable
+            if (vertical_surroundings[2] & BlockPathfindingState::Climbable
                 && vertical_surroundings[1] != BlockPathfindingState::Solid
                 && vertical_surroundings[1] != BlockPathfindingState::Hazardous
                 && vertical_surroundings[0] != BlockPathfindingState::Solid
@@ -170,7 +189,7 @@ namespace Botcraft
             // ?
             if (vertical_surroundings[3] == BlockPathfindingState::Solid
                 && vertical_surroundings[2] == BlockPathfindingState::Empty
-                && vertical_surroundings[1] == BlockPathfindingState::Climbable
+                && vertical_surroundings[1] & BlockPathfindingState::Climbable
                 && vertical_surroundings[0] != BlockPathfindingState::Solid
                 && vertical_surroundings[0] != BlockPathfindingState::Hazardous
                 )
@@ -194,7 +213,7 @@ namespace Botcraft
             // -
             // ?
             // ?
-            if (vertical_surroundings[3] == BlockPathfindingState::Climbable)
+            if (vertical_surroundings[3] & BlockPathfindingState::Climbable)
             {
                 const float new_cost = cost[current_node.pos] + 1.0f;
                 const Position new_pos = current_node.pos + Position(0, -1, 0);
@@ -215,7 +234,7 @@ namespace Botcraft
             // -
             //  
             // o
-            if (vertical_surroundings[3] == BlockPathfindingState::Climbable
+            if (vertical_surroundings[3] & BlockPathfindingState::Climbable
                 && vertical_surroundings[4] == BlockPathfindingState::Empty
                 && vertical_surroundings[5] != BlockPathfindingState::Empty
                 && vertical_surroundings[5] != BlockPathfindingState::Hazardous
@@ -242,7 +261,7 @@ namespace Botcraft
             //  
             //  
             // o
-            if (vertical_surroundings[2] == BlockPathfindingState::Climbable
+            if (vertical_surroundings[2] & BlockPathfindingState::Climbable
                 && vertical_surroundings[3] == BlockPathfindingState::Empty
                 && vertical_surroundings[4] == BlockPathfindingState::Empty
                 && vertical_surroundings[5] != BlockPathfindingState::Empty
@@ -271,7 +290,7 @@ namespace Botcraft
             //  
             // Special case here, we can drop down
             // if there is a climbable at the bottom
-            if (vertical_surroundings[3] == BlockPathfindingState::Climbable
+            if (vertical_surroundings[3] & BlockPathfindingState::Climbable
                 && vertical_surroundings[4] == BlockPathfindingState::Empty
                 && vertical_surroundings[5] == BlockPathfindingState::Empty
                 )
@@ -289,9 +308,7 @@ namespace Botcraft
                         break;
                     }
 
-                    if (block
-                        && block->GetBlockstate()->IsClimbable()
-                        )
+                    if (block && block->GetBlockstate()->IsClimbable())
                     {
                         const float new_cost = cost[current_node.pos] + std::abs(y);
                         const Position new_pos = current_node.pos + Position(0, y + 1, 0);
@@ -359,7 +376,7 @@ namespace Botcraft
 
                     // You can't make large jumps if your feet are in a climbable block
                     // If we can jump, then we need the third column
-                    if (allow_jump && vertical_surroundings[2] != BlockPathfindingState::Climbable)
+                    if (allow_jump && !(vertical_surroundings[2] & BlockPathfindingState::Climbable))
                     {
                         block = world->GetBlock(next_next_location + Position(0, 2, 0));
                         horizontal_surroundings[6] = GetBlockGoThroughState(block, takes_damage);
@@ -393,10 +410,10 @@ namespace Botcraft
                     && horizontal_surroundings[2] != BlockPathfindingState::Hazardous
                     && horizontal_surroundings[3] != BlockPathfindingState::Empty
                     && horizontal_surroundings[3] != BlockPathfindingState::Hazardous
-                    && (horizontal_surroundings[3] != BlockPathfindingState::Climbable    // We can't go from above a climbable to above
-                        || vertical_surroundings[3] != BlockPathfindingState::Climbable   // another one to avoid "walking on water"
-                        || horizontal_surroundings[2] == BlockPathfindingState::Climbable // except if one or both "leg level" blocks
-                        || vertical_surroundings[2] == BlockPathfindingState::Climbable)  // are also climbables
+                    && (!(horizontal_surroundings[3] & BlockPathfindingState::Fluid)  // We can't go from above a fluid to above
+                        || !(vertical_surroundings[3] & BlockPathfindingState::Fluid) // another one to avoid "walking on water"
+                        || horizontal_surroundings[2] & BlockPathfindingState::Fluid  // except if one or both "leg level" blocks
+                        || vertical_surroundings[2] & BlockPathfindingState::Fluid)   // are also fluids
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 1.0f;
@@ -425,7 +442,7 @@ namespace Botcraft
                     && vertical_surroundings[3] == BlockPathfindingState::Solid
                     && horizontal_surroundings[0] != BlockPathfindingState::Solid
                     && horizontal_surroundings[0] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[1] == BlockPathfindingState::Climbable
+                    && horizontal_surroundings[1] & BlockPathfindingState::Climbable
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -557,9 +574,7 @@ namespace Botcraft
                             break;
                         }
 
-                        if (block
-                            && block->GetBlockstate()->IsClimbable()
-                            )
+                        if (block && block->GetBlockstate()->IsClimbable())
                         {
                             const float new_cost = cost[current_node.pos] + std::abs(y) + 1.5f;
                             const Position new_pos = next_location + Position(0, y + 1, 0);
@@ -585,7 +600,8 @@ namespace Botcraft
                     || vertical_surroundings[0] == BlockPathfindingState::Hazardous   // Block above
                     || vertical_surroundings[1] != BlockPathfindingState::Empty       // Block above
                     || vertical_surroundings[2] != BlockPathfindingState::Empty       // Feet inside climbable
-                    || vertical_surroundings[3] != BlockPathfindingState::Solid       // Feet on climbable/empty
+                    || vertical_surroundings[3] & BlockPathfindingState::Fluid        // "Walking" on fluid
+                    || vertical_surroundings[3] == BlockPathfindingState::Empty       // Feet on nothing (inside climbable)
                     || horizontal_surroundings[0] == BlockPathfindingState::Solid     // Block above next column
                     || horizontal_surroundings[0] == BlockPathfindingState::Hazardous // Hazard above next column
                     || horizontal_surroundings[1] != BlockPathfindingState::Empty     // Non empty block in next column, can't jump through it
@@ -708,9 +724,8 @@ namespace Botcraft
         for (auto it = came_from.begin(); it != came_from.end(); ++it)
         {
             const Position diff = it->first - end;
-            const float distXZ = static_cast<float>(std::abs(diff.x) + std::abs(diff.z));
-            const float d = std::abs(diff.y) + distXZ;
-            if (d < best_float_dist && distXZ >= min_end_dist)
+            const float d = static_cast<float>(std::abs(diff.x) + std::abs(diff.y) + std::abs(diff.z));
+            if (d < best_float_dist && d >= min_end_dist)
             {
                 best_float_dist = d;
                 it_end_path = it;
@@ -1140,6 +1155,10 @@ namespace Botcraft
 
     Status GoToImpl(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const float speed, const bool allow_jump)
     {
+        if (min_end_dist > dist_tolerance)
+        {
+            LOG_WARNING("min_end_dist should be <= dist_tolerance if you want pathfinding to work as expected");
+        }
         std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
         std::shared_ptr<World> world = client.GetWorld();
         std::shared_ptr<PhysicsManager> physics_manager = client.GetPhysicsManager();
@@ -1178,6 +1197,7 @@ namespace Botcraft
                 is_goal_loaded = world->IsLoaded(goal);
             }
 
+            const int current_diff = std::abs(goal.x - current_position.x) + std::abs(goal.y - current_position.y) + std::abs(goal.z - current_position.z);
             // Path finding step
             if (!is_goal_loaded)
             {
@@ -1193,8 +1213,7 @@ namespace Botcraft
             }
             else
             {
-                Position diff = goal - current_position;
-                if (dist_tolerance && diff.dot(diff) <= dist_tolerance * dist_tolerance && std::abs(diff.x) + std::abs(diff.z) >= min_end_dist)
+                if (dist_tolerance && current_diff <= dist_tolerance && current_diff >= min_end_dist)
                 {
                     return Status::Success;
                 }
@@ -1203,7 +1222,7 @@ namespace Botcraft
 
             if (path.size() == 0 || path.back() == current_position)
             {
-                if (!dist_tolerance && current_position != goal)
+                if (!dist_tolerance && current_diff > 0)
                 {
                     LOG_WARNING("Pathfinding cannot find a better position than " << current_position << " (asked " << goal << "). Staying there.");
                     return Status::Failure;
@@ -1214,9 +1233,14 @@ namespace Botcraft
                 }
                 else
                 {
-                    Position diff = goal - current_position;
-                    return diff.dot(diff) <= dist_tolerance * dist_tolerance ? Status::Success : Status::Failure;
+                    return current_diff <= dist_tolerance ? Status::Success : Status::Failure;
                 }
+            }
+            // To avoid going back and forth two positions that are at the same distance of an unreachable goal
+            else if (current_diff >= min_end_dist && std::abs(goal.x - path.back().x) + std::abs(goal.y - path.back().y) + std::abs(goal.z - path.back().z) >= current_diff)
+            {
+                LOG_WARNING("Pathfinding cannot find a better position than " << current_position << " (asked " << goal << "). Staying there.");
+                return Status::Failure;
             }
 
             for (int i = 0; i < path.size(); ++i)
