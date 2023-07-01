@@ -10,7 +10,9 @@
 <p align="center">A Minecraft bots library</p>
 
 <div align="center">
-![Build status](https://github.com/adepierre/Botcraft/actions/workflows/build.yml/badge.svg) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/wECVsTbjA9) [![Documentation](https://badgen.net/badge/%F0%9F%93%96/documentation/black)](https://adepierre.github.io/Botcraft/)
+    <img src="https://github.com/adepierre/Botcraft/actions/workflows/build.yml/badge.svg" alt="Build status">
+    <a href="https://discord.gg/wECVsTbjA9" target="_blank"><img src="https://badgen.net/badge/icon/discord?icon=discord&label" alt="Discord link"></a>
+    <a href="https://adepierre.github.io/Botcraft/" target="_blank"><img src="https://badgen.net/badge/%F0%9F%93%96/documentation/black" alt="Documentation link"></a>
 </div>
 
 <!-- <p align="center" style="margin-bottom: 0px !important;">
