@@ -279,12 +279,7 @@ namespace Botcraft
             }
             // We can't click if the crafted items don't fit in the stack
             else if (!cursor.IsEmptySlot() &&
-                cursor.GetItemCount() + clicked_slot.GetItemCount() >
-#if PROTOCOL_VERSION < 347
-                AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(static_cast<unsigned char>(cursor.GetItemDamage()))->GetStackSize()
-#else
-                AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize()
-#endif
+                (cursor.GetItemCount() + clicked_slot.GetItemCount()) > AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize()
                 )
             {
                 carried_item = cursor;
@@ -361,11 +356,7 @@ namespace Botcraft
                                 )
                             {
                                 const int sum_count = cursor.GetItemCount() + clicked_slot.GetItemCount();
-#if PROTOCOL_VERSION < 347
-                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(static_cast<unsigned char>(cursor.GetItemDamage()))->GetStackSize();
-#else
                                 const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize();
-#endif
                                 // The cursor becomes the clicked slot
                                 carried_item = clicked_slot;
                                 carried_item.SetItemCount(std::max(0, sum_count - max_stack_size));
@@ -411,11 +402,7 @@ namespace Botcraft
                             else if (cursor.GetItemID() == clicked_slot.GetItemID())
 #endif
                             {
-#if PROTOCOL_VERSION < 347
-                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetBlockID()).at(static_cast<unsigned char>(cursor.GetItemDamage()))->GetStackSize();
-#else
                                 const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize();
-#endif
                                 const bool transfer = clicked_slot.GetItemCount() < max_stack_size;
                                 // The cursor loses 1 item if possible
                                 carried_item = clicked_slot;

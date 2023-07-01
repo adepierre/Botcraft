@@ -284,11 +284,7 @@ namespace Botcraft
                             {
                                 ImGui::Text("Offhand");
                             }
-#if PROTOCOL_VERSION < 347
-                            std::string name = AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(static_cast<unsigned char>(it->second.GetItemDamage()))->GetName();
-#else
-                            std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName();
-#endif
+                            const std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName();
                             if (name != "minecraft:air")
                             {
                                 ImGui::Text(std::string("    (%i) " + name + " (x%i)").c_str(), i, it->second.GetItemCount());

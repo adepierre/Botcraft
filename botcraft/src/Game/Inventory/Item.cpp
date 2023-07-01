@@ -7,25 +7,15 @@ namespace Botcraft
     Item::Item(const ItemProperties& props)
     {
         id = props.id;
-#if PROTOCOL_VERSION < 347
-        damage_id = props.damage_id;
-#endif
         name = props.name;
         stack_size = props.stack_size;
         LoadTypeAndMaterialFromName();
     }
 
-    const int Item::GetId() const
+    ItemId Item::GetId() const
     {
         return id;
     }
-
-#if PROTOCOL_VERSION < 347
-    const unsigned char Item::GetDamageId() const
-    {
-        return damage_id;
-    }
-#endif
 
     const std::string& Item::GetName() const
     {

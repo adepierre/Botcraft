@@ -122,11 +122,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
                     if (it->first >= 0
                         && it->first < first_player_index
                         && !it->second.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-                        && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(static_cast<unsigned char>(it->second.GetItemDamage()))->GetName() == food_name
-#else
                         && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == food_name
-#endif
                         )
                     {
                         slots_src.push_back(it->first);
@@ -162,13 +158,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
 
         // Wait until player inventory is updated after the container is closed
         auto start = std::chrono::steady_clock::now();
-        while (
-#if PROTOCOL_VERSION < 347
-            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetBlockID()).at(static_cast<unsigned char>(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemDamage()))->GetName() != food_name
-#else
-            AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemID())->GetName() != food_name
-#endif
-            )
+        while (AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemID())->GetName() != food_name)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
             {
@@ -198,11 +188,7 @@ Status GetBlocksAvailableInInventory(BehaviourClient& c)
             it->first < Window::INVENTORY_OFFHAND_INDEX &&
             !it->second.IsEmptySlot())
         {
-#if PROTOCOL_VERSION < 347
-            blocks_in_inventory.insert(AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(static_cast<unsigned char>(it->second.GetItemDamage()))->GetName());
-#else
             blocks_in_inventory.insert(AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName());
-#endif
         }
     }
 
@@ -274,11 +260,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
                     && it->first < first_player_index
                     && take_from_chest
                     && !it->second.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(static_cast<unsigned char>(it->second.GetItemDamage()))->GetName() != food_name
-#else
                     && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() != food_name
-#endif
                     )
                 {
                     slots_src.push_back(it->first);
@@ -302,11 +284,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
                 else if (it->first >= first_player_index
                     && !take_from_chest
                     && !it->second.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(static_cast<unsigned char>(it->second.GetItemDamage()))->GetName() != food_name
-#else
                     && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() != food_name
-#endif
                     )
                 {
                     slots_src.push_back(it->first);

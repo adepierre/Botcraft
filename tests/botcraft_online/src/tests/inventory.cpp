@@ -24,11 +24,7 @@ std::string GetItemName(const ProtocolCraft::Slot& slot)
         return "";
     }
 
-#if PROTOCOL_VERSION < 347
-    return Botcraft::AssetsManager::getInstance().GetItem({ slot.GetBlockID(), slot.GetItemDamage() })->GetName();
-#else
     return Botcraft::AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName();
-#endif
 }
 
 TEST_CASE("receive item")

@@ -91,42 +91,12 @@ namespace Botcraft
         }
     }
 
-#if PROTOCOL_VERSION < 347
-    const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Item> > >& AssetsManager::Items() const
-#else
-    const std::unordered_map<int, std::unique_ptr<Item>>& AssetsManager::Items() const
-#endif
+    const std::unordered_map<ItemId, std::unique_ptr<Item> >& AssetsManager::Items() const
     {
         return items;
     }
 
-#if PROTOCOL_VERSION < 347
-    const Item* AssetsManager::GetItem(const std::pair<int, unsigned char> id) const
-    {
-        auto it = items.find(id.first);
-        if (it != items.end())
-        {
-            auto it2 = it->second.find(id.second);
-            if (it2 != it->second.end())
-            {
-                return it2->second.get();
-            }
-            else if (it->second.find(0) != it->second.end())
-            {
-                return it->second.at(0).get();
-            }
-            else
-            {
-                return nullptr;
-            }
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
-#else
-    const Item* AssetsManager::GetItem(const int id) const
+    const Item* AssetsManager::GetItem(const ItemId id) const
     {
         auto it = items.find(id);
         if (it != items.end())
@@ -135,28 +105,18 @@ namespace Botcraft
         }
         else
         {
+#if PROTOCOL_VERSION < 347
+            it = items.find({ id.first, 0 });
+            if (it != items.end())
+            {
+                return it->second.get();
+            }
+#endif
             return nullptr;
         }
     }
-#endif
 
-#if PROTOCOL_VERSION < 347
-    const std::pair<int, unsigned char> AssetsManager::GetItemID(const std::string& item_name) const
-    {
-        for (const auto& p : items)
-        {
-            for (const auto& p2 : p.second)
-            {
-                if (p2.second->GetName() == item_name)
-                {
-                    return { p.first, p2.first };
-                }
-            }
-        }
-        return { -1, 0 };
-    }
-#else
-    const int AssetsManager::GetItemID(const std::string& item_name) const
+    const ItemId AssetsManager::GetItemID(const std::string& item_name) const
     {
         for (const auto& p : items)
         {
@@ -165,9 +125,13 @@ namespace Botcraft
                 return p.first;
             }
         }
+
+#if PROTOCOL_VERSION < 347
+        return { -1, 0 };
+#else
         return -1;
-    }
 #endif
+    }
 
 #if USE_GUI
     const Renderer::Atlas* AssetsManager::GetAtlas() const
@@ -807,16 +771,16 @@ namespace Botcraft
 
         // Add a default item
         ItemProperties props{
-                -1, //id
 #if PROTOCOL_VERSION < 347
-                0, //damage_id
+                {-1, 0}, //id
+#else
+                -1, //id
 #endif
                 "default", //name
                 64, //stack_size
         };
 #if PROTOCOL_VERSION < 347
-        items[-1];
-        items[-1][0] = std::make_unique<Item>(props);
+        items[{-1, 0}] = std::make_unique<Item>(props);
 #else
         items[-1] = std::make_unique<Item>(props);
 #endif
@@ -831,7 +795,11 @@ namespace Botcraft
             {
                 continue;
             }
+#if PROTOCOL_VERSION < 347
+            props.id.first = properties["id"].get_number<int>();
+#else
             props.id = properties["id"].get_number<int>();
+#endif
 
             if (properties.contains("stack_size") && properties["stack_size"].is_number())
             {
@@ -848,15 +816,9 @@ namespace Botcraft
             {
                 continue;
             }
-            props.damage_id = properties["damage_id"].get_number<unsigned char>();
-            if (items.find(props.id) == items.end())
-            {
-                items[props.id];
-            }
-            items[props.id][props.damage_id] = std::make_unique<Item>(props);
-#else
-            items[props.id] = std::make_unique<Item>(props);
+            props.id.second = properties["damage_id"].get_number<unsigned char>();
 #endif
+            items[props.id] = std::make_unique<Item>(props);
         }
     }
 

@@ -79,15 +79,8 @@ bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, co
         const std::map<short, ProtocolCraft::Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
         for (short i = Botcraft::Window::INVENTORY_HOTBAR_START; i < Botcraft::Window::INVENTORY_OFFHAND_INDEX; ++i)
         {
-            if (slots.at(i).IsEmptySlot() || (
-#if PROTOCOL_VERSION < 347
-                item->GetId() == slots.at(i).GetBlockID()
-                && item->GetDamageId() == slots.at(i).GetItemDamage()
-#else
-                item->GetId() == slots.at(i).GetItemID()
-#endif
-                && item->GetStackSize() >= slots.at(i).GetItemCount() + quantity)
-                )
+            if (slots.at(i).IsEmptySlot() ||
+                (item->GetId() == slots.at(i).GetItemID() && item->GetStackSize() >= slots.at(i).GetItemCount() + quantity))
             {
                 receiving_slot = i;
                 break;

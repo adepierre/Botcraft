@@ -71,7 +71,7 @@ namespace ProtocolCraft
         void SetItemDamage(const short item_damage_)
         {
             item_damage = item_damage_;
-    }
+        }
 #elif PROTOCOL_VERSION < 402
         void SetItemID(const short item_id_)
         {
@@ -120,6 +120,13 @@ namespace ProtocolCraft
         short GetItemDamage() const
         {
             return item_damage;
+        }
+
+        /// @brief Utility function to simplify interfacing between 1.12.2 and later versions
+        /// @return Paired { block_id, item_damage }
+        std::pair<int, unsigned char> GetItemID() const
+        {
+            return { static_cast<int>(block_id), static_cast<unsigned char>(item_damage) };
         }
 #elif PROTOCOL_VERSION < 402
         short GetItemID() const

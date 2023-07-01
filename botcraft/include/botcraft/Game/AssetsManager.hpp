@@ -38,13 +38,8 @@ namespace Botcraft
         const Biome* GetBiome(const int id) const;
 #endif
 
-#if PROTOCOL_VERSION < 347
-        const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Item> > >& Items() const;
-        const Item* GetItem(const std::pair<int, unsigned char> id) const;
-#else
-        const std::unordered_map<int, std::unique_ptr<Item> >& Items() const;
-        const Item* GetItem(const int id) const;
-#endif
+        const std::unordered_map<ItemId, std::unique_ptr<Item> >& Items() const;
+        const Item* GetItem(const ItemId id) const;
 
 #if PROTOCOL_VERSION < 347
         const std::pair<int, unsigned char> GetItemID(const std::string& item_name) const;
@@ -82,11 +77,7 @@ namespace Botcraft
 #else
         std::unordered_map<int, std::unique_ptr<Biome> > biomes;
 #endif
-#if PROTOCOL_VERSION < 347
-        std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Item> > > items;
-#else
-        std::unordered_map<int, std::unique_ptr<Item> > items;
-#endif
+        std::unordered_map<ItemId, std::unique_ptr<Item>> items;
 #if USE_GUI
         std::unique_ptr<Renderer::Atlas> atlas;
 #endif

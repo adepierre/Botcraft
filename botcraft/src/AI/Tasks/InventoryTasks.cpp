@@ -310,11 +310,8 @@ namespace Botcraft
             // If the currently selected item is the right one, just go for it
             const Slot& current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
             if (!current_selected.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-                && AssetsManager::getInstance().Items().at(current_selected.GetBlockID()).at(static_cast<unsigned char>(current_selected.GetItemDamage()))->GetName() == item_name)
-#else
                 && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item_name)
-#endif
+
             {
                 return Status::Success;
             }
@@ -326,11 +323,7 @@ namespace Botcraft
                 if (it->first >= Window::INVENTORY_STORAGE_START
                     && it->first < Window::INVENTORY_OFFHAND_INDEX
                     && !it->second.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
-                    && AssetsManager::getInstance().Items().at(it->second.GetBlockID()).at(static_cast<unsigned char>(it->second.GetItemDamage()))->GetName() == item_name)
-#else
                     && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name)
-#endif
                 {
                     inventory_correct_slot_index = it->first;
                     break;
@@ -1165,11 +1158,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION < 350
-    Status CraftImpl(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft)
-#else
-    Status CraftImpl(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft)
-#endif
+    Status CraftImpl(BehaviourClient& client, const std::array<std::array<ItemId, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
@@ -1286,32 +1275,20 @@ namespace Botcraft
 
                 if (source_slot == -1)
                 {
-#if PROTOCOL_VERSION < 350
-                    LOG_WARNING("Not enough source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] found in inventory for crafting.");
-#else
                     LOG_WARNING("Not enough source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] found in inventory for crafting.");
-#endif
                     return Status::Failure;
                 }
 
                 if (ClickSlotInContainer(client, crafting_container_id, source_slot, 0, 0) == Status::Failure)
                 {
-#if PROTOCOL_VERSION < 350
-                    LOG_WARNING("Error trying to pick source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
-#else
                     LOG_WARNING("Error trying to pick source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
-#endif
                     return Status::Failure;
                 }
 
                 // Right click in the destination slot
                 if (ClickSlotInContainer(client, crafting_container_id, destination_slot, 0, 1) == Status::Failure)
                 {
-#if PROTOCOL_VERSION < 350
-                    LOG_WARNING("Error trying to place source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
-#else
                     LOG_WARNING("Error trying to place source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
-#endif
                     return Status::Failure;
                 }
 
@@ -1320,11 +1297,7 @@ namespace Botcraft
                 {
                     if (ClickSlotInContainer(client, crafting_container_id, source_slot, 0, 0) == Status::Failure)
                     {
-#if PROTOCOL_VERSION < 350
-                        LOG_WARNING("Error trying to place back source item [" << AssetsManager::getInstance().Items().at(inputs[y][x].first).at(inputs[y][x].second)->GetName() << "] during crafting");
-#else
                         LOG_WARNING("Error trying to place back source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
-#endif
                         return Status::Failure;
                     }
                 }
@@ -1371,14 +1344,8 @@ namespace Botcraft
 
                 // If it fits in a slot (empty or with the same item)
                 if (s.second.IsEmptySlot() ||
-#if PROTOCOL_VERSION < 347
-                    (inventory_manager->GetCursor().GetBlockID() == s.second.GetBlockID()
-                        && inventory_manager->GetCursor().GetItemDamage() == s.second.GetItemDamage()
-                        && s.second.GetItemCount() < AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(static_cast<unsigned char>(s.second.GetItemDamage()))->GetStackSize() - 1)
-#else
                     (inventory_manager->GetCursor().GetItemID() == s.second.GetItemID() &&
                         s.second.GetItemCount() < AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetStackSize() - 1)
-#endif
                     )
                 {
                     destination_slot = s.first;
@@ -1594,11 +1561,7 @@ namespace Botcraft
                     // If this slot is not empty, and not full,
                     // check if "upper" slot with same items that
                     // could fit in it
-#if PROTOCOL_VERSION < 350
-                    const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetBlockID()).at(static_cast<unsigned char>(dst_slot.GetItemDamage()))->GetStackSize() - dst_slot.GetItemCount();
-#else
                     const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetItemID())->GetStackSize() - dst_slot.GetItemCount();
-#endif
                     if (available_space == 0)
                     {
                         continue;
