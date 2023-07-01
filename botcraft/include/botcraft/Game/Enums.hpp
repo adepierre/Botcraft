@@ -1,5 +1,8 @@
 #pragma once
 
+// To make gcc happy about std::ostream
+#include <iosfwd>
+
 namespace Botcraft
 {
     enum class ChatMode
