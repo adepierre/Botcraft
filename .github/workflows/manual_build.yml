@@ -193,7 +193,7 @@ jobs:
         run: |
           echo "New binaries available in the [latest release](https://github.com/${{ github.repository }}/releases/tag/latest) for version ${{ github.event.inputs.minecraft_version }}" > body.txt
           echo -en '\n' >> body.txt
-          echo You can now close this issue. Feel free to reopen at anytime if you need an updated build for the same version. >> body.txt
+          echo You can now close this issue. You can reopen it at anytime to trigger a new build for the same version. >> body.txt
           gh issue comment ${{ github.event.inputs.issue }} --repo ${{ github.repository }} --body-file body.txt
         env:
           GH_TOKEN: ${{ github.token }}
