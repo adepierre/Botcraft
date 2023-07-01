@@ -188,6 +188,11 @@ TEST_CASE("place block")
         pos = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 1, 1);
         bot->SyncAction(Botcraft::PlaceBlock, "minecraft:diamond_block", pos, Botcraft::PlayerDiggingFace::Up, true, true);
     }
+    SECTION("automatic face detection")
+    {
+        pos = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1);
+        bot->SyncAction(Botcraft::PlaceBlock, "minecraft:diamond_block", pos, std::nullopt, true, false);
+    }
 
     {
         std::lock_guard<std::mutex> lock(world->GetMutex());
