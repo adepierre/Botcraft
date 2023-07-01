@@ -5,7 +5,7 @@
         <img width="400" src="Visuals/logo.svg" alt="Botcraft logo" align="center">
     </picture>
 </p>
-<h1 align="center" style="margin-top: 0px;">Bocraft</h1>
+<h1 align="center" style="margin-top: 0px;">Botcraft</h1>
 
 <p align="center">A Minecraft bots library</p>
 
