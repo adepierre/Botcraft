@@ -508,8 +508,8 @@ namespace Botcraft
 
             ProtocolCraft::ProfilePublicKey key;
             key.SetTimestamp(authentifier->GetKeyTimestamp());
-            key.SetKey(RSAToBytes(authentifier->GetPublicKey()));
-            key.SetSignature(DecodeBase64(authentifier->GetKeySignature()));
+            key.SetKey(Utilities::RSAToBytes(authentifier->GetPublicKey()));
+            key.SetSignature(Utilities::DecodeBase64(authentifier->GetKeySignature()));
 
             chat_session_data.SetProfilePublicKey(key);
             chat_session_uuid = ProtocolCraft::UUID();

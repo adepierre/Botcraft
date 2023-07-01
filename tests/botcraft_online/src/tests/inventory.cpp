@@ -81,7 +81,7 @@ TEST_CASE("drop items")
             CHECK(inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_HOTBAR_START).GetItemCount() == 4);
         }
         // There is a stick entity on the floor
-        CHECK(Botcraft::WaitForCondition([&]()
+        CHECK(Botcraft::Utilities::WaitForCondition([&]()
             {
                 std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
                 for (const auto& [id, e] : entity_manager->GetEntities())
@@ -110,7 +110,7 @@ TEST_CASE("drop items")
             CHECK(inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_HOTBAR_START).IsEmptySlot());
         }
         // There is a stick entity on the floor
-        CHECK(Botcraft::WaitForCondition([&]()
+        CHECK(Botcraft::Utilities::WaitForCondition([&]()
             {
                 std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
                 for (const auto& [id, e] : entity_manager->GetEntities())
@@ -296,7 +296,7 @@ TEST_CASE("trade")
     const Botcraft::Vector3<double> pos = Botcraft::Vector3<double>(1.5, 0, 1.5) + TestManager::GetInstance().GetCurrentOffset();
 
     std::shared_ptr<Botcraft::Entity> entity;
-    REQUIRE(Botcraft::WaitForCondition([&]()
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
             for (const auto& [k, v] : entity_manager->GetEntities())
@@ -319,7 +319,7 @@ TEST_CASE("trade")
     bot->SyncAction(Botcraft::CloseContainer, -1);
 
     // Wait for the player inventory to update
-    CHECK(Botcraft::WaitForCondition([&]()
+    CHECK(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
             return !inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START).IsEmptySlot();

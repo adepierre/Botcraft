@@ -2,24 +2,21 @@
 
 #include <functional>
 
-namespace Botcraft
+namespace Botcraft::Utilities
 {
-    namespace Utils
+    /// @brief A class to execute a callback when destroyed
+    class OnEndScope
     {
-        /// @brief A class to execute a callback when destroyed
-        class OnEndScope
-        {
-        public:
-            OnEndScope(const std::function<void()>& f) : callback(f) {}
-            ~OnEndScope() { callback(); }
+    public:
+        OnEndScope(const std::function<void()>& f) : callback(f) {}
+        ~OnEndScope() { callback(); }
 
-            // No copy
-            OnEndScope(const OnEndScope& other) = delete;
-            OnEndScope(OnEndScope&& other) = delete;
-            OnEndScope& operator=(const OnEndScope& other) = delete;
+        // No copy
+        OnEndScope(const OnEndScope& other) = delete;
+        OnEndScope(OnEndScope&& other) = delete;
+        OnEndScope& operator=(const OnEndScope& other) = delete;
 
-        private:
-            std::function<void()> callback;
-        };
-    }
+    private:
+        std::function<void()> callback;
+    };
 }

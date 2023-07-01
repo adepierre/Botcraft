@@ -4,7 +4,7 @@
 
 using namespace ProtocolCraft;
 
-namespace Botcraft
+namespace Botcraft::Utilities
 {
     short GetEnchantmentLvl(const NBT::Value& item_nbt, const std::string& enchantment_name)
     {

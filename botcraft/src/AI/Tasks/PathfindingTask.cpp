@@ -1166,7 +1166,7 @@ namespace Botcraft
         const bool has_gravity = physics_manager->GetHasGravity();
         physics_manager->SetHasGravity(true);
         // Reset gravity when returning
-        Utils::OnEndScope reset_gravity([physics_manager, has_gravity]() { if (physics_manager != nullptr) physics_manager->SetHasGravity(has_gravity); });
+        Utilities::OnEndScope reset_gravity([physics_manager, has_gravity]() { if (physics_manager != nullptr) physics_manager->SetHasGravity(has_gravity); });
 
         Position current_position;
         do

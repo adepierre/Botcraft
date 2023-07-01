@@ -17,7 +17,7 @@ void TestDig(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const Botcra
 
     // Check the block is now air
     std::shared_ptr<Botcraft::World> world = bot->GetWorld();
-    CHECK(Botcraft::WaitForCondition([&]()
+    CHECK(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(world->GetMutex());
             const Botcraft::Block* block = world->GetBlock(pos);
@@ -33,7 +33,7 @@ TEST_CASE("dig pickaxe")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1,0,1));
     // Wait to be on ground
-    Botcraft::WaitForCondition([&]()
+    Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
@@ -94,7 +94,7 @@ TEST_CASE("dig pickaxe")
 TEST_CASE("dig underwater")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1, 0, 1));
-    Botcraft::WaitForCondition([&]()
+    Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
@@ -135,7 +135,7 @@ TEST_CASE("dig underwater")
 TEST_CASE("dig shears")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1, 0, 1));
-    Botcraft::WaitForCondition([&]()
+    Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();

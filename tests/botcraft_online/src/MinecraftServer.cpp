@@ -120,7 +120,7 @@ std::vector<std::string> MinecraftServer::WaitLine(const std::string& regex, con
     std::chrono::steady_clock::time_point time_check = std::chrono::steady_clock::now();
     const std::chrono::steady_clock::time_point start = time_check;
     std::vector<std::string> output;
-    if (Botcraft::WaitForCondition([&]()
+    if (Botcraft::Utilities::WaitForCondition([&]()
         {
             std::unique_lock<std::mutex> lock(internal_read_mutex);
             if (lines.size() > 0)

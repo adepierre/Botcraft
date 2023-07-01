@@ -44,7 +44,7 @@ TEST_CASE("interact")
 
     std::shared_ptr<Botcraft::World> world = bot->GetWorld();
 
-    REQUIRE(Botcraft::WaitForCondition([&]()
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(world->GetMutex());
             const Botcraft::Block* block = world->GetBlock(lamp);
@@ -62,7 +62,7 @@ TEST_CASE("get day time")
     MinecraftServer::GetInstance().SendLine("time set " + std::to_string(day_time));
     MinecraftServer::GetInstance().WaitLine(".*: Set the time to " + std::to_string(day_time) + ".*", 2000);
 
-    Botcraft::WaitForCondition([&]()
+    Botcraft::Utilities::WaitForCondition([&]()
     {
         return bot->GetDayTime() == day_time;
     }, 2000);

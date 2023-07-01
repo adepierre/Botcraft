@@ -94,7 +94,7 @@ public:
         {
             // If this is not a ConnectionClient, wait for all the chunks to be loaded
             const int num_chunk_to_load = (MinecraftServer::options.view_distance + 1) * (MinecraftServer::options.view_distance + 1);
-            if (!Botcraft::WaitForCondition([&]()
+            if (!Botcraft::Utilities::WaitForCondition([&]()
                 {
                     // If the client has not received ClientboundGameProfilePacket yet world is still nullptr
                     if (client->GetWorld())

@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
                 clients[i]->BehaviourStep();
             }
 
-            SleepUntil(end);
+            Utilities::SleepUntil(end);
         }
 
         return 0;

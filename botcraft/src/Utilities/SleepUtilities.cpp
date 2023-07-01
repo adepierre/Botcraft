@@ -8,7 +8,7 @@
 #include <timeapi.h>
 #endif
 
-namespace Botcraft
+namespace Botcraft::Utilities
 {
     void SleepUntil(const std::chrono::steady_clock::time_point& end)
     {

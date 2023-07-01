@@ -39,7 +39,7 @@ namespace Botcraft
 
     void Item::LoadTypeAndMaterialFromName()
     {
-        if (!StartsWith(name, "minecraft:"))
+        if (!Utilities::StartsWith(name, "minecraft:"))
         {
             if (name != "default")
             {
@@ -51,7 +51,7 @@ namespace Botcraft
         }
 
         const std::string without_minecraft = name.substr(10);
-        const std::vector<std::string> sub_parts = SplitString(without_minecraft, '_');
+        const std::vector<std::string> sub_parts = Utilities::SplitString(without_minecraft, '_');
 
         if (sub_parts.size() == 1 && sub_parts[0] == "shears")
         {

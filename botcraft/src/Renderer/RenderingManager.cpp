@@ -315,7 +315,7 @@ namespace Botcraft
                 real_fps = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count() / 1e6);
                 
                 //Wait to have 60 FPS
-                SleepUntil(end);
+                Utilities::SleepUntil(end);
             }
 
             world_renderer.reset();

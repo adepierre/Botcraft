@@ -45,7 +45,7 @@ TEST_CASE("summoning")
             std::shared_ptr<Botcraft::EntityManager> entity_manager = bot->GetEntityManager();
             std::shared_ptr<Botcraft::Entity> entity;
             // Wait for the entity to be registered on bot side
-            REQUIRE(Botcraft::WaitForCondition([&]()
+            REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
                 {
                     std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
                     for (const auto& [k, v] : entity_manager->GetEntities())
@@ -73,7 +73,7 @@ TEST_CASE("entity interact")
     // Give flint and steel to bot
     MinecraftServer::GetInstance().SendLine("give " + botname + " flint_and_steel");
     MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave 1) \\[Flint and Steel\\](?: \\* 1)? to " + botname + ".*", 2000);
-    Botcraft::WaitForCondition([&]()
+    Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(bot->GetInventoryManager()->GetMutex());
             return !bot->GetInventoryManager()->GetHotbarSelected().IsEmptySlot();
@@ -82,7 +82,7 @@ TEST_CASE("entity interact")
     // Wait for the entity to be registered on bot side
     std::shared_ptr<Botcraft::EntityManager> entity_manager = bot->GetEntityManager();
     std::shared_ptr<Botcraft::Entity> entity;
-    REQUIRE(Botcraft::WaitForCondition([&]()
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
             for (const auto& [k, v] : entity_manager->GetEntities())
@@ -102,14 +102,14 @@ TEST_CASE("entity interact")
 
     // Wait for the creeper to be ignited
     std::shared_ptr<Botcraft::CreeperEntity> creeper = std::dynamic_pointer_cast<Botcraft::CreeperEntity>(entity);
-    REQUIRE(Botcraft::WaitForCondition([&]()
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
             return creeper->GetDataIsIgnited();
         }, 2000));
 
     // Wait for the creeper to explode
-    REQUIRE(Botcraft::WaitForCondition([&]()
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
             return entity_manager->GetEntity(creeper->GetEntityID()) == nullptr;

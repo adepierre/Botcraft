@@ -211,17 +211,17 @@ namespace Botcraft
 
     const bool CheckCondition(const std::string &name, const std::string &value, const std::vector<std::string> &variables)
     {
-        const std::vector<std::string> possible_values = SplitString(value, '|');
+        const std::vector<std::string> possible_values = Utilities::SplitString(value, '|');
 
         bool output = false;
 
         for (int i = 0; i < variables.size(); ++i)
         {
-            if (StartsWith(variables[i], name))
+            if (Utilities::StartsWith(variables[i], name))
             {
                 for (int j = 0; j < possible_values.size(); ++j)
                 {
-                    if (EndsWith(variables[i], possible_values[j]))
+                    if (Utilities::EndsWith(variables[i], possible_values[j]))
                     {
                         output = true;
                         break;
@@ -323,7 +323,7 @@ namespace Botcraft
 
         for (int i = 0; i < properties.variables.size(); ++i)
         {
-            std::vector<std::string> splitted = SplitString(properties.variables[i], '=');
+            std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
             variables[splitted[0]] = splitted[1];
         }
 
@@ -351,7 +351,7 @@ namespace Botcraft
 
                 for (const auto& [key, val] : json["variants"].get_object())
                 {
-                    const std::vector<std::string> variables_values = SplitString(key, ',');
+                    const std::vector<std::string> variables_values = Utilities::SplitString(key, ',');
                     
                     int num_match = 0;
                     for (int i = 0; i < properties.variables.size(); ++i)

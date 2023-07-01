@@ -8,7 +8,7 @@
 #include <iomanip>
 #endif
 
-namespace Botcraft
+namespace Botcraft::Utilities
 {
     bool StartsWith(const std::string& mainStr, const std::string& toMatch)
     {
@@ -39,7 +39,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758
     std::vector<unsigned char> DecodeBase64(const std::string& s)
     {
-        static std::array<unsigned char, 128> constexpr decode_table {
+        static std::array<unsigned char, 128> constexpr decode_table{
             64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
             64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
             64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 62, 64, 64, 64, 63,
@@ -50,7 +50,7 @@ namespace Botcraft
             41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 64, 64, 64, 64, 64
         };
 
-        if (s.size () == 0)
+        if (s.size() == 0)
         {
             return {};
         }
@@ -173,4 +173,4 @@ namespace Botcraft
         return sec * 1000 + ms;
     }
 #endif
-} // Botcraft
+} // Botcraft::Utilities

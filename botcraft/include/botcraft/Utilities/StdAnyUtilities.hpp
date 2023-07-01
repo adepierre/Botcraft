@@ -7,7 +7,7 @@
 #include <functional>
 #include <unordered_map>
 
-namespace Botcraft
+namespace Botcraft::Utilities
 {
     class AnyParser
     {
@@ -34,5 +34,4 @@ namespace Botcraft
         /// @brief Maps std::type_index of a std::any to a function to convert it to std::string
         static std::unordered_map<std::type_index, std::function<std::string(const std::any&)>> registered_types;
     };
-
 }

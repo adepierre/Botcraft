@@ -93,7 +93,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 // > 1.15.2
             // Remove the minecraft: in front of the parent model name
             std::string model_name = obj["parent"].get_string();
-            if (StartsWith(model_name, "minecraft:"))
+            if (Utilities::StartsWith(model_name, "minecraft:"))
             {
                 model_name = model_name.substr(10);
             }
@@ -136,7 +136,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 // > 1.15.2
                 // Remove leading minecraft: from the path of the textures
                 std::string texture_name = val.get_string();
-                if (StartsWith(texture_name, "minecraft:"))
+                if (Utilities::StartsWith(texture_name, "minecraft:"))
                 {
                      texture_name = texture_name.substr(10);
                 }

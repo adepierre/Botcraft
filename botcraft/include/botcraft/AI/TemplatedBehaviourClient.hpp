@@ -112,7 +112,7 @@ namespace Botcraft
 
                 BehaviourStep();
 
-                SleepUntil(end);
+                Utilities::SleepUntil(end);
             }
         }
 
@@ -157,7 +157,7 @@ namespace Botcraft
             BehaviourStep();
 
             // Wait for the tree to be set as active one
-            if (!WaitForCondition([&]()
+            if (!Utilities::WaitForCondition([&]()
                 {
                     return tree != nullptr;
                 }, 500))
@@ -174,7 +174,7 @@ namespace Botcraft
 
                 BehaviourStep();
 
-                SleepUntil(end);
+                Utilities::SleepUntil(end);
             }
         }
 

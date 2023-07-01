@@ -450,7 +450,7 @@ void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
         {(chunk_x - view_distance) * Botcraft::CHUNK_WIDTH, (chunk_z - view_distance) * Botcraft::CHUNK_WIDTH}
     };
 
-    if (!Botcraft::WaitForCondition([&]()
+    if (!Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(world->GetMutex());
             for (size_t i = 0; i < wait_loaded.size(); ++i)

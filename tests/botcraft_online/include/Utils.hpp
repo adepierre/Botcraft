@@ -23,7 +23,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
 
     // Wait for bot to register teleportation
     std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
-    if (!Botcraft::WaitForCondition([&]()
+    if (!Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             return local_player->GetPosition().SqrDist(pos) < 1.0;
@@ -46,7 +46,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
         {(chunk_x - view_distance) * Botcraft::CHUNK_WIDTH, (chunk_z - view_distance) * Botcraft::CHUNK_WIDTH}
     };
 
-    if (!Botcraft::WaitForCondition([&]() {
+    if (!Botcraft::Utilities::WaitForCondition([&]() {
             std::lock_guard<std::mutex> lock(world->GetMutex());
             for (size_t i = 0; i < wait_loaded.size(); ++i)
             {
@@ -107,7 +107,7 @@ bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, co
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
     MinecraftServer::GetInstance().SendLine("give " + botname + " " + item_name + " " + std::to_string(quantity));
     MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave " + std::to_string(quantity) + ") \\[" + item_pretty_name + "\\](?: \\* " + std::to_string(quantity) + ")? to " + botname + ".*", 2000);
-    return Botcraft::WaitForCondition([&]()
+    return Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(bot->GetInventoryManager()->GetMutex());
             return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(receiving_slot).IsEmptySlot();

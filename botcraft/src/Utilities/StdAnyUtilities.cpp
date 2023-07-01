@@ -1,3 +1,4 @@
+#include "botcraft/Utilities/DemanglingUtilities.hpp"
 #include "botcraft/Utilities/StdAnyUtilities.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
@@ -7,7 +8,7 @@
 #include <sstream>
 #include <iomanip>
 
-namespace Botcraft
+namespace Botcraft::Utilities
 {
     template<class T>
     std::string SimpleToString(const std::any& v)
@@ -84,8 +85,7 @@ namespace Botcraft
 
     std::string AnyParser::DefaultToString(const std::any& value)
     {
-        // TODO: demangle name if available (?)
-        return value.type().name();
+        return Demangle(value.type().name(), false);
     }
 
     void AnyParser::RegisterType(const std::type_index& index, const std::function<std::string(const std::any&)>& f)

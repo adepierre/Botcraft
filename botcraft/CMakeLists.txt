@@ -207,6 +207,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Network/LastSeenMessagesTracker.hpp
     
     include/botcraft/Utilities/AsyncHandler.hpp
+    include/botcraft/Utilities/DemanglingUtilities.hpp
     include/botcraft/Utilities/EnumUtilities.hpp
     include/botcraft/Utilities/Logger.hpp
     include/botcraft/Utilities/MiscUtilities.hpp
@@ -433,6 +434,7 @@ set(botcraft_SRC
     src/Network/TCP_Com.cpp
     
     src/Utilities/AsyncHandler.cpp
+    src/Utilities/DemanglingUtilities.cpp
     src/Utilities/Logger.cpp
     src/Utilities/NBTUtilities.cpp
     src/Utilities/SleepUtilities.cpp

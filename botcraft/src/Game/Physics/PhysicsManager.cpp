@@ -148,7 +148,7 @@ namespace Botcraft
                     }
                 }
             }
-            SleepUntil(end);
+            Utilities::SleepUntil(end);
         }
     }
 

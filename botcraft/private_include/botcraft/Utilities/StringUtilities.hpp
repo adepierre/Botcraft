@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-namespace Botcraft
+namespace Botcraft::Utilities
 {
     bool StartsWith(const std::string& mainStr, const std::string& toMatch);
 

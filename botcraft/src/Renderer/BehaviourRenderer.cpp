@@ -1001,7 +1001,7 @@ namespace Botcraft
 
         void BehaviourRenderer::UpdateBlackboardValue(const std::string& key, const std::any& value)
         {
-            std::vector<std::string> splitted = SplitString(key, '.');
+            std::vector<std::string> splitted = Utilities::SplitString(key, '.');
             // Empty key
             if (splitted.size() == 0)
             {
@@ -1029,7 +1029,7 @@ namespace Botcraft
                 }
                 current_json = &(*current_json)["children"][splitted[i]];
             }
-            const std::string new_content = AnyParser::ToString(value);
+            const std::string new_content = Utilities::AnyParser::ToString(value);
             changed = changed || (*current_json)["content"].get_string() != new_content;
 
             if (changed)
@@ -1050,7 +1050,7 @@ namespace Botcraft
 
         void BehaviourRenderer::RemoveBlackboardValue(const std::string& key)
         {
-            std::vector<std::string> splitted = SplitString(key, '.');
+            std::vector<std::string> splitted = Utilities::SplitString(key, '.');
             // Empty key
             if (splitted.size() == 0)
             {

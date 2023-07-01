@@ -1138,7 +1138,7 @@ namespace Botcraft
             }
 
             // Convert expires date in ISO8601 to ms since UNIX epoch
-            const long long int expires_timestamp = TimestampMilliFromISO8601(response["expiresAt"].get_string());
+            const long long int expires_timestamp = Utilities::TimestampMilliFromISO8601(response["expiresAt"].get_string());
             
             UpdateCachedPlayerCertificates(login, response["keyPair"]["privateKey"].get_string(),
                 response["keyPair"]["publicKey"].get_string(), response["publicKeySignature"].get_string(),

@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
         client.Connect(args.address, args.login);
 
         // Wait 10 seconds then start executing the tree
-        Botcraft::SleepFor(std::chrono::seconds(10));
+        Botcraft::Utilities::SleepFor(std::chrono::seconds(10));
         client.SetBehaviourTree(dispenser_farm_tree);
 
         client.RunBehaviourUntilClosed();
@@ -99,11 +99,11 @@ int main(int argc, char* argv[])
 void RegisterBlackboardTypesToDebugger()
 {
     // Register a custom parser for small vectors of int (to print them in the blackboard debugger)
-    Botcraft::AnyParser::RegisterType<std::vector<int>>([](const std::any& f) {
+    Botcraft::Utilities::AnyParser::RegisterType<std::vector<int>>([](const std::any& f) {
         const std::vector<int>& v = std::any_cast<const std::vector<int>&>(f);
         if (v.size() > 10)
         {
-            return Botcraft::AnyParser::DefaultToString(f);
+            return Botcraft::Utilities::AnyParser::DefaultToString(f);
         }
         std::stringstream s;
         s << '[';
@@ -114,7 +114,7 @@ void RegisterBlackboardTypesToDebugger()
         return s.str();
         });
     // Register a custom parser for small vectors of Position (to print them in the blackboard debugger)
-    Botcraft::AnyParser::RegisterType(std::type_index(typeid(std::vector<Botcraft::Position>)), [](const std::any& f) {
+    Botcraft::Utilities::AnyParser::RegisterType(std::type_index(typeid(std::vector<Botcraft::Position>)), [](const std::any& f) {
         const std::vector<Botcraft::Position>& v = std::any_cast<const std::vector<Botcraft::Position>&>(f);
         if (v.size() > 10)
         {

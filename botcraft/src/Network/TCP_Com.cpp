@@ -221,7 +221,7 @@ namespace Botcraft
     {
         std::string addressOnly;
 
-        const std::vector<std::string> splitted_port = SplitString(address, ':');
+        const std::vector<std::string> splitted_port = Utilities::SplitString(address, ':');
         // address:port format
         if (splitted_port.size() > 1)
         {
@@ -268,7 +268,7 @@ namespace Botcraft
         // SRV type
         question.SetTypeCode(33);
         question.SetClassCode(1);
-        question.SetNameLabels(SplitString("_minecraft._tcp." + address, '.'));
+        question.SetNameLabels(Utilities::SplitString("_minecraft._tcp." + address, '.'));
         query.SetQuestions({ question });
 
         // Write the request and send it to google DNS

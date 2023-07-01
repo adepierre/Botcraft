@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <iostream>
 
-namespace Botcraft
+namespace Botcraft::Utilities
 {
     template <auto V>
     constexpr auto enum_value_name() noexcept
@@ -15,15 +15,15 @@ namespace Botcraft
         static_assert(std::is_enum_v<decltype(V)>, "enum_value_name requires enum value");
 
 #if defined(__clang__)
-        constexpr std::string_view header = "auto Botcraft::enum_value_name() [V = ";
+        constexpr std::string_view header = "auto Botcraft::Utilities::enum_value_name() [V = ";
         constexpr std::string_view footer = "]";
         constexpr std::string_view name = __PRETTY_FUNCTION__;
 #elif defined(__GNUC__)
-        constexpr std::string_view header = "constexpr auto Botcraft::enum_value_name() [with auto V = ";
+        constexpr std::string_view header = "constexpr auto Botcraft::Utilities::enum_value_name() [with auto V = ";
         constexpr std::string_view footer = "]";
         constexpr std::string_view name = __PRETTY_FUNCTION__;
 #elif defined(_MSC_VER)
-        constexpr std::string_view header = "auto __cdecl Botcraft::enum_value_name<";
+        constexpr std::string_view header = "auto __cdecl Botcraft::Utilities::enum_value_name<";
         constexpr std::string_view footer = ">(void) noexcept";
         constexpr std::string_view name = __FUNCSIG__;
 #else
@@ -74,13 +74,13 @@ namespace Botcraft
 {                                                                                          \
     static_assert(::std::is_same_v<decltype(min_value), Enum>, "min_value must be "#Enum); \
     static_assert(::std::is_same_v<decltype(max_value), Enum>, "max_value must be "#Enum); \
-    using mapper = ::Botcraft::EnumMapperRange<Enum, min_value, max_value>;        \
-    if (::Botcraft::to_underlying(v) < mapper::start ||                            \
-        ::Botcraft::to_underlying(v) > mapper::end)                                \
+    using mapper = ::Botcraft::Utilities::EnumMapperRange<Enum, min_value, max_value>;     \
+    if (::Botcraft::Utilities::to_underlying(v) < mapper::start ||                         \
+        ::Botcraft::Utilities::to_underlying(v) > mapper::end)                             \
     {                                                                                      \
         return os << '(' << #Enum << ')' << static_cast<int>(v);                           \
     }                                                                                      \
-    return os << mapper::mapping[::Botcraft::to_underlying(v) - mapper::start];    \
+    return os << mapper::mapping[::Botcraft::Utilities::to_underlying(v) - mapper::start]; \
 } static_assert(true, "") /* To require a ; after macro call */
 #else // min_value and max_value are not necessary, but keep them to get the same interface
 #define DEFINE_ENUM_STRINGIFYER_RANGE(Enum, min_value, max_value)    \
@@ -91,17 +91,17 @@ namespace Botcraft
 #endif
 
 #if defined(__clang__) || defined(__GNUC__) || defined(_MSC_VER)
-#define DEFINE_ENUM_STRINGIFYER_LIST(Enum, ...)                                           \
-::std::ostream& operator <<(::std::ostream& os, const Enum v)                             \
-{                                                                                         \
-    static constexpr auto mapper = ::Botcraft::GetNamedEnum<Enum, __VA_ARGS__>();         \
-    const auto it = ::std::find_if(mapper.begin(), mapper.end(),                          \
-        [v](const ::std::pair<Enum, ::std::string_view>& p) { return p.first == v; });    \
-    if (it == mapper.end())                                                               \
-    {                                                                                     \
-        return os << '(' << #Enum << ')' << static_cast<int>(v);                          \
-    }                                                                                     \
-    return os << it->second;                                                              \
+#define DEFINE_ENUM_STRINGIFYER_LIST(Enum, ...)                                              \
+::std::ostream& operator <<(::std::ostream& os, const Enum v)                                \
+{                                                                                            \
+    static constexpr auto mapper = ::Botcraft::Utilities::GetNamedEnum<Enum, __VA_ARGS__>(); \
+    const auto it = ::std::find_if(mapper.begin(), mapper.end(),                             \
+        [v](const ::std::pair<Enum, ::std::string_view>& p) { return p.first == v; });       \
+    if (it == mapper.end())                                                                  \
+    {                                                                                        \
+        return os << '(' << #Enum << ')' << static_cast<int>(v);                             \
+    }                                                                                        \
+    return os << it->second;                                                                 \
 } static_assert(true, "") /* To require a ; after macro call */
 #else // value list is not necessary, but keep it to get the same interface
 #define DEFINE_ENUM_STRINGIFYER_LIST(Enum, ...)   \

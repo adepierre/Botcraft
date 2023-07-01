@@ -17,7 +17,7 @@ TEST_CASE("gravity")
     std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
 
     CHECK_FALSE(local_player->GetOnGround());
-    CHECK(Botcraft::WaitForCondition([&]()
+    CHECK(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             return local_player->GetPosition().y < 2.2 && local_player->GetOnGround();
@@ -40,7 +40,7 @@ TEST_CASE("collisions")
 
     std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
     // Wait the bot to be on ground
-    Botcraft::WaitForCondition([&]()
+    Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             return local_player->GetY() - TestManager::GetInstance().GetCurrentOffset().y < 1.2;
@@ -57,7 +57,7 @@ TEST_CASE("collisions")
                     std::lock_guard<std::mutex> lock(local_player->GetMutex());
                     local_player->AddPlayerInputs(directions[i].second * 0.1);
                 }
-                Botcraft::SleepFor(std::chrono::milliseconds(30));
+                Botcraft::Utilities::SleepFor(std::chrono::milliseconds(30));
             }
             // Check the wall stopped the walk
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
