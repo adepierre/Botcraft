@@ -7,15 +7,15 @@
 </p>
 <h1 align="center" style="margin-top: 0px;">Bocraft</h1>
 
-<p align="center">Just another Minecraft bots library</p>
+<p align="center">A Minecraft bots library</p>
 
 <div align="center">
 ![Build status](https://github.com/adepierre/Botcraft/actions/workflows/build.yml/badge.svg) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/wECVsTbjA9) [![Documentation](https://badgen.net/badge/%F0%9F%93%96/documentation/black)](https://adepierre.github.io/Botcraft/)
 </div>
 
-<p align="center" style="margin-bottom: 0px !important;">
-  <!-- <img width="100" src="Visuals/XXX.gif" alt="botcraft illustration gif" align="center"> TODO: add a nice gif -->
-</p>
+<!-- <p align="center" style="margin-bottom: 0px !important;">
+  <img width="100" src="Visuals/XXX.gif" alt="botcraft illustration gif" align="center"> TODO: add a nice illustation gif
+</p> -->
 
 This is a "learn-by-doing" pet project I develop on my free time when I feel like it. I share the code for people that might be interested but it's more a "shared private repo" than a real open source community project. I usually try to push updates on master every first week of each month, and as soon as they are ready for new Minecraft version support updates.
 
@@ -52,7 +52,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - Custom framework to easily test the bot behaviours on a vanilla server ([wiki page](https://github.com/adepierre/Botcraft/wiki/Test-framework) for details)
 
 Available bot behaviours includes:
-- Path finding (including ladder/scaffolding climbing)
+- Path finding (including ladder/scaffolding climbing, see [wiki page](https://github.com/adepierre/Botcraft/wiki/Pathfinding))
 - Block breaking (including with correct tool/haste effects)
 - Inventory managing (including interactions with chest/anvil/brewing stand...)
 - Block placing (vanilla or mid-air)
@@ -85,10 +85,10 @@ Other gifs/videos can be found in the [Visuals](Visuals/) folder.
 
 ## Dependencies
 
-The code is cross-platform and requires a C++17 compiler, as well as git and CMake. I try to keep the number of external libraries for the core part of the library very low. This is less true for the rendering part or testing.
-Dependencies are included either directly(\*) or as git submodules(†). All libraries marked as optional can be disabled using cmake options.
+The code is cross-platform and requires a C++17 compiler, as well as git and CMake. I try to keep the number of external libraries for the core part of the library very low (currently only one is mandatory, plus two optionals for additional features). This is less true for the rendering part or testing.
+Dependencies are included either directly(\*) or as git submodules(†). All libraries marked as optional are automatically enabled/disabled based on cmake options.
 
-You *don't* have to clone recursively, download nor install any of them: the cmake build system is made to do that for you automatically for each dependency that is not already found on your system. The only exceptions are Java to launch the test server if enabled and doxygen to generate the doc.
+You *don't* have to clone recursively, download nor install any of them: the cmake build system is made to do that for you automatically for each dependency that is not already found on your system. The only exceptions are Java, to launch the test server if enabled, and doxygen to generate the doc. They need to be installed on your system manually.
 
 - [asio](https://think-async.com/Asio/)† for low-level TCP
 
@@ -171,7 +171,7 @@ Botcraft supports both servers in offline ("cracked") and online mode. If the se
 
 ## Mod support
 
-Botcraft is developped and tested to be compatible with vanilla servers. It might be able to connect to other servers (e.g. Fabric) if there is no mods or server only mods (e.g. performance mods). However, as soon as a mod needs to communicate with the client, things might get tricky. All the exchanges related to this mod will happen on a dedicated "registered channel", and ProtocolCraft will only expose them as raw byte arrays and you will have to implement a custom parsing/serialization code. For more details on how to do that, see the dedicated [wiki page](https://github.com/adepierre/Botcraft/wiki/Mod-support).
+Botcraft is developped and tested to be compatible with vanilla servers. It might be able to connect to other servers (e.g. Fabric) if there is no mods or server only mods (e.g. performance mods). However, as soon as a mod needs to communicate with the client, or interfere with the vanilla protocol (e.g. no chat report), things might get tricky. All packets related to this mod will come and go through on a dedicated "registered channel", and ProtocolCraft will only expose them as raw byte arrays. You will have to implement a custom parsing/serialization code. For more details on how to do that, see the dedicated [wiki page](https://github.com/adepierre/Botcraft/wiki/Mod-support).
 
 ## License
 
