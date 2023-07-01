@@ -2,6 +2,8 @@
 
 #include "botcraft/Utilities/DemanglingUtilities.hpp"
 
+#include <typeinfo>
+
 namespace Botcraft
 {
     BaseNode::BaseNode(const std::string& name_) : name(name_)
