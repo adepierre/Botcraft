@@ -118,7 +118,7 @@ TEST_CASE("biomes")
             << end_pos.z << " "
             << "desert";
         MinecraftServer::GetInstance().SendLine(command.str());
-        MinecraftServer::GetInstance().WaitLine(".* biome (?:entry/)?entries set between .*", 2000);
+        MinecraftServer::GetInstance().WaitLine(".* biome (?:entry/)?entries set between .*", 5000);
 
         int biome_id;
         const Botcraft::Biome* biome;

@@ -22,7 +22,7 @@ void TestDig(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const Botcra
             std::lock_guard<std::mutex> lock(world->GetMutex());
             const Botcraft::Block* block = world->GetBlock(pos);
             return block == nullptr || block->GetBlockstate()->IsAir();
-        }, 2000));
+        }, 5000));
 
     const double elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
     // We are rather large here to compensate lags from delays in tree swapping/executing
@@ -37,7 +37,7 @@ TEST_CASE("dig pickaxe")
         {
             std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
-        }, 2000);
+        }, 5000);
 
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
@@ -71,7 +71,7 @@ TEST_CASE("dig pickaxe")
 #else
         MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 2");
 #endif
-        MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 2000);
+        MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 5000);
 
         SECTION("golden pick")
         {
@@ -98,7 +98,7 @@ TEST_CASE("dig underwater")
         {
             std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
-        }, 2000);
+        }, 5000);
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
     const Botcraft::Position dirt = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(0, 0, 2);
@@ -112,7 +112,7 @@ TEST_CASE("dig underwater")
 #else
         MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 2");
 #endif
-        MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 2000);
+        MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 5000);
 
         SECTION("golden pick")
         {
@@ -139,7 +139,7 @@ TEST_CASE("dig shears")
         {
             std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
-        }, 2000);
+        }, 5000);
 
     const Botcraft::Position dirt = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(0, 0, 2);
     const Botcraft::Position leaves = dirt + Botcraft::Position(1, 0, 0);

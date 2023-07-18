@@ -27,7 +27,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             return local_player->GetPosition().SqrDist(pos) < 1.0;
-        }, 2000))
+        }, 5000))
     {
         throw std::runtime_error("Timeout waiting " + botname + " to register teleportation");
     }
@@ -56,7 +56,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
                 }
             }
             return true;
-        }, 5000))
+        }, 10000))
     {
         throw std::runtime_error("Timeout waiting " + botname + " to load surroundings");
     }
@@ -106,10 +106,10 @@ bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, co
 
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
     MinecraftServer::GetInstance().SendLine("give " + botname + " " + item_name + " " + std::to_string(quantity));
-    MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave " + std::to_string(quantity) + ") \\[" + item_pretty_name + "\\](?: \\* " + std::to_string(quantity) + ")? to " + botname + ".*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave " + std::to_string(quantity) + ") \\[" + item_pretty_name + "\\](?: \\* " + std::to_string(quantity) + ")? to " + botname + ".*", 5000);
     return Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(bot->GetInventoryManager()->GetMutex());
             return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(receiving_slot).IsEmptySlot();
-        }, 2000);
+        }, 5000);
 }

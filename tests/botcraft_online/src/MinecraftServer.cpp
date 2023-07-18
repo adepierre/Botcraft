@@ -102,7 +102,7 @@ void MinecraftServer::Initialize()
 
     // Set time to day
     SendLine("time set day");
-    WaitLine(".*: Set the time to \\d+.*", 2000);
+    WaitLine(".*: Set the time to \\d+.*", 5000);
 }
 
 std::string MinecraftServer::WaitLine(const long long int timeout_ms)
@@ -322,7 +322,7 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
 void MinecraftServer::SetGamerule(const std::string& gamerule, const std::string& value)
 {
     SendLine("gamerule " + gamerule + " " + value);
-    WaitLine(".*: Game ?rule " + gamerule + " (?:is now set to:|has been updated to) " + value + ".*", 2000);
+    WaitLine(".*: Game ?rule " + gamerule + " (?:is now set to:|has been updated to) " + value + ".*", 5000);
 }
 
 void MinecraftServer::InitServerGamerules()

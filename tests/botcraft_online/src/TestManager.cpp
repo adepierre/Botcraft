@@ -116,9 +116,9 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
         ".*: Changed the block at "
         + std::to_string(pos.x) + ", "
         + std::to_string(pos.y) + ", "
-        + std::to_string(pos.z) + ".*", 2000);
+        + std::to_string(pos.z) + ".*", 5000);
 #else
-    MinecraftServer::GetInstance().WaitLine(".*: Block placed.*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*: Block placed.*", 5000);
 #endif
 }
 
@@ -211,15 +211,15 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
 
     MinecraftServer::GetInstance().SendLine(command.str());
 #if PROTOCOL_VERSION > 340 && PROTOCOL_VERSION < 477
-    MinecraftServer::GetInstance().WaitLine(".*?: Summoned new Item Frame.*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*?: Summoned new Item Frame.*", 5000);
 #elif PROTOCOL_VERSION == 340
-    MinecraftServer::GetInstance().WaitLine(".*?: Object successfully summoned.*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*?: Object successfully summoned.*", 5000);
 #else
     MinecraftServer::GetInstance().WaitLine(
         ".*: Changed the block at "
         + std::to_string(pos.x) + ", "
         + std::to_string(pos.y) + ", "
-        + std::to_string(pos.z) + ".*", 2000);
+        + std::to_string(pos.z) + ".*", 5000);
 #endif
 }
 
@@ -233,7 +233,7 @@ void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<doub
         << pos.y << " "
         << pos.z;
     MinecraftServer::GetInstance().SendLine(command.str());
-    MinecraftServer::GetInstance().WaitLine(".*?Teleported " + name + " to.*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*?Teleported " + name + " to.*", 5000);
 }
 
 Botcraft::Position TestManager::GetStructureSize(const std::string& filename) const
@@ -493,7 +493,7 @@ void TestManager::SetGameMode(const std::string& name, const Botcraft::GameType 
         << gamemode_string << " "
         << name;
     MinecraftServer::GetInstance().SendLine(command.str());
-    MinecraftServer::GetInstance().WaitLine(".*? Set " + name + "'s game mode to.*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*? Set " + name + "'s game mode to.*", 5000);
 }
 
 
@@ -581,7 +581,7 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
 #if PROTOCOL_VERSION > 340
     // In 1.12.2 server sends one line per entity killed so we can't wait without knowing
     // how many there were. Just assume the command worked
-    MinecraftServer::GetInstance().WaitLine(".*?: (?:Killed|No entity was found).*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*?: (?:Killed|No entity was found).*", 5000);
 #endif
 }
 

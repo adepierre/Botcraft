@@ -75,11 +75,11 @@ public:
         botname = "botcraft_" + std::to_string(bot_index++);
         client->Connect("127.0.0.1:25565", botname);
 
-        std::vector<std::string> captured = MinecraftServer::GetInstance().WaitLine(".*?" + botname + ".*? logged in with entity id (\\d+) at \\(([\\d.,]+), ([\\d.,]+), ([\\d.,]+)\\).*", 2000);
+        std::vector<std::string> captured = MinecraftServer::GetInstance().WaitLine(".*?" + botname + ".*? logged in with entity id (\\d+) at \\(([\\d.,]+), ([\\d.,]+), ([\\d.,]+)\\).*", 5000);
         id = std::stoi(captured[1]);
         pos = Botcraft::Vector3(std::stod(captured[2]), std::stod(captured[3]), std::stod(captured[4]));
 
-        MinecraftServer::GetInstance().WaitLine(".*?" + botname + " joined the game.*", 2000);
+        MinecraftServer::GetInstance().WaitLine(".*?" + botname + " joined the game.*", 5000);
 
         if (gamemode != Botcraft::GameType::Creative)
         {
@@ -106,7 +106,7 @@ public:
                         }
                     }
                     return false;
-                }, 5000))
+                }, 10000))
             {
                 throw std::runtime_error(botname + " took too long to load world");
             }

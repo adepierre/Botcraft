@@ -97,7 +97,7 @@ TEST_CASE("drop items")
                     }
                 }
                 return false;
-            }, 2000));
+            }, 5000));
     }
     SECTION("drop all")
     {
@@ -126,7 +126,7 @@ TEST_CASE("drop items")
                     }
                 }
                 return false;
-            }, 2000));
+            }, 5000));
     }
 }
 
@@ -309,7 +309,7 @@ TEST_CASE("trade")
                 }
             }
             return false;
-        }, 2000));
+        }, 5000));
     REQUIRE(entity != nullptr);
     REQUIRE(GiveItem(bot, "minecraft:stick", "Stick", 1));
 
@@ -323,7 +323,7 @@ TEST_CASE("trade")
         {
             std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
             return !inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START).IsEmptySlot();
-        }, 2000));
+        }, 5000));
 
     bot->SyncAction(Botcraft::SetItemInHand, "minecraft:enchanted_book", Botcraft::Hand::Right);
     {

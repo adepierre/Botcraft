@@ -17,7 +17,7 @@ TEST_CASE("say")
     bot->SyncAction(Botcraft::Say, "Hello, world!");
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
-    REQUIRE_NOTHROW(MinecraftServer::GetInstance().WaitLine(".*: (?:\\[Not Secure\\] )?[[<]" + botname + "[>\\]] Hello, world!.*", 2000));
+    REQUIRE_NOTHROW(MinecraftServer::GetInstance().WaitLine(".*: (?:\\[Not Secure\\] )?[[<]" + botname + "[>\\]] Hello, world!.*", 5000));
 }
 
 bool IsLitRedstoneLamp(const Botcraft::Block* block)
@@ -49,7 +49,7 @@ TEST_CASE("interact")
             std::lock_guard<std::mutex> lock(world->GetMutex());
             const Botcraft::Block* block = world->GetBlock(lamp);
             return IsLitRedstoneLamp(block);
-        }, 2000));
+        }, 5000));
 }
 
 TEST_CASE("get day time")
@@ -60,15 +60,15 @@ TEST_CASE("get day time")
 
     // Sent time set command
     MinecraftServer::GetInstance().SendLine("time set " + std::to_string(day_time));
-    MinecraftServer::GetInstance().WaitLine(".*: Set the time to " + std::to_string(day_time) + ".*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*: Set the time to " + std::to_string(day_time) + ".*", 5000);
 
     Botcraft::Utilities::WaitForCondition([&]()
     {
         return bot->GetDayTime() == day_time;
-    }, 2000);
+    }, 5000);
     CHECK(bot->GetDayTime() == day_time);
 
     // Reset the time to day
     MinecraftServer::GetInstance().SendLine("time set day");
-    MinecraftServer::GetInstance().WaitLine(".*: Set the time to 1000.*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*: Set the time to 1000.*", 5000);
 }

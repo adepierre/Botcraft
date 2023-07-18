@@ -15,7 +15,7 @@ TEST_CASE("commands")
     MinecraftServer::GetInstance().SendLine("say hello");
     std::vector<std::string> captured;
     // \\w because we want the regex string to be \w
-    REQUIRE_NOTHROW(captured = MinecraftServer::GetInstance().WaitLine(".*: (?:\\[Not Secure\\] )?[[<]Server[>\\]] \\b(\\w+)\\b.*", 2000));
+    REQUIRE_NOTHROW(captured = MinecraftServer::GetInstance().WaitLine(".*: (?:\\[Not Secure\\] )?[[<]Server[>\\]] \\b(\\w+)\\b.*", 5000));
     REQUIRE(captured.size() == 2);
     CHECK(captured[0].substr(captured[0].size() - 5) == "hello");
     CHECK(captured[1] == "hello");

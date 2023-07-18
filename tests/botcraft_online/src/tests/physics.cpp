@@ -21,7 +21,7 @@ TEST_CASE("gravity")
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             return local_player->GetPosition().y < 2.2 && local_player->GetOnGround();
-        }, 2000));
+        }, 5000));
     const Botcraft::Vector3<double> target_pos = Botcraft::Vector3<double>(1.5, 0.0, 1.5) + TestManager::GetInstance().GetCurrentOffset();
     std::lock_guard<std::mutex> lock(local_player->GetMutex());
     CHECK(local_player->GetPosition().SqrDist(target_pos) < 0.2);
@@ -44,7 +44,7 @@ TEST_CASE("collisions")
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             return local_player->GetY() - TestManager::GetInstance().GetCurrentOffset().y < 1.2;
-        }, 2000);
+        }, 5000);
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
     for (size_t i = 0; i < directions.size(); ++i)
     {

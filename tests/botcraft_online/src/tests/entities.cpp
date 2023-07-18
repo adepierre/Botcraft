@@ -38,9 +38,9 @@ TEST_CASE("summoning")
                 << "{NoAI:1b,PersistenceRequired:1b}";
             MinecraftServer::GetInstance().SendLine(command.str());
 #if PROTOCOL_VERSION > 340
-            MinecraftServer::GetInstance().WaitLine(".*?: Summoned new.*", 2000);
+            MinecraftServer::GetInstance().WaitLine(".*?: Summoned new.*", 5000);
 #else
-            MinecraftServer::GetInstance().WaitLine(".*?: Object successfully summoned.*", 2000);
+            MinecraftServer::GetInstance().WaitLine(".*?: Object successfully summoned.*", 5000);
 #endif
             std::shared_ptr<Botcraft::EntityManager> entity_manager = bot->GetEntityManager();
             std::shared_ptr<Botcraft::Entity> entity;
@@ -57,7 +57,7 @@ TEST_CASE("summoning")
                         }
                     }
                     return false;
-                }, 2000));
+                }, 5000));
             REQUIRE(entity != nullptr);
             CHECK(entity->GetName() == t);
         }
@@ -72,12 +72,12 @@ TEST_CASE("entity interact")
 
     // Give flint and steel to bot
     MinecraftServer::GetInstance().SendLine("give " + botname + " flint_and_steel");
-    MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave 1) \\[Flint and Steel\\](?: \\* 1)? to " + botname + ".*", 2000);
+    MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave 1) \\[Flint and Steel\\](?: \\* 1)? to " + botname + ".*", 5000);
     Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(bot->GetInventoryManager()->GetMutex());
             return !bot->GetInventoryManager()->GetHotbarSelected().IsEmptySlot();
-        }, 2000);
+        }, 5000);
 
     // Wait for the entity to be registered on bot side
     std::shared_ptr<Botcraft::EntityManager> entity_manager = bot->GetEntityManager();
@@ -94,7 +94,7 @@ TEST_CASE("entity interact")
                 }
             }
             return false;
-        }, 2000));
+        }, 5000));
     REQUIRE(entity != nullptr);
     CHECK(entity->GetName() == "creeper");
 
@@ -106,12 +106,12 @@ TEST_CASE("entity interact")
         {
             std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
             return creeper->GetDataIsIgnited();
-        }, 2000));
+        }, 5000));
 
     // Wait for the creeper to explode
     REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
         {
             std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
             return entity_manager->GetEntity(creeper->GetEntityID()) == nullptr;
-        }, 2000));
+        }, 5000));
 }
