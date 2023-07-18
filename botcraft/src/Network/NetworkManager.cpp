@@ -73,8 +73,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 761
             ProtocolCraft::ProfilePublicKey key;
             key.SetTimestamp(authentifier->GetKeyTimestamp());
-            key.SetKey(RSAToBytes(authentifier->GetPublicKey()));
-            key.SetSignature(DecodeBase64(authentifier->GetKeySignature()));
+            key.SetKey(Utilities::RSAToBytes(authentifier->GetPublicKey()));
+            key.SetSignature(Utilities::DecodeBase64(authentifier->GetKeySignature()));
 
             loginstart_msg->SetPublicKey(key);
 #else
