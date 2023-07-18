@@ -56,6 +56,17 @@ jobs:
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
 
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ runner.workspace }}/build/3rdparty/catch2/install
+            ${{ runner.workspace }}/build/3rdparty/glad/install
+            ${{ runner.workspace }}/build/3rdparty/glfw/install
+            ${{ runner.workspace }}/build/3rdparty/openssl/install
+            ${{ runner.workspace }}/build/3rdparty/zlib/install
+          key: ${{ runner.os }}-deps
+
       - name: Configure cmake
         shell: bash
         working-directory: ${{ runner.workspace }}/build
