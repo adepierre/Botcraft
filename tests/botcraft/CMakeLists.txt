@@ -1,6 +1,6 @@
 project(botcraft_tests)
 
-set(SRC_FILES 
+set(SRC_FILES
     src/behaviour_tree.cpp
     src/blackboard.cpp
     src/blockstate.cpp

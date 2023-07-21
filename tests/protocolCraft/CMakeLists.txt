@@ -1,6 +1,6 @@
 project(protocolCraft_tests)
 
-set(SRC_FILES 
+set(SRC_FILES
     src/json.cpp
     src/nbt.cpp
 )

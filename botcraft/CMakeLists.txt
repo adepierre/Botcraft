@@ -8,14 +8,14 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/AI/SimpleBehaviourClient.hpp
     include/botcraft/AI/Status.hpp
     include/botcraft/AI/TemplatedBehaviourClient.hpp
-    
+
     include/botcraft/AI/Tasks/AllTasks.hpp
     include/botcraft/AI/Tasks/BaseTasks.hpp
     include/botcraft/AI/Tasks/DigTask.hpp
     include/botcraft/AI/Tasks/EntitiesTasks.hpp
     include/botcraft/AI/Tasks/InventoryTasks.hpp
     include/botcraft/AI/Tasks/PathfindingTask.hpp
-    
+
     include/botcraft/Game/AABB.hpp
     include/botcraft/Game/AssetsManager.hpp
     include/botcraft/Game/ManagersClient.hpp
@@ -23,20 +23,20 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Enums.hpp
     include/botcraft/Game/Model.hpp
     include/botcraft/Game/Vector3.hpp
-    
+
     include/botcraft/Game/World/Biome.hpp
     include/botcraft/Game/World/Block.hpp
     include/botcraft/Game/World/Blockstate.hpp
     include/botcraft/Game/World/Chunk.hpp
     include/botcraft/Game/World/Section.hpp
     include/botcraft/Game/World/World.hpp
-    
+
     include/botcraft/Game/Entities/EntityManager.hpp
     include/botcraft/Game/Entities/GlobalPos.hpp
     include/botcraft/Game/Entities/LocalPlayer.hpp
     include/botcraft/Game/Entities/VillagerData.hpp
     include/botcraft/Game/Entities/entities/UnknownEntity.hpp
-    
+
     include/botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp
     include/botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp
@@ -196,16 +196,16 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/PathfinderMobEntity.hpp
     include/botcraft/Game/Entities/entities/monster/PatrollingMonsterEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrowableProjectileEntity.hpp
-    
+
     include/botcraft/Game/Inventory/Window.hpp
     include/botcraft/Game/Inventory/InventoryManager.hpp
     include/botcraft/Game/Inventory/Item.hpp
-    
+
     include/botcraft/Game/Physics/PhysicsManager.hpp
-    
+
     include/botcraft/Network/NetworkManager.hpp
     include/botcraft/Network/LastSeenMessagesTracker.hpp
-    
+
     include/botcraft/Utilities/AsyncHandler.hpp
     include/botcraft/Utilities/DemanglingUtilities.hpp
     include/botcraft/Utilities/EnumUtilities.hpp
@@ -222,12 +222,12 @@ set(botcraft_PRIVATE_HDR
     private_include/botcraft/Network/AESEncrypter.hpp
     private_include/botcraft/Network/Compression.hpp
     private_include/botcraft/Network/TCP_Com.hpp
-    
+
     private_include/botcraft/Network/DNS/DNSMessage.hpp
     private_include/botcraft/Network/DNS/DNSQuestion.hpp
     private_include/botcraft/Network/DNS/DNSResourceRecord.hpp
     private_include/botcraft/Network/DNS/DNSSrvData.hpp
-    
+
     private_include/botcraft/Utilities/StringUtilities.hpp
 )
 
@@ -236,34 +236,34 @@ set(botcraft_SRC
     src/AI/BehaviourClient.cpp
     src/AI/Blackboard.cpp
     src/AI/SimpleBehaviourClient.cpp
-    
+
     src/AI/Tasks/BaseTasks.cpp
     src/AI/Tasks/DigTask.cpp
     src/AI/Tasks/EntitiesTasks.cpp
     src/AI/Tasks/InventoryTasks.cpp
     src/AI/Tasks/PathfindingTask.cpp
-    
+
     src/Game/AABB.cpp
     src/Game/AssetsManager.cpp
     src/Game/ConnectionClient.cpp
     src/Game/Enums.cpp
     src/Game/ManagersClient.cpp
     src/Game/Model.cpp
-    
+
     src/Game/World/Biome.cpp
     src/Game/World/Block.cpp
     src/Game/World/Blockstate.cpp
     src/Game/World/Chunk.cpp
     src/Game/World/World.cpp
-    
+
     src/Game/Inventory/Window.cpp
     src/Game/Inventory/InventoryManager.cpp
     src/Game/Inventory/Item.cpp
-    
+
     src/Game/Entities/EntityManager.cpp
     src/Game/Entities/LocalPlayer.cpp
     src/Game/Entities/entities/UnknownEntity.cpp
-    
+
     src/Game/Entities/entities/animal/allay/AllayEntity.cpp
     src/Game/Entities/entities/AreaEffectCloudEntity.cpp
     src/Game/Entities/entities/decoration/ArmorStandEntity.cpp
@@ -423,16 +423,16 @@ set(botcraft_SRC
     src/Game/Entities/entities/PathfinderMobEntity.cpp
     src/Game/Entities/entities/monster/PatrollingMonsterEntity.cpp
     src/Game/Entities/entities/projectile/ThrowableProjectileEntity.cpp
-    
+
     src/Game/Physics/PhysicsManager.cpp
-    
+
     src/Network/AESEncrypter.cpp
     src/Network/Authentifier.cpp
     src/Network/Compression.cpp
     src/Network/LastSeenMessagesTracker.cpp
     src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
-    
+
     src/Utilities/AsyncHandler.cpp
     src/Utilities/DemanglingUtilities.cpp
     src/Utilities/Logger.cpp
@@ -449,7 +449,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             include/botcraft/Renderer/Face.hpp
             include/botcraft/Renderer/Transformation.hpp
     )
-            
+
     list(APPEND botcraft_PRIVATE_HDR
             private_include/botcraft/Renderer/Atlas.hpp
             private_include/botcraft/Renderer/BehaviourRenderer.hpp
@@ -462,7 +462,7 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             private_include/botcraft/Renderer/TransparentChunk.hpp
             private_include/botcraft/Renderer/WorldRenderer.hpp
     )
-            
+
     list(APPEND botcraft_SRC
             src/Renderer/Atlas.cpp
             src/Renderer/BehaviourRenderer.cpp
@@ -489,7 +489,7 @@ if(MSVC)
         string(REPLACE "/" "\\" source_path_msvc "${source_path_header}")
         source_group("${source_path_msvc}" FILES "${source}")
     endforeach()
-    
+
     foreach(source IN LISTS botcraft_PRIVATE_HDR)
         get_filename_component(source_path_header "${source}" PATH)
         string(REPLACE "private_include/botcraft" "Header Files/private" source_path_header "${source_path_header}")
@@ -552,11 +552,11 @@ else()
 endif (WIN32)
 
 # Add include folders
-target_include_directories(botcraft 
-    PUBLIC 
+target_include_directories(botcraft
+    PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-        "$<INSTALL_INTERFACE:include>"   
+        "$<INSTALL_INTERFACE:include>"
     PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private_include>"
         )
@@ -640,16 +640,16 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/botcraft"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
-install(FILES 
+install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/include/botcraft/Version.hpp"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/botcraft"
 )
-    
+
 install(EXPORT botcraft-targets
     FILE botcraft-targets.cmake
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/botcraft"
 )
-    
+
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
@@ -659,7 +659,7 @@ configure_package_config_file(
 )
 
 install(
-    FILES 
+    FILES
         "${CMAKE_CURRENT_BINARY_DIR}/cmake/botcraft-config.cmake"
     DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/cmake/botcraft"
@@ -683,7 +683,7 @@ endif(BOTCRAFT_INSTALL_MC_ASSETS)
 
 # Copy Mingw libstdc++ dll
 if(WIN32 AND MINGW)
-    install(FILES 
+    install(FILES
         "${BOTCRAFT_OUTPUT_DIR}/bin/libstdc++-6.dll"
         DESTINATION "${CMAKE_INSTALL_BINDIR}"
     )

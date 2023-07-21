@@ -6,7 +6,7 @@ set(HDR_FILES
     include/Utils.hpp
 )
 
-set(SRC_FILES 
+set(SRC_FILES
     src/main.cpp
 
     src/MinecraftServer.cpp
@@ -44,7 +44,7 @@ if(MSVC)
         string(REPLACE "/" "\\" source_path_msvc "${source_path_header}")
         source_group("${source_path_msvc}" FILES "${source}")
     endforeach()
-    
+
     foreach(source IN LISTS SRC_FILES)
         get_filename_component(source_path "${source}" PATH)
         string(REPLACE "src" "Source Files" source_path "${source_path}")

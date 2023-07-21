@@ -24,7 +24,6 @@ if(NOT TARGET glad)
         execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--parallel" "2" "--config" "Release" WORKING_DIRECTORY "${GLAD_BUILD_PATH}")
     endif()
 
-    
     # Find the freshly built library
     find_package(glad QUIET PATHS "${GLAD_BUILD_PATH}/install")
 endif()

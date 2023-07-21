@@ -15,7 +15,7 @@ if(RES_LEN EQUAL 0)
 endif()
 
 if(NOT TARGET imgui)
-    set(IMGUI_SOURCES 
+    set(IMGUI_SOURCES
         3rdparty/imgui/imgui.cpp
         3rdparty/imgui/imgui_draw.cpp
         3rdparty/imgui/imgui_tables.cpp
@@ -31,7 +31,7 @@ if(NOT TARGET imgui)
         3rdparty/imgui-node-editor/imgui_node_editor_api.cpp
     )
 
-    set(IMGUI_HEADERS 
+    set(IMGUI_HEADERS
         3rdparty/imgui/imconfig.h
         3rdparty/imgui/imgui.h
         3rdparty/imgui/imgui_internal.h

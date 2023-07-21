@@ -4,7 +4,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/AllClientboundMessages.hpp
     include/protocolCraft/AllMessages.hpp
     include/protocolCraft/AllServerboundMessages.hpp
-    include/protocolCraft/BaseMessage.hpp 
+    include/protocolCraft/BaseMessage.hpp
     include/protocolCraft/BinaryReadWrite.hpp
     include/protocolCraft/enums.hpp
     include/protocolCraft/GenericHandler.hpp
@@ -324,7 +324,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Utilities/Plugins/PluginObject.hpp
 )
 
-set(protocolCraft_SRC 
+set(protocolCraft_SRC
     src/BaseMessage.cpp
     src/BinaryReadWrite.cpp
     src/MessageFactory.cpp
@@ -412,8 +412,8 @@ endif (MSVC)
 target_compile_definitions(protocolCraft PUBLIC PROTOCOL_VERSION=${PROTOCOL_VERSION})
 
 # Add include folders
-target_include_directories(protocolCraft 
-    PUBLIC 
+target_include_directories(protocolCraft
+    PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:include>"
 )
@@ -456,7 +456,7 @@ configure_package_config_file(
 )
 
 install(
-    FILES 
+    FILES
         "${CMAKE_CURRENT_BINARY_DIR}/cmake/protocolcraft-config.cmake"
     DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/cmake/protocolCraft"

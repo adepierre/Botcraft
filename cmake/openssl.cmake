@@ -33,7 +33,7 @@ if(NOT OPENSSL_FOUND)
     endif()
 endif()
 
-if(NOT TARGET OpenSSL::SSL OR NOT TARGET OpenSSL::Crypto)    
+if(NOT TARGET OpenSSL::SSL OR NOT TARGET OpenSSL::Crypto)
     # Create imported targets
     file(GLOB ssl_lib_file "${OPENSSL_BUILD_PATH}/install/lib/*libssl*")
     add_library(OpenSSL::SSL STATIC IMPORTED)

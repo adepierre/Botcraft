@@ -14,7 +14,7 @@ if(NOT TARGET ZLIB::ZLIB)
     list(LENGTH RESULT RES_LEN)
     if(RES_LEN EQUAL 0)
         message(STATUS "Can't find Zlib, cloning and building it from sources")
-        
+
         file(GLOB RESULT "${ZLIB_SRC_PATH}")
         list(LENGTH RESULT RES_LEN)
         if(RES_LEN EQUAL 0)
