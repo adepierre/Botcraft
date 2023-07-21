@@ -16,7 +16,8 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build:
+  # Make sure dependencies are in cache
+  pre_configure:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
@@ -26,7 +27,155 @@ jobs:
             name: "Windows",
             os: windows-latest,
             generator: "Visual Studio 17 2022"
-            
+          }
+        - {
+            name: "Linux",
+            os: ubuntu-latest,
+            generator: "Unix Makefiles"
+          }
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Install Linux deps
+        if: ${{ matrix.config.name == 'Linux' }}
+        run: |
+          sudo apt update
+          sudo apt install -y xorg-dev
+
+      - name: Create build folder
+        run: cmake -E make_directory ${{ runner.workspace }}/build
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ runner.workspace }}/build/3rdparty/catch2/install
+            ${{ runner.workspace }}/build/3rdparty/glad/install
+            ${{ runner.workspace }}/build/3rdparty/glfw/install
+            ${{ runner.workspace }}/build/3rdparty/openssl/install
+            ${{ runner.workspace }}/build/3rdparty/zlib/install
+          key: ${{ runner.os }}-deps
+
+      - name: Configure cmake
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: >
+          cmake -G "${{ matrix.config.generator }}"
+          -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+          -DBOTCRAFT_GAME_VERSION=${{ github.event.inputs.minecraft_version }}
+          -DBOTCRAFT_USE_OPENGL_GUI=ON
+          -DBOTCRAFT_USE_IMGUI=ON
+          -DBOTCRAFT_COMPRESSION=ON
+          -DBOTCRAFT_ENCRYPTION=ON
+          -DBOTCRAFT_BUILD_EXAMPLES=OFF
+          -DBOTCRAFT_BUILD_TESTS=OFF
+          -DBOTCRAFT_BUILD_TESTS_ONLINE=OFF
+          -DBOTCRAFT_WINDOWS_BETTER_SLEEP=ON
+          -DBOTCRAFT_FORCE_LOCAL_ZLIB=ON
+          -DBOTCRAFT_FORCE_LOCAL_OPENSSL=ON
+          -DBOTCRAFT_FORCE_LOCAL_GLFW=ON
+          -DBOTCRAFT_FORCE_LOCAL_GLAD=ON
+          -DBOTCRAFT_FORCE_LOCAL_CATCH=ON
+          -DBOTCRAFT_INSTALL_MC_ASSETS=OFF
+          -DBOTCRAFT_USE_PRECOMPILED_HEADERS=ON
+          -DBOTCRAFT_BUILD_DOC=OFF
+          -DBOTCRAFT_OUTPUT_DIR=output
+          -DCMAKE_INSTALL_PREFIX=install/botcraft
+          -S $GITHUB_WORKSPACE
+          -B .
+
+
+  build_doc:
+    runs-on: ubuntu-latest
+    needs:
+      - pre_configure
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Install deps
+        run: |
+          sudo apt update
+          sudo apt install -y xorg-dev
+          wget https://github.com/doxygen/doxygen/releases/download/Release_1_9_7/doxygen-1.9.7.linux.bin.tar.gz
+          tar xzvf doxygen-1.9.7.linux.bin.tar.gz
+          cd doxygen-1.9.7
+          sudo make install
+
+      - name: Create build folder
+        run: cmake -E make_directory ${{ runner.workspace }}/build
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ runner.workspace }}/build/3rdparty/catch2/install
+            ${{ runner.workspace }}/build/3rdparty/glad/install
+            ${{ runner.workspace }}/build/3rdparty/glfw/install
+            ${{ runner.workspace }}/build/3rdparty/openssl/install
+            ${{ runner.workspace }}/build/3rdparty/zlib/install
+          key: ${{ runner.os }}-deps
+
+      - name: Configure cmake
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: >
+          cmake -G "Unix Makefiles"
+          -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+          -DBOTCRAFT_GAME_VERSION=${{ github.event.inputs.minecraft_version }}
+          -DBOTCRAFT_USE_OPENGL_GUI=ON
+          -DBOTCRAFT_USE_IMGUI=ON
+          -DBOTCRAFT_COMPRESSION=ON
+          -DBOTCRAFT_ENCRYPTION=ON
+          -DBOTCRAFT_BUILD_EXAMPLES=OFF
+          -DBOTCRAFT_BUILD_TESTS=OFF
+          -DBOTCRAFT_BUILD_TESTS_ONLINE=OFF
+          -DBOTCRAFT_WINDOWS_BETTER_SLEEP=ON
+          -DBOTCRAFT_FORCE_LOCAL_ZLIB=ON
+          -DBOTCRAFT_FORCE_LOCAL_OPENSSL=ON
+          -DBOTCRAFT_FORCE_LOCAL_GLFW=ON
+          -DBOTCRAFT_FORCE_LOCAL_GLAD=ON
+          -DBOTCRAFT_FORCE_LOCAL_CATCH=ON
+          -DBOTCRAFT_INSTALL_MC_ASSETS=OFF
+          -DBOTCRAFT_USE_PRECOMPILED_HEADERS=ON
+          -DBOTCRAFT_BUILD_DOC=ON
+          -DBOTCRAFT_OUTPUT_DIR=output
+          -DCMAKE_INSTALL_PREFIX=install/botcraft
+          -S $GITHUB_WORKSPACE
+          -B .
+
+      - name: Generate doc
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --build . --target doc_doxygen
+
+      - name: Create doc archive
+        working-directory: ${{ runner.workspace }}/build/output/doc
+        run: cmake -E tar "cf" "doc.zip" --format=zip ${{ github.event.inputs.minecraft_version }}/
+
+      - name: Upload doc as zip
+        uses: actions/upload-artifact@v3
+        with:
+          name: botcraft-doc
+          path: ${{ runner.workspace }}/build/output/doc/doc.zip
+          retention-days: 1
+
+
+  build_and_test:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    needs:
+      - pre_configure
+    strategy:
+      matrix:
+        config:
+        - {
+            name: "Windows",
+            os: windows-latest,
+            generator: "Visual Studio 17 2022"
           }
         - {
             name: "Linux",
@@ -48,10 +197,6 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y xorg-dev
-          wget https://github.com/doxygen/doxygen/releases/download/Release_1_9_7/doxygen-1.9.7.linux.bin.tar.gz
-          tar xzvf doxygen-1.9.7.linux.bin.tar.gz
-          cd doxygen-1.9.7
-          sudo make install
 
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
@@ -96,15 +241,38 @@ jobs:
           -B .
 
       - name: Build all
+        id: build
         shell: bash
         working-directory: ${{ runner.workspace }}/build
         run: cmake --build . --config $BUILD_TYPE --parallel 2
 
+      - name: Notify issue if build failed
+        if: failure() && steps.build.conclusion == 'failure' && ${{ github.event.inputs.issue }}
+        run: |
+          echo "Build failed. Logs can be found [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }})." > body.txt
+          echo -en '\n' >> body.txt
+          echo -en '\n' >> body.txt
+          echo @${{ github.repository_owner }} you might want to take a look. >> body.txt
+          gh issue comment ${{ github.event.inputs.issue }} --repo ${{ github.repository }} --body-file body.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Run tests
+        id: test
         shell: bash
         working-directory: ${{ runner.workspace }}/build
         run: ctest -C $BUILD_TYPE -VV
-        id: test
+
+      - name: Notify issue if tests failed
+        if: failure() && steps.test.conclusion == 'failure' && ${{ github.event.inputs.issue }}
+        run: |
+          echo "Tests failed. See [this run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}) for logs." > body.txt
+          echo -en '\n' >> body.txt
+          echo -en '\n' >> body.txt
+          echo @${{ github.repository_owner }} you might want to take a look. >> body.txt
+          gh issue comment ${{ github.event.inputs.issue }} --repo ${{ github.repository }} --body-file body.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Prepare test server world download
         if: success() || steps.test.conclusion == 'failure'
@@ -115,7 +283,7 @@ jobs:
         if: success() || steps.test.conclusion == 'failure'
         uses: actions/upload-artifact@v3
         with:
-          name: test_world_download_${{ matrix.config.name }}_${{ github.event.inputs.minecraft_version }}
+          name: test_world_download_${{ matrix.config.name }}
           path: ${{ runner.workspace }}/build/output/bin/test_servers
 
       - name: Create install
@@ -135,27 +303,12 @@ jobs:
           path: ${{ runner.workspace }}/build/install/botcraft.zip
           retention-days: 1
 
-      - name: Generate doc
-        if: ${{ matrix.config.name == 'Linux' }}
-        working-directory: ${{ runner.workspace }}/build
-        run: cmake --build . --target doc_doxygen
 
-      - name: Create doc archive
-        if: ${{ matrix.config.name == 'Linux' }}
-        working-directory: ${{ runner.workspace }}/build/output/doc
-        run: cmake -E tar "cf" "doc.zip" --format=zip ${{ github.event.inputs.minecraft_version }}/
-
-      - name: Upload doc
-        if: ${{ matrix.config.name == 'Linux' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: botcraft-doc
-          path: ${{ runner.workspace }}/build/output/doc/doc.zip
-          retention-days: 1
-
-  upload-artifacts:
+  update_release:
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - build_doc
+      - build_and_test
     steps:
       - name: Download Linux artifact
         uses: actions/download-artifact@v3
@@ -163,27 +316,11 @@ jobs:
           name: botcraft-Linux
           path: linux
 
-      - name: Upload Linux file to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: linux/botcraft.zip
-          asset_name: botcraft-linux-${{ github.event.inputs.minecraft_version }}.zip
-          tag: latest
-
       - name: Download Windows artifact
         uses: actions/download-artifact@v3
         with:
           name: botcraft-Windows
           path: windows
-
-      - name: Upload Windows file to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: windows/botcraft.zip
-          asset_name: botcraft-windows-${{ github.event.inputs.minecraft_version }}.zip
-          tag: latest
 
       - name: Download doc artifact
         uses: actions/download-artifact@v3
@@ -191,20 +328,28 @@ jobs:
           name: botcraft-doc
           path: doc
 
-      - name: Upload doc to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: doc/doc.zip
-          asset_name: botcraft-doc-${{ github.event.inputs.minecraft_version }}.zip
-          tag: latest
+      - name: Rename artifacts
+        run: |
+          mv linux/botcraft.zip botcraft-linux-${{ github.event.inputs.minecraft_version }}.zip
+          mv windows/botcraft.zip botcraft-windows-${{ github.event.inputs.minecraft_version }}.zip
+          mv doc/doc.zip botcraft-doc-${{ github.event.inputs.minecraft_version }}.zip
+
+      - name: Upload files to release
+        run: >
+          gh release upload latest
+          botcraft-linux-${{ github.event.inputs.minecraft_version }}.zip
+          botcraft-windows-${{ github.event.inputs.minecraft_version }}.zip
+          botcraft-doc-${{ github.event.inputs.minecraft_version }}.zip
+          --repo ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Comment on associated issue
         if: ${{ github.event.inputs.issue }}
         run: |
           echo "New binaries available in the [latest release](https://github.com/${{ github.repository }}/releases/tag/latest) for version ${{ github.event.inputs.minecraft_version }}" > body.txt
           echo -en '\n' >> body.txt
-          echo You can now close this issue. You can reopen it at anytime to trigger a new build for the same version. >> body.txt
+          echo You can now close this issue. If you need an updated build for the same Minecraft version in the future, you can reopen this issue to trigger a new build instead of creating a new issue. >> body.txt
           gh issue comment ${{ github.event.inputs.issue }} --repo ${{ github.repository }} --body-file body.txt
         env:
           GH_TOKEN: ${{ github.token }}

@@ -39,7 +39,7 @@ jobs:
         run: |
           echo "Binaries for ${{ steps.retrieve.outputs.version }} are already available in the [latest release](https://github.com/${{ github.repository }}/releases/tag/latest)." > body.txt
           echo -en '\n' >> body.txt
-          echo You can close this issue. Feel free to reopen at anytime if you need an updated build for the same version. >> body.txt
+          echo You can close this issue. If you need an updated build for the same Minecraft version in the future, you can reopen this issue to trigger a new build instead of creating a new one. >> body.txt
           gh issue comment ${{ github.event.issue.html_url }} --repo ${{ github.repository }} --body-file body.txt
         env:
           GH_TOKEN: ${{ github.token }}
