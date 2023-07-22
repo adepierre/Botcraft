@@ -60,11 +60,13 @@ namespace Botcraft
 
         /// @brief Save the given tree to replace the current one as soon as possible.
         /// @param tree_ The new tree
-        void SetBehaviourTree(const std::shared_ptr<BehaviourTree<TDerived> >& tree_)
+        /// @param blackboard_ Initial values to put into the blackboard when swapping tree
+        void SetBehaviourTree(const std::shared_ptr<BehaviourTree<TDerived> >& tree_, const std::map<std::string, std::any>& blackboard_ = {})
         {
             std::lock_guard<std::mutex> behaviour_guard(behaviour_mutex);
             swap_tree = true;
             new_tree = tree_;
+            new_blackboard = blackboard_;
         }
 
         /// @brief Can be called to pause the execution of the internal
@@ -251,8 +253,8 @@ namespace Botcraft
                     tree = new_tree;
                     new_tree = nullptr;
                     swap_tree = false;
-                    blackboard.Clear();
                     OnTreeChanged(tree.get());
+                    blackboard.Reset(new_blackboard);
                     continue;
                 }
                 // We need to stop the behaviour thread
@@ -276,6 +278,7 @@ namespace Botcraft
     private:
         std::shared_ptr<BehaviourTree<TDerived> > tree;
         std::shared_ptr<BehaviourTree<TDerived> > new_tree;
+        std::map<std::string, std::any> new_blackboard;
         bool swap_tree;
 
         std::thread behaviour_thread;

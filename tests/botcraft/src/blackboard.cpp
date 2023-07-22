@@ -30,8 +30,11 @@ TEST_CASE("Blackboard Read/Write values")
     REQUIRE(ref == 42);
     REQUIRE(blackboard.Get<int>("hello") == 42);
 
-    REQUIRE_NOTHROW(blackboard.Clear());
+    REQUIRE_NOTHROW(blackboard.Reset());
     REQUIRE_THROWS(blackboard.Get<int>("hello"));
+    
+    REQUIRE_NOTHROW(blackboard.Reset({ { "hello", 42 } }));
+    REQUIRE(blackboard.Get<int>("hello") == 42);
 }
 
 class TestBlackboardObserver : public BlackboardObserver
@@ -71,6 +74,6 @@ TEST_CASE("Blackboard notifications")
     blackboard.Erase("hello");
     REQUIRE(observer.is_value_removed);
 
-    blackboard.Clear();
+    blackboard.Reset();
     REQUIRE(observer.is_reset);
 }

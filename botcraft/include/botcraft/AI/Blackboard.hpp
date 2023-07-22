@@ -142,8 +142,9 @@ namespace Botcraft
         /// @param key key we want to remove
         void Erase(const std::string& key);
         
-        /// @brief Clear all the entries in the blackboard
-        void Clear();
+        /// @brief Clear all the entries in the blackboard and load new ones
+        /// @param values Values to load into the blackboard after clearing
+        void Reset(const std::map<std::string, std::any>& values = {});
 
         void Subscribe(BlackboardObserver* observer);
 

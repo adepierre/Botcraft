@@ -24,10 +24,16 @@ namespace Botcraft
         blackboard.erase(key);
         NotifyKeyRemoved(key);
     }
-    void Blackboard::Clear()
+
+    void Blackboard::Reset(const std::map<std::string, std::any>& values)
     {
         blackboard.clear();
         NotifyCleared();
+        for (const auto& [k, v] : values)
+        {
+            blackboard[k] = v;
+            NotifyKeyChanged(k, v);
+        }
     }
 
     void Blackboard::Subscribe(BlackboardObserver* observer)
