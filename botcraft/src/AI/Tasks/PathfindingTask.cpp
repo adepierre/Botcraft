@@ -61,7 +61,7 @@ namespace Botcraft
         return block->GetBlockstate()->IsSolid() ? BlockPathfindingState::Solid : BlockPathfindingState::Empty;
     }
 
-    std::vector<Position> FindPath(BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump)
+    std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump)
     {
         struct PathNode
         {

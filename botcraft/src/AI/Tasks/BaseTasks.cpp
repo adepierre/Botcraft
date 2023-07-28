@@ -301,4 +301,35 @@ namespace Botcraft
         const int day_time = client.GetDayTime();
         return (day_time > 12541 && day_time < 23460) ? Status::Success : Status::Failure;
     }
+
+
+    Status IsAlive(BehaviourClient& client)
+    {
+        return client.GetEntityManager()->GetLocalPlayer()->GetHealth() > 0.0f ? Status::Success : Status::Failure;
+    }
+
+
+    Status StartSprinting(BehaviourClient& client)
+    {
+        std::shared_ptr<ProtocolCraft::ServerboundPlayerCommandPacket> player_command = std::make_shared<ProtocolCraft::ServerboundPlayerCommandPacket>();
+        player_command->SetAction(3); // 3 is start sprinting
+        player_command->SetId_(client.GetEntityManager()->GetLocalPlayer()->GetEntityID());
+        player_command->SetData(0);
+
+        client.GetNetworkManager()->Send(player_command);
+
+        return Status::Success;
+    }
+
+    Status StopSprinting(BehaviourClient& client)
+    {
+        std::shared_ptr<ProtocolCraft::ServerboundPlayerCommandPacket> player_command = std::make_shared<ProtocolCraft::ServerboundPlayerCommandPacket>();
+        player_command->SetAction(4); // 4 is stop sprinting
+        player_command->SetId_(client.GetEntityManager()->GetLocalPlayer()->GetEntityID());
+        player_command->SetData(0);
+
+        client.GetNetworkManager()->Send(player_command);
+
+        return Status::Success;
+    }
 }

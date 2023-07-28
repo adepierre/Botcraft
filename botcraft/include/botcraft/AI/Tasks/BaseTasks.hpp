@@ -147,4 +147,20 @@ namespace Botcraft
     /// @return Success if it's time to sleep, Failure otherwise
     Status IsNightTime(BehaviourClient& client);
 
+
+    /// @brief Return success if player is alive
+    /// @param client The client performing the action
+    /// @return Success if player.GetHealth() > 0, Failure otherwise
+    Status IsAlive(BehaviourClient& client);
+
+
+    /// @brief Tell the server the bot starts sprinting (only useful to be more human-like, doesn't relate to the actual speed)
+    /// @param client The client performing the action
+    /// @return Always return Success
+    Status StartSprinting(BehaviourClient& client);
+
+    /// @brief Tell the server the bot stops sprinting (only useful to be more human-like, doesn't relate to the actual speed)
+    /// @param client The client performing the action
+    /// @return Always return Success
+    Status StopSprinting(BehaviourClient& client);
 } // namespace Botcraft

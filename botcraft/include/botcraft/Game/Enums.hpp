@@ -76,12 +76,18 @@ namespace Botcraft
     enum class Orientation
     {
         None = -1,
-        Bottom = 0, // y = -1
-        North,      // z = -1
-        West,       // x = -1
-        East,       // x = 1
-        South,      // z = 1
-        Top         // y = 1
+        /// @brief y = -1
+        Bottom = 0,
+        /// @brief z = -1
+        North,
+        /// @brief x = -1
+        West,
+        /// @brief x = 1
+        East,
+        /// @brief z = 1
+        South,
+        /// @brief y = 1
+        Top
     };
 
     enum class PlayerDiggingStatus
@@ -97,12 +103,18 @@ namespace Botcraft
 
     enum class Direction
     {
-        Down = 0, // -Y
-        Up,        // +Y
-        North,      // -Z
-        South,      // +Z
-        West,       // -X
-        East        // +X
+        /// @brief -Y
+        Down = 0,
+        /// @brief +Y
+        Up,
+        /// @brief -Z
+        North,
+        /// @brief +Z
+        South,
+        /// @brief -X
+        West,
+        /// @brief +X
+        East
     };
     typedef Direction PlayerDiggingFace;
     std::ostream& operator<<(std::ostream& os, const Direction v);

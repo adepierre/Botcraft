@@ -14,7 +14,7 @@ namespace Botcraft
     /// @param min_end_dist Desired minimal checkboard distance between the final position and goal (useful if you want to place a block, you don't want to be at the exact spot, but close to it).
     /// @param allow_jump If true, allow to jump above 1-wide gaps
     /// @return A vector of positions to go through to reach end +/- min_end_dist. If not possible, will return a path to get as close as possible
-    std::vector<Position> FindPath(BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump);
+    std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump);
 
     /// @brief Find a path to a position and navigate to it.
     /// @param client The client performing the action
