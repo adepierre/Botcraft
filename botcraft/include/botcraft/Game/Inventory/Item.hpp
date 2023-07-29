@@ -29,9 +29,13 @@ namespace Botcraft
 
         ItemId GetId() const;
         const std::string& GetName() const;
-        const unsigned char GetStackSize() const;
-        const ToolType GetToolType() const;
-        const ToolMaterial GetToolMaterial() const;
+        unsigned char GetStackSize() const;
+        ToolType GetToolType() const;
+        ToolMaterial GetToolMaterial() const;
+
+        /// @brief Get the max durability of this item (only implemented for tools)
+        /// @return -1 if unknown, max durability otherwise
+        int GetMaxDurability() const;
 
     private:
         void LoadTypeAndMaterialFromName();
