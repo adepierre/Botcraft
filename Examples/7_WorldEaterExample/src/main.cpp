@@ -16,10 +16,11 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--numbot\tNumber of parallel bot to start, default: 5\n"
+        << "\t--numbot\tNumber of parallel bot to start, default: 16\n"
+        << "\t--numworld\tNumber of shared world used by bots, less worlds saves RAM, but can be slower if shared between too many bots, default: 8\n"
         << "\t--start\t3 ints, offset for the first block, default: -64 -59 832\n"
         << "\t--end\t3 ints, offset for the last block, default: 63 80 959\n"
-        << "\t--tempblock\tname of the scaffolding block, default: minecraft:basalt\n"
+        << "\t--tempblock\tname of the temp block, must be a full solid block, default: minecraft:basalt\n"
         << std::endl;
 }
 
@@ -27,7 +28,8 @@ struct Args
 {
     bool help = false;
     std::string address = "127.0.0.1:25565";
-    int num_bot = 10;
+    int num_bot = 16;
+    int num_world = 8;
     Botcraft::Position start = Botcraft::Position(-64, -59, 832);
     Botcraft::Position end = Botcraft::Position(63, 80, 959);
     std::string temp_block = "minecraft:basalt";
@@ -72,19 +74,26 @@ int main(int argc, char* argv[])
         const std::vector<std::string> base_names = {
             "BotAuFeu", "Botager", "Botiron", "BotEnTouche",
             "BotDeVin", "BotAuxRoses", "BotronMinet", "Botmobile",
-            "Botman", "Botentiel"
+            "Botman", "Botentiel", "BotDog", "Botrefois",
+            "Botomate", "Botaku", "Botaubus", "Bothentique"
         };
 
         const std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> eater_behaviour_tree = FullTree();
 
+        std::vector<std::shared_ptr<Botcraft::World> > shared_worlds(args.num_world);
+        for (int i = 0; i < args.num_world; ++i)
+        {
+            shared_worlds[i] = std::make_shared<Botcraft::World>(true, false);
+        }
         std::vector<std::string> names(args.num_bot);
         std::vector<std::shared_ptr<Botcraft::SimpleBehaviourClient> > clients(args.num_bot);
         for (int i = 0; i < args.num_bot; ++i)
         {
             // Get a unique name for this bot
-            names[i] = base_names[i] + (i < base_names.size() ? "" : ("_" + std::to_string(i / base_names.size())));
+            names[i] = i < base_names.size() ? base_names[i] : ("Botcraft_" + std::to_string(i / base_names.size()));
             // Create the bot client and connect to the server
             clients[i] = std::make_shared<Botcraft::SimpleBehaviourClient>(i == -1);
+            clients[i]->SetSharedWorld(shared_worlds[i % args.num_world]);
             clients[i]->Connect(args.address, names[i], false);
             // Start behaviour thread and set active tree
             clients[i]->StartBehaviour();
@@ -160,6 +169,19 @@ Args ParseCommandLine(int argc, char* argv[])
             else
             {
                 LOG_FATAL("--numbot requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--numworld")
+        {
+            if (i + 1 < argc)
+            {
+                args.num_world = std::stoi(argv[++i]);
+            }
+            else
+            {
+                LOG_FATAL("--numworld requires an argument");
                 args.return_code = 1;
                 return args;
             }
