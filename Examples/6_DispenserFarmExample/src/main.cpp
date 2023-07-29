@@ -317,7 +317,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
     return Botcraft::Builder<Botcraft::SimpleBehaviourClient>("eat")
         .selector()
             // If hungry
-            .inverter().leaf("check is hungry", Botcraft::IsHungry)
+            .inverter().leaf("check is hungry", Botcraft::IsHungry, 20)
             // Go buy some food, then eat
             .sequence()
                 .leaf("check if has 3 emeralds in inventory", Botcraft::HasItemInInventory, "minecraft:emerald", 3)

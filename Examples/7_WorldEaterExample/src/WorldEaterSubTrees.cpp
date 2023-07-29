@@ -72,7 +72,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Action
         .repeater("Action loop", 0).inverter() // repeater(0) + inverter --> repeat until it fails
             .sequence("Action loop body")
                 .selector("Eat")
-                    .inverter().leaf(IsHungry)
+                    .inverter().leaf(IsHungry, 15) // Try to optimize golden carrots eating pattern
                     .leaf(Eat, "minecraft:golden_carrot", true)
                 .end()
                 .selector("Clean inventory")

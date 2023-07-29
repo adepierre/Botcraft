@@ -123,10 +123,16 @@ namespace Botcraft
     Status RemoveBlackboardDataBlackboard(BehaviourClient& client);
 
 
-    /// @brief Return success if player food isn't at max
+    /// @brief Return success if player food is below a threshold
     /// @param client The client performing the action
-    /// @return Success if player.GetFood() < 20, Failure otherwise
-    Status IsHungry(BehaviourClient& client);
+    /// @param threshold Threshold under which the player is considered to be hungry
+    /// @return Success if player.GetFood() < threshold, Failure otherwise
+    Status IsHungry(BehaviourClient& client, const int threshold = 20);
+
+    /// @brief Same thing as IsHungry, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if player.GetFood() < threshold, Failure otherwise
+    Status IsHungryBlackboard(BehaviourClient& client);
 
 
     /// @brief Copy a blackboard data

@@ -300,7 +300,7 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
     auto eat_subtree = Builder<SimpleBehaviourClient>("eat")
         .selector()
             // If hungry
-            .inverter().leaf(IsHungry)
+            .inverter().leaf(IsHungry, 20)
             // Get some food, then eat
             .sequence()
                 .selector()

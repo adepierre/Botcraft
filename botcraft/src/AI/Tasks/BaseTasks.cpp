@@ -251,9 +251,36 @@ namespace Botcraft
     }
 
 
-    Status IsHungry(BehaviourClient& client)
+    Status IsHungryImpl(BehaviourClient& client, const int threshold)
     {
-        return client.GetEntityManager()->GetLocalPlayer()->GetFood() < 20.0f ? Status::Success : Status::Failure;
+        return client.GetEntityManager()->GetLocalPlayer()->GetFood() < threshold ? Status::Success : Status::Failure;
+    }
+
+    Status IsHungry(BehaviourClient& client, const int threshold)
+    {
+        constexpr std::array variable_names = {
+            "IsHungry.threshold"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<int>(variable_names[0], threshold);
+
+        return IsHungryImpl(client, threshold);
+    }
+
+    Status IsHungryBlackboard(BehaviourClient& client)
+    {
+        constexpr std::array variable_names = {
+            "IsHungry.threshold"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const int threshold = blackboard.Get<int>(variable_names[0]);
+
+        return IsHungryImpl(client, threshold);
     }
 
 
