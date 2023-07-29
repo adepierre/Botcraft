@@ -173,6 +173,12 @@ Status Init(SimpleBehaviourClient& client)
         ToolType::Sword,
     });
 
+    if (!IdentifyBaseCampLayout(client))
+    {
+        return Status::Failure;
+    }
+
+
     return Status::Success;
 }
 
@@ -360,17 +366,11 @@ Status CleanInventory(SimpleBehaviourClient& client)
     {
         std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         init_position = local_player->GetPosition();
-        local_player->LookAt(init_position, true);
     }
-
-    // Wait for ~0.5 sec so the server registers the new look at
-    for (int i = 0; i < 50; ++i)
-    {
-        client.Yield();
-    }
+    LookAt(client, init_position, true);
 
     // Throw all items below
-    const std::unordered_set<ItemId> items_to_keep = {
+    const std::unordered_set<ItemId> non_tool_items_to_keep = {
         AssetsManager::getInstance().GetItemID("minecraft:lava_bucket"),
         AssetsManager::getInstance().GetItemID("minecraft:golden_carrot"),
         AssetsManager::getInstance().GetItemID("minecraft:ladder"),
@@ -386,7 +386,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
             // Don't throw lava bucket, food, temp block or tools
             if (idx < Window::INVENTORY_STORAGE_START ||
                 slot.IsEmptySlot() ||
-                items_to_keep.find(slot.GetItemID()) != items_to_keep.end() ||
+                non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.end() ||
                 AssetsManager::getInstance().GetItem(slot.GetItemID())->GetToolType() != ToolType::None)
             {
                 continue;
@@ -663,8 +663,101 @@ Status PlanLayerBlocks(SimpleBehaviourClient& client)
     return Status::Success;
 }
 
+bool IdentifyBaseCampLayout(Botcraft::SimpleBehaviourClient& client)
+{
+    Blackboard& blackboard = client.GetBlackboard();
 
+    const int bot_index = blackboard.Get<int>("Eater.bot_index");
 
+    std::unordered_map<std::string, std::string> block_item_mapping = {
+        { "minecraft:red_concrete", "drop" },
+        { "minecraft:orange_shulker_box", "lava_bucket" },
+        { "minecraft:pink_shulker_box", "sword" },
+        { "minecraft:magenta_shulker_box", "shears" },
+        { "minecraft:purple_shulker_box", "hoe" },
+        { "minecraft:blue_shulker_box", "shovel" },
+        { "minecraft:light_blue_shulker_box", "axe" },
+        { "minecraft:yellow_shulker_box", "golden_carrots" },
+        { "minecraft:brown_shulker_box", "ladder" },
+        { "minecraft:black_shulker_box", "temp_block" },
+        { "minecraft:cyan_shulker_box", "pickaxe" }
+    };
+
+    std::unordered_map<std::string, std::vector<Position>> found_blocks;
+    for (const auto& [k, v] : block_item_mapping)
+    {
+        found_blocks[k] = {};
+    }
+
+    std::shared_ptr<World> world = client.GetWorld();
+    Position current_position;
+    // Loop through all loaded blocks to find the one we are looking for
+    for (const auto& [coords, chunk] : world->GetAllChunks())
+    {
+        for (int y = world->GetMinY(); y < world->GetMinY() + world->GetHeight(); ++y)
+        {
+            current_position.y = y;
+            for (int x = 0; x < CHUNK_WIDTH; ++x)
+            {
+                current_position.x = coords.first * CHUNK_WIDTH + x;
+                for (int z = 0; z < CHUNK_WIDTH; ++z)
+                {
+                    current_position.z = coords.second * CHUNK_WIDTH + z;
+                    const Blockstate* blockstate = nullptr;
+                    {
+                        std::lock_guard<std::mutex> lock_world(world->GetMutex());
+                        const Block* block = world->GetBlock(current_position);
+                        if (block != nullptr)
+                        {
+                            blockstate = block->GetBlockstate();
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (const auto it = found_blocks.find(blockstate->GetName()); it != found_blocks.end())
+                    {
+                        it->second.push_back(current_position);
+                        if (bot_index == 0)
+                        {
+                            LOG_INFO(blockstate->GetName() << "(" << block_item_mapping.at(blockstate->GetName()) << ") found at " << current_position);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Sort all positions in a consistent way for all bots
+    for (auto& [_, v] : found_blocks)
+    {
+        std::sort(v.begin(), v.end(), [&](const Position& a, const Position& b)
+            {
+                return a.x < b.x ||
+                    (a.x == b.x && a.y < b.y) ||
+                    (a.x == b.x && a.y == b.y && a.z < b.z);
+            });
+    }
+
+    // Assign dedicated positions for each bot based on index
+    for (const auto& [k, v] : block_item_mapping)
+    {
+        const std::vector<Position>& positions = found_blocks.at(k);
+        if (positions.size() == 0)
+        {
+            if (bot_index == 0)
+            {
+                LOG_ERROR("Can't find any " << k << ". I can't work without " << v);
+            }
+            return false;
+        }
+        blackboard.Set<Position>("Eater." + v + "_position", positions[bot_index % positions.size()]);
+    }
+
+    return true;
+}
 
 std::unordered_set<Position> CollectBlocks(const std::shared_ptr<Botcraft::World> world, const Position& start, const Position& end, const int layer, const bool fluids, const std::unordered_set<std::string>& spared_blocks)
 {
