@@ -37,4 +37,20 @@ namespace Botcraft::Utilities
 
         return 0;
     }
+
+    int GetDamageCount(const NBT::Value& item_nbt)
+    {
+        if (!item_nbt.HasData())
+        {
+            return 0;
+        }
+
+        if (!item_nbt.contains("Damage") ||
+            !item_nbt["Damage"].is<NBT::TagInt>())
+        {
+            return 0;
+        }
+
+        return item_nbt["Damage"].get<NBT::TagInt>();
+    }
 }

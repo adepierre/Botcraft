@@ -13,4 +13,5 @@ namespace ProtocolCraft
 namespace Botcraft::Utilities
 {
     short GetEnchantmentLvl(const ProtocolCraft::NBT::Value& item_nbt, const std::string& enchantment_name);
+    int GetDamageCount(const NBT::Value& item_nbt);
 }

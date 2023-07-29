@@ -4,6 +4,7 @@
 #include <botcraft/Game/Entities/EntityManager.hpp>
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/AI/Tasks/AllTasks.hpp>
+#include <botcraft/Utilities/NBTUtilities.hpp>
 
 #include <queue>
 
@@ -224,6 +225,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
 {
     Blackboard& blackboard = client.GetBlackboard();
     std::shared_ptr<World> world = client.GetWorld();
+    std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
     const std::pair<Position, ActionType>& action = blackboard.Get<std::pair<Position, ActionType>>("Eater.next_action");
 
@@ -243,7 +245,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         }
 
         // Check which tool type is the best
-        /*const std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>& tool_types = blackboard.Get<std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>>("Eater.tools");
+        const std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>& tool_types = blackboard.Get<std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>>("Eater.tools");
         ToolType best_tool_type = ToolType::None;
         float min_mining_time = std::numeric_limits<float>::max();
 
@@ -255,28 +257,60 @@ Status ExecuteAction(SimpleBehaviourClient& client)
                 min_mining_time = mining_time;
                 best_tool_type = t;
             }
-        }*/
+        }
 
-        client.SendChatCommand("setblock "
-            + std::to_string(action.first.x) + " "
-            + std::to_string(action.first.y) + " "
-            + std::to_string(action.first.z) + " "
-            + "minecraft:air");
-
-        const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-        while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() < 2000)
+        // Set the best tool in hand
+        std::string tool_name = "";
         {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            const std::map<short, ProtocolCraft::Slot>& inventory_slots = inventory_manager->GetPlayerInventory()->GetSlots();
+            for (const auto& [i, slot] : inventory_slots)
             {
-                std::lock_guard<std::mutex> lock(world->GetMutex());
-                const Block* block = world->GetBlock(action.first);
-                if (block == nullptr || block->GetBlockstate()->IsAir())
+                if (i < Window::INVENTORY_STORAGE_START || i > Window::INVENTORY_OFFHAND_INDEX || slot.IsEmptySlot())
                 {
-                    return Status::Success;
+                    continue;
+                }
+
+                const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+                if (item->GetToolType() == best_tool_type)
+                {
+                    // Check the tool won't break, with a large margin of 1 to be safe
+                    const int damage_count = Utilities::GetDamageCount(slot.GetNBT());
+                    if (damage_count < item->GetMaxDurability() - 2)
+                    {
+                        tool_name = item->GetName();
+                        break;
+                    }
                 }
             }
-            client.Yield();
         }
-        return Status::Failure;
+
+        // We don't have a tool of this type or it's too damaged
+        if (tool_name == "")
+        {
+            return Status::Failure;
+        }
+
+        if (SetItemInHand(client, tool_name) == Status::Failure)
+        {
+            return Status::Failure;
+        }
+
+        // Dig would call GoTo too, but without the 2 blocks min dist we want
+        StartSprinting(client);
+        if (GoTo(client, action.first, 4, 2) == Status::Failure)
+        {
+            StopSprinting(client);
+            return Status::Failure;
+        }
+        StopSprinting(client);
+
+        if (Dig(client, action.first, true, PlayerDiggingFace::Up) == Status::Failure)
+        {
+            return Status::Failure;
+        }
+
+        return Status::Success;
     }
     else if (action.second == ActionType::PlaceTempBlock || action.second == ActionType::PlaceSolidBlock || action.second == ActionType::PlaceLadderBlock)
     {
@@ -297,27 +331,15 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             }
         }
 
-        client.SendChatCommand("setblock "
-            + std::to_string(action.first.x) + " "
-            + std::to_string(action.first.y) + " "
-            + std::to_string(action.first.z) + " "
-            + block_to_place + (action.second == ActionType::PlaceLadderBlock ? "[facing=east]" : ""));
-
-
-        const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-        while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() < 2000)
+        StartSprinting(client);
+        if (PlaceBlock(client, block_to_place, action.first, std::nullopt, true) == Status::Failure)
         {
-            {
-                std::lock_guard<std::mutex> lock(world->GetMutex());
-                const Block* block = world->GetBlock(action.first);
-                if (block != nullptr && block->GetBlockstate()->GetName() == block_to_place)
-                {
-                    return Status::Success;
-                }
-            }
-            client.Yield();
+            StopSprinting(client);
+            return Status::Failure;
         }
-        return Status::Failure;
+        StopSprinting(client);
+
+        return Status::Success;
     }
     else
     {
@@ -328,7 +350,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     return Status::Success;
 }
 
-Botcraft::Status CheckActionsDone(Botcraft::SimpleBehaviourClient& client)
+Status CheckActionsDone(SimpleBehaviourClient& client)
 {
     Blackboard& blackboard = client.GetBlackboard();
 
@@ -449,7 +471,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
     }
 
     // Put lava below
-    if (SetItemInHand(client, "minecraft:lava_bucket") != Botcraft::Status::Success)
+    if (SetItemInHand(client, "minecraft:lava_bucket") != Status::Success)
     {
         return Status::Failure;
     }
@@ -521,7 +543,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
     network_manager->Send(use_item_on);
     network_manager->Send(use_item);
 
-    return Botcraft::Status::Success;
+    return Status::Success;
 }
 
 Status MoveToNextLayer(SimpleBehaviourClient& client)
@@ -615,18 +637,18 @@ Status PlanLayerFluids(SimpleBehaviourClient& client)
     // Fluids pass
     // Get all fluid blocks
     // -1/+1 to avoid leaking from the sides
-    std::unordered_set<Botcraft::Position> blocks_fluids = CollectBlocks(world, start + Botcraft::Position(-1, 0, -1), end + Botcraft::Position(1, 0, 1), current_layer, true, {});
+    std::unordered_set<Position> blocks_fluids = CollectBlocks(world, start + Position(-1, 0, -1), end + Position(1, 0, 1), current_layer, true, {});
     blocks_fluids.insert(layer_entry);
-    std::unordered_map<Botcraft::Position, std::unordered_set<Botcraft::Position>> additional_neighbours_fluids;
-    const std::vector<std::unordered_set<Botcraft::Position>> components_fluids = GroupBlocksInComponents(start - Botcraft::Position(1, 0, 1), end + Botcraft::Position(1, 0, 1), layer_entry, client, blocks_fluids, &additional_neighbours_fluids);
-    const std::vector<Botcraft::Position> blocks_to_add_fluids = GetBlocksToAdd(components_fluids, layer_entry);
-    const std::unordered_set<Botcraft::Position> blocks_to_fill_fluids = FlattenComponentsAndAdditionalBlocks(components_fluids, blocks_to_add_fluids);
-    std::vector<Botcraft::Position> ordered_blocks_to_place_fluids = ComputeBlockOrder(blocks_to_fill_fluids, layer_entry, ladder_face, additional_neighbours_fluids);
+    std::unordered_map<Position, std::unordered_set<Position>> additional_neighbours_fluids;
+    const std::vector<std::unordered_set<Position>> components_fluids = GroupBlocksInComponents(start - Position(1, 0, 1), end + Position(1, 0, 1), layer_entry, client, blocks_fluids, &additional_neighbours_fluids);
+    const std::vector<Position> blocks_to_add_fluids = GetBlocksToAdd(components_fluids, layer_entry);
+    const std::unordered_set<Position> blocks_to_fill_fluids = FlattenComponentsAndAdditionalBlocks(components_fluids, blocks_to_add_fluids);
+    std::vector<Position> ordered_blocks_to_place_fluids = ComputeBlockOrder(blocks_to_fill_fluids, layer_entry, ladder_face, additional_neighbours_fluids);
     std::reverse(ordered_blocks_to_place_fluids.begin(), ordered_blocks_to_place_fluids.end());
 
     std::queue<std::pair<Position, ActionType>> action_queue;
 
-    for (const Botcraft::Position& p : ordered_blocks_to_place_fluids)
+    for (const Position& p : ordered_blocks_to_place_fluids)
     {
         // Don't replace the ladder...
         if (p == layer_entry)
@@ -658,19 +680,19 @@ Status PlanLayerBlocks(SimpleBehaviourClient& client)
 
     // Solid pass
     // Get all solid blocks
-    std::unordered_set<Botcraft::Position> blocks = CollectBlocks(world, start, end, current_layer, false, {});
+    std::unordered_set<Position> blocks = CollectBlocks(world, start, end, current_layer, false, {});
     blocks.insert(layer_entry);
-    std::unordered_map<Botcraft::Position, std::unordered_set<Botcraft::Position>> additional_neighbours;
-    const std::vector<std::unordered_set<Botcraft::Position>> components = GroupBlocksInComponents(start, end, layer_entry, client, blocks, &additional_neighbours);
-    const std::vector<Botcraft::Position> blocks_to_add = GetBlocksToAdd(components, layer_entry);
-    const std::unordered_set<Botcraft::Position> blocks_to_mine = FlattenComponentsAndAdditionalBlocks(components, blocks_to_add);
-    const std::vector<Botcraft::Position> ordered_blocks_to_mine = ComputeBlockOrder(blocks_to_mine, layer_entry, ladder_face, additional_neighbours);
+    std::unordered_map<Position, std::unordered_set<Position>> additional_neighbours;
+    const std::vector<std::unordered_set<Position>> components = GroupBlocksInComponents(start, end, layer_entry, client, blocks, &additional_neighbours);
+    const std::vector<Position> blocks_to_add = GetBlocksToAdd(components, layer_entry);
+    const std::unordered_set<Position> blocks_to_mine = FlattenComponentsAndAdditionalBlocks(components, blocks_to_add);
+    const std::vector<Position> ordered_blocks_to_mine = ComputeBlockOrder(blocks_to_mine, layer_entry, ladder_face, additional_neighbours);
 
-    for (const Botcraft::Position& p : blocks_to_add)
+    for (const Position& p : blocks_to_add)
     {
         action_queue.push({ p, ActionType::PlaceSolidBlock });
     }
-    for (const Botcraft::Position& p : ordered_blocks_to_mine)
+    for (const Position& p : ordered_blocks_to_mine)
     {
         // Don't replace the ladder...
         if (p == layer_entry)
@@ -685,7 +707,7 @@ Status PlanLayerBlocks(SimpleBehaviourClient& client)
     return Status::Success;
 }
 
-bool IdentifyBaseCampLayout(Botcraft::SimpleBehaviourClient& client)
+bool IdentifyBaseCampLayout(SimpleBehaviourClient& client)
 {
     Blackboard& blackboard = client.GetBlackboard();
 
@@ -781,10 +803,10 @@ bool IdentifyBaseCampLayout(Botcraft::SimpleBehaviourClient& client)
     return true;
 }
 
-std::unordered_set<Position> CollectBlocks(const std::shared_ptr<Botcraft::World> world, const Position& start, const Position& end, const int layer, const bool fluids, const std::unordered_set<std::string>& spared_blocks)
+std::unordered_set<Position> CollectBlocks(const std::shared_ptr<World> world, const Position& start, const Position& end, const int layer, const bool fluids, const std::unordered_set<std::string>& spared_blocks)
 {
-    std::unordered_set<Botcraft::Position> output;
-    Botcraft::Position p(0, layer, 0);
+    std::unordered_set<Position> output;
+    Position p(0, layer, 0);
     for (int x = start.x; x <= end.x; ++x)
     {
         p.x = x;
@@ -792,25 +814,25 @@ std::unordered_set<Position> CollectBlocks(const std::shared_ptr<Botcraft::World
         {
             p.z = z;
             std::scoped_lock<std::mutex> lock(world->GetMutex());
-            const Botcraft::Block* block = world->GetBlock(p);
+            const Block* block = world->GetBlock(p);
             if (block && !block->GetBlockstate()->IsAir() && spared_blocks.find(block->GetBlockstate()->GetName()) == spared_blocks.cend() &&
                 ((fluids && block->GetBlockstate()->IsFluid())
                     || (!fluids && !block->GetBlockstate()->IsAir()))
                 )
             {
-                output.insert(Botcraft::Position(x, layer, z));
+                output.insert(Position(x, layer, z));
             }
         }
     }
     return output;
 }
 
-std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position& start, const Position& end, const Botcraft::Position& start_point, const Botcraft::BehaviourClient& client, const std::unordered_set<Position>& positions, std::unordered_map<Position, std::unordered_set<Position>>* additional_neighbours)
+std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position& start, const Position& end, const Position& start_point, const BehaviourClient& client, const std::unordered_set<Position>& positions, std::unordered_map<Position, std::unordered_set<Position>>* additional_neighbours)
 {
-    std::vector<std::unordered_set<Botcraft::Position>> components;
+    std::vector<std::unordered_set<Position>> components;
 
-    std::unordered_map<Botcraft::Position, int> components_index;
-    for (const Botcraft::Position& b : positions)
+    std::unordered_map<Position, int> components_index;
+    for (const Position& b : positions)
     {
         components_index[b] = -1;
     }
@@ -824,12 +846,12 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
             continue;
         }
         // Otherwise add all neighbours we can find to the current component
-        std::unordered_set<Botcraft::Position> current_component;
-        std::unordered_set<Botcraft::Position> neighbours = { p };
+        std::unordered_set<Position> current_component;
+        std::unordered_set<Position> neighbours = { p };
         while (neighbours.size() > 0)
         {
             // Take first element in current neighbours
-            const Botcraft::Position current_pos = *neighbours.begin();
+            const Position current_pos = *neighbours.begin();
             neighbours.erase(current_pos);
 
             // This neighbour is already in a component
@@ -843,7 +865,7 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
 
             if (current_pos.x > start.x)
             {
-                const Botcraft::Position west = current_pos + Botcraft::Position(-1, 0, 0);
+                const Position west = current_pos + Position(-1, 0, 0);
                 if (const auto it = components_index.find(west); it != components_index.end() && it->second == -1)
                 {
                     neighbours.insert(west);
@@ -851,7 +873,7 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
             }
             if (current_pos.x < end.x)
             {
-                const Botcraft::Position east = current_pos + Botcraft::Position(1, 0, 0);
+                const Position east = current_pos + Position(1, 0, 0);
                 if (const auto it = components_index.find(east); it != components_index.end() && it->second == -1)
                 {
                     neighbours.insert(east);
@@ -859,7 +881,7 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
             }
             if (current_pos.z > start.z)
             {
-                const Botcraft::Position north = current_pos + Botcraft::Position(0, 0, -1);
+                const Position north = current_pos + Position(0, 0, -1);
                 if (const auto it = components_index.find(north); it != components_index.end() && it->second == -1)
                 {
                     neighbours.insert(north);
@@ -867,7 +889,7 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
             }
             if (current_pos.z < end.z)
             {
-                const Botcraft::Position south = current_pos + Botcraft::Position(0, 0, 1);
+                const Position south = current_pos + Position(0, 0, 1);
                 if (const auto it = components_index.find(south); it != components_index.end() && it->second == -1)
                 {
                     neighbours.insert(south);
@@ -892,16 +914,16 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
         bool merged = false;
         for (size_t i = 0; i < components.size(); ++i)
         {
-            const Botcraft::Position pathfinding_start = *components[i].begin() + Botcraft::Position(0, 1, 0);
-            const Botcraft::Position pathfinding_end = *current_component.begin() + Botcraft::Position(0, 1, 0);
-            const std::vector<Botcraft::Position> path = Botcraft::FindPath(client, pathfinding_start, pathfinding_end, 0, true);
-            const std::vector<Botcraft::Position> reversed_path = Botcraft::FindPath(client, pathfinding_end, pathfinding_start, 0, true);
+            const Position pathfinding_start = *components[i].begin() + Position(0, 1, 0);
+            const Position pathfinding_end = *current_component.begin() + Position(0, 1, 0);
+            const std::vector<Position> path = FindPath(client, pathfinding_start, pathfinding_end, 0, true);
+            const std::vector<Position> reversed_path = FindPath(client, pathfinding_end, pathfinding_start, 0, true);
             // If we can pathfind from start to end (both ways to prevent cliff falls that would only allow one-way travel)
             if (path.back() == pathfinding_end && reversed_path.back() == pathfinding_start)
             {
                 merged = true;
                 // Add link between the two components as non adjacent neighbours
-                Botcraft::Position path_block_component1 = pathfinding_start + Botcraft::Position(0, -1, 0);
+                Position path_block_component1 = pathfinding_start + Position(0, -1, 0);
                 for (size_t j = 0; j < path.size(); ++j)
                 {
                     // If the pathfinding crosses the boundaries of the work area anywhere else than the ladder,
@@ -916,14 +938,14 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
                     if (additional_neighbours != nullptr)
                     {
                         // If component index of the current path position is equal to the one currently compared to (i)
-                        auto it = components_index.find(path[j] + Botcraft::Position(0, -1, 0));
+                        auto it = components_index.find(path[j] + Position(0, -1, 0));
                         if (it != components_index.end() && it->second == i)
                         {
-                            path_block_component1 = path[j] + Botcraft::Position(0, -1, 0);
+                            path_block_component1 = path[j] + Position(0, -1, 0);
                         }
                     }
                 }
-                Botcraft::Position path_block_component2 = pathfinding_end + Botcraft::Position(0, -1, 0);
+                Position path_block_component2 = pathfinding_end + Position(0, -1, 0);
                 for (size_t j = 0; j < reversed_path.size(); ++j)
                 {
                     // If the pathfinding crosses the boundaries of the work area anywhere else than the ladder,
@@ -938,16 +960,16 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
                     if (additional_neighbours != nullptr)
                     {
                         // If component index of the current path position is equal to the current one to add (components.size())
-                        auto it = components_index.find(reversed_path[j] + Botcraft::Position(0, -1, 0));
+                        auto it = components_index.find(reversed_path[j] + Position(0, -1, 0));
                         if (it != components_index.end() && it->second == components.size())
                         {
-                            path_block_component2 = reversed_path[j] + Botcraft::Position(0, -1, 0);
+                            path_block_component2 = reversed_path[j] + Position(0, -1, 0);
                         }
                     }
                 }
                 if (merged)
                 {
-                    for (const Botcraft::Position& p : current_component)
+                    for (const Position& p : current_component)
                     {
                         components_index[p] = i;
                     }
@@ -984,14 +1006,14 @@ std::vector<Position> GetBlocksToAdd(const std::vector<std::unordered_set<Positi
         components_to_process.insert(i);
     }
 
-    std::vector<Botcraft::Position> output;
+    std::vector<Position> output;
     output.reserve(components_to_process.size()); // rough estimate of ~1:1 ratio block present/block to add
     while (components_to_process.size() > 0)
     {
         float min_dist = std::numeric_limits<float>::max();
         int argmin_component_idx = -1;
-        Botcraft::Position from;
-        Botcraft::Position to;
+        Position from;
+        Position to;
 
         // Look for the "closest" remaining component
         // from the one we already have
@@ -999,9 +1021,9 @@ std::vector<Position> GetBlocksToAdd(const std::vector<std::unordered_set<Positi
         {
             for (const int c2 : components_to_process)
             {
-                for (const Botcraft::Position& p1 : c1 != -1 ? components[c1] : std::unordered_set<Botcraft::Position>{ start_point })
+                for (const Position& p1 : c1 != -1 ? components[c1] : std::unordered_set<Position>{ start_point })
                 {
-                    for (const Botcraft::Position& p2 : components[c2])
+                    for (const Position& p2 : components[c2])
                     {
                         const float dist = std::abs(p1.x - p2.x) + std::abs(p1.z - p2.z);
                         if (dist < min_dist)
@@ -1043,8 +1065,8 @@ std::vector<Position> GetBlocksToAdd(const std::vector<std::unordered_set<Positi
 
 std::unordered_set<Position> FlattenComponentsAndAdditionalBlocks(const std::vector<std::unordered_set<Position>>& components, const std::vector<Position>& additional_blocks)
 {
-    std::unordered_set<Botcraft::Position> output;
-    for (const std::unordered_set<Botcraft::Position>& v : components)
+    std::unordered_set<Position> output;
+    for (const std::unordered_set<Position>& v : components)
     {
         output.insert(v.begin(), v.end());
     }
@@ -1052,11 +1074,11 @@ std::unordered_set<Position> FlattenComponentsAndAdditionalBlocks(const std::vec
     return output;
 }
 
-std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, const Position& start_block, const Botcraft::Direction orientation, const std::unordered_map<Position, std::unordered_set<Position>>& additional_neighbours)
+std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, const Position& start_block, const Direction orientation, const std::unordered_map<Position, std::unordered_set<Position>>& additional_neighbours)
 {
     struct SortingNode
     {
-        Botcraft::Position pos;
+        Position pos;
         std::vector<SortingNode> children;
     };
 
@@ -1072,24 +1094,24 @@ std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, con
     std::queue<SortingNode*> to_process;
     to_process.push(&root);
 
-    std::array<Botcraft::Position, 4> potential_neighbours;
+    std::array<Position, 4> potential_neighbours;
     
     if (orientation == Direction::East || orientation == Direction::West)
     {
         potential_neighbours = {
-            Botcraft::Position(-1, 0, 0),   // west
-            Botcraft::Position(1, 0, 0),    // east
-            Botcraft::Position(0, 0, -1),   // north
-            Botcraft::Position(0, 0, 1)     // south
+            Position(-1, 0, 0),   // west
+            Position(1, 0, 0),    // east
+            Position(0, 0, -1),   // north
+            Position(0, 0, 1)     // south
         };
     }
     else
     {
         potential_neighbours = {
-            Botcraft::Position(0, 0, -1),   // north
-            Botcraft::Position(0, 0, 1),    // south
-            Botcraft::Position(-1, 0, 0),   // west
-            Botcraft::Position(1, 0, 0)     // east
+            Position(0, 0, -1),   // north
+            Position(0, 0, 1),    // south
+            Position(-1, 0, 0),   // west
+            Position(1, 0, 0)     // east
         };
     }
     
@@ -1099,9 +1121,9 @@ std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, con
         SortingNode* current_node = to_process.front();
 
         // Add direct neighbours
-        for (const Botcraft::Position& offset : potential_neighbours)
+        for (const Position& offset : potential_neighbours)
         {
-            const Botcraft::Position potential_neighbour = current_node->pos + offset;
+            const Position potential_neighbour = current_node->pos + offset;
             if (blocks.find(potential_neighbour) != blocks.end())
             {
                 SortingNode neighbour;
@@ -1112,7 +1134,7 @@ std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, con
         // Add additional ones (if any)
         if (const auto it = additional_neighbours.find(current_node->pos); it != additional_neighbours.end())
         {
-            for (const Botcraft::Position& potential_neighbour : it->second)
+            for (const Position& potential_neighbour : it->second)
             {
                 if (blocks.find(potential_neighbour) != blocks.end())
                 {
@@ -1134,13 +1156,13 @@ std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, con
     // Recursive function to add all children, then current node
     // This allows to be sure that we will never "cut the branch
     // we are sitting on" preventing getting back to start_point
-    const std::function<std::vector<Botcraft::Position>(const SortingNode& n)> get_sorted_positions =
-        [&get_sorted_positions](const SortingNode& n) -> std::vector<Botcraft::Position>
+    const std::function<std::vector<Position>(const SortingNode& n)> get_sorted_positions =
+        [&get_sorted_positions](const SortingNode& n) -> std::vector<Position>
     {
-        std::vector<Botcraft::Position> output;
+        std::vector<Position> output;
         for (const SortingNode& c : n.children)
         {
-            const std::vector<Botcraft::Position> children_sorted = get_sorted_positions(c);
+            const std::vector<Position> children_sorted = get_sorted_positions(c);
             output.insert(output.end(), children_sorted.begin(), children_sorted.end());
         }
         output.push_back(n.pos);
@@ -1154,8 +1176,8 @@ std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, con
 Position GetFarthestXZBlock(const std::unordered_set<Position>& blocks, const Position& p)
 {
     int max_dist = 0;
-    Botcraft::Position max_pos = p;
-    for (const Botcraft::Position& b : blocks)
+    Position max_pos = p;
+    for (const Position& b : blocks)
     {
         const int dist = std::abs(b.x - p.x) + std::abs(b.z - p.z);
         if (dist > max_dist)
