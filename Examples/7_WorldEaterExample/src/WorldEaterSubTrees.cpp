@@ -10,8 +10,8 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> FullTree()
     return Builder<SimpleBehaviourClient>("Full Tree")
         .sequence()
             .tree(IsDeadTree())
-            .tree(BaseCampResupplyTree())
             .tree(InitTree())
+            .tree(BaseCampResupplyTree())
             .tree(MainTree())
             .tree(CompletionTree())
         .end();
@@ -48,22 +48,34 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> BaseCampResupplyTree()
 std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> MainTree()
 {
     return Builder<SimpleBehaviourClient>("Main Tree")
-        
-        .repeater(3) // Repeat the whole loop 3 times so the bot doesn't exit the loop
-                     // everytime there is a small pathfinding error, but instead only
-                     // when there are 3 failure in a row (probably meaning it is missing
-                     // something in its inventory and needs to resupply)
-        .repeater("Layer loop", 0).inverter() // repeater(0) + inverter --> repeat until it fails
-            .sequence("Layer loop body")
-                .leaf("Prepare layer", PrepareLayer)
-                .tree(ActionLoopTree())
-                //.leaf("Plan layer fluids", PlanLayerFluids)
-                //.tree(ActionLoopTree())
-                .leaf("Plan layer blocks", PlanLayerBlocks)
-                .tree(ActionLoopTree())
-                .leaf("Check done", CheckActionsDone)
-                .leaf("Move to next layer", MoveToNextLayer)
-            .end();
+        .sequence()
+            .leaf("Reset failure counter", SetBlackboardData<int>, "Eater.failed_loop", 0)
+            // Repeat the whole loop until it fails.
+            // The last leaf makes sure it fails only
+            // if the internal loop failed three times in
+            // a row.
+            .repeater(0).inverter()
+                .sequence()
+                    .repeater("Layer loop", 0).inverter() // repeater(0) + inverter --> repeat until it fails
+                        .selector()
+                            .sequence("Layer loop body")
+                                .leaf("Prepare layer", PrepareLayer)
+                                .tree(ActionLoopTree())
+                                .leaf("Plan layer fluids", PlanLayerFluids)
+                                .tree(ActionLoopTree())
+                                .leaf("Plan layer blocks", PlanLayerBlocks)
+                                .tree(ActionLoopTree())
+                                .leaf("Check done", CheckActionsDone)
+                                .leaf("Move to next layer", MoveToNextLayer)
+                                // If everything succeeded, reset failure counter to 0
+                                .leaf("Reset failure counter", SetBlackboardData<int>, "Eater.failed_loop", 0)
+                            .end()
+                            // if previous sequence didn't succeed, increment failure counter
+                            .leaf("Increment failure counter", [](SimpleBehaviourClient& c) { c.GetBlackboard().Set<int>("Eater.failed_loop", c.GetBlackboard().Get<int>("Eater.failed_loop") + 1); return Status::Failure; })
+                        .end()
+                    .leaf("Exit loop if 3 failures", [](SimpleBehaviourClient& c) { return c.GetBlackboard().Get<int>("Eater.failed_loop") == 3 ? Status::Failure : Status::Success; })
+                .end()
+        .end();
 }
 
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> ActionLoopTree()
