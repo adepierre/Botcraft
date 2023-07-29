@@ -22,20 +22,12 @@ namespace Botcraft
     {
         std::shared_ptr<LocalPlayer> local_player = c.GetEntityManager()->GetLocalPlayer();
         Vector3<double> hand_pos;
-        Position eyes_block;
-        bool is_on_ground;
         {
             std::lock_guard<std::mutex> lock(local_player->GetMutex());
             // Get hand (?) pos to check the distance to the center of the target block
             // (unsure about the 1.0 distance, might be from the eyes or somewhere else)
             hand_pos = local_player->GetPosition();
             hand_pos.y += 1.0;
-            eyes_block = Position(
-                static_cast<int>(std::floor(local_player->GetX())),
-                static_cast<int>(std::floor(local_player->GetY() + 1.6)),
-                static_cast<int>(std::floor(local_player->GetZ()))
-            );
-            is_on_ground = local_player->GetOnGround();
         }
 
         if (hand_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 20.0f)
@@ -45,6 +37,18 @@ namespace Botcraft
             {
                 return Status::Failure;
             }
+        }
+
+        Position eyes_block;
+        bool is_on_ground;
+        {
+            std::lock_guard<std::mutex> lock(local_player->GetMutex());
+            eyes_block = Position(
+                static_cast<int>(std::floor(local_player->GetX())),
+                static_cast<int>(std::floor(local_player->GetY() + 1.6)),
+                static_cast<int>(std::floor(local_player->GetZ()))
+            );
+            is_on_ground = local_player->GetOnGround();
         }
 
         std::shared_ptr<World> world = c.GetWorld();
