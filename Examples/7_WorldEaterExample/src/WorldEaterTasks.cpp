@@ -154,6 +154,29 @@ Status Init(SimpleBehaviourClient& client)
             LOG_ERROR("Work area of " << client.GetNetworkManager()->GetMyName() << " (from " << this_bot_start << "to " << this_bot_end << ") is not fully loaded, please move it closer before launching it");
             return Status::Failure;
         }
+
+        // Check the whole area for spawner and log them to user
+        if (bot_index == 0)
+        {
+            Position current_position;
+            for (int y = min_block.y - 16; y <= max_block.y + 16; ++y)
+            {
+                current_position.y = y;
+                for (int x = min_block.x - 16; x <= max_block.x + 16; ++x)
+                {
+                    current_position.x = x;
+                    for (int z = min_block.z - 16; z <= max_block.z + 16; ++z)
+                    {
+                        current_position.z = z;
+                        const Block* block = world->GetBlock(current_position);
+                        if (block != nullptr && !block->GetBlockstate()->IsAir() && block->GetBlockstate()->GetName() == "minecraft:spawner")
+                        {
+                            LOG_WARNING("Spawner detected at " << current_position << ". Please make sure it's spawnproofed as I don't like to die (it tickles)");
+                        }
+                    }
+                }
+            }
+        }
     }
 
     blackboard.Set<Position>("Eater.start_block", this_bot_start);
@@ -177,7 +200,6 @@ Status Init(SimpleBehaviourClient& client)
     {
         return Status::Failure;
     }
-
 
     return Status::Success;
 }
