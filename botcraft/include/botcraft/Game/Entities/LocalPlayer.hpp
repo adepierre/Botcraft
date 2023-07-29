@@ -6,9 +6,14 @@
 
 namespace Botcraft 
 {
+
     class LocalPlayer : public PlayerEntity
     {
     public:
+        static constexpr float WALKING_SPEED = 4.317f;
+        static constexpr float SPRINTING_SPEED = 5.612f;
+        static constexpr float SNEAKING_SPEED = 1.3f;
+
         LocalPlayer();
         virtual ~LocalPlayer();
 

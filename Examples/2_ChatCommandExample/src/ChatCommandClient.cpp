@@ -100,7 +100,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             return;
         }
         Position target_position;
-        float speed = 4.317f;
+        float speed = 0.0f;
         try
         {
             target_position = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
@@ -131,7 +131,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                     // parameters for the last bool value
                     .leaf("go to lambda", [=](ChatCommandClient& c) { return GoTo(c, target_position, 0, 0, speed); })
                     .leaf("go to function", GoTo, target_position, 0, 0, speed, true)
-                    .leaf("go to std bind", std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, speed, true))
+                    .leaf("go to std::bind", std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, speed, true))
                     // If goto fails, say something in chat
                     .leaf(Say, "Pathfinding failed :(")
                 .end()
@@ -272,7 +272,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
                 .succeeder().sequence()
-                    .leaf("go next to block", GoTo, pos, 4, 1, 4.317f, true)
+                    .leaf("go next to block", GoTo, pos, 4, 1, 0.0f, true)
                     // Set interaction position in the blackboard
                     .leaf(SetBlackboardData<Position>, "InteractWithBlock.pos", pos)
                     .selector()

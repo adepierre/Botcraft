@@ -21,10 +21,10 @@ namespace Botcraft
     /// @param goal The end goal
     /// @param dist_tolerance If != 0 and the distance between final position and goal is < dist_tolerance, return Success even if goal is not reached.
     /// @param min_end_dist Desired minimal checkboard distance between the final position and goal (useful if you want to place a block, you don't want to be at the exact spot, but close to it). Should always be <= dist_tolerance.
-    /// @param speed Travel speed (block per s)
+    /// @param speed Travel speed (block per s). If 0, will be inferred from current player state (sprinting, potion effects etc...)
     /// @param allow_jump If true, allow to jump above 1-wide gaps
     /// @return Success if goal is reached, Failure otherwise
-    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance = 0, const int min_end_dist = 0, const float speed = 4.317f, const bool allow_jump = true);
+    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance = 0, const int min_end_dist = 0, const float speed = 0.0f, const bool allow_jump = true);
 
     /// @brief Same thing as GoTo, but reads its parameters from the blackboard
     /// @param client The client performing the action
@@ -43,5 +43,16 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Always return Success
     Status LookAtBlackboard(BehaviourClient& client);
+
+
+    /// @brief Tell the server the bot starts sprinting (only useful to be more human-like, doesn't relate to the actual speed)
+    /// @param client The client performing the action
+    /// @return Always return Success
+    Status StartSprinting(BehaviourClient& client);
+
+    /// @brief Tell the server the bot stops sprinting (only useful to be more human-like, doesn't relate to the actual speed)
+    /// @param client The client performing the action
+    /// @return Always return Success
+    Status StopSprinting(BehaviourClient& client);
 
 } // namespace Botcraft

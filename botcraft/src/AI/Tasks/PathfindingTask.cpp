@@ -1159,7 +1159,8 @@ namespace Botcraft
         {
             LOG_WARNING("min_end_dist should be <= dist_tolerance if you want pathfinding to work as expected");
         }
-        std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+        std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
+        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
         std::shared_ptr<World> world = client.GetWorld();
         std::shared_ptr<PhysicsManager> physics_manager = client.GetPhysicsManager();
         // Enable gravity in case we are in creative mode
@@ -1167,6 +1168,27 @@ namespace Botcraft
         physics_manager->SetHasGravity(true);
         // Reset gravity when returning
         Utilities::OnEndScope reset_gravity([physics_manager, has_gravity]() { if (physics_manager != nullptr) physics_manager->SetHasGravity(has_gravity); });
+
+        // Get real movement speed
+        float movement_speed = speed;
+        if (movement_speed == 0.0f)
+        {
+            const float base_speed = local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED;
+
+            std::scoped_lock<std::mutex> entity_manager_lock(entity_manager->GetMutex());
+
+            // Get speed effect
+            unsigned char speed_amplifier = 0;
+            for (const EntityEffect& effect : local_player->GetEffects())
+            {
+                if (effect.type == EntityEffectType::Speed && effect.end > std::chrono::steady_clock::now())
+                {
+                    speed_amplifier = effect.amplifier + 1; // amplifier is 0 for "Effect I"
+                    continue;
+                }
+            }
+            movement_speed = base_speed * (1.0f + 0.2f * speed_amplifier);
+        }
 
         Position current_position;
         do
@@ -1245,7 +1267,7 @@ namespace Botcraft
 
             for (int i = 0; i < path.size(); ++i)
             {
-                const bool succeeded = Move(client, local_player, path[i], speed, 0.5f * speed);
+                const bool succeeded = Move(client, local_player, path[i], movement_speed, 0.5f * movement_speed);
 
                 // If something went wrong, break and
                 // replan the whole path to the goal
@@ -1310,7 +1332,7 @@ namespace Botcraft
         // Optional
         const int dist_tolerance = blackboard.Get(variable_names[1], 0);
         const int min_end_dist = blackboard.Get(variable_names[2], 0);
-        const float speed = blackboard.Get(variable_names[3], 4.317f);
+        const float speed = blackboard.Get(variable_names[3], 0.0f);
         const bool allow_jump = blackboard.Get(variable_names[4], true);
 
         return GoToImpl(client, goal, dist_tolerance, min_end_dist, speed, allow_jump);
@@ -1366,5 +1388,44 @@ namespace Botcraft
         const bool set_pitch = blackboard.Get(variable_names[1], true);
 
         return LookAtImpl(client, target, set_pitch);
+    }
+
+
+    Status StartSprinting(BehaviourClient& client)
+    {
+        if (client.GetEntityManager()->GetLocalPlayer()->GetIsRunning())
+        {
+            return Status::Success;
+        }
+
+        client.GetEntityManager()->GetLocalPlayer()->SetIsRunning(true);
+
+        std::shared_ptr<ProtocolCraft::ServerboundPlayerCommandPacket> player_command = std::make_shared<ProtocolCraft::ServerboundPlayerCommandPacket>();
+        player_command->SetAction(3); // 3 is start sprinting
+        player_command->SetId_(client.GetEntityManager()->GetLocalPlayer()->GetEntityID());
+        player_command->SetData(0);
+
+        client.GetNetworkManager()->Send(player_command);
+
+        return Status::Success;
+    }
+
+    Status StopSprinting(BehaviourClient& client)
+    {
+        if (!client.GetEntityManager()->GetLocalPlayer()->GetIsRunning())
+        {
+            return Status::Success;
+        }
+
+        client.GetEntityManager()->GetLocalPlayer()->SetIsRunning(false);
+
+        std::shared_ptr<ProtocolCraft::ServerboundPlayerCommandPacket> player_command = std::make_shared<ProtocolCraft::ServerboundPlayerCommandPacket>();
+        player_command->SetAction(4); // 4 is stop sprinting
+        player_command->SetId_(client.GetEntityManager()->GetLocalPlayer()->GetEntityID());
+        player_command->SetData(0);
+
+        client.GetNetworkManager()->Send(player_command);
+
+        return Status::Success;
     }
 }
