@@ -66,27 +66,40 @@ TEST_CASE("dig pickaxe")
 
     SECTION("haste")
     {
+        // Haste 2 is given using amplifier 1
 #if PROTOCOL_VERSION > 340
-        MinecraftServer::GetInstance().SendLine("effect give " + botname + " haste 99999 2");
+        MinecraftServer::GetInstance().SendLine("effect give " + botname + " haste 99999 1");
 #else
-        MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 2");
+        MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 1");
 #endif
         MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 5000);
+
+        CHECK(Botcraft::Utilities::WaitForCondition([&]() {
+            std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetMutex());
+            for (const Botcraft::EntityEffect& effect : bot->GetEntityManager()->GetLocalPlayer()->GetEffects())
+            {
+                if (effect.type == Botcraft::EntityEffectType::Haste)
+                {
+                    return true;
+                }
+            }
+            return false;
+            }, 5000));
 
         SECTION("golden pick")
         {
             GiveItem(bot, "golden_pickaxe", "Golden Pickaxe");
-            TestDig(bot, chest, 2.35);
+            TestDig(bot, chest, 2.7);
             TestDig(bot, stone, 0.15);
-            TestDig(bot, iron, 1.35);
+            TestDig(bot, iron, 1.5);
         }
 
         SECTION("diamond pick")
         {
             GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
-            TestDig(bot, chest, 2.35);
-            TestDig(bot, stone, 0.2);
-            TestDig(bot, iron, 0.6);
+            TestDig(bot, chest, 2.7);
+            TestDig(bot, stone, 0.25);
+            TestDig(bot, iron, 0.7);
         }
     }
 }
@@ -107,27 +120,40 @@ TEST_CASE("dig underwater")
 
     SECTION("haste")
     {
+        // Haste 2 is given using amplifier 1
 #if PROTOCOL_VERSION > 340
-        MinecraftServer::GetInstance().SendLine("effect give " + botname + " haste 99999 2");
+        MinecraftServer::GetInstance().SendLine("effect give " + botname + " haste 99999 1");
 #else
-        MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 2");
+        MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 1");
 #endif
         MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 5000);
+
+        CHECK(Botcraft::Utilities::WaitForCondition([&]() {
+            std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetMutex());
+            for (const Botcraft::EntityEffect& effect : bot->GetEntityManager()->GetLocalPlayer()->GetEffects())
+            {
+                if (effect.type == Botcraft::EntityEffectType::Haste)
+                {
+                    return true;
+                }
+            }
+            return false;
+            }, 5000));
 
         SECTION("golden pick")
         {
             GiveItem(bot, "golden_pickaxe", "Golden Pickaxe");
-            TestDig(bot, dirt, 2.35);
-            TestDig(bot, stone, 0.6);
-            TestDig(bot, iron, 6.55);
+            TestDig(bot, dirt, 2.7);
+            TestDig(bot, stone, 0.7);
+            TestDig(bot, iron, 7.45);
         }
 
         SECTION("diamond pick")
         {
             GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
-            TestDig(bot, dirt, 2.35);
-            TestDig(bot, stone, 0.9);
-            TestDig(bot, iron, 2.95);
+            TestDig(bot, dirt, 2.7);
+            TestDig(bot, stone, 1.05);
+            TestDig(bot, iron, 3.35);
         }
     }
 }
