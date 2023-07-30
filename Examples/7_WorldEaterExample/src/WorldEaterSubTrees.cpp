@@ -42,7 +42,10 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> InitTree()
 std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> BaseCampResupplyTree()
 {
     return Builder<SimpleBehaviourClient>("Basecamp Resupply Tree")
-        .leaf(Yield);
+        .sequence()
+            .leaf("Drop items", BaseCampDropItems)
+            .leaf("Pick items", BaseCampPickItems)
+        .end();
 }
 
 std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> MainTree()
@@ -84,7 +87,7 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Action
         .repeater("Action loop", 0).inverter() // repeater(0) + inverter --> repeat until it fails
             .sequence("Action loop body")
                 .selector("Eat")
-                    .inverter().leaf(IsHungry, 15) // Try to optimize golden carrots eating pattern
+                    .inverter().leaf(IsHungry, 15) // Try to optimize golden carrots eating pattern with 15 threshold
                     .leaf(Eat, "minecraft:golden_carrot", true)
                 .end()
                 .selector("Clean inventory")

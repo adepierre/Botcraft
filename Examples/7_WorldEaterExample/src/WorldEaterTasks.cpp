@@ -293,6 +293,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
 
         if (SetItemInHand(client, tool_name) == Status::Failure)
         {
+            LOG_WARNING("Error trying to set " << tool_name << " in right hand");
             return Status::Failure;
         }
 
@@ -301,12 +302,14 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         if (GoTo(client, action.first, 4, 2) == Status::Failure)
         {
             StopSprinting(client);
+            LOG_WARNING("Error trying to GoTo digging position " << action.first);
             return Status::Failure;
         }
         StopSprinting(client);
 
         if (Dig(client, action.first, true, PlayerDiggingFace::Up) == Status::Failure)
         {
+            LOG_WARNING("Error trying to Dig at " << action.first);
             return Status::Failure;
         }
 
@@ -335,6 +338,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         if (PlaceBlock(client, block_to_place, action.first, std::nullopt, true) == Status::Failure)
         {
             StopSprinting(client);
+            LOG_WARNING("Error trying to PlaceBlock (" << block_to_place << ") at " << action.first);
             return Status::Failure;
         }
         StopSprinting(client);
@@ -473,6 +477,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
     // Put lava below
     if (SetItemInHand(client, "minecraft:lava_bucket") != Status::Success)
     {
+        LOG_WARNING("Error trying to put lava bucket in right hand");
         return Status::Failure;
     }
 
@@ -530,6 +535,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
     // Get back lava in bucket
     if (SetItemInHand(client, "minecraft:bucket") != Status::Success)
     {
+        LOG_WARNING("Error trying to put empty bucket in right hand");
         return Status::Failure;
     }
 
@@ -703,6 +709,187 @@ Status PlanLayerBlocks(SimpleBehaviourClient& client)
     }
 
     blackboard.Set<std::queue<std::pair<Position, ActionType>>>("Eater.action_queue", action_queue);
+
+    return Status::Success;
+}
+
+Status BaseCampDropItems(SimpleBehaviourClient& client)
+{
+    std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<World> world = client.GetWorld();
+    std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
+    std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+    Blackboard& blackboard = client.GetBlackboard();
+
+    const Position& drop_position = blackboard.Get<Position>("Eater.drop_position");
+
+    StartSprinting(client);
+    if (GoTo(client, drop_position + Position(0, 1, 0)) == Status::Failure)
+    {
+        StopSprinting(client);
+        LOG_WARNING("Error trying to GoTo drop item position " << drop_position + Position(0, 1, 0));
+        return Status::Failure;
+    }
+    StopSprinting(client);
+
+    LookAt(client, Vector3<double>(0.5, 0, 0.5) + drop_position, true);
+
+    // Throw all unnecessary items
+    const std::unordered_set<ItemId> non_tool_items_to_keep = {
+        AssetsManager::getInstance().GetItemID("minecraft:lava_bucket"),
+        AssetsManager::getInstance().GetItemID("minecraft:golden_carrot"),
+        AssetsManager::getInstance().GetItemID("minecraft:ladder"),
+        AssetsManager::getInstance().GetItemID(blackboard.Get<std::string>("Eater.temp_block"))
+    };
+    std::vector<short> slots_to_throw;
+    slots_to_throw.reserve(Window::INVENTORY_OFFHAND_INDEX);
+    {
+        std::lock_guard<std::mutex> lock_inventory(inventory_manager->GetMutex());
+        std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
+        for (const auto& [idx, slot] : player_inventory->GetSlots())
+        {
+            // Don't throw lava bucket, food, temp block
+            if (idx < Window::INVENTORY_STORAGE_START || slot.IsEmptySlot() ||
+                non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.end())
+            {
+                continue;
+            }
+            const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+            // Don't throw tools with more than 10% durability
+            if (item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot.GetNBT()) > item->GetMaxDurability() / 10)
+            {
+                continue;
+            }
+            slots_to_throw.push_back(idx);
+        }
+    }
+
+    for (const short idx : slots_to_throw)
+    {
+        if (DropItemsFromContainer(client, Window::PLAYER_INVENTORY_INDEX, idx) == Status::Failure)
+        {
+            LOG_WARNING("Error trying drop items at base camp");
+            return Status::Failure;
+        }
+    }
+
+    return Status::Success;
+}
+
+Status BaseCampPickItems(SimpleBehaviourClient& client)
+{
+    Blackboard& blackboard = client.GetBlackboard();
+
+    std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+
+    const std::unordered_map<std::string, int> items_to_get = {
+        { "lava_bucket", 1 },
+        { "sword", 1 },
+        { "shears", 1 },
+        { "hoe", 1 },
+        { "shovel", 1 },
+        { "axe", 1 },
+        { "golden_carrots", 64 },
+        { "ladder", 64 },
+        { "temp_block", 5 * 64 },
+        { "pickaxe", 1 }
+    };
+
+    for (const auto& [s, quantity] : items_to_get)
+    {
+        const Position& shulker = blackboard.Get<Position>("Eater." + s + "_position");
+
+        if (OpenContainer(client, shulker) == Status::Failure)
+        {
+            LOG_WARNING("Error trying to open shulkerbox at " << shulker);
+            return Status::Failure;
+        }
+
+        const short shulkerbox_window_id = inventory_manager->GetFirstOpenedWindowId();
+        std::shared_ptr<Window> shulkerbox_window = inventory_manager->GetWindow(shulkerbox_window_id);
+
+        // Get the exact name of the item in this shulkerbox
+        std::string item_name = "";
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            const short player_inventory_start = shulkerbox_window->GetFirstPlayerInventorySlot();
+            for (const auto& [s, slot] : shulkerbox_window->GetSlots())
+            {
+                if (s >= player_inventory_start || slot.IsEmptySlot())
+                {
+                    continue;
+                }
+                item_name = AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName();
+            }
+        }
+
+        if (item_name.empty())
+        {
+            LOG_ERROR("Shulker box empty while looking for " << s);
+            CloseContainer(client);
+            return Status::Failure;
+        }
+
+        // Check how much we already have, and which slots can be transfered to the inventory
+        std::vector<std::pair<short, int>> quantities_of_items;
+        std::vector<short> inventory_empty_slots;
+        int quantity_inventory = 0;
+        const short player_inventory_first_slot = shulkerbox_window->GetFirstPlayerInventorySlot();
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            for (const auto& [s, slot] : shulkerbox_window->GetSlots())
+            {
+                if (s < player_inventory_first_slot)
+                {
+                    if (!slot.IsEmptySlot())
+                    {
+                        quantities_of_items.push_back({ s,slot.GetItemCount() });
+                    }
+                    continue;
+                }
+                if (slot.IsEmptySlot())
+                {
+                    inventory_empty_slots.push_back(s);
+                    continue;
+                }
+                if (AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName() == item_name)
+                {
+                    quantity_inventory += slot.GetItemCount();
+                }
+            }
+        }
+
+        // Transfer items into the inventory
+        size_t shulker_slot_index = 0;
+        size_t inventory_slot_index = 0;
+        while (quantity_inventory < quantity)
+        {
+            if (shulker_slot_index >= quantities_of_items.size() || inventory_slot_index >= inventory_empty_slots.size())
+            {
+                LOG_WARNING("Not enough items or room in inventory when taking items from shulkerbox at " << shulker);
+                CloseContainer(client);
+                return Status::Failure;
+            }
+
+            if (SwapItemsInContainer(client, shulkerbox_window_id, quantities_of_items[shulker_slot_index].first, inventory_empty_slots[inventory_slot_index]) == Status::Failure)
+            {
+                LOG_WARNING("Error trying to take items from shulkerbox at " << shulker);
+                CloseContainer(client);
+                return Status::Failure;
+            }
+
+            quantity_inventory += quantities_of_items[shulker_slot_index].second;
+
+            shulker_slot_index += 1;
+            inventory_slot_index += 1;
+        }
+
+        if (CloseContainer(client) == Status::Failure)
+        {
+            LOG_WARNING("Error trying to close shulkerbox at " << shulker);
+            return Status::Failure;
+        }
+    }
 
     return Status::Success;
 }

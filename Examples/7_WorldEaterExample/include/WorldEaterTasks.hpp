@@ -65,6 +65,16 @@ Botcraft::Status PlanLayerFluids(Botcraft::SimpleBehaviourClient& client);
 /// @return Always return Success
 Botcraft::Status PlanLayerBlocks(Botcraft::SimpleBehaviourClient& client);
 
+/// @brief Drop all unnecessary items at basecamp
+/// @param client The client performing the action
+/// @return Success if nothing bad happened during dropping
+Botcraft::Status BaseCampDropItems(Botcraft::SimpleBehaviourClient& client);
+
+/// @brief Pick all necessary items from basecamp
+/// @param client The client performing the action
+/// @return Success if nothing bad happened during picking
+Botcraft::Status BaseCampPickItems(Botcraft::SimpleBehaviourClient& client);
+
 /// @brief Find all interest points in the surroundings and load them in the blackboard
 /// @param client The client performing the action
 /// @return True if everything was found, false otherwise
