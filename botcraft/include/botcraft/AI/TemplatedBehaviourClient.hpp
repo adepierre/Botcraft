@@ -233,7 +233,7 @@ namespace Botcraft
     private:
         void TreeLoop()
         {
-            Logger::GetInstance().RegisterThread("BehaviourTreeLoop");
+            Logger::GetInstance().RegisterThread("Behaviour - " + GetNetworkManager()->GetMyName());
             while (true)
             {
                 try

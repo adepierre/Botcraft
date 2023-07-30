@@ -45,12 +45,12 @@ namespace Botcraft
     Status LookAtBlackboard(BehaviourClient& client);
 
 
-    /// @brief Tell the server the bot starts sprinting (only useful to be more human-like, doesn't relate to the actual speed)
+    /// @brief Tell the server the bot starts sprinting (will impact pathfinding speed if not specified when calling GoTo)
     /// @param client The client performing the action
     /// @return Always return Success
     Status StartSprinting(BehaviourClient& client);
 
-    /// @brief Tell the server the bot stops sprinting (only useful to be more human-like, doesn't relate to the actual speed)
+    /// @brief Tell the server the bot stops sprinting (will impact pathfinding speed if not specified when calling GoTo)
     /// @param client The client performing the action
     /// @return Always return Success
     Status StopSprinting(BehaviourClient& client);
