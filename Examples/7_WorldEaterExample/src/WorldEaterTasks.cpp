@@ -5,17 +5,22 @@
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/AI/Tasks/AllTasks.hpp>
 #include <botcraft/Utilities/NBTUtilities.hpp>
+#include <botcraft/Utilities/MiscUtilities.hpp>
 
 #include <queue>
 
 #include "WorldEaterTasks.hpp"
+#include "WorldEaterUtilities.hpp"
 
 using namespace Botcraft;
 
-enum ActionType
+enum class ActionType
 {
+    GoTo,
     BreakBlock,
+    BreakPillar,
     PlaceSolidBlock,
+    PlacePillarBlock,
     PlaceTempBlock,
     PlaceLadderBlock
 };
@@ -133,14 +138,14 @@ Status Init(SimpleBehaviourClient& client)
 
     {
         std::lock_guard<std::mutex> lock(world->GetMutex());
-        // Get top of ladder pillar (first non air block going downard
+        // Get top of ladder pillar (first solid block going downard
         // from the top of the working area)
         Position block_pos = ladder_pillar_position;
         for (int y = this_bot_start.y; y >= world->GetMinY(); --y)
         {
             block_pos.y = y;
             const Block* block = world->GetBlock(block_pos);
-            if (block && !block->GetBlockstate()->IsAir())
+            if (block && block->GetBlockstate()->IsSolid())
             {
                 ladder_pillar_position.y = y;
                 ladder_position.y = y;
@@ -154,29 +159,6 @@ Status Init(SimpleBehaviourClient& client)
         {
             LOG_ERROR("Work area of " << client.GetNetworkManager()->GetMyName() << " (from " << this_bot_start << "to " << this_bot_end << ") is not fully loaded, please move it closer before launching it");
             return Status::Failure;
-        }
-
-        // Check the whole area for spawner and log them to user
-        if (bot_index == 0)
-        {
-            Position current_position;
-            for (int y = min_block.y - 16; y <= max_block.y + 16; ++y)
-            {
-                current_position.y = y;
-                for (int x = min_block.x - 16; x <= max_block.x + 16; ++x)
-                {
-                    current_position.x = x;
-                    for (int z = min_block.z - 16; z <= max_block.z + 16; ++z)
-                    {
-                        current_position.z = z;
-                        const Block* block = world->GetBlock(current_position);
-                        if (block != nullptr && !block->GetBlockstate()->IsAir() && block->GetBlockstate()->GetName() == "minecraft:spawner")
-                        {
-                            LOG_WARNING("Spawner detected at " << current_position << ". Please make sure it's spawnproofed as I don't like to die (it tickles)");
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -197,9 +179,52 @@ Status Init(SimpleBehaviourClient& client)
         ToolType::Sword,
     });
 
+    // Get a set for spared/collected blocks/items
+    blackboard.Set<std::unordered_set<std::string>>("Eater.spared_blocks", SplitString(blackboard.Get<std::string>("Eater.spared_blocks"), ','));
+    std::unordered_set<ItemId> collected_blocks;
+    for (const auto& s : SplitString(blackboard.Get<std::string>("Eater.collected_blocks"), ','))
+    {
+        collected_blocks.insert(AssetsManager::getInstance().GetItemID(s));
+    }
+    blackboard.Set<std::unordered_set<ItemId>>("Eater.collected_blocks", collected_blocks);
+
+
     if (!IdentifyBaseCampLayout(client))
     {
         return Status::Failure;
+    }
+
+    // Check the whole area for spawner/shrieker and log them to user
+    if (bot_index == 0)
+    {
+        std::lock_guard<std::mutex> lock(world->GetMutex());
+        Position current_position;
+        for (int y = min_block.y - 16; y <= max_block.y + 16; ++y)
+        {
+            current_position.y = y;
+            for (int x = min_block.x - 16; x <= max_block.x + 16; ++x)
+            {
+                current_position.x = x;
+                for (int z = min_block.z - 16; z <= max_block.z + 16; ++z)
+                {
+                    current_position.z = z;
+                    const Block* block = world->GetBlock(current_position);
+                    if (block != nullptr && !block->GetBlockstate()->IsAir())
+                    {
+                        if (block->GetBlockstate()->GetName() == "minecraft:spawner")
+                        {
+                            LOG_WARNING("Spawner detected at " << current_position << ". Please make sure it's spawnproofed as I don't like to die (it tickles)");
+                        }
+#if PROTOCOL_VERSION > 758
+                        else if (block->GetBlockstate()->GetName() == "minecraft:sculk_shrieker")
+                        {
+                            LOG_WARNING("Shrieker detected at " << current_position << ". Please make sure it won't spawn a warden. They hit hard.");
+                        }
+#endif
+                    }
+                }
+            }
+        }
     }
 
     return Status::Success;
@@ -226,24 +251,58 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     Blackboard& blackboard = client.GetBlackboard();
     std::shared_ptr<World> world = client.GetWorld();
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+    std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+    const std::unordered_set<std::string>& spared_blocks = blackboard.Get<std::unordered_set<std::string>>("Eater.spared_blocks");
+    const Position& start_block = blackboard.Get<Position>("Eater.start_block");
+    const Position& end_block = blackboard.Get<Position>("Eater.end_block");
 
     const std::pair<Position, ActionType>& action = blackboard.Get<std::pair<Position, ActionType>>("Eater.next_action");
-
-    if (action.second == ActionType::BreakBlock)
+    Vector3<double> player_position;
     {
-        const Blockstate* blockstate;
-        // Check if we really need to break this block
+        std::lock_guard<std::mutex> lock(local_player->GetMutex());
+        player_position = local_player->GetPosition();
+    }
+    const Position player_block_position(
+        static_cast<int>(std::floor(player_position.x)),
+        static_cast<int>(std::floor(player_position.y)),
+        static_cast<int>(std::floor(player_position.z))
+    );
+    const double squared_dist_to_action = local_player->GetPosition().SqrDist(action.first);
+
+    // Stop sprinting when exiting this function (in case we don't sprint, it's a no-op)
+    Utilities::OnEndScope stop_sprinting([&]() { StopSprinting(client); });
+
+    // Start sprinting if we need to move more than 10 blocks
+    if (squared_dist_to_action > 10.0 * 10.0)
+    {
+        StartSprinting(client);
+    }
+
+    if (action.second == ActionType::GoTo)
+    {
+        return GoTo(client, action.first);
+    }
+
+    const Blockstate* blockstate = nullptr;
+    // Get this position blockstate
+    {
+        std::lock_guard<std::mutex> lock(world->GetMutex());
+        const Block* block = world->GetBlock(action.first);
+        if (block != nullptr)
         {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            const Block* block = world->GetBlock(action.first);
-            // Skip if the block is already air or unbreakable
-            if (block == nullptr || block->GetBlockstate()->IsAir() || block->GetBlockstate()->GetHardness() < 0)
-            {
-                return Status::Success;
-            }
             blockstate = block->GetBlockstate();
         }
+    }
 
+    const std::string block_to_place =
+        action.second == ActionType::PlaceLadderBlock ?
+        "minecraft:ladder" :
+        blackboard.Get<std::string>("Eater.temp_block");
+
+    // Break block if that's the action, or if we need to place a block that's not the one currently there
+    if (blockstate != nullptr && !blockstate->IsAir() && !blockstate->IsFluid() && blockstate->GetHardness() >= 0 && spared_blocks.find(blockstate->GetName()) == spared_blocks.cend() &&
+        (action.second == ActionType::BreakBlock || action.second == ActionType::BreakPillar || (action.second == ActionType::PlaceSolidBlock && !blockstate->IsSolid()) || (action.second != ActionType::PlaceSolidBlock && blockstate->GetName() != block_to_place)))
+    {
         // Check which tool type is the best
         const std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>& tool_types = blackboard.Get<std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>>("Eater.tools");
         ToolType best_tool_type = ToolType::None;
@@ -274,7 +333,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
                 const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
                 if (item->GetToolType() == best_tool_type)
                 {
-                    // Check the tool won't break, with a large margin of 1 to be safe
+                    // Check the tool won't break, with a "large" margin of 1 to be safe
                     const int damage_count = Utilities::GetDamageCount(slot.GetNBT());
                     if (damage_count < item->GetMaxDurability() - 2)
                     {
@@ -297,15 +356,40 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             return Status::Failure;
         }
 
-        // Dig would call GoTo too, but without the 2 blocks min dist we want
-        StartSprinting(client);
-        if (GoTo(client, action.first, 4, 2) == Status::Failure)
+        Status goto_result = Status::Success;
+        switch (action.second)
         {
-            StopSprinting(client);
+        case ActionType::BreakBlock:
+            // If we are standing on the current layer, we know we can break all blocks in range
+            // as long as we are not standing on them. The ordering of the actions in the queue
+            // gives us guarantees that we won't "break" the path back to the ladder as long as
+            // we don't break the block under our feets
+            if (player_block_position.y == action.first.y + 1 &&
+                player_block_position.x >= start_block.x && player_block_position.x <= end_block.x &&
+                player_block_position.z >= start_block.z && player_block_position.z <= end_block.z)
+            {
+                goto_result = GoTo(client, action.first + Position(0, 1, 0), 4, 1, 1);
+            }
+            // Else, we should get back on top of the current layer to be sure we won't isolate
+            // us from the ladder access point
+            else
+            {
+                goto_result = GoTo(client, action.first + Position(0, 1, 0), 1, 1, 1);
+            }
+            break;
+        case ActionType::BreakPillar:
+            goto_result = GoTo(client, action.first + Position(0, 1, 0));
+            break;
+        default:
+            break;
+        }
+
+        // Dig would call GoTo too, but without the min dist constraint we want
+        if (goto_result == Status::Failure)
+        {
             LOG_WARNING("Error trying to GoTo digging position " << action.first);
             return Status::Failure;
         }
-        StopSprinting(client);
 
         if (Dig(client, action.first, true, PlayerDiggingFace::Up) == Status::Failure)
         {
@@ -313,42 +397,74 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             return Status::Failure;
         }
 
-        return Status::Success;
-    }
-    else if (action.second == ActionType::PlaceTempBlock || action.second == ActionType::PlaceSolidBlock || action.second == ActionType::PlaceLadderBlock)
-    {
-        const std::string block_to_place =
-            action.second == ActionType::PlaceLadderBlock ?
-            "minecraft:ladder" :
-            blackboard.Get<std::string>("Eater.temp_block");
-
-        // Check if we really need to place this block
+        // After breaking a pillar, wait to land on the next pillar block
+        if (action.second == ActionType::BreakPillar)
         {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            const Block* block = world->GetBlock(action.first);
-            // Skip if the block is already desired one
-            if (block && (block->GetBlockstate()->GetName() == block_to_place ||
-                (action.second == ActionType::PlaceSolidBlock && block->GetBlockstate()->IsSolid())))
+            auto start = std::chrono::steady_clock::now();
+            while (true)
             {
-                return Status::Success;
+                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 2000)
+                {
+                    LOG_WARNING("Timeout waiting to land after mining pillar block");
+                    return Status::Failure;
+                }
+                {
+                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                    if (local_player->GetOnGround())
+                    {
+                        break;
+                    }
+                }
+                client.Yield();
             }
         }
-
-        StartSprinting(client);
-        if (PlaceBlock(client, block_to_place, action.first, std::nullopt, true) == Status::Failure)
+    }
+    
+    if ((action.second == ActionType::PlaceSolidBlock && (blockstate == nullptr || !blockstate->IsSolid()))
+         || ((action.second == ActionType::PlacePillarBlock || action.second == ActionType::PlaceTempBlock || action.second == ActionType::PlaceLadderBlock)
+             && (blockstate == nullptr || blockstate->GetName() != block_to_place)))
+    {
+        // PlaceBlock would call GoTo too, but without the min dist constraint we want
+        Status goto_result = Status::Success;
+        switch (action.second)
         {
-            StopSprinting(client);
+        case ActionType::PlaceSolidBlock:
+        case ActionType::PlaceTempBlock:
+            // If we are standing on the current layer
+            if (player_block_position.y == action.first.y + 1 &&
+                player_block_position.x >= start_block.x && player_block_position.x <= end_block.x &&
+                player_block_position.z >= start_block.z && player_block_position.z <= end_block.z)
+            {
+                goto_result = GoTo(client, action.first + Position(0, 1, 0), 3, 1, 1);
+            }
+            // Else, try to get back on the top layer by giving less tolerance on the distance
+            else
+            {
+                goto_result = GoTo(client, action.first + Position(0, 1, 0), 2, 1, 1);
+            }
+            break;
+        case ActionType::PlacePillarBlock:
+        case ActionType::PlaceLadderBlock:
+            goto_result = GoTo(client, action.first, 4, 2);
+            break;
+        default:
+            break;
+        }
+
+        if (goto_result == Status::Failure)
+        {
+            LOG_WARNING("Error trying to GoTo digging position " << action.first);
+            return Status::Failure;
+        }
+
+        if (PlaceBlock(client, block_to_place, action.first,
+            action.second == ActionType::PlaceLadderBlock ?
+                std::optional<PlayerDiggingFace>(blackboard.Get<PlayerDiggingFace>("Eater.ladder_face")) :
+                std::nullopt, true, false) == Status::Failure)
+        {
             LOG_WARNING("Error trying to PlaceBlock (" << block_to_place << ") at " << action.first);
             return Status::Failure;
         }
-        StopSprinting(client);
-
-        return Status::Success;
-    }
-    else
-    {
-        LOG_WARNING("Unknown ActionType " << static_cast<int>(action.second));
-        return Status::Failure;
     }
 
     return Status::Success;
@@ -388,7 +504,7 @@ Status IsInventoryFull(SimpleBehaviourClient& client)
         std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
         for (const auto& [idx, slot] : player_inventory->GetSlots())
         {
-            if (idx < Window::INVENTORY_STORAGE_START)
+            if (idx < Window::INVENTORY_STORAGE_START || idx >= Window::INVENTORY_OFFHAND_INDEX)
             {
                 continue;
             }
@@ -408,6 +524,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
     std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
     Blackboard& blackboard = client.GetBlackboard();
+    const std::unordered_set<ItemId>& collected_items = blackboard.Get<std::unordered_set<ItemId>>("Eater.collected_blocks");
 
     Vector3<double> init_position;
     // Look down
@@ -417,7 +534,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
     }
     LookAt(client, init_position, true);
 
-    // Throw all items below
+    // Items we don't want to throw in lava
     const std::unordered_set<ItemId> non_tool_items_to_keep = {
         AssetsManager::getInstance().GetItemID("minecraft:lava_bucket"),
         AssetsManager::getInstance().GetItemID("minecraft:golden_carrot"),
@@ -434,7 +551,8 @@ Status CleanInventory(SimpleBehaviourClient& client)
             // Don't throw lava bucket, food, temp block or tools
             if (idx < Window::INVENTORY_STORAGE_START ||
                 slot.IsEmptySlot() ||
-                non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.end() ||
+                non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.cend() ||
+                collected_items.find(slot.GetItemID()) != collected_items.cend() ||
                 AssetsManager::getInstance().GetItem(slot.GetItemID())->GetToolType() != ToolType::None)
             {
                 continue;
@@ -549,6 +667,12 @@ Status CleanInventory(SimpleBehaviourClient& client)
     network_manager->Send(use_item_on);
     network_manager->Send(use_item);
 
+    if (SortInventory(client) == Status::Failure)
+    {
+        // Minor error, don't interrupt the tree ticking operation but log it anyway
+        LOG_INFO("Error trying to sort inventory while picking items");
+    }
+
     return Status::Success;
 }
 
@@ -576,50 +700,67 @@ Status MoveToNextLayer(SimpleBehaviourClient& client)
 Status PrepareLayer(SimpleBehaviourClient& client)
 {
     Blackboard& blackboard = client.GetBlackboard();
+    std::shared_ptr<World> world = client.GetWorld();
 
     const Position& start = blackboard.Get<Position>("Eater.start_block");
     const Position& end = blackboard.Get<Position>("Eater.end_block");
     const int current_layer = blackboard.Get<int>("Eater.current_layer");
     const Position& ladder_pillar = blackboard.Get<Position>("Eater.ladder_pillar");
+    const std::string& temp_block = blackboard.Get<std::string>("Eater.temp_block");
     Position current_pillar = ladder_pillar;
     Position current_ladder = blackboard.Get<Position>("Eater.ladder");
 
     std::queue<std::pair<Position, ActionType>> action_queue;
     
-    // Special case, remove all ladders
+    // Special case, remove ugly pillar above ground
     if (current_layer < end.y)
     {
-        for (int y = end.y; y < ladder_pillar.y; ++y)
+        for (int y = start.y; y > ladder_pillar.y; --y)
         {
-            current_ladder.y = y;
-            action_queue.push({ current_ladder, ActionType::BreakBlock });
+            current_pillar.y = y;
+            action_queue.push({ current_pillar, ActionType::BreakPillar });
         }
-        for (int y = start.y; y >= ladder_pillar.y; --y)
-        {
-            current_ladder.y = y;
-            action_queue.push({ current_ladder, ActionType::BreakBlock });
-        }
+        // Go back to init position
+        action_queue.push({ blackboard.Get<Position>("Eater.init_pos"), ActionType::GoTo });
     }
     // Place ladder up to current layer
     else if (current_layer > ladder_pillar.y)
     {
+        std::lock_guard<std::mutex> lock(world->GetMutex());
         for (int y = ladder_pillar.y + 1; y <= current_layer; ++y)
         {
-            current_ladder.y = y;
             current_pillar.y = y;
-            action_queue.push({ current_pillar, ActionType::PlaceTempBlock });
-            action_queue.push({ current_ladder, ActionType::PlaceLadderBlock });
+            const Block* block = world->GetBlock(current_pillar);
+            if (block == nullptr || block->GetBlockstate()->GetName() != temp_block)
+            {
+                action_queue.push({ current_pillar, ActionType::PlacePillarBlock });
+            }
+            current_ladder.y = y;
+            block = world->GetBlock(current_ladder);
+            if (block == nullptr || block->GetBlockstate()->GetName() != "minecraft:ladder")
+            {
+                action_queue.push({ current_ladder, ActionType::PlaceLadderBlock });
+            }
         }
     }
     // Place ladder down to current layer
     else
     {
+        std::lock_guard<std::mutex> lock(world->GetMutex());
         for (int y = ladder_pillar.y; y >= current_layer; --y)
         {
-            current_ladder.y = y;
             current_pillar.y = y;
-            action_queue.push({ current_pillar, ActionType::PlaceTempBlock });
-            action_queue.push({ current_ladder, ActionType::PlaceLadderBlock });
+            const Block* block = world->GetBlock(current_pillar);
+            if (block == nullptr || block->GetBlockstate()->GetName() != temp_block)
+            {
+                action_queue.push({ current_pillar, ActionType::PlacePillarBlock });
+            }
+            current_ladder.y = y;
+            block = world->GetBlock(current_ladder);
+            if (block == nullptr || block->GetBlockstate()->GetName() != "minecraft:ladder")
+            {
+                action_queue.push({ current_ladder, ActionType::PlaceLadderBlock });
+            }
         }
     }
 
@@ -643,18 +784,71 @@ Status PlanLayerFluids(SimpleBehaviourClient& client)
     // Fluids pass
     // Get all fluid blocks
     // -1/+1 to avoid leaking from the sides
-    std::unordered_set<Position> blocks_fluids = CollectBlocks(world, start + Position(-1, 0, -1), end + Position(1, 0, 1), current_layer, true, {});
+    std::unordered_set<Position> blocks_fluids = CollectBlocks(world, start + Position(-1, 0, -1), end + Position(1, 0, 1), current_layer, true, false);
     blocks_fluids.insert(layer_entry);
     std::unordered_map<Position, std::unordered_set<Position>> additional_neighbours_fluids;
     const std::vector<std::unordered_set<Position>> components_fluids = GroupBlocksInComponents(start - Position(1, 0, 1), end + Position(1, 0, 1), layer_entry, client, blocks_fluids, &additional_neighbours_fluids);
-    const std::vector<Position> blocks_to_add_fluids = GetBlocksToAdd(components_fluids, layer_entry);
+    const std::vector<Position> blocks_to_add_fluids = GetBlocksToAdd(components_fluids, layer_entry, start, end);
     const std::unordered_set<Position> blocks_to_fill_fluids = FlattenComponentsAndAdditionalBlocks(components_fluids, blocks_to_add_fluids);
     std::vector<Position> ordered_blocks_to_place_fluids = ComputeBlockOrder(blocks_to_fill_fluids, layer_entry, ladder_face, additional_neighbours_fluids);
     std::reverse(ordered_blocks_to_place_fluids.begin(), ordered_blocks_to_place_fluids.end());
 
+    if (ordered_blocks_to_place_fluids.size() != blocks_to_fill_fluids.size())
+    {
+        LOG_WARNING("Ordered blocks to place have a different size than blocks to fill: " << ordered_blocks_to_place_fluids.size() << " VS " << blocks_to_fill_fluids.size());
+        return Status::Failure;
+    }
+
     std::queue<std::pair<Position, ActionType>> action_queue;
 
     for (const Position& p : ordered_blocks_to_place_fluids)
+    {
+        // Don't replace the ladder...
+        if (p == layer_entry)
+        {
+            continue;
+        }
+        action_queue.push({ p, ActionType::PlaceSolidBlock });
+    }
+
+    blackboard.Set<std::queue<std::pair<Position, ActionType>>>("Eater.action_queue", action_queue);
+
+    return Status::Success;
+}
+
+Botcraft::Status PlanLayerNonSolids(Botcraft::SimpleBehaviourClient& client)
+{
+    std::shared_ptr<World> world = client.GetWorld();
+
+    Blackboard& blackboard = client.GetBlackboard();
+    const Position& start = blackboard.Get<Position>("Eater.start_block");
+    const Position& end = blackboard.Get<Position>("Eater.end_block");
+    const int current_layer = blackboard.Get<int>("Eater.current_layer");
+    const PlayerDiggingFace ladder_face = blackboard.Get<PlayerDiggingFace>("Eater.ladder_face");
+    Position layer_entry = blackboard.Get<Position>("Eater.ladder");
+    layer_entry.y = current_layer;
+
+
+    // Non solid pass
+    // Get all non solid blocks
+    std::unordered_set<Position> blocks_not_solid = CollectBlocks(world, start, end, current_layer, false, false);
+    blocks_not_solid.insert(layer_entry);
+    std::unordered_map<Position, std::unordered_set<Position>> additional_neighbours_not_solid;
+    const std::vector<std::unordered_set<Position>> components_not_solid = GroupBlocksInComponents(start, end, layer_entry, client, blocks_not_solid, &additional_neighbours_not_solid);
+    const std::vector<Position> blocks_to_add_non_solid = GetBlocksToAdd(components_not_solid, layer_entry, start, end);
+    const std::unordered_set<Position> blocks_to_fill_not_solid = FlattenComponentsAndAdditionalBlocks(components_not_solid, blocks_to_add_non_solid);
+    std::vector<Position> ordered_blocks_to_place_not_solid = ComputeBlockOrder(blocks_to_fill_not_solid, layer_entry, ladder_face, additional_neighbours_not_solid);
+    std::reverse(ordered_blocks_to_place_not_solid.begin(), ordered_blocks_to_place_not_solid.end());
+
+    if (ordered_blocks_to_place_not_solid.size() != blocks_to_fill_not_solid.size())
+    {
+        LOG_WARNING("Ordered blocks to replace have a different size than blocks to fill: " << ordered_blocks_to_place_not_solid.size() << " VS " << blocks_to_fill_not_solid.size());
+        return Status::Failure;
+    }
+
+    std::queue<std::pair<Position, ActionType>> action_queue;
+
+    for (const Position& p : ordered_blocks_to_place_not_solid)
     {
         // Don't replace the ladder...
         if (p == layer_entry)
@@ -686,17 +880,23 @@ Status PlanLayerBlocks(SimpleBehaviourClient& client)
 
     // Solid pass
     // Get all solid blocks
-    std::unordered_set<Position> blocks = CollectBlocks(world, start, end, current_layer, false, {});
+    std::unordered_set<Position> blocks = CollectBlocks(world, start, end, current_layer, false, true);
     blocks.insert(layer_entry);
     std::unordered_map<Position, std::unordered_set<Position>> additional_neighbours;
     const std::vector<std::unordered_set<Position>> components = GroupBlocksInComponents(start, end, layer_entry, client, blocks, &additional_neighbours);
-    const std::vector<Position> blocks_to_add = GetBlocksToAdd(components, layer_entry);
+    const std::vector<Position> blocks_to_add = GetBlocksToAdd(components, layer_entry, start, end);
     const std::unordered_set<Position> blocks_to_mine = FlattenComponentsAndAdditionalBlocks(components, blocks_to_add);
-    const std::vector<Position> ordered_blocks_to_mine = ComputeBlockOrder(blocks_to_mine, layer_entry, ladder_face, additional_neighbours);
+    std::vector<Position> ordered_blocks_to_mine = ComputeBlockOrder(blocks_to_mine, layer_entry, ladder_face, additional_neighbours);
+
+    if (ordered_blocks_to_mine.size() != blocks_to_mine.size())
+    {
+        LOG_WARNING("Ordered blocks to mine have a different size than blocks to mine: " << ordered_blocks_to_mine.size() << " VS " << blocks_to_mine.size());
+        return Status::Failure;
+    }
 
     for (const Position& p : blocks_to_add)
     {
-        action_queue.push({ p, ActionType::PlaceSolidBlock });
+        action_queue.push({ p, ActionType::PlaceTempBlock });
     }
     for (const Position& p : ordered_blocks_to_mine)
     {
@@ -713,7 +913,7 @@ Status PlanLayerBlocks(SimpleBehaviourClient& client)
     return Status::Success;
 }
 
-Status BaseCampDropItems(SimpleBehaviourClient& client)
+Status BaseCampDropItems(SimpleBehaviourClient& client, const bool all_items)
 {
     std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
     std::shared_ptr<World> world = client.GetWorld();
@@ -750,13 +950,13 @@ Status BaseCampDropItems(SimpleBehaviourClient& client)
         {
             // Don't throw lava bucket, food, temp block
             if (idx < Window::INVENTORY_STORAGE_START || slot.IsEmptySlot() ||
-                non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.end())
+                (!all_items && non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.end()))
             {
                 continue;
             }
             const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
             // Don't throw tools with more than 10% durability
-            if (item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot.GetNBT()) > item->GetMaxDurability() / 10)
+            if (!all_items && item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot.GetNBT()) < item->GetMaxDurability() / 10)
             {
                 continue;
             }
@@ -891,487 +1091,35 @@ Status BaseCampPickItems(SimpleBehaviourClient& client)
         }
     }
 
+    if (SortInventory(client) == Status::Failure)
+    {
+        // Minor error, don't interrupt the tree ticking operation but log it anyway
+        LOG_INFO("Error trying to sort inventory while picking items");
+    }
+
     return Status::Success;
 }
 
-bool IdentifyBaseCampLayout(SimpleBehaviourClient& client)
+Botcraft::Status HasToolInInventory(Botcraft::SimpleBehaviourClient& client, const ToolType tool_type, const int min_durability)
 {
-    Blackboard& blackboard = client.GetBlackboard();
-
-    const int bot_index = blackboard.Get<int>("Eater.bot_index");
-
-    std::unordered_map<std::string, std::string> block_item_mapping = {
-        { "minecraft:red_concrete", "drop" },
-        { "minecraft:orange_shulker_box", "lava_bucket" },
-        { "minecraft:pink_shulker_box", "sword" },
-        { "minecraft:magenta_shulker_box", "shears" },
-        { "minecraft:purple_shulker_box", "hoe" },
-        { "minecraft:blue_shulker_box", "shovel" },
-        { "minecraft:light_blue_shulker_box", "axe" },
-        { "minecraft:yellow_shulker_box", "golden_carrots" },
-        { "minecraft:brown_shulker_box", "ladder" },
-        { "minecraft:black_shulker_box", "temp_block" },
-        { "minecraft:cyan_shulker_box", "pickaxe" }
-    };
-
-    std::unordered_map<std::string, std::vector<Position>> found_blocks;
-    for (const auto& [k, v] : block_item_mapping)
+    std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
     {
-        found_blocks[k] = {};
-    }
-
-    std::shared_ptr<World> world = client.GetWorld();
-    Position current_position;
-    // Loop through all loaded blocks to find the one we are looking for
-    for (const auto& [coords, chunk] : world->GetAllChunks())
-    {
-        for (int y = world->GetMinY(); y < world->GetMinY() + world->GetHeight(); ++y)
+        std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+        const std::map<short, ProtocolCraft::Slot>& inventory_slots = inventory_manager->GetPlayerInventory()->GetSlots();
+        for (const auto& [i, slot] : inventory_slots)
         {
-            current_position.y = y;
-            for (int x = 0; x < CHUNK_WIDTH; ++x)
-            {
-                current_position.x = coords.first * CHUNK_WIDTH + x;
-                for (int z = 0; z < CHUNK_WIDTH; ++z)
-                {
-                    current_position.z = coords.second * CHUNK_WIDTH + z;
-                    const Blockstate* blockstate = nullptr;
-                    {
-                        std::lock_guard<std::mutex> lock_world(world->GetMutex());
-                        const Block* block = world->GetBlock(current_position);
-                        if (block != nullptr)
-                        {
-                            blockstate = block->GetBlockstate();
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (const auto it = found_blocks.find(blockstate->GetName()); it != found_blocks.end())
-                    {
-                        it->second.push_back(current_position);
-                        if (bot_index == 0)
-                        {
-                            LOG_INFO(blockstate->GetName() << "(" << block_item_mapping.at(blockstate->GetName()) << ") found at " << current_position);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Sort all positions in a consistent way for all bots
-    for (auto& [_, v] : found_blocks)
-    {
-        std::sort(v.begin(), v.end(), [&](const Position& a, const Position& b)
-            {
-                return a.x < b.x ||
-                    (a.x == b.x && a.y < b.y) ||
-                    (a.x == b.x && a.y == b.y && a.z < b.z);
-            });
-    }
-
-    // Assign dedicated positions for each bot based on index
-    for (const auto& [k, v] : block_item_mapping)
-    {
-        const std::vector<Position>& positions = found_blocks.at(k);
-        if (positions.size() == 0)
-        {
-            if (bot_index == 0)
-            {
-                LOG_ERROR("Can't find any " << k << ". I can't work without " << v);
-            }
-            return false;
-        }
-        blackboard.Set<Position>("Eater." + v + "_position", positions[bot_index % positions.size()]);
-    }
-
-    return true;
-}
-
-std::unordered_set<Position> CollectBlocks(const std::shared_ptr<World> world, const Position& start, const Position& end, const int layer, const bool fluids, const std::unordered_set<std::string>& spared_blocks)
-{
-    std::unordered_set<Position> output;
-    Position p(0, layer, 0);
-    for (int x = start.x; x <= end.x; ++x)
-    {
-        p.x = x;
-        for (int z = start.z; z <= end.z; ++z)
-        {
-            p.z = z;
-            std::scoped_lock<std::mutex> lock(world->GetMutex());
-            const Block* block = world->GetBlock(p);
-            if (block && !block->GetBlockstate()->IsAir() && spared_blocks.find(block->GetBlockstate()->GetName()) == spared_blocks.cend() &&
-                ((fluids && block->GetBlockstate()->IsFluid())
-                    || (!fluids && !block->GetBlockstate()->IsAir()))
-                )
-            {
-                output.insert(Position(x, layer, z));
-            }
-        }
-    }
-    return output;
-}
-
-std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position& start, const Position& end, const Position& start_point, const BehaviourClient& client, const std::unordered_set<Position>& positions, std::unordered_map<Position, std::unordered_set<Position>>* additional_neighbours)
-{
-    std::vector<std::unordered_set<Position>> components;
-
-    std::unordered_map<Position, int> components_index;
-    for (const Position& b : positions)
-    {
-        components_index[b] = -1;
-    }
-
-    // For all block elements
-    for (const auto& p : positions)
-    {
-        // If we already set a component to this position, skip it
-        if (components_index[p] != -1)
-        {
-            continue;
-        }
-        // Otherwise add all neighbours we can find to the current component
-        std::unordered_set<Position> current_component;
-        std::unordered_set<Position> neighbours = { p };
-        while (neighbours.size() > 0)
-        {
-            // Take first element in current neighbours
-            const Position current_pos = *neighbours.begin();
-            neighbours.erase(current_pos);
-
-            // This neighbour is already in a component
-            if (components_index[current_pos] != -1)
+            if (i < Window::INVENTORY_STORAGE_START || i > Window::INVENTORY_OFFHAND_INDEX || slot.IsEmptySlot())
             {
                 continue;
             }
 
-            current_component.insert(current_pos);
-            components_index[current_pos] = components.size();
-
-            if (current_pos.x > start.x)
+            const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+            if (item->GetToolType() == tool_type && Utilities::GetDamageCount(slot.GetNBT()) < item->GetMaxDurability() - min_durability)
             {
-                const Position west = current_pos + Position(-1, 0, 0);
-                if (const auto it = components_index.find(west); it != components_index.end() && it->second == -1)
-                {
-                    neighbours.insert(west);
-                }
+                return Status::Success;
             }
-            if (current_pos.x < end.x)
-            {
-                const Position east = current_pos + Position(1, 0, 0);
-                if (const auto it = components_index.find(east); it != components_index.end() && it->second == -1)
-                {
-                    neighbours.insert(east);
-                }
-            }
-            if (current_pos.z > start.z)
-            {
-                const Position north = current_pos + Position(0, 0, -1);
-                if (const auto it = components_index.find(north); it != components_index.end() && it->second == -1)
-                {
-                    neighbours.insert(north);
-                }
-            }
-            if (current_pos.z < end.z)
-            {
-                const Position south = current_pos + Position(0, 0, 1);
-                if (const auto it = components_index.find(south); it != components_index.end() && it->second == -1)
-                {
-                    neighbours.insert(south);
-                }
-            }
-        }
-
-        if (current_component.size() == 0)
-        {
-            continue;
-        }
-
-        // If additional neighbours are not asked, don't try to merge
-        // components using pathfinding
-        if (additional_neighbours == nullptr)
-        {
-            components.push_back(current_component);
-            continue;
-        }
-        // Check if we can pathfind from one of the previous components
-        // to this one and merge them if we can
-        bool merged = false;
-        for (size_t i = 0; i < components.size(); ++i)
-        {
-            const Position pathfinding_start = *components[i].begin() + Position(0, 1, 0);
-            const Position pathfinding_end = *current_component.begin() + Position(0, 1, 0);
-            const std::vector<Position> path = FindPath(client, pathfinding_start, pathfinding_end, 0, true);
-            const std::vector<Position> reversed_path = FindPath(client, pathfinding_end, pathfinding_start, 0, true);
-            // If we can pathfind from start to end (both ways to prevent cliff falls that would only allow one-way travel)
-            if (path.back() == pathfinding_end && reversed_path.back() == pathfinding_start)
-            {
-                merged = true;
-                // Add link between the two components as non adjacent neighbours
-                Position path_block_component1 = pathfinding_start + Position(0, -1, 0);
-                for (size_t j = 0; j < path.size(); ++j)
-                {
-                    // If the pathfinding crosses the boundaries of the work area anywhere else than the ladder,
-                    // cancel the merging of the components
-                    if ((path[j].x < start.x || path[j].x > end.x || path[j].z < start.z || path[j].z > end.z) &&
-                        path[j].x != start_point.x && path[j].z != start_point.z)
-                    {
-                        merged = false;
-                        break;
-                    }
-
-                    if (additional_neighbours != nullptr)
-                    {
-                        // If component index of the current path position is equal to the one currently compared to (i)
-                        auto it = components_index.find(path[j] + Position(0, -1, 0));
-                        if (it != components_index.end() && it->second == i)
-                        {
-                            path_block_component1 = path[j] + Position(0, -1, 0);
-                        }
-                    }
-                }
-                Position path_block_component2 = pathfinding_end + Position(0, -1, 0);
-                for (size_t j = 0; j < reversed_path.size(); ++j)
-                {
-                    // If the pathfinding crosses the boundaries of the work area anywhere else than the ladder,
-                    // cancel the merging of the components
-                    if ((reversed_path[j].x < start.x || reversed_path[j].x > end.x || reversed_path[j].z < start.z || reversed_path[j].z > end.z) &&
-                        reversed_path[j].x != start_point.x && reversed_path[j].z != start_point.z)
-                    {
-                        merged = false;
-                        break;
-                    }
-
-                    if (additional_neighbours != nullptr)
-                    {
-                        // If component index of the current path position is equal to the current one to add (components.size())
-                        auto it = components_index.find(reversed_path[j] + Position(0, -1, 0));
-                        if (it != components_index.end() && it->second == components.size())
-                        {
-                            path_block_component2 = reversed_path[j] + Position(0, -1, 0);
-                        }
-                    }
-                }
-                if (merged)
-                {
-                    for (const Position& p : current_component)
-                    {
-                        components_index[p] = i;
-                    }
-                    components[i].insert(current_component.begin(), current_component.end());
-                    if (additional_neighbours != nullptr)
-                    {
-                        (*additional_neighbours)[path_block_component1].insert(path_block_component2);
-                        (*additional_neighbours)[path_block_component2].insert(path_block_component1);
-                    }
-                }
-            }
-        }
-        if (!merged)
-        {
-            components.push_back(current_component);
         }
     }
-    return components;
-}
 
-std::vector<Position> GetBlocksToAdd(const std::vector<std::unordered_set<Position>>& components, const Position& start_point)
-{
-    if (components.empty())
-    {
-        return {};
-    }
-
-    std::unordered_set<int> components_already_processed = { -1 };
-    std::unordered_set<int> components_to_process;
-
-    // Add all components to "to_process" vector
-    for (int i = 0; i < components.size(); ++i)
-    {
-        components_to_process.insert(i);
-    }
-
-    std::vector<Position> output;
-    output.reserve(components_to_process.size()); // rough estimate of ~1:1 ratio block present/block to add
-    while (components_to_process.size() > 0)
-    {
-        float min_dist = std::numeric_limits<float>::max();
-        int argmin_component_idx = -1;
-        Position from;
-        Position to;
-
-        // Look for the "closest" remaining component
-        // from the one we already have
-        for (const int c1 : components_already_processed)
-        {
-            for (const int c2 : components_to_process)
-            {
-                for (const Position& p1 : c1 != -1 ? components[c1] : std::unordered_set<Position>{ start_point })
-                {
-                    for (const Position& p2 : components[c2])
-                    {
-                        const float dist = std::abs(p1.x - p2.x) + std::abs(p1.z - p2.z);
-                        if (dist < min_dist)
-                        {
-                            min_dist = dist;
-                            argmin_component_idx = c2;
-                            from = p1;
-                            to = p2;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Dumb 2D staircase between from and to
-        while (from != to)
-        {
-            if (std::abs(to.x - from.x) > std::abs(to.z - from.z))
-            {
-                from.x += from.x < to.x ? 1 : -1;
-            }
-            else
-            {
-                from.z += from.z < to.z ? 1 : -1;
-            }
-            if (from != to)
-            {
-                output.push_back(from);
-            }
-        }
-        components_already_processed.insert(argmin_component_idx);
-        // Remove start point after first time
-        components_already_processed.erase(-1);
-        components_to_process.erase(argmin_component_idx);
-    }
-
-    return output;
-}
-
-std::unordered_set<Position> FlattenComponentsAndAdditionalBlocks(const std::vector<std::unordered_set<Position>>& components, const std::vector<Position>& additional_blocks)
-{
-    std::unordered_set<Position> output;
-    for (const std::unordered_set<Position>& v : components)
-    {
-        output.insert(v.begin(), v.end());
-    }
-    output.insert(additional_blocks.begin(), additional_blocks.end());
-    return output;
-}
-
-std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, const Position& start_block, const Direction orientation, const std::unordered_map<Position, std::unordered_set<Position>>& additional_neighbours)
-{
-    struct SortingNode
-    {
-        Position pos;
-        std::vector<SortingNode> children;
-    };
-
-    // Should not happen as at least start_block should be in blocks
-    if (blocks.size() == 0)
-    {
-        return { };
-    }
-    blocks.erase(start_block);
-
-    SortingNode root{ start_block };
-
-    std::queue<SortingNode*> to_process;
-    to_process.push(&root);
-
-    std::array<Position, 4> potential_neighbours;
-    
-    if (orientation == Direction::East || orientation == Direction::West)
-    {
-        potential_neighbours = {
-            Position(-1, 0, 0),   // west
-            Position(1, 0, 0),    // east
-            Position(0, 0, -1),   // north
-            Position(0, 0, 1)     // south
-        };
-    }
-    else
-    {
-        potential_neighbours = {
-            Position(0, 0, -1),   // north
-            Position(0, 0, 1),    // south
-            Position(-1, 0, 0),   // west
-            Position(1, 0, 0)     // east
-        };
-    }
-    
-
-    while (blocks.size() > 0)
-    {
-        SortingNode* current_node = to_process.front();
-
-        // Add direct neighbours
-        for (const Position& offset : potential_neighbours)
-        {
-            const Position potential_neighbour = current_node->pos + offset;
-            if (blocks.find(potential_neighbour) != blocks.end())
-            {
-                SortingNode neighbour;
-                neighbour.pos = potential_neighbour;
-                current_node->children.emplace_back(neighbour);
-            }
-        }
-        // Add additional ones (if any)
-        if (const auto it = additional_neighbours.find(current_node->pos); it != additional_neighbours.end())
-        {
-            for (const Position& potential_neighbour : it->second)
-            {
-                if (blocks.find(potential_neighbour) != blocks.end())
-                {
-                    SortingNode neighbour;
-                    neighbour.pos = potential_neighbour;
-                    current_node->children.emplace_back(neighbour);
-                }
-            }
-        }
-
-        for (size_t i = 0; i < current_node->children.size(); ++i)
-        {
-            to_process.push(current_node->children.data() + i);
-            blocks.erase(current_node->children[i].pos);
-        }
-        to_process.pop();
-    }
-
-    // Recursive function to add all children, then current node
-    // This allows to be sure that we will never "cut the branch
-    // we are sitting on" preventing getting back to start_point
-    const std::function<std::vector<Position>(const SortingNode& n)> get_sorted_positions =
-        [&get_sorted_positions](const SortingNode& n) -> std::vector<Position>
-    {
-        std::vector<Position> output;
-        for (const SortingNode& c : n.children)
-        {
-            const std::vector<Position> children_sorted = get_sorted_positions(c);
-            output.insert(output.end(), children_sorted.begin(), children_sorted.end());
-        }
-        output.push_back(n.pos);
-
-        return output;
-    };
-
-    return get_sorted_positions(root);
-}
-
-Position GetFarthestXZBlock(const std::unordered_set<Position>& blocks, const Position& p)
-{
-    int max_dist = 0;
-    Position max_pos = p;
-    for (const Position& b : blocks)
-    {
-        const int dist = std::abs(b.x - p.x) + std::abs(b.z - p.z);
-        if (dist > max_dist)
-        {
-            max_dist = dist;
-            max_pos = b;
-        }
-    }
-    return max_pos;
+    return Status::Failure;
 }

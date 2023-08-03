@@ -1,14 +1,14 @@
 #include <iostream>
 #include <string>
 
-#include "botcraft/Game/Vector3.hpp"
-#include "botcraft/AI/BehaviourTree.hpp"
-#include "botcraft/AI/SimpleBehaviourClient.hpp"
-#include "botcraft/Utilities/Logger.hpp"
-#include "botcraft/Utilities/SleepUtilities.hpp"
+#include <botcraft/Game/Vector3.hpp>
+#include <botcraft/Game/World/World.hpp>
+#include <botcraft/AI/BehaviourTree.hpp>
+#include <botcraft/AI/SimpleBehaviourClient.hpp>
+#include <botcraft/Utilities/Logger.hpp>
+#include <botcraft/Utilities/SleepUtilities.hpp>
 
 #include "WorldEaterSubTrees.hpp"
-#include "WorldEaterTasks.hpp"
 
 void ShowHelp(const char* argv0)
 {
@@ -19,8 +19,10 @@ void ShowHelp(const char* argv0)
         << "\t--numbot\tNumber of parallel bot to start, default: 16\n"
         << "\t--numworld\tNumber of shared world used by bots, less worlds saves RAM, but can be slower if shared between too many bots, default: 8\n"
         << "\t--start\t3 ints, offset for the first block, default: -64 -59 832\n"
-        << "\t--end\t3 ints, offset for the last block, default: 63 80 959\n"
+        << "\t--end\t3 ints, offset for the last block, default: 63 80 895\n"
         << "\t--tempblock\tname of the temp block, must be a full solid block, default: minecraft:basalt\n"
+        << "\t--spared\tcomma-separated list of blocks you don't want the bots to break, default: minecraft:spawner,minecraft:torch\n"
+        << "\t--collected\tcomma-separated list of items you want the bot to store (be careful to use item names instead of blocks if tools don't have silk touch), default: minecraft:diamond_ore,minecraft:deepslate_diamond_ore\n"
         << std::endl;
 }
 
@@ -29,17 +31,17 @@ struct Args
     bool help = false;
     std::string address = "127.0.0.1:25565";
     int num_bot = 16;
-    int num_world = 8;
+    int num_world = 6;
     Botcraft::Position start = Botcraft::Position(-64, -59, 832);
-    Botcraft::Position end = Botcraft::Position(63, 80, 959);
+    Botcraft::Position end = Botcraft::Position(63, 80, 895);
     std::string temp_block = "minecraft:basalt";
+    std::string spared_blocks = "minecraft:spawner,minecraft:torch";
+    std::string collected_blocks = "minecraft:diamond_ore,minecraft:deepslate_diamond_ore";
 
     int return_code = 0;
 };
 
 Args ParseCommandLine(int argc, char* argv[]);
-
-std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CreateTree();
 
 int main(int argc, char* argv[])
 {
@@ -90,9 +92,9 @@ int main(int argc, char* argv[])
         for (int i = 0; i < args.num_bot; ++i)
         {
             // Get a unique name for this bot
-            names[i] = i < base_names.size() ? base_names[i] : ("Botcraft_" + std::to_string(i / base_names.size()));
+            names[i] = i < base_names.size() ? base_names[i] : (base_names[i % base_names.size()] + std::to_string(i / base_names.size()));
             // Create the bot client and connect to the server
-            clients[i] = std::make_shared<Botcraft::SimpleBehaviourClient>(i == -1);
+            clients[i] = std::make_shared<Botcraft::SimpleBehaviourClient>(false);
             clients[i]->SetSharedWorld(shared_worlds[i % args.num_world]);
             clients[i]->Connect(args.address, names[i], false);
             // Start behaviour thread and set active tree
@@ -102,23 +104,25 @@ int main(int argc, char* argv[])
                 { "Eater.num_bot", args.num_bot },
                 { "Eater.start_block", args.start },
                 { "Eater.end_block", args.end },
-                { "Eater.temp_block", args.temp_block }
+                { "Eater.temp_block", args.temp_block },
+                { "Eater.spared_blocks", args.spared_blocks },
+                { "Eater.collected_blocks", args.collected_blocks }
             });
         }
 
         // Wait for everything to be loaded
         Botcraft::Utilities::SleepFor(std::chrono::seconds(5));
-        while (true)
+
+        std::vector<std::thread> behaviours_threads(args.num_bot);
+        for (int i = 0; i < args.num_bot; ++i)
         {
-            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now() + std::chrono::milliseconds(10);
+            behaviours_threads[i] = std::thread(&Botcraft::TemplatedBehaviourClient<Botcraft::SimpleBehaviourClient>::RunBehaviourUntilClosed, clients[i]);
+        }
 
-            // Step all clients
-            for (const auto& c : clients)
-            {
-                c->BehaviourStep();
-            }
-
-            Botcraft::Utilities::SleepUntil(end);
+        // Will never return, as the bot will run their behaviour until they disconnect, which shouldn't happen
+        for (int i = 0; i < args.num_bot; ++i)
+        {
+            behaviours_threads[i].join();
         }
 
         return 0;
@@ -227,6 +231,32 @@ Args ParseCommandLine(int argc, char* argv[])
             else
             {
                 LOG_FATAL("--tempblock requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--spared")
+        {
+            if (i + 1 < argc)
+            {
+                args.spared_blocks = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--spared requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--collected")
+        {
+            if (i + 1 < argc)
+            {
+                args.collected_blocks = argv[++i];
+            }
+            else
+            {
+                LOG_FATAL("--collected requires an argument");
                 args.return_code = 1;
                 return args;
             }
