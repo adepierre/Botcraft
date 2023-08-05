@@ -8,7 +8,7 @@ namespace Botcraft::Utilities
     class OnEndScope
     {
     public:
-        OnEndScope(const std::function<void()>& f) : callback(f) {}
+        OnEndScope(const std::function<void()>& f = []() {}) : callback(f) {}
         ~OnEndScope() { callback(); }
 
         // No copy
