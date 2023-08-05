@@ -418,22 +418,26 @@ namespace Botcraft
             }
             else
             {
-                std::vector<PlayerDiggingFace> face_candidates; // Faces next to a block
-                face_candidates.reserve(6);
+                std::vector<PlayerDiggingFace> premium_face_candidates; // Faces next to a solid block
+                premium_face_candidates.reserve(6);
+                std::vector<PlayerDiggingFace> second_choice_face_candidates; // Faces next to a non solid block (like ferns that would make the block replace the fern instead of going next to it)
+                second_choice_face_candidates.reserve(6);
                 for (int face_idx = 0; face_idx < 6; face_idx++)
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
                     const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[face_idx]);
-                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
+                    // Placing against fluids is not allowed
+                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir() && !neighbour_block->GetBlockstate()->IsFluid())
                     {
-                        face_candidates.push_back(static_cast<PlayerDiggingFace>(face_idx));
+                        (neighbour_block->GetBlockstate()->IsSolid() ? premium_face_candidates : second_choice_face_candidates).push_back(static_cast<PlayerDiggingFace>(face_idx));
                     }
                 }
-                if (face_candidates.size() == 0)
+                if (premium_face_candidates.size() + second_choice_face_candidates.size() == 0)
                 {
                     LOG_WARNING("Can't place a block in midair at " << pos);
                     return Status::Failure;
                 }
+                std::vector<PlayerDiggingFace>& face_candidates = (premium_face_candidates.size() > 0 ? premium_face_candidates : second_choice_face_candidates);
                 Vector3<double> player_orientation;
                 {
                     std::lock_guard<std::mutex> lock(local_player->GetMutex());
@@ -451,8 +455,8 @@ namespace Botcraft
                 );
                 face = face_candidates.front(); // This does not guarantees that the choosed PlayerDiggingFace is facing the player IE player_orientation.dot(face) can be less or equal than 0.
             }
-        } else
-        // Check if block is air
+        }
+        else // Check if block is air
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
 
