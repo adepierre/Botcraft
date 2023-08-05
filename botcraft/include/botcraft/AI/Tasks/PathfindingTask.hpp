@@ -11,20 +11,23 @@ namespace Botcraft
     /// @param client Client used to do the pathfinding
     /// @param start Start position
     /// @param end End position
+    /// @param dist_tolerance Stop the search earlier if you get closer than dist_tolerance from the end position
     /// @param min_end_dist Desired minimal checkboard distance between the final position and goal (useful if you want to place a block, you don't want to be at the exact spot, but close to it).
+    /// @param min_end_dist_xz Same as min_end_dist but only considering the XZ plane (allows to ask to stand next to a block, but above for example)
     /// @param allow_jump If true, allow to jump above 1-wide gaps
     /// @return A vector of positions to go through to reach end +/- min_end_dist. If not possible, will return a path to get as close as possible
-    std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump);
+    std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump);
 
     /// @brief Find a path to a position and navigate to it.
     /// @param client The client performing the action
     /// @param goal The end goal
     /// @param dist_tolerance If != 0 and the distance between final position and goal is < dist_tolerance, return Success even if goal is not reached.
     /// @param min_end_dist Desired minimal checkboard distance between the final position and goal (useful if you want to place a block, you don't want to be at the exact spot, but close to it). Should always be <= dist_tolerance.
+    /// @param min_end_dist_xz Same as min_end_dist but only considering the XZ plane (allows to ask to stand next to a block, but above for example)
     /// @param speed Travel speed (block per s). If 0, will be inferred from current player state (sprinting, potion effects etc...)
     /// @param allow_jump If true, allow to jump above 1-wide gaps
     /// @return Success if goal is reached, Failure otherwise
-    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance = 0, const int min_end_dist = 0, const float speed = 0.0f, const bool allow_jump = true);
+    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance = 0, const int min_end_dist = 0, const int min_end_dist_xz = 0, const float speed = 0.0f, const bool allow_jump = true);
 
     /// @brief Same thing as GoTo, but reads its parameters from the blackboard
     /// @param client The client performing the action

@@ -391,7 +391,7 @@ namespace Botcraft
 
         if (player_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 16.0f)
         {
-            if (GoTo(client, pos, 4, 1) == Status::Failure)
+            if (GoTo(client, pos, 4, 0, 1) == Status::Failure)
             {
                 return Status::Failure;
             }

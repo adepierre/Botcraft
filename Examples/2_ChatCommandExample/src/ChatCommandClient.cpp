@@ -129,9 +129,9 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                     // possibilities to create a leaf. Note that
                     // only the lambda solution can use default
                     // parameters for the last bool value
-                    .leaf("go to lambda", [=](ChatCommandClient& c) { return GoTo(c, target_position, 0, 0, speed); })
-                    .leaf("go to function", GoTo, target_position, 0, 0, speed, true)
-                    .leaf("go to std::bind", std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, speed, true))
+                    .leaf("go to lambda", [=](ChatCommandClient& c) { return GoTo(c, target_position, 4, 1, 1, speed); })
+                    .leaf("go to function", GoTo, target_position, 0, 0, 0, speed, true)
+                    .leaf("go to std::bind", std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, 0, speed, true))
                     // If goto fails, say something in chat
                     .leaf(Say, "Pathfinding failed :(")
                 .end()
@@ -272,7 +272,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
                 .succeeder().sequence()
-                    .leaf("go next to block", GoTo, pos, 4, 1, 0.0f, true)
+                    .leaf("go next to block", GoTo, pos, 4, 0, 1, 0.0f, true)
                     // Set interaction position in the blackboard
                     .leaf(SetBlackboardData<Position>, "InteractWithBlock.pos", pos)
                     .selector()

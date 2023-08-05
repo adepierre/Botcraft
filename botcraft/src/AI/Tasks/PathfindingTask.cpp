@@ -61,7 +61,7 @@ namespace Botcraft
         return block->GetBlockstate()->IsSolid() ? BlockPathfindingState::Solid : BlockPathfindingState::Empty;
     }
 
-    std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int min_end_dist, const bool allow_jump)
+    std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump)
     {
         struct PathNode
         {
@@ -84,6 +84,8 @@ namespace Botcraft
             }
         };
 
+        constexpr int budget_visit = 15000;
+
         const std::vector<Position> neighbour_offsets({ Position(1, 0, 0), Position(-1, 0, 0), Position(0, 0, 1), Position(0, 0, -1) });
         std::priority_queue<PathNode, std::vector<PathNode>, std::greater<PathNode> > nodes_to_explore;
         std::unordered_map<Position, Position> came_from;
@@ -94,8 +96,19 @@ namespace Botcraft
         cost[start] = 0.0f;
 
         int count_visit = 0;
+        // We found one location matching all the criterion, but
+        // continue the search to see if we can find a better one
+        bool suitable_location_found = false;
+        // We found a path to the desired goal
+        bool end_reached = false;
 
+        bool end_is_inside_solid = false;
         std::shared_ptr<World> world = client.GetWorld();
+        {
+            std::lock_guard<std::mutex> lock(world->GetMutex());
+            const Block* block = world->GetBlock(end);
+            end_is_inside_solid = block != nullptr && block->GetBlockstate()->IsSolid();
+        }
         const bool takes_damage = !client.GetCreativeMode();
 
         while (!nodes_to_explore.empty())
@@ -104,12 +117,16 @@ namespace Botcraft
             PathNode current_node = nodes_to_explore.top();
             nodes_to_explore.pop();
 
+            end_reached |= current_node.pos == end;
+            suitable_location_found |=
+                std::abs(end.x - current_node.pos.x) + std::abs(end.y - current_node.pos.y) + std::abs(end.z - current_node.pos.z) <= dist_tolerance &&
+                std::abs(end.x - current_node.pos.x) + std::abs(end.y - current_node.pos.y) + std::abs(end.z - current_node.pos.z) >= min_end_dist &&
+                std::abs(end.x - current_node.pos.x) + std::abs(end.z - current_node.pos.z) >= min_end_dist_xz;
+
             if (// If we exceeded the search budget
-                count_visit > 15000 ||
-                // If we reached the goal AND we started further than min_end_dist
-                (std::abs(end.x - start.x) + std::abs(end.z - start.z) >= min_end_dist && current_node.pos == end) ||
-                // If we started closer than min_end_dist AND are now far enough
-                (std::abs(end.x - start.x) + std::abs(end.z - start.z) < min_end_dist) && (std::abs(end.x - current_node.pos.x) + std::abs(end.z - current_node.pos.z) >= min_end_dist)) 
+                count_visit > budget_visit ||
+                // Or if we found a suitable location in the process and already reached the goal/can't reach it anyway
+                (suitable_location_found && (end_reached || end_is_inside_solid)))
             {
                 break;
             }
@@ -718,16 +735,26 @@ namespace Botcraft
 
         auto it_end_path = came_from.begin();
 
-        // We search for the closest node
-        // respecting the min_end_dist criterion
-        float best_float_dist = std::numeric_limits<float>::max();
+        // We search for the node respecting
+        // the criteria AND the closest to
+        // start as it should often lead
+        // to a shorter path. In case of a tie,
+        // take the one the closest to the end
+        int best_dist = std::numeric_limits<int>::max();
+        int best_dist_start = std::numeric_limits<int>::max();
         for (auto it = came_from.begin(); it != came_from.end(); ++it)
         {
             const Position diff = it->first - end;
-            const float d = static_cast<float>(std::abs(diff.x) + std::abs(diff.y) + std::abs(diff.z));
-            if (d < best_float_dist && d >= min_end_dist)
+            const int d_xz = std::abs(diff.x) + std::abs(diff.z);
+            const int d = d_xz + std::abs(diff.y);
+            const Position diff_start = it->first - start;
+            const int d_start = std::abs(diff_start.x) + std::abs(diff_start.y) + std::abs(diff_start.z);
+            if (d <= dist_tolerance && d >= min_end_dist && d_xz >= min_end_dist_xz &&
+                (d_start < best_dist_start || (d_start == best_dist_start && d < best_dist))
+                )
             {
-                best_float_dist = d;
+                best_dist = d;
+                best_dist_start = d_start;
                 it_end_path = it;
             }
         }
@@ -1153,11 +1180,15 @@ namespace Botcraft
     }
 
 
-    Status GoToImpl(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const float speed, const bool allow_jump)
+    Status GoToImpl(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const float speed, const bool allow_jump)
     {
         if (min_end_dist > dist_tolerance)
         {
             LOG_WARNING("min_end_dist should be <= dist_tolerance if you want pathfinding to work as expected");
+        }
+        if (min_end_dist_xz > dist_tolerance)
+        {
+            LOG_WARNING("min_end_dist_xz should be <= dist_tolerance if you want pathfinding to work as expected");
         }
         std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
@@ -1219,7 +1250,8 @@ namespace Botcraft
                 is_goal_loaded = world->IsLoaded(goal);
             }
 
-            const int current_diff = std::abs(goal.x - current_position.x) + std::abs(goal.y - current_position.y) + std::abs(goal.z - current_position.z);
+            const int current_diff_xz = std::abs(goal.x - current_position.x) + std::abs(goal.z - current_position.z);
+            const int current_diff = current_diff_xz + std::abs(goal.y - current_position.y);
             // Path finding step
             if (!is_goal_loaded)
             {
@@ -1231,15 +1263,15 @@ namespace Botcraft
                         static_cast<int>(goal_direction.x * 32.0),
                         static_cast<int>(goal_direction.y * 32.0),
                         static_cast<int>(goal_direction.z * 32.0)
-                    ), min_end_dist, allow_jump);
+                    ), dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump);
             }
             else
             {
-                if (dist_tolerance && current_diff <= dist_tolerance && current_diff >= min_end_dist)
+                if (dist_tolerance && current_diff <= dist_tolerance && current_diff >= min_end_dist && current_diff_xz >= min_end_dist_xz)
                 {
                     return Status::Success;
                 }
-                path = FindPath(client, current_position, goal, min_end_dist, allow_jump);
+                path = FindPath(client, current_position, goal, dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump);
             }
 
             if (path.size() == 0 || path.back() == current_position)
@@ -1259,7 +1291,7 @@ namespace Botcraft
                 }
             }
             // To avoid going back and forth two positions that are at the same distance of an unreachable goal
-            else if (current_diff >= min_end_dist && std::abs(goal.x - path.back().x) + std::abs(goal.y - path.back().y) + std::abs(goal.z - path.back().z) >= current_diff)
+            else if (current_diff >= min_end_dist && current_diff_xz >= min_end_dist_xz && std::abs(goal.x - path.back().x) + std::abs(goal.y - path.back().y) + std::abs(goal.z - path.back().z) >= current_diff)
             {
                 LOG_WARNING("Pathfinding cannot find a better position than " << current_position << " (asked " << goal << "). Staying there.");
                 return Status::Failure;
@@ -1293,12 +1325,13 @@ namespace Botcraft
         return Status::Success;
     }
 
-    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const float speed, const bool allow_jump)
+    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const float speed, const bool allow_jump)
     {
         constexpr std::array variable_names = {
             "GoTo.goal",
             "GoTo.dist_tolerance",
             "GoTo.min_end_dist",
+            "GoTo.min_end_dist_xz",
             "GoTo.speed",
             "GoTo.allow_jump"
         };
@@ -1308,10 +1341,11 @@ namespace Botcraft
         blackboard.Set<Position>(variable_names[0], goal);
         blackboard.Set<int>(variable_names[1], dist_tolerance);
         blackboard.Set<int>(variable_names[2], min_end_dist);
-        blackboard.Set<float>(variable_names[3], speed);
-        blackboard.Set<bool>(variable_names[4], allow_jump);
+        blackboard.Set<int>(variable_names[3], min_end_dist_xz);
+        blackboard.Set<float>(variable_names[4], speed);
+        blackboard.Set<bool>(variable_names[5], allow_jump);
 
-        return GoToImpl(client, goal, dist_tolerance, min_end_dist, speed, allow_jump);
+        return GoToImpl(client, goal, dist_tolerance, min_end_dist, min_end_dist_xz, speed, allow_jump);
     }
 
     Status GoToBlackboard(BehaviourClient& client)
@@ -1320,6 +1354,7 @@ namespace Botcraft
             "GoTo.goal",
             "GoTo.dist_tolerance",
             "GoTo.min_end_dist",
+            "GoTo.min_end_dist_xz",
             "GoTo.speed",
             "GoTo.allow_jump"
         };
@@ -1332,10 +1367,11 @@ namespace Botcraft
         // Optional
         const int dist_tolerance = blackboard.Get(variable_names[1], 0);
         const int min_end_dist = blackboard.Get(variable_names[2], 0);
-        const float speed = blackboard.Get(variable_names[3], 0.0f);
-        const bool allow_jump = blackboard.Get(variable_names[4], true);
+        const int min_end_dist_xz = blackboard.Get(variable_names[3], 0);
+        const float speed = blackboard.Get(variable_names[4], 0.0f);
+        const bool allow_jump = blackboard.Get(variable_names[5], true);
 
-        return GoToImpl(client, goal, dist_tolerance, min_end_dist, speed, allow_jump);
+        return GoToImpl(client, goal, dist_tolerance, min_end_dist, min_end_dist_xz, speed, allow_jump);
     }
 
 

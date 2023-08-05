@@ -181,6 +181,8 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .sequence()
                 .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
                 .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
+                .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist", 0)
+                .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist_xz", 0)
                 .leaf("go to buying position", Botcraft::GoToBlackboard)
                 .leaf(CopyRandomFromVectorBlackboardData<int>, blackboard_entity_location, "InteractEntity.entity_id")
                 .leaf(Botcraft::SetBlackboardData<bool>, "InteractEntity.swing", true)
@@ -206,6 +208,8 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .sequence()
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
                     .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
+                    .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist", 0)
+                    .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist_xz", 0)
                     .leaf(Botcraft::GoToBlackboard)
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.rotten_flesh_shulker_position", "OpenContainer.pos")
                     .leaf(Botcraft::OpenContainerBlackboard)
@@ -245,6 +249,8 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 .sequence()
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
                     .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
+                    .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist", 0)
+                    .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist_xz", 0)
                     .leaf(Botcraft::GoToBlackboard)
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.bones_shulker_position", "OpenContainer.pos")
                     .leaf("open bones container", Botcraft::OpenContainerBlackboard)
@@ -294,8 +300,10 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .end()
             .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
             .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
+            .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist", 0)
+            .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist_xz", 0)
             .leaf("go to selling position", Botcraft::GoToBlackboard)
-        // Sell crops
+            // Sell crops
             .repeater(0).inverter().sequence()
                 .leaf("check if enough crop to sell", Botcraft::HasItemInInventory, item_name, min_item_to_sell)
                 .leaf(CopyRandomFromVectorBlackboardData<int>, "DispenserFarmBot.farmer_id", "InteractEntity.entity_id")
@@ -350,6 +358,8 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                     // Go to the mining position
                     .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.stone_standing_position", "GoTo.goal")
                     .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
+                    .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist", 0)
+                    .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist_xz", 0)
                     .leaf("go to mining position", Botcraft::GoToBlackboard)
                     // Get cobblestone
                     .leaf("mine cobblestone", MineCobblestone)
@@ -375,6 +385,8 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
         .sequence()
             .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.buying_standing_position", "GoTo.goal")
             .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 0)
+            .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist", 0)
+            .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist_xz", 0)
             .leaf("go to crafting table", Botcraft::GoToBlackboard)
             .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.crafting_table_position", "OpenContainer.pos")
             .leaf("open crafting table interface", Botcraft::OpenContainerBlackboard)
@@ -410,6 +422,8 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
             .sequence()
                 .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.despawn_position", "GoTo.goal")
                 .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 1)
+                .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist", 0)
+                .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist_xz", 0)
                 .leaf("go to despawn position", Botcraft::GoToBlackboard)
             .end()
         .end();
@@ -425,6 +439,8 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> Create
                 // Go to the bed
                 .leaf(Botcraft::CopyBlackboardData, "DispenserFarmBot.bed_position", "GoTo.goal")
                 .leaf(Botcraft::SetBlackboardData<int>, "GoTo.dist_tolerance", 2)
+                .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist", 0)
+                .leaf(Botcraft::SetBlackboardData<int>, "GoTo.min_end_dist_xz", 0)
                 .leaf("go to bed", Botcraft::GoToBlackboard)
                 // Right click the bed every second until it's day time
                 .repeater(0).sequence()

@@ -395,7 +395,7 @@ Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboa
         has_wrong_items = index < slots_to_remove.size();
 
         // Now go to the cactus to destroy them
-        if (GoTo(client, cactus_standing_pos, 0, 0) == Status::Failure)
+        if (GoTo(client, cactus_standing_pos, 0, 0, 0) == Status::Failure)
         {
             LOG_WARNING("Error trying to go to the cactus standing position");
             return Status::Failure;
@@ -924,7 +924,7 @@ Status DestroyItems(BehaviourClient& client, const std::string& item_name)
     }
 
 
-    if (GoTo(client, cactus_standing_pos, 0, 0) == Status::Failure)
+    if (GoTo(client, cactus_standing_pos, 0, 0, 0) == Status::Failure)
     {
         LOG_WARNING("Error trying to go to the cactus standing position");
         return Status::Failure;
