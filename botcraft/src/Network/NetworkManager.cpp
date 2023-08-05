@@ -270,7 +270,7 @@ namespace Botcraft
 
     void NetworkManager::WaitForNewPackets()
     {
-        Logger::GetInstance().RegisterThread("NetworkPacketProcessing");
+        Logger::GetInstance().RegisterThread("NetworkPacketProcessing - " + name);
         try
         {
             while (state != ProtocolCraft::ConnectionState::None)
