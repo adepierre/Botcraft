@@ -571,6 +571,11 @@ namespace Botcraft
         m_name = properties.name;
         any_tool_harvest = properties.any_tool_harvest;
         best_tools = properties.best_tools;
+        for (int i = 0; i < properties.variables.size(); ++i)
+        {
+            std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
+            variables[splitted[0]] = splitted[1];
+        }
 
         weights_sum = 1;
         random_generator = std::mt19937(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
