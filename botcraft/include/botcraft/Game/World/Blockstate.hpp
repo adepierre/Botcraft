@@ -84,6 +84,7 @@ namespace Botcraft
         const bool IsFluid() const;
         const bool IsClimbable() const;
         const bool IsHazardous() const;
+        bool IsWaterlogged() const;
         const float GetHardness() const;
         const TintType GetTintType() const;
 

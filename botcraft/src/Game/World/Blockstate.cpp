@@ -667,6 +667,12 @@ namespace Botcraft
         return hazardous;
     }
 
+    bool Blockstate::IsWaterlogged() const
+    {
+        const auto it = variables.find("waterlogged");
+        return it != variables.cend() && it->second == "true";
+    }
+
     const float Blockstate::GetHardness() const
     {
         return hardness;
