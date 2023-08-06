@@ -25,6 +25,7 @@ bool IdentifyBaseCampLayout(SimpleBehaviourClient& client)
 
     std::unordered_map<std::string, std::string> block_item_mapping = {
         { "minecraft:red_concrete", "drop" },
+        { "minecraft:lime_concrete", "out" },
         { "minecraft:orange_shulker_box", "lava_bucket" },
         { "minecraft:pink_shulker_box", "sword" },
         { "minecraft:magenta_shulker_box", "shears" },
@@ -349,8 +350,13 @@ std::vector<Position> GetBlocksToAdd(const std::vector<std::unordered_set<Positi
             }
         }
 
-        // Dumb 2D staircase between from and to
-        while (from != to)
+        // Straight line to get back into the working area
+        // as quickly as possible
+        while (from != to && (
+            from.x < min_bound.x ||
+            from.x > max_bound.x ||
+            from.z < min_bound.z ||
+            from.z > max_bound.z))
         {
             if (from.x < min_bound.x)
             {
@@ -368,7 +374,16 @@ std::vector<Position> GetBlocksToAdd(const std::vector<std::unordered_set<Positi
             {
                 from.z -= 1;
             }
-            else if (std::abs(to.x - from.x) > std::abs(to.z - from.z))
+            if (from != to)
+            {
+                output.push_back(from);
+            }
+        }
+
+        // Dumb 2D staircase between from and to
+        while (from != to)
+        {
+            if (std::abs(to.x - from.x) > std::abs(to.z - from.z))
             {
                 from.x += from.x < to.x ? 1 : -1;
             }

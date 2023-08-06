@@ -20,6 +20,7 @@ enum class ActionType
     BreakBlock,
     BreakPillar,
     PlaceSolidBlock,
+    FillFluidBlock,
     PlacePillarBlock,
     PlaceTempBlock,
     PlaceLadderBlock
@@ -91,7 +92,6 @@ Status Init(SimpleBehaviourClient& client)
     Position this_bot_end;
     Position ladder_pillar_position;
     Position ladder_position;
-    Position layer_entry_position;
     PlayerDiggingFace ladder_face;
     if (input_edge == Direction::West || input_edge == Direction::East)
     {
@@ -110,8 +110,6 @@ Status Init(SimpleBehaviourClient& client)
         ladder_pillar_position.z = (this_bot_end.z + this_bot_start.z) / 2;
         ladder_position.x = input_edge == Direction::West ? min_block.x - 1 : max_block.x + 1;
         ladder_position.z = (this_bot_end.z + this_bot_start.z) / 2;
-        layer_entry_position.x = input_edge == Direction::West ? min_block.x : max_block.x;
-        layer_entry_position.z = (this_bot_end.z + this_bot_start.z) / 2;
         ladder_face = input_edge == Direction::West ? Direction::East : Direction::West;
     }
     else
@@ -131,8 +129,6 @@ Status Init(SimpleBehaviourClient& client)
         ladder_pillar_position.z = input_edge == Direction::North ? min_block.z - 2 : max_block.z + 2;
         ladder_position.x = (this_bot_end.x + this_bot_start.x) / 2;
         ladder_position.z = input_edge == Direction::North ? min_block.z - 1 : max_block.z + 1;
-        layer_entry_position.x = (this_bot_end.x + this_bot_start.x) / 2;
-        layer_entry_position.z = input_edge == Direction::North ? min_block.z : max_block.z;
         ladder_face = input_edge == Direction::North ? Direction::South : Direction::North;
     }
 
@@ -149,7 +145,6 @@ Status Init(SimpleBehaviourClient& client)
             {
                 ladder_pillar_position.y = y;
                 ladder_position.y = y;
-                layer_entry_position.y = y;
                 break;
             }
         }
@@ -166,7 +161,6 @@ Status Init(SimpleBehaviourClient& client)
     blackboard.Set<Position>("Eater.end_block", this_bot_end);
     blackboard.Set<Position>("Eater.ladder_pillar", ladder_pillar_position);
     blackboard.Set<Position>("Eater.ladder", ladder_position);
-    blackboard.Set<Position>("Eater.layer_entry", layer_entry_position);
     blackboard.Set<PlayerDiggingFace>("Eater.ladder_face", ladder_face);
     blackboard.Set<int>("Eater.current_layer", this_bot_start.y);
     blackboard.Set<bool>("Eater.init", true);
@@ -256,7 +250,10 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     const Position& start_block = blackboard.Get<Position>("Eater.start_block");
     const Position& end_block = blackboard.Get<Position>("Eater.end_block");
 
+
     const std::pair<Position, ActionType>& action = blackboard.Get<std::pair<Position, ActionType>>("Eater.next_action");
+    blackboard.Set<Position>("DEBUG.action.position", action.first);
+    blackboard.Set<int>("DEBUG.action.action", static_cast<int>(action.second));
     Vector3<double> player_position;
     {
         std::lock_guard<std::mutex> lock(local_player->GetMutex());
@@ -294,14 +291,25 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         }
     }
 
+    // If we need to spare this block or if it's one we can't break anyway
+    if (blockstate != nullptr &&
+        (spared_blocks.find(blockstate->GetName()) != spared_blocks.cend() ||
+        (!blockstate->IsAir() && blockstate->GetHardness() < 0)))
+    {
+        return Status::Success;
+    }
+
     const std::string block_to_place =
         action.second == ActionType::PlaceLadderBlock ?
         "minecraft:ladder" :
         blackboard.Get<std::string>("Eater.temp_block");
 
     // Break block if that's the action, or if we need to place a block that's not the one currently there
-    if (blockstate != nullptr && !blockstate->IsAir() && !blockstate->IsFluid() && blockstate->GetHardness() >= 0 && spared_blocks.find(blockstate->GetName()) == spared_blocks.cend() &&
-        (action.second == ActionType::BreakBlock || action.second == ActionType::BreakPillar || (action.second == ActionType::PlaceSolidBlock && !blockstate->IsSolid()) || (action.second != ActionType::PlaceSolidBlock && blockstate->GetName() != block_to_place)))
+    if (blockstate != nullptr && !blockstate->IsAir() && !blockstate->IsFluid() &&
+        (action.second == ActionType::BreakBlock ||
+            action.second == ActionType::BreakPillar ||
+            (action.second == ActionType::PlaceSolidBlock && !blockstate->IsSolid()) ||
+            (action.second != ActionType::PlaceSolidBlock && action.second != ActionType::FillFluidBlock && blockstate->GetName() != block_to_place)))
     {
         // Check which tool type is the best
         const std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>& tool_types = blackboard.Get<std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>>("Eater.tools");
@@ -370,11 +378,15 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             {
                 goto_result = GoTo(client, action.first + Position(0, 1, 0), 4, 1, 1);
             }
-            // Else, we should get back on top of the current layer to be sure we won't isolate
-            // us from the ladder access point
+            // Else, we should get back on top of the current layer first to be sure we won't
+            // isolate us from the ladder access point
             else
             {
-                goto_result = GoTo(client, action.first + Position(0, 1, 0), 1, 1, 1);
+                goto_result = GoTo(client, action.first + Position(0, 1, 0));
+                if (goto_result == Status::Success)
+                {
+                    goto_result = GoTo(client, action.first + Position(0, 1, 0), 4, 1, 1);
+                }
             }
             break;
         case ActionType::BreakPillar:
@@ -419,15 +431,17 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             }
         }
     }
-    
-    if ((action.second == ActionType::PlaceSolidBlock && (blockstate == nullptr || !blockstate->IsSolid()))
-         || ((action.second == ActionType::PlacePillarBlock || action.second == ActionType::PlaceTempBlock || action.second == ActionType::PlaceLadderBlock)
+
+    if ((action.second == ActionType::FillFluidBlock && blockstate != nullptr && blockstate->IsFluid() && blockstate->GetVariableValue("level") == "0") ||
+        (action.second == ActionType::PlaceSolidBlock && (blockstate == nullptr || !blockstate->IsSolid())) ||
+        ((action.second == ActionType::PlacePillarBlock || action.second == ActionType::PlaceTempBlock || action.second == ActionType::PlaceLadderBlock)
              && (blockstate == nullptr || blockstate->GetName() != block_to_place)))
     {
         // PlaceBlock would call GoTo too, but without the min dist constraint we want
         Status goto_result = Status::Success;
         switch (action.second)
         {
+        case ActionType::FillFluidBlock:
         case ActionType::PlaceSolidBlock:
         case ActionType::PlaceTempBlock:
             // If we are standing on the current layer
@@ -437,10 +451,14 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             {
                 goto_result = GoTo(client, action.first + Position(0, 1, 0), 3, 1, 1);
             }
-            // Else, try to get back on the top layer by giving less tolerance on the distance
+            // Else, try to get back on the top layer fist
             else
             {
-                goto_result = GoTo(client, action.first + Position(0, 1, 0), 2, 1, 1);
+                goto_result = GoTo(client, action.first + Position(0, 1, 0), 1, 1, 1);
+                if (goto_result == Status::Success)
+                {
+                    goto_result = GoTo(client, action.first + Position(0, 1, 0), 3, 1, 1);
+                }
             }
             break;
         case ActionType::PlacePillarBlock:
@@ -462,8 +480,15 @@ Status ExecuteAction(SimpleBehaviourClient& client)
                 std::optional<PlayerDiggingFace>(blackboard.Get<PlayerDiggingFace>("Eater.ladder_face")) :
                 std::nullopt, true, false) == Status::Failure)
         {
-            LOG_WARNING("Error trying to PlaceBlock (" << block_to_place << ") at " << action.first);
-            return Status::Failure;
+            // Retry, but this time with the cheaty midair placement
+            if (PlaceBlock(client, block_to_place, action.first,
+                action.second == ActionType::PlaceLadderBlock ?
+                std::optional<PlayerDiggingFace>(blackboard.Get<PlayerDiggingFace>("Eater.ladder_face")) :
+                PlayerDiggingFace::Up, true, true) == Status::Failure)
+            {
+                LOG_WARNING("Error trying to PlaceBlock (" << block_to_place << ") at " << action.first);
+                return Status::Failure;
+            }
         }
     }
 
@@ -532,6 +557,34 @@ Status CleanInventory(SimpleBehaviourClient& client)
         std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         init_position = local_player->GetPosition();
     }
+
+    bool on_fluid = false;
+    {
+        std::lock_guard<std::mutex> lock(world->GetMutex());
+        const Block* block = world->GetBlock(Position(
+            static_cast<int>(std::floor(init_position.x)),
+            static_cast<int>(std::floor(init_position.y)),
+            static_cast<int>(std::floor(init_position.z))
+        ));
+        on_fluid = block != nullptr && block->GetBlockstate()->IsFluid();
+    }
+
+    // It's not a good idea to drop lava on top of a fluid, best case it won't work,
+    // worst case, you'll get obsidian
+    if (on_fluid)
+    {
+        // Try to pathfind on top of previous position
+        if (GoTo(client, blackboard.Get<std::pair<Position, ActionType>>("Eater.next_action").first + Position(0, 1, 0)) == Status::Failure)
+        {
+            // If it didn't work, the bot will go back to basecamp instead of wasting a bucket of lava
+            return Status::Failure;
+        }
+        {
+            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+            init_position = local_player->GetPosition();
+        }
+    }
+
     LookAt(client, init_position, true);
 
     // Items we don't want to throw in lava
@@ -684,7 +737,7 @@ Status MoveToNextLayer(SimpleBehaviourClient& client)
     const int current_layer = blackboard.Get<int>("Eater.current_layer");
 
     // We reached the end
-    if (current_layer == last_layer - 1)
+    if (current_layer == last_layer)
     {
         blackboard.Set<bool>("Eater.done", true);
         return Status::Failure;
@@ -712,55 +765,36 @@ Status PrepareLayer(SimpleBehaviourClient& client)
 
     std::queue<std::pair<Position, ActionType>> action_queue;
     
-    // Special case, remove ugly pillar above ground
-    if (current_layer < end.y)
+    // Special case, once all the layers above groound are done, remove ugly pillar
+    if (current_layer == ladder_pillar.y)
     {
         for (int y = start.y; y > ladder_pillar.y; --y)
         {
             current_pillar.y = y;
             action_queue.push({ current_pillar, ActionType::BreakPillar });
         }
-        // Go back to init position
-        action_queue.push({ blackboard.Get<Position>("Eater.init_pos"), ActionType::GoTo });
     }
+
     // Place ladder up to current layer
-    else if (current_layer > ladder_pillar.y)
+    if (current_layer > ladder_pillar.y)
     {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
         for (int y = ladder_pillar.y + 1; y <= current_layer; ++y)
         {
             current_pillar.y = y;
-            const Block* block = world->GetBlock(current_pillar);
-            if (block == nullptr || block->GetBlockstate()->GetName() != temp_block)
-            {
-                action_queue.push({ current_pillar, ActionType::PlacePillarBlock });
-            }
             current_ladder.y = y;
-            block = world->GetBlock(current_ladder);
-            if (block == nullptr || block->GetBlockstate()->GetName() != "minecraft:ladder")
-            {
-                action_queue.push({ current_ladder, ActionType::PlaceLadderBlock });
-            }
+            action_queue.push({ current_pillar, ActionType::PlacePillarBlock });
+            action_queue.push({ current_ladder, ActionType::PlaceLadderBlock });
         }
     }
     // Place ladder down to current layer
     else
     {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
         for (int y = ladder_pillar.y; y >= current_layer; --y)
         {
             current_pillar.y = y;
-            const Block* block = world->GetBlock(current_pillar);
-            if (block == nullptr || block->GetBlockstate()->GetName() != temp_block)
-            {
-                action_queue.push({ current_pillar, ActionType::PlacePillarBlock });
-            }
             current_ladder.y = y;
-            block = world->GetBlock(current_ladder);
-            if (block == nullptr || block->GetBlockstate()->GetName() != "minecraft:ladder")
-            {
-                action_queue.push({ current_ladder, ActionType::PlaceLadderBlock });
-            }
+            action_queue.push({ current_pillar, ActionType::PlacePillarBlock });
+            action_queue.push({ current_ladder, ActionType::PlaceLadderBlock });
         }
     }
 
@@ -808,7 +842,7 @@ Status PlanLayerFluids(SimpleBehaviourClient& client)
         {
             continue;
         }
-        action_queue.push({ p, ActionType::PlaceSolidBlock });
+        action_queue.push({ p, ActionType::FillFluidBlock });
     }
 
     blackboard.Set<std::queue<std::pair<Position, ActionType>>>("Eater.action_queue", action_queue);

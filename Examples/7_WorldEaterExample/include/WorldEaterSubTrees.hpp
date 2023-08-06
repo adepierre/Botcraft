@@ -11,4 +11,4 @@ std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> BaseCa
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> MainTree();
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> ActionLoopTree();
 std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> CompletionTree();
-
+std::shared_ptr<Botcraft::BehaviourTree<Botcraft::SimpleBehaviourClient>> GoToTopLadderTree();
