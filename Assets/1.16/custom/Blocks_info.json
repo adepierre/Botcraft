@@ -6635,9 +6635,12 @@
     {
         "hardness": -1,
         "name": "minecraft:bubble_column",
-        "render": "none",
+        "render": "fluid",
+        "texture": "block/water_still",
+        "tintType": "water",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "climbable": true
     },
     {
         "hardness": 1.5,
