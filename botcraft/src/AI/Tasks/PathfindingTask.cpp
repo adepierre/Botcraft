@@ -1299,6 +1299,19 @@ namespace Botcraft
 
             for (int i = 0; i < path.size(); ++i)
             {
+                // Basic verification to check we won't try to walk on air.
+                // If so, it means some blocks have changed, better to
+                // recompute a new path
+                {
+                    std::lock_guard<std::mutex> lock(world->GetMutex());
+                    const Block* next_target = world->GetBlock(path[i]);
+                    const Block* below = world->GetBlock(path[i] + Position(0, -1, 0));
+                    if ((next_target == nullptr || (!next_target->GetBlockstate()->IsClimbable() && !next_target->GetBlockstate()->IsFluid())) &&
+                        (below == nullptr || below->GetBlockstate()->IsAir()))
+                    {
+                        break;
+                    }
+                }
                 const bool succeeded = Move(client, local_player, path[i], movement_speed, 0.5f * movement_speed);
 
                 // If something went wrong, break and
