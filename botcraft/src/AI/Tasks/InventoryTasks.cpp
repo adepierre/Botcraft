@@ -462,7 +462,7 @@ namespace Botcraft
 
             const Block* block = world->GetBlock(pos);
 
-            if (block && !block->GetBlockstate()->IsAir())
+            if (block && !block->GetBlockstate()->IsAir() && !block->GetBlockstate()->IsFluid())
             {
                 return Status::Failure;
             }
