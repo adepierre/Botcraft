@@ -27,7 +27,6 @@ bool IdentifyBaseCampLayout(SimpleBehaviourClient& client)
         { "minecraft:red_concrete", "drop" },
         { "minecraft:lime_concrete", "out" },
         { "minecraft:orange_shulker_box", "lava_bucket" },
-        { "minecraft:pink_shulker_box", "sword" },
         { "minecraft:magenta_shulker_box", "shears" },
         { "minecraft:purple_shulker_box", "hoe" },
         { "minecraft:blue_shulker_box", "shovel" },
@@ -126,10 +125,12 @@ std::unordered_set<Position> CollectBlocks(const std::shared_ptr<World> world, c
             p.z = z;
             std::scoped_lock<std::mutex> lock(world->GetMutex());
             const Block* block = world->GetBlock(p);
-            if (block && !block->GetBlockstate()->IsAir() &&
-                ((fluids && block->GetBlockstate()->IsFluid()) ||
-                    (solids && block->GetBlockstate()->IsSolid()) ||
-                    (!fluids && !solids && !block->GetBlockstate()->IsFluid() && !block->GetBlockstate()->IsSolid())
+            const Blockstate* blockstate = block == nullptr ? nullptr : block->GetBlockstate();
+            if (block && !blockstate->IsAir() &&
+                // For fluids, we are not interested in the corner blocks as they can't "leak" into the working area
+                ((fluids && (blockstate->IsFluid() || blockstate->IsWaterlogged()) && ((x != start.x && x != end.x) || (z != start.z && z != end.z))) ||
+                    (solids && blockstate->IsSolid()) ||
+                    (!fluids && !solids && (!blockstate->IsFluid() || blockstate->IsHazardous()) && !blockstate->IsWaterlogged() && (!blockstate->IsSolid() || blockstate->IsHazardous()))
                 ))
             {
                 output.insert(Position(x, layer, z));

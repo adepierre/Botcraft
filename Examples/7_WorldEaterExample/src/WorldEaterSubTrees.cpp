@@ -44,7 +44,6 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> BaseCampResupplyTree()
             .leaf("Drop items", BaseCampDropItems, false)
             .leaf("Pick items", BaseCampPickItems)
             .leaf("Has lava", HasItemInInventory, "minecraft:lava_bucket", 1)
-            .leaf("Has sword", HasToolInInventory, ToolType::Sword, 2)
             .leaf("Has shears", HasToolInInventory, ToolType::Shears, 2)
             .leaf("Has hoe", HasToolInInventory, ToolType::Hoe, 2)
             .leaf("Has shovel", HasToolInInventory, ToolType::Shovel, 2)
@@ -69,16 +68,20 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> MainTree()
                 // CheckActionsDone will exit this loop if all the
                 // actions weren't done during the internal loop
                 .leaf("Check done", CheckActionsDone)
-                .leaf("Plan layer fluids", PlanLayerFluids)
+                .leaf("Plan layer non solids", PlanLayerNonWalkable)
                 .tree(action_loop_tree)
                 .leaf("Check done", CheckActionsDone)
-                .leaf("Plan layer non solids", PlanLayerNonSolids)
+                .leaf("Plan layer fluids", PlanLayerFluids)
                 .tree(action_loop_tree)
                 .leaf("Check done", CheckActionsDone)
                 .leaf("Plan layer blocks", PlanLayerBlocks)
                 .tree(action_loop_tree)
                 .leaf("Check done", CheckActionsDone)
-                .leaf("Move to next layer", MoveToNextLayer)
+                // Only move to next layer if layer is really done
+                .selector()
+                    .inverter().leaf("Check layer done", CheckLayerDone)
+                    .leaf("Move to next layer", MoveToNextLayer)
+                .end()
             .end();
 }
 

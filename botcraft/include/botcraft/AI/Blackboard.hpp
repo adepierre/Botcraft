@@ -57,7 +57,7 @@ namespace Botcraft
         template<class T>
         const T& Get(const std::string& key)
         {
-            return std::any_cast<T&>(blackboard[key]);
+            return std::any_cast<T&>(blackboard.at(key));
         }
         
         /// @brief Get the map value at key, casting it to T.

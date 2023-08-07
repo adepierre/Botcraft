@@ -22,6 +22,11 @@ Botcraft::Status ExecuteAction(Botcraft::SimpleBehaviourClient& client);
 /// @return Success if the action queue is empty, Failure otherwise
 Botcraft::Status CheckActionsDone(Botcraft::SimpleBehaviourClient& client);
 
+/// @brief Check if the current layer is done
+/// @param client The client performing the action
+/// @return Success if the layer is now air, Failure otherwise
+Botcraft::Status CheckLayerDone(Botcraft::SimpleBehaviourClient& client);
+
 /// @brief Remove the first action in the action queue
 /// @param client The client performing the action
 /// @return Failure if the queue is full, Success otherwise
@@ -52,10 +57,10 @@ Botcraft::Status PrepareLayer(Botcraft::SimpleBehaviourClient& client);
 /// @return Always return Success
 Botcraft::Status PlanLayerFluids(Botcraft::SimpleBehaviourClient& client);
 
-/// @brief Plan actions to all non solid blocks from the current layer with solid ones
+/// @brief Plan actions to replace all non walkable blocks (non solid/hazardous) from the current layer with solid ones
 /// @param client The client performing the action
 /// @return Always return Success
-Botcraft::Status PlanLayerNonSolids(Botcraft::SimpleBehaviourClient& client);
+Botcraft::Status PlanLayerNonWalkable(Botcraft::SimpleBehaviourClient& client);
 
 /// @brief Plan actions to remove all blocks from the current layer
 /// @param client The client performing the action

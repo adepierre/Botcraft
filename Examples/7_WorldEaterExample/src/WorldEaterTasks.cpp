@@ -164,13 +164,12 @@ Status Init(SimpleBehaviourClient& client)
     blackboard.Set<PlayerDiggingFace>("Eater.ladder_face", ladder_face);
     blackboard.Set<int>("Eater.current_layer", this_bot_start.y);
     blackboard.Set<bool>("Eater.init", true);
-    blackboard.Set<std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>>("Eater.tools", {
+    blackboard.Set<std::array<ToolType, 5>>("Eater.tools", {
         ToolType::Axe,
         ToolType::Hoe,
         ToolType::Pickaxe,
         ToolType::Shears,
-        ToolType::Shovel,
-        ToolType::Sword,
+        ToolType::Shovel
     });
 
     // Get a set for spared/collected blocks/items
@@ -249,11 +248,8 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     const std::unordered_set<std::string>& spared_blocks = blackboard.Get<std::unordered_set<std::string>>("Eater.spared_blocks");
     const Position& start_block = blackboard.Get<Position>("Eater.start_block");
     const Position& end_block = blackboard.Get<Position>("Eater.end_block");
-
-
     const std::pair<Position, ActionType>& action = blackboard.Get<std::pair<Position, ActionType>>("Eater.next_action");
-    blackboard.Set<Position>("DEBUG.action.position", action.first);
-    blackboard.Set<int>("DEBUG.action.action", static_cast<int>(action.second));
+
     Vector3<double> player_position;
     {
         std::lock_guard<std::mutex> lock(local_player->GetMutex());
@@ -294,7 +290,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     // If we need to spare this block or if it's one we can't break anyway
     if (blockstate != nullptr &&
         (spared_blocks.find(blockstate->GetName()) != spared_blocks.cend() ||
-        (!blockstate->IsAir() && blockstate->GetHardness() < 0)))
+        (!blockstate->IsAir() && !blockstate->IsFluid() && blockstate->GetHardness() < 0)))
     {
         return Status::Success;
     }
@@ -308,11 +304,12 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     if (blockstate != nullptr && !blockstate->IsAir() && !blockstate->IsFluid() &&
         (action.second == ActionType::BreakBlock ||
             action.second == ActionType::BreakPillar ||
-            (action.second == ActionType::PlaceSolidBlock && !blockstate->IsSolid()) ||
+            (action.second == ActionType::FillFluidBlock && blockstate->IsWaterlogged()) ||
+            (action.second == ActionType::PlaceSolidBlock && (!blockstate->IsSolid() || (!blockstate->IsFluid() && blockstate->IsHazardous()))) ||
             (action.second != ActionType::PlaceSolidBlock && action.second != ActionType::FillFluidBlock && blockstate->GetName() != block_to_place)))
     {
         // Check which tool type is the best
-        const std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>& tool_types = blackboard.Get<std::array<ToolType, static_cast<size_t>(ToolType::NUM_TOOL_TYPE) - 1>>("Eater.tools");
+        const std::array<ToolType, 5>& tool_types = blackboard.Get<std::array<ToolType, 5>>("Eater.tools");
         ToolType best_tool_type = ToolType::None;
         float min_mining_time = std::numeric_limits<float>::max();
 
@@ -341,9 +338,9 @@ Status ExecuteAction(SimpleBehaviourClient& client)
                 const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
                 if (item->GetToolType() == best_tool_type)
                 {
-                    // Check the tool won't break, with a "large" margin of 1 to be safe
+                    // Check the tool won't break, with a "large" margin of 5 to be safe
                     const int damage_count = Utilities::GetDamageCount(slot.GetNBT());
-                    if (damage_count < item->GetMaxDurability() - 2)
+                    if (damage_count < item->GetMaxDurability() - 6)
                     {
                         tool_name = item->GetName();
                         break;
@@ -432,11 +429,17 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         }
     }
 
-    if ((action.second == ActionType::FillFluidBlock && blockstate != nullptr && blockstate->IsFluid() && blockstate->GetVariableValue("level") == "0") ||
-        (action.second == ActionType::PlaceSolidBlock && (blockstate == nullptr || !blockstate->IsSolid())) ||
+    if ((action.second == ActionType::FillFluidBlock && blockstate != nullptr && (blockstate->IsFluid() || blockstate->IsWaterlogged() || blockstate->IsAir())) || // We need to place it if it's air as it could be part of a pathfinding requirements to go to next fluid block
+        (action.second == ActionType::PlaceSolidBlock && (blockstate == nullptr || !blockstate->IsSolid() || blockstate->IsHazardous())) ||
         ((action.second == ActionType::PlacePillarBlock || action.second == ActionType::PlaceTempBlock || action.second == ActionType::PlaceLadderBlock)
              && (blockstate == nullptr || blockstate->GetName() != block_to_place)))
     {
+        if (HasItemInInventory(client, block_to_place, 1) == Status::Failure)
+        {
+            // If we don't have one item in inventory go back to basecamp to grab some
+            return Status::Failure;
+        }
+
         // PlaceBlock would call GoTo too, but without the min dist constraint we want
         Status goto_result = Status::Success;
         switch (action.second)
@@ -504,6 +507,37 @@ Status CheckActionsDone(SimpleBehaviourClient& client)
     return queue.empty() ? Status::Success : Status::Failure;
 }
 
+Botcraft::Status CheckLayerDone(Botcraft::SimpleBehaviourClient& client)
+{
+    Blackboard& blackboard = client.GetBlackboard();
+    std::shared_ptr<World> world = client.GetWorld();
+
+    const std::unordered_set<std::string>& spared_blocks = blackboard.Get<std::unordered_set<std::string>>("Eater.spared_blocks");
+    const int current_layer = blackboard.Get<int>("Eater.current_layer");
+    const Position& start_block = blackboard.Get<Position>("Eater.start_block");
+    const Position& end_block = blackboard.Get<Position>("Eater.end_block");
+
+    {
+        std::lock_guard<std::mutex> lock(world->GetMutex());
+        Position current_position(0, current_layer, 0);
+        for (int x = start_block.x; x <= end_block.x; ++x)
+        {
+            current_position.x = x;
+            for (int z = start_block.z; z <= end_block.z; ++z)
+            {
+                current_position.z = z;
+                const Block* block = world->GetBlock(current_position);
+                if (block != nullptr && !block->GetBlockstate()->IsAir() && spared_blocks.find(block->GetBlockstate()->GetName()) == spared_blocks.cend())
+                {
+                    return Status::Failure;
+                }
+            }
+        }
+    }
+
+    return Status::Success;
+}
+
 Status PopAction(SimpleBehaviourClient& client)
 {
     Blackboard& blackboard = client.GetBlackboard();
@@ -551,6 +585,12 @@ Status CleanInventory(SimpleBehaviourClient& client)
     Blackboard& blackboard = client.GetBlackboard();
     const std::unordered_set<ItemId>& collected_items = blackboard.Get<std::unordered_set<ItemId>>("Eater.collected_blocks");
 
+    if (HasItemInInventory(client, "minecraft:lava_bucket", 1) == Status::Failure)
+    {
+        // We are missing lava bucket, go back to basecamp to grab one
+        return Status::Failure;
+    }
+
     Vector3<double> init_position;
     // Look down
     {
@@ -566,7 +606,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
             static_cast<int>(std::floor(init_position.y)),
             static_cast<int>(std::floor(init_position.z))
         ));
-        on_fluid = block != nullptr && block->GetBlockstate()->IsFluid();
+        on_fluid = block != nullptr && (block->GetBlockstate()->IsFluid() || block->GetBlockstate()->IsWaterlogged());
     }
 
     // It's not a good idea to drop lava on top of a fluid, best case it won't work,
@@ -834,7 +874,6 @@ Status PlanLayerFluids(SimpleBehaviourClient& client)
     }
 
     std::queue<std::pair<Position, ActionType>> action_queue;
-
     for (const Position& p : ordered_blocks_to_place_fluids)
     {
         // Don't replace the ladder...
@@ -850,7 +889,7 @@ Status PlanLayerFluids(SimpleBehaviourClient& client)
     return Status::Success;
 }
 
-Botcraft::Status PlanLayerNonSolids(Botcraft::SimpleBehaviourClient& client)
+Botcraft::Status PlanLayerNonWalkable(Botcraft::SimpleBehaviourClient& client)
 {
     std::shared_ptr<World> world = client.GetWorld();
 
@@ -990,7 +1029,7 @@ Status BaseCampDropItems(SimpleBehaviourClient& client, const bool all_items)
             }
             const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
             // Don't throw tools with more than 10% durability
-            if (!all_items && item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot.GetNBT()) < item->GetMaxDurability() / 10)
+            if (!all_items && item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot.GetNBT()) < 9 * item->GetMaxDurability() / 10)
             {
                 continue;
             }
@@ -1018,7 +1057,6 @@ Status BaseCampPickItems(SimpleBehaviourClient& client)
 
     const std::unordered_map<std::string, int> items_to_get = {
         { "lava_bucket", 1 },
-        { "sword", 1 },
         { "shears", 1 },
         { "hoe", 1 },
         { "shovel", 1 },
