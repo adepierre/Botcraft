@@ -246,6 +246,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 347
         metadata = properties.metadata;
 #endif
+        air = properties.air;
         transparent = properties.transparent;
         solid = properties.solid;
         fluid = properties.fluid;
@@ -561,6 +562,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 347
         metadata = properties.metadata;
 #endif
+        air = properties.air;
         transparent = properties.transparent;
         solid = properties.solid;
         climbable = properties.climbable;
@@ -639,7 +641,7 @@ namespace Botcraft
 
     const bool Blockstate::IsAir() const
     {
-        return id == 0;
+        return air;
     }
 
     const bool Blockstate::IsSolid() const

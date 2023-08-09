@@ -4,7 +4,8 @@
         "name": "minecraft:air",
         "render": "none",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "air": true
     },
     {
         "hardness": 1.5,
@@ -5395,7 +5396,8 @@
         "name": "minecraft:structure_void",
         "render": "none",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "air": true
     },
     {
         "hardness": 3,
@@ -6612,14 +6614,16 @@
         "name": "minecraft:void_air",
         "render": "none",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "air": true
     },
     {
         "hardness": -1,
         "name": "minecraft:cave_air",
         "render": "none",
         "solid": false,
-        "transparent": true
+        "transparent": true,
+        "air": true
     },
     {
         "hardness": -1,

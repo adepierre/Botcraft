@@ -241,6 +241,11 @@ namespace Botcraft
                 blockstate_properties[name].name = name;
             }
 
+            if (info.contains("air") && info["air"].is_bool())
+            {
+                blockstate_properties[name].air = info["air"].get<bool>();
+            }
+
             if (info.contains("transparent") && info["transparent"].is_bool())
             {
                 blockstate_properties[name].transparent = info["transparent"].get<bool>();
@@ -412,32 +417,34 @@ namespace Botcraft
         blockstates[-1];
         blockstates[-1][0] = std::make_unique<Blockstate>(
             BlockstateProperties{
-                -1, //id
-                0, //metadata
-                false, //transparent
-                true, //solid
-                false, //fluid
-                false, //climbable
-                false, //custom
-                false, //hazardous
-                -2.0f, //hardness
+                -1,             //id
+                0,              //metadata
+                false,          //air
+                false,          //transparent
+                true,           //solid
+                false,          //fluid
+                false,          //climbable
+                false,          //custom
+                false,          //hazardous
+                -2.0f,          //hardness
                 TintType::None, //tint_type
-                "default", //name
+                "default",      //name
             }
         );
 #else
         blockstates[-1] = std::make_unique<Blockstate>(
             BlockstateProperties{
-                -1, //id
-                false, //transparent
-                true, //solid
-                false, //fluid
-                false, //climbable
-                false, //custom
-                false, //hazardous
-                -2.0f, //hardness
+                -1,             //id
+                false,          //air
+                false,          //transparent
+                true,           //solid
+                false,          //fluid
+                false,          //climbable
+                false,          //custom
+                false,          //hazardous
+                -2.0f,          //hardness
                 TintType::None, //tint_type
-                "default", //name
+                "default",      //name
             }
         );
 #endif

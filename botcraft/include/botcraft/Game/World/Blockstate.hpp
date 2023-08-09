@@ -34,6 +34,8 @@ namespace Botcraft
 #else
         int id = -1;
 #endif
+        /// @brief True if the block is air (air, cave_air, void and structure_void are counted as air)
+        bool air = false;
         /// @brief True if not a full 1x1x1 block OR at least one face texture has transparency
         bool transparent = false;
         /// @brief True if can't go through it
@@ -114,6 +116,7 @@ namespace Botcraft
     private:
         static std::map<std::string, ProtocolCraft::Json::Value> cached_jsons;
 
+        bool air;
         bool transparent;
         bool solid;
         bool fluid;

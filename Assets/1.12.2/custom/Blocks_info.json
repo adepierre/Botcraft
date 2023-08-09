@@ -4,7 +4,8 @@
         "transparent": true,
         "solid": false,
         "render": "none",
-        "hardness": -1
+        "hardness": -1,
+        "air": true
     },
     {
         "name": "minecraft:stone",
@@ -2300,7 +2301,8 @@
         "transparent": true,
         "solid": false,
         "render": "none",
-        "hardness": -1
+        "hardness": -1,
+        "air": true
     },
     {
         "name": "minecraft:observer",
