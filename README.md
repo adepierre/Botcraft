@@ -15,9 +15,9 @@
     <a href="https://adepierre.github.io/Botcraft/" target="_blank"><img src="https://badgen.net/badge/%F0%9F%93%96/documentation/black" alt="Documentation link"></a>
 </div>
 
-<!-- <p align="center" style="margin-bottom: 0px !important;">
-  <img width="100" src="Visuals/XXX.gif" alt="botcraft illustration gif" align="center"> TODO: add a nice illustation gif
-</p> -->
+<p align="center" style="margin-bottom: 0px !important;">
+  <img width="800" src="Visuals/example_7.gif" alt="botcraft illustration gif" align="center">
+</p>
 
 This is a "learn-by-doing" pet project I develop on my free time when I feel like it. I share the code for people that might be interested but it's more a "shared private repo" than a real open source community project. I usually try to push updates on master every first week of each month, and as soon as they are ready for new Minecraft version support updates.
 
@@ -158,6 +158,7 @@ Examples can be found in the [Examples](Examples/) folder:
 - [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same (due to concurrent access). Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
 - [5_MobHitterExample](Examples/5_MobHitterExample): Entity processing example. Attack every monster in range, with a per-entity cooldown of 0.5s. /!\ This is only an example about entities, no eating is performed, so would starve to death pretty quickly if used as-is.
 - [6_DispenserFarmExample](Examples/6_DispenserFarmExample): A full example with a real usecase in mind. Fully autonomous dispenser farm. More detailed explanations can be found on the associated [wiki page](https://github.com/adepierre/Botcraft/wiki/Dispensers-example).
+- [7_WorldEaterExample](Examples/7_WorldEaterExample): A full example with a real usecase in mind. Fully autonomous world eater program. More detailed explanations can be found on the associated [wiki page](https://github.com/adepierre/Botcraft/wiki/World-Eater-example).
 
 ## ProtocolCraft
 

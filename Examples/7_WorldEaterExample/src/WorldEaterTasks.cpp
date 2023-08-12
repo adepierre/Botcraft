@@ -638,7 +638,6 @@ Status CleanInventory(SimpleBehaviourClient& client)
     }
 
     Vector3<double> init_position;
-    // Look down
     {
         std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         init_position = local_player->GetPosition();
