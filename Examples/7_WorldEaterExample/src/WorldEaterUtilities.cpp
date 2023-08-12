@@ -126,12 +126,19 @@ std::unordered_set<Position> CollectBlocks(const std::shared_ptr<World> world, c
             std::scoped_lock<std::mutex> lock(world->GetMutex());
             const Block* block = world->GetBlock(p);
             const Blockstate* blockstate = block == nullptr ? nullptr : block->GetBlockstate();
-            if (block && !blockstate->IsAir() &&
-                // For fluids, we are not interested in the corner blocks as they can't "leak" into the working area
-                ((fluids && (blockstate->IsFluid() || blockstate->IsWaterlogged()) && ((x != start.x && x != end.x) || (z != start.z && z != end.z))) ||
-                    (solids && blockstate->IsSolid()) ||
-                    (!fluids && !solids && (!blockstate->IsFluid() || blockstate->IsHazardous()) && !blockstate->IsWaterlogged() && (!blockstate->IsSolid() || blockstate->IsHazardous()))
-                ))
+            if (blockstate == nullptr || blockstate->IsAir())
+            {
+                continue;
+            }
+            if (// if fluid, we are not interested in the corner blocks as they can't "leak" into the working area
+                (fluids && (blockstate->IsFluid() || blockstate->IsWaterlogged()) && ((x != start.x && x != end.x) || (z != start.z && z != end.z))) ||
+                // if solid
+                (solids && blockstate->IsSolid()) ||
+                // not fluid not solid and non walkable
+                (!fluids && !solids && !blockstate->IsWaterlogged() && (!blockstate->IsFluid() || blockstate->IsHazardous()) && (!blockstate->IsSolid() || blockstate->IsHazardous())) ||
+                // not fluid not solid and gravity hazard
+                (!fluids && !solids && CouldFallIfUpdated(blockstate->GetName())))
+
             {
                 output.insert(Position(x, layer, z));
             }
@@ -223,14 +230,26 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
             continue;
         }
         // Check if we can pathfind from one of the previous components
-        // to this one and merge them if we can
+        // to this one and merge them if we can.
+        // We do not allow the 1-wide gaps during the pathfinding search because of the
+        // case illustrated below:
+        // __A__   __B__
+        // |   |   |   |
+        //             __C__
+        //             |   |
+        // when standing on and having to break B, the bot would pathfind to the nearest block
+        // which would be C (because jumping has a penalty in the pathfinding search). So it
+        // goes down to C, breaks B and that's it. It can't get back on top of A to continue the
+        // current layer. Disabling 1-wide jumps solves this by making A and B always adjacent,
+        // i.e. closer to each other than C that is at a 2 blocks distance.
+
         bool merged = false;
         for (size_t i = 0; i < components.size(); ++i)
         {
             const Position pathfinding_start = *components[i].begin() + Position(0, 1, 0);
             const Position pathfinding_end = *current_component.begin() + Position(0, 1, 0);
-            const std::vector<Position> path = FindPath(client, pathfinding_start, pathfinding_end, 0, 0, false, true);
-            const std::vector<Position> reversed_path = FindPath(client, pathfinding_end, pathfinding_start, 0, 0, false, true);
+            const std::vector<Position> path = FindPath(client, pathfinding_start, pathfinding_end, 0, 0, false, false);
+            const std::vector<Position> reversed_path = FindPath(client, pathfinding_end, pathfinding_start, 0, 0, false, false);
             // If we can pathfind from start to end (both ways to prevent cliff falls that would only allow one-way travel)
             if (path.back() == pathfinding_end && reversed_path.back() == pathfinding_start)
             {
@@ -533,4 +552,19 @@ std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, con
     };
 
     return get_sorted_positions(root);
+}
+
+bool CouldFallIfUpdated(const std::string& block_name)
+{
+    const static std::unordered_set<std::string> gravity_blocks = {
+        "minecraft:sand",
+        "minecraft:gravel",
+        "minecraft:red_sand",
+    #if PROTOCOL_VERSION > 762
+        "minecraft:suspicious_sand",
+        "minecraft:suspicious_gravel",
+    #endif
+    };
+
+    return gravity_blocks.find(block_name) != gravity_blocks.end();
 }

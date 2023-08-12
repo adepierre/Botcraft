@@ -63,12 +63,13 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> MainTree()
     return Builder<SimpleBehaviourClient>("Main Tree")
         .repeater("Layer loop", 0).inverter() // repeater(0) + inverter --> repeat until it fails
             .sequence("Layer loop body")
+                .leaf("Validate current layer", ValidateCurrentLayer)
                 .leaf("Prepare layer", PrepareLayer)
                 .tree(action_loop_tree)
-                // CheckActionsDone will exit this loop if all the
+                // CheckActionsDone will exit this loop early if all the
                 // actions weren't done during the internal loop
                 .leaf("Check done", CheckActionsDone)
-                .leaf("Plan layer non solids", PlanLayerNonWalkable)
+                .leaf("Plan layer non walkable", PlanLayerNonWalkable)
                 .tree(action_loop_tree)
                 .leaf("Check done", CheckActionsDone)
                 .leaf("Plan layer fluids", PlanLayerFluids)
@@ -77,11 +78,7 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> MainTree()
                 .leaf("Plan layer blocks", PlanLayerBlocks)
                 .tree(action_loop_tree)
                 .leaf("Check done", CheckActionsDone)
-                // Only move to next layer if layer is really done
-                .selector()
-                    .inverter().leaf("Check layer done", CheckLayerDone)
-                    .leaf("Move to next layer", MoveToNextLayer)
-                .end()
+                .leaf("Move to next layer", MoveToNextLayer)
             .end();
 }
 

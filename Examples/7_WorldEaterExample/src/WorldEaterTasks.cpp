@@ -16,7 +16,6 @@ using namespace Botcraft;
 
 enum class ActionType
 {
-    GoTo,
     BreakBlock,
     BreakPillar,
     PlaceSolidBlock,
@@ -271,11 +270,6 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         StartSprinting(client);
     }
 
-    if (action.second == ActionType::GoTo)
-    {
-        return GoTo(client, action.first);
-    }
-
     const Blockstate* blockstate = nullptr;
     // Get this position blockstate
     {
@@ -305,7 +299,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         (action.second == ActionType::BreakBlock ||
             action.second == ActionType::BreakPillar ||
             (action.second == ActionType::FillFluidBlock && blockstate->IsWaterlogged()) ||
-            (action.second == ActionType::PlaceSolidBlock && (!blockstate->IsSolid() || (!blockstate->IsFluid() && blockstate->IsHazardous()))) ||
+            (action.second == ActionType::PlaceSolidBlock && (!blockstate->IsSolid() || (!blockstate->IsFluid() && blockstate->IsHazardous()) || CouldFallIfUpdated(blockstate->GetName()))) ||
             (action.second != ActionType::PlaceSolidBlock && action.second != ActionType::FillFluidBlock && blockstate->GetName() != block_to_place)))
     {
         // Check which tool type is the best
@@ -369,7 +363,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             // as long as we are not standing on them. The ordering of the actions in the queue
             // gives us guarantees that we won't "break" the path back to the ladder as long as
             // we don't break the block under our feets
-            if (player_block_position.y == action.first.y + 1 &&
+            if (player_position.y >= action.first.y + 1 && player_position.y < action.first.y + 2.5 &&
                 player_block_position.x >= start_block.x && player_block_position.x <= end_block.x &&
                 player_block_position.z >= start_block.z && player_block_position.z <= end_block.z)
             {
@@ -380,9 +374,22 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             else
             {
                 goto_result = GoTo(client, action.first + Position(0, 1, 0));
+                // If it succeeds, we are now on the current layer and can just find a spot to mine.
                 if (goto_result == Status::Success)
                 {
                     goto_result = GoTo(client, action.first + Position(0, 1, 0), 4, 1, 1);
+                }
+                // If it failed, try to find another close position as a backup plan.
+                else
+                {
+                    for (int i = 1; i < 5; ++i)
+                    {
+                        goto_result = GoTo(client, action.first + Position(0, 1, 0), i, 1, 1);
+                        if (goto_result == Status::Success)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
             break;
@@ -409,6 +416,11 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         // After breaking a pillar, wait to land on the next pillar block
         if (action.second == ActionType::BreakPillar)
         {
+            // Manually set on ground to false as the physics thread might not have yet registered the missing block
+            {
+                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                local_player->SetOnGround(false);
+            }
             auto start = std::chrono::steady_clock::now();
             while (true)
             {
@@ -430,7 +442,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     }
 
     if ((action.second == ActionType::FillFluidBlock && blockstate != nullptr && (blockstate->IsFluid() || blockstate->IsWaterlogged() || blockstate->IsAir())) || // We need to place it if it's air as it could be part of a pathfinding requirements to go to next fluid block
-        (action.second == ActionType::PlaceSolidBlock && (blockstate == nullptr || !blockstate->IsSolid() || blockstate->IsHazardous())) ||
+        (action.second == ActionType::PlaceSolidBlock && (blockstate == nullptr || !blockstate->IsSolid() || blockstate->IsHazardous() || CouldFallIfUpdated(blockstate->GetName()))) ||
         ((action.second == ActionType::PlacePillarBlock || action.second == ActionType::PlaceTempBlock || action.second == ActionType::PlaceLadderBlock)
              && (blockstate == nullptr || blockstate->GetName() != block_to_place)))
     {
@@ -448,7 +460,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         case ActionType::PlaceSolidBlock:
         case ActionType::PlaceTempBlock:
             // If we are standing on the current layer
-            if (player_block_position.y == action.first.y + 1 &&
+            if (player_position.y >= action.first.y + 1 && player_position.y < action.first.y + 2.5 &&
                 player_block_position.x >= start_block.x && player_block_position.x <= end_block.x &&
                 player_block_position.z >= start_block.z && player_block_position.z <= end_block.z)
             {
@@ -458,9 +470,17 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             else
             {
                 goto_result = GoTo(client, action.first + Position(0, 1, 0), 1, 1, 1);
-                if (goto_result == Status::Success)
+                // If it failed, try to find another close position as a backup plan.
+                if (goto_result == Status::Failure)
                 {
-                    goto_result = GoTo(client, action.first + Position(0, 1, 0), 3, 1, 1);
+                    for (int i = 2; i < 5; ++i)
+                    {
+                        goto_result = GoTo(client, action.first + Position(0, 1, 0), i, 1, 1);
+                        if (goto_result == Status::Success)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
             break;
@@ -507,7 +527,7 @@ Status CheckActionsDone(SimpleBehaviourClient& client)
     return queue.empty() ? Status::Success : Status::Failure;
 }
 
-Botcraft::Status CheckLayerDone(Botcraft::SimpleBehaviourClient& client)
+Botcraft::Status ValidateCurrentLayer(Botcraft::SimpleBehaviourClient& client)
 {
     Blackboard& blackboard = client.GetBlackboard();
     std::shared_ptr<World> world = client.GetWorld();
@@ -517,19 +537,45 @@ Botcraft::Status CheckLayerDone(Botcraft::SimpleBehaviourClient& client)
     const Position& start_block = blackboard.Get<Position>("Eater.start_block");
     const Position& end_block = blackboard.Get<Position>("Eater.end_block");
 
+    // Wait for the area to be loaded (in case a bot sharing the same world died as it unload the chunks for a brief moment)
+    auto start = std::chrono::steady_clock::now();
+    while (true)
+    {
+        // Something went wrong during waiting on ground
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
+        {
+            LOG_WARNING("Timeout waiting for chunk loading");
+            return Status::Failure;
+        }
+        {
+            std::lock_guard<std::mutex> lock(world->GetMutex());
+            if (world->IsLoaded(start_block) && world->IsLoaded(end_block))
+            {
+                break;
+            }
+        }
+        client.Yield();
+    }
+
+    // Check previous layers are indeed done
     {
         std::lock_guard<std::mutex> lock(world->GetMutex());
-        Position current_position(0, current_layer, 0);
-        for (int x = start_block.x; x <= end_block.x; ++x)
+        Position current_position;
+        for (int y = start_block.y; y > current_layer; --y)
         {
-            current_position.x = x;
-            for (int z = start_block.z; z <= end_block.z; ++z)
+            current_position.y = y;
+            for (int x = start_block.x; x <= end_block.x; ++x)
             {
-                current_position.z = z;
-                const Block* block = world->GetBlock(current_position);
-                if (block != nullptr && !block->GetBlockstate()->IsAir() && spared_blocks.find(block->GetBlockstate()->GetName()) == spared_blocks.cend())
+                current_position.x = x;
+                for (int z = start_block.z; z <= end_block.z; ++z)
                 {
-                    return Status::Failure;
+                    current_position.z = z;
+                    const Block* block = world->GetBlock(current_position);
+                    if (block != nullptr && !block->GetBlockstate()->IsAir() && spared_blocks.find(block->GetBlockstate()->GetName()) == spared_blocks.cend())
+                    {
+                        blackboard.Set<int>("Eater.current_layer", y);
+                        return Status::Success;
+                    }
                 }
             }
         }
@@ -597,20 +643,22 @@ Status CleanInventory(SimpleBehaviourClient& client)
         std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         init_position = local_player->GetPosition();
     }
+    Position block_position(
+        static_cast<int>(std::floor(init_position.x)),
+        static_cast<int>(std::floor(init_position.y + 0.2)), // Add 0.2 in case we are on the top of an "almost full block" and don't want to place lava in our face :)
+        static_cast<int>(std::floor(init_position.z))
+    );
 
     bool on_fluid = false;
     {
         std::lock_guard<std::mutex> lock(world->GetMutex());
-        const Block* block = world->GetBlock(Position(
-            static_cast<int>(std::floor(init_position.x)),
-            static_cast<int>(std::floor(init_position.y)),
-            static_cast<int>(std::floor(init_position.z))
-        ));
+        const Block* block = world->GetBlock(block_position + Position(0, -1, 0));
         on_fluid = block != nullptr && (block->GetBlockstate()->IsFluid() || block->GetBlockstate()->IsWaterlogged());
     }
 
-    // It's not a good idea to drop lava on top of a fluid, best case it won't work,
-    // worst case, you'll get obsidian
+    // It's not a good idea to drop lava on top of a fluid, best case it's,
+    // water and you'll get obsidian, worst case it's lava and you'll get
+    // sadness and death
     if (on_fluid)
     {
         // Try to pathfind on top of previous position
@@ -619,13 +667,40 @@ Status CleanInventory(SimpleBehaviourClient& client)
             // If it didn't work, the bot will go back to basecamp instead of wasting a bucket of lava
             return Status::Failure;
         }
-        {
-            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-            init_position = local_player->GetPosition();
-        }
     }
 
     LookAt(client, init_position, true);
+
+    // Wait to be on ground
+    auto start = std::chrono::steady_clock::now();
+    while (true)
+    {
+        // Something went wrong during waiting on ground
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 2000)
+        {
+            LOG_WARNING("Timeout waiting for on ground trying to clean inventory");
+            return Status::Failure;
+        }
+        {
+            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+            if (local_player->GetOnGround())
+            {
+                break;
+            }
+        }
+        client.Yield();
+    }
+
+     // Update positions in case we moved
+    {
+        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+        init_position = local_player->GetPosition();
+    }
+    block_position = Position(
+        static_cast<int>(std::floor(init_position.x)),
+        static_cast<int>(std::floor(init_position.y + 0.2)),
+        static_cast<int>(std::floor(init_position.z))
+    );
 
     // Items we don't want to throw in lava
     const std::unordered_set<ItemId> non_tool_items_to_keep = {
@@ -666,7 +741,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
     }
 
     // Wait to be above start block
-    auto start = std::chrono::steady_clock::now();
+    start = std::chrono::steady_clock::now();
     while (true)
     {
         // Something went wrong during jumping
@@ -694,10 +769,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
 
     // Use item on
     std::shared_ptr<ProtocolCraft::ServerboundUseItemOnPacket> use_item_on = std::make_shared<ProtocolCraft::ServerboundUseItemOnPacket>();
-    use_item_on->SetLocation(Position(
-        static_cast<int>(std::floor(init_position.x)),
-        static_cast<int>(std::floor(init_position.y)) - 1,
-        static_cast<int>(std::floor(init_position.z))).ToNetworkPosition());
+    use_item_on->SetLocation((block_position + Position(0, -1, 0)).ToNetworkPosition());
     use_item_on->SetDirection(static_cast<int>(Direction::Up));
     use_item_on->SetCursorPositionX(0.5f);
     use_item_on->SetCursorPositionY(1.0f);
@@ -724,18 +796,19 @@ Status CleanInventory(SimpleBehaviourClient& client)
 #endif
     network_manager->Send(use_item);
 
-    // Wait for jump heighest point
+    // Wait for server to confirm block is lava
     start = std::chrono::steady_clock::now();
     while (true)
     {
         if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 2000)
         {
-            LOG_WARNING("Timeout waiting for jump highest point trying to clean inventory");
+            LOG_WARNING("Timeout waiting for lava trying to clean inventory");
             return Status::Failure;
         }
         {
-            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-            if (local_player->GetSpeedY() < 0.0f)
+            std::lock_guard<std::mutex> lock(world->GetMutex());
+            const Block* block = world->GetBlock(block_position);
+            if (block != nullptr && block->GetBlockstate()->GetName() == "minecraft:lava")
             {
                 break;
             }
@@ -746,7 +819,8 @@ Status CleanInventory(SimpleBehaviourClient& client)
     // Get back lava in bucket
     if (SetItemInHand(client, "minecraft:bucket") != Status::Success)
     {
-        LOG_WARNING("Error trying to put empty bucket in right hand");
+        // Press F to pay respect
+        LOG_WARNING("Error trying to put empty bucket in right hand. It was an honour.");
         return Status::Failure;
     }
 
@@ -766,6 +840,26 @@ Status CleanInventory(SimpleBehaviourClient& client)
         LOG_INFO("Error trying to sort inventory while picking items");
     }
 
+    // Wait to be back on ground
+    start = std::chrono::steady_clock::now();
+    while (true)
+    {
+        // Something went wrong during waiting on ground
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 2000)
+        {
+            LOG_WARNING("Timeout waiting for on ground trying to clean inventory");
+            return Status::Failure;
+        }
+        {
+            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+            if (local_player->GetOnGround())
+            {
+                break;
+            }
+        }
+        client.Yield();
+    }
+
     return Status::Success;
 }
 
@@ -775,6 +869,7 @@ Status MoveToNextLayer(SimpleBehaviourClient& client)
 
     const int last_layer = blackboard.Get<Position>("Eater.end_block").y;
     const int current_layer = blackboard.Get<int>("Eater.current_layer");
+    const int bot_index = blackboard.Get<int>("Eater.bot_index");
 
     // We reached the end
     if (current_layer == last_layer)
@@ -784,6 +879,10 @@ Status MoveToNextLayer(SimpleBehaviourClient& client)
     }
     else
     {
+        if (bot_index == 0)
+        {
+            LOG_INFO("Move to layer " << current_layer - 1);
+        }
         blackboard.Set<int>("Eater.current_layer", current_layer - 1);
     }
 
@@ -805,7 +904,7 @@ Status PrepareLayer(SimpleBehaviourClient& client)
 
     std::queue<std::pair<Position, ActionType>> action_queue;
     
-    // Special case, once all the layers above groound are done, remove ugly pillar
+    // Special case, once all the layers above ground are done, remove ugly pillar
     if (current_layer == ladder_pillar.y)
     {
         for (int y = start.y; y > ladder_pillar.y; --y)
@@ -904,24 +1003,24 @@ Botcraft::Status PlanLayerNonWalkable(Botcraft::SimpleBehaviourClient& client)
 
     // Non solid pass
     // Get all non solid blocks
-    std::unordered_set<Position> blocks_not_solid = CollectBlocks(world, start, end, current_layer, false, false);
-    blocks_not_solid.insert(layer_entry);
+    std::unordered_set<Position> blocks_non_walkable = CollectBlocks(world, start, end, current_layer, false, false);
+    blocks_non_walkable.insert(layer_entry);
     std::unordered_map<Position, std::unordered_set<Position>> additional_neighbours_not_solid;
-    const std::vector<std::unordered_set<Position>> components_not_solid = GroupBlocksInComponents(start, end, layer_entry, client, blocks_not_solid, &additional_neighbours_not_solid);
-    const std::vector<Position> blocks_to_add_non_solid = GetBlocksToAdd(components_not_solid, layer_entry, start, end);
-    const std::unordered_set<Position> blocks_to_fill_not_solid = FlattenComponentsAndAdditionalBlocks(components_not_solid, blocks_to_add_non_solid);
-    std::vector<Position> ordered_blocks_to_place_not_solid = ComputeBlockOrder(blocks_to_fill_not_solid, layer_entry, ladder_face, additional_neighbours_not_solid);
-    std::reverse(ordered_blocks_to_place_not_solid.begin(), ordered_blocks_to_place_not_solid.end());
+    const std::vector<std::unordered_set<Position>> components_non_walkable = GroupBlocksInComponents(start, end, layer_entry, client, blocks_non_walkable, &additional_neighbours_not_solid);
+    const std::vector<Position> blocks_to_add_non_walkable = GetBlocksToAdd(components_non_walkable, layer_entry, start, end);
+    const std::unordered_set<Position> blocks_to_fill_non_walkable = FlattenComponentsAndAdditionalBlocks(components_non_walkable, blocks_to_add_non_walkable);
+    std::vector<Position> ordered_blocks_to_place_non_walkable = ComputeBlockOrder(blocks_to_fill_non_walkable, layer_entry, ladder_face, additional_neighbours_not_solid);
+    std::reverse(ordered_blocks_to_place_non_walkable.begin(), ordered_blocks_to_place_non_walkable.end());
 
-    if (ordered_blocks_to_place_not_solid.size() != blocks_to_fill_not_solid.size())
+    if (ordered_blocks_to_place_non_walkable.size() != blocks_to_fill_non_walkable.size())
     {
-        LOG_WARNING("Ordered blocks to replace have a different size than blocks to fill: " << ordered_blocks_to_place_not_solid.size() << " VS " << blocks_to_fill_not_solid.size());
+        LOG_WARNING("Ordered blocks to replace have a different size than blocks to fill: " << ordered_blocks_to_place_non_walkable.size() << " VS " << blocks_to_fill_non_walkable.size());
         return Status::Failure;
     }
 
     std::queue<std::pair<Position, ActionType>> action_queue;
 
-    for (const Position& p : ordered_blocks_to_place_not_solid)
+    for (const Position& p : ordered_blocks_to_place_non_walkable)
     {
         // Don't replace the ladder...
         if (p == layer_entry)

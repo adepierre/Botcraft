@@ -22,10 +22,11 @@ Botcraft::Status ExecuteAction(Botcraft::SimpleBehaviourClient& client);
 /// @return Success if the action queue is empty, Failure otherwise
 Botcraft::Status CheckActionsDone(Botcraft::SimpleBehaviourClient& client);
 
-/// @brief Check if the current layer is done
+/// @brief Check all layers above the current one to see if we didn't forget a block. This should not happen,
+/// but in case it happens for any reason, we want to make sure we detect it and go back up.
 /// @param client The client performing the action
-/// @return Success if the layer is now air, Failure otherwise
-Botcraft::Status CheckLayerDone(Botcraft::SimpleBehaviourClient& client);
+/// @return Always returns Success, Eater.current_layer might be updated
+Botcraft::Status ValidateCurrentLayer(Botcraft::SimpleBehaviourClient& client);
 
 /// @brief Remove the first action in the action queue
 /// @param client The client performing the action

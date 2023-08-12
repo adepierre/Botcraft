@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 
-
 #include <botcraft/Game/Vector3.hpp>
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
@@ -62,3 +61,8 @@ std::unordered_set<Botcraft::Position> FlattenComponentsAndAdditionalBlocks(cons
 /// @param additional_neighbours Potential additional neighbours for some blocks (i.e. blocks that are not direct neighbours but that we can reach by pathfinding)
 /// @return Ordered positions to follow, should end with exit_block
 std::vector<Botcraft::Position> ComputeBlockOrder(std::unordered_set<Botcraft::Position> blocks, const Botcraft::Position& start_block, const Botcraft::Direction orientation, const std::unordered_map<Botcraft::Position, std::unordered_set<Botcraft::Position>>& additional_neighbours = {});
+
+/// @brief A function to check if a block could turn into falling entity if updated (sand/gravel)
+/// @param block_name Block name to check
+/// @return True if sand/gravel or similar, false otherwise
+bool CouldFallIfUpdated(const std::string& block_name);
