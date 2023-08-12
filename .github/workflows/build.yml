@@ -369,6 +369,12 @@ jobs:
         id: mc-version
         run: echo "version=$(cat version/version.txt)" >> $GITHUB_OUTPUT
 
+      - name: Download release note
+        uses: actions/download-artifact@v3
+        with:
+          name: release_note
+          path: release_note
+
       - name: Rename artifacts
         run: |
           mv linux/botcraft.zip botcraft-linux-${{ steps.mc-version.outputs.version }}.zip
