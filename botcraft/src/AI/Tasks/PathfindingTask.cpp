@@ -1390,18 +1390,17 @@ namespace Botcraft
 
     Status LookAtImpl(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
     {
+        std::shared_ptr<ProtocolCraft::ServerboundMovePlayerPacketRot> rot = std::make_shared<ProtocolCraft::ServerboundMovePlayerPacketRot>();
         {
             std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
             std::lock_guard<std::mutex> lock_player(local_player->GetMutex());
             local_player->LookAt(target, set_pitch);
+            rot->SetOnGround(local_player->GetOnGround());
+            rot->SetYRot(local_player->GetYaw());
+            rot->SetXRot(local_player->GetPitch());
         }
-
-        // Wait at least 70 ms to be sure the new orientation is sent to the server
-        // (position is sent every 50 ms) TODO: find a clean way to do that?
-        for (int i = 0; i < 7; ++i)
-        {
-            client.Yield();
-        }
+        std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
+        network_manager->Send(rot);
 
         return Status::Success;
     }

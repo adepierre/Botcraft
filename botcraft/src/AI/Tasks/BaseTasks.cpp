@@ -137,10 +137,7 @@ namespace Botcraft
             client.GetNetworkManager()->Send(animation_msg);
         }
 
-        {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            local_player->LookAt(Vector3<double>(0.5, 0.5, 0.5) + pos, true);
-        }
+        LookAt(client, Vector3<double>(0.5) + pos, true);
 
         return Status::Success;
     }

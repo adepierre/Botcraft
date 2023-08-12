@@ -397,10 +397,7 @@ namespace Botcraft
             }
         }
 
-        {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            local_player->LookAt(Vector3<double>(0.5) + pos);
-        }
+        LookAt(client, Vector3<double>(0.5) + pos, true);
 
         const std::vector<Position> neighbour_offsets({
             Position(0, 1, 0), Position(0, -1, 0),

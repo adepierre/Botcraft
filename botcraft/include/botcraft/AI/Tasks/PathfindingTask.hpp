@@ -35,7 +35,7 @@ namespace Botcraft
     Status GoToBlackboard(BehaviourClient& client);
 
 
-    /// @brief Turn the camera to look at a given target, and wait at least one tick so the server register it
+    /// @brief Turn the camera to look at a given target and send the new rotation to the server
     /// @param client The client performing the action
     /// @param target The target to look at
     /// @param set_pitch If false, only the yaw will be changed
