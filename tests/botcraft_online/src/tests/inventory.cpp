@@ -237,11 +237,26 @@ TEST_CASE("container")
     {
         bot->SyncAction(Botcraft::PutOneItemInContainerSlot, container_id, container->GetFirstPlayerInventorySlot() + Botcraft::Window::INVENTORY_HOTBAR_START - Botcraft::Window::INVENTORY_STORAGE_START, 0);
         bot->SyncAction(Botcraft::CloseContainer, container_id);
+#if PROTOCOL_VERSION < 755
+        // If <1.17 we need to wait for the server to send the
+        // updated player inventory content after closing the container
+        REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
+            {
+                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                if (GetItemName(inventory_manager->GetHotbarSelected()) == "minecraft:stick" &&
+                    inventory_manager->GetHotbarSelected().GetItemCount() == 4)
+                {
+                    return true;
+                }
+                return false;
+            }, 5000));
+#else
         {
             std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
             REQUIRE(GetItemName(inventory_manager->GetHotbarSelected()) == "minecraft:stick");
             REQUIRE(inventory_manager->GetHotbarSelected().GetItemCount() == 4);
         }
+#endif
         container_id = -1;
         bot->SyncAction(Botcraft::OpenContainer, chest);
         {
@@ -260,10 +275,24 @@ TEST_CASE("container")
     {
         bot->SyncAction(Botcraft::SwapItemsInContainer, container_id, container->GetFirstPlayerInventorySlot() + Botcraft::Window::INVENTORY_HOTBAR_START - Botcraft::Window::INVENTORY_STORAGE_START, 0);
         bot->SyncAction(Botcraft::CloseContainer, container_id);
+#if PROTOCOL_VERSION < 755
+        // If <1.17 we need to wait for the server to send the
+        // updated player inventory content after closing the container
+        REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
+            {
+                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+                if (inventory_manager->GetHotbarSelected().IsEmptySlot())
+                {
+                    return true;
+                }
+                return false;
+            }, 5000));
+#else
         {
             std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
             REQUIRE(inventory_manager->GetHotbarSelected().IsEmptySlot());
         }
+#endif
         container_id = -1;
         bot->SyncAction(Botcraft::OpenContainer, chest);
         {
@@ -374,12 +403,26 @@ TEST_CASE("craft")
 
     bot->SyncAction(Botcraft::CraftNamed, craft_recipe, false);
     bot->SyncAction(Botcraft::CloseContainer, -1);
-
+#if PROTOCOL_VERSION < 755
+    // If <1.17 we need to wait for the server to send the
+    // updated player inventory content after closing the container
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
+        {
+            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            if (GetItemName(inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START)) == "minecraft:diamond_block" &&
+                inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START).GetItemCount() == 1)
+            {
+                return true;
+            }
+            return false;
+        }, 5000));
+#else
     {
         std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
         REQUIRE(GetItemName(inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START)) == "minecraft:diamond_block");
         REQUIRE(inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START).GetItemCount() == 1);
     }
+#endif
 }
 
 TEST_CASE("sort inventory")
