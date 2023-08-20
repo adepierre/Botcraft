@@ -131,6 +131,25 @@ Status Init(SimpleBehaviourClient& client)
         ladder_face = input_edge == Direction::North ? Direction::South : Direction::North;
     }
 
+    auto start = std::chrono::steady_clock::now();
+    while (true)
+    {
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
+        {
+            LOG_ERROR("Work area of " << client.GetNetworkManager()->GetMyName() << " (from " << this_bot_start << "to " << this_bot_end << ") is not fully loaded, please move it closer before launching it");
+            return Status::Failure;
+        }
+        {
+            std::lock_guard<std::mutex> player_lock(world->GetMutex());
+            // Check the whole area is loaded (required for the planning algorithm to work properly)
+            if (world->IsLoaded(this_bot_end) && world->IsLoaded(this_bot_start))
+            {
+                break;
+            }
+        }
+        client.Yield();
+    }
+
     {
         std::lock_guard<std::mutex> lock(world->GetMutex());
         // Get top of ladder pillar (first solid block going downard
@@ -146,13 +165,6 @@ Status Init(SimpleBehaviourClient& client)
                 ladder_position.y = y;
                 break;
             }
-        }
-
-        // Check the whole area is loaded (required for the planning algorithm to work properly)
-        if (!world->IsLoaded(this_bot_end) || !world->IsLoaded(this_bot_start))
-        {
-            LOG_ERROR("Work area of " << client.GetNetworkManager()->GetMyName() << " (from " << this_bot_start << "to " << this_bot_end << ") is not fully loaded, please move it closer before launching it");
-            return Status::Failure;
         }
     }
 

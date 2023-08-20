@@ -17,7 +17,7 @@ WorldEaterClient::~WorldEaterClient()
 }
 
 #if PROTOCOL_VERSION < 759
-void WorldEaterClient::Handle(ClientboundChatPacket& msg)
+void WorldEaterClient::Handle(ProtocolCraft::ClientboundChatPacket& msg)
 {
     ManagersClient::Handle(msg);
 
