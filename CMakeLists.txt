@@ -49,6 +49,9 @@ get_mc_version_urls(${BOTCRAFT_GAME_VERSION})
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/version.txt" ${BOTCRAFT_GAME_VERSION})
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/protocol.txt" ${PROTOCOL_VERSION})
 
+# Installation stuff
+include(GNUInstallDirs)
+
 # Do all the assets related stuffs
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/assets.cmake")
 

@@ -31,8 +31,8 @@ if(NOT TARGET Catch2::Catch2WithMain)
     endif()
 
     # Find the freshly built library
-    find_package(Catch2 3 REQUIRED PATHS "${CATCH_BUILD_PATH}/install/lib/cmake/Catch2")
-    include("${CATCH_BUILD_PATH}/install/lib/cmake/Catch2/Catch.cmake")
+    find_package(Catch2 3 REQUIRED PATHS "${CATCH_BUILD_PATH}/install/${CMAKE_INSTALL_LIBDIR}/cmake/Catch2")
+    include("${CATCH_BUILD_PATH}/install/${CMAKE_INSTALL_LIBDIR}/cmake/Catch2/Catch.cmake")
 else()
     include("${Catch2_DIR}/Catch.cmake")
 endif()

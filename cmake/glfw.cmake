@@ -32,5 +32,5 @@ if(NOT TARGET glfw)
 
 
     # Find the freshly built library
-    find_package(glfw3 3.3 REQUIRED PATHS "${GLFW_BUILD_PATH}/install/lib/cmake/glfw3")
+    find_package(glfw3 3.3 REQUIRED PATHS "${GLFW_BUILD_PATH}/install/${CMAKE_INSTALL_LIBDIR}/cmake/glfw3")
 endif()
