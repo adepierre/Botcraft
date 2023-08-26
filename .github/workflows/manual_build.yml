@@ -247,9 +247,10 @@ jobs:
         run: cmake --build . --config $BUILD_TYPE --parallel 2
 
       - name: Notify issue if build failed
-        if: failure() && steps.build.conclusion == 'failure' && ${{ github.event.inputs.issue }}
+        if: failure() && steps.build.conclusion == 'failure' && github.event.inputs.issue
+        shell: bash
         run: |
-          echo "Build failed. Logs can be found [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }})." > body.txt
+          echo "Build failed. Logs can be found [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})." > body.txt
           echo -en '\n' >> body.txt
           echo -en '\n' >> body.txt
           echo @${{ github.repository_owner }} you might want to take a look. >> body.txt
@@ -264,9 +265,10 @@ jobs:
         run: ctest -C $BUILD_TYPE -VV
 
       - name: Notify issue if tests failed
-        if: failure() && steps.test.conclusion == 'failure' && ${{ github.event.inputs.issue }}
+        if: failure() && steps.test.conclusion == 'failure' && github.event.inputs.issue
+        shell: bash
         run: |
-          echo "Tests failed. See [this run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}) for logs." > body.txt
+          echo "Tests failed. See [this run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for logs." > body.txt
           echo -en '\n' >> body.txt
           echo -en '\n' >> body.txt
           echo @${{ github.repository_owner }} you might want to take a look. >> body.txt
@@ -345,7 +347,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Comment on associated issue
-        if: ${{ github.event.inputs.issue }}
+        if: github.event.inputs.issue
         run: |
           echo "New binaries available in the [latest release](https://github.com/${{ github.repository }}/releases/tag/latest) for version ${{ github.event.inputs.minecraft_version }}" > body.txt
           echo -en '\n' >> body.txt
