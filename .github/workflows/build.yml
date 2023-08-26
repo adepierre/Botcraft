@@ -83,7 +83,7 @@ jobs:
           -DBOTCRAFT_COMPRESSION=ON
           -DBOTCRAFT_ENCRYPTION=ON
           -DBOTCRAFT_BUILD_EXAMPLES=OFF
-          -DBOTCRAFT_BUILD_TESTS=OFF
+          -DBOTCRAFT_BUILD_TESTS=ON
           -DBOTCRAFT_BUILD_TESTS_ONLINE=OFF
           -DBOTCRAFT_WINDOWS_BETTER_SLEEP=ON
           -DBOTCRAFT_FORCE_LOCAL_ZLIB=ON
@@ -308,6 +308,7 @@ jobs:
 
       - name: Prepare test server world download
         if: success() || steps.test.conclusion == 'failure'
+        shell: bash
         working-directory: ${{ runner.workspace }}/build/output/bin/test_servers
         run: cmake -E rm -rf -- $(cat ${{ runner.workspace }}/build/version.txt)/libraries $(cat ${{ runner.workspace }}/build/version.txt)/versions
 
