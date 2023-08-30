@@ -9,13 +9,15 @@ namespace ProtocolCraft
     class ClientboundUseBedPacket : public BaseMessage<ClientboundUseBedPacket>
     {
     public:
-#if PROTOCOL_VERSION == 340 // 1.12.2
+#if   PROTOCOL_VERSION == 340
         static constexpr int packet_id = 0x30;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
+#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
+      PROTOCOL_VERSION == 404
         static constexpr int packet_id = 0x33;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Use Bed";
 
         virtual ~ClientboundUseBedPacket() override

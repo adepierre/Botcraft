@@ -8,13 +8,12 @@ namespace ProtocolCraft
     class ClientboundHurtAnimationPacket : public BaseMessage<ClientboundHurtAnimationPacket>
     {
     public:
-#if PROTOCOL_VERSION == 762 // 1.19.4
-        static constexpr int packet_id = 0x21;
-#elif PROTOCOL_VERSION == 763 // 1.20
+#if   PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
         static constexpr int packet_id = 0x21;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Hurt Animation";
 
         virtual ~ClientboundHurtAnimationPacket() override

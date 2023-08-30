@@ -9,13 +9,12 @@ namespace ProtocolCraft
     class ClientboundChatPreviewPacket : public BaseMessage<ClientboundChatPreviewPacket>
     {
     public:
-#if PROTOCOL_VERSION == 759 // 1.19
-        static constexpr int packet_id = 0x0C;
-#elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
+#if   PROTOCOL_VERSION == 759 || PROTOCOL_VERSION == 760
         static constexpr int packet_id = 0x0C;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Chat Preview";
 
         virtual ~ClientboundChatPreviewPacket() override

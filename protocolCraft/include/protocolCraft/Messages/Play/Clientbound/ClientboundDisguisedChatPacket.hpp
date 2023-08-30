@@ -10,15 +10,14 @@ namespace ProtocolCraft
     class ClientboundDisguisedChatPacket : public BaseMessage<ClientboundDisguisedChatPacket>
     {
     public:
-#if PROTOCOL_VERSION == 761 // 1.19.3
+#if   PROTOCOL_VERSION == 761
         static constexpr int packet_id = 0x18;
-#elif PROTOCOL_VERSION == 762 // 1.19.4
-        static constexpr int packet_id = 0x1B;
-#elif PROTOCOL_VERSION == 763 // 1.20
+#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
         static constexpr int packet_id = 0x1B;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Disguised Chat";
 
         virtual ~ClientboundDisguisedChatPacket() override

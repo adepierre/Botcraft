@@ -11,13 +11,12 @@ namespace ProtocolCraft
     class ClientboundChunksBiomesPacket : public BaseMessage<ClientboundChunksBiomesPacket>
     {
     public:
-#if PROTOCOL_VERSION == 762 // 1.19.4
-        static constexpr int packet_id = 0x0D;
-#elif PROTOCOL_VERSION == 763 // 1.20
+#if   PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
         static constexpr int packet_id = 0x0D;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Chunks Biome";
 
         virtual ~ClientboundChunksBiomesPacket() override

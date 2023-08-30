@@ -13,13 +13,12 @@ namespace ProtocolCraft
     class ClientboundDamageEventPacket : public BaseMessage<ClientboundDamageEventPacket>
     {
     public:
-#if PROTOCOL_VERSION == 762 // 1.19.4
-        static constexpr int packet_id = 0x18;
-#elif PROTOCOL_VERSION == 763 // 1.20
+#if   PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
         static constexpr int packet_id = 0x18;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Damage Event";
 
         virtual ~ClientboundDamageEventPacket() override

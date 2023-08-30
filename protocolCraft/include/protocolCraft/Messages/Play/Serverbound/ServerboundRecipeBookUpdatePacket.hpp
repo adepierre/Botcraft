@@ -9,19 +9,22 @@ namespace ProtocolCraft
     class ServerboundRecipeBookUpdatePacket : public BaseMessage<ServerboundRecipeBookUpdatePacket>
     {
     public:
-#if PROTOCOL_VERSION == 340 // 1.12.2
+#if   PROTOCOL_VERSION == 340
         static constexpr int packet_id = 0x17;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
+#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
+      PROTOCOL_VERSION == 404
         static constexpr int packet_id = 0x1B;
-#elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
+#elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 ||  \
+      PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 ||  \
+      PROTOCOL_VERSION == 498 || PROTOCOL_VERSION == 573 ||  \
+      PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578
         static constexpr int packet_id = 0x1D;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
-        static constexpr int packet_id = 0x1D;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16.X
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736
         static constexpr int packet_id = 0x1E;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Recipe Book Update";
 
         virtual ~ServerboundRecipeBookUpdatePacket() override

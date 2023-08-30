@@ -9,17 +9,16 @@ namespace ProtocolCraft
     class ClientboundDeleteChatPacket : public BaseMessage<ClientboundDeleteChatPacket>
     {
     public:
-#if PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
+#if   PROTOCOL_VERSION == 760
         static constexpr int packet_id = 0x18;
-#elif PROTOCOL_VERSION == 761 // 1.19.3
+#elif PROTOCOL_VERSION == 761
         static constexpr int packet_id = 0x16;
-#elif PROTOCOL_VERSION == 762 // 1.19.4
-        static constexpr int packet_id = 0x19;
-#elif PROTOCOL_VERSION == 763 // 1.20
+#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
         static constexpr int packet_id = 0x19;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Delete Chat";
 
         virtual ~ClientboundDeleteChatPacket() override

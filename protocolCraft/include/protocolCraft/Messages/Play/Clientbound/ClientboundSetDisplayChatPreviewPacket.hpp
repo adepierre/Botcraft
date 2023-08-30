@@ -8,13 +8,14 @@ namespace ProtocolCraft
     class ClientboundSetDisplayChatPreviewPacket : public BaseMessage<ClientboundSetDisplayChatPreviewPacket>
     {
     public:
-#if PROTOCOL_VERSION == 759 // 1.19
+#if   PROTOCOL_VERSION == 759
         static constexpr int packet_id = 0x4B;
-#elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
+#elif PROTOCOL_VERSION == 760
         static constexpr int packet_id = 0x4E;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Set Display Chat Preview";
 
         virtual ~ClientboundSetDisplayChatPreviewPacket() override

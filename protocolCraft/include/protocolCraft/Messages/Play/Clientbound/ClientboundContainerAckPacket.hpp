@@ -8,21 +8,25 @@ namespace ProtocolCraft
     class ClientboundContainerAckPacket : public BaseMessage<ClientboundContainerAckPacket>
     {
     public:
-#if PROTOCOL_VERSION == 340 // 1.12.2
+#if   PROTOCOL_VERSION == 340
         static constexpr int packet_id = 0x11;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.X
+#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
+      PROTOCOL_VERSION == 404 || PROTOCOL_VERSION == 477 ||  \
+      PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 ||  \
+      PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498
         static constexpr int packet_id = 0x12;
-#elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
-        static constexpr int packet_id = 0x12;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 ||  \
+      PROTOCOL_VERSION == 578
         static constexpr int packet_id = 0x13;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16 or 1.16.1
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736
         static constexpr int packet_id = 0x12;
-#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
+#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 ||  \
+      PROTOCOL_VERSION == 754
         static constexpr int packet_id = 0x11;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Container Ack";
 
         virtual ~ClientboundContainerAckPacket() override

@@ -8,13 +8,12 @@ namespace ProtocolCraft
     class ClientboundBundlePacket : public BaseMessage<ClientboundBundlePacket>
     {
     public:
-#if PROTOCOL_VERSION == 762 // 1.19.4
-        static constexpr int packet_id = 0x00;
-#elif PROTOCOL_VERSION == 763 // 1.20
+#if   PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
         static constexpr int packet_id = 0x00;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Bundle";
 
         virtual ~ClientboundBundlePacket() override

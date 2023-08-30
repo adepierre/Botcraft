@@ -42,15 +42,14 @@ namespace ProtocolCraft
     class ClientboundPlayerInfoUpdatePacket : public BaseMessage<ClientboundPlayerInfoUpdatePacket>
     {
     public:
-#if PROTOCOL_VERSION == 761 // 1.19.3
+#if   PROTOCOL_VERSION == 761
         static constexpr int packet_id = 0x36;
-#elif PROTOCOL_VERSION == 762 // 1.19.4
-        static constexpr int packet_id = 0x3A;
-#elif PROTOCOL_VERSION == 763 // 1.20
+#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
         static constexpr int packet_id = 0x3A;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Player Info Update";
 
         virtual ~ClientboundPlayerInfoUpdatePacket() override

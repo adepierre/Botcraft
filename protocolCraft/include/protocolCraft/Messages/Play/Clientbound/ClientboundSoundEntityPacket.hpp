@@ -12,32 +12,32 @@ namespace ProtocolCraft
     class ClientboundSoundEntityPacket : public BaseMessage<ClientboundSoundEntityPacket>
     {
     public:
-
-#if PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
+#if   PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 ||  \
+      PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 ||  \
+      PROTOCOL_VERSION == 498
         static constexpr int packet_id = 0x50;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
+#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 ||  \
+      PROTOCOL_VERSION == 578
         static constexpr int packet_id = 0x51;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736  // 1.16 or 1.16.1
+#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 ||  \
+      PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 ||  \
+      PROTOCOL_VERSION == 754
         static constexpr int packet_id = 0x50;
-#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754 // 1.16.2, 1.16.3, 1.16.4, 1.16.5
-        static constexpr int packet_id = 0x50;
-#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
+#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756
         static constexpr int packet_id = 0x5B;
-#elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18, 1.18.1 or 1.18.2
+#elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 ||  \
+      PROTOCOL_VERSION == 759
         static constexpr int packet_id = 0x5C;
-#elif PROTOCOL_VERSION == 759 // 1.19
-        static constexpr int packet_id = 0x5C;
-#elif PROTOCOL_VERSION == 760 // 1.19.1 or 1.19.2
+#elif PROTOCOL_VERSION == 760
         static constexpr int packet_id = 0x5F;
-#elif PROTOCOL_VERSION == 761 // 1.19.3
+#elif PROTOCOL_VERSION == 761
         static constexpr int packet_id = 0x5D;
-#elif PROTOCOL_VERSION == 762 // 1.19.4
-        static constexpr int packet_id = 0x61;
-#elif PROTOCOL_VERSION == 763 // 1.20
+#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
         static constexpr int packet_id = 0x61;
 #else
 #error "Protocol version not implemented"
 #endif
+
         static constexpr std::string_view packet_name = "Sound Entity";
 
         virtual ~ClientboundSoundEntityPacket() override
