@@ -1,4 +1,4 @@
-1.20\custom\Biomes.json
+1.19.4\custom\Biomes.json
 1.20\custom\Blocks.json
 1.20\custom\Blocks_info.json
 1.20\custom\Items.json

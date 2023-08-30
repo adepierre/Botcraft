@@ -85,8 +85,9 @@ TEST_CASE("block states")
     }
 }
 
-// Botcraft biome data extraction is bugged for 1.19.3+
-#if PROTOCOL_VERSION > 760
+// Biome names is sometimes wrong in 1.19.4 because of additional cherry_grove that
+// is only present when experimental is activated
+#if PROTOCOL_VERSION == 762
 TEST_CASE("biomes", "[!mayfail]")
 #else
 TEST_CASE("biomes")
@@ -122,13 +123,20 @@ TEST_CASE("biomes")
 
         int biome_id;
         const Botcraft::Biome* biome;
-        std::lock_guard<std::mutex> lock(bot->GetWorld()->GetMutex());
-        REQUIRE_NOTHROW(biome_id = bot->GetWorld()->GetBiome(start_pos));
-        biome = Botcraft::AssetsManager::getInstance().GetBiome(biome_id);
-        CHECK(biome->GetName() == "desert");
-        REQUIRE_NOTHROW(biome_id = bot->GetWorld()->GetBiome(end_pos));
-        biome = Botcraft::AssetsManager::getInstance().GetBiome(biome_id);
-        CHECK(biome->GetName() == "desert");
+        REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
+            {
+                std::lock_guard<std::mutex> lock(bot->GetWorld()->GetMutex());
+                biome_id = bot->GetWorld()->GetBiome(start_pos);
+                biome = Botcraft::AssetsManager::getInstance().GetBiome(biome_id);
+                return biome->GetName() == "desert";
+            }, 5000));
+        REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
+            {
+                std::lock_guard<std::mutex> lock(bot->GetWorld()->GetMutex());
+                biome_id = bot->GetWorld()->GetBiome(end_pos);
+                biome = Botcraft::AssetsManager::getInstance().GetBiome(biome_id);
+                return biome->GetName() == "desert";
+            }, 5000));
     }
 #endif
 }
