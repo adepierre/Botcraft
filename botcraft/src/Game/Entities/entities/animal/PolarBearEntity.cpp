@@ -30,7 +30,7 @@ namespace Botcraft
 
     double PolarBearEntity::GetWidth() const
     {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         return 1.4;
 #else
         return 1.3;

@@ -1,11 +1,11 @@
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/piglin/PiglinEntity.hpp"
 
 namespace Botcraft
 {
     const std::array<std::string, PiglinEntity::metadata_count> PiglinEntity::metadata_names{ {
         "data_baby_id",
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
         "data_immune_to_zombification",
 #endif
         "data_is_charging_crossbow",
@@ -16,7 +16,7 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataBabyId(false);
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
         SetDataImmuneToZombification(false);
 #endif
         SetDataIsChargingCrossbow(false);
@@ -63,14 +63,14 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value PiglinEntity::Serialize() const
     {
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
         ProtocolCraft::Json::Value output = AbstractPiglinEntity::Serialize();
 #else
         ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 #endif
 
         output["metadata"]["data_baby_id"] = GetDataBabyId();
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
         output["metadata"]["data_immune_to_zombification"] = GetDataImmuneToZombification();
 #endif
         output["metadata"]["data_is_charging_crossbow"] = GetDataIsChargingCrossbow();
@@ -84,7 +84,7 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
             AbstractPiglinEntity::SetMetadataValue(index, value);
 #else
             MonsterEntity::SetMetadataValue(index, value);
@@ -101,7 +101,7 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_baby_id"));
     }
 
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
     bool PiglinEntity::GetDataImmuneToZombification() const
     {
         return std::any_cast<bool>(metadata.at("data_immune_to_zombification"));
@@ -124,7 +124,7 @@ namespace Botcraft
         metadata["data_baby_id"] = data_baby_id;
     }
 
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
     void PiglinEntity::SetDataImmuneToZombification(const bool data_immune_to_zombification)
     {
         metadata["data_immune_to_zombification"] = data_immune_to_zombification;

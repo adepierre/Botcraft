@@ -83,7 +83,7 @@ namespace Botcraft
 
     const unsigned int Biome::GetWaterColorMultiplier() const
     {
-#if PROTOCOL_VERSION < 393
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
         switch (biome_type)
         {
         case BiomeType::Swamp:

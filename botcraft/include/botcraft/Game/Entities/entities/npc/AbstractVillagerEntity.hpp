@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 477
+#if PROTOCOL_VERSION > 477 /* > 1.14 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/AgeableMobEntity.hpp"

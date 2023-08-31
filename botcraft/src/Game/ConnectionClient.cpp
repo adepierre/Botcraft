@@ -87,7 +87,7 @@ namespace Botcraft
         should_be_closed = true;
     }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     void ConnectionClient::Handle(ClientboundContainerAckPacket &msg)
     {
         // If the transaction was not accepted, we must apologize

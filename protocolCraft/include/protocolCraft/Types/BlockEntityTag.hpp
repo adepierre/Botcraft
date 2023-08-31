@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 348
+#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Identifier.hpp"

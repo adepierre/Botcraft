@@ -9,7 +9,7 @@
 #include "botcraft/Network/Compression.hpp"
 #endif
 #include "botcraft/Utilities/Logger.hpp"
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Utilities/StringUtilities.hpp"
 #endif
 
@@ -64,13 +64,13 @@ namespace Botcraft
         state = ProtocolCraft::ConnectionState::Login;
 
         std::shared_ptr<ProtocolCraft::ServerboundHelloPacket> loginstart_msg = std::make_shared<ProtocolCraft::ServerboundHelloPacket>();
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         loginstart_msg->SetGameProfile(name);
 #else
         loginstart_msg->SetName(name);
         if (authentifier)
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             ProtocolCraft::ProfilePublicKey key;
             key.SetTimestamp(authentifier->GetKeyTimestamp());
             key.SetKey(Utilities::RSAToBytes(authentifier->GetPublicKey()));
@@ -80,7 +80,7 @@ namespace Botcraft
 #else
             message_sent_index = 0;
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             loginstart_msg->SetProfileId(authentifier->GetPlayerUUID());
 #endif
         }
@@ -170,7 +170,7 @@ namespace Botcraft
 
     void NetworkManager::SendChatMessage(const std::string& message)
     {
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         if (message[0] == '/')
         {
             LOG_INFO("You're trying to send a message starting with '/'. Use SendChatCommand instead if you want the server to interprete it as a command.");
@@ -179,18 +179,18 @@ namespace Botcraft
 
         std::shared_ptr<ProtocolCraft::ServerboundChatPacket> chat_message = std::make_shared<ProtocolCraft::ServerboundChatPacket>();
         chat_message->SetMessage(message);
-#if PROTOCOL_VERSION > 758
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         chat_message->SetSignedPreview(false);
 #endif
         if (authentifier)
         {
             long long int salt, timestamp;
             std::vector<unsigned char> signature;
-#if PROTOCOL_VERSION == 759
+#if PROTOCOL_VERSION == 759 /* 1.19 */
             // 1.19
             signature = authentifier->GetMessageSignature(message, salt, timestamp);
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
             // 1.19.1 and 1.19.2
             ProtocolCraft::LastSeenMessagesUpdate last_seen_update;
             {
@@ -214,7 +214,7 @@ namespace Botcraft
             }
             chat_message->SetTimestamp(timestamp);
 
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             ProtocolCraft::SaltSignature salt_signature;
             salt_signature.SetSalt(salt);
             salt_signature.SetSignature(signature);
@@ -236,18 +236,18 @@ namespace Botcraft
 
     void NetworkManager::SendChatCommand(const std::string& command)
     {
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         std::shared_ptr<ProtocolCraft::ServerboundChatCommandPacket> chat_command = std::make_shared<ProtocolCraft::ServerboundChatCommandPacket>();
         chat_command->SetCommand(command);
         chat_command->SetTimestamp(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         std::mt19937 rnd(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
         chat_command->SetSalt(std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(rnd));
 #endif
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         chat_command->SetSignedPreview(false);
 #endif
-#if PROTOCOL_VERSION == 760
+#if PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         ProtocolCraft::LastSeenMessagesUpdate last_seen_update;
         if (authentifier)
         {
@@ -255,7 +255,7 @@ namespace Botcraft
             last_seen_update = chat_context.GetLastSeenMessagesUpdate();
         }
         chat_command->SetLastSeenMessages(last_seen_update);
-#elif PROTOCOL_VERSION > 760
+#elif PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         const auto [signatures, updates] = chat_context.GetLastSeenMessagesUpdate();
         chat_command->SetLastSeenMessages(updates);
 #endif
@@ -397,11 +397,11 @@ namespace Botcraft
         std::vector<unsigned char> raw_shared_secret;
         std::vector<unsigned char> encrypted_shared_secret;
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         std::vector<unsigned char> encrypted_nonce;
         encrypter->Init(msg.GetPublicKey(), msg.GetNonce(),
             raw_shared_secret, encrypted_nonce, encrypted_shared_secret);
-#elif PROTOCOL_VERSION < 761
+#elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
         std::vector<unsigned char> salted_nonce_signature;
         long long int salt;
         encrypter->Init(msg.GetPublicKey(), msg.GetNonce(), authentifier->GetPrivateKey(),
@@ -419,10 +419,10 @@ namespace Botcraft
         std::shared_ptr<ProtocolCraft::ServerboundKeyPacket> response_msg = std::make_shared<ProtocolCraft::ServerboundKeyPacket>();
         response_msg->SetKeyBytes(encrypted_shared_secret);
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         // Pre-1.19 behaviour, send encrypted nonce
         response_msg->SetNonce(encrypted_nonce);
-#elif PROTOCOL_VERSION < 761
+#elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
         // 1.19, 1.19.1, 1.19.2 behaviour, send salted nonce signature
         ProtocolCraft::SaltSignature salt_signature;
         salt_signature.SetSalt(salt);
@@ -449,13 +449,13 @@ namespace Botcraft
         Send(keep_alive_msg);
     }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void NetworkManager::Handle(ProtocolCraft::ClientboundCustomQueryPacket& msg)
     {
         // Vanilla like response when asked by fabric API
         // Not implemented in fabric before December 05 2020,
         // so not necessary before version 1.16.4
-#if PROTOCOL_VERSION > 753
+#if PROTOCOL_VERSION > 753 /* > 1.16.3 */
         if (msg.GetIdentifier().GetFull() == "fabric-networking-api-v1:early_registration")
         {
             std::shared_ptr<ProtocolCraft::ServerboundCustomQueryPacket> custom_query_response = std::make_shared<ProtocolCraft::ServerboundCustomQueryPacket>();
@@ -468,10 +468,10 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
     void NetworkManager::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
     {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         chat_context.AddSeenMessage(msg.GetMessage_().GetHeaderSignature(), msg.GetMessage_().GetSignedHeader().GetSender());
 #else
         if (msg.GetSignature().has_value())
@@ -490,7 +490,7 @@ namespace Botcraft
 #endif
     }
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     void NetworkManager::Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& msg)
     {
         chat_context.AddSeenMessage(msg.GetHeaderSignature(), msg.GetHeader().GetSender());
@@ -498,7 +498,7 @@ namespace Botcraft
 #endif
 #endif
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
     void NetworkManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
     {
         if (authentifier)

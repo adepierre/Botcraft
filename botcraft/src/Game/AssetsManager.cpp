@@ -56,7 +56,7 @@ namespace Botcraft
         LOG_INFO("Done!");
     }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
     const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Blockstate> > >& AssetsManager::Blockstates() const
 #else
     const std::unordered_map<int, std::unique_ptr<Blockstate> >& AssetsManager::Blockstates() const
@@ -65,7 +65,7 @@ namespace Botcraft
         return blockstates;
     }
 
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
     const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& AssetsManager::Biomes() const
 #else
     const std::unordered_map<int, std::unique_ptr<Biome> >& AssetsManager::Biomes() const
@@ -74,7 +74,7 @@ namespace Botcraft
         return biomes;
     }
 
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
     const Biome* AssetsManager::GetBiome(const unsigned char id) const
 #else
     const Biome* AssetsManager::GetBiome(const int id) const
@@ -105,7 +105,7 @@ namespace Botcraft
         }
         else
         {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             it = items.find({ id.first, 0 });
             if (it != items.end())
             {
@@ -126,7 +126,7 @@ namespace Botcraft
             }
         }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         return { -1, 0 };
 #else
         return -1;
@@ -162,7 +162,7 @@ namespace Botcraft
         {
             return ToolMaterial::Diamond;
         }
-#if PROTOCOL_VERSION > 578 // > 1.15.2
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         else if (s == "netherite")
         {
             return ToolMaterial::Netherite;
@@ -205,7 +205,7 @@ namespace Botcraft
         std::unordered_map<std::string, BlockstateProperties> blockstate_properties;
         std::unordered_map<std::string, std::string> textures;
         std::unordered_map<std::string, std::string> rendering;
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         std::unordered_map<std::string, std::unordered_map<int, TintType> > tint_types;
 #else
         std::unordered_map<std::string, TintType> tint_types;
@@ -365,13 +365,13 @@ namespace Botcraft
                     tint_type = TintType::Redstone;
                 }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                 tint_types[name] = std::unordered_map<int, TintType>({ { -1, tint_type } });
 #else
                 tint_types[name] = tint_type;
 #endif
             }
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             // Before the flattening, we could have different tints for different metadata
             else if (info.contains("tintTypes") && info["tintType"].is_object())
             {
@@ -404,7 +404,7 @@ namespace Botcraft
 #endif
             else
             {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                 tint_types[name] = std::unordered_map<int, TintType>({ { -1, TintType::None } });
 #else
                 tint_types[name] = TintType::None;
@@ -413,7 +413,7 @@ namespace Botcraft
         }
 
         // Add a default block
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         blockstates[-1];
         blockstates[-1][0] = std::make_unique<Blockstate>(
             BlockstateProperties{
@@ -463,7 +463,7 @@ namespace Botcraft
             return;
         }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
 
         if (!json.is_array())
         {
@@ -735,7 +735,7 @@ namespace Botcraft
                 {
                     biome_type = BiomeType::DarkForest;
                 }
-#if PROTOCOL_VERSION >= 393
+#if PROTOCOL_VERSION >= 393 /* >= 1.13 */
                 else if (string_biome_type == "WarmOcean")
                 {
                     biome_type = BiomeType::WarmOcean;
@@ -778,7 +778,7 @@ namespace Botcraft
 
         // Add a default item
         ItemProperties props{
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                 {-1, 0}, //id
 #else
                 -1, //id
@@ -786,7 +786,7 @@ namespace Botcraft
                 "default", //name
                 64, //stack_size
         };
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         items[{-1, 0}] = std::make_unique<Item>(props);
 #else
         items[-1] = std::make_unique<Item>(props);
@@ -802,7 +802,7 @@ namespace Botcraft
             {
                 continue;
             }
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             props.id.first = properties["id"].get_number<int>();
 #else
             props.id = properties["id"].get_number<int>();
@@ -818,7 +818,7 @@ namespace Botcraft
                 props.stack_size = 64;
             }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             if (!properties.contains("damage_id") || !properties["damage_id"].is_number())
             {
                 continue;
@@ -836,7 +836,7 @@ namespace Botcraft
 
         for (auto it = blockstates.begin(); it != blockstates.end(); ++it)
         {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
             {
                 for (int n = 0; n < it2->second->GetNumModels(); ++n)
@@ -894,7 +894,7 @@ namespace Botcraft
     {
         for (auto it = blockstates.begin(); it != blockstates.end(); ++it)
         {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
             {
                 it2->second->UpdateModelsWithAtlasData(atlas.get());

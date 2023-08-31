@@ -3,12 +3,12 @@
 namespace Botcraft
 {
     const std::array<std::string, WolfEntity::metadata_count> WolfEntity::metadata_names{ {
-#if PROTOCOL_VERSION < 499
+#if PROTOCOL_VERSION < 499 /* < 1.15 */
         "data_health_id",
 #endif
         "data_interested_id",
         "data_collar_color",
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         "data_remaining_anger_time",
 #endif
     } };
@@ -16,12 +16,12 @@ namespace Botcraft
     WolfEntity::WolfEntity()
     {
         // Initialize all metadata with default values
-#if PROTOCOL_VERSION < 499
+#if PROTOCOL_VERSION < 499 /* < 1.15 */
         SetDataHealthId(1.0f);
 #endif
         SetDataInterestedId(false);
         SetDataCollarColor(14);
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         SetDataRemainingAngerTime(0);
 #endif
     }
@@ -68,12 +68,12 @@ namespace Botcraft
     {
         ProtocolCraft::Json::Value output = TamableAnimalEntity::Serialize();
 
-#if PROTOCOL_VERSION < 499
+#if PROTOCOL_VERSION < 499 /* < 1.15 */
         output["metadata"]["data_health_id"] = GetDataHealthId();
 #endif
         output["metadata"]["data_interested_id"] = GetDataInterestedId();
         output["metadata"]["data_collar_color"] = GetDataCollarColor();
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         output["metadata"]["data_remaining_anger_time"] = GetDataRemainingAngerTime();
 #endif
 
@@ -93,7 +93,7 @@ namespace Botcraft
         }
     }
 
-#if PROTOCOL_VERSION < 499
+#if PROTOCOL_VERSION < 499 /* < 1.15 */
     float WolfEntity::GetDataHealthId() const
     {
         return std::any_cast<float>(metadata.at("data_health_id"));
@@ -110,7 +110,7 @@ namespace Botcraft
         return std::any_cast<int>(metadata.at("data_collar_color"));
     }
 
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     int WolfEntity::GetDataRemainingAngerTime() const
     {
         return std::any_cast<int>(metadata.at("data_remaining_anger_time"));
@@ -118,7 +118,7 @@ namespace Botcraft
 #endif
 
 
-#if PROTOCOL_VERSION < 499
+#if PROTOCOL_VERSION < 499 /* < 1.15 */
     void WolfEntity::SetDataHealthId(const float data_health_id)
     {
         metadata["data_health_id"] = data_health_id;
@@ -135,7 +135,7 @@ namespace Botcraft
         metadata["data_collar_color"] = data_collar_color;
     }
 
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     void WolfEntity::SetDataRemainingAngerTime(const int data_remaining_anger_time)
     {
         metadata["data_remaining_anger_time"] = data_remaining_anger_time;

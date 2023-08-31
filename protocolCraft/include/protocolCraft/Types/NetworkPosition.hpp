@@ -55,7 +55,7 @@ namespace ProtocolCraft
                 x -= 67108864;
             }
 
-#if PROTOCOL_VERSION < 442
+#if PROTOCOL_VERSION < 442 /* < 1.14 */
             y = (value >> 26) & 0xFFF;
             if (y >= 2048)
             {
@@ -84,7 +84,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 
-#if PROTOCOL_VERSION < 442
+#if PROTOCOL_VERSION < 442 /* < 1.14 */
             const unsigned long long int value = (((long long int)x & 0x3FFFFFF) << 38) | (((long long int)y & 0xFFF) << 26) | ((long long int)z & 0x3FFFFFF);
 #else
             const unsigned long long int value = (((long long int)x & 0x3FFFFFF) << 38) | (((long long int)z & 0x3FFFFFF) << 12) | ((long long int)y & 0xFFF);

@@ -219,7 +219,7 @@ Status Init(SimpleBehaviourClient& client)
                         {
                             LOG_WARNING("Spawner detected at " << current_position << ". Please make sure it's spawnproofed as I don't like to die (it tickles)");
                         }
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
                         else if (block->GetBlockstate()->GetName() == "minecraft:sculk_shrieker")
                         {
                             LOG_WARNING("Shrieker detected at " << current_position << ". Please make sure it won't spawn a warden. They hit hard.");
@@ -785,11 +785,11 @@ Status CleanInventory(SimpleBehaviourClient& client)
     use_item_on->SetCursorPositionX(0.5f);
     use_item_on->SetCursorPositionY(1.0f);
     use_item_on->SetCursorPositionZ(0.5f);
-#if PROTOCOL_VERSION > 452
+#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
     use_item_on->SetInside(false);
 #endif
     use_item_on->SetHand(static_cast<int>(Hand::Right));
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     {
         std::lock_guard<std::mutex> world_guard(world->GetMutex());
         use_item_on->SetSequence(world->GetNextWorldInteractionSequenceId());
@@ -799,7 +799,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
     // Use item
     std::shared_ptr<ProtocolCraft::ServerboundUseItemPacket> use_item = std::make_shared<ProtocolCraft::ServerboundUseItemPacket>();
     use_item->SetHand(static_cast<int>(Hand::Right));
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     {
         std::lock_guard<std::mutex> world_guard(world->GetMutex());
         use_item->SetSequence(world->GetNextWorldInteractionSequenceId());
@@ -835,7 +835,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
         return Status::Failure;
     }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     {
         std::lock_guard<std::mutex> world_guard(world->GetMutex());
         use_item_on->SetSequence(world->GetNextWorldInteractionSequenceId());

@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "protocolCraft/Types/Particles/VibrationParticle.hpp"
 
 namespace ProtocolCraft
@@ -23,7 +23,7 @@ namespace ProtocolCraft
         return ParticleType::Vibration;
     }
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
     const VibrationPath& VibrationParticle::GetVibrationPath() const
     {
         return vibration_path;
@@ -45,7 +45,7 @@ namespace ProtocolCraft
     }
 #endif
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
     void VibrationParticle::SetVibrationPath(const VibrationPath& vibration_path_)
     {
         vibration_path = vibration_path_;
@@ -69,7 +69,7 @@ namespace ProtocolCraft
     
     void VibrationParticle::ReadImpl(ReadIterator& iter, size_t& length)
     {
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         vibration_path = ReadData<VibrationPath>(iter, length);
 #else
         destination_type = ReadData<Identifier>(iter, length);
@@ -81,7 +81,7 @@ namespace ProtocolCraft
     
     void VibrationParticle::WriteImpl(WriteContainer& container) const
     {
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         WriteData<VibrationPath>(vibration_path, container);
 #else
         WriteData<Identifier>(destination_type, container);
@@ -94,7 +94,7 @@ namespace ProtocolCraft
     {
         Json::Value output;
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         output["vibration_path"] = vibration_path;
 #else
         output["destination_type"] = destination_type;

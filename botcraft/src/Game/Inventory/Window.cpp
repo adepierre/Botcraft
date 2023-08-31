@@ -9,9 +9,9 @@ namespace Botcraft
 
     Window::Window(const InventoryType type_)
     {
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         next_transaction_id = 1;
-#elif PROTOCOL_VERSION > 755
+#elif PROTOCOL_VERSION > 755 /* > 1.17 */
         state_id = 1;
 #endif
         type = type_;
@@ -42,7 +42,7 @@ namespace Botcraft
         slots[index] = slot;
     }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     const int Window::GetNextTransactionId() const
     {
         return next_transaction_id;
@@ -52,7 +52,7 @@ namespace Botcraft
     {
         next_transaction_id = n;
     }
-#elif PROTOCOL_VERSION > 755
+#elif PROTOCOL_VERSION > 755 /* > 1.17 */
     const int Window::GetStateId() const
     {
         return state_id;

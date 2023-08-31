@@ -4,10 +4,10 @@
 
 #include "protocolCraft/Utilities/Json.hpp"
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include <random>
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #include "protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp"
 #endif
 
@@ -38,13 +38,13 @@ namespace Botcraft
         const std::string& GetPlayerDisplayName() const;
         const std::array<unsigned char, 16>& GetPlayerUUID() const;
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         const std::string& GetPrivateKey() const;
         const std::string& GetPublicKey() const;
         const std::string& GetKeySignature() const;
         const long long int GetKeyTimestamp() const;
 
-#if PROTOCOL_VERSION == 759
+#if PROTOCOL_VERSION == 759 /* 1.19 */
         /// @brief Compute the signature of a message
         /// @param message Message to send
         /// @param salt Output salt used to generate the signature
@@ -52,7 +52,7 @@ namespace Botcraft
         /// @return The message signature
         const std::vector<unsigned char> GetMessageSignature(const std::string& message,
             long long int& salt, long long int& timestamp);
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         /// @brief Compute the signature of a message
         /// @param message Message to send
         /// @param previous_signature Signature of the previous message sent
@@ -130,7 +130,7 @@ namespace Botcraft
         void UpdateCachedMCProfile(const std::string& login, const std::string& name,
             const std::string& id) const;
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         /// @brief Update the cached player certificates for the given login
         /// @param login The login we want to update the data for
         /// @param private_k New private key
@@ -180,7 +180,7 @@ namespace Botcraft
         const std::pair<std::string, std::string> GetMCProfile(const std::string& login, 
             const std::string& mc_token) const;
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         /// @brief Try to get player certificates from Minecraft token
         /// @param login Login used to store credentials in cache
         /// @param mc_token Minecraft token
@@ -232,7 +232,7 @@ namespace Botcraft
         std::string mc_player_uuid;
         std::array<unsigned char, 16> mc_player_uuid_bytes;
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         std::string private_key;
         std::string public_key;
         std::string key_signature;

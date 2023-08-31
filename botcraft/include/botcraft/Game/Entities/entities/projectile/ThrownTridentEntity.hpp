@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/projectile/AbstractArrowEntity.hpp"
@@ -8,7 +8,7 @@ namespace Botcraft
     class ThrownTridentEntity : public AbstractArrowEntity
     {
     protected:
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         static constexpr int metadata_count = 2;
 #else
         static constexpr int metadata_count = 1;
@@ -37,12 +37,12 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         char GetIdLoyalty() const;
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         bool GetIdFoil() const;
 #endif
 
         void SetIdLoyalty(const char id_loyalty);
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         void SetIdFoil(const bool id_foil);
 #endif
 

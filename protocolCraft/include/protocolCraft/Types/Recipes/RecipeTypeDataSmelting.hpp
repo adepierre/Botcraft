@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 347
+#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #include "protocolCraft/Types/Slot.hpp"
@@ -20,7 +20,7 @@ namespace ProtocolCraft
             group = group_;
         }
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         void SetCookingBookCategory(const int cooking_book_category_)
         {
             cooking_book_category = cooking_book_category_;
@@ -53,7 +53,7 @@ namespace ProtocolCraft
             return group;
         }
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         int GetCookingBookCategory() const
         {
             return cooking_book_category;
@@ -84,7 +84,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             group = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             cooking_book_category = ReadData<VarInt>(iter, length);
 #endif
             ingredient = ReadData<Ingredient>(iter, length);
@@ -96,7 +96,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(group, container);
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             WriteData<VarInt>(cooking_book_category, container);
 #endif
             WriteData<Ingredient>(ingredient, container);
@@ -110,7 +110,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["group"] = group;
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             output["cooking_book_category"] = cooking_book_category;
 #endif
             output["ingredient"] = ingredient;
@@ -123,7 +123,7 @@ namespace ProtocolCraft
 
     private:
         std::string group;
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         int cooking_book_category = 0;
 #endif
         Ingredient ingredient;

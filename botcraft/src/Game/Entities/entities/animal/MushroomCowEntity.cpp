@@ -2,7 +2,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const std::array<std::string, MushroomCowEntity::metadata_count> MushroomCowEntity::metadata_names{ {
         "data_type",
     } };
@@ -10,7 +10,7 @@ namespace Botcraft
 
     MushroomCowEntity::MushroomCowEntity()
     {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         // Initialize all metadata with default values
         SetDataType("red");
 #endif
@@ -54,7 +54,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     ProtocolCraft::Json::Value MushroomCowEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = CowEntity::Serialize();

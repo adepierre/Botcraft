@@ -35,7 +35,7 @@ namespace ProtocolCraft
             requirements = requirements_;
         }
 
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         void SetSendsTelemetryEvent(const bool sends_telemetry_event_)
         {
             sends_telemetry_event = sends_telemetry_event_;
@@ -63,7 +63,7 @@ namespace ProtocolCraft
             return requirements;
         }
 
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         bool GetSendsTelemetryEvent() const
         {
             return sends_telemetry_event;
@@ -82,7 +82,7 @@ namespace ProtocolCraft
                     return ReadVector<std::string>(i, l);
                 }
             );
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             sends_telemetry_event = ReadData<bool>(iter, length);
 #endif
         }
@@ -98,7 +98,7 @@ namespace ProtocolCraft
                     WriteVector<std::string>(v, c);
                 }
             );
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             WriteData<bool>(sends_telemetry_event, container);
 #endif
         }
@@ -117,7 +117,7 @@ namespace ProtocolCraft
             }
             output["criteria"] = criteria;
             output["requirements"] = requirements;
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             output["sends_telemetry_event"] = sends_telemetry_event;
 #endif
 
@@ -129,7 +129,7 @@ namespace ProtocolCraft
         std::optional<AdvancementDisplay> display_data;
         std::vector<Identifier> criteria;
         std::vector<std::vector<std::string> > requirements;
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         bool sends_telemetry_event = false;
 #endif
     };

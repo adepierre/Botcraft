@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/raid/RaiderEntity.hpp"
 #else
 #include "botcraft/Game/Entities/entities/MobEntity.hpp"
@@ -8,7 +8,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     class WitchEntity : public RaiderEntity
 #else
     class WitchEntity : public MobEntity
@@ -17,7 +17,7 @@ namespace Botcraft
     protected:
         static constexpr int metadata_count = 1;
         static const std::array<std::string, metadata_count> metadata_names;
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int hierarchy_metadata_count = RaiderEntity::metadata_count + RaiderEntity::hierarchy_metadata_count;
 #else
         static constexpr int hierarchy_metadata_count = MobEntity::metadata_count + MobEntity::hierarchy_metadata_count;

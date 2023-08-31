@@ -30,7 +30,7 @@ namespace Botcraft
 
     double DonkeyEntity::GetHeight() const
     {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         return 1.5;
 #else
         return 1.6;

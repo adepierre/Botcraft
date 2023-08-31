@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
 #include <string>
@@ -7,7 +7,7 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #include "protocolCraft/Types/Chat/LastSeenMessagesUpdate.hpp"
 #endif
 
@@ -16,10 +16,10 @@ namespace ProtocolCraft
     class ServerboundChatCommandPacket : public BaseMessage<ServerboundChatCommandPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 759
+#if   PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x03;
-#elif PROTOCOL_VERSION == 760 || PROTOCOL_VERSION == 761 ||  \
-      PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */ || PROTOCOL_VERSION == 761 /* 1.19.3 */ ||  \
+      PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x04;
 #else
 #error "Protocol version not implemented"
@@ -42,7 +42,7 @@ namespace ProtocolCraft
             timestamp = timestamp_;
         }
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         void SetSalt(const long long int salt_)
         {
             salt = salt_;
@@ -54,14 +54,14 @@ namespace ProtocolCraft
             argument_signatures = argument_signatures_;
         }
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         void SetSignedPreview(const bool signed_preview_)
         {
             signed_preview = signed_preview_;
         }
 #endif
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         void SetLastSeenMessages(const LastSeenMessagesUpdate& last_seen_messages_)
         {
             last_seen_messages = last_seen_messages_;
@@ -79,7 +79,7 @@ namespace ProtocolCraft
             return timestamp;
         }
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         long long int GetSalt() const
         {
             return salt;
@@ -91,14 +91,14 @@ namespace ProtocolCraft
             return argument_signatures;
         }
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         bool GetSignedPreview() const
         {
             return signed_preview;
         }
 #endif
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         const LastSeenMessagesUpdate& GetLastSeenMessages() const
         {
             return last_seen_messages;
@@ -110,7 +110,7 @@ namespace ProtocolCraft
         {
             command = ReadData<std::string>(iter, length);
             timestamp = ReadData<long long int>(iter, length);
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             salt = ReadData<long long int>(iter, length);
 #endif
             argument_signatures = ReadMap<std::string, std::vector<unsigned char>>(iter, length,
@@ -122,10 +122,10 @@ namespace ProtocolCraft
                     return std::make_pair(key, val);
                 }
             );
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             signed_preview = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             last_seen_messages = ReadData<LastSeenMessagesUpdate>(iter, length);
 #endif
         }
@@ -134,7 +134,7 @@ namespace ProtocolCraft
         {
             WriteData<std::string>(command, container);
             WriteData<long long int>(timestamp, container);
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             WriteData<long long int>(salt, container);
 #endif
             WriteMap<std::string, std::vector<unsigned char>>(argument_signatures, container,
@@ -144,10 +144,10 @@ namespace ProtocolCraft
                     WriteVector<unsigned char>(p.second, c);
                 }
             );
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<bool>(signed_preview, container);
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             WriteData<LastSeenMessagesUpdate>(last_seen_messages, container);
 #endif
         }
@@ -158,7 +158,7 @@ namespace ProtocolCraft
 
             output["command"] = command;
             output["timestamp"] = timestamp;
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             output["salt"] = salt;
 #endif
             output["argument_signatures"] = Json::Object();
@@ -166,10 +166,10 @@ namespace ProtocolCraft
             {
                 output["argument_signatures"][s.first] = "Vector of " + std::to_string(s.second.size()) + " unsigned char";
             }
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["signed_preview"] = signed_preview;
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             output["last_seen_messages"] = last_seen_messages;
 #endif
 
@@ -180,14 +180,14 @@ namespace ProtocolCraft
     private:
         std::string command;
         long long int timestamp = 0;
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         long long int salt = 0;
 #endif
         std::map<std::string, std::vector<unsigned char> > argument_signatures;
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         bool signed_preview = false;
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         LastSeenMessagesUpdate last_seen_messages;
 #endif
     };

@@ -1,11 +1,11 @@
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/projectile/ThrownTridentEntity.hpp"
 
 namespace Botcraft
 {
     const std::array<std::string, ThrownTridentEntity::metadata_count> ThrownTridentEntity::metadata_names{ {
         "id_loyalty",
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         "id_foil",
 #endif
     } };
@@ -14,7 +14,7 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetIdLoyalty(0);
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         SetIdFoil(false);
 #endif
     }
@@ -62,7 +62,7 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = AbstractArrowEntity::Serialize();
 
         output["metadata"]["id_loyalty"] = GetIdLoyalty();
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         output["metadata"]["id_foil"] = GetIdFoil();
 #endif
 
@@ -87,7 +87,7 @@ namespace Botcraft
         return std::any_cast<char>(metadata.at("id_loyalty"));
     }
 
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     bool ThrownTridentEntity::GetIdFoil() const
     {
         return std::any_cast<bool>(metadata.at("id_foil"));
@@ -100,7 +100,7 @@ namespace Botcraft
         metadata["id_loyalty"] = id_loyalty;
     }
 
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     void ThrownTridentEntity::SetIdFoil(const bool id_foil)
     {
         metadata["id_foil"] = id_foil;

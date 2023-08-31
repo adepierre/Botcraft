@@ -146,7 +146,7 @@ namespace Botcraft
     Status LogInventoryContentBlackboard(BehaviourClient& client);
 
 
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     /// @brief Buy or sell an item, assuming a trading window is currently opened.
     /// @param client The client performing the action
     /// @param item_id Id of the item to buy/sell

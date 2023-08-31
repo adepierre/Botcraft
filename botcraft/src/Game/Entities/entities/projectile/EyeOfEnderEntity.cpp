@@ -2,7 +2,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const std::array<std::string, EyeOfEnderEntity::metadata_count> EyeOfEnderEntity::metadata_names{ {
         "data_item_stack",
     } };
@@ -10,7 +10,7 @@ namespace Botcraft
 
     EyeOfEnderEntity::EyeOfEnderEntity()
     {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         // Initialize all metadata with default values
         SetDataItemStack(ProtocolCraft::Slot());
 #endif
@@ -54,7 +54,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     ProtocolCraft::Json::Value EyeOfEnderEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = Entity::Serialize();

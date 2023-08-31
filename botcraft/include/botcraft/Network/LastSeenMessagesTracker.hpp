@@ -1,10 +1,10 @@
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #pragma once
 
 #include <mutex>
 #include <vector>
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include <deque>
 
 #include "protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp"
@@ -24,7 +24,7 @@ namespace Botcraft
 
         std::mutex& GetMutex();
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const std::vector<unsigned char>& GetLastSignature() const;
         void SetLastSignature(const std::vector<unsigned char>& last_signature_sent_);
         
@@ -44,7 +44,7 @@ namespace Botcraft
 
     private:
         std::mutex mutex;
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         std::vector<unsigned char> last_signature_sent;
         std::deque<ProtocolCraft::LastSeenMessagesEntry> last_seen;
 #else

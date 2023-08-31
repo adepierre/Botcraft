@@ -138,7 +138,7 @@ TEST_CASE("Testing mining time calculation")
 
         REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Shovel, ToolMaterial::Wood), Catch::Matchers::WithinAbs(0.4, 0.04));
         REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Shovel, ToolMaterial::Gold), Catch::Matchers::WithinAbs(0.1, 0.04));
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Shovel, ToolMaterial::Netherite), Catch::Matchers::WithinAbs(0.1, 0.04));
 #endif
     }

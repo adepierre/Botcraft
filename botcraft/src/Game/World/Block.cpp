@@ -3,7 +3,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
     Block::Block(const int id_, const unsigned char metadata_)
     {
         ChangeBlockstate(id_, metadata_);

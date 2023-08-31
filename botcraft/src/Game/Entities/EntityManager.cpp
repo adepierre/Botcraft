@@ -54,7 +54,7 @@ namespace Botcraft
         entities[msg.GetPlayerId()] = local_player;
     }
     
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
@@ -158,7 +158,7 @@ namespace Botcraft
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
 
-#if PROTOCOL_VERSION < 458
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
         std::shared_ptr<Entity> entity = Entity::CreateObjectEntity(static_cast<ObjectEntityType>(msg.GetType()));
 #else
         std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
@@ -174,7 +174,7 @@ namespace Botcraft
         entities[msg.GetId_()] = entity;
     }
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
     void EntityManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
@@ -206,7 +206,7 @@ namespace Botcraft
         entities[msg.GetId_()] = entity;
     }
 
-#if PROTOCOL_VERSION < 721
+#if PROTOCOL_VERSION < 721 /* < 1.16 */
     void EntityManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
@@ -289,7 +289,7 @@ namespace Botcraft
         local_player->SetWalkingSpeed(msg.GetWalkingSpeed());
     }
 
-#if PROTOCOL_VERSION == 755
+#if PROTOCOL_VERSION == 755 /* 1.17 */
     void EntityManager::Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
@@ -365,7 +365,7 @@ namespace Botcraft
         }
         else
         {
-#if PROTOCOL_VERSION > 730
+#if PROTOCOL_VERSION > 730 /* > 1.15.2 */
             for (auto& p : msg.GetSlots())
             {
                 it->second->SetEquipment(static_cast<EquipmentSlot>(p.first), p.second);

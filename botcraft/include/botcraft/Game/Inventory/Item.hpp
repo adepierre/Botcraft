@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
 #include <utility>
 #endif
 
@@ -9,7 +9,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
     using ItemId = std::pair<int, unsigned char>;
 #else
     using ItemId = int;
@@ -49,7 +49,7 @@ namespace Botcraft
     };
 } // Botcraft
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
 namespace std
 {
     template<>

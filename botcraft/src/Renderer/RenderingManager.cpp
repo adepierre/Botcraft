@@ -703,7 +703,7 @@ namespace Botcraft
 
         void RenderingManager::Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg)
         {
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
             AddChunkToUpdate(msg.GetChunkX(), msg.GetChunkZ());
 #else
             AddChunkToUpdate(msg.GetSectionPos() >> 42, msg.GetSectionPos() << 22 >> 42);
@@ -715,7 +715,7 @@ namespace Botcraft
             AddChunkToUpdate(msg.GetX(), msg.GetZ());
         }
 
-#if PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
 #else
         void RenderingManager::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)
@@ -729,14 +729,14 @@ namespace Botcraft
             AddEntityToUpdate(msg.GetId_());
         }
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
         {
             AddEntityToUpdate(msg.GetId_());
         }
 #endif
 
-#if PROTOCOL_VERSION < 721
+#if PROTOCOL_VERSION < 721 /* < 1.16 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)
         {
             AddEntityToUpdate(msg.GetId_());
@@ -753,7 +753,7 @@ namespace Botcraft
             AddEntityToUpdate(msg.GetId_());
         }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg)
         {
             AddEntityToUpdate(msg.GetEntityId());
@@ -775,7 +775,7 @@ namespace Botcraft
             AddEntityToUpdate(msg.GetEntityId());
         }
 
-#if PROTOCOL_VERSION == 755
+#if PROTOCOL_VERSION == 755 /* 1.17 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg)
         {
             AddEntityToUpdate(msg.GetEntityId());

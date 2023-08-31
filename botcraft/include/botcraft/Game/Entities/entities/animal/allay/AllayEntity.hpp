@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/PathfinderMobEntity.hpp"
@@ -8,7 +8,7 @@ namespace Botcraft
     class AllayEntity : public PathfinderMobEntity
     {
     protected:
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
         static constexpr int metadata_count = 0;
 #else
         static constexpr int metadata_count = 2;
@@ -30,7 +30,7 @@ namespace Botcraft
         static std::string GetClassName();
         static EntityType GetClassType();
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff

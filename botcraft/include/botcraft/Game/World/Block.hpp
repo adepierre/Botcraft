@@ -8,7 +8,7 @@ namespace Botcraft
     class Block
     {
     public:
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         Block(const int id_ = 0, const unsigned char metadata_ = 0);
 
         void ChangeBlockstate(const int id_, const unsigned char metadata_, const int model_id_ = -1, const Position* pos = nullptr);

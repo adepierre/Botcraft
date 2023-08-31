@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION < 461
+#if PROTOCOL_VERSION < 461 /* < 1.14 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
@@ -9,10 +9,10 @@ namespace ProtocolCraft
     class ClientboundUseBedPacket : public BaseMessage<ClientboundUseBedPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 340
+#if   PROTOCOL_VERSION == 340 /* 1.12.2 */
         static constexpr int packet_id = 0x30;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
-      PROTOCOL_VERSION == 404
+#elif PROTOCOL_VERSION == 393 /* 1.13 */ || PROTOCOL_VERSION == 401 /* 1.13.1 */ ||  \
+      PROTOCOL_VERSION == 404 /* 1.13.2 */
         static constexpr int packet_id = 0x33;
 #else
 #error "Protocol version not implemented"

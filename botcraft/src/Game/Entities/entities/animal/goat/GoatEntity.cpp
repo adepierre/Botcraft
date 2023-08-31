@@ -1,11 +1,11 @@
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "botcraft/Game/Entities/entities/animal/goat/GoatEntity.hpp"
 
 namespace Botcraft
 {
     const std::array<std::string, GoatEntity::metadata_count> GoatEntity::metadata_names{ {
         "data_is_screaming_goat",
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         "data_has_left_horn",
         "data_has_right_horn",
 #endif
@@ -15,7 +15,7 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataIsScreamingGoat(false);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SetDataHasLeftHorn(true);
         SetDataHasRightHorn(true);
 #endif
@@ -64,7 +64,7 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
         output["metadata"]["data_is_screaming_goat"] = GetDataIsScreamingGoat();
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         output["metadata"]["data_has_left_horn"] = GetDataHasLeftHorn();
         output["metadata"]["data_has_right_horn"] = GetDataHasRightHorn();
 #endif
@@ -90,7 +90,7 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_is_screaming_goat"));
     }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     bool GoatEntity::GetDataHasLeftHorn() const
     {
         return std::any_cast<bool>(metadata.at("data_has_left_horn"));
@@ -108,7 +108,7 @@ namespace Botcraft
         metadata["data_is_screaming_goat"] = data_is_screaming_goat;
     }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     void GoatEntity::SetDataHasLeftHorn(const bool data_has_left_horn)
     {
         metadata["data_has_left_horn"] = data_has_left_horn;

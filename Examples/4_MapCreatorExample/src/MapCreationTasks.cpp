@@ -415,7 +415,7 @@ Status FindNextTask(BehaviourClient& c)
 
                 if (!block)
                 {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                     blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
 #else
                     blockstate = AssetsManager::getInstance().Blockstates().at(0).get();

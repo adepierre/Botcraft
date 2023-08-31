@@ -39,7 +39,7 @@ const Botcraft::Position& TestManager::GetCurrentOffset() const
     return current_offset;
 }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const std::map<std::string, std::string>& blockstates, const std::map<std::string, std::string>& metadata, const bool escape_metadata) const
 #else
 void TestManager::SetBlock(const std::string& name, const Botcraft::Position& pos, const int block_variant, const std::map<std::string, std::string>& metadata, const bool escape_metadata) const
@@ -53,7 +53,7 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
         << pos.y << " "
         << pos.z << " "
         << ((name.size() > 10 && name.substr(0, 10) == "minecraft:") ? "" : "minecraft:") << name;
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     if (!blockstates.empty())
     {
         command << "[";
@@ -107,11 +107,11 @@ void TestManager::SetBlock(const std::string& name, const Botcraft::Position& po
         }
         command << "}";
     }
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     command << " replace";
 #endif
     MinecraftServer::GetInstance().SendLine(command.str());
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     MinecraftServer::GetInstance().WaitLine(
         ".*: Changed the block at "
         + std::to_string(pos.x) + ", "
@@ -145,7 +145,7 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
     std::stringstream command;
 
     command
-#if PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
         << "summon" << " "
         << "minecraft:item_frame" << " "
 #else
@@ -154,7 +154,7 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
         << pos.x << " "
         << pos.y << " "
         << pos.z << " "
-#if PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
         << "{Facing:" << facing_id << ","
         << "Item:{"
 #else
@@ -193,7 +193,7 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
         {
             command
                 << "\""
-#if PROTOCOL_VERSION < 735
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
                 // Just a list of strings is working before 1.16(?)
                 << ReplaceCharacters(description[i])
 #else
@@ -210,9 +210,9 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
         << "}"; // Main
 
     MinecraftServer::GetInstance().SendLine(command.str());
-#if PROTOCOL_VERSION > 340 && PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 477 /* < 1.14 */
     MinecraftServer::GetInstance().WaitLine(".*?: Summoned new Item Frame.*", 5000);
-#elif PROTOCOL_VERSION == 340
+#elif PROTOCOL_VERSION == 340 /* 1.12.2 */
     MinecraftServer::GetInstance().WaitLine(".*?: Object successfully summoned.*", 5000);
 #else
     MinecraftServer::GetInstance().WaitLine(
@@ -296,7 +296,7 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
         text_color = "gold";
         break;
     }
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
     std::map<std::string, std::string> lines;
 #else
     std::vector<std::string> lines;
@@ -316,7 +316,7 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
                 << "\"clickEvent\"" << ":" << "{"
                     << "\"action\"" << ":" << "\"run_command\"" << ","
                     << "\"value\"" << ":" << "\""
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
                     << "teleport @s" << " " << offset_target.x << " " << offset_target.y << " " << offset_target.z
                     << " " << "facing" << " " << dst.x << " " << dst.y << " " << dst.z
 #else
@@ -332,7 +332,7 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
                 << "\"color\"" << ":" << "\"" << text_color << "\"";
         }
         line << "}";
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         lines.insert({ "Text" + std::to_string(i + 1), line.str() });
 #else
         lines.push_back(line.str());
@@ -340,13 +340,13 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
     }
     // There is a bug in version 1.14 (and prereleases) that requires all 4 lines
     // to be specified or the server can't read the text. See: https://bugs.mojang.com/browse/MC-144316
-#if PROTOCOL_VERSION > 459 && PROTOCOL_VERSION < 478
+#if PROTOCOL_VERSION > 459 /* > 1.13.2 */ && PROTOCOL_VERSION < 478 /* < 1.14.1 */
     for (size_t i = texts.size(); i < 4ULL; ++i)
     {
         lines.insert({ "Text" + std::to_string(i + 1), "{\"text\":\"\"}" });
     }
 #endif
-#if PROTOCOL_VERSION > 762 // In 1.20 texts are sent as a list with exactly 4 elements
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */ // In 1.20 texts are sent as a list with exactly 4 elements
     std::stringstream text_content;
     text_content << "{\"messages\":[";
     for (size_t i = 0; i < 4ULL; ++i)
@@ -369,22 +369,22 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 #endif
 
     SetBlock(
-#if PROTOCOL_VERSION < 393
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
         "standing_sign",
-#elif PROTOCOL_VERSION < 477
+#elif PROTOCOL_VERSION < 477 /* < 1.14 */
         "sign",
 #else
         "oak_sign",
 #endif
         src,
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         {
             { "rotation", std::to_string(block_rotation) }
         },
 #else
         block_rotation,
 #endif
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         lines
 #else
         {
@@ -407,7 +407,7 @@ void TestManager::LoadStructure(const std::string& filename, const Botcraft::Pos
     SetBlock(
         "structure_block",
         pos,
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         {},
 #else
         0,
@@ -578,7 +578,7 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
 
     // Kill all items that could exist on the floor
     MinecraftServer::GetInstance().SendLine("kill @e[type=item]");
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     // In 1.12.2 server sends one line per entity killed so we can't wait without knowing
     // how many there were. Just assume the command worked
     MinecraftServer::GetInstance().WaitLine(".*?: (?:Killed|No entity was found).*", 5000);

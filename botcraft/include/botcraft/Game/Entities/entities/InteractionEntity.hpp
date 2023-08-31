@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/Entity.hpp"

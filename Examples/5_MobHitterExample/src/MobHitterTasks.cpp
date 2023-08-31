@@ -47,7 +47,7 @@ Status HitCloseHostiles(BehaviourClient& c)
                 std::shared_ptr<ServerboundInteractPacket> msg = std::make_shared<ServerboundInteractPacket>();
                 msg->SetAction(1);
                 msg->SetEntityId(it.first);
-#if PROTOCOL_VERSION > 722
+#if PROTOCOL_VERSION > 722 /* > 1.15.2 */
                 msg->SetUsingSecondaryAction(false);
 #endif
                 std::shared_ptr<ServerboundSwingPacket> msg_swing = std::make_shared<ServerboundSwingPacket>();

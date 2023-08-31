@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/DisplayTextDisplayEntity.hpp"
 
 namespace Botcraft

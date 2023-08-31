@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
 #include "botcraft/Game/Entities/entities/animal/BeeEntity.hpp"
 
 namespace Botcraft

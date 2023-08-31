@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 347
+#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include <memory>
 
 #include "protocolCraft/NetworkType.hpp"
@@ -51,7 +51,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION < 453
+#if PROTOCOL_VERSION < 453 /* < 1.14 */
             recipe_id = ReadData<Identifier>(iter, length);
             type = ReadData<Identifier>(iter, length);
 #else
@@ -64,7 +64,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION < 453
+#if PROTOCOL_VERSION < 453 /* < 1.14 */
             WriteData<Identifier>(recipe_id, container);
             WriteData<Identifier>(type, container);
 #else

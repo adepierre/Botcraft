@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 756
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 756 /* < 1.17.1 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -8,7 +8,7 @@ namespace ProtocolCraft
     class ClientboundRemoveEntityPacket : public BaseMessage<ClientboundRemoveEntityPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 755
+#if   PROTOCOL_VERSION == 755 /* 1.17 */
         static constexpr int packet_id = 0x3A;
 #else
 #error "Protocol version not implemented"

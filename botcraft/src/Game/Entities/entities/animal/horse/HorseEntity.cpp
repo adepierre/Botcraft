@@ -4,7 +4,7 @@ namespace Botcraft
 {
     const std::array<std::string, HorseEntity::metadata_count> HorseEntity::metadata_names{ {
         "data_id_type_variant",
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         "armor_type",
 #endif
     } };
@@ -13,7 +13,7 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataIdTypeVariant(0);
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         SetArmorType(std::optional<int>());
 #endif
     }
@@ -61,7 +61,7 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = AbstractHorseEntity::Serialize();
 
         output["metadata"]["data_id_type_variant"] = GetDataIdTypeVariant();
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         output["metadata"]["armor_type"] = GetArmorType() ? ProtocolCraft::Json::Value(GetArmorType().value()) : ProtocolCraft::Json::Value();
 #endif
 
@@ -86,7 +86,7 @@ namespace Botcraft
         return std::any_cast<int>(metadata.at("data_id_type_variant"));
     }
 
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
     const std::optional<int>& HorseEntity::GetArmorType() const
     {
         return std::any_cast<const std::optional<int>&>(metadata.at("armor_type"));
@@ -99,7 +99,7 @@ namespace Botcraft
         metadata["data_id_type_variant"] = data_id_type_variant;
     }
 
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
     void HorseEntity::SetArmorType(const std::optional<int>& armor_type)
     {
         metadata["armor_type"] = armor_type;

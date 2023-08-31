@@ -8,31 +8,31 @@ namespace ProtocolCraft
     class ClientboundMapItemDataPacket : public BaseMessage<ClientboundMapItemDataPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 340
+#if   PROTOCOL_VERSION == 340 /* 1.12.2 */
         static constexpr int packet_id = 0x24;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
-      PROTOCOL_VERSION == 404 || PROTOCOL_VERSION == 477 ||  \
-      PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 ||  \
-      PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498
+#elif PROTOCOL_VERSION == 393 /* 1.13 */ || PROTOCOL_VERSION == 401 /* 1.13.1 */ ||  \
+      PROTOCOL_VERSION == 404 /* 1.13.2 */ || PROTOCOL_VERSION == 477 /* 1.14 */ ||  \
+      PROTOCOL_VERSION == 480 /* 1.14.1 */ || PROTOCOL_VERSION == 485 /* 1.14.2 */ ||  \
+      PROTOCOL_VERSION == 490 /* 1.14.3 */ || PROTOCOL_VERSION == 498 /* 1.14.4 */
         static constexpr int packet_id = 0x26;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 ||  \
-      PROTOCOL_VERSION == 578
+#elif PROTOCOL_VERSION == 573 /* 1.15 */ || PROTOCOL_VERSION == 575 /* 1.15.1 */ ||  \
+      PROTOCOL_VERSION == 578 /* 1.15.2 */
         static constexpr int packet_id = 0x27;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736
+#elif PROTOCOL_VERSION == 735 /* 1.16 */ || PROTOCOL_VERSION == 736 /* 1.16.1 */
         static constexpr int packet_id = 0x26;
-#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 ||  \
-      PROTOCOL_VERSION == 754
+#elif PROTOCOL_VERSION == 751 /* 1.16.2 */ || PROTOCOL_VERSION == 753 /* 1.16.3 */ ||  \
+      PROTOCOL_VERSION == 754 /* 1.16.4/5 */
         static constexpr int packet_id = 0x25;
-#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 ||  \
-      PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758
+#elif PROTOCOL_VERSION == 755 /* 1.17 */ || PROTOCOL_VERSION == 756 /* 1.17.1 */ ||  \
+      PROTOCOL_VERSION == 757 /* 1.18/.1 */ || PROTOCOL_VERSION == 758 /* 1.18.2 */
         static constexpr int packet_id = 0x27;
-#elif PROTOCOL_VERSION == 759
+#elif PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x24;
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x26;
-#elif PROTOCOL_VERSION == 761
+#elif PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x25;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x29;
 #else
 #error "Protocol version not implemented"
@@ -55,21 +55,21 @@ namespace ProtocolCraft
             scale = scale_;
         }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         void SetTrackingPosition(const bool tracking_position_)
         {
             tracking_position = tracking_position_;
         }
 #endif
 
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         void SetLocked(const bool locked_)
         {
             locked = locked_;
         }
 #endif
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         void SetDecorations(const std::optional<std::vector<MapDecoration>>& decorations_)
         {
             decorations = decorations_;
@@ -117,21 +117,21 @@ namespace ProtocolCraft
             return scale;
         }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         bool GetTrackingPosition() const
         {
             return tracking_position;
         }
 #endif
 
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         bool GetLocked() const
         {
             return locked;
         }
 #endif
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         const std::optional<std::vector<MapDecoration>>& GetDecorations() const
         {
             return decorations;
@@ -174,13 +174,13 @@ namespace ProtocolCraft
         {
             map_id = ReadData<VarInt>(iter, length);
             scale = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
             tracking_position = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
             locked = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
             decorations = ReadOptional<std::vector<MapDecoration>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
@@ -205,13 +205,13 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(map_id, container);
             WriteData<char>(scale, container);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
             WriteData<bool>(tracking_position, container);
 #endif
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
             WriteData<bool>(locked, container);
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
             WriteOptional<std::vector<MapDecoration>>(decorations, container,
                 [](const std::vector<MapDecoration>& v, WriteContainer& c)
                 {
@@ -238,14 +238,14 @@ namespace ProtocolCraft
 
             output["map_id"] = map_id;
             output["scale"] = scale;
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
             output["tracking_position"] = tracking_position;
 #endif
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
             output["locked"] = locked;
 #endif
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
             if (decorations.has_value())
             {
                 output["decorations"] = decorations.value();
@@ -268,13 +268,13 @@ namespace ProtocolCraft
     private:
         int map_id = 0;
         char scale = 0;
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         bool tracking_position = false;
 #endif
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         bool locked = false;
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         std::optional<std::vector<MapDecoration>> decorations;
 #else
         std::vector<MapDecoration> decorations;

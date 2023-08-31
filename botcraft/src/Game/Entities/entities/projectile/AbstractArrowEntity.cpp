@@ -4,10 +4,10 @@ namespace Botcraft
 {
     const std::array<std::string, AbstractArrowEntity::metadata_count> AbstractArrowEntity::metadata_names{ {
         "id_flags",
-#if PROTOCOL_VERSION < 579 && PROTOCOL_VERSION > 393
+#if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
         "data_owneruuid_id",
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "pierce_level",
 #endif
     } };
@@ -16,10 +16,10 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetIdFlags(0);
-#if PROTOCOL_VERSION < 579 && PROTOCOL_VERSION > 393
+#if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
         SetDataOwneruuidId(std::optional<ProtocolCraft::UUID>());
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetPierceLevel(0);
 #endif
     }
@@ -37,17 +37,17 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value AbstractArrowEntity::Serialize() const
     {
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         ProtocolCraft::Json::Value output = ProjectileEntity::Serialize();
 #else
         ProtocolCraft::Json::Value output = Entity::Serialize();
 #endif
 
         output["metadata"]["id_flags"] = GetIdFlags();
-#if PROTOCOL_VERSION < 579 && PROTOCOL_VERSION > 393
+#if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
         output["metadata"]["data_owneruuid_id"] = GetDataOwneruuidId() ? ProtocolCraft::Json::Value(GetDataOwneruuidId().value()) : ProtocolCraft::Json::Value();
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["pierce_level"] = GetPierceLevel();
 #endif
 
@@ -59,7 +59,7 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
             ProjectileEntity::SetMetadataValue(index, value);
 #else
             Entity::SetMetadataValue(index, value);
@@ -76,14 +76,14 @@ namespace Botcraft
         return std::any_cast<char>(metadata.at("id_flags"));
     }
 
-#if PROTOCOL_VERSION < 579 && PROTOCOL_VERSION > 393
+#if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
     const std::optional<ProtocolCraft::UUID>& AbstractArrowEntity::GetDataOwneruuidId() const
     {
         return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_owneruuid_id"));
     }
 #endif
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     char AbstractArrowEntity::GetPierceLevel() const
     {
         return std::any_cast<char>(metadata.at("pierce_level"));
@@ -96,14 +96,14 @@ namespace Botcraft
         metadata["id_flags"] = id_flags;
     }
 
-#if PROTOCOL_VERSION < 579 && PROTOCOL_VERSION > 393
+#if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
     void AbstractArrowEntity::SetDataOwneruuidId(const std::optional<ProtocolCraft::UUID>& data_owneruuid_id)
     {
         metadata["data_owneruuid_id"] = data_owneruuid_id;
     }
 #endif
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void AbstractArrowEntity::SetPierceLevel(const char pierce_level)
     {
         metadata["pierce_level"] = pierce_level;

@@ -11,7 +11,7 @@ namespace Botcraft
         Swamp = 1,
         DarkForest = 2,
         Badlands = 3,
-#if PROTOCOL_VERSION >= 393
+#if PROTOCOL_VERSION >= 393 /* >= 1.13 */
         WarmOcean = 4,
         LukewarmOcean = 5,
         ColdOcean = 6,

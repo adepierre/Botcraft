@@ -1,9 +1,9 @@
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #pragma once
 
 #include "protocolCraft/Types/Particles/Particle.hpp"
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
 #include "protocolCraft/Types/Vibrations/VibrationPath.hpp"
 #else
 #include "protocolCraft/Types/Vibrations/PositionSource.hpp"
@@ -22,7 +22,7 @@ namespace ProtocolCraft
         
         virtual ParticleType GetType() const override;
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         const VibrationPath& GetVibrationPath() const;
 #else
         const Identifier& GetDestinationType() const;
@@ -30,7 +30,7 @@ namespace ProtocolCraft
         int GetArrivalInTicks() const;
 #endif
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         void SetVibrationPath(const VibrationPath& vibration_path_);
 #else
         void SetDestinationType(const Identifier& destination_type_);
@@ -46,7 +46,7 @@ namespace ProtocolCraft
         virtual Json::Value SerializeImpl() const override;
 
     private:
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         VibrationPath vibration_path;
 #else
         Identifier destination_type;

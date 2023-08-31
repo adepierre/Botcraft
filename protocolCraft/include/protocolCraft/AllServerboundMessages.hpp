@@ -9,7 +9,7 @@
 
 
 // Login serverbound
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundHelloPacket.hpp"
@@ -23,7 +23,7 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundClientCommandPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketPosRot.hpp"
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerAckPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundKeepAlivePacket.hpp"
@@ -31,14 +31,14 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundAcceptTeleportationPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerActionPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundCommandSuggestionPacket.hpp"
-#if PROTOCOL_VERSION < 476
+#if PROTOCOL_VERSION < 476 /* < 1.14 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundEnchantItemPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerClickPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerClosePacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundCustomPayloadPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundInteractPacket.hpp"
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketPos.hpp"
@@ -49,7 +49,7 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerAbilitiesPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerCommandPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPlayerInputPacket.hpp"
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp"
 #else
@@ -65,11 +65,11 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundTeleportToEntityPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundUseItemOnPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundUseItemPacket.hpp"
-#if PROTOCOL_VERSION > 388
+#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundBlockEntityTagQuery.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundEntityTagQuery.hpp"
 #endif
-#if PROTOCOL_VERSION > 385
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundEditBookPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPickItemPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundRenameItemPacket.hpp"
@@ -79,40 +79,40 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundSetCommandMinecartPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundSetStructureBlockPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 463
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChangeDifficultyPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundLockDifficultyPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerButtonClickPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 471
+#if PROTOCOL_VERSION > 471 /* > 1.13.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundSetJigsawBlockPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 711
+#if PROTOCOL_VERSION > 711 /* > 1.15.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundJigsawGeneratePacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPongPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatCommandPacket.hpp"
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatPreviewPacket.hpp"
 #endif
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatAckPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatSessionUpdatePacket.hpp"
 #endif
 
 namespace ProtocolCraft
 {
     using AllServerboundLoginMessages = std::tuple<
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         ServerboundCustomQueryPacket,
 #endif
         ServerboundHelloPacket,
@@ -133,33 +133,33 @@ namespace ProtocolCraft
         ServerboundSwingPacket,
         ServerboundChatPacket,
         ServerboundContainerClickPacket,
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         ServerboundContainerButtonClickPacket,
 #endif
         ServerboundClientInformationPacket,
         ServerboundClientCommandPacket,
         ServerboundContainerClosePacket,
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         ServerboundContainerAckPacket,
 #endif
         ServerboundPlaceRecipePacket,
         ServerboundSetCreativeModeSlotPacket,
-#if PROTOCOL_VERSION > 385
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
         ServerboundEditBookPacket,
 #endif
-#if PROTOCOL_VERSION < 476
+#if PROTOCOL_VERSION < 476 /* < 1.14 */
         ServerboundEnchantItemPacket,
 #endif
         ServerboundPlayerCommandPacket,
-#if PROTOCOL_VERSION > 711
+#if PROTOCOL_VERSION > 711 /* > 1.15.2 */
         ServerboundJigsawGeneratePacket,
 #endif
         ServerboundSetCarriedItemPacket,
         ServerboundInteractPacket,
-#if PROTOCOL_VERSION > 463
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
         ServerboundLockDifficultyPacket,
 #endif
-#if PROTOCOL_VERSION > 385
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
         ServerboundRenameItemPacket,
         ServerboundPickItemPacket,
 #endif
@@ -167,28 +167,28 @@ namespace ProtocolCraft
         ServerboundUseItemOnPacket,
         ServerboundPlayerActionPacket,
         ServerboundMovePlayerPacketRot,
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         ServerboundMovePlayerPacket,
 #endif
         ServerboundMovePlayerPacketPos,
         ServerboundMovePlayerPacketPosRot,
         ServerboundCustomPayloadPacket,
-#if PROTOCOL_VERSION > 388
+#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
         ServerboundBlockEntityTagQuery,
         ServerboundEntityTagQuery,
 #endif
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
         ServerboundRecipeBookSeenRecipePacket,
         ServerboundRecipeBookChangeSettingsPacket,
 #else
         ServerboundRecipeBookUpdatePacket,
 #endif
         ServerboundResourcePackPacket,
-#if PROTOCOL_VERSION > 385
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
         ServerboundSelectTradePacket,
         ServerboundSetBeaconPacket,
 #endif
-#if PROTOCOL_VERSION > 463
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
         ServerboundChangeDifficultyPacket,
 #endif
         ServerboundTeleportToEntityPacket,
@@ -196,33 +196,33 @@ namespace ProtocolCraft
         ServerboundPlayerInputPacket,
         ServerboundCommandSuggestionPacket,
         ServerboundAcceptTeleportationPacket,
-#if PROTOCOL_VERSION > 385
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
         ServerboundSetCommandBlockPacket,
         ServerboundSetCommandMinecartPacket,
 #endif
-#if PROTOCOL_VERSION > 471
+#if PROTOCOL_VERSION > 471 /* > 1.13.2 */
         ServerboundSetJigsawBlockPacket,
 #endif
         ServerboundSignUpdatePacket,
-#if PROTOCOL_VERSION > 385
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
         ServerboundSetStructureBlockPacket,
 #endif
         ServerboundUseItemPacket,
         ServerboundMoveVehiclePacket,
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         ServerboundMovePlayerPacketStatusOnly,
         ServerboundPongPacket,
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         ServerboundChatCommandPacket,
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         ServerboundChatPreviewPacket,
 #endif
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         ServerboundChatAckPacket,
 #endif
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         ServerboundChatSessionUpdatePacket,
 #endif
         ServerboundKeepAlivePacket

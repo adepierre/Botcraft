@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/projectile/ThrowableItemProjectileEntity.hpp"
 #else
 #include "botcraft/Game/Entities/entities/projectile/ThrowableProjectileEntity.hpp"
@@ -9,14 +9,14 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     class ThrownPotionEntity : public ThrowableItemProjectileEntity
 #else
     class ThrownPotionEntity : public ThrowableProjectileEntity
 #endif
     {
     protected:
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         static constexpr int metadata_count = 0;
         static constexpr int hierarchy_metadata_count = ThrowableItemProjectileEntity::metadata_count + ThrowableItemProjectileEntity::hierarchy_metadata_count;
 #else
@@ -39,7 +39,7 @@ namespace Botcraft
         static EntityType GetClassType();
 
 
-#if PROTOCOL_VERSION < 579
+#if PROTOCOL_VERSION < 579 /* < 1.16 */
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff

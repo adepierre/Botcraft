@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
 #include "botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp"
 
 namespace Botcraft
@@ -12,7 +12,7 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDash(true);
-#if PROTOCOL_VERSION < 762
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         SetLastPoseChangeTick(-52);
 #else
         SetLastPoseChangeTick(0);

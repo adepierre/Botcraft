@@ -2,7 +2,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const std::array<std::string, FireballEntity::metadata_count> FireballEntity::metadata_names{ {
         "data_item_stack",
     } };
@@ -10,7 +10,7 @@ namespace Botcraft
 
     FireballEntity::FireballEntity()
     {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         // Initialize all metadata with default values
         SetDataItemStack(ProtocolCraft::Slot());
 #endif
@@ -27,7 +27,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     ProtocolCraft::Json::Value FireballEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = AbstractHurtingProjectileEntity::Serialize();

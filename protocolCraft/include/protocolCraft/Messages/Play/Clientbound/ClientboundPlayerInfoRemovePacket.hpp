@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
 #pragma once
 
 #include <vector>
@@ -10,9 +10,9 @@ namespace ProtocolCraft
     class ClientboundPlayerInfoRemovePacket : public BaseMessage<ClientboundPlayerInfoRemovePacket>
     {
     public:
-#if   PROTOCOL_VERSION == 761
+#if   PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x35;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x39;
 #else
 #error "Protocol version not implemented"

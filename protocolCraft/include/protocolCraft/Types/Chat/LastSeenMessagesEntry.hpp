@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #pragma once
 
 #include <vector>
@@ -16,7 +16,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         void SetProfileId(const UUID& profile_id_)
         {
             profile_id = profile_id_;
@@ -34,7 +34,7 @@ namespace ProtocolCraft
         }
     
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const UUID& GetProfileId() const
         {
             return profile_id;
@@ -54,7 +54,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             profile_id = ReadData<UUID>(iter, length);
             last_signature = ReadVector<unsigned char>(iter, length);
 #else
@@ -72,7 +72,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<UUID>(profile_id, container);
             WriteVector<unsigned char>(last_signature, container);
 #else
@@ -88,7 +88,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["profile_id"] = profile_id;
 #else
             output["id"] = id;
@@ -99,7 +99,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         UUID profile_id = {};
 #else
         int id = 0;

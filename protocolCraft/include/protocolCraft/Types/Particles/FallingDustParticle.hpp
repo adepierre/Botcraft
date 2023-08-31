@@ -15,7 +15,7 @@ namespace ProtocolCraft
         
         virtual ParticleType GetType() const override;
 
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
         int GetState() const;
 
         void SetState(const int state_);
@@ -33,7 +33,7 @@ namespace ProtocolCraft
         virtual Json::Value SerializeImpl() const override;
 
     private:
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
         int state = 0;
 #else
         int argument1 = 0;

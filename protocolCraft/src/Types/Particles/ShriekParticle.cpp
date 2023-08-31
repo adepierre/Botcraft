@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "protocolCraft/Types/Particles/ShriekParticle.hpp"
 
 namespace ProtocolCraft

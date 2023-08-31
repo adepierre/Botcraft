@@ -3,7 +3,7 @@
 namespace Botcraft
 {
     const std::array<std::string, OcelotEntity::metadata_count> OcelotEntity::metadata_names{ {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "data_trusting",
 #else
         "data_type_id",
@@ -13,7 +13,7 @@ namespace Botcraft
     OcelotEntity::OcelotEntity()
     {
         // Initialize all metadata with default values
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataTrusting(false);
 #else
         SetDataTypeId(0);
@@ -62,7 +62,7 @@ namespace Botcraft
     {
         ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["data_trusting"] = GetDataTrusting();
 #else
         output["metadata"]["data_type_id"] = GetDataTypeId();
@@ -84,7 +84,7 @@ namespace Botcraft
         }
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     bool OcelotEntity::GetDataTrusting() const
     {
         return std::any_cast<bool>(metadata.at("data_trusting"));

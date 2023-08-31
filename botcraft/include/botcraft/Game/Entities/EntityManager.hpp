@@ -26,24 +26,24 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundAddEntityPacket& msg) override;
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         virtual void Handle(ProtocolCraft::ClientboundAddMobPacket& msg) override;
 #endif
         virtual void Handle(ProtocolCraft::ClientboundAddExperienceOrbPacket& msg) override;
-#if PROTOCOL_VERSION < 721
+#if PROTOCOL_VERSION < 721 /* < 1.16 */
         virtual void Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg) override;
 #endif
         virtual void Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg) override;
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg) override;
 #endif
         virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg) override;
-#if PROTOCOL_VERSION == 755
+#if PROTOCOL_VERSION == 755 /* 1.17 */
         virtual void Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg) override;
 #else
         virtual void Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg) override;

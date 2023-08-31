@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 344
+#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #include "protocolCraft/Types/CommandNode/BrigadierProperty.hpp"
 
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyDouble.hpp"
@@ -9,10 +9,10 @@
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyEntity.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyScoreHolder.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyResourceOrTag.hpp"
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyTime.hpp"
 #endif
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyRange.hpp"
 #endif
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyNone.hpp"
@@ -26,7 +26,7 @@ namespace ProtocolCraft
 
     }
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
     std::shared_ptr<BrigadierProperty> BrigadierProperty::CreateProperties(const Identifier& parser_identifier)
     {
         if (parser_identifier.GetFull() == "brigadier:double")
@@ -98,13 +98,13 @@ namespace ProtocolCraft
             return std::make_shared<BrigadierPropertyEntity>();
         case BrigadierPropertyType::ScoreHolder:
             return std::make_shared<BrigadierPropertyScoreHolder>();
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         case BrigadierPropertyType::Time:
             return std::make_shared<BrigadierPropertyTime>();
 #endif
         case BrigadierPropertyType::ResourceOrTag:
         case BrigadierPropertyType::Resource:
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         case BrigadierPropertyType::ResourceOrTagKey:
         case BrigadierPropertyType::ResourceKey:
 #endif
@@ -136,27 +136,27 @@ namespace ProtocolCraft
         case BrigadierPropertyType::Team:
         case BrigadierPropertyType::ItemSlot:
         case BrigadierPropertyType::ResourceLocation:
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         case BrigadierPropertyType::MobEffect:
 #endif
         case BrigadierPropertyType::Function:
         case BrigadierPropertyType::EntityAnchor:
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         case BrigadierPropertyType::ItemEnchantment:
         case BrigadierPropertyType::EntitySummon:
 #endif
         case BrigadierPropertyType::IntRange:
         case BrigadierPropertyType::FloatRange:
         case BrigadierPropertyType::Dimension:
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         case BrigadierPropertyType::Gamemode:
 #endif
-#if PROTOCOL_VERSION < 762
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         case BrigadierPropertyType::Time:
 #endif
         case BrigadierPropertyType::TemplateMirror:
         case BrigadierPropertyType::TemplateRotation:
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         case BrigadierPropertyType::Heightmap:
 #endif
         case BrigadierPropertyType::Uuid:

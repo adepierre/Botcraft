@@ -1,10 +1,10 @@
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #pragma once
 
 #include <vector>
 
 #include "protocolCraft/NetworkType.hpp"
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include "protocolCraft/Types/Chat/ChatMessageContent.hpp"
 #endif
 #include "protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp"
@@ -20,7 +20,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         void SetContent(const ChatMessageContent& content_)
         {
             content = content_;
@@ -48,7 +48,7 @@ namespace ProtocolCraft
         }
     
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const ChatMessageContent& GetContent() const
         {
             return content;
@@ -78,7 +78,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             content = ReadData<ChatMessageContent>(iter, length);
 #else
             content = ReadData<std::string>(iter, length);
@@ -90,7 +90,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<ChatMessageContent>(content, container);
 #else
             WriteData<std::string>(content, container);
@@ -114,7 +114,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         ChatMessageContent content;
 #else
         std::string content;

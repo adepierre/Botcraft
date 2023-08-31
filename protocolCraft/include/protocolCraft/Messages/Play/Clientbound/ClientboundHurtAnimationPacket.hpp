@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
@@ -8,7 +8,7 @@ namespace ProtocolCraft
     class ClientboundHurtAnimationPacket : public BaseMessage<ClientboundHurtAnimationPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#if   PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x21;
 #else
 #error "Protocol version not implemented"

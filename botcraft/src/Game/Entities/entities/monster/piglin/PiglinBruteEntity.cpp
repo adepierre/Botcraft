@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "botcraft/Game/Entities/entities/monster/piglin/PiglinBruteEntity.hpp"
 
 namespace Botcraft

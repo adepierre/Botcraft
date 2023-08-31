@@ -5,7 +5,7 @@ namespace Botcraft
     const std::array<std::string, EnderManEntity::metadata_count> EnderManEntity::metadata_names{ {
         "data_carry_state",
         "data_creepy",
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         "data_stared_at",
 #endif
     } };
@@ -15,7 +15,7 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataCarryState(0);
         SetDataCreepy(false);
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         SetDataStaredAt(false);
 #endif
     }
@@ -64,7 +64,7 @@ namespace Botcraft
 
         output["metadata"]["data_carry_state"] = GetDataCarryState();
         output["metadata"]["data_creepy"] = GetDataCreepy();
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         output["metadata"]["data_stared_at"] = GetDataStaredAt();
 #endif
 
@@ -94,7 +94,7 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_creepy"));
     }
 
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     bool EnderManEntity::GetDataStaredAt() const
     {
         return std::any_cast<bool>(metadata.at("data_stared_at"));
@@ -112,7 +112,7 @@ namespace Botcraft
         metadata["data_creepy"] = data_creepy;
     }
 
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     void EnderManEntity::SetDataStaredAt(const bool data_stared_at)
     {
         metadata["data_stared_at"] = data_stared_at;

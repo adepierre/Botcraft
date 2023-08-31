@@ -8,29 +8,29 @@ namespace Botcraft
 {
     enum class Palette
     {
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         SingleValue,
 #endif
         SectionPalette,
         GlobalPalette
     };
 
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
     Chunk::Chunk(const Dimension &dim)
-#elif PROTOCOL_VERSION < 757
+#elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
     Chunk::Chunk(const std::string& dim)
 #else
     Chunk::Chunk(const int min_y_, const unsigned int height_, const std::string& dim)
 #endif
     {
         dimension = dim;
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         height = height_;
         min_y = min_y_;
 #endif
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
         biomes = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
-#elif PROTOCOL_VERSION < 552
+#elif PROTOCOL_VERSION < 552 /* < 1.15 */
         biomes = std::vector<int>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
 #else
         // Each section has 64 biomes, one for each 4*4*4 cubes
@@ -48,7 +48,7 @@ namespace Botcraft
         dimension = c.dimension;
         biomes = c.biomes;
 
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         height = c.height;
         min_y = c.min_y;
 #endif
@@ -103,10 +103,10 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION < 757
-#if PROTOCOL_VERSION < 552
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
     void Chunk::LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous)
-#elif PROTOCOL_VERSION < 755
+#elif PROTOCOL_VERSION < 755 /* < 1.17 */
     void Chunk::LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask)
 #else
     void Chunk::LoadChunkData(const std::vector<unsigned char>& data, const std::vector<unsigned long long int>& primary_bit_mask)
@@ -124,7 +124,7 @@ namespace Botcraft
         //The chunck sections
         for (int sectionY = 0; sectionY < height / SECTION_HEIGHT; ++sectionY)
         {
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
             if (!(primary_bit_mask & (1 << sectionY)))
 #else
             if (!(primary_bit_mask[sectionY / 64] & (1 << (sectionY % 64))))
@@ -133,14 +133,14 @@ namespace Botcraft
                 continue;
             }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
             short block_count = ReadData<short>(iter, length);
 #endif
             unsigned char bits_per_block = ReadData<unsigned char>(iter, length);
 
             Palette palette_type = (bits_per_block <= 8 ? Palette::SectionPalette : Palette::GlobalPalette);
 
-#if PROTOCOL_VERSION < 384
+#if PROTOCOL_VERSION < 384 /* < 1.13 */
             int palette_length = ReadData<VarInt>(iter, length);
 #else
             int palette_length = 0;
@@ -186,7 +186,7 @@ namespace Botcraft
             }
 
             //Blocks data
-#if PROTOCOL_VERSION > 712
+#if PROTOCOL_VERSION > 712 /* > 1.15.2 */
             int bit_offset = 0;
 #endif
             Position pos;
@@ -199,7 +199,7 @@ namespace Botcraft
                     for (int block_x = 0; block_x < CHUNK_WIDTH; ++block_x)
                     {
                         pos.x = block_x;
-#if PROTOCOL_VERSION > 712
+#if PROTOCOL_VERSION > 712 /* > 1.15.2 */
                         // From protocol version 713, the compacted array format has been adjusted so that
                         //individual entries no longer span across multiple longs
                         if (64 - (bit_offset % 64) < bits_per_block)
@@ -233,7 +233,7 @@ namespace Botcraft
                             raw_id = palette[raw_id];
                         }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                         unsigned int id;
                         unsigned char metadata;
 
@@ -247,7 +247,7 @@ namespace Botcraft
                 }
             }
 
-#if PROTOCOL_VERSION <= 404
+#if PROTOCOL_VERSION <= 404 /* <= 1.13.2 */
             //Block light
             for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
             {
@@ -291,7 +291,7 @@ namespace Botcraft
 #endif
         }
 
-#if PROTOCOL_VERSION < 552
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
         //The biomes
         if (ground_up_continuous)
         {
@@ -299,7 +299,7 @@ namespace Botcraft
             {
                 for (int block_x = 0; block_x < CHUNK_WIDTH; ++block_x)
                 {
-#if PROTOCOL_VERSION < 358 
+#if PROTOCOL_VERSION < 358 /* < 1.13 */ 
                     SetBiome(block_x, block_z, ReadData<unsigned char>(iter, length));
 #else
                     SetBiome(block_x, block_z, ReadData<int>(iter, length));
@@ -439,7 +439,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
     void Chunk::LoadChunkBlockEntitiesData(const std::vector<NBT::Value>& block_entities)
 #else
     void Chunk::LoadChunkBlockEntitiesData(const std::vector<BlockEntityInfo>& block_entities)
@@ -450,7 +450,7 @@ namespace Botcraft
 
         for (int i = 0; i < block_entities.size(); ++i)
         {
-#if PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
             if (block_entities[i].HasData())
             {
                 if (block_entities[i].contains("x") &&
@@ -521,7 +521,7 @@ namespace Botcraft
         return sections[(pos.y - min_y) / SECTION_HEIGHT]->data_blocks.data() + (((pos.y - min_y) % SECTION_HEIGHT) * (CHUNK_WIDTH + 2) * (CHUNK_WIDTH + 2) + (pos.z + 1) * (CHUNK_WIDTH + 2) + pos.x + 1);
     }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
     void Chunk::SetBlock(const Position &pos, const unsigned int id, unsigned char metadata, const int model_id)
 #else
     void Chunk::SetBlock(const Position &pos, const unsigned int id, const int model_id)
@@ -546,7 +546,7 @@ namespace Botcraft
         Block *block = sections[(pos.y - min_y) / SECTION_HEIGHT]->data_blocks.data() + (((pos.y - min_y) % SECTION_HEIGHT) * (CHUNK_WIDTH + 2) * (CHUNK_WIDTH + 2) + (pos.z + 1) * (CHUNK_WIDTH + 2) + pos.x + 1);
 
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         block->ChangeBlockstate(id, metadata, model_id, &pos);
 #else
         block->ChangeBlockstate(id, model_id, &pos);
@@ -561,7 +561,7 @@ namespace Botcraft
     {
         if (block == nullptr)
         {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             SetBlock(pos, 0, 0, -1);
 #else
             SetBlock(pos, 0, -1);
@@ -569,7 +569,7 @@ namespace Botcraft
         }
         else
         {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             SetBlock(pos, block->GetBlockstate()->GetId(), block->GetBlockstate()->GetMetadata(), block->GetModelId());
 #else
             SetBlock(pos, block->GetBlockstate()->GetId(), block->GetModelId());
@@ -613,7 +613,7 @@ namespace Botcraft
 
     const unsigned char Chunk::GetSkyLight(const Position &pos) const
     {
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         if (dimension != Dimension::Overworld
 #else
         if (dimension != "minecraft:overworld"
@@ -633,7 +633,7 @@ namespace Botcraft
 
     void Chunk::SetSkyLight(const Position &pos, const unsigned char v)
     {
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         if (dimension != Dimension::Overworld
 #else
         if (dimension != "minecraft:overworld"
@@ -655,7 +655,7 @@ namespace Botcraft
 //#endif
     }
 
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
     const unsigned char Chunk::GetBiome(const int x, const int z) const
     {
         if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
@@ -680,7 +680,7 @@ namespace Botcraft
 #endif
     }
 
-#elif PROTOCOL_VERSION < 552
+#elif PROTOCOL_VERSION < 552 /* < 1.15 */
     const int Chunk::GetBiome(const int x, const int z) const
     {
         if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
@@ -756,7 +756,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     void Botcraft::Chunk::LoadSectionBiomeData(const int section_y, ProtocolCraft::ReadIterator& iter, size_t& length)
     {
         // Paletted biomes
@@ -848,7 +848,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
     void Botcraft::Chunk::LoadBiomesData(const std::vector<unsigned char>& data)
     {
         if (data.size() == 0)
@@ -1015,7 +1015,7 @@ namespace Botcraft
         }
     }
 
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
     const Dimension Chunk::GetDimension() const
 #else
     const std::string& Chunk::GetDimension() const
@@ -1036,7 +1036,7 @@ namespace Botcraft
 
     void Chunk::AddSection(const int y)
     {
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         sections[y] = std::shared_ptr<Section>(new Section(dimension == Dimension::Overworld));
 #else
         sections[y] = std::shared_ptr<Section>(new Section(dimension == "minecraft:overworld"));

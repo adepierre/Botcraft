@@ -237,7 +237,7 @@ TEST_CASE("container")
     {
         bot->SyncAction(Botcraft::PutOneItemInContainerSlot, container_id, container->GetFirstPlayerInventorySlot() + Botcraft::Window::INVENTORY_HOTBAR_START - Botcraft::Window::INVENTORY_STORAGE_START, 0);
         bot->SyncAction(Botcraft::CloseContainer, container_id);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         // If <1.17 we need to wait for the server to send the
         // updated player inventory content after closing the container
         REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
@@ -275,7 +275,7 @@ TEST_CASE("container")
     {
         bot->SyncAction(Botcraft::SwapItemsInContainer, container_id, container->GetFirstPlayerInventorySlot() + Botcraft::Window::INVENTORY_HOTBAR_START - Botcraft::Window::INVENTORY_STORAGE_START, 0);
         bot->SyncAction(Botcraft::CloseContainer, container_id);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         // If <1.17 we need to wait for the server to send the
         // updated player inventory content after closing the container
         REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
@@ -315,7 +315,7 @@ TEST_CASE("container")
     }
 }
 
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
 TEST_CASE("trade")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
@@ -403,7 +403,7 @@ TEST_CASE("craft")
 
     bot->SyncAction(Botcraft::CraftNamed, craft_recipe, false);
     bot->SyncAction(Botcraft::CloseContainer, -1);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     // If <1.17 we need to wait for the server to send the
     // updated player inventory content after closing the container
     REQUIRE(Botcraft::Utilities::WaitForCondition([&]()

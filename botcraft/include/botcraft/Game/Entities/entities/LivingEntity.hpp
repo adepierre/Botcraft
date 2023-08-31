@@ -7,9 +7,9 @@ namespace Botcraft
     class LivingEntity : public Entity
     {
     protected:
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         static constexpr int metadata_count = 7;
-#elif PROTOCOL_VERSION > 404
+#elif PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 6;
 #else
         static constexpr int metadata_count = 5;
@@ -33,10 +33,10 @@ namespace Botcraft
         int GetDataEffectColorId() const;
         bool GetDataEffectAmbienceId() const;
         int GetDataArrowCountId() const;
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         int GetDataStingerCountId() const;
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         const std::optional<Position>& GetSleepingPosId() const;
 #endif
 
@@ -45,10 +45,10 @@ namespace Botcraft
         void SetDataEffectColorId(const int data_effect_color_id);
         void SetDataEffectAmbienceId(const bool data_effect_ambience_id);
         void SetDataArrowCountId(const int data_arrow_count_id);
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         void SetDataStingerCountId(const int data_stinger_count_id);
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         void SetSleepingPosId(const std::optional<Position>& sleeping_pos_id);
 #endif
 

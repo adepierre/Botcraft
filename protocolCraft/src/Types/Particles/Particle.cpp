@@ -2,22 +2,22 @@
 
 #include "protocolCraft/Types/Particles/NoDataTypedParticle.hpp"
 
-#if PROTOCOL_VERSION > 392 //1.13+
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
 #include "protocolCraft/Types/Particles/BlockParticle.hpp"
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/Types/Particles/BlockMarkerParticle.hpp"
 #endif
 #include "protocolCraft/Types/Particles/DustParticle.hpp"
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "protocolCraft/Types/Particles/DustColorTransitionParticle.hpp"
 #endif
 #include "protocolCraft/Types/Particles/FallingDustParticle.hpp"
 #include "protocolCraft/Types/Particles/ItemParticle.hpp"
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "protocolCraft/Types/Particles/SculkChargeParticle.hpp"
 #include "protocolCraft/Types/Particles/ShriekParticle.hpp"
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "protocolCraft/Types/Particles/VibrationParticle.hpp"
 #endif
 #else // 1.12.2
@@ -41,20 +41,20 @@ namespace ProtocolCraft
          
     };
 
-#if PROTOCOL_VERSION > 392 // 1.13+
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
     std::shared_ptr<Particle> Particle::CreateParticle(const ParticleType type)
     {
         switch (type)
         {
         case ParticleType::Block:
             return std::make_shared<BlockParticle>();
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         case ParticleType::BlockMarker:
             return std::make_shared<BlockMarkerParticle>();
 #endif
         case ParticleType::Dust:
             return std::make_shared<DustParticle>();
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         case ParticleType::DustColorTransition:
             return std::make_shared<DustColorTransitionParticle>();
 #endif
@@ -62,22 +62,22 @@ namespace ProtocolCraft
             return std::make_shared<FallingDustParticle>();
         case ParticleType::Item:
             return std::make_shared<ItemParticle>();
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case ParticleType::SculkCharge:
             return std::make_shared<SculkChargeParticle>();
         case ParticleType::Shriek:
             return std::make_shared<ShriekParticle>();
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         case ParticleType::Vibration:
             return std::make_shared<VibrationParticle>();
 #endif
         case ParticleType::AmbientEntityEffect:
         case ParticleType::AngryVillager:
-#if PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         case ParticleType::Barrier:
 #endif
-#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         case ParticleType::Light:
 #endif
         case ParticleType::Bubble:
@@ -86,12 +86,12 @@ namespace ProtocolCraft
         case ParticleType::DamageIndicator:
         case ParticleType::DragonBreath:
         case ParticleType::DrippingLava:
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         case ParticleType::FallingLava:
         case ParticleType::LandingLava:
 #endif
         case ParticleType::DrippingWater:
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         case ParticleType::FallingWater:
 #endif
         case ParticleType::Effect:
@@ -102,33 +102,33 @@ namespace ProtocolCraft
         case ParticleType::EntityEffect:
         case ParticleType::ExplosionEmitter:
         case ParticleType::Explosion:
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case ParticleType::SonicBoom:
 #endif
         case ParticleType::Firework:
         case ParticleType::Fishing:
         case ParticleType::Flame:
-#if PROTOCOL_VERSION > 761 && PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */ && PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         case ParticleType::DrippingCherryLeaves:
         case ParticleType::FallingCherryLeaves:
         case ParticleType::LandingCherryLeaves:
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         case ParticleType::CherryLeaves:
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case ParticleType::SculkSoul:
         case ParticleType::SculkChargePop:
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         case ParticleType::SoulFireFlame:
         case ParticleType::Soul:
 #endif
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         case ParticleType::Flash:
 #endif
         case ParticleType::HappyVillager:
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         case ParticleType::Composter:
 #endif
         case ParticleType::Heart:
@@ -143,7 +143,7 @@ namespace ProtocolCraft
         case ParticleType::Portal:
         case ParticleType::Rain:
         case ParticleType::Smoke:
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         case ParticleType::Sneeze:
 #endif
         case ParticleType::Spit:
@@ -158,35 +158,35 @@ namespace ProtocolCraft
         case ParticleType::BubbleColumnUp:
         case ParticleType::Nautilus:
         case ParticleType::Dolphin:
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         case ParticleType::CampfireCosySmoke:
         case ParticleType::CampfireSignalSmoke:
 #endif
-#if PROTOCOL_VERSION > 572
+#if PROTOCOL_VERSION > 572 /* > 1.14.4 */
         case ParticleType::DrippingHoney:
         case ParticleType::FallingHoney:
         case ParticleType::LandingHoney:
         case ParticleType::FallingNectar:
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         case ParticleType::FallingSporeBlossom:
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         case ParticleType::Ash:
         case ParticleType::CrimsonSpore:
         case ParticleType::WarpedSpore:
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         case ParticleType::SporeBlossomAir:
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         case ParticleType::DrippingObsidianTear:
         case ParticleType::FallingObsidianTear:
         case ParticleType::LandingObsidianTear:
         case ParticleType::ReversePortal:
         case ParticleType::WhiteAsh:
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         case ParticleType::SmallFlame:
         case ParticleType::Snowflake:
         case ParticleType::DrippingDripstoneLava:
@@ -200,7 +200,7 @@ namespace ProtocolCraft
         case ParticleType::ElectricSpark:
         case ParticleType::Scrape:
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         case ParticleType::EggCrack:
 #endif
             return std::make_shared<NoDataTypedParticle>(type);

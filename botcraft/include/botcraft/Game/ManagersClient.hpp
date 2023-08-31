@@ -80,7 +80,7 @@ namespace Botcraft
         GameType game_mode;
 
         Difficulty difficulty;
-#if PROTOCOL_VERSION > 463
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
         bool difficulty_locked;
 #endif
         bool is_hardcore;

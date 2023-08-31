@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "protocolCraft/Types/CommandNode/BrigadierProperty.hpp"
 
 #include <limits>

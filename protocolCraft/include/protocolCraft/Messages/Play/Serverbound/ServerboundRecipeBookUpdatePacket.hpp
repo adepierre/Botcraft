@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
 
@@ -9,17 +9,17 @@ namespace ProtocolCraft
     class ServerboundRecipeBookUpdatePacket : public BaseMessage<ServerboundRecipeBookUpdatePacket>
     {
     public:
-#if   PROTOCOL_VERSION == 340
+#if   PROTOCOL_VERSION == 340 /* 1.12.2 */
         static constexpr int packet_id = 0x17;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
-      PROTOCOL_VERSION == 404
+#elif PROTOCOL_VERSION == 393 /* 1.13 */ || PROTOCOL_VERSION == 401 /* 1.13.1 */ ||  \
+      PROTOCOL_VERSION == 404 /* 1.13.2 */
         static constexpr int packet_id = 0x1B;
-#elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 ||  \
-      PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 ||  \
-      PROTOCOL_VERSION == 498 || PROTOCOL_VERSION == 573 ||  \
-      PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578
+#elif PROTOCOL_VERSION == 477 /* 1.14 */ || PROTOCOL_VERSION == 480 /* 1.14.1 */ ||  \
+      PROTOCOL_VERSION == 485 /* 1.14.2 */ || PROTOCOL_VERSION == 490 /* 1.14.3 */ ||  \
+      PROTOCOL_VERSION == 498 /* 1.14.4 */ || PROTOCOL_VERSION == 573 /* 1.15 */ ||  \
+      PROTOCOL_VERSION == 575 /* 1.15.1 */ || PROTOCOL_VERSION == 578 /* 1.15.2 */
         static constexpr int packet_id = 0x1D;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736
+#elif PROTOCOL_VERSION == 735 /* 1.16 */ || PROTOCOL_VERSION == 736 /* 1.16.1 */
         static constexpr int packet_id = 0x1E;
 #else
 #error "Protocol version not implemented"
@@ -37,7 +37,7 @@ namespace ProtocolCraft
             purpose = purpose_;
         }
 
-#if PROTOCOL_VERSION > 375
+#if PROTOCOL_VERSION > 375 /* > 1.12.2 */
         void SetRecipe(const Identifier& recipe_)
 #else
         void SetRecipe(const int recipe_)
@@ -56,7 +56,7 @@ namespace ProtocolCraft
             filtering_craftable = filtering_craftable_;
         }
 
-#if PROTOCOL_VERSION > 358
+#if PROTOCOL_VERSION > 358 /* > 1.12.2 */
         void SetFurnaceGuiOpen(const bool furnace_gui_open_)
         {
             furnace_gui_open = furnace_gui_open_;
@@ -68,7 +68,7 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 450
+#if PROTOCOL_VERSION > 450 /* > 1.13.2 */
         void SetBlastFurnaceGuiOpen(const bool blast_furnace_gui_open_)
         {
             blast_furnace_gui_open = blast_furnace_gui_open_;
@@ -95,7 +95,7 @@ namespace ProtocolCraft
             return purpose;
         }
 
-#if PROTOCOL_VERSION > 375
+#if PROTOCOL_VERSION > 375 /* > 1.12.2 */
         const Identifier& GetRecipe() const
 #else
         int GetRecipe() const
@@ -114,7 +114,7 @@ namespace ProtocolCraft
             return filtering_craftable;
         }
 
-#if PROTOCOL_VERSION > 358
+#if PROTOCOL_VERSION > 358 /* > 1.12.2 */
         bool GetFurnaceGuiOpen() const
         {
             return furnace_gui_open;
@@ -126,7 +126,7 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 450
+#if PROTOCOL_VERSION > 450 /* > 1.13.2 */
         bool GetBlastFurnaceGuiOpen() const
         {
             return blast_furnace_gui_open;
@@ -155,7 +155,7 @@ namespace ProtocolCraft
             switch (purpose)
             {
             case 0:
-#if PROTOCOL_VERSION > 375
+#if PROTOCOL_VERSION > 375 /* > 1.12.2 */
                 recipe = ReadData<Identifier>(iter, length);
 #else
                 recipe = ReadData<VarInt>(iter, length);
@@ -164,11 +164,11 @@ namespace ProtocolCraft
             case 1:
                 gui_open = ReadData<bool>(iter, length);
                 filtering_craftable = ReadData<bool>(iter, length);
-#if PROTOCOL_VERSION > 358
+#if PROTOCOL_VERSION > 358 /* > 1.12.2 */
                 furnace_gui_open = ReadData<bool>(iter, length);
                 furnace_filtering_craftable = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 450
+#if PROTOCOL_VERSION > 450 /* > 1.13.2 */
                 blast_furnace_gui_open = ReadData<bool>(iter, length);
                 blast_furnace_filtering_craftable = ReadData<bool>(iter, length);
                 smoker_gui_open = ReadData<bool>(iter, length);
@@ -186,7 +186,7 @@ namespace ProtocolCraft
             switch (purpose)
             {
             case 0:
-#if PROTOCOL_VERSION > 375
+#if PROTOCOL_VERSION > 375 /* > 1.12.2 */
                 WriteData<Identifier>(recipe, container);
 #else
                 WriteData<VarInt>(recipe, container);
@@ -195,11 +195,11 @@ namespace ProtocolCraft
             case 1:
                 WriteData<bool>(gui_open, container);
                 WriteData<bool>(filtering_craftable, container);
-#if PROTOCOL_VERSION > 358
+#if PROTOCOL_VERSION > 358 /* > 1.12.2 */
                 WriteData<bool>(furnace_gui_open, container);
                 WriteData<bool>(furnace_filtering_craftable, container);
 #endif
-#if PROTOCOL_VERSION > 450
+#if PROTOCOL_VERSION > 450 /* > 1.13.2 */
                 WriteData<bool>(blast_furnace_gui_open, container);
                 WriteData<bool>(blast_furnace_filtering_craftable, container);
                 WriteData<bool>(smoker_gui_open, container);
@@ -219,7 +219,7 @@ namespace ProtocolCraft
             switch (purpose)
             {
             case 0:
-#if PROTOCOL_VERSION > 375
+#if PROTOCOL_VERSION > 375 /* > 1.12.2 */
                 output["recipe"] = recipe;
 #else
                 output["recipe"] = recipe;
@@ -228,11 +228,11 @@ namespace ProtocolCraft
             case 1:
                 output["gui_open"] = gui_open;
                 output["filtering_craftable"] = filtering_craftable;
-#if PROTOCOL_VERSION > 358
+#if PROTOCOL_VERSION > 358 /* > 1.12.2 */
                 output["furnace_gui_open"] = furnace_gui_open;
                 output["furnace_filtering_craftable"] = furnace_filtering_craftable;
 #endif
-#if PROTOCOL_VERSION > 450
+#if PROTOCOL_VERSION > 450 /* > 1.13.2 */
                 output["blast_furnace_gui_open"] = blast_furnace_gui_open;
                 output["blast_furnace_filtering_craftable"] = blast_furnace_filtering_craftable;
                 output["smoker_gui_open"] = smoker_gui_open;
@@ -248,18 +248,18 @@ namespace ProtocolCraft
 
     private:
         int purpose = 0;
-#if PROTOCOL_VERSION > 375
+#if PROTOCOL_VERSION > 375 /* > 1.12.2 */
         Identifier recipe;
 #else
         int recipe = 0;
 #endif
         bool gui_open = false;
         bool filtering_craftable = false;
-#if PROTOCOL_VERSION > 358
+#if PROTOCOL_VERSION > 358 /* > 1.12.2 */
         bool furnace_gui_open = false;
         bool furnace_filtering_craftable = false;
 #endif
-#if PROTOCOL_VERSION > 450
+#if PROTOCOL_VERSION > 450 /* > 1.13.2 */
         bool blast_furnace_gui_open = false;
         bool blast_furnace_filtering_craftable = false;
         bool smoker_gui_open = false;

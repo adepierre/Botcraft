@@ -7,20 +7,20 @@ namespace ProtocolCraft
     class ClientboundAddEntityPacket : public BaseMessage<ClientboundAddEntityPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 340 || PROTOCOL_VERSION == 393 ||  \
-      PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 ||  \
-      PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 ||  \
-      PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 ||  \
-      PROTOCOL_VERSION == 498 || PROTOCOL_VERSION == 573 ||  \
-      PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 ||  \
-      PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 ||  \
-      PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 ||  \
-      PROTOCOL_VERSION == 754 || PROTOCOL_VERSION == 755 ||  \
-      PROTOCOL_VERSION == 756 || PROTOCOL_VERSION == 757 ||  \
-      PROTOCOL_VERSION == 758 || PROTOCOL_VERSION == 759 ||  \
-      PROTOCOL_VERSION == 760 || PROTOCOL_VERSION == 761
+#if   PROTOCOL_VERSION == 340 /* 1.12.2 */ || PROTOCOL_VERSION == 393 /* 1.13 */ ||  \
+      PROTOCOL_VERSION == 401 /* 1.13.1 */ || PROTOCOL_VERSION == 404 /* 1.13.2 */ ||  \
+      PROTOCOL_VERSION == 477 /* 1.14 */ || PROTOCOL_VERSION == 480 /* 1.14.1 */ ||  \
+      PROTOCOL_VERSION == 485 /* 1.14.2 */ || PROTOCOL_VERSION == 490 /* 1.14.3 */ ||  \
+      PROTOCOL_VERSION == 498 /* 1.14.4 */ || PROTOCOL_VERSION == 573 /* 1.15 */ ||  \
+      PROTOCOL_VERSION == 575 /* 1.15.1 */ || PROTOCOL_VERSION == 578 /* 1.15.2 */ ||  \
+      PROTOCOL_VERSION == 735 /* 1.16 */ || PROTOCOL_VERSION == 736 /* 1.16.1 */ ||  \
+      PROTOCOL_VERSION == 751 /* 1.16.2 */ || PROTOCOL_VERSION == 753 /* 1.16.3 */ ||  \
+      PROTOCOL_VERSION == 754 /* 1.16.4/5 */ || PROTOCOL_VERSION == 755 /* 1.17 */ ||  \
+      PROTOCOL_VERSION == 756 /* 1.17.1 */ || PROTOCOL_VERSION == 757 /* 1.18/.1 */ ||  \
+      PROTOCOL_VERSION == 758 /* 1.18.2 */ || PROTOCOL_VERSION == 759 /* 1.19 */ ||  \
+      PROTOCOL_VERSION == 760 /* 1.19.1/2 */ || PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x00;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x01;
 #else
 #error "Protocol version not implemented"
@@ -83,7 +83,7 @@ namespace ProtocolCraft
             y_rot = yRot_;
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         void SetYHeadRot(const Angle y_head_rot_)
         {
             y_head_rot = y_head_rot_;
@@ -150,7 +150,7 @@ namespace ProtocolCraft
             return y_rot;
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         Angle GetYHeadRot() const
         {
             return y_head_rot;
@@ -172,7 +172,7 @@ namespace ProtocolCraft
         {
             id_ = ReadData<VarInt>(iter, length);
             uuid = ReadData<UUID>(iter, length);
-#if PROTOCOL_VERSION < 458
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
             type = ReadData<char>(iter, length);
 #else
             type = ReadData<VarInt>(iter, length);
@@ -182,7 +182,7 @@ namespace ProtocolCraft
             z = ReadData<double>(iter, length);
             x_rot = ReadData<Angle>(iter, length);
             y_rot = ReadData<Angle>(iter, length);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             y_head_rot = ReadData<Angle>(iter, length);
             data = ReadData<VarInt>(iter, length);
 #else
@@ -197,7 +197,7 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(id_, container);
             WriteData<UUID>(uuid, container);
-#if PROTOCOL_VERSION < 458
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
             WriteData<char>(type, container);
 #else
             WriteData<VarInt>(type, container);
@@ -207,7 +207,7 @@ namespace ProtocolCraft
             WriteData<double>(z, container);
             WriteData<Angle>(x_rot, container);
             WriteData<Angle>(y_rot, container);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteData<Angle>(y_head_rot, container);
             WriteData<VarInt>(data, container);
 #else
@@ -230,7 +230,7 @@ namespace ProtocolCraft
             output["z"] = z;
             output["x_rot"] = x_rot;
             output["y_rot"] = y_rot;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             output["y_head_rot"] = y_head_rot;
 #endif
             output["data"] = data;
@@ -244,7 +244,7 @@ namespace ProtocolCraft
     private:
         int id_ = 0;
         UUID uuid = {};
-#if PROTOCOL_VERSION < 458
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
         char type = 0;
 #else
         int type = 0;
@@ -257,7 +257,7 @@ namespace ProtocolCraft
         short za = 0;
         Angle x_rot = 0;
         Angle y_rot = 0;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         Angle y_head_rot = 0;
 #endif
         int data = 0;

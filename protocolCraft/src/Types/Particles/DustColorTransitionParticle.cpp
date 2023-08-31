@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "protocolCraft/Types/Particles/DustColorTransitionParticle.hpp"
 
 namespace ProtocolCraft

@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 759 && PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
@@ -9,7 +9,7 @@ namespace ProtocolCraft
     class ClientboundPlayerChatHeaderPacket : public BaseMessage<ClientboundPlayerChatHeaderPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 760
+#if   PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x32;
 #else
 #error "Protocol version not implemented"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "botcraft/Game/Entities/entities/monster/ZombieEntity.hpp"
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/VillagerData.hpp"
 #endif
 
@@ -35,14 +35,14 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         bool GetDataConvertingId() const;
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         const VillagerData& GetDataVillagerData() const;
 #else
         int GetDataVillagerProfessionId() const;
 #endif
 
         void SetDataConvertingId(const bool data_converting_id);
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         void SetDataVillagerData(const VillagerData& data_villager_data);
 #else
         void SetDataVillagerProfessionId(const int data_villager_profession_id);

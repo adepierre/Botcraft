@@ -2,18 +2,18 @@
 
 namespace ProtocolCraft
 {
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
     const std::vector<std::string> NoDataTypedParticle::names = {
         "ambient_entity_effect",
         "angry_villager",
-#if PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         "barrier",
 #endif
-#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         "light",
 #endif
         "block",
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         "block_marker",
 #endif
         "bubble",
@@ -22,16 +22,16 @@ namespace ProtocolCraft
         "damage_indicator",
         "dragon_breath",
         "dripping_lava",
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         "falling_lava",
         "landing_lava",
 #endif
         "dripping_water",
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         "falling_water",
 #endif
         "dust",
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         "dust_color_transition",
 #endif
         "effect",
@@ -42,41 +42,41 @@ namespace ProtocolCraft
         "entity_effect",
         "explosion_emitter",
         "explosion",
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         "sonic_boom",
 #endif
         "falling_dust",
         "firework",
         "fishing",
         "flame",
-#if PROTOCOL_VERSION > 761 && PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */ && PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         "dripping_cherry_leaves",
         "falling_cherry_leaves",
         "landing_cherry_leaves",
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         "cherry_leaves",
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         "sculk_soul",
         "sculk_charge",
         "sculk_charge_pop",
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         "soul_fire_flame",
         "soul",
 #endif
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         "flash",
 #endif
         "happy_villager",
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         "composter",
 #endif
         "heart",
         "instant_effect",
         "item",
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         "vibration",
 #endif
         "item_slime",
@@ -89,7 +89,7 @@ namespace ProtocolCraft
         "portal",
         "rain",
         "smoke",
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         "sneeze",
 #endif
         "spit",
@@ -104,35 +104,35 @@ namespace ProtocolCraft
         "bubble_column_up",
         "nautilus",
         "dolphin",
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         "campfire_cosy_smoke",
         "campfire_signal_smoke",
 #endif
-#if PROTOCOL_VERSION > 572
+#if PROTOCOL_VERSION > 572 /* > 1.14.4 */
         "dripping_honey",
         "falling_honey",
         "landing_honey",
         "falling_nectar",
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         "falling_spore_blossom",
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         "ash",
         "crimson_spore",
         "warped_spore",
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         "spore_blossom_air",
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         "dripping_obsidian_tear",
         "falling_obsidian_tear",
         "landing_obsidian_tear",
         "reverse_portal",
         "white_ash",
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         "small_flame",
         "snowflake",
         "dripping_dripstone_lava",
@@ -146,10 +146,10 @@ namespace ProtocolCraft
         "electric_spark",
         "scrape",
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         "shriek",
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         "egg_crack",
 #endif
     };

@@ -9,7 +9,7 @@ namespace Botcraft
         "data_id_type",
         "data_id_paddle_left",
         "data_id_paddle_right",
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         "data_id_bubble_time",
 #endif
     } };
@@ -23,7 +23,7 @@ namespace Botcraft
         SetDataIdType(0);
         SetDataIdPaddleLeft(false);
         SetDataIdPaddleRight(false);
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         SetDataIdBubbleTime(0);
 #endif
     }
@@ -76,7 +76,7 @@ namespace Botcraft
         output["metadata"]["data_id_type"] = GetDataIdType();
         output["metadata"]["data_id_paddle_left"] = GetDataIdPaddleLeft();
         output["metadata"]["data_id_paddle_right"] = GetDataIdPaddleRight();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         output["metadata"]["data_id_bubble_time"] = GetDataIdBubbleTime();
 #endif
 
@@ -126,7 +126,7 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_id_paddle_right"));
     }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     int BoatEntity::GetDataIdBubbleTime() const
     {
         return std::any_cast<int>(metadata.at("data_id_bubble_time"));
@@ -164,7 +164,7 @@ namespace Botcraft
         metadata["data_id_paddle_right"] = data_id_paddle_right;
     }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void BoatEntity::SetDataIdBubbleTime(const int data_id_bubble_time)
     {
         metadata["data_id_bubble_time"] = data_id_bubble_time;

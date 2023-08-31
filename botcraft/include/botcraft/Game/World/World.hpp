@@ -41,7 +41,7 @@ namespace Botcraft
 
         ProtocolCraft::Handler* GetAsyncHandler();
 
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         bool AddChunk(const int x, const int z, const Dimension dim);
 #else
         bool AddChunk(const int x, const int z, const std::string& dim);
@@ -53,24 +53,24 @@ namespace Botcraft
         void ResetChunkModificationState(const int x, const int z);
 #endif
 
-#if PROTOCOL_VERSION < 552
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const int primary_bit_mask, const bool ground_up_continuous);
-#elif PROTOCOL_VERSION < 755
+#elif PROTOCOL_VERSION < 755 /* < 1.17 */
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const int primary_bit_mask);
-#elif PROTOCOL_VERSION < 757
+#elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const std::vector<unsigned long long int>& primary_bit_mask);
 #else
         bool LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data);
 #endif
-#if PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT::Value>& block_entities);
 #else
         bool LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities);
 #endif
-#if PROTOCOL_VERSION > 551 && PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         bool LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes);
 #endif
 
@@ -81,7 +81,7 @@ namespace Botcraft
 
         const std::shared_ptr<const Chunk> GetChunkCopy(const int x, const int z);
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         bool SetBlock(const Position &pos, const unsigned int id, unsigned char metadata, const int model_id = -1);
 #else
         bool SetBlock(const Position &pos, const unsigned int id, const int model_id = -1);
@@ -97,15 +97,15 @@ namespace Botcraft
         // Get the block entity data at a given position
         std::shared_ptr<ProtocolCraft::NBT::Value> GetBlockEntityData(const Position& pos);
 
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
         bool SetBiome(const int x, const int z, const unsigned char biome);
-#elif PROTOCOL_VERSION < 552
+#elif PROTOCOL_VERSION < 552 /* < 1.15 */
         bool SetBiome(const int x, const int z, const int biome);
 #else
         bool SetBiome(const int x, const int y, const int z, const int biome);
 #endif
 
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
         const unsigned char GetBiome(const Position & pos);
 #else
         const int GetBiome(const Position& pos);
@@ -113,11 +113,11 @@ namespace Botcraft
 
         bool SetSkyLight(const Position &pos, const unsigned char skylight);
         bool SetBlockLight(const Position &pos, const unsigned char blocklight);
-#if PROTOCOL_VERSION > 404 && PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 719 /* < 1.16 */
         void UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
-#elif PROTOCOL_VERSION > 718 && PROTOCOL_VERSION < 755
+#elif PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */
         void UpdateChunkLight(const int x, const int z, const std::string& dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
-#elif PROTOCOL_VERSION > 754
+#elif PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         void UpdateChunkLight(const int x, const int z, const std::string& dim, 
             const std::vector<unsigned long long int>& light_mask, const std::vector<unsigned long long int>& empty_light_mask, 
             const std::vector<std::vector<char> >& data, const bool sky);
@@ -125,13 +125,13 @@ namespace Botcraft
         const unsigned char GetSkyLight(const Position& pos);
         const unsigned char GetBlockLight(const Position& pos);
 
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         const Dimension GetDimension(const int x, const int z);
 #else
         const std::string GetDimension(const int x, const int z);
 #endif
 
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         void SetDimensionHeight(const std::string& dimension, const int height);
         void SetDimensionMinY(const std::string& dimension, const int min_y);
         void SetCurrentDimension(const std::string& dimension);
@@ -154,7 +154,7 @@ namespace Botcraft
         const std::map<std::pair<int, int>, std::shared_ptr<Chunk> >& GetAllChunks() const;
 
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         const int GetNextWorldInteractionSequenceId();
 #endif
 
@@ -167,16 +167,16 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg) override;
-#if PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         virtual void Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg) override;
 #else
         virtual void Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg) override;
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         virtual void Handle(ProtocolCraft::ClientboundLightUpdatePacket& msg) override;
 #endif
         virtual void Handle(ProtocolCraft::ClientboundBlockEntityDataPacket& msg) override;
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         virtual void Handle(ProtocolCraft::ClientboundChunksBiomesPacket& msg) override;
 #endif
 
@@ -189,12 +189,12 @@ namespace Botcraft
         std::map<std::pair<int, int>, std::shared_ptr<Chunk> > terrain;
 
         bool is_shared;
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         Dimension current_dimension;
 #else
         std::string current_dimension;
 #endif
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         /// @brief Height of the chunks in a given dimension
         std::map<std::string, unsigned int> dimension_height;
         /// @brief Height of the lowest block in a given dimension
@@ -202,7 +202,7 @@ namespace Botcraft
 #endif
         std::unique_ptr<AsyncHandler> async_handler;
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         int world_interaction_sequence_id;
 #endif
     };

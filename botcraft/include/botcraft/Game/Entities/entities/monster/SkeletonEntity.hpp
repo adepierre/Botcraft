@@ -7,12 +7,12 @@ namespace Botcraft
     class SkeletonEntity : public AbstractSkeletonEntity
     {
     protected:
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         static constexpr int metadata_count = 1;
 #else
         static constexpr int metadata_count = 0;
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         static const std::array<std::string, metadata_count> metadata_names;
 #endif
         static constexpr int hierarchy_metadata_count = AbstractSkeletonEntity::metadata_count + AbstractSkeletonEntity::hierarchy_metadata_count;
@@ -32,7 +32,7 @@ namespace Botcraft
         static EntityType GetClassType();
 
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff

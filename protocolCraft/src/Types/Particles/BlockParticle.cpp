@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
 #include "protocolCraft/Types/Particles/BlockParticle.hpp"
 
 namespace ProtocolCraft

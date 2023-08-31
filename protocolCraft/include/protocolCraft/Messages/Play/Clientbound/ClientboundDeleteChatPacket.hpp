@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
@@ -9,11 +9,11 @@ namespace ProtocolCraft
     class ClientboundDeleteChatPacket : public BaseMessage<ClientboundDeleteChatPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 760
+#if   PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x18;
-#elif PROTOCOL_VERSION == 761
+#elif PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x16;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x19;
 #else
 #error "Protocol version not implemented"
@@ -26,7 +26,7 @@ namespace ProtocolCraft
 
         }
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         void SetMessageSignatureId(const int message_signature_id_)
         {
             message_signature_id = message_signature_id_;
@@ -38,7 +38,7 @@ namespace ProtocolCraft
             message_signature = message_signature_;
         }
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         int GetMessageSignatureId() const
         {
             return message_signature_id;
@@ -53,7 +53,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             message_signature_id = ReadData<VarInt>(iter, length) - 1;
             if (message_signature_id == -1)
             {
@@ -66,7 +66,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             WriteData<VarInt>(message_signature_id + 1, container);
             if (message_signature_id == -1)
             {
@@ -81,7 +81,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             output["message_signature_id"] = message_signature_id;
             if (message_signature_id == -1)
             {
@@ -95,7 +95,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         int message_signature_id = 0;
 #endif
         std::vector<unsigned char> message_signature;

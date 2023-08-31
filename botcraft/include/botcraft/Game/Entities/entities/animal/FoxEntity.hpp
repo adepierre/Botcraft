@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/animal/AnimalEntity.hpp"

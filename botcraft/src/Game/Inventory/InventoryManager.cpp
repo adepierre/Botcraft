@@ -26,7 +26,7 @@ namespace Botcraft
         if (it == inventories.end())
         {
             // In 1.17+ we don't wait for any server confirmation, so this can potentially happen very often.
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
             LOG_WARNING("Trying to add item in an unknown window with id : " << window_id);
 #endif
         }
@@ -112,7 +112,7 @@ namespace Botcraft
     void InventoryManager::EraseInventory(const short window_id)
     {
         std::lock_guard<std::mutex> inventory_lock(inventory_manager_mutex);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         pending_transactions.erase(window_id);
         transaction_states.erase(window_id);
 #else
@@ -122,7 +122,7 @@ namespace Botcraft
 #endif
         inventories.erase(window_id);
 
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         if (window_id == trading_container_id)
         {
             trading_container_id = -1;
@@ -131,7 +131,7 @@ namespace Botcraft
 #endif
     }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     const TransactionState InventoryManager::GetTransactionState(const short window_id, const int transaction_id)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
@@ -198,7 +198,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION > 755
+#if PROTOCOL_VERSION > 755 /* > 1.17 */
     void InventoryManager::SetStateId(const short window_id, const int state_id)
     {
         auto it = inventories.find(window_id);
@@ -213,7 +213,7 @@ namespace Botcraft
     void InventoryManager::AddInventory(const short window_id, const InventoryType window_type)
     {
         inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         pending_transactions[window_id] = std::map<short, InventoryTransaction >();
         transaction_states[window_id] = std::map<short, TransactionState>();
 #endif
@@ -267,7 +267,7 @@ namespace Botcraft
             const Slot& clicked_slot = window->GetSlot(transaction->GetSlotNum());
             // If cursor is not empty, we can't click if the items are not the same, 
             if (!cursor.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                 (cursor.GetBlockID() != clicked_slot.GetBlockID()
                     || cursor.GetItemDamage() != clicked_slot.GetItemDamage())
 #else
@@ -347,7 +347,7 @@ namespace Botcraft
                         {
                             // Special case: left click with same item
                             if (!cursor.IsEmptySlot() && !clicked_slot.IsEmptySlot()
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                                 && cursor.GetBlockID() == clicked_slot.GetBlockID()
                                 && cursor.GetItemDamage() == clicked_slot.GetItemDamage()
 #else
@@ -395,7 +395,7 @@ namespace Botcraft
                                 changed_slots.at(transaction->GetSlotNum()).SetItemCount(1);
                             }
                             // If same items in both
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                             else if (cursor.GetBlockID() == clicked_slot.GetBlockID()
                                 && cursor.GetItemDamage() == clicked_slot.GetItemDamage())
 #else
@@ -435,10 +435,10 @@ namespace Botcraft
             }
         }
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         transaction->SetCarriedItem(carried_item);
         transaction->SetChangedSlots(changed_slots);
-#if PROTOCOL_VERSION > 755
+#if PROTOCOL_VERSION > 755 /* > 1.17 */
         transaction->SetStateId(window->GetStateId());
 #endif
 #else
@@ -455,7 +455,7 @@ namespace Botcraft
 
     void InventoryManager::ApplyTransactionInternal(const InventoryTransaction& transaction)
     {
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         const std::map<short, Slot>& modified_slots = transaction.msg->GetChangeSlots();
         cursor = transaction.msg->GetCarriedItem();
 #else
@@ -477,7 +477,7 @@ namespace Botcraft
         ApplyTransactionInternal(transaction);
     }
 
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     const std::vector<ProtocolCraft::Trade>& InventoryManager::GetAvailableTrades() const
     {
         return available_trades;
@@ -517,7 +517,7 @@ namespace Botcraft
         else if (msg.GetContainerId() >= 0)
         {
             SetSlot(msg.GetContainerId(), msg.GetSlot(), msg.GetItemStack());
-#if PROTOCOL_VERSION > 755
+#if PROTOCOL_VERSION > 755 /* > 1.17 */
             SetStateId(msg.GetContainerId(), msg.GetStateId());
 #endif
         }
@@ -535,7 +535,7 @@ namespace Botcraft
         {
             SetSlot(msg.GetContainerId(), static_cast<short>(i), msg.GetSlotData()[i]);
         }
-#if PROTOCOL_VERSION > 755
+#if PROTOCOL_VERSION > 755 /* > 1.17 */
         if (msg.GetContainerId() >= 0)
         {
             SetStateId(msg.GetContainerId(), msg.GetStateId());
@@ -546,7 +546,7 @@ namespace Botcraft
     void InventoryManager::Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-#if PROTOCOL_VERSION < 452
+#if PROTOCOL_VERSION < 452 /* < 1.14 */
         InventoryType type = InventoryType::Default;
         if (msg.GetType() == "minecraft:chest")
         {
@@ -583,7 +583,7 @@ namespace Botcraft
         SetHotbarSelected(msg.GetSlot());
     }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     void InventoryManager::Handle(ProtocolCraft::ClientboundContainerAckPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
@@ -624,7 +624,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     void InventoryManager::Handle(ProtocolCraft::ClientboundMerchantOffersPacket& msg)
     {
         std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);

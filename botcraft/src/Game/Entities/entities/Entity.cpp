@@ -4,10 +4,10 @@
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/VillagerData.hpp"
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/GlobalPos.hpp"
 #endif
 
@@ -17,46 +17,46 @@
 #endif
 #include "botcraft/Utilities/Logger.hpp"
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp"
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "botcraft/Game/Entities/entities/animal/axolotl/AxolotlEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/ambient/BatEntity.hpp"
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
 #include "botcraft/Game/Entities/entities/animal/BeeEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/BlazeEntity.hpp"
 #include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/CatEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
 #include "botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/CaveSpiderEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/ChickenEntity.hpp"
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/CodEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/CowEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/CreeperEntity.hpp"
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/DolphinEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/horse/DonkeyEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/DragonFireballEntity.hpp"
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/monster/DrownedEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/DisplayBlockDisplayEntity.hpp"
 #include "botcraft/Game/Entities/entities/DisplayEntity.hpp"
 #include "botcraft/Game/Entities/entities/DisplayItemDisplayEntity.hpp"
@@ -73,27 +73,27 @@
 #include "botcraft/Game/Entities/entities/projectile/EyeOfEnderEntity.hpp"
 #include "botcraft/Game/Entities/entities/item/FallingBlockEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp"
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/FoxEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/frog/FrogEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/GhastEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/GiantEntity.hpp"
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "botcraft/Game/Entities/entities/decoration/GlowItemFrameEntity.hpp"
 #include "botcraft/Game/Entities/entities/GlowSquidEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/goat/GoatEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/GuardianEntity.hpp"
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/hoglin/HoglinEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/horse/HorseEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/HuskEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/IllusionerEntity.hpp"
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/InteractionEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/IronGolemEntity.hpp"
@@ -105,7 +105,7 @@
 #include "botcraft/Game/Entities/entities/animal/horse/LlamaEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/LlamaSpitEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/MagmaCubeEntity.hpp"
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "botcraft/Game/Entities/entities/MarkerEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/vehicle/MinecartEntity.hpp"
@@ -119,35 +119,35 @@
 #include "botcraft/Game/Entities/entities/animal/MushroomCowEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/OcelotEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/PaintingEntity.hpp"
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/PandaEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/ParrotEntity.hpp"
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/monster/PhantomEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/PigEntity.hpp"
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/piglin/PiglinEntity.hpp"
 #else
 #include "botcraft/Game/Entities/entities/monster/PigZombieEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "botcraft/Game/Entities/entities/monster/piglin/PiglinBruteEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/monster/PillagerEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/PolarBearEntity.hpp"
 #include "botcraft/Game/Entities/entities/item/PrimedTntEntity.hpp"
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/PufferfishEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/RabbitEntity.hpp"
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/monster/RavagerEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/SalmonEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/SheepEntity.hpp"
@@ -158,7 +158,7 @@
 #include "botcraft/Game/Entities/entities/animal/horse/SkeletonHorseEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/SlimeEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/SmallFireballEntity.hpp"
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/animal/sniffer/SnifferEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/SnowGolemEntity.hpp"
@@ -167,36 +167,36 @@
 #include "botcraft/Game/Entities/entities/monster/SpiderEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/SquidEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/StrayEntity.hpp"
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/StriderEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/frog/TadpoleEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/projectile/ThrownEggEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ThrownEnderpearlEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ThrownPotionEntity.hpp"
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/projectile/ThrownTridentEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/horse/TraderLlamaEntity.hpp"
 #endif
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/TropicalFishEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/TurtleEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/VexEntity.hpp"
 #include "botcraft/Game/Entities/entities/npc/VillagerEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/VindicatorEntity.hpp"
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/npc/WanderingTraderEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/WitchEntity.hpp"
@@ -204,13 +204,13 @@
 #include "botcraft/Game/Entities/entities/monster/WitherSkeletonEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/WitherSkullEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/WolfEntity.hpp"
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/ZoglinEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/ZombieEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/horse/ZombieHorseEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/ZombieVillagerEntity.hpp"
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/ZombifiedPiglinEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/player/PlayerEntity.hpp"
@@ -225,10 +225,10 @@ namespace Botcraft
         "data_custom_name_visible",
         "data_silent",
         "data_no_gravity",
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "data_pose",
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         "data_ticks_frozen",
 #endif
     } };
@@ -254,7 +254,7 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataSharedFlagsId(0);
         SetDataAirSupplyId(300);
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         SetDataCustomName(std::optional<ProtocolCraft::Chat>());
 #else
         SetDataCustomName("");
@@ -262,10 +262,10 @@ namespace Botcraft
         SetDataCustomNameVisible(false);
         SetDataSilent(false);
         SetDataNoGravity(false);
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataPose(Pose::Standing);
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         SetDataTicksFrozen(0);
 #endif
     }
@@ -317,13 +317,13 @@ namespace Botcraft
             {
                 Char = 0,
                 Int,
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
                 Long,
 #endif
                 Float,
                 String,
                 Chat,
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
                 OptionalChat,
 #endif
                 Slot,
@@ -334,25 +334,25 @@ namespace Botcraft
                 DirectionType,
                 OptionalUUID,
                 BlockstateType,
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
                 OptionalBlockstate,
 #endif
                 NBT,
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
                 Particle,
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
                 VillagerDataType,
                 OptionalUint,
                 PoseType,
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
                 CatVariant,
                 FrogVariant,
                 OptionalGlobalPos,
                 PaintingVariant,
 #endif
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
                 SnifferState,
                 Vec3,
                 Quaternion,
@@ -367,7 +367,7 @@ namespace Botcraft
             case EntityMetadataTypes::Int:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             case EntityMetadataTypes::Long:
                 value = static_cast<long long int>(ProtocolCraft::ReadData<ProtocolCraft::VarLong>(iter, length));
                 break;
@@ -382,7 +382,7 @@ namespace Botcraft
                 value = ProtocolCraft::Chat();
                 std::any_cast<ProtocolCraft::Chat&>(value).Read(iter, length);
                 break;
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
             case EntityMetadataTypes::OptionalChat:
                 if (ProtocolCraft::ReadData<bool>(iter, length))
                 {
@@ -447,7 +447,7 @@ namespace Botcraft
             case EntityMetadataTypes::BlockstateType:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
             case EntityMetadataTypes::OptionalBlockstate:
                 if (const int n = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length))
                 {
@@ -463,13 +463,13 @@ namespace Botcraft
                 value = ProtocolCraft::NBT::Value();
                 std::any_cast<ProtocolCraft::NBT::Value&>(value).Read(iter, length);
                 break;
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
             case EntityMetadataTypes::Particle:
                 value = ProtocolCraft::Particle::CreateParticle(static_cast<ProtocolCraft::ParticleType>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length))));
                 std::any_cast<std::shared_ptr<ProtocolCraft::Particle>&>(value)->Read(iter, length);
                 break;
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
             case EntityMetadataTypes::VillagerDataType:
                 value = VillagerData{
                     ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length), // villager_type
@@ -487,7 +487,7 @@ namespace Botcraft
                 value = static_cast<Pose>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length)));
                 break;
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             case EntityMetadataTypes::CatVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
@@ -516,7 +516,7 @@ namespace Botcraft
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
 #endif
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
             case EntityMetadataTypes::SnifferState:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
@@ -563,7 +563,7 @@ namespace Botcraft
         return std::any_cast<int>(metadata.at("data_air_supply_id"));
     }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     const std::optional<ProtocolCraft::Chat>& Entity::GetDataCustomName() const
     {
         return std::any_cast<const std::optional<ProtocolCraft::Chat>&>(metadata.at("data_custom_name"));
@@ -590,14 +590,14 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_no_gravity"));
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     Pose Entity::GetDataPose() const
     {
         return std::any_cast<Pose>(metadata.at("data_pose"));
     }
 #endif
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
     int Entity::GetDataTicksFrozen() const
     {
         return std::any_cast<int>(metadata.at("data_ticks_frozen"));
@@ -615,7 +615,7 @@ namespace Botcraft
         metadata["data_air_supply_id"] = data_air_supply_id;
     }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void Entity::SetDataCustomName(const std::optional<ProtocolCraft::Chat>& data_custom_name)
     {
         metadata["data_custom_name"] = data_custom_name;
@@ -642,14 +642,14 @@ namespace Botcraft
         metadata["data_no_gravity"] = data_no_gravity;
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void Entity::SetDataPose(const Pose data_pose)
     {
         metadata["data_pose"] = data_pose;
     }
 #endif
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
     void Entity::SetDataTicksFrozen(const int data_ticks_frozen)
     {
         metadata["data_ticks_frozen"] = data_ticks_frozen;
@@ -941,7 +941,7 @@ namespace Botcraft
 
         output["metadata"]["data_shared_flags_id"] = GetDataSharedFlagsId();
         output["metadata"]["data_air_supply_id"] = GetDataAirSupplyId();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         output["metadata"]["data_custom_name"] = GetDataCustomName() ? GetDataCustomName().value().Serialize() : ProtocolCraft::Json::Value();
 #else
         output["metadata"]["data_custom_name"] = GetDataCustomName();
@@ -949,10 +949,10 @@ namespace Botcraft
         output["metadata"]["data_custom_name_visible"] = GetDataCustomNameVisible();
         output["metadata"]["data_silent"] = GetDataSilent();
         output["metadata"]["data_no_gravity"] = GetDataNoGravity();
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["data_pose"] = static_cast<int>(GetDataPose());
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         output["metadata"]["data_ticks_frozen"] = GetDataTicksFrozen();
 #endif
 
@@ -994,7 +994,7 @@ namespace Botcraft
         return false;
     }
 
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
     bool Entity::IsDisplay() const
     {
         return false;
@@ -1036,7 +1036,7 @@ namespace Botcraft
         return false;
     }
 
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     bool Entity::IsProjectile() const
     {
         return false;
@@ -1083,7 +1083,7 @@ namespace Botcraft
         return false;
     }
 
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
     bool Entity::IsAbstractPiglin() const
     {
         return false;
@@ -1100,7 +1100,7 @@ namespace Botcraft
         return false;
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     bool Entity::IsRaider() const
     {
         return false;
@@ -1117,7 +1117,7 @@ namespace Botcraft
         return false;
     }
 
-#if PROTOCOL_VERSION > 477
+#if PROTOCOL_VERSION > 477 /* > 1.14 */
     bool Entity::IsAbstractVillager() const
     {
         return false;
@@ -1134,7 +1134,7 @@ namespace Botcraft
         return false;
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     bool Entity::IsPatrollingMonster() const
     {
         return false;
@@ -1153,7 +1153,7 @@ namespace Botcraft
         {
         case EntityType::None:
             return nullptr;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::Allay:
             return std::make_shared<AllayEntity>();
 #endif
@@ -1163,13 +1163,13 @@ namespace Botcraft
             return std::make_shared<ArmorStandEntity>();
         case EntityType::Arrow:
             return std::make_shared<ArrowEntity>();
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         case EntityType::Axolotl:
             return std::make_shared<AxolotlEntity>();
 #endif
         case EntityType::Bat:
             return std::make_shared<BatEntity>();
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         case EntityType::Bee:
             return std::make_shared<BeeEntity>();
 #endif
@@ -1177,15 +1177,15 @@ namespace Botcraft
             return std::make_shared<BlazeEntity>();
         case EntityType::Boat:
             return std::make_shared<BoatEntity>();
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::ChestBoat:
             return std::make_shared<ChestBoatEntity>();
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::Cat:
             return std::make_shared<CatEntity>();
 #endif
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         case EntityType::Camel:
             return std::make_shared<CamelEntity>();
 #endif
@@ -1193,7 +1193,7 @@ namespace Botcraft
             return std::make_shared<CaveSpiderEntity>();
         case EntityType::Chicken:
             return std::make_shared<ChickenEntity>();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::Cod:
             return std::make_shared<CodEntity>();
 #endif
@@ -1201,7 +1201,7 @@ namespace Botcraft
             return std::make_shared<CowEntity>();
         case EntityType::Creeper:
             return std::make_shared<CreeperEntity>();
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         case EntityType::DisplayBlockDisplay:
             return std::make_shared<DisplayBlockDisplayEntity>();
         case EntityType::DisplayItemDisplay:
@@ -1209,7 +1209,7 @@ namespace Botcraft
         case EntityType::DisplayTextDisplay:
             return std::make_shared<DisplayTextDisplayEntity>();
 #endif
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::Dolphin:
             return std::make_shared<DolphinEntity>();
 #endif
@@ -1217,7 +1217,7 @@ namespace Botcraft
             return std::make_shared<DonkeyEntity>();
         case EntityType::DragonFireball:
             return std::make_shared<DragonFireballEntity>();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::Drowned:
             return std::make_shared<DrownedEntity>();
 #endif
@@ -1243,11 +1243,11 @@ namespace Botcraft
             return std::make_shared<FallingBlockEntity>();
         case EntityType::FireworkRocketEntity:
             return std::make_shared<FireworkRocketEntity>();
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::Fox:
             return std::make_shared<FoxEntity>();
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::Frog:
             return std::make_shared<FrogEntity>();
 #endif
@@ -1255,7 +1255,7 @@ namespace Botcraft
             return std::make_shared<GhastEntity>();
         case EntityType::Giant:
             return std::make_shared<GiantEntity>();
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         case EntityType::GlowItemFrame:
             return std::make_shared<GlowItemFrameEntity>();
         case EntityType::GlowSquid:
@@ -1265,7 +1265,7 @@ namespace Botcraft
 #endif
         case EntityType::Guardian:
             return std::make_shared<GuardianEntity>();
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         case EntityType::Hoglin:
             return std::make_shared<HoglinEntity>();
 #endif
@@ -1285,7 +1285,7 @@ namespace Botcraft
             return std::make_shared<LargeFireballEntity>();
         case EntityType::LeashFenceKnotEntity:
             return std::make_shared<LeashFenceKnotEntity>();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::LightningBolt:
             return std::make_shared<LightningBoltEntity>();
 #endif
@@ -1295,7 +1295,7 @@ namespace Botcraft
             return std::make_shared<LlamaSpitEntity>();
         case EntityType::MagmaCube:
             return std::make_shared<MagmaCubeEntity>();
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         case EntityType::Marker:
             return std::make_shared<MarkerEntity>();
 #endif
@@ -1321,27 +1321,27 @@ namespace Botcraft
             return std::make_shared<OcelotEntity>();
         case EntityType::Painting:
             return std::make_shared<PaintingEntity>();
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::Panda:
             return std::make_shared<PandaEntity>();
 #endif
         case EntityType::Parrot:
             return std::make_shared<ParrotEntity>();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::Phantom:
             return std::make_shared<PhantomEntity>();
 #endif
         case EntityType::Pig:
             return std::make_shared<PigEntity>();
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         case EntityType::Piglin:
             return std::make_shared<PiglinEntity>();
 #endif
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
         case EntityType::PiglinBrute:
             return std::make_shared<PiglinBruteEntity>();
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::Pillager:
             return std::make_shared<PillagerEntity>();
 #endif
@@ -1349,17 +1349,17 @@ namespace Botcraft
             return std::make_shared<PolarBearEntity>();
         case EntityType::PrimedTnt:
             return std::make_shared<PrimedTntEntity>();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::Pufferfish:
             return std::make_shared<PufferfishEntity>();
 #endif
         case EntityType::Rabbit:
             return std::make_shared<RabbitEntity>();
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::Ravager:
             return std::make_shared<RavagerEntity>();
 #endif
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::Salmon:
             return std::make_shared<SalmonEntity>();
 #endif
@@ -1391,11 +1391,11 @@ namespace Botcraft
             return std::make_shared<SquidEntity>();
         case EntityType::Stray:
             return std::make_shared<StrayEntity>();
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         case EntityType::Strider:
             return std::make_shared<StriderEntity>();
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::Tadpole:
             return std::make_shared<TadpoleEntity>();
 #endif
@@ -1407,19 +1407,19 @@ namespace Botcraft
             return std::make_shared<ThrownExperienceBottleEntity>();
         case EntityType::ThrownPotion:
             return std::make_shared<ThrownPotionEntity>();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::ThrownTrident:
             return std::make_shared<ThrownTridentEntity>();
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::TraderLlama:
             return std::make_shared<TraderLlamaEntity>();
 #endif
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::TropicalFish:
             return std::make_shared<TropicalFishEntity>();
 #endif
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::Turtle:
             return std::make_shared<TurtleEntity>();
 #endif
@@ -1429,11 +1429,11 @@ namespace Botcraft
             return std::make_shared<VillagerEntity>();
         case EntityType::Vindicator:
             return std::make_shared<VindicatorEntity>();
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::WanderingTrader:
             return std::make_shared<WanderingTraderEntity>();
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::Warden:
             return std::make_shared<WardenEntity>();
 #endif
@@ -1447,7 +1447,7 @@ namespace Botcraft
             return std::make_shared<WitherSkullEntity>();
         case EntityType::Wolf:
             return std::make_shared<WolfEntity>();
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         case EntityType::Zoglin:
             return std::make_shared<ZoglinEntity>();
 #endif
@@ -1457,7 +1457,7 @@ namespace Botcraft
             return std::make_shared<ZombieHorseEntity>();
         case EntityType::ZombieVillager:
             return std::make_shared<ZombieVillagerEntity>();
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         case EntityType::ZombifiedPiglin:
             return std::make_shared<ZombifiedPiglinEntity>();
 #else
@@ -1466,7 +1466,7 @@ namespace Botcraft
 #endif
         case EntityType::Player:
             return std::make_shared<PlayerEntity>();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::FishingHook:
             return std::make_shared<FishingHookEntity>();
 #endif
@@ -1475,7 +1475,7 @@ namespace Botcraft
         }
     }
 
-#if PROTOCOL_VERSION < 458
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
     std::shared_ptr<Entity> Entity::CreateObjectEntity(const ObjectEntityType type)
     {
         switch (type)
@@ -1534,7 +1534,7 @@ namespace Botcraft
             return std::make_shared<SpectralArrowEntity>();
         case ObjectEntityType::DragonFireball:
             return std::make_shared<DragonFireballEntity>();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case ObjectEntityType::ThrownTrident:
             return std::make_shared<ThrownTridentEntity>();
 #endif

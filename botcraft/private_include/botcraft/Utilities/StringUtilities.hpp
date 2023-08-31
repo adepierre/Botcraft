@@ -11,7 +11,7 @@ namespace Botcraft::Utilities
 
     std::vector<std::string> SplitString(const std::string& s, const char delimiter);
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     std::vector<unsigned char> DecodeBase64(const std::string& s);
 
     std::vector<unsigned char> RSAToBytes(const std::string& s);

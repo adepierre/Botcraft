@@ -560,7 +560,7 @@ bool CouldFallIfUpdated(const std::string& block_name)
         "minecraft:sand",
         "minecraft:gravel",
         "minecraft:red_sand",
-    #if PROTOCOL_VERSION > 762
+    #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         "minecraft:suspicious_sand",
         "minecraft:suspicious_gravel",
     #endif

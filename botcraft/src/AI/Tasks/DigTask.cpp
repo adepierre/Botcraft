@@ -96,7 +96,7 @@ namespace Botcraft
             if (!main_hand.IsEmptySlot())
             {
                 const Item* item;
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                 item = AssetsManager::getInstance().GetItem({ main_hand.GetBlockID(), static_cast<unsigned char>(main_hand.GetItemDamage()) });
 #else
                 item = AssetsManager::getInstance().GetItem(main_hand.GetItemID());
@@ -150,7 +150,7 @@ namespace Botcraft
         msg_digging->SetAction(static_cast<int>(PlayerDiggingStatus::StartDigging));
         msg_digging->SetPos(pos.ToNetworkPosition());
         msg_digging->SetDirection(static_cast<int>(face));
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
             msg_digging->SetSequence(world->GetNextWorldInteractionSequenceId());
@@ -186,7 +186,7 @@ namespace Botcraft
                 msg_finish->SetAction(static_cast<int>(PlayerDiggingStatus::FinishDigging));
                 msg_finish->SetPos(pos.ToNetworkPosition());
                 msg_finish->SetDirection(static_cast<int>(face));
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
                 {
                     std::lock_guard<std::mutex> world_guard(world->GetMutex());
                     msg_finish->SetSequence(world->GetNextWorldInteractionSequenceId());

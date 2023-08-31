@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 347
+#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
 
 namespace ProtocolCraft
@@ -14,7 +14,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         void SetCookingBookCategory(const int cooking_book_category_)
         {
             cooking_book_category = cooking_book_category_;
@@ -22,7 +22,7 @@ namespace ProtocolCraft
 #endif
 
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         int GetCookingBookCategory() const
         {
             return cooking_book_category;
@@ -33,14 +33,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             cooking_book_category = ReadData<VarInt>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             WriteData<VarInt>(cooking_book_category, container);
 #endif
         }
@@ -49,7 +49,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             output["cooking_book_category"] = cooking_book_category;
 #endif
 
@@ -57,7 +57,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         int cooking_book_category = 0;
 #endif
     };

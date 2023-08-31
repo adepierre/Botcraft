@@ -347,7 +347,7 @@ Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboa
             for (const auto& s : container->GetSlots())
             {
                 if (s.first < container->GetFirstPlayerInventorySlot() && !s.second.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                     AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() != item_to_keep
 #else
                     AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() != item_to_keep
@@ -458,7 +458,7 @@ Status StoreDispenser(BehaviourClient& client)
         {
             if (dst_slot == -1 && s.first < container->GetFirstPlayerInventorySlot() && 
                 (s.second.IsEmptySlot() || (
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                 s.second.GetBlockID() == dispenser_id.first && s.second.GetItemDamage() == dispenser_id.second
 #else
                 s.second.GetItemID() == dispenser_id
@@ -470,7 +470,7 @@ Status StoreDispenser(BehaviourClient& client)
                 dst_slot = s.first;
             }
             else if (src_slot == -1 && s.first >= container->GetFirstPlayerInventorySlot() &&
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                 s.second.GetBlockID() == dispenser_id.first && s.second.GetItemDamage() == dispenser_id.second
 #else
                 s.second.GetItemID() == dispenser_id
@@ -628,7 +628,7 @@ Status MineCobblestone(BehaviourClient& client)
             {
                 if (src_slot == -1 && s.first < shulker_container->GetFirstPlayerInventorySlot())
                 {
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                     if (!s.second.IsEmptySlot() && AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() == "minecraft:cobblestone")
 #else
                     if (!s.second.IsEmptySlot() && AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() == "minecraft:cobblestone")
@@ -646,7 +646,7 @@ Status MineCobblestone(BehaviourClient& client)
                 if (src_slot != -1 && s.first >= shulker_container->GetFirstPlayerInventorySlot())
                 {
                     if (s.second.IsEmptySlot() || (s.second.GetItemCount() < 64 - quantity &&
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                         AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() == "minecraft:cobblestone"
 #else
                         AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() == "minecraft:cobblestone"
@@ -719,7 +719,7 @@ Status TakeFromChest(BehaviourClient& client, const std::string& item_name, cons
         for (const auto& s : container->GetSlots())
         {
             if (!s.second.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                 AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() == item_name
 #else
                 AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() == item_name
@@ -812,7 +812,7 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
                 if (e.second->GetType() == EntityType::ItemEntity)
                 {
                     std::shared_ptr<ItemEntity> item = std::static_pointer_cast<ItemEntity>(e.second);
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                     if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetBlockID()).at(item->GetDataItem().GetItemDamage())->GetName() == item_name)
 #else
                     if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetItemID())->GetName() == item_name)
@@ -906,7 +906,7 @@ Status DestroyItems(BehaviourClient& client, const std::string& item_name)
         for (const auto& s : inventory->GetSlots())
         {
             if (s.first >= inventory->GetFirstPlayerInventorySlot() && !s.second.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 340
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                 AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() == item_name
 #else
                 AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() == item_name

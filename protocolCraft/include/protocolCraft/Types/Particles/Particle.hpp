@@ -6,20 +6,20 @@
 
 namespace ProtocolCraft
 {
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
     enum class ParticleType
     {
         None = -1,
         AmbientEntityEffect,
         AngryVillager,
-#if PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         Barrier,
 #endif
-#if PROTOCOL_VERSION > 754 && PROTOCOL_VERSION < 757
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         Light,
 #endif
         Block,
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         BlockMarker,
 #endif
         Bubble,
@@ -28,16 +28,16 @@ namespace ProtocolCraft
         DamageIndicator,
         DragonBreath,
         DrippingLava,
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         FallingLava,
         LandingLava,
 #endif
         DrippingWater,
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         FallingWater,
 #endif
         Dust,
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         DustColorTransition,
 #endif
         Effect,
@@ -48,41 +48,41 @@ namespace ProtocolCraft
         EntityEffect,
         ExplosionEmitter,
         Explosion,
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SonicBoom,
 #endif
         FallingDust,
         Firework,
         Fishing,
         Flame,
-#if PROTOCOL_VERSION > 761 && PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */ && PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         DrippingCherryLeaves,
         FallingCherryLeaves,
         LandingCherryLeaves,
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         CherryLeaves,
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SculkSoul,
         SculkCharge,
         SculkChargePop,
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         SoulFireFlame,
         Soul,
 #endif
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         Flash,
 #endif
         HappyVillager,
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         Composter,
 #endif
         Heart,
         InstantEffect,
         Item,
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         Vibration,
 #endif
         ItemSlime,
@@ -95,7 +95,7 @@ namespace ProtocolCraft
         Portal,
         Rain,
         Smoke,
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         Sneeze,
 #endif
         Spit,
@@ -110,35 +110,35 @@ namespace ProtocolCraft
         BubbleColumnUp,
         Nautilus,
         Dolphin,
-#if PROTOCOL_VERSION > 476
+#if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         CampfireCosySmoke,
         CampfireSignalSmoke,
 #endif
-#if PROTOCOL_VERSION > 572
+#if PROTOCOL_VERSION > 572 /* > 1.14.4 */
         DrippingHoney,
         FallingHoney,
         LandingHoney,
         FallingNectar,
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         FallingSporeBlossom,
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         Ash,
         CrimsonSpore,
         WarpedSpore,
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         SporeBlossomAir,
 #endif
-#if PROTOCOL_VERSION > 734
+#if PROTOCOL_VERSION > 734 /* > 1.15.2 */
         DrippingObsidianTear,
         FallingObsidianTear,
         LandingObsidianTear,
         ReversePortal,
         WhiteAsh,
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         SmallFlame,
         Snowflake,
         DrippingDripstoneLava,
@@ -152,10 +152,10 @@ namespace ProtocolCraft
         ElectricSpark,
         Scrape,
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         Shriek,
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         EggCrack,
 #endif
     };

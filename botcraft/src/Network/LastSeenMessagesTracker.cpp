@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 
 #include "botcraft/Network/LastSeenMessagesTracker.hpp"
 
@@ -6,7 +6,7 @@ namespace Botcraft
 {
     LastSeenMessagesTracker::LastSeenMessagesTracker()
     {
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         tail = 0;
         offset = 0;
 #endif
@@ -22,7 +22,7 @@ namespace Botcraft
         return mutex;
     }
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     const std::vector<unsigned char>& LastSeenMessagesTracker::GetLastSignature() const
     {
         return last_signature_sent;

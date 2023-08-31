@@ -4,7 +4,7 @@ namespace Botcraft
 {
     const std::array<std::string, ZombieVillagerEntity::metadata_count> ZombieVillagerEntity::metadata_names{ {
         "data_converting_id",
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "data_villager_data",
 #else
         "data_villager_profession_id"
@@ -15,7 +15,7 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataConvertingId(false);
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataVillagerData(VillagerData{ 2, 0, 1 });
 #else
         SetDataVillagerProfessionId(0);
@@ -65,7 +65,7 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = ZombieEntity::Serialize();
 
         output["metadata"]["data_converting_id"] = GetDataConvertingId();
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["data_villager_data"] = { GetDataVillagerData().type, GetDataVillagerData().profession, GetDataVillagerData().level };
 #else
         output["metadata"]["data_villager_profession_id"] = GetDataVillagerProfessionId();
@@ -92,7 +92,7 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_converting_id"));
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const VillagerData& ZombieVillagerEntity::GetDataVillagerData() const
     {
         return std::any_cast<const VillagerData&>(metadata.at("data_villager_data"));
@@ -110,7 +110,7 @@ namespace Botcraft
         metadata["data_converting_id"] = data_converting_id;
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void ZombieVillagerEntity::SetDataVillagerData(const VillagerData& data_villager_data)
     {
         metadata["data_villager_data"] = data_villager_data;

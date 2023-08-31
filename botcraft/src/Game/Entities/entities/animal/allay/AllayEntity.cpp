@@ -1,9 +1,9 @@
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp"
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
     const std::array<std::string, AllayEntity::metadata_count> AllayEntity::metadata_names{ {
         "data_dancing",
         "data_can_duplicate",
@@ -11,7 +11,7 @@ namespace Botcraft
 #endif
     AllayEntity::AllayEntity()
     {
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         // Initialize all metadata with default values
         SetDataDancing(true);
         SetDataCanDuplicate(true);
@@ -56,7 +56,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
     ProtocolCraft::Json::Value AllayEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = PathfinderMobEntity::Serialize();

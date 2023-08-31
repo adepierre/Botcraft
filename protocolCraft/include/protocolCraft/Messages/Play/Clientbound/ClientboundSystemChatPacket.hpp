@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
 #include <vector>
@@ -11,13 +11,13 @@ namespace ProtocolCraft
     class ClientboundSystemChatPacket : public BaseMessage<ClientboundSystemChatPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 759
+#if   PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x5F;
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x62;
-#elif PROTOCOL_VERSION == 761
+#elif PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x60;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x64;
 #else
 #error "Protocol version not implemented"
@@ -35,7 +35,7 @@ namespace ProtocolCraft
             content = signed_content_;
         }
 
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
         void SetTypeId(const int type_id_)
         {
             type_id = type_id_;
@@ -53,7 +53,7 @@ namespace ProtocolCraft
             return content;
         }
 
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
         int GetTypeId() const
         {
             return type_id;
@@ -69,7 +69,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             content = ReadData<Chat>(iter, length);
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             type_id = ReadData<VarInt>(iter, length);
 #else
             overlay = ReadData<bool>(iter, length);
@@ -79,7 +79,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<Chat>(content, container);
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             WriteData<VarInt>(type_id, container);
 #else
             WriteData<bool>(overlay, container);
@@ -91,7 +91,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["content"] = content;
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             output["type_id"] = type_id;
 #else
             output["overlay"] = overlay;
@@ -103,7 +103,7 @@ namespace ProtocolCraft
 
     private:
         Chat content;
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
         int type_id = 0;
 #else
         bool overlay = false;

@@ -26,7 +26,7 @@ namespace Botcraft
         game_mode = GameType::None;
         difficulty = Difficulty::None;
         is_hardcore = false;
-#if PROTOCOL_VERSION > 463
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
         difficulty_locked = true;
 #endif
 
@@ -60,7 +60,7 @@ namespace Botcraft
 
         game_mode = GameType::None;
         difficulty = Difficulty::None;
-#if PROTOCOL_VERSION > 463
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
         difficulty_locked = true;
 #endif
         is_hardcore = false;
@@ -90,7 +90,7 @@ namespace Botcraft
     const int ManagersClient::SendInventoryTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction)
     {
         InventoryTransaction inventory_transaction = inventory_manager->PrepareTransaction(transaction);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         inventory_manager->AddPendingTransaction(inventory_transaction);
         network_manager->Send(transaction);
         return transaction->GetUid();
@@ -177,7 +177,7 @@ namespace Botcraft
     void ManagersClient::Handle(ClientboundChangeDifficultyPacket &msg)
     {
         difficulty = static_cast<Difficulty>(msg.GetDifficulty());
-#if PROTOCOL_VERSION > 463
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
         difficulty_locked = msg.GetLocked();
 #endif
     }
@@ -185,13 +185,13 @@ namespace Botcraft
     void ManagersClient::Handle(ClientboundLoginPacket &msg)
     {
         game_mode = static_cast<GameType>(msg.GetGameType() & 0x03);
-#if PROTOCOL_VERSION > 737
+#if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         is_hardcore = msg.GetHardcore();
 #else
         is_hardcore = msg.GetGameType() & 0x08;
 #endif
 
-#if PROTOCOL_VERSION < 464
+#if PROTOCOL_VERSION < 464 /* < 1.14 */
         difficulty = static_cast<Difficulty>(msg.GetDifficulty());
 #endif
     }
@@ -228,7 +228,7 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundRespawnPacket &msg)
     {
-#if PROTOCOL_VERSION < 464
+#if PROTOCOL_VERSION < 464 /* < 1.14 */
         difficulty = static_cast<Difficulty>(msg.GetDifficulty());
 #endif
         game_mode = static_cast<GameType>(msg.GetPlayerGameType());

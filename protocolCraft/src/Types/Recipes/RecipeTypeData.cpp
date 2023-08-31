@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 347
+#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
 
 #include "protocolCraft/Types/Recipes/RecipeTypeDataNone.hpp"
@@ -10,7 +10,7 @@
 #include "protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeDataSmithing.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp"
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "protocolCraft/Types/Recipes/RecipeTypeDataSmithingTransform.hpp"
 #include "protocolCraft/Types/Recipes/RecipeTypeDataSmithingTrim.hpp"
 #endif
@@ -36,7 +36,7 @@ namespace ProtocolCraft
         {
             return std::make_shared<RecipeTypeDataSmelting>();
         }
-#if PROTOCOL_VERSION > 452
+#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
         else if (recipe_type.GetFull() == "minecraft:blasting")
         {
             return std::make_shared<RecipeTypeDataBlasting>();
@@ -54,13 +54,13 @@ namespace ProtocolCraft
             return std::make_shared<RecipeTypeDataStoneCutting>();
         }
 #endif
-#if PROTOCOL_VERSION > 732 && PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION > 732 /* > 1.15.2 */ && PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         else if (recipe_type.GetFull() == "minecraft:smithing")
         {
             return std::make_shared<RecipeTypeDataSmithing>();
         }
 #endif
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         else if (recipe_type.GetFull() == "minecraft:smithing_transform")
         {
             return std::make_shared<RecipeTypeDataSmithingTransform>();

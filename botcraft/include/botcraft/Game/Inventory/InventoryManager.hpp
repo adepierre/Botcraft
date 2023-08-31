@@ -10,7 +10,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     enum class TransactionState
     {
         Waiting,
@@ -22,7 +22,7 @@ namespace Botcraft
     struct InventoryTransaction
     {
         std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> msg;
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         std::map<short, ProtocolCraft::Slot> changed_slots;
         ProtocolCraft::Slot carried_item;
 #endif
@@ -47,7 +47,7 @@ namespace Botcraft
         const ProtocolCraft::Slot& GetOffHand() const;
         const ProtocolCraft::Slot& GetCursor() const;
         void EraseInventory(const short window_id);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         const TransactionState GetTransactionState(const short window_id, const int transaction_id);
         void AddPendingTransaction(const InventoryTransaction& transaction);
 #endif
@@ -59,7 +59,7 @@ namespace Botcraft
         /// @brief Apply a given transaction to a container
         /// @param transaction The transaction to apply
         void ApplyTransaction(const InventoryTransaction& transaction);
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         const std::vector<ProtocolCraft::Trade>& GetAvailableTrades() const;
         ProtocolCraft::Trade& GetAvailableTrade(const int index);
 #endif
@@ -70,10 +70,10 @@ namespace Botcraft
 
         void AddInventory(const short window_id, const InventoryType window_type);
         void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         void SynchronizeContainerPlayerInventory(const short window_id);
 #endif
-#if PROTOCOL_VERSION > 755
+#if PROTOCOL_VERSION > 755 /* > 1.17 */
         void SetStateId(const short window_id, const int state_id);
 #endif
 
@@ -84,10 +84,10 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg) override;
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
 #endif
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         virtual void Handle(ProtocolCraft::ClientboundMerchantOffersPacket& msg) override;
 #endif
         virtual void Handle(ProtocolCraft::ClientboundContainerClosePacket& msg) override;
@@ -100,14 +100,14 @@ namespace Botcraft
         short index_hotbar_selected;
         ProtocolCraft::Slot cursor;
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         // Storing all the transactions that have neither been accepted
         // nor refused by the server yet
         std::map<short, std::map<short, InventoryTransaction > > pending_transactions;
         // Storing the old transactions (accepted/refused) for all opened windows
         std::map<short, std::map<short, TransactionState> > transaction_states;
 #endif
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         int trading_container_id;
         std::vector<ProtocolCraft::Trade> available_trades;
 #endif

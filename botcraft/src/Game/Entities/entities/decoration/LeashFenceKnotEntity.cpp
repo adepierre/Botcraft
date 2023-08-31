@@ -25,7 +25,7 @@ namespace Botcraft
 
     double LeashFenceKnotEntity::GetWidth() const
     {
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         return 0.375;
 #else
         return 0.5;

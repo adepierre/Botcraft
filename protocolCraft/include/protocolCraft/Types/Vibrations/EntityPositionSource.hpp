@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "protocolCraft/Types/Vibrations/PositionSource.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
@@ -19,7 +19,7 @@ namespace ProtocolCraft
             source_entity_id = source_entity_id_;
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         void SetYOffset(const float y_offset_)
         {
             y_offset = y_offset_;
@@ -32,7 +32,7 @@ namespace ProtocolCraft
             return source_entity_id;
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         float GetYOffset() const
         {
             return y_offset;
@@ -43,7 +43,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             source_entity_id = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             y_offset = ReadData<float>(iter, length);
 #endif
         }
@@ -51,7 +51,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(source_entity_id, container);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteData<float>(y_offset, container);
 #endif
         }
@@ -61,7 +61,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["source_entity_id"] = source_entity_id;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             output["y_offset"] = y_offset;
 #endif
 
@@ -70,7 +70,7 @@ namespace ProtocolCraft
 
     private:
         int source_entity_id = 0;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         float y_offset = 0.0f;
 #endif
     };

@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/AnimalEntity.hpp"
 #else
 #include "botcraft/Game/Entities/entities/TamableAnimalEntity.hpp"
@@ -8,7 +8,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     class OcelotEntity : public AnimalEntity
 #else
     class OcelotEntity : public TamableAnimalEntity
@@ -39,7 +39,7 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         bool GetDataTrusting() const;
 
         void SetDataTrusting(const bool data_trusting);

@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
@@ -8,29 +8,29 @@ namespace ProtocolCraft
     class ClientboundCustomSoundPacket : public BaseMessage<ClientboundCustomSoundPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 340
+#if   PROTOCOL_VERSION == 340 /* 1.12.2 */
         static constexpr int packet_id = 0x19;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
-      PROTOCOL_VERSION == 404
+#elif PROTOCOL_VERSION == 393 /* 1.13 */ || PROTOCOL_VERSION == 401 /* 1.13.1 */ ||  \
+      PROTOCOL_VERSION == 404 /* 1.13.2 */
         static constexpr int packet_id = 0x1A;
-#elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 ||  \
-      PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 ||  \
-      PROTOCOL_VERSION == 498
+#elif PROTOCOL_VERSION == 477 /* 1.14 */ || PROTOCOL_VERSION == 480 /* 1.14.1 */ ||  \
+      PROTOCOL_VERSION == 485 /* 1.14.2 */ || PROTOCOL_VERSION == 490 /* 1.14.3 */ ||  \
+      PROTOCOL_VERSION == 498 /* 1.14.4 */
         static constexpr int packet_id = 0x19;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 ||  \
-      PROTOCOL_VERSION == 578
+#elif PROTOCOL_VERSION == 573 /* 1.15 */ || PROTOCOL_VERSION == 575 /* 1.15.1 */ ||  \
+      PROTOCOL_VERSION == 578 /* 1.15.2 */
         static constexpr int packet_id = 0x1A;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736
+#elif PROTOCOL_VERSION == 735 /* 1.16 */ || PROTOCOL_VERSION == 736 /* 1.16.1 */
         static constexpr int packet_id = 0x19;
-#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 ||  \
-      PROTOCOL_VERSION == 754
+#elif PROTOCOL_VERSION == 751 /* 1.16.2 */ || PROTOCOL_VERSION == 753 /* 1.16.3 */ ||  \
+      PROTOCOL_VERSION == 754 /* 1.16.4/5 */
         static constexpr int packet_id = 0x18;
-#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 ||  \
-      PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758
+#elif PROTOCOL_VERSION == 755 /* 1.17 */ || PROTOCOL_VERSION == 756 /* 1.17.1 */ ||  \
+      PROTOCOL_VERSION == 757 /* 1.18/.1 */ || PROTOCOL_VERSION == 758 /* 1.18.2 */
         static constexpr int packet_id = 0x19;
-#elif PROTOCOL_VERSION == 759
+#elif PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x16;
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x17;
 #else
 #error "Protocol version not implemented"
@@ -78,7 +78,7 @@ namespace ProtocolCraft
             pitch = pitch_;
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         void SetSeed(const long long int seed_)
         {
             seed = seed_;
@@ -121,7 +121,7 @@ namespace ProtocolCraft
             return pitch;
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         long long int GetSeed() const
         {
             return seed;
@@ -139,7 +139,7 @@ namespace ProtocolCraft
             z = ReadData<int>(iter, length);
             volume = ReadData<float>(iter, length);
             pitch = ReadData<float>(iter, length);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             seed = ReadData<long long int>(iter, length);
 #endif
         }
@@ -153,7 +153,7 @@ namespace ProtocolCraft
             WriteData<int>(z, container);
             WriteData<float>(volume, container);
             WriteData<float>(pitch, container);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteData<long long int>(seed, container);
 #endif
         }
@@ -169,7 +169,7 @@ namespace ProtocolCraft
             output["z"] = z;
             output["volume"] = volume;
             output["pitch"] = pitch;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             output["seed"] = seed;
 #endif
 
@@ -184,7 +184,7 @@ namespace ProtocolCraft
         int z = 0;
         float volume = 0.0f;
         float pitch = 0.0f;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         long long int seed = 0;
 #endif
 

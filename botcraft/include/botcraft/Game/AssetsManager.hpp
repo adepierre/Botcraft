@@ -24,13 +24,13 @@ namespace Botcraft
         AssetsManager(AssetsManager const&) = delete;
         void operator=(AssetsManager const&) = delete;
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         const std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Blockstate> > >& Blockstates() const;
 #else
         const std::unordered_map<int, std::unique_ptr<Blockstate> >& Blockstates() const;
 #endif
         
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
         const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& Biomes() const;
         const Biome* GetBiome(const unsigned char id) const;
 #else
@@ -41,7 +41,7 @@ namespace Botcraft
         const std::unordered_map<ItemId, std::unique_ptr<Item> >& Items() const;
         const Item* GetItem(const ItemId id) const;
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         const std::pair<int, unsigned char> GetItemID(const std::string& item_name) const;
 #else
         const int GetItemID(const std::string& item_name) const;
@@ -67,12 +67,12 @@ namespace Botcraft
 #endif
 
     private:
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Blockstate> > > blockstates;
 #else
         std::unordered_map<int, std::unique_ptr<Blockstate> > blockstates;
 #endif
-#if PROTOCOL_VERSION < 358
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
         std::unordered_map<unsigned char, std::unique_ptr<Biome> > biomes;
 #else
         std::unordered_map<int, std::unique_ptr<Biome> > biomes;

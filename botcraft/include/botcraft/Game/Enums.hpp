@@ -12,7 +12,7 @@ namespace Botcraft
         Hidden
     };
 
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
     enum class Dimension
     {
         None = -2,
@@ -181,7 +181,7 @@ namespace Botcraft
         Stone,
         Iron,
         Diamond,
-#if PROTOCOL_VERSION > 578 // > 1.15.2
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         Netherite,
 #endif
         NUM_TOOL_MATERIAL
@@ -229,16 +229,16 @@ namespace Botcraft
         Levitation = 25,
         Luck = 26,
         Unluck = 27,
-#if PROTOCOL_VERSION > 340 // 1.13
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         SlowFalling = 28,
         ConduitPower = 29,
         DolphinsGrace = 30,
 #endif
-#if PROTOCOL_VERSION > 404 //1.14
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         BadOmen = 31,
         HeroOfTheVillage = 32,
 #endif
-#if PROTOCOL_VERSION > 758 // 1.19
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         Darkness = 33,
 #endif
     };

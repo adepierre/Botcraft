@@ -7,7 +7,7 @@ namespace Botcraft
     class EnderManEntity : public MonsterEntity
     {
     protected:
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         static constexpr int metadata_count = 3;
 #else
         static constexpr int metadata_count = 2;
@@ -37,13 +37,13 @@ namespace Botcraft
 
         int GetDataCarryState() const;
         bool GetDataCreepy() const;
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         bool GetDataStaredAt() const;
 #endif
 
         void SetDataCarryState(const int data_carry_state);
         void SetDataCreepy(const bool data_creepy);
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         void SetDataStaredAt(const bool data_stared_at);
 #endif
 

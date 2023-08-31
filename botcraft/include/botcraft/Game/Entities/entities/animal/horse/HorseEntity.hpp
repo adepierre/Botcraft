@@ -7,7 +7,7 @@ namespace Botcraft
     class HorseEntity : public AbstractHorseEntity
     {
     protected:
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 1;
 #else
         static constexpr int metadata_count = 2;
@@ -36,12 +36,12 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         int GetDataIdTypeVariant() const;
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         const std::optional<int>& GetArmorType() const;
 #endif
 
         void SetDataIdTypeVariant(const int data_id_type_variant);
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         void SetArmorType(const std::optional<int>& armor_type);
 #endif
 

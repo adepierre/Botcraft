@@ -32,7 +32,7 @@ namespace Botcraft
         int transaction_id = client.SendInventoryTransaction(click_window_msg);
 
         // Wait for the click confirmation (versions < 1.17)
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         auto start = std::chrono::steady_clock::now();
         while (true)
         {
@@ -548,11 +548,11 @@ namespace Botcraft
         default:
             break;
         }
-#if PROTOCOL_VERSION > 452
+#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
         place_block_msg->SetInside(false);
 #endif
         place_block_msg->SetHand(static_cast<int>(Hand::Right));
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         {
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
             place_block_msg->SetSequence(world->GetNextWorldInteractionSequenceId());
@@ -666,7 +666,7 @@ namespace Botcraft
         const char current_stack_size = inventory_manager->GetOffHand().GetItemCount();
         std::shared_ptr<ServerboundUseItemPacket> use_item_msg = std::make_shared<ServerboundUseItemPacket>();
         use_item_msg->SetHand(static_cast<int>(Hand::Left));
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         {
             std::shared_ptr<World> world = client.GetWorld();
             std::lock_guard<std::mutex> world_guard(world->GetMutex());
@@ -879,7 +879,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION > 451
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     Status TradeImpl(BehaviourClient& client, const int item_id, const bool buy, const int trade_id)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
@@ -1182,7 +1182,7 @@ namespace Botcraft
             {
                 for (int x = 0; x < 3; ++x)
                 {
-#if PROTOCOL_VERSION < 350
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
                     if (inputs[y][x].first != -1)
 #else
                     if (inputs[y][x] != -1)
@@ -1261,7 +1261,7 @@ namespace Botcraft
                         {
                             continue;
                         }
-#if PROTOCOL_VERSION < 350
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
                         if (s.second.GetBlockID() == inputs[y][x].first && s.second.GetItemDamage() == inputs[y][x].second)
 #else
                         if (s.second.GetItemID() == inputs[y][x])
@@ -1369,7 +1369,7 @@ namespace Botcraft
         return Status::Success;
     }
 
-#if PROTOCOL_VERSION < 350
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
     Status Craft(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft)
 #else
     Status Craft(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft)
@@ -1382,7 +1382,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-#if PROTOCOL_VERSION < 350
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
         blackboard.Set<std::array<std::array<std::pair<int, unsigned char>, 3>, 3>>(variable_names[0], inputs);
 #else
         blackboard.Set<std::array<std::array<int, 3>, 3>>(variable_names[0], inputs);
@@ -1402,7 +1402,7 @@ namespace Botcraft
         Blackboard& blackboard = client.GetBlackboard();
 
         // Mandatory
-#if PROTOCOL_VERSION < 350
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
         const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs = blackboard.Get<std::array<std::array<std::pair<int, unsigned char>, 3>, 3>>(variable_names[0]);
 #else
         const std::array<std::array<int, 3>, 3>& inputs = blackboard.Get<std::array<std::array<int, 3>, 3>>(variable_names[0]);
@@ -1418,7 +1418,7 @@ namespace Botcraft
     Status CraftNamedImpl(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         const AssetsManager& assets_manager = AssetsManager::getInstance();
-#if PROTOCOL_VERSION < 350
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
         std::array<std::array<std::pair<int, unsigned char>, 3>, 3> inputs_ids;
 #else
         std::array<std::array<int, 3>, 3> inputs_ids;
@@ -1427,7 +1427,7 @@ namespace Botcraft
         {
             for (size_t j = 0; j < 3; ++j)
             {
-#if PROTOCOL_VERSION < 350
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
                 inputs_ids[i][j] = inputs[i][j] == "" ? std::pair<int, unsigned char>{ -1, 0 } : assets_manager.GetItemID(inputs[i][j]);
 #else
                 inputs_ids[i][j] = inputs[i][j] == "" ? -1 : assets_manager.GetItemID(inputs[i][j]);
@@ -1488,7 +1488,7 @@ namespace Botcraft
                 }
 
                 if (!s.second.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 350
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
                     s.second.GetBlockID() == item_id.first && s.second.GetItemDamage() == item_id.second
 #else
                     s.second.GetItemID() == item_id

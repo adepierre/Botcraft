@@ -16,7 +16,7 @@ WorldEaterClient::~WorldEaterClient()
 
 }
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
 void WorldEaterClient::Handle(ProtocolCraft::ClientboundChatPacket& msg)
 {
     ManagersClient::Handle(msg);
@@ -28,9 +28,9 @@ void WorldEaterClient::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
 {
     ManagersClient::Handle(msg);
 
-#if PROTOCOL_VERSION == 759
+#if PROTOCOL_VERSION == 759 /* 1.19 */
     ProcessChatMsg(msg.GetSignedContent().GetText());
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
     ProcessChatMsg(msg.GetMessage_().GetSignedBody().GetContent().GetPlain());
 #else
     ProcessChatMsg(msg.GetBody().GetContent());

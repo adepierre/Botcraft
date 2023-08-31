@@ -9,10 +9,10 @@
 #include <mutex>
 #include <condition_variable>
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #include "botcraft/Network/LastSeenMessagesTracker.hpp"
 #endif
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
 #include <atomic>
 #endif
 
@@ -51,16 +51,16 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundHelloPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg) override;
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         virtual void Handle(ProtocolCraft::ClientboundCustomQueryPacket& msg) override;
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         virtual void Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg) override;
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         virtual void Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& msg) override;
 #endif
 #endif
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
 #endif
 
@@ -82,10 +82,10 @@ namespace Botcraft
 
         std::string name;
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         LastSeenMessagesTracker chat_context;
 #endif
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         ProtocolCraft::UUID chat_session_uuid;
         std::atomic<int> message_sent_index;
 #endif

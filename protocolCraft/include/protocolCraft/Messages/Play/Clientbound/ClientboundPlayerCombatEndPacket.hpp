@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
@@ -9,16 +9,16 @@ namespace ProtocolCraft
     class ClientboundPlayerCombatEndPacket : public BaseMessage<ClientboundPlayerCombatEndPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 ||  \
-      PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758
+#if   PROTOCOL_VERSION == 755 /* 1.17 */ || PROTOCOL_VERSION == 756 /* 1.17.1 */ ||  \
+      PROTOCOL_VERSION == 757 /* 1.18/.1 */ || PROTOCOL_VERSION == 758 /* 1.18.2 */
         static constexpr int packet_id = 0x33;
-#elif PROTOCOL_VERSION == 759
+#elif PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x31;
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x34;
-#elif PROTOCOL_VERSION == 761
+#elif PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x32;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x36;
 #else
 #error "Protocol version not implemented"
@@ -31,7 +31,7 @@ namespace ProtocolCraft
 
         }
 
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         void SetKillerId(const int killer_id_)
         {
             killer_id = killer_id_;
@@ -44,7 +44,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         int GetKillerId() const
         {
             return killer_id;
@@ -61,7 +61,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             duration = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
             killer_id = ReadData<int>(iter, length);
 #endif
         }
@@ -69,7 +69,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(duration, container);
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
             WriteData<int>(killer_id, container);
 #endif
         }
@@ -79,7 +79,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["duration"] = duration;
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
             output["killer_id"] = killer_id;
 #endif
 
@@ -87,7 +87,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         int killer_id = 0;
 #endif
         int duration = 0;

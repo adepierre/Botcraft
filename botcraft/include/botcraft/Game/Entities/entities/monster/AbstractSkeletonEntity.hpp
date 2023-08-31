@@ -7,7 +7,7 @@ namespace Botcraft
     class AbstractSkeletonEntity : public MonsterEntity
     {
     protected:
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 0;
 #else
         static constexpr int metadata_count = 1;
@@ -22,7 +22,7 @@ namespace Botcraft
         virtual bool IsAbstractSkeleton() const override;
 
 
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff

@@ -7,7 +7,7 @@ namespace Botcraft
     class ShulkerEntity : public AbstractGolemEntity
     {
     protected:
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         static constexpr int metadata_count = 3;
 #else
         static constexpr int metadata_count = 4;
@@ -36,14 +36,14 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         Direction GetDataAttachFaceId() const;
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         const std::optional<Position>& GetDataAttachPosId() const;
 #endif
         char GetDataPeekId() const;
         char GetDataColorId() const;
 
         void SetDataAttachFaceId(const Direction data_attach_face_id);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         void SetDataAttachPosId(const std::optional<Position>& data_attach_pos_id);
 #endif
         void SetDataPeekId(const char data_peek_id);

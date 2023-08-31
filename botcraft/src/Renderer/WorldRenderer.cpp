@@ -258,7 +258,7 @@ namespace Botcraft
 
                         //Add all faces of the current state
                         const std::vector<FaceDescriptor>& current_faces = this_block->GetBlockstate()->GetModel(this_block->GetModelId()).GetFaces();
-#if PROTOCOL_VERSION < 552
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
                         const Biome* current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, z));
 #else
                         const Biome* current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, y, z));
@@ -591,29 +591,29 @@ namespace Botcraft
                     break;
                     //Something like black when signal strength is 0 and red when it's 15
                 case TintType::Redstone:
-#if PROTOCOL_VERSION == 340 // 1.12.2
+#if PROTOCOL_VERSION == 340 /* 1.12.2 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * blockstate->GetMetadata());
-#elif PROTOCOL_VERSION == 393 // 1.13
+#elif PROTOCOL_VERSION == 393 /* 1.13 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 1752) / 9) % 16));
-#elif PROTOCOL_VERSION == 401 || PROTOCOL_VERSION == 404 // 1.13.1 && 1.13.2
+#elif PROTOCOL_VERSION == 401 /* 1.13.1 */ || PROTOCOL_VERSION == 404 /* 1.13.2 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 1753) / 9) % 16));
-#elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498 // 1.14.X
+#elif PROTOCOL_VERSION == 477 /* 1.14 */ || PROTOCOL_VERSION == 480 /* 1.14.1 */ || PROTOCOL_VERSION == 485 /* 1.14.2 */ || PROTOCOL_VERSION == 490 /* 1.14.3 */ || PROTOCOL_VERSION == 498 /* 1.14.4 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2056) / 9) % 16));
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 || PROTOCOL_VERSION == 578 // 1.15.X
+#elif PROTOCOL_VERSION == 573 /* 1.15 */ || PROTOCOL_VERSION == 575 /* 1.15.1 */ || PROTOCOL_VERSION == 578 /* 1.15.2 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2056) / 9) % 16));
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736 || PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753  || PROTOCOL_VERSION == 754 // 1.16.X
+#elif PROTOCOL_VERSION == 735 /* 1.16 */ || PROTOCOL_VERSION == 736 /* 1.16.1 */ || PROTOCOL_VERSION == 751 /* 1.16.2 */ || PROTOCOL_VERSION == 753 /* 1.16.3 */  || PROTOCOL_VERSION == 754 /* 1.16.4/5 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2058) / 9) % 16));
-#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 // 1.17.X
+#elif PROTOCOL_VERSION == 755 /* 1.17 */ || PROTOCOL_VERSION == 756 /* 1.17.1 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2114) / 9) % 16));
-#elif PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 // 1.18.X
+#elif PROTOCOL_VERSION == 757 /* 1.18/.1 */ || PROTOCOL_VERSION == 758 /* 1.18.2 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2114) / 9) % 16));
-#elif PROTOCOL_VERSION == 759 || PROTOCOL_VERSION == 760 // 1.19, 1.19.1 and 1.19.2
+#elif PROTOCOL_VERSION == 759 /* 1.19 */ || PROTOCOL_VERSION == 760 /* 1.19.1/2 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2312) / 9) % 16));
-#elif PROTOCOL_VERSION == 759 || PROTOCOL_VERSION == 761 // 1.19.3
+#elif PROTOCOL_VERSION == 759 /* 1.19 */ || PROTOCOL_VERSION == 761 /* 1.19.3 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2926) / 9) % 16));
-#elif PROTOCOL_VERSION == 759 || PROTOCOL_VERSION == 762 // 1.19.4
+#elif PROTOCOL_VERSION == 759 /* 1.19 */ || PROTOCOL_VERSION == 762 /* 1.19.4 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2974) / 9) % 16));
-#elif PROTOCOL_VERSION == 763 // 1.20
+#elif PROTOCOL_VERSION == 763 /* 1.20/.1 */
                     texture_modifier[i] = 0xFF000000 | (25 + 15 * (((blockstate->GetId() - 2978) / 9) % 16));
 #else
         #error "Protocol version not implemented"

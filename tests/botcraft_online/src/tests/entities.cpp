@@ -37,7 +37,7 @@ TEST_CASE("summoning")
                 << pos.z << " "
                 << "{NoAI:1b,PersistenceRequired:1b}";
             MinecraftServer::GetInstance().SendLine(command.str());
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
             MinecraftServer::GetInstance().WaitLine(".*?: Summoned new.*", 5000);
 #else
             MinecraftServer::GetInstance().WaitLine(".*?: Object successfully summoned.*", 5000);

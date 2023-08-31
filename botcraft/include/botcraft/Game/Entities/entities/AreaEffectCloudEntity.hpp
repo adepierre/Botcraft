@@ -1,7 +1,7 @@
 #pragma once
 
 #include "botcraft/Game/Entities/entities/Entity.hpp"
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #endif
 
@@ -10,7 +10,7 @@ namespace Botcraft
     class AreaEffectCloudEntity : public Entity
     {
     protected:
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         static constexpr int metadata_count = 4;
 #else
         static constexpr int metadata_count = 6;
@@ -41,7 +41,7 @@ namespace Botcraft
         float GetDataRadius() const;
         int GetDataColor() const;
         bool GetDataWaiting() const;
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         const std::shared_ptr<ProtocolCraft::Particle>& GetDataParticle() const;
 #else
         const std::optional<int>& GetDataParticle() const;
@@ -52,7 +52,7 @@ namespace Botcraft
         void SetDataRadius(const float data_radius);
         void SetDataColor(const int data_color);
         void SetDataWaiting(const bool data_waiting);
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         void SetDataParticle(const std::shared_ptr<ProtocolCraft::Particle>& data_particle);
 #else
         void SetDataParticle(const std::optional<int>& data_particle_type_id);

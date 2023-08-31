@@ -2,7 +2,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
     const std::array<std::string, AbstractSkeletonEntity::metadata_count> AbstractSkeletonEntity::metadata_names{ {
         "is_swinging_arms",
     } };
@@ -10,7 +10,7 @@ namespace Botcraft
 
     AbstractSkeletonEntity::AbstractSkeletonEntity()
     {
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         // Initialize all metadata with default values
         SetIsSwingingArms(false);
 #endif
@@ -27,7 +27,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
     ProtocolCraft::Json::Value AbstractSkeletonEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = MonsterEntity::Serialize();

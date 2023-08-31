@@ -3,7 +3,7 @@
 #ifdef USE_ENCRYPTION
 
 #include <vector>
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include <string>
 #endif
 
@@ -16,7 +16,7 @@ namespace Botcraft
     public:
         AESEncrypter();
         ~AESEncrypter();
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         /// @brief Initialize the encryption context for this connection
         /// @param pub_key Server public key
         /// @param input_nonce Server input nonce
@@ -25,7 +25,7 @@ namespace Botcraft
         /// @param encrypted_shared_secret Shared secret encrypted using server public key
         void Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce,
             std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_nonce, std::vector<unsigned char>& encrypted_shared_secret);
-#elif PROTOCOL_VERSION < 761
+#elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
         /// @brief Initialize the encryption context for this connection
         /// @param pub_key Server public key
         /// @param input_nonce Server input nonce

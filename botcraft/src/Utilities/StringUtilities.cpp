@@ -2,7 +2,7 @@
 #include "botcraft/Utilities/Logger.hpp"
 
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include <array>
 #include <ctime>
 #include <iomanip>
@@ -36,7 +36,7 @@ namespace Botcraft::Utilities
         return tokens;
     }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     std::vector<unsigned char> DecodeBase64(const std::string& s)
     {
         static std::array<unsigned char, 128> constexpr decode_table{

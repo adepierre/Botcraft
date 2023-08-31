@@ -2,7 +2,7 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "protocolCraft/Types/GameProfile/GameProfile.hpp"
 #endif
 
@@ -19,7 +19,7 @@ namespace ProtocolCraft
 
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         void SetGameProfile(const GameProfile& game_profile_)
         {
             game_profile = game_profile_;
@@ -31,7 +31,7 @@ namespace ProtocolCraft
             return game_profile;
         }
 #else
-#if PROTOCOL_VERSION > 706
+#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
         void SetUUID(const UUID& uuid_)
         {
             uuid = uuid_;
@@ -48,7 +48,7 @@ namespace ProtocolCraft
             username = username_;
         }
 
-#if PROTOCOL_VERSION > 706
+#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
         const UUID& GetUUID() const
         {
             return uuid;
@@ -69,10 +69,10 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             game_profile = ReadData<GameProfile>(iter, length);
 #else
-#if PROTOCOL_VERSION > 706
+#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
             uuid = ReadData<UUID>(iter, length);
 #else
             uuid = ReadData<std::string>(iter, length);
@@ -83,10 +83,10 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteData<GameProfile>(game_profile, container);
 #else
-#if PROTOCOL_VERSION > 706
+#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
             WriteData<UUID>(uuid, container);
 #else
             WriteData<std::string>(uuid, container);
@@ -99,7 +99,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             output["game_profile"] = game_profile;
 #else
             output["uuid"] = uuid;
@@ -110,10 +110,10 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         GameProfile game_profile;
 #else
-#if PROTOCOL_VERSION > 706
+#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
         UUID uuid = {};
 #else
         // This uuid is not a normal uuid but a regular string

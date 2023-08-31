@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
@@ -9,8 +9,8 @@ namespace ProtocolCraft
     class ServerboundChatAckPacket : public BaseMessage<ServerboundChatAckPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 760 || PROTOCOL_VERSION == 761 ||  \
-      PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#if   PROTOCOL_VERSION == 760 /* 1.19.1/2 */ || PROTOCOL_VERSION == 761 /* 1.19.3 */ ||  \
+      PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x03;
 #else
 #error "Protocol version not implemented"
@@ -24,7 +24,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         void SetLastSeenMessages(const LastSeenMessagesUpdate& last_seen_messages_)
         {
             last_seen_messages = last_seen_messages_;
@@ -37,7 +37,7 @@ namespace ProtocolCraft
 #endif
 
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const LastSeenMessagesUpdate& GetLastSeenMessages() const
         {
             return last_seen_messages;
@@ -53,7 +53,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             last_seen_messages = ReadData<LastSeenMessagesUpdate>(iter, length);
 #else
             offset = ReadData<VarInt>(iter, length);
@@ -62,7 +62,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<LastSeenMessagesUpdate>(last_seen_messages, container);
 #else
             WriteData<VarInt>(offset, container);
@@ -73,7 +73,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["last_seen_message"] = last_seen_messages;
 #else
             output["offset"] = offset;
@@ -83,7 +83,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         LastSeenMessagesUpdate last_seen_messages;
 #else
         int offset = 0;

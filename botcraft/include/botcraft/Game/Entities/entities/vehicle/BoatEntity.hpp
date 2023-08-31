@@ -7,7 +7,7 @@ namespace Botcraft
     class BoatEntity : public Entity
     {
     protected:
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         static constexpr int metadata_count = 7;
 #else
         static constexpr int metadata_count = 6;
@@ -41,7 +41,7 @@ namespace Botcraft
         int GetDataIdType() const;
         bool GetDataIdPaddleLeft() const;
         bool GetDataIdPaddleRight() const;
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         int GetDataIdBubbleTime() const;
 #endif
 
@@ -51,7 +51,7 @@ namespace Botcraft
         void SetDataIdType(const int data_id_type);
         void SetDataIdPaddleLeft(const bool data_id_paddle_left);
         void SetDataIdPaddleRight(const bool data_id_paddle_right);
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         void SetDataIdBubbleTime(const int data_id_bubble_time);
 #endif
 

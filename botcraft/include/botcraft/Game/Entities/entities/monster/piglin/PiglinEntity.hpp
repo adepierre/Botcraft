@@ -1,7 +1,7 @@
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "botcraft/Game/Entities/entities/monster/piglin/AbstractPiglinEntity.hpp"
 #else
 #include "botcraft/Game/Entities/entities/monster/MonsterEntity.hpp"
@@ -9,20 +9,20 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
     class PiglinEntity : public AbstractPiglinEntity
 #else
     class PiglinEntity : public MonsterEntity
 #endif
     {
     protected:
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
         static constexpr int metadata_count = 3;
 #else
         static constexpr int metadata_count = 4;
 #endif
         static const std::array<std::string, metadata_count> metadata_names;
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
         static constexpr int hierarchy_metadata_count = AbstractPiglinEntity::metadata_count + AbstractPiglinEntity::hierarchy_metadata_count;
 #else
         static constexpr int hierarchy_metadata_count = MonsterEntity::metadata_count + MonsterEntity::hierarchy_metadata_count;
@@ -49,14 +49,14 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         bool GetDataBabyId() const;
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
         bool GetDataImmuneToZombification() const;
 #endif
         bool GetDataIsChargingCrossbow() const;
         bool GetDataIsDancing() const;
 
         void SetDataBabyId(const bool data_baby_id);
-#if PROTOCOL_VERSION < 737
+#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
         void SetDataImmuneToZombification(const bool data_immune_to_zombification);
 #endif
         void SetDataIsChargingCrossbow(const bool data_is_charging_crossbow);

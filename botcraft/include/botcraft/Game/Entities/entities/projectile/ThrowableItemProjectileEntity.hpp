@@ -1,7 +1,7 @@
 #pragma once
 
 #include "botcraft/Game/Entities/entities/projectile/ThrowableProjectileEntity.hpp"
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "protocolCraft/Types/Slot.hpp"
 #endif
 
@@ -10,7 +10,7 @@ namespace Botcraft
     class ThrowableItemProjectileEntity : public ThrowableProjectileEntity
     {
     protected:
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 1;
         static const std::array<std::string, metadata_count> metadata_names;
 #else
@@ -24,7 +24,7 @@ namespace Botcraft
 
         virtual bool IsThrowableItemProjectile() const override;
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff

@@ -64,7 +64,7 @@ namespace Botcraft
         msg_interact->SetEntityId(entity_id);
         msg_interact->SetAction(0);
         msg_interact->SetHand(static_cast<int>(hand)); 
-#if PROTOCOL_VERSION > 722
+#if PROTOCOL_VERSION > 722 /* > 1.15.2 */
         msg_interact->SetUsingSecondaryAction(false);
 #endif
         network_manager->Send(msg_interact);

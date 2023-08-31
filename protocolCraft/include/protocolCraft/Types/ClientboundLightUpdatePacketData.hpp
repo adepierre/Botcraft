@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/NetworkType.hpp"
 
 namespace ProtocolCraft
@@ -14,7 +14,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         void SetTrustEdges(const bool trust_edges_)
         {
             trust_edges = trust_edges_;
@@ -52,7 +52,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         bool GetTrustEdges() const
         {
             return trust_edges;
@@ -92,7 +92,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
             trust_edges = ReadData<bool>(iter, length);
 #endif
             
@@ -118,7 +118,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
             WriteData<bool>(trust_edges, container);
 #endif
 
@@ -146,7 +146,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
             output["trust_edges"] = trust_edges;
 #endif
             output["sky_Y_mask"] = sky_Y_mask;
@@ -160,7 +160,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         bool trust_edges = false;
 #endif
 

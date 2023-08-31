@@ -8,10 +8,10 @@ namespace Botcraft
         "data_effect_color_id",
         "data_effect_ambience_id",
         "data_arrow_count_id",
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         "data_stinger_count_id",
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "sleeping_pos_id",
 #endif
     } };
@@ -24,10 +24,10 @@ namespace Botcraft
         SetDataEffectColorId(0);
         SetDataEffectAmbienceId(false);
         SetDataArrowCountId(0);
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         SetDataStingerCountId(0);
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetSleepingPosId(std::optional<Position>());
 #endif
     }
@@ -52,10 +52,10 @@ namespace Botcraft
         output["metadata"]["data_effect_color_id"] = GetDataEffectColorId();
         output["metadata"]["data_effect_ambience_id"] = GetDataEffectAmbienceId();
         output["metadata"]["data_arrow_count_id"] = GetDataArrowCountId();
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         output["metadata"]["data_stinger_count_id"] = GetDataStingerCountId();
 #endif
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["sleeping_pos_id"] = GetSleepingPosId() ? GetSleepingPosId().value().Serialize() : ProtocolCraft::Json::Value();
 #endif
 
@@ -100,14 +100,14 @@ namespace Botcraft
         return std::any_cast<int>(metadata.at("data_arrow_count_id"));
     }
 
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     int LivingEntity::GetDataStingerCountId() const
     {
         return std::any_cast<int>(metadata.at("data_stinger_count_id"));
     }
 #endif
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const std::optional<Position>& LivingEntity::GetSleepingPosId() const
     {
         return std::any_cast<const std::optional<Position>&>(metadata.at("sleeping_pos_id"));
@@ -140,14 +140,14 @@ namespace Botcraft
         metadata["data_arrow_count_id"] = data_arrow_count_id;
     }
 
-#if PROTOCOL_VERSION > 498
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     void LivingEntity::SetDataStingerCountId(const int data_stinger_count_id)
     {
         metadata["data_stinger_count_id"] = data_stinger_count_id;
     }
 #endif
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void LivingEntity::SetSleepingPosId(const std::optional<Position>& sleeping_pos_id)
     {
         metadata["sleeping_pos_id"] = sleeping_pos_id;

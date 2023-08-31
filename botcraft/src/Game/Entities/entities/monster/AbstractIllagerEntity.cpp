@@ -2,14 +2,14 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
     const std::array<std::string, AbstractIllagerEntity::metadata_count> AbstractIllagerEntity::metadata_names{ {
         "has_target",
     } };
 #endif
     AbstractIllagerEntity::AbstractIllagerEntity()
     {
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         // Initialize all metadata with default values
         SetHasTarget(0);
 #endif
@@ -26,7 +26,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION < 405
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
     ProtocolCraft::Json::Value AbstractIllagerEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = MonsterEntity::Serialize();

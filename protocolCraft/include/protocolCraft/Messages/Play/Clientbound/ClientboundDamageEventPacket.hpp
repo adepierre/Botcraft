@@ -1,10 +1,10 @@
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
 
-#if PROTOCOL_VERSION > 356
+#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
 
@@ -13,7 +13,7 @@ namespace ProtocolCraft
     class ClientboundDamageEventPacket : public BaseMessage<ClientboundDamageEventPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#if   PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x18;
 #else
 #error "Protocol version not implemented"

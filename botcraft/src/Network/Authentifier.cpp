@@ -35,7 +35,7 @@ namespace Botcraft
         { "id", nullptr },
         { "mc_token", nullptr },
         { "expires_date", nullptr },
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         { "certificates", {
             { "private_key", nullptr },
             { "public_key", nullptr },
@@ -49,7 +49,7 @@ namespace Botcraft
     Authentifier::Authentifier()
     {
         mc_player_uuid_bytes.fill(0);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         key_timestamp = 0;
         rnd = std::mt19937(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
 #endif
@@ -85,7 +85,7 @@ namespace Botcraft
             UpdateUUIDBytes();
             LOG_INFO("Cached Minecraft token for Microsoft account still valid.");
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             LOG_INFO("Getting player certificates...");
             std::tie(private_key, public_key, key_signature, key_timestamp) = GetPlayerCertificates(login, mc_access_token);
             if (private_key.empty() || public_key.empty() || key_signature.empty())
@@ -152,7 +152,7 @@ namespace Botcraft
         UpdateUUIDBytes();
         LOG_INFO("MC profile obtained!");
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         LOG_INFO("Getting player certificates...");
         std::tie(private_key, public_key, key_signature, key_timestamp) = GetPlayerCertificates(login, mc_access_token);
         if (private_key.empty() || public_key.empty() || key_signature.empty())
@@ -269,7 +269,7 @@ namespace Botcraft
         return mc_player_uuid_bytes;
     }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     const std::string& Authentifier::GetPrivateKey() const
     {
         return private_key;
@@ -290,10 +290,10 @@ namespace Botcraft
         return key_timestamp;
     }
 
-#if PROTOCOL_VERSION == 759
+#if PROTOCOL_VERSION == 759 /* 1.19 */
     const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
         long long int& salt, long long int& timestamp)
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
     const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
         const std::vector<unsigned char>& previous_signature, const std::vector<LastSeenMessagesEntry>& last_seen,
         long long int& salt, long long int& timestamp)
@@ -328,7 +328,7 @@ namespace Botcraft
         }
 
         std::array<unsigned char, SHA256_DIGEST_LENGTH> signature_hash;
-#if PROTOCOL_VERSION == 759
+#if PROTOCOL_VERSION == 759 /* 1.19 */
         // Signature is computed with a dumb json instead of the actual string
         const std::string jsoned_message = "{\"text\":\"" + message + "\"}";
 
@@ -339,7 +339,7 @@ namespace Botcraft
         SHA256_Update(&sha256, mc_player_uuid_bytes.data(), mc_player_uuid_bytes.size());
         SHA256_Update(&sha256, timestamp_bytes.data(), timestamp_bytes.size());
         SHA256_Update(&sha256, jsoned_message.data(), jsoned_message.size());
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         const unsigned char const_byte_70 = 70;
 
         // Body hash
@@ -621,7 +621,7 @@ namespace Botcraft
         WriteCacheFile(profiles);
     }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     void Authentifier::UpdateCachedPlayerCertificates(const std::string& login, const std::string& private_k,
         const std::string& public_k, const std::string& signature_v1,
         const std::string& signature_v2, const long long int& expiration) const
@@ -1052,7 +1052,7 @@ namespace Botcraft
         return { response["id"].get_string(), response["name"].get_string() };
     }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     const std::tuple<std::string, std::string, std::string, long long int> Authentifier::GetPlayerCertificates(const std::string& login,
         const std::string& mc_token) const
     {
@@ -1062,7 +1062,7 @@ namespace Botcraft
         const bool invalid_cached_values = !cached.contains("certificates") || !cached["certificates"].is_object() ||
             !cached["certificates"].contains("private_key") || !cached["certificates"]["private_key"].is_string() ||
             !cached["certificates"].contains("public_key") || !cached["certificates"]["public_key"].is_string() ||
-#if PROTOCOL_VERSION == 759
+#if PROTOCOL_VERSION == 759 /* 1.19 */
             !cached["certificates"].contains("signature_v1") || !cached["certificates"]["signature_v1"].is_string() ||
 #else
             !cached["certificates"].contains("signature_v2") || !cached["certificates"]["signature_v2"].is_string() ||
@@ -1147,7 +1147,7 @@ namespace Botcraft
 
             return { response["keyPair"]["privateKey"].get_string(),
                 response["keyPair"]["publicKey"].get_string(),
-#if PROTOCOL_VERSION == 759
+#if PROTOCOL_VERSION == 759 /* 1.19 */
                 response["publicKeySignature"].get_string(),
 #else
                 response["publicKeySignatureV2"].get_string(),
@@ -1159,7 +1159,7 @@ namespace Botcraft
         LOG_INFO("Cached player certificates still valid!");
         return { cached["certificates"]["private_key"].get_string(),
             cached["certificates"]["public_key"].get_string(),
-        #if PROTOCOL_VERSION == 759
+        #if PROTOCOL_VERSION == 759 /* 1.19 */
             cached["certificates"]["signature_v1"].get_string(),
 #else
             cached["certificates"]["signature_v2"].get_string(),

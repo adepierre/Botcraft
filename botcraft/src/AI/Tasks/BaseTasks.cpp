@@ -117,11 +117,11 @@ namespace Botcraft
         default:
             break;
         }
-#if PROTOCOL_VERSION > 452
+#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
         place_block_msg->SetInside(false);
 #endif
         place_block_msg->SetHand(static_cast<int>(Hand::Right));
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         {
             std::shared_ptr<World> world = client.GetWorld();
             std::lock_guard<std::mutex> world_guard(world->GetMutex());

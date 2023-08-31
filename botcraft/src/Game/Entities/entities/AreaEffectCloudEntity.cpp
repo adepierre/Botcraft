@@ -7,7 +7,7 @@ namespace Botcraft
         "data_color",
         "data_waiting",
         "data_particle",
-#if PROTOCOL_VERSION < 341
+#if PROTOCOL_VERSION < 341 /* < 1.13 */
         "data_particle_argument1",
         "data_particle_argument2",
 #endif
@@ -16,14 +16,14 @@ namespace Botcraft
     AreaEffectCloudEntity::AreaEffectCloudEntity()
     {
         // Initialize all metadata with default values
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         SetDataRadius(0.5f);
 #else
         SetDataRadius(3.0f);
 #endif
         SetDataColor(0);
         SetDataWaiting(false);
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         SetDataParticle(ProtocolCraft::Particle::CreateParticle(ProtocolCraft::ParticleType::EntityEffect));
 #else
         SetDataParticle(std::optional<int>());
@@ -77,7 +77,7 @@ namespace Botcraft
         output["metadata"]["data_radius"] = GetDataRadius();
         output["metadata"]["data_color"] = GetDataColor();
         output["metadata"]["data_waiting"] = GetDataWaiting();
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         output["metadata"]["data_particle"] = GetDataParticle() ? ProtocolCraft::Json::Value({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : ProtocolCraft::Json::Value();
 #else
         output["metadata"]["data_particle"] = GetDataParticle() ? ProtocolCraft::Json::Value(GetDataParticle().value()) : ProtocolCraft::Json::Value();
@@ -113,7 +113,7 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_waiting"));
     }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     const std::shared_ptr<ProtocolCraft::Particle>& AreaEffectCloudEntity::GetDataParticle() const
     {
         return std::any_cast<const std::shared_ptr<ProtocolCraft::Particle>&>(metadata.at("data_particle"));
@@ -159,7 +159,7 @@ namespace Botcraft
         metadata["data_waiting"] = data_waiting;
     }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void AreaEffectCloudEntity::SetDataParticle(const std::shared_ptr<ProtocolCraft::Particle>& data_particle)
     {
         metadata["data_particle"] = data_particle;

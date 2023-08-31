@@ -6,7 +6,7 @@
 #include <any>
 #include <chrono>
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
 #include "protocolCraft/Types/Slot.hpp"
@@ -23,7 +23,7 @@
 namespace Botcraft
 {
     enum class EntityType;
-#if PROTOCOL_VERSION < 458
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
     enum class ObjectEntityType;
 #endif
 
@@ -37,9 +37,9 @@ namespace Botcraft
     class Entity
     {
     protected:
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         static constexpr int metadata_count = 8;
-#elif PROTOCOL_VERSION > 404
+#elif PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 7;
 #else
         static constexpr int metadata_count = 6;
@@ -64,7 +64,7 @@ namespace Botcraft
 
         char GetDataSharedFlagsId() const;
         int GetDataAirSupplyId() const;
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         const std::optional<ProtocolCraft::Chat>& GetDataCustomName() const;
 #else
         const std::string& GetDataCustomName() const;
@@ -72,16 +72,16 @@ namespace Botcraft
         bool GetDataCustomNameVisible() const;
         bool GetDataSilent() const;
         bool GetDataNoGravity() const;
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         Pose GetDataPose() const;
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         int GetDataTicksFrozen() const;
 #endif
 
         void SetDataSharedFlagsId(const char data_shared_flags_id);
         void SetDataAirSupplyId(const int data_air_supply_id);
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         void SetDataCustomName(const std::optional<ProtocolCraft::Chat>& data_custom_name);
 #else
         void SetDataCustomName(const std::string& data_custom_name);
@@ -89,10 +89,10 @@ namespace Botcraft
         void SetDataCustomNameVisible(const bool data_custom_name_visible);
         void SetDataSilent(const bool data_silent);
         void SetDataNoGravity(const bool data_no_gravity);
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         void SetDataPose(const Pose data_pose);
 #endif
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         void SetDataTicksFrozen(const int data_ticks_frozen);
 #endif
 
@@ -149,7 +149,7 @@ namespace Botcraft
         virtual bool IsAnimal() const;
         virtual bool IsAmbientCreature() const;
         virtual bool IsMonster() const;
-#if PROTOCOL_VERSION > 761
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         virtual bool IsDisplay() const;
 #endif
         virtual bool IsTamableAnimal() const;
@@ -159,7 +159,7 @@ namespace Botcraft
         virtual bool IsAbstractHurtingProjectile() const;
         virtual bool IsMob() const;
         virtual bool IsSpellcasterIllager() const;
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         virtual bool IsProjectile() const;
 #endif
         virtual bool IsFlyingMob() const;
@@ -170,29 +170,29 @@ namespace Botcraft
         virtual bool IsAbstractMinecart() const;
         virtual bool IsAbstractMinecartContainer() const;
         virtual bool IsShoulderRidingEntity() const;
-#if PROTOCOL_VERSION > 736
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
         virtual bool IsAbstractPiglin() const;
 #endif
         virtual bool IsAbstractIllager() const;
         virtual bool IsAbstractFish() const;
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         virtual bool IsRaider() const;
 #endif
         virtual bool IsAbstractSkeleton() const;
         virtual bool IsThrowableItemProjectile() const;
-#if PROTOCOL_VERSION > 477
+#if PROTOCOL_VERSION > 477 /* > 1.14 */
         virtual bool IsAbstractVillager() const;
 #endif
         virtual bool IsAgeableMob() const;
         virtual bool IsPathfinderMob() const;
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         virtual bool IsPatrollingMonster() const;
 #endif
         virtual bool IsThrowableProjectile() const;
 
         // Factory stuff
         static std::shared_ptr<Entity> CreateEntity(const EntityType type);
-#if PROTOCOL_VERSION < 458
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
         static std::shared_ptr<Entity> CreateObjectEntity(const ObjectEntityType type);
 #endif
     
@@ -228,7 +228,7 @@ namespace Botcraft
     enum class EntityType
     {
         None = -1,
-#if PROTOCOL_VERSION > 761 // 1.19.4+
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         Allay = 0,
         AreaEffectCloud = 1,
         ArmorStand = 2,
@@ -353,7 +353,7 @@ namespace Botcraft
         ZombifiedPiglin = 121,
         Player = 122,
         FishingHook = 123,
-#elif PROTOCOL_VERSION > 760 // 1.19.3
+#elif PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         Allay = 0,
         AreaEffectCloud = 1,
         ArmorStand = 2,
@@ -473,7 +473,7 @@ namespace Botcraft
         ZombifiedPiglin = 116,
         Player = 117,
         FishingHook = 118,
-#elif PROTOCOL_VERSION > 758 // 1.19, 1.19.1, 1.19.2
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */
         Allay = 0,
         AreaEffectCloud = 1,
         ArmorStand = 2,
@@ -592,7 +592,7 @@ namespace Botcraft
         ZombifiedPiglin = 115,
         Player = 116,
         FishingHook = 117,
-#elif PROTOCOL_VERSION > 754 // 1.17+
+#elif PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -706,7 +706,7 @@ namespace Botcraft
         ZombifiedPiglin = 110,
         Player = 111,
         FishingHook = 112,
-#elif PROTOCOL_VERSION > 736 // 1.16.2+
+#elif PROTOCOL_VERSION > 736 /* > 1.16.1 */
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -815,7 +815,7 @@ namespace Botcraft
         ZombifiedPiglin = 105,
         Player = 106,
         FishingHook = 107,
-#elif PROTOCOL_VERSION > 578 // 1.16+
+#elif PROTOCOL_VERSION > 578 /* > 1.15.2 */
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -923,7 +923,7 @@ namespace Botcraft
         ZombifiedPiglin = 104,
         Player = 105,
         FishingHook = 106,
-#elif PROTOCOL_VERSION > 498 // 1.15+
+#elif PROTOCOL_VERSION > 498 /* > 1.14.4 */
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -1027,7 +1027,7 @@ namespace Botcraft
         LightningBolt = 100,
         Player = 101,
         FishingHook = 102,
-#elif PROTOCOL_VERSION > 404 //1.14+
+#elif PROTOCOL_VERSION > 404 /* > 1.13.2 */
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -1130,7 +1130,7 @@ namespace Botcraft
         LightningBolt = 99,
         Player = 100,
         FishingHook = 101,
-#elif PROTOCOL_VERSION > 340 // 1.13+
+#elif PROTOCOL_VERSION > 340 /* > 1.12.2 */
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,
@@ -1316,7 +1316,7 @@ namespace Botcraft
         MaxEntityIndex
     };
 
-#if PROTOCOL_VERSION < 458
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
     enum class ObjectEntityType
     {
         None = -1,
@@ -1346,7 +1346,7 @@ namespace Botcraft
         FishingHook = 90,
         SpectralArrow = 91,
         DragonFireball = 93,
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         ThrownTrident = 94,
 #endif
         MaxEntityIndex

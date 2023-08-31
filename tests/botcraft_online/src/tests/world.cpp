@@ -6,7 +6,7 @@
 
 #include <botcraft/Game/AssetsManager.hpp>
 
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
 #include <sstream>
 #endif
 
@@ -16,7 +16,7 @@ TEST_CASE("block names")
     std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot();
 
     std::vector<std::pair<Botcraft::Position, std::string> > pos_names = {
-#if PROTOCOL_VERSION < 393
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
         {Botcraft::Position(0, 0, 1), "minecraft:stained_glass"},
         {Botcraft::Position(1, 0, 0), "minecraft:magma"},
         {Botcraft::Position(1, 0, 1), "minecraft:wool"},
@@ -51,17 +51,17 @@ TEST_CASE("block states")
     std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot();
 
         std::vector<std::tuple<Botcraft::Position, std::string, std::string, std::string> > pos_block_variables_values = {
-#if PROTOCOL_VERSION < 393
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
         {Botcraft::Position(0, 0, 0), "minecraft:stone_slab", "half", "bottom"},
         {Botcraft::Position(0, 0, 1), "minecraft:stone_slab", "half", "top"},
-#elif PROTOCOL_VERSION < 477
+#elif PROTOCOL_VERSION < 477 /* < 1.14 */
         {Botcraft::Position(0, 0, 0), "minecraft:stone_slab", "type", "bottom"},
         {Botcraft::Position(0, 0, 1), "minecraft:stone_slab", "type", "top"},
 #else
         {Botcraft::Position(0, 0, 0), "minecraft:smooth_stone_slab", "type", "bottom"},
         {Botcraft::Position(0, 0, 1), "minecraft:smooth_stone_slab", "type", "top"},
 #endif
-#if PROTOCOL_VERSION < 393
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
         {Botcraft::Position(0, 0, 2), "minecraft:redstone_torch", "facing", "up"},
         {Botcraft::Position(1, 0, 1), "minecraft:unlit_redstone_torch", "facing", "south"}
 #else
@@ -87,7 +87,7 @@ TEST_CASE("block states")
 
 // Biome names is sometimes wrong in 1.19.4 because of additional cherry_grove that
 // is only present when experimental is activated
-#if PROTOCOL_VERSION == 762
+#if PROTOCOL_VERSION == 762 /* 1.19.4 */
 TEST_CASE("biomes", "[!mayfail]")
 #else
 TEST_CASE("biomes")
@@ -103,7 +103,7 @@ TEST_CASE("biomes")
         const Botcraft::Biome* biome = Botcraft::AssetsManager::getInstance().GetBiome(biome_id);
         CHECK(biome->GetName() == "plains");
     }
-#if PROTOCOL_VERSION > 760
+#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
     SECTION("changed biome")
     {
         const Botcraft::Position start_pos = TestManager::GetInstance().GetCurrentOffset();
@@ -141,7 +141,7 @@ TEST_CASE("biomes")
 #endif
 }
 
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
 TEST_CASE("block entity")
 #else
 TEST_CASE("block entity 1_20")
@@ -155,13 +155,13 @@ TEST_CASE("block entity 1_20")
     REQUIRE_NOTHROW(nbt = bot->GetWorld()->GetBlockEntityData(TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1)));
 
     std::vector<std::string> expected_lines = { "Hello", "world", "", "!" };
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
     std::vector<std::string> expected_lines_back = { "Hello", "back", "", "!" };
 #endif
 
     for (size_t i = 0; i < expected_lines.size(); ++i)
     {
-#if PROTOCOL_VERSION < 763
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         const std::string& line = (*nbt)["Text" + std::to_string(i+1)].get<std::string>();
         const ProtocolCraft::Json::Value content = ProtocolCraft::Json::Parse(line);
         CHECK(content["text"].get_string() == expected_lines[i]);

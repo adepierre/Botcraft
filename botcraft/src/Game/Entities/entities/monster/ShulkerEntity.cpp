@@ -4,7 +4,7 @@ namespace Botcraft
 {
     const std::array<std::string, ShulkerEntity::metadata_count> ShulkerEntity::metadata_names{ {
         "data_attach_face_id",
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         "data_attach_pos_id",
 #endif
         "data_peek_id",
@@ -15,7 +15,7 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataAttachFaceId(Direction::Down);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         SetDataAttachPosId(std::optional<Position>());
 #endif
         SetDataPeekId(0);
@@ -65,7 +65,7 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = AbstractGolemEntity::Serialize();
 
         output["metadata"]["data_attach_face_id"] = static_cast<int>(GetDataAttachFaceId());
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         output["metadata"]["data_attach_pos_id"] = GetDataAttachPosId() ? GetDataAttachPosId().value().Serialize() : ProtocolCraft::Json::Value();
 #endif
         output["metadata"]["data_peek_id"] = GetDataPeekId();
@@ -92,7 +92,7 @@ namespace Botcraft
         return std::any_cast<Direction>(metadata.at("data_attach_face_id"));
     }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     const std::optional<Position>& ShulkerEntity::GetDataAttachPosId() const
     {
         return std::any_cast<const std::optional<Position>&>(metadata.at("data_attach_pos_id"));
@@ -115,7 +115,7 @@ namespace Botcraft
         metadata["data_attach_face_id"] = data_attach_face_id;
     }
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
     void ShulkerEntity::SetDataAttachPosId(const std::optional<Position>& data_attach_pos_id)
     {
         metadata["data_attach_pos_id"] = data_attach_pos_id;

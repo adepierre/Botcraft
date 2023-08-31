@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
 #include <string>
@@ -11,13 +11,13 @@ namespace ProtocolCraft
     class ClientboundServerDataPacket : public BaseMessage<ClientboundServerDataPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 759
+#if   PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x3F;
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x42;
-#elif PROTOCOL_VERSION == 761
+#elif PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x41;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x45;
 #else
 #error "Protocol version not implemented"
@@ -31,7 +31,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 762
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         void SetMotd(const std::optional<Chat>& motd_)
         {
             motd = motd_;
@@ -53,14 +53,14 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         void SetPreviewsChat(const bool previews_chat_)
         {
             previews_chat = previews_chat_;
         }
 #endif
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         void SetEnforcesSecureChat(const bool enforces_secure_chat_)
         {
             enforces_secure_chat = enforces_secure_chat_;
@@ -68,7 +68,7 @@ namespace ProtocolCraft
 #endif
 
 
-#if PROTOCOL_VERSION < 762
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         const std::optional<Chat>& GetMotd() const
         {
             return motd;
@@ -90,14 +90,14 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         bool GetPreviewsChat() const
         {
             return previews_chat;
         }
 #endif
 
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         bool GetEnforcesSecureChat() const
         {
             return enforces_secure_chat;
@@ -108,7 +108,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION < 762
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
             motd = ReadOptional<Chat>(iter, length);
             icon_base_64 = ReadOptional<std::string>(iter, length);
 #else
@@ -120,17 +120,17 @@ namespace ProtocolCraft
                 }
             );
 #endif
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             previews_chat = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             enforces_secure_chat = ReadData<bool>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION < 762
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
             WriteOptional<Chat>(motd, container);
             WriteOptional<std::string>(icon_base_64, container);
 #else
@@ -142,10 +142,10 @@ namespace ProtocolCraft
                 }
             );
 #endif
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<bool>(previews_chat, container);
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             WriteData<bool>(enforces_secure_chat, container);
 #endif
         }
@@ -154,7 +154,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 762
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
             if (motd.has_value())
             {
                 output["motd"] = motd.value();
@@ -170,10 +170,10 @@ namespace ProtocolCraft
                 output["icon_base_64"] = "Vector of " + std::to_string(icon_bytes.value().size()) + " unsigned char";
             }
 #endif
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["previews_chat"] = previews_chat;
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
             output["enforces_secure_chat"] = enforces_secure_chat;
 #endif
 
@@ -182,17 +182,17 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 762
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         std::optional<Chat> motd;
         std::optional<std::string> icon_base_64;
 #else
         Chat motd;
         std::optional<std::vector<unsigned char>> icon_bytes;
 #endif
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         bool previews_chat = false;
 #endif
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
         bool enforces_secure_chat = false;
 #endif
 

@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #pragma once
 
 #include <string>
@@ -6,7 +6,7 @@
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #include "protocolCraft/Types/GameProfile/GameProfileProperty.hpp"
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "protocolCraft/Types/GameProfile/ProfilePublicKey.hpp"
 #endif
 
@@ -45,7 +45,7 @@ namespace ProtocolCraft
             properties = p;
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         void SetProfilePublicKey(const std::optional<ProfilePublicKey>& profile_public_key_)
         {
             profile_public_key = profile_public_key_;
@@ -83,7 +83,7 @@ namespace ProtocolCraft
             return properties;
         }
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         const std::optional<ProfilePublicKey>& GetProfilePublicKey() const
         {
             return profile_public_key;
@@ -98,7 +98,7 @@ namespace ProtocolCraft
             game_mode = ReadData<VarInt>(iter, length);
             latency = ReadData<VarInt>(iter, length);
             display_name = ReadOptional<Chat>(iter, length);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             profile_public_key = ReadOptional<ProfilePublicKey>(iter, length);
 #endif
         }
@@ -110,7 +110,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(game_mode, container);
             WriteData<VarInt>(latency, container);
             WriteOptional<Chat>(display_name, container);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteOptional<ProfilePublicKey>(profile_public_key, container);
 #endif
         }
@@ -127,7 +127,7 @@ namespace ProtocolCraft
                 output["display_name"] = display_name.value();
             }
             output["properties"] = properties;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             if (profile_public_key.has_value())
             {
                 output["profile_public_key"] = profile_public_key.value();
@@ -144,7 +144,7 @@ namespace ProtocolCraft
         int latency = 0;
         std::optional<Chat> display_name;
         std::vector<GameProfileProperty> properties;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         std::optional<ProfilePublicKey> profile_public_key;
 #endif
     };

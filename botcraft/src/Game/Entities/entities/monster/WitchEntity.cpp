@@ -52,7 +52,7 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value WitchEntity::Serialize() const
     {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         ProtocolCraft::Json::Value output = RaiderEntity::Serialize();
 #else
         ProtocolCraft::Json::Value output = MobEntity::Serialize();
@@ -68,7 +68,7 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
             RaiderEntity::SetMetadataValue(index, value);
 #else
             MobEntity::SetMetadataValue(index, value);

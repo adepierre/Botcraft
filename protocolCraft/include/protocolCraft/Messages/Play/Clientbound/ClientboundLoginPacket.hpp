@@ -2,7 +2,7 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "protocolCraft/Types/GlobalPos.hpp"
 #endif
 #include "protocolCraft/Types/NBT/NBT.hpp"
@@ -12,31 +12,31 @@ namespace ProtocolCraft
     class ClientboundLoginPacket : public BaseMessage<ClientboundLoginPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 340
+#if   PROTOCOL_VERSION == 340 /* 1.12.2 */
         static constexpr int packet_id = 0x23;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
-      PROTOCOL_VERSION == 404 || PROTOCOL_VERSION == 477 ||  \
-      PROTOCOL_VERSION == 480 || PROTOCOL_VERSION == 485 ||  \
-      PROTOCOL_VERSION == 490 || PROTOCOL_VERSION == 498
+#elif PROTOCOL_VERSION == 393 /* 1.13 */ || PROTOCOL_VERSION == 401 /* 1.13.1 */ ||  \
+      PROTOCOL_VERSION == 404 /* 1.13.2 */ || PROTOCOL_VERSION == 477 /* 1.14 */ ||  \
+      PROTOCOL_VERSION == 480 /* 1.14.1 */ || PROTOCOL_VERSION == 485 /* 1.14.2 */ ||  \
+      PROTOCOL_VERSION == 490 /* 1.14.3 */ || PROTOCOL_VERSION == 498 /* 1.14.4 */
         static constexpr int packet_id = 0x25;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 ||  \
-      PROTOCOL_VERSION == 578
+#elif PROTOCOL_VERSION == 573 /* 1.15 */ || PROTOCOL_VERSION == 575 /* 1.15.1 */ ||  \
+      PROTOCOL_VERSION == 578 /* 1.15.2 */
         static constexpr int packet_id = 0x26;
-#elif PROTOCOL_VERSION == 735 || PROTOCOL_VERSION == 736
+#elif PROTOCOL_VERSION == 735 /* 1.16 */ || PROTOCOL_VERSION == 736 /* 1.16.1 */
         static constexpr int packet_id = 0x25;
-#elif PROTOCOL_VERSION == 751 || PROTOCOL_VERSION == 753 ||  \
-      PROTOCOL_VERSION == 754
+#elif PROTOCOL_VERSION == 751 /* 1.16.2 */ || PROTOCOL_VERSION == 753 /* 1.16.3 */ ||  \
+      PROTOCOL_VERSION == 754 /* 1.16.4/5 */
         static constexpr int packet_id = 0x24;
-#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 ||  \
-      PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758
+#elif PROTOCOL_VERSION == 755 /* 1.17 */ || PROTOCOL_VERSION == 756 /* 1.17.1 */ ||  \
+      PROTOCOL_VERSION == 757 /* 1.18/.1 */ || PROTOCOL_VERSION == 758 /* 1.18.2 */
         static constexpr int packet_id = 0x26;
-#elif PROTOCOL_VERSION == 759
+#elif PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x23;
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x25;
-#elif PROTOCOL_VERSION == 761
+#elif PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x24;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x28;
 #else
 #error "Protocol version not implemented"
@@ -54,14 +54,14 @@ namespace ProtocolCraft
             player_id = player_id_;
         }
 
-#if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
         void SetSeed(const long long int seed_)
         {
             seed = seed_;
         }
 #endif
 
-#if PROTOCOL_VERSION > 737
+#if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         void SetHardcore(const bool hardcore_)
         {
             hardcore = hardcore_;
@@ -73,7 +73,7 @@ namespace ProtocolCraft
             game_type = game_type_;
         }
 
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
         void SetPreviousGameType(const unsigned char previous_game_type_)
         {
             previous_game_type = previous_game_type_;
@@ -89,12 +89,12 @@ namespace ProtocolCraft
             registry_holder = registry_holder_;
         }
 
-#if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         void SetDimensionType(const NBT::Value& dimension_type_)
         {
             dimension_type = dimension_type_;
         }
-#elif PROTOCOL_VERSION > 758
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */
         void SetDimensionType(const Identifier& dimension_type_)
         {
             dimension_type = dimension_type_;
@@ -112,14 +112,14 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
         void SetDifficulty(const unsigned char difficulty_)
         {
             difficulty = difficulty_;
         }
 #endif
 
-#if PROTOCOL_VERSION < 749
+#if PROTOCOL_VERSION < 749 /* < 1.16.2 */
         void SetMaxPlayers(const unsigned char max_players_)
         {
             max_players = max_players_;
@@ -131,20 +131,20 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         void SetLevelType(const std::string& level_type_)
         {
             level_type = level_type_;
         }
 #endif
 
-#if PROTOCOL_VERSION >= 477
+#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
         void SetChunkRadius(const int chunk_radius_)
         {
             chunk_radius = chunk_radius_;
         }
 #endif
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         void SetSimulationDistance(const int simulation_distance_)
         {
             simulation_distance = simulation_distance_;
@@ -156,14 +156,14 @@ namespace ProtocolCraft
             reduced_debug_info = reduced_debug_info_;
         }
 
-#if PROTOCOL_VERSION > 565
+#if PROTOCOL_VERSION > 565 /* > 1.14.4 */
         void SetShowDeathScreen(const bool show_death_screen_)
         {
             show_death_screen = show_death_screen_;
         }
 #endif
 
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
         void SetIsDebug(const bool is_debug_)
         {
             is_debug = is_debug_;
@@ -175,14 +175,14 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         void SetLastDeathLocation(const std::optional<GlobalPos>& last_death_location_)
         {
             last_death_location = last_death_location_;
         }
 #endif
 
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         void SetPortalCooldown(const int portal_cooldown_)
         {
             portal_cooldown = portal_cooldown_;
@@ -195,14 +195,14 @@ namespace ProtocolCraft
             return player_id;
         }
 
-#if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
         long long int GetSeed() const
         {
             return seed;
         }
 #endif
 
-#if PROTOCOL_VERSION > 737
+#if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         bool GetHardcore() const
         {
             return hardcore;
@@ -214,7 +214,7 @@ namespace ProtocolCraft
             return game_type;
         }
 
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
         unsigned char GetPreviousGameType() const
         {
             return previous_game_type;
@@ -230,12 +230,12 @@ namespace ProtocolCraft
             return registry_holder;
         }
 
-#if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         const NBT::Value& GetDimensionType() const
         {
             return dimension_type;
         }
-#elif PROTOCOL_VERSION > 758
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */
         const Identifier& GetDimensionType() const
         {
             return dimension_type;
@@ -253,14 +253,14 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
         unsigned char GetDifficulty() const
         {
             return difficulty;
         }
 #endif
 
-#if PROTOCOL_VERSION < 749
+#if PROTOCOL_VERSION < 749 /* < 1.16.2 */
         unsigned char GetMaxPlayers() const
         {
             return max_players;
@@ -272,20 +272,20 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         const std::string& GetLevelType() const
         {
             return level_type;
         }
 #endif
 
-#if PROTOCOL_VERSION >= 477
+#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
         int GetChunkRadius() const
         {
             return chunk_radius;
         }
 #endif
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         int GetSimulationDistance() const
         {
             return simulation_distance;
@@ -297,13 +297,13 @@ namespace ProtocolCraft
             return reduced_debug_info;
         }
 
-#if PROTOCOL_VERSION > 565
+#if PROTOCOL_VERSION > 565 /* > 1.14.4 */
         bool GetShowDeathScreen() const
         {
             return show_death_screen;
         }
 #endif
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
         bool GetIsDebug() const
         {
             return is_debug;
@@ -315,14 +315,14 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         const std::optional<GlobalPos>& GetLastDeathLocation() const
         {
             return last_death_location;
         }
 #endif
 
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         int GetPortalCooldown() const
         {
             return portal_cooldown;
@@ -333,16 +333,16 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
             player_id = ReadData<int>(iter, length);
-#if PROTOCOL_VERSION > 737
+#if PROTOCOL_VERSION > 737 /* > 1.16.1 */
             hardcore = ReadData<bool>(iter, length);
 #endif
             game_type = ReadData<unsigned char>(iter, length);
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
             previous_game_type = ReadData<unsigned char>(iter, length);
             levels = ReadVector<Identifier>(iter, length);
             registry_holder = ReadData<NBT::Value>(iter, length);
-#if PROTOCOL_VERSION > 747
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
             dimension_type = ReadData<NBT::Value>(iter, length);
 #else
             dimension_type = ReadData<Identifier>(iter, length);
@@ -352,38 +352,38 @@ namespace ProtocolCraft
 #else
             dimension = ReadData<int>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
             seed = ReadData<long long int>(iter, length);
 #endif
-#if PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
             difficulty = ReadData<unsigned char>(iter, length);
 #endif
-#if PROTOCOL_VERSION < 749
+#if PROTOCOL_VERSION < 749 /* < 1.16.2 */
             max_players = ReadData<unsigned char>(iter, length);
 #else
             max_players = ReadData<VarInt>(iter, length);
 #endif
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
             level_type = ReadData<std::string>(iter, length);
 #endif
-#if PROTOCOL_VERSION >= 477
+#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
             chunk_radius = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
             simulation_distance = ReadData<VarInt>(iter, length);
 #endif
 #endif
             reduced_debug_info = ReadData<bool>(iter, length);
-#if PROTOCOL_VERSION > 565
+#if PROTOCOL_VERSION > 565 /* > 1.14.4 */
             show_death_screen = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
             is_debug = ReadData<bool>(iter, length);
             is_flat = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             last_death_location = ReadOptional<GlobalPos>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             portal_cooldown = ReadData<VarInt>(iter, length);
 #endif
         }
@@ -391,16 +391,16 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer &container) const override
         {
             WriteData<int>(player_id, container);
-#if PROTOCOL_VERSION > 737
+#if PROTOCOL_VERSION > 737 /* > 1.16.1 */
             WriteData<bool>(hardcore, container);
 #endif
             WriteData<unsigned char>(game_type, container);
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
             WriteData<unsigned char>(previous_game_type, container);
             WriteVector<Identifier>(levels, container);
             WriteData<NBT::Value>(registry_holder, container);
-#if PROTOCOL_VERSION > 747
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
             WriteData<NBT::Value>(dimension_type, container);
 #else
             WriteData<Identifier>(dimension_type, container);
@@ -410,38 +410,38 @@ namespace ProtocolCraft
 #else
             WriteData<int>(dimension, container);
 #endif
-#if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
             WriteData<long long int>(seed, container);
 #endif
-#if PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
             WriteData<unsigned char>(difficulty, container);
 #endif
-#if PROTOCOL_VERSION < 749
+#if PROTOCOL_VERSION < 749 /* < 1.16.2 */
             WriteData<unsigned char>(max_players, container);
 #else
             WriteData<VarInt>(max_players, container);
 #endif
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
             WriteData<std::string>(level_type, container);
 #endif
-#if PROTOCOL_VERSION >= 477
+#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
             WriteData<VarInt>(chunk_radius, container);
 #endif
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
             WriteData<VarInt>(simulation_distance, container);
 #endif
             WriteData<bool>(reduced_debug_info, container);
-#if PROTOCOL_VERSION > 565
+#if PROTOCOL_VERSION > 565 /* > 1.14.4 */
             WriteData<bool>(show_death_screen, container);
 #endif
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
             WriteData<bool>(is_debug, container);
             WriteData<bool>(is_flat, container);
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteOptional<GlobalPos>(last_death_location, container);
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             WriteData<VarInt>(portal_cooldown, container);
 #endif
         }
@@ -451,49 +451,49 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["player_id"] = player_id;
-#if PROTOCOL_VERSION > 737
+#if PROTOCOL_VERSION > 737 /* > 1.16.1 */
             output["hardcore"] = hardcore;
 #endif
             output["game_type"] = game_type;
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
             output["previous_game_type"] = previous_game_type;
             output["levels"] = levels;
             output["registry_holder"] = registry_holder;
 
-#if PROTOCOL_VERSION > 747
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */
             output["dimension_type"] = dimension_type;
 #endif
 #endif
             output["dimension"] = dimension;
-#if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
             output["seed"] = seed;
 #endif
             output["difficulty"] = difficulty;
             output["max_players"] = max_players;
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
             output["level_type"] = level_type;
 #endif
-#if PROTOCOL_VERSION >= 477
+#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
             output["chunk_radius"] = chunk_radius;
 #endif
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
             output["simulation_distance"] = simulation_distance;
 #endif
             output["reduced_debug_info"] = reduced_debug_info;
-#if PROTOCOL_VERSION > 565
+#if PROTOCOL_VERSION > 565 /* > 1.14.4 */
             output["show_death_screen"] = show_death_screen;
 #endif
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
             output["is_debug"] = is_debug;
             output["is_flat"] = is_flat;
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             if (last_death_location.has_value())
             {
                 output["last_death_location"] = last_death_location.value();
             }
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             output["portal_cooldown"] = portal_cooldown;
 #endif
 
@@ -502,20 +502,20 @@ namespace ProtocolCraft
 
     private:
         int player_id = 0;
-#if PROTOCOL_VERSION > 551
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
         long long int seed = 0;
 #endif
-#if PROTOCOL_VERSION > 737
+#if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         bool hardcore = false;
 #endif
         unsigned char game_type = 0;
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
         unsigned char previous_game_type = 0;
         std::vector<Identifier> levels;
         NBT::Value registry_holder;
-#if PROTOCOL_VERSION > 747 && PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         NBT::Value dimension_type;
-#elif PROTOCOL_VERSION > 758
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */
         Identifier dimension_type;
 #endif
         Identifier dimension;
@@ -523,32 +523,32 @@ namespace ProtocolCraft
         int dimension = 0;
 #endif
         unsigned char difficulty = 0;
-#if PROTOCOL_VERSION < 749
+#if PROTOCOL_VERSION < 749 /* < 1.16.2 */
         unsigned char max_players = 0;
 #else
         int max_players = 0;
 #endif
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         std::string level_type;
 #endif
-#if PROTOCOL_VERSION >= 477
+#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
         int chunk_radius = 0;
 #endif
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         int simulation_distance = 0;
 #endif
         bool reduced_debug_info = false;
-#if PROTOCOL_VERSION > 565
+#if PROTOCOL_VERSION > 565 /* > 1.14.4 */
         bool show_death_screen = false;
 #endif
-#if PROTOCOL_VERSION > 718
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
         bool is_debug = false;
         bool is_flat = false;
 #endif
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         std::optional<GlobalPos> last_death_location;
 #endif
-#if PROTOCOL_VERSION > 762
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         int portal_cooldown = 0;
 #endif
     };

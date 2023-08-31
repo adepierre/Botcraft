@@ -7,7 +7,7 @@ namespace Botcraft
     class MushroomCowEntity : public CowEntity
     {
     protected:
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 1;
         static const std::array<std::string, metadata_count> metadata_names;
 #else
@@ -30,7 +30,7 @@ namespace Botcraft
         static EntityType GetClassType();
 
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff

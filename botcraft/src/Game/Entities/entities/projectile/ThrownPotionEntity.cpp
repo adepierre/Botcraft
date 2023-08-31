@@ -2,7 +2,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 579
+#if PROTOCOL_VERSION < 579 /* < 1.16 */
     const std::array<std::string, ThrownPotionEntity::metadata_count> ThrownPotionEntity::metadata_names{ {
         "data_item_stack",
     } };
@@ -10,7 +10,7 @@ namespace Botcraft
 
     ThrownPotionEntity::ThrownPotionEntity()
     {
-#if PROTOCOL_VERSION < 579
+#if PROTOCOL_VERSION < 579 /* < 1.16 */
         // Initialize all metadata with default values
         SetDataItemStack(ProtocolCraft::Slot());
 #endif
@@ -54,7 +54,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION < 579
+#if PROTOCOL_VERSION < 579 /* < 1.16 */
     ProtocolCraft::Json::Value ThrownPotionEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = ThrowableProjectileEntity::Serialize();

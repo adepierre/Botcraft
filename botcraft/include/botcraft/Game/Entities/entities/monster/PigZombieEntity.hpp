@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION < 579
+#if PROTOCOL_VERSION < 579 /* < 1.16 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/monster/ZombieEntity.hpp"

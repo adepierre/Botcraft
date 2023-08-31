@@ -14,7 +14,7 @@ namespace ProtocolCraft
     
     std::string FallingDustParticle::GetName() const
     {
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
         return "falling_dust";
 #else
         return "fallingdust";
@@ -26,7 +26,7 @@ namespace ProtocolCraft
         return ParticleType::FallingDust;
     }
 
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
     int FallingDustParticle::GetState() const
     {
         return state;
@@ -50,7 +50,7 @@ namespace ProtocolCraft
     
     void FallingDustParticle::ReadImpl(ReadIterator& iter, size_t& length)
     {
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
         state = ReadData<VarInt>(iter, length);
 #else
         argument1 = ReadData<VarInt>(iter, length);
@@ -60,7 +60,7 @@ namespace ProtocolCraft
     
     void FallingDustParticle::WriteImpl(WriteContainer& container) const
     {
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
         WriteData<VarInt>(state, container);
 #else
         WriteData<VarInt>(argument1, container);
@@ -71,7 +71,7 @@ namespace ProtocolCraft
     {
         Json::Value output;
 
-#if PROTOCOL_VERSION > 392
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
         output["state"] = state;
 #else
         output["argument1"] = argument1;

@@ -41,7 +41,7 @@ ChatCommandClient::~ChatCommandClient()
     
 }
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
 void ChatCommandClient::Handle(ClientboundChatPacket &msg)
 {
     ManagersClient::Handle(msg);
@@ -59,9 +59,9 @@ void ChatCommandClient::Handle(ClientboundPlayerChatPacket& msg)
     ManagersClient::Handle(msg);
 
     // Split the message
-#if PROTOCOL_VERSION == 759
+#if PROTOCOL_VERSION == 759 /* 1.19 */
     std::istringstream ss{ msg.GetSignedContent().GetText() };
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
     std::istringstream ss{ msg.GetMessage_().GetSignedBody().GetContent().GetPlain() };
 #else
     std::istringstream ss{ msg.GetBody().GetContent() };

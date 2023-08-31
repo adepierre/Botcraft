@@ -180,7 +180,7 @@ namespace Botcraft
             x -= 67108864;
         }
 
-#if PROTOCOL_VERSION < 442
+#if PROTOCOL_VERSION < 442 /* < 1.14 */
         int y = (value >> 26) & 0xFFF;
         if (y >= 2048)
         {
@@ -209,7 +209,7 @@ namespace Botcraft
 
     void WritePosition(const Position &my_position, WriteContainer &container)
     {
-#if PROTOCOL_VERSION < 442
+#if PROTOCOL_VERSION < 442 /* < 1.14 */
         unsigned long long int value = (((long long int)my_position.x & 0x3FFFFFF) << 38) | (((long long int)my_position.y & 0xFFF) << 26) | ((long long int)my_position.z & 0x3FFFFFF);
 #else
         unsigned long long int value = (((long long int)my_position.x & 0x3FFFFFF) << 38) | (((long long int)my_position.z & 0x3FFFFFF) << 12) | ((long long int)my_position.y & 0xFFF);

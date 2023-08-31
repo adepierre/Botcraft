@@ -30,10 +30,10 @@ namespace Botcraft
         const std::map<short, ProtocolCraft::Slot>& GetSlots() const;
         const InventoryType GetType() const;
         void SetSlot(const short index, const ProtocolCraft::Slot& slot);
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         const int GetNextTransactionId() const;
         void SetNextTransactionId(const int n);
-#elif PROTOCOL_VERSION > 755
+#elif PROTOCOL_VERSION > 755 /* > 1.17 */
         const int GetStateId() const;
         void SetStateId(const int state_id_);
 #endif
@@ -43,10 +43,10 @@ namespace Botcraft
         std::map<short, ProtocolCraft::Slot> slots;
         InventoryType type;
 
-#if PROTOCOL_VERSION < 755
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         // TODO, need mutex to make this thread-safe?
         int next_transaction_id;
-#elif PROTOCOL_VERSION > 755
+#elif PROTOCOL_VERSION > 755 /* > 1.17 */
         int state_id;
 #endif
     };

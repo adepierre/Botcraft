@@ -2,7 +2,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     const std::array<std::string, PaintingEntity::metadata_count> PaintingEntity::metadata_names{ {
         "data_painting_variant_id",
     } };
@@ -10,7 +10,7 @@ namespace Botcraft
 
     PaintingEntity::PaintingEntity()
     {
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         // Initialize all metadata with default values
         SetDataPaintingVariantId(0);
 #endif
@@ -54,7 +54,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     ProtocolCraft::Json::Value PaintingEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = HangingEntity::Serialize();

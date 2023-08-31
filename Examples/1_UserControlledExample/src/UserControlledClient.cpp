@@ -69,13 +69,13 @@ UserControlledClient::~UserControlledClient()
 
 void UserControlledClient::CreateTestWorld()
 {
-#if PROTOCOL_VERSION < 719
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
     const Dimension dimension = Dimension::Overworld;
 #else
     const std::string dimension = "minecraft:overworld";
 #endif
 
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     world->SetDimensionMinY(dimension, 0);
     world->SetDimensionHeight(dimension, 256);
     world->SetCurrentDimension(dimension);
@@ -107,7 +107,7 @@ void UserControlledClient::CreateTestWorld()
         }
     }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
     for (int i = 0; i < (max_id - min_id) / 16 + 1; ++i)
 #else
     for (int i = 0; i < (max_id - min_id) / 16 / 16 + 1; ++i)
@@ -121,7 +121,7 @@ void UserControlledClient::CreateTestWorld()
 
     int x = 0;
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
     for (auto it = AssetsManager::getInstance().Blockstates().begin(); it != AssetsManager::getInstance().Blockstates().end(); ++it)
     {
         int id = it->first;
@@ -202,7 +202,7 @@ void UserControlledClient::CreateTestWorld()
         }
     }
 
-#if PROTOCOL_VERSION < 552
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
     const int biome_spacing = 1;
 #else
     const int biome_spacing = 4;
@@ -221,12 +221,12 @@ void UserControlledClient::CreateTestWorld()
         {
             Position pos(-(x * biome_spacing) - 1, 0, 0);
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             world->SetBlock(pos, 2, 0);
 #else
             world->SetBlock(pos, 9);
 #endif
-#if PROTOCOL_VERSION < 552
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
             world->SetBiome(pos.x, pos.z, i);
 #else
             world->SetBiome(pos.x, pos.y, pos.z, i);
@@ -241,18 +241,18 @@ void UserControlledClient::CreateTestWorld()
             }
             else
             {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                 previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
 #else
                 previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
 #endif
             }
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             world->SetBlock(pos, 18, 0);
 #else
             world->SetBlock(pos, 157);
 #endif
-#if PROTOCOL_VERSION < 552
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
             world->SetBiome(pos.x, pos.z, i);
 #else
             world->SetBiome(pos.x, pos.y, pos.z, i);
@@ -266,19 +266,19 @@ void UserControlledClient::CreateTestWorld()
             }
             else
             {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
                 previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
 #else
                 previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
 #endif
             }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
             world->SetBlock(pos, 9, 0);
 #else
             world->SetBlock(pos, 34);
 #endif
-#if PROTOCOL_VERSION < 552
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
             world->SetBiome(pos.x, pos.z, i);
 #else
             world->SetBiome(pos.x, pos.y, pos.z, i);

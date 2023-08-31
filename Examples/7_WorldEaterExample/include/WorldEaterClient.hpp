@@ -14,7 +14,7 @@ public:
     ~WorldEaterClient();
 
 protected:
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
     virtual void Handle(ProtocolCraft::ClientboundChatPacket& msg) override;
 #else
     virtual void Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg) override;

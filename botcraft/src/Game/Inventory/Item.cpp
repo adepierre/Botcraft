@@ -58,7 +58,7 @@ namespace Botcraft
                 return 250;
             case ToolMaterial::Diamond:
                 return 1561;
-#if PROTOCOL_VERSION > 578 // > 1.15.2
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
             case ToolMaterial::Netherite:
                 return 2031;
 #endif
@@ -151,7 +151,7 @@ namespace Botcraft
         {
             tool_material = ToolMaterial::Diamond;
         }
-#if PROTOCOL_VERSION > 578 // > 1.15.2
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         else if (sub_parts[0] == "netherite")
         {
             tool_material = ToolMaterial::Netherite;

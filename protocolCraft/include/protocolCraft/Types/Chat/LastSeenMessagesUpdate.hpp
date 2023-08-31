@@ -1,10 +1,10 @@
-#if PROTOCOL_VERSION > 759
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #pragma once
 
 
 #include "protocolCraft/NetworkType.hpp"
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include <vector>
 
 #include "protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp"
@@ -21,7 +21,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         void SetLastSeen(const std::vector<LastSeenMessagesEntry>& last_seen_)
         {
             last_seen = last_seen_;
@@ -44,7 +44,7 @@ namespace ProtocolCraft
 #endif
 
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const std::vector<LastSeenMessagesEntry>& GetLastSeen() const
         {
             return last_seen;
@@ -69,7 +69,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             last_seen = ReadVector<LastSeenMessagesEntry>(iter, length);
             last_received = ReadOptional<LastSeenMessagesEntry>(iter, length);
 #else
@@ -80,7 +80,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteVector<LastSeenMessagesEntry>(last_seen, container);
             WriteOptional<LastSeenMessagesEntry>(last_received, container);
 #else
@@ -93,7 +93,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["last_seen"] = last_seen;
             if (last_received.has_value())
             {
@@ -108,7 +108,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         std::vector<LastSeenMessagesEntry> last_seen;
         std::optional<LastSeenMessagesEntry> last_received;
 #else

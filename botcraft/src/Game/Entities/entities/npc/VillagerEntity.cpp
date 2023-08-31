@@ -3,7 +3,7 @@
 namespace Botcraft
 {
     const std::array<std::string, VillagerEntity::metadata_count> VillagerEntity::metadata_names{ {
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "data_villager_data",
 #else
         "data_villager_profession_id",
@@ -13,7 +13,7 @@ namespace Botcraft
     VillagerEntity::VillagerEntity()
     {
         // Initialize all metadata with default values
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataVillagerData(VillagerData{ 2, 0, 1 });
 #else
         SetDataVillagerProfessionId(0);
@@ -60,13 +60,13 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value VillagerEntity::Serialize() const
     {
-#if PROTOCOL_VERSION > 477
+#if PROTOCOL_VERSION > 477 /* > 1.14 */
         ProtocolCraft::Json::Value output = AbstractVillagerEntity::Serialize();
 #else
         ProtocolCraft::Json::Value output = AgeableMobEntity::Serialize();
 #endif
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["data_villager_data"] = { GetDataVillagerData().type, GetDataVillagerData().profession, GetDataVillagerData().level };
 #else
         output["metadata"]["data_villager_profession_id"] = std::any_cast<int>(GetDataVillagerProfessionId());
@@ -80,7 +80,7 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
-#if PROTOCOL_VERSION > 477
+#if PROTOCOL_VERSION > 477 /* > 1.14 */
             AbstractVillagerEntity::SetMetadataValue(index, value);
 #else
             AgeableMobEntity::SetMetadataValue(index, value);
@@ -92,7 +92,7 @@ namespace Botcraft
         }
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const VillagerData& VillagerEntity::GetDataVillagerData() const
     {
         return std::any_cast<const VillagerData&>(metadata.at("data_villager_data"));

@@ -5,7 +5,7 @@ namespace Botcraft
     const std::array<std::string, FireworkRocketEntity::metadata_count> FireworkRocketEntity::metadata_names{ {
         "data_id_fireworks_item",
         "data_attached_to_target",
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "data_shot_at_angle",
 #endif
     } };
@@ -14,7 +14,7 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataIdFireworksItem(ProtocolCraft::Slot());
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataAttachedToTarget(std::optional<int>());
         SetDataShotAtAngle(false);
 #else
@@ -62,14 +62,14 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value FireworkRocketEntity::Serialize() const
     {
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         ProtocolCraft::Json::Value output = ProjectileEntity::Serialize();
 #else
         ProtocolCraft::Json::Value output = Entity::Serialize();
 #endif
 
         output["metadata"]["data_id_fireworks_item"] = GetDataIdFireworksItem().Serialize();
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["data_attached_to_target"] = GetDataAttachedToTarget() ? ProtocolCraft::Json::Value(GetDataAttachedToTarget().value()) : ProtocolCraft::Json::Value();
         output["metadata"]["data_shot_at_angle"] = GetDataShotAtAngle();
 #else
@@ -84,7 +84,7 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
             ProjectileEntity::SetMetadataValue(index, value);
 #else
             Entity::SetMetadataValue(index, value);
@@ -101,7 +101,7 @@ namespace Botcraft
         return std::any_cast<const ProtocolCraft::Slot&>(metadata.at("data_id_fireworks_item"));
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const std::optional<int>& FireworkRocketEntity::GetDataAttachedToTarget() const
     {
         return std::any_cast<const std::optional<int>&>(metadata.at("data_attached_to_target"));
@@ -124,7 +124,7 @@ namespace Botcraft
         metadata["data_id_fireworks_item"] = data_id_fireworks_item;
     }
 
-#if PROTOCOL_VERSION > 404
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void FireworkRocketEntity::SetDataAttachedToTarget(const std::optional<int>& data_attached_to_target)
     {
         metadata["data_attached_to_target"] = data_attached_to_target;

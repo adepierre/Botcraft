@@ -67,7 +67,7 @@ TEST_CASE("dig pickaxe")
     SECTION("haste")
     {
         // Haste 2 is given using amplifier 1
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         MinecraftServer::GetInstance().SendLine("effect give " + botname + " haste 99999 1");
 #else
         MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 1");
@@ -121,7 +121,7 @@ TEST_CASE("dig underwater")
     SECTION("haste")
     {
         // Haste 2 is given using amplifier 1
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         MinecraftServer::GetInstance().SendLine("effect give " + botname + " haste 99999 1");
 #else
         MinecraftServer::GetInstance().SendLine("effect " + botname + " haste 99999 1");

@@ -187,7 +187,7 @@ void MinecraftServer::SendLine(const std::string& input)
 
 std::filesystem::path MinecraftServer::GetStructurePath() const
 {
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     return server_path / "world" / "generated" / "minecraft" / "structures";
 #else
     return server_path / "world" / "structures";
@@ -257,18 +257,18 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
     // Setting the value of all non default properties
     if (std::ofstream server_props = std::ofstream(path / "server.properties"))
     {
-#if PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
         server_props << "difficulty=3" << "\n";
 #else
         server_props << "difficulty=hard" << "\n";
 #endif
         server_props << "enable-command-block=true" << "\n";
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         server_props << "enforce-secure-profile=false" << "\n";
 #endif
         // Everyone joins as creative and bots will be manually set to survival upon join
         server_props << "force-gamemode=true" << "\n";
-#if PROTOCOL_VERSION < 477
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
         server_props << "gamemode=1" << "\n";
 #else
         server_props << "gamemode=creative" << "\n";
@@ -299,7 +299,7 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
         throw std::runtime_error("Unable to create server.properties");
     }
 
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     std::filesystem::create_directories(path / "world" / "generated" / "minecraft");
 #else
     std::filesystem::create_directories(path / "world");
@@ -311,7 +311,7 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
     // Setup structures files
     std::filesystem::copy(
         path / server_relative_files_path / "runtime" / "structures",
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         path / "world" / "generated" / "minecraft" / "structures",
 #else
         path / "world" / "structures",
@@ -328,21 +328,21 @@ void MinecraftServer::SetGamerule(const std::string& gamerule, const std::string
 void MinecraftServer::InitServerGamerules()
 {
     SetGamerule("announceAdvancements", "false");
-#if PROTOCOL_VERSION > 485 // 1.14.2
+#if PROTOCOL_VERSION > 485 /* > 1.14.2 */
     SetGamerule("disableRaids", "true");
 #endif
     SetGamerule("doDaylightCycle", "false");
     SetGamerule("doFireTick", "false");
-#if PROTOCOL_VERSION > 498 // 1.14.4
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     SetGamerule("doInsomnia", "false");
 #endif
     SetGamerule("doMobSpawning", "false");
-#if PROTOCOL_VERSION > 575 // 1.15.1
+#if PROTOCOL_VERSION > 575 /* > 1.15.1 */
     SetGamerule("doPatrolSpawning", "false");
     SetGamerule("doTraderSpawning", "false");
 #endif
     SetGamerule("doWeatherCycle", "false");
-#if PROTOCOL_VERSION > 758 // 1.18.2
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     SetGamerule("doWardenSpawning", "false");
 #endif
     SetGamerule("mobGriefing", "false");

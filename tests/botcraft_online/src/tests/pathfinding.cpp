@@ -345,7 +345,7 @@ TEST_CASE("speed pathfinding")
     if (speed_effect > 0)
     {
         // Speed N is given using N-1
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         MinecraftServer::GetInstance().SendLine("effect give " + botname + " speed 99999 " + std::to_string(speed_effect - 1));
 #else
         MinecraftServer::GetInstance().SendLine("effect " + botname + " speed 99999 " + std::to_string(speed_effect - 1));

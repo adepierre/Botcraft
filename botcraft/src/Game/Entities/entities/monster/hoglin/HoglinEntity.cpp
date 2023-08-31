@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 578
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/hoglin/HoglinEntity.hpp"
 
 namespace Botcraft

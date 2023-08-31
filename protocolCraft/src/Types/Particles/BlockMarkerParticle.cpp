@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 756
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 
 #include "protocolCraft/Types/Particles/BlockMarkerParticle.hpp"
 

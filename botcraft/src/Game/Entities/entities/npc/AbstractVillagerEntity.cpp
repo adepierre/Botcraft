@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 477
+#if PROTOCOL_VERSION > 477 /* > 1.14 */
 #include "botcraft/Game/Entities/entities/npc/AbstractVillagerEntity.hpp"
 
 namespace Botcraft

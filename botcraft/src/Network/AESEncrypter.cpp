@@ -9,7 +9,7 @@
 #include <random>
 #include <chrono>
 
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include <openssl/pem.h>
 
 #include <array>
@@ -40,10 +40,10 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
     void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce,
         std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_nonce, std::vector<unsigned char>& encrypted_shared_secret)
-#elif PROTOCOL_VERSION < 761
+#elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
     void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce, const std::string& private_key,
         std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_shared_secret,
         long long int& salt, std::vector<unsigned char>& salted_nonce_signature)
@@ -71,11 +71,11 @@ namespace Botcraft
 
         encrypted_shared_secret = std::vector<unsigned char>(rsa_size);
         RSA_public_encrypt(AES_BLOCK_SIZE, raw_shared_secret.data(), encrypted_shared_secret.data(), rsa, RSA_PKCS1_PADDING);
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         // Pre-1.19 behaviour, compute encrypted nonce
         encrypted_nonce = std::vector<unsigned char>(rsa_size);
         RSA_public_encrypt(static_cast<int>(input_nonce.size()), input_nonce.data(), encrypted_nonce.data(), rsa, RSA_PKCS1_PADDING);
-#elif PROTOCOL_VERSION < 761
+#elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
         // 1.19, 1.19.1 and 1.19.2 behaviour, signature of salted nonce
         // Generate random salt
         salt = std::uniform_int_distribution<long long int>(std::numeric_limits<long long int>::min(), std::numeric_limits<long long int>::max())(random_gen);

@@ -26,7 +26,7 @@ bool IsLitRedstoneLamp(const Botcraft::Block* block)
     {
         return false;
     }
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     return block->GetBlockstate()->GetName() == "minecraft:redstone_lamp" && block->GetBlockstate()->GetVariableValue("lit") == "true";
 #else
     return block->GetBlockstate()->GetName() == "minecraft:lit_redstone_lamp";

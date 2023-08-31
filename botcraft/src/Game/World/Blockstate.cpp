@@ -187,9 +187,9 @@ namespace Botcraft
     std::string ModelNameFromJson(const Json::Value& json)
     {
         const std::string& model_path = json["model"].get_string();
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         return "block/" + model_path;
-#elif PROTOCOL_VERSION > 578 //> 1.15.2
+#elif PROTOCOL_VERSION > 578 /* > 1.15.2 */
         // Remove the minecraft: prefix from the model path
         return model_path.substr(10);
 #else
@@ -243,7 +243,7 @@ namespace Botcraft
     Blockstate::Blockstate(const BlockstateProperties& properties)
     {
         id = properties.id;
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         metadata = properties.metadata;
 #endif
         air = properties.air;
@@ -559,7 +559,7 @@ namespace Botcraft
     Blockstate::Blockstate(const BlockstateProperties& properties, const Model &model_)
     {
         id = properties.id;
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         metadata = properties.metadata;
 #endif
         air = properties.air;
@@ -591,7 +591,7 @@ namespace Botcraft
         return id;
     }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
     const unsigned char Blockstate::GetMetadata() const
     {
         return metadata;
@@ -701,7 +701,7 @@ namespace Botcraft
                 4.0f,
                 6.0f,
                 8.0f,
-#if PROTOCOL_VERSION > 578 // > 1.15.2
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
                 9.0f,
 #endif
         } };
@@ -755,7 +755,7 @@ namespace Botcraft
         return std::ceil(1.0f / damage_per_ticks) / 20.0f;
     }
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
     const unsigned int Blockstate::IdMetadataToId(const unsigned int id_, const unsigned char metadata_)
     {
         return id_ << 4 | metadata_;

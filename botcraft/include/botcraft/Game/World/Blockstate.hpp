@@ -28,7 +28,7 @@ namespace Botcraft
 
     struct BlockstateProperties
     {
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         int id = -1;
         unsigned char metadata = 0;
 #else
@@ -71,7 +71,7 @@ namespace Botcraft
         Blockstate(const BlockstateProperties& properties, const Model &model_);
 
         const unsigned int GetId() const;
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         const unsigned char GetMetadata() const;
 #endif
         const Model &GetModel(const unsigned short index) const;
@@ -103,7 +103,7 @@ namespace Botcraft
             const unsigned char tool_efficiency = 0, const unsigned char haste = 0, const unsigned char fatigue = 0,
             const bool on_ground = true, const bool head_in_fluid_wo_aqua_affinity = false) const;
 
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         const static unsigned int IdMetadataToId(const unsigned int id_, const unsigned char metadata_);
         static void IdToIdMetadata(const unsigned int input_id, unsigned int &output_id, unsigned char &output_metadata);
 #endif
@@ -137,7 +137,7 @@ namespace Botcraft
         std::unordered_map<std::string, std::string> variables;
 
         unsigned int id;
-#if PROTOCOL_VERSION < 347
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
         unsigned char metadata;
 #endif
     };

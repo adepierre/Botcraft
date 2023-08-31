@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 344
+#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #include <memory>
 
 #include "protocolCraft/NetworkType.hpp"
@@ -38,7 +38,7 @@ namespace ProtocolCraft
             name = name_;
         }
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         void SetParser(const Identifier& parser_)
         {
             parser = parser_;
@@ -81,7 +81,7 @@ namespace ProtocolCraft
             return name;
         }
 
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         const Identifier& GetParser() const
         {
             return parser;
@@ -124,7 +124,7 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
                 parser = ReadData<Identifier>(iter, length);
                 properties = BrigadierProperty::CreateProperties(parser);
 #else
@@ -159,7 +159,7 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
                 WriteData<Identifier>(parser, container);
 #else
                 WriteData<VarInt>(parser_id, container);
@@ -191,7 +191,7 @@ namespace ProtocolCraft
             }
             if (node_type == 2)
             {
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
                 output["parser"] = parser;
 #else
                 output["parser_id"] = parser_id;
@@ -211,7 +211,7 @@ namespace ProtocolCraft
         std::vector<int> children;
         int redirect_node = 0;
         std::string name;
-#if PROTOCOL_VERSION < 759
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         Identifier parser;
 #else
         int parser_id = 0;

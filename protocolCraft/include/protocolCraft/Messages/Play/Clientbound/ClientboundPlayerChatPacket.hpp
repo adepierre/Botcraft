@@ -1,16 +1,16 @@
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
 #include <vector>
 
 #include "protocolCraft/BaseMessage.hpp"
 
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
 #include "protocolCraft/Types/SaltSignature.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #include "protocolCraft/Types/Chat/ChatSender.hpp"
 #else
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include "protocolCraft/Types/Chat/PlayerChatMessage.hpp"
 #else
 #include "protocolCraft/Types/Chat/SignedMessageBody.hpp"
@@ -25,13 +25,13 @@ namespace ProtocolCraft
     class ClientboundPlayerChatPacket : public BaseMessage<ClientboundPlayerChatPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 759
+#if   PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x30;
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x33;
-#elif PROTOCOL_VERSION == 761
+#elif PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x31;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x35;
 #else
 #error "Protocol version not implemented"
@@ -44,7 +44,7 @@ namespace ProtocolCraft
 
         }
 
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
         void SetSignedContent(const Chat& signed_content_)
         {
             signed_content = signed_content_;
@@ -106,7 +106,7 @@ namespace ProtocolCraft
             return salt_signature;
         }
 #else
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         void SetMessage(const PlayerChatMessage& message_)
         {
             message = message_;
@@ -149,7 +149,7 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const PlayerChatMessage& GetMessage_() const
         {
             return message;
@@ -195,7 +195,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             signed_content = ReadData<Chat>(iter, length);
             unsigned_content = ReadOptional<Chat>(iter, length);
             type_id = ReadData<VarInt>(iter, length);
@@ -203,7 +203,7 @@ namespace ProtocolCraft
             timestamp = ReadData<long long int>(iter, length);
             salt_signature = ReadData<SaltSignature>(iter, length);
 #else
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             message = ReadData<PlayerChatMessage>(iter, length);
 #else
             sender = ReadData<UUID>(iter, length);
@@ -224,7 +224,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             WriteData<Chat>(signed_content, container);
             WriteOptional<Chat>(unsigned_content, container);
             WriteData<VarInt>(type_id, container);
@@ -232,7 +232,7 @@ namespace ProtocolCraft
             WriteData<long long int>(timestamp, container);
             WriteData<SaltSignature>(salt_signature, container);
 #else
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<PlayerChatMessage>(message, container);
 #else
             WriteData<UUID>(sender, container);
@@ -255,7 +255,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             output["signed_content"] = signed_content;
             if (unsigned_content.has_value())
             {
@@ -266,7 +266,7 @@ namespace ProtocolCraft
             output["timestamp"] = timestamp;
             output["salt_signature"] = salt_signature;
 #else
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["message"] = message;
 #else
             output["sender"] = sender;
@@ -290,7 +290,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 760
+#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
         Chat signed_content;
         std::optional<Chat> unsigned_content;
         int type_id = 0;
@@ -298,7 +298,7 @@ namespace ProtocolCraft
         long long int timestamp = 0;
         SaltSignature salt_signature;
 #else
-#if PROTOCOL_VERSION < 761
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         PlayerChatMessage message;
 #else
         UUID sender = {};

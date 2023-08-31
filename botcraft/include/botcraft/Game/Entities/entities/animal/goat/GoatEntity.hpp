@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 754
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/animal/AnimalEntity.hpp"
@@ -8,7 +8,7 @@ namespace Botcraft
     class GoatEntity : public AnimalEntity
     {
     protected:
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         static constexpr int metadata_count = 3;
 #else
         static constexpr int metadata_count = 1;
@@ -37,13 +37,13 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         bool GetDataIsScreamingGoat() const;
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         bool GetDataHasLeftHorn() const;
         bool GetDataHasRightHorn() const;
 #endif
 
         void SetDataIsScreamingGoat(const bool data_is_screaming_goat);
-#if PROTOCOL_VERSION > 758
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         void SetDataHasLeftHorn(const bool data_has_left_horn);
         void SetDataHasRightHorn(const bool data_has_right_horn);
 #endif

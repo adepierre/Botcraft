@@ -1,7 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#if PROTOCOL_VERSION > 374
+#if PROTOCOL_VERSION > 374 /* > 1.12.2 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
 
@@ -10,29 +10,29 @@ namespace ProtocolCraft
     class ClientboundSetPlayerTeamPacket : public BaseMessage<ClientboundSetPlayerTeamPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 340
+#if   PROTOCOL_VERSION == 340 /* 1.12.2 */
         static constexpr int packet_id = 0x44;
-#elif PROTOCOL_VERSION == 393 || PROTOCOL_VERSION == 401 ||  \
-      PROTOCOL_VERSION == 404
+#elif PROTOCOL_VERSION == 393 /* 1.13 */ || PROTOCOL_VERSION == 401 /* 1.13.1 */ ||  \
+      PROTOCOL_VERSION == 404 /* 1.13.2 */
         static constexpr int packet_id = 0x47;
-#elif PROTOCOL_VERSION == 477 || PROTOCOL_VERSION == 480 ||  \
-      PROTOCOL_VERSION == 485 || PROTOCOL_VERSION == 490 ||  \
-      PROTOCOL_VERSION == 498
+#elif PROTOCOL_VERSION == 477 /* 1.14 */ || PROTOCOL_VERSION == 480 /* 1.14.1 */ ||  \
+      PROTOCOL_VERSION == 485 /* 1.14.2 */ || PROTOCOL_VERSION == 490 /* 1.14.3 */ ||  \
+      PROTOCOL_VERSION == 498 /* 1.14.4 */
         static constexpr int packet_id = 0x4B;
-#elif PROTOCOL_VERSION == 573 || PROTOCOL_VERSION == 575 ||  \
-      PROTOCOL_VERSION == 578 || PROTOCOL_VERSION == 735 ||  \
-      PROTOCOL_VERSION == 736 || PROTOCOL_VERSION == 751 ||  \
-      PROTOCOL_VERSION == 753 || PROTOCOL_VERSION == 754
+#elif PROTOCOL_VERSION == 573 /* 1.15 */ || PROTOCOL_VERSION == 575 /* 1.15.1 */ ||  \
+      PROTOCOL_VERSION == 578 /* 1.15.2 */ || PROTOCOL_VERSION == 735 /* 1.16 */ ||  \
+      PROTOCOL_VERSION == 736 /* 1.16.1 */ || PROTOCOL_VERSION == 751 /* 1.16.2 */ ||  \
+      PROTOCOL_VERSION == 753 /* 1.16.3 */ || PROTOCOL_VERSION == 754 /* 1.16.4/5 */
         static constexpr int packet_id = 0x4C;
-#elif PROTOCOL_VERSION == 755 || PROTOCOL_VERSION == 756 ||  \
-      PROTOCOL_VERSION == 757 || PROTOCOL_VERSION == 758 ||  \
-      PROTOCOL_VERSION == 759
+#elif PROTOCOL_VERSION == 755 /* 1.17 */ || PROTOCOL_VERSION == 756 /* 1.17.1 */ ||  \
+      PROTOCOL_VERSION == 757 /* 1.18/.1 */ || PROTOCOL_VERSION == 758 /* 1.18.2 */ ||  \
+      PROTOCOL_VERSION == 759 /* 1.19 */
         static constexpr int packet_id = 0x55;
-#elif PROTOCOL_VERSION == 760
+#elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         static constexpr int packet_id = 0x58;
-#elif PROTOCOL_VERSION == 761
+#elif PROTOCOL_VERSION == 761 /* 1.19.3 */
         static constexpr int packet_id = 0x56;
-#elif PROTOCOL_VERSION == 762 || PROTOCOL_VERSION == 763
+#elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x5A;
 #else
 #error "Protocol version not implemented"
@@ -50,7 +50,7 @@ namespace ProtocolCraft
             name_ = name__;
         }
 
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         void SetDisplayName(const std::string& display_name_)
 #else
         void SetDisplayName(const Chat& display_name_)
@@ -59,7 +59,7 @@ namespace ProtocolCraft
             display_name = display_name_;
         }
 
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         void SetPlayerPrefix(const std::string& player_prefix_)
 #else
         void SetPlayerPrefix(const Chat& player_prefix_)
@@ -68,7 +68,7 @@ namespace ProtocolCraft
             player_prefix = player_prefix_;
         }
 
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         void SetPlayerSuffix(const std::string& player_suffix_)
 #else
         void SetPlayerSuffix(const Chat& player_suffix_)
@@ -113,7 +113,7 @@ namespace ProtocolCraft
             return name_;
         }
 
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         const std::string& GetDisplayName() const
 #else
         const Chat& GetDisplayName() const
@@ -122,7 +122,7 @@ namespace ProtocolCraft
             return display_name;
         }
 
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         const std::string& GetPlayerPrefix() const
 #else
         const Chat& GetPlayerPrefix() const
@@ -131,7 +131,7 @@ namespace ProtocolCraft
             return player_prefix;
         }
 
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         const std::string& GetPlayerSuffix() const
 #else
         const Chat& GetPlayerSuffix() const
@@ -178,7 +178,7 @@ namespace ProtocolCraft
             method = ReadData<char>(iter, length);
             if (method == 0 || method == 2)
             {
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
                 display_name = ReadData<std::string>(iter, length);
                 player_prefix = ReadData<std::string>(iter, length);
                 player_suffix = ReadData<std::string>(iter, length);
@@ -210,7 +210,7 @@ namespace ProtocolCraft
 
             if (method == 0 || method == 2)
             {
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
                 WriteData<std::string>(display_name, container);
                 WriteData<std::string>(player_prefix, container);
                 WriteData<std::string>(player_suffix, container);
@@ -244,7 +244,7 @@ namespace ProtocolCraft
 
             if (method == 0 || method == 2)
             {
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
                 output["display_name"] = display_name;
                 output["player_prefix"] = player_prefix;
                 output["player_suffix"] = player_suffix;
@@ -273,12 +273,12 @@ namespace ProtocolCraft
 
     private:
         std::string name_;
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         std::string display_name;
 #else
         Chat display_name;
 #endif
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         std::string player_prefix;
         std::string player_suffix;
 #else
@@ -287,7 +287,7 @@ namespace ProtocolCraft
 #endif
         std::string nametag_visibility;
         std::string collision_rule;
-#if PROTOCOL_VERSION < 375
+#if PROTOCOL_VERSION < 375 /* < 1.13 */
         char color = 0;
 #else
         int color = 0;

@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 340
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/animal/WaterAnimalEntity.hpp"
