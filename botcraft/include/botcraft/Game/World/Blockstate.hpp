@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <random>
 #include <map>
 
 #include "protocolCraft/Utilities/Json.hpp"
@@ -25,6 +24,12 @@ namespace Botcraft
         ToolMaterial min_material;
         float multiplier;
     };
+
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+    using BlockstateId = std::pair<int, unsigned char>;
+#else
+    using BlockstateId = unsigned int;
+#endif
 
     struct BlockstateProperties
     {
@@ -70,25 +75,22 @@ namespace Botcraft
         /// @param model_ The model of this blockstate
         Blockstate(const BlockstateProperties& properties, const Model &model_);
 
-        const unsigned int GetId() const;
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-        const unsigned char GetMetadata() const;
-#endif
-        const Model &GetModel(const unsigned short index) const;
-        const unsigned char GetRandomModelId(const Position* pos = nullptr) const;
-        const int GetNumModels() const;
-        const std::string &GetName() const;
+        BlockstateId GetId() const;
+        const Model& GetModel(const unsigned short index) const;
+        unsigned char GetModelId(const Position& pos) const;
+        int GetNumModels() const;
+        const std::string& GetName() const;
         const std::string& GetVariableValue(const std::string& variable) const;
 
-        const bool IsAir() const;
-        const bool IsSolid() const;
-        const bool IsTransparent() const;
-        const bool IsFluid() const;
-        const bool IsClimbable() const;
-        const bool IsHazardous() const;
+        bool IsAir() const;
+        bool IsSolid() const;
+        bool IsTransparent() const;
+        bool IsFluid() const;
+        bool IsClimbable() const;
+        bool IsHazardous() const;
         bool IsWaterlogged() const;
-        const float GetHardness() const;
-        const TintType GetTintType() const;
+        float GetHardness() const;
+        TintType GetTintType() const;
 
         /// @brief Compute the amount of time (in s) required to mine this block
         /// @param tool_type The tool used to mine
@@ -104,7 +106,7 @@ namespace Botcraft
             const bool on_ground = true, const bool head_in_fluid_wo_aqua_affinity = false) const;
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-        const static unsigned int IdMetadataToId(const unsigned int id_, const unsigned char metadata_);
+        static unsigned int IdMetadataToId(const unsigned int id_, const unsigned char metadata_);
         static void IdToIdMetadata(const unsigned int input_id, unsigned int &output_id, unsigned char &output_metadata);
 #endif
         static void ClearCache();
@@ -129,16 +131,12 @@ namespace Botcraft
         std::vector<Model> models;
         std::vector<int> models_weights;
         int weights_sum;
-        mutable std::mt19937 random_generator;
 
         bool any_tool_harvest;
         std::vector<BestTool> best_tools;
 
         std::unordered_map<std::string, std::string> variables;
 
-        unsigned int id;
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-        unsigned char metadata;
-#endif
+        BlockstateId blockstate_id;
     };
 } // Botcraft

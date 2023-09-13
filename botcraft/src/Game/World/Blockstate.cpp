@@ -1,7 +1,5 @@
 #include <sstream>
 #include <fstream>
-#include <random>
-#include <chrono>
 #include <deque>
 
 #include "botcraft/Game/World/Blockstate.hpp"
@@ -242,9 +240,10 @@ namespace Botcraft
 
     Blockstate::Blockstate(const BlockstateProperties& properties)
     {
-        id = properties.id;
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-        metadata = properties.metadata;
+        blockstate_id = { properties.id, properties.metadata };
+#else
+        blockstate_id = properties.id;
 #endif
         air = properties.air;
         transparent = properties.transparent;
@@ -259,7 +258,6 @@ namespace Botcraft
         best_tools = properties.best_tools;
 
         weights_sum = 0;
-        random_generator = std::mt19937(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
 
         if (properties.path == "none")
         {
@@ -558,9 +556,10 @@ namespace Botcraft
 
     Blockstate::Blockstate(const BlockstateProperties& properties, const Model &model_)
     {
-        id = properties.id;
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-        metadata = properties.metadata;
+        blockstate_id = { properties.id, properties.metadata };
+#else
+        blockstate_id = properties.id;
 #endif
         air = properties.air;
         transparent = properties.transparent;
@@ -580,41 +579,25 @@ namespace Botcraft
         }
 
         weights_sum = 1;
-        random_generator = std::mt19937(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
 
         models_weights = { 1 };
         models = { model_ };
     }
 
-    const unsigned int Blockstate::GetId() const
+    unsigned int Blockstate::GetId() const
     {
-        return id;
+        return blockstate_id;
     }
 
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-    const unsigned char Blockstate::GetMetadata() const
-    {
-        return metadata;
-    }
-#endif
-
-    const Model &Blockstate::GetModel(const unsigned short index) const
+    const Model& Blockstate::GetModel(const unsigned short index) const
     {
         return models[index];
     }
 
-    const unsigned char Blockstate::GetRandomModelId(const Position* pos) const
+    unsigned char Blockstate::GetModelId(const Position& pos) const
     {
-        int random_value = 0;
-        if (!pos)
-        {
-            random_value = std::uniform_int_distribution<int>(0, weights_sum - 1)(random_generator);
-        }
-        else
-        {
-            // Faster pseudo random choice
-            random_value = (pos->x + pos->y + pos->z) % weights_sum;
-        }
+        static const std::hash<Position> pos_hasher;
+        size_t random_value = pos_hasher(pos) % weights_sum;
         
         const size_t num_models = models_weights.size();
         for (int i = 0; i < num_models; ++i)
@@ -625,7 +608,7 @@ namespace Botcraft
             }
             random_value -= models_weights[i];
         }
-        //Should never be here
+        // Should never be here
         return 0;
     }
 
@@ -639,32 +622,32 @@ namespace Botcraft
         return variables.at(variable);
     }
 
-    const bool Blockstate::IsAir() const
+    bool Blockstate::IsAir() const
     {
         return air;
     }
 
-    const bool Blockstate::IsSolid() const
+    bool Blockstate::IsSolid() const
     {
         return solid;
     }
 
-    const bool Blockstate::IsTransparent() const
+    bool Blockstate::IsTransparent() const
     {
         return transparent;
     }
 
-    const bool Blockstate::IsFluid() const
+    bool Blockstate::IsFluid() const
     {
         return fluid;
     }
 
-    const bool Blockstate::IsClimbable() const
+    bool Blockstate::IsClimbable() const
     {
         return climbable;
     }
 
-    const bool Blockstate::IsHazardous() const
+    bool Blockstate::IsHazardous() const
     {
         return hazardous;
     }
@@ -675,12 +658,12 @@ namespace Botcraft
         return it != variables.cend() && it->second == "true";
     }
 
-    const float Blockstate::GetHardness() const
+    float Blockstate::GetHardness() const
     {
         return hardness;
     }
 
-    const TintType Blockstate::GetTintType() const
+    TintType Blockstate::GetTintType() const
     {
         return tint_type;
     }
@@ -756,7 +739,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-    const unsigned int Blockstate::IdMetadataToId(const unsigned int id_, const unsigned char metadata_)
+    unsigned int Blockstate::IdMetadataToId(const unsigned int id_, const unsigned char metadata_)
     {
         return id_ << 4 | metadata_;
     }
@@ -822,7 +805,7 @@ namespace Botcraft
     }
 #endif
 
-    const int Blockstate::GetNumModels() const
+    int Blockstate::GetNumModels() const
     {
         return static_cast<int>(models.size());
     }

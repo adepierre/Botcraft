@@ -4,7 +4,6 @@
 #include <set>
 
 #include "botcraft/Game/AssetsManager.hpp"
-#include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Biome.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
@@ -63,6 +62,41 @@ namespace Botcraft
 #endif
     {
         return blockstates;
+    }
+
+    const Blockstate* AssetsManager::GetBlockstate(const BlockstateId id) const
+    {
+        auto& blockstates_map = AssetsManager::getInstance().Blockstates();
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        auto it = blockstates_map.find(id.first);
+        if (it != blockstates_map.end())
+        {
+            auto it2 = it->second.find(id.second);
+            if (it2 != it->second.end())
+            {
+                return blockstate = it2->second.get();
+            }
+            else
+            {
+                return blockstate = it->second.at(0).get();
+            }
+        }
+        else
+        {
+            return blockstate = blockstates_map.at(-1).at(0).get();
+        }
+#else
+        auto it = blockstates_map.find(id);
+        if (it != blockstates_map.end())
+        {
+            return it->second.get();
+        }
+        else
+        {
+            return blockstates_map.at(-1).get();
+        }
+#endif
+        return nullptr;
     }
 
 #if PROTOCOL_VERSION < 358 /* < 1.13 */

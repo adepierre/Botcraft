@@ -29,6 +29,7 @@ namespace Botcraft
 #else
         const std::unordered_map<int, std::unique_ptr<Blockstate> >& Blockstates() const;
 #endif
+        const Blockstate* GetBlockstate(const BlockstateId id) const;
         
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
         const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& Biomes() const;
