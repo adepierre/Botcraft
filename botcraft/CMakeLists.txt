@@ -25,7 +25,6 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Vector3.hpp
 
     include/botcraft/Game/World/Biome.hpp
-    include/botcraft/Game/World/Block.hpp
     include/botcraft/Game/World/Blockstate.hpp
     include/botcraft/Game/World/Chunk.hpp
     include/botcraft/Game/World/Section.hpp
@@ -251,9 +250,9 @@ set(botcraft_SRC
     src/Game/Model.cpp
 
     src/Game/World/Biome.cpp
-    src/Game/World/Block.cpp
     src/Game/World/Blockstate.cpp
     src/Game/World/Chunk.cpp
+    src/Game/World/Section.cpp
     src/Game/World/World.cpp
 
     src/Game/Inventory/Window.cpp

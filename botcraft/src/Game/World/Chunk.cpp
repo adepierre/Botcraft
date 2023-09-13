@@ -1,3 +1,4 @@
+#include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/Section.hpp"
 #include "botcraft/Utilities/Logger.hpp"
@@ -72,7 +73,7 @@ namespace Botcraft
         }
     }
 
-    const Position Chunk::BlockCoordsToChunkCoords(const Position& pos)
+    Position Chunk::BlockCoordsToChunkCoords(const Position& pos)
     {
         return Position(
             static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
@@ -81,18 +82,18 @@ namespace Botcraft
         );
     }
 
-    const int Chunk::GetMinY() const
+    int Chunk::GetMinY() const
     {
         return min_y;
     }
 
-    const int Chunk::GetHeight() const
+    int Chunk::GetHeight() const
     {
         return height;
     }
 
 #if USE_GUI
-    const bool Chunk::GetModifiedSinceLastRender() const
+    bool Chunk::GetModifiedSinceLastRender() const
     {
         return modified_since_last_rendered;
     }
@@ -239,7 +240,7 @@ namespace Botcraft
 
                         Blockstate::IdToIdMetadata(raw_id, id, metadata);
 
-                        SetBlock(pos, id, metadata);
+                        SetBlock(pos, { id, metadata });
 #else
                         SetBlock(pos, raw_id);
 #endif
@@ -478,7 +479,7 @@ namespace Botcraft
 
     void Chunk::SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT::Value& block_entity)
     {
-        if (pos.x < -1 || pos.x > CHUNK_WIDTH || pos.y < min_y || pos.y > height + min_y - 1 || pos.z < -1 || pos.z > CHUNK_WIDTH)
+        if (!IsInRange(pos, true))
         {
             return;
         }
@@ -495,7 +496,7 @@ namespace Botcraft
         block_entities_data.erase(pos);
     }
 
-    const std::shared_ptr<NBT::Value> Chunk::GetBlockEntityData(const Position& pos) const
+    std::shared_ptr<NBT::Value> Chunk::GetBlockEntityData(const Position& pos) const
     {
         auto it = block_entities_data.find(pos);
         if (it == block_entities_data.end())
@@ -506,33 +507,32 @@ namespace Botcraft
         return it->second;
     }
 
-    const Block *Chunk::GetBlock(const Position &pos) const
+    const Blockstate* Chunk::GetBlock(const Position &pos) const
     {
-        if (pos.x < -1 || pos.x > CHUNK_WIDTH || pos.y < min_y || pos.y > height + min_y - 1 || pos.z < -1 || pos.z > CHUNK_WIDTH)
+        if (!IsInRange(pos, false))
         {
             return nullptr;
         }
 
-        if (!sections[(pos.y - min_y) / SECTION_HEIGHT])
+        const int section_y = (pos.y - min_y) / SECTION_HEIGHT;
+        if (sections[section_y] == nullptr)
         {
             return nullptr;
         }
 
-        return sections[(pos.y - min_y) / SECTION_HEIGHT]->data_blocks.data() + (((pos.y - min_y) % SECTION_HEIGHT) * (CHUNK_WIDTH + 2) * (CHUNK_WIDTH + 2) + (pos.z + 1) * (CHUNK_WIDTH + 2) + pos.x + 1);
+        return *(sections[section_y]->data_blocks.data() + Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z));
     }
 
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-    void Chunk::SetBlock(const Position &pos, const unsigned int id, unsigned char metadata, const int model_id)
-#else
-    void Chunk::SetBlock(const Position &pos, const unsigned int id, const int model_id)
-#endif
+
+    void Chunk::SetBlock(const Position &pos, const BlockstateId id)
     {
-        if (pos.x < -1 || pos.x > CHUNK_WIDTH || pos.y < min_y || pos.y > height + min_y - 1 || pos.z < -1 || pos.z > CHUNK_WIDTH)
+        if (!IsInRange(pos, false))
         {
             return;
         }
 
-        if (!sections[(pos.y  - min_y) / SECTION_HEIGHT])
+        const int section_y = (pos.y - min_y) / SECTION_HEIGHT;
+        if (!sections[section_y])
         {
             if (id == 0)
             {
@@ -540,70 +540,63 @@ namespace Botcraft
             }
             else
             {
-                AddSection((pos.y - min_y) / SECTION_HEIGHT);
+                AddSection(section_y);
             }
         }
-        Block *block = sections[(pos.y - min_y) / SECTION_HEIGHT]->data_blocks.data() + (((pos.y - min_y) % SECTION_HEIGHT) * (CHUNK_WIDTH + 2) * (CHUNK_WIDTH + 2) + (pos.z + 1) * (CHUNK_WIDTH + 2) + pos.x + 1);
 
-
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-        block->ChangeBlockstate(id, metadata, model_id, &pos);
-#else
-        block->ChangeBlockstate(id, model_id, &pos);
-#endif
+        sections[section_y]->data_blocks[Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = AssetsManager::getInstance().GetBlockstate(id);
 
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
     }
 
-    void Chunk::SetBlock(const Position& pos, const Block* block)
+    void Chunk::SetBlock(const Position& pos, const Blockstate* block)
     {
         if (block == nullptr)
         {
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-            SetBlock(pos, 0, 0, -1);
+            SetBlock(pos, { 0, 0 });
 #else
-            SetBlock(pos, 0, -1);
+            SetBlock(pos, 0u);
 #endif
         }
         else
         {
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-            SetBlock(pos, block->GetBlockstate()->GetId(), block->GetBlockstate()->GetMetadata(), block->GetModelId());
-#else
-            SetBlock(pos, block->GetBlockstate()->GetId(), block->GetModelId());
-#endif
+            SetBlock(pos, block->GetId());
         }
     }
-    const unsigned char Chunk::GetBlockLight(const Position &pos) const
+    
+    unsigned char Chunk::GetBlockLight(const Position &pos) const
     {
-        if (pos.x < 0 || pos.x > CHUNK_WIDTH - 1 || pos.y < min_y || pos.y > height + min_y - 1 || pos.z < 0 || pos.z > CHUNK_WIDTH - 1)
-        {
-            return 0;
-        }
-        
-        if (!sections[(pos.y - min_y) / SECTION_HEIGHT])
+        if (!IsInRange(pos, true))
         {
             return 0;
         }
 
-        return sections[(pos.y - min_y) / SECTION_HEIGHT]->block_light[((pos.y - min_y) % SECTION_HEIGHT) * CHUNK_WIDTH * CHUNK_WIDTH + pos.z * CHUNK_WIDTH + pos.x];
+        const int section_y = (pos.y - min_y) / SECTION_HEIGHT;
+        if (!sections[section_y])
+        {
+            return 0;
+        }
+
+        return sections[section_y]->block_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)];
     }
 
     void Chunk::SetBlockLight(const Position &pos, const unsigned char v)
     {
-        if (pos.x < 0 || pos.x > CHUNK_WIDTH - 1 || pos.y < min_y || pos.y > height + min_y - 1 || pos.z < 0 || pos.z > CHUNK_WIDTH - 1)
+        if (!IsInRange(pos, true))
         {
             return;
         }
 
-        if (!sections[(pos.y - min_y) / SECTION_HEIGHT])
+        const int section_y = (pos.y - min_y) / SECTION_HEIGHT;
+        if (!sections[section_y])
         {
-            AddSection((pos.y - min_y)/ SECTION_HEIGHT);
+            AddSection(section_y);
         }
 
-        sections[(pos.y - min_y) / SECTION_HEIGHT]->block_light[((pos.y - min_y) % SECTION_HEIGHT) * CHUNK_WIDTH * CHUNK_WIDTH + pos.z * CHUNK_WIDTH + pos.x] = v;
+        sections[section_y]->block_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = v;
 
         // Not necessary as we don't render lights
 //#if USE_GUI
@@ -611,24 +604,25 @@ namespace Botcraft
 //#endif
     }
 
-    const unsigned char Chunk::GetSkyLight(const Position &pos) const
+    unsigned char Chunk::GetSkyLight(const Position &pos) const
     {
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         if (dimension != Dimension::Overworld
 #else
         if (dimension != "minecraft:overworld"
 #endif
-            || pos.x < 0 || pos.x > CHUNK_WIDTH - 1 || pos.y < min_y || pos.y > height + min_y - 1 || pos.z < 0 || pos.z > CHUNK_WIDTH - 1)
+            || !IsInRange(pos, true))
         {
             return 0;
         }
 
-        if (!sections[(pos.y - min_y) / SECTION_HEIGHT])
+        const int section_y = (pos.y - min_y) / SECTION_HEIGHT;
+        if (!sections[section_y])
         {
             return 0;
         }
 
-        return sections[(pos.y - min_y) / SECTION_HEIGHT]->sky_light[((pos.y - min_y) % SECTION_HEIGHT) * CHUNK_WIDTH * CHUNK_WIDTH + pos.z * CHUNK_WIDTH + pos.x];
+        return sections[section_y]->sky_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)];
     }
 
     void Chunk::SetSkyLight(const Position &pos, const unsigned char v)
@@ -638,17 +632,18 @@ namespace Botcraft
 #else
         if (dimension != "minecraft:overworld"
 #endif
-            || pos.x < 0 || pos.x > CHUNK_WIDTH - 1 || pos.y < min_y || pos.y > height + min_y - 1 || pos.z < 0 || pos.z > CHUNK_WIDTH - 1)
+            || !IsInRange(pos, true))
         {
             return;
         }
 
-        if (!sections[(pos.y - min_y) / SECTION_HEIGHT])
+        const int section_y = (pos.y - min_y) / SECTION_HEIGHT;
+        if (!sections[section_y])
         {
-            AddSection((pos.y - min_y) / SECTION_HEIGHT);
+            AddSection(section_y);
         }
 
-        sections[(pos.y - min_y) / SECTION_HEIGHT]->block_light[((pos.y - min_y) % SECTION_HEIGHT) * CHUNK_WIDTH * CHUNK_WIDTH + pos.z * CHUNK_WIDTH + pos.x] = v;
+        sections[section_y]->block_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = v;
         // Not necessary as we don't render lights
 //#if USE_GUI
 //        modified_since_last_rendered = true;
@@ -705,13 +700,13 @@ namespace Botcraft
 #endif
     }
 #else
-    const int Chunk::GetBiome(const int x, const int y, const int z) const
+    int Chunk::GetBiome(const int x, const int y, const int z) const
     {
         // y / 4 * 16 + z / 4 * 4 + x / 4
         return GetBiome((((y - min_y) >> 2) & 63) << 4 | ((z >> 2) & 3) << 2 | ((x >> 2) & 3));
     }
 
-    const int Chunk::GetBiome(const int i) const
+    int Chunk::GetBiome(const int i) const
     {
         if (i < 0 || i > biomes.size() - 1)
         {
@@ -755,6 +750,25 @@ namespace Botcraft
 #endif
     }
 #endif
+
+    bool Chunk::IsInRange(const Position& pos, const bool no_gui) const
+    {
+        if (no_gui)
+        {
+            return pos.x >= 0 && pos.x < CHUNK_WIDTH&&
+                pos.y >= min_y && pos.y < height + min_y &&
+                pos.z >= 0 && pos.z < CHUNK_WIDTH;
+        }
+#if USE_GUI
+        return pos.x >= -1 && pos.x <= CHUNK_WIDTH &&
+            pos.y >= min_y && pos.y < height + min_y &&
+            pos.z >= -1 && pos.z <= CHUNK_WIDTH;
+#else
+        return pos.x >= 0 && pos.x < CHUNK_WIDTH&&
+            pos.y >= min_y && pos.y < height + min_y &&
+            pos.z >= 0 && pos.z < CHUNK_WIDTH;
+#endif
+    }
 
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     void Botcraft::Chunk::LoadSectionBiomeData(const int section_y, ProtocolCraft::ReadIterator& iter, size_t& length)
@@ -1024,12 +1038,12 @@ namespace Botcraft
         return dimension;
     }
 
-    const std::map<Position, std::shared_ptr<NBT::Value> >& Chunk::GetBlockEntitiesData() const
+    const std::unordered_map<Position, std::shared_ptr<NBT::Value> >& Chunk::GetBlockEntitiesData() const
     {
         return block_entities_data;
     }
 
-    const bool Chunk::HasSection(const int y) const
+    bool Chunk::HasSection(const int y) const
     {
         return sections[y] != nullptr;
     }
@@ -1037,9 +1051,9 @@ namespace Botcraft
     void Chunk::AddSection(const int y)
     {
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        sections[y] = std::shared_ptr<Section>(new Section(dimension == Dimension::Overworld));
+        sections[y] = std::make_shared<Section>(dimension == Dimension::Overworld);
 #else
-        sections[y] = std::shared_ptr<Section>(new Section(dimension == "minecraft:overworld"));
+        sections[y] = std::make_shared<Section>(dimension == "minecraft:overworld");
 #endif
     }
 
