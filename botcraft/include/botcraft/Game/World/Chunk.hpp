@@ -5,12 +5,14 @@
 #include <memory>
 
 #include "botcraft/Game/Enums.hpp"
+#include "botcraft/Game/World/Blockstate.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Types/BlockEntityInfo.hpp"
 
 namespace Botcraft
 {
-    struct Section;
+    class Biome;
+    class Section;
 
     //We assume that a chunk is 16*256*16 in versions before 1.18 and 16*N*16 after
     //And a section is 16*16*16
@@ -20,12 +22,13 @@ namespace Botcraft
     class Chunk
     {
     public:
+        Chunk();
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        Chunk(const Dimension &dim = Dimension::Overworld);
+        Chunk(const Dimension &dim);
 #elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-        Chunk(const std::string& dim = "minecraft:overworld");
+        Chunk(const std::string& dim);
 #else
-        Chunk(const int min_y_, const unsigned int height_, const std::string& dim = "minecraft:overworld");
+        Chunk(const int min_y_, const unsigned int height_, const std::string& dim);
 #endif
         Chunk(const Chunk& c);
 
@@ -55,37 +58,34 @@ namespace Botcraft
 #endif
         void SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT::Value& block_entity);
         void RemoveBlockEntityData(const Position& pos);
-        std::shared_ptr<ProtocolCraft::NBT::Value> GetBlockEntityData(const Position& pos) const;
+        ProtocolCraft::NBT::Value GetBlockEntityData(const Position& pos) const;
 
         const Blockstate* GetBlock(const Position &pos) const;
 
-        void SetBlock(const Position &pos, const BlockstateId id);
         void SetBlock(const Position& pos, const Blockstate* block);
+        void SetBlock(const Position &pos, const BlockstateId id);
 
         unsigned char GetBlockLight(const Position &pos) const;
         void SetBlockLight(const Position &pos, const unsigned char v);
 
         unsigned char GetSkyLight(const Position &pos) const;
         void SetSkyLight(const Position &pos, const unsigned char v);
+
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         Dimension GetDimension() const;
 #else
         const std::string& GetDimension() const;
 #endif
-        const std::unordered_map<Position, std::shared_ptr<ProtocolCraft::NBT::Value> >& GetBlockEntitiesData() const;
 
         bool HasSection(const int y) const;
         void AddSection(const int y);
 
-#if PROTOCOL_VERSION < 358 /* < 1.13 */
-        unsigned char GetBiome(const int x, const int z) const;
-        void SetBiome(const int x, const int z, const unsigned char b);
-#elif PROTOCOL_VERSION < 552 /* < 1.15 */
-        int GetBiome(const int x, const int z) const;
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
+        const Biome* GetBiome(const int x, const int z) const;
         void SetBiome(const int x, const int z, const int b);
 #else
-        int GetBiome(const int x, const int y, const int z) const;
-        int GetBiome(const int i) const;
+        const Biome* GetBiome(const int x, const int y, const int z) const;
+        const Biome* GetBiome(const int i) const;
         void SetBiomes(const std::vector<int>& new_biomes);
         void SetBiome(const int x, const int y, const int z, const int new_biome);
         void SetBiome(const int i, const int new_biome);
@@ -93,21 +93,18 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         void LoadBiomesData(const std::vector<unsigned char>& data);
 #endif
-        void UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction);
+        void UpdateNeighbour(Chunk* const neighbour, const Orientation direction);
         
     private:
-        bool IsInRange(const Position& pos, const bool no_gui) const;
+        bool IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const;
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         void LoadSectionBiomeData(const int section_y, ProtocolCraft::ReadIterator& iter, size_t& length);
 #endif
     private:
         std::vector<std::shared_ptr<Section> > sections;
-#if PROTOCOL_VERSION < 358 /* < 1.13 */
-        std::vector<unsigned char> biomes;
-#else
-        std::vector<int> biomes;
-#endif
-        std::unordered_map<Position, std::shared_ptr<ProtocolCraft::NBT::Value> > block_entities_data;
+        std::vector<const Biome*> biomes;
+
+        std::unordered_map<Position, ProtocolCraft::NBT::Value> block_entities_data;
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         Dimension dimension;
 #else

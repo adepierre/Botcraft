@@ -16,6 +16,23 @@ namespace Botcraft
         GlobalPalette
     };
 
+    Chunk::Chunk()
+    {
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+        dimension = Dimension::None;
+#else
+        dimension = "";
+#endif
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
+        height = 0;
+        min_y = 0;
+#endif
+
+#if USE_GUI
+        modified_since_last_rendered = false;
+#endif
+    }
+
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
     Chunk::Chunk(const Dimension &dim)
 #elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
@@ -29,13 +46,12 @@ namespace Botcraft
         height = height_;
         min_y = min_y_;
 #endif
-#if PROTOCOL_VERSION < 358 /* < 1.13 */
-        biomes = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
-#elif PROTOCOL_VERSION < 552 /* < 1.15 */
-        biomes = std::vector<int>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
+
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
+        biomes = std::vector<const Biome*>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
 #else
         // Each section has 64 biomes, one for each 4*4*4 cubes
-        biomes = std::vector<int>(64 * height / SECTION_HEIGHT, 0);
+        biomes = std::vector<const Biome*>(64 * height / SECTION_HEIGHT, 0);
 #endif
         sections = std::vector<std::shared_ptr<Section> >(height / SECTION_HEIGHT);
 
@@ -67,10 +83,7 @@ namespace Botcraft
             }
         }
 
-        for (auto it = c.block_entities_data.begin(); it != c.block_entities_data.end(); it++)
-        {
-            block_entities_data[it->first] = std::make_shared<NBT::Value>(*it->second);
-        }
+        block_entities_data = c.block_entities_data;
     }
 
     Position Chunk::BlockCoordsToChunkCoords(const Position& pos)
@@ -461,14 +474,14 @@ namespace Botcraft
                     block_entities[i].contains("z") &&
                     block_entities[i]["z"].is<int>())
                 {
-                    block_entities_data[Position((block_entities[i]["x"].get<int>() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, block_entities[i]["y"].get<int>(), (block_entities[i]["z"].get<int>() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = std::make_shared<NBT::Value>(block_entities[i]);
+                    block_entities_data[Position((block_entities[i]["x"].get<int>() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, block_entities[i]["y"].get<int>(), (block_entities[i]["z"].get<int>() % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = block_entities[i];
                 }
             }
 #else
             const int x = (block_entities[i].GetPackedXZ() >> 4) & 15;
             const int z = (block_entities[i].GetPackedXZ() & 15);
             // And what about the type ???
-            block_entities_data[Position((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, block_entities[i].GetY(), (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = std::make_shared<NBT::Value>(block_entities[i].GetTag());
+            block_entities_data[Position((x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH, block_entities[i].GetY(), (z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH)] = block_entities[i].GetTag();
 #endif
         }
 
@@ -479,12 +492,12 @@ namespace Botcraft
 
     void Chunk::SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT::Value& block_entity)
     {
-        if (!IsInRange(pos, true))
+        if (!IsInsideChunk(pos, true))
         {
             return;
         }
 
-        block_entities_data[pos] = std::make_shared<NBT::Value>(block_entity);
+        block_entities_data[pos] = block_entity;
 
 #if USE_GUI
         modified_since_last_rendered = true;
@@ -496,12 +509,12 @@ namespace Botcraft
         block_entities_data.erase(pos);
     }
 
-    std::shared_ptr<NBT::Value> Chunk::GetBlockEntityData(const Position& pos) const
+    NBT::Value Chunk::GetBlockEntityData(const Position& pos) const
     {
         auto it = block_entities_data.find(pos);
         if (it == block_entities_data.end())
         {
-            return nullptr;
+            return NBT::Value();
         }
 
         return it->second;
@@ -509,7 +522,7 @@ namespace Botcraft
 
     const Blockstate* Chunk::GetBlock(const Position &pos) const
     {
-        if (!IsInRange(pos, false))
+        if (!IsInsideChunk(pos, false))
         {
             return nullptr;
         }
@@ -523,10 +536,9 @@ namespace Botcraft
         return *(sections[section_y]->data_blocks.data() + Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z));
     }
 
-
-    void Chunk::SetBlock(const Position &pos, const BlockstateId id)
+    void Chunk::SetBlock(const Position& pos, const Blockstate* block)
     {
-        if (!IsInRange(pos, false))
+        if (!IsInsideChunk(pos, false))
         {
             return;
         }
@@ -534,7 +546,7 @@ namespace Botcraft
         const int section_y = (pos.y - min_y) / SECTION_HEIGHT;
         if (!sections[section_y])
         {
-            if (id == 0)
+            if (block == nullptr)
             {
                 return;
             }
@@ -544,32 +556,21 @@ namespace Botcraft
             }
         }
 
-        sections[section_y]->data_blocks[Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = AssetsManager::getInstance().GetBlockstate(id);
+        sections[section_y]->data_blocks[Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = block;
 
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
     }
 
-    void Chunk::SetBlock(const Position& pos, const Blockstate* block)
+    void Chunk::SetBlock(const Position &pos, const BlockstateId id)
     {
-        if (block == nullptr)
-        {
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-            SetBlock(pos, { 0, 0 });
-#else
-            SetBlock(pos, 0u);
-#endif
-        }
-        else
-        {
-            SetBlock(pos, block->GetId());
-        }
+        SetBlock(pos, AssetsManager::getInstance().GetBlockstate(id));
     }
-    
+
     unsigned char Chunk::GetBlockLight(const Position &pos) const
     {
-        if (!IsInRange(pos, true))
+        if (!IsInsideChunk(pos, true))
         {
             return 0;
         }
@@ -585,7 +586,7 @@ namespace Botcraft
 
     void Chunk::SetBlockLight(const Position &pos, const unsigned char v)
     {
-        if (!IsInRange(pos, true))
+        if (!IsInsideChunk(pos, true))
         {
             return;
         }
@@ -611,7 +612,7 @@ namespace Botcraft
 #else
         if (dimension != "minecraft:overworld"
 #endif
-            || !IsInRange(pos, true))
+            || !IsInsideChunk(pos, true))
         {
             return 0;
         }
@@ -632,7 +633,7 @@ namespace Botcraft
 #else
         if (dimension != "minecraft:overworld"
 #endif
-            || !IsInRange(pos, true))
+            || !IsInsideChunk(pos, true))
         {
             return;
         }
@@ -650,37 +651,13 @@ namespace Botcraft
 //#endif
     }
 
-#if PROTOCOL_VERSION < 358 /* < 1.13 */
-    const unsigned char Chunk::GetBiome(const int x, const int z) const
+
+#if PROTOCOL_VERSION < 552 /* < 1.15 */
+    const Biome* Chunk::GetBiome(const int x, const int z) const
     {
         if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
         {
-            return 0;
-        }
-
-        return biomes[z * CHUNK_WIDTH + x];
-    }
-
-    void Chunk::SetBiome(const int x, const int z, const unsigned char b)
-    {
-        if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
-        {
-            return;
-        }
-
-        biomes[z * CHUNK_WIDTH + x] = b;
-
-#if USE_GUI
-        modified_since_last_rendered = true;
-#endif
-    }
-
-#elif PROTOCOL_VERSION < 552 /* < 1.15 */
-    const int Chunk::GetBiome(const int x, const int z) const
-    {
-        if (x < 0 || x > CHUNK_WIDTH - 1 || z < 0 || z > CHUNK_WIDTH - 1)
-        {
-            return 0;
+            return nullptr;
         }
 
         return biomes[z * CHUNK_WIDTH + x];
@@ -693,24 +670,24 @@ namespace Botcraft
             return;
         }
 
-        biomes[z * CHUNK_WIDTH + x] = b;
+        biomes[z * CHUNK_WIDTH + x] = AssetsManager::getInstance().GetBiome(b);;
 
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
     }
 #else
-    int Chunk::GetBiome(const int x, const int y, const int z) const
+    const Biome* Chunk::GetBiome(const int x, const int y, const int z) const
     {
         // y / 4 * 16 + z / 4 * 4 + x / 4
         return GetBiome((((y - min_y) >> 2) & 63) << 4 | ((z >> 2) & 3) << 2 | ((x >> 2) & 3));
     }
 
-    int Chunk::GetBiome(const int i) const
+    const Biome* Chunk::GetBiome(const int i) const
     {
         if (i < 0 || i > biomes.size() - 1)
         {
-            return 0;
+            return nullptr;
         }
 
         return biomes[i];
@@ -723,7 +700,12 @@ namespace Botcraft
             LOG_ERROR("Trying to set biomes with a wrong size");
             return;
         }
-        biomes = new_biomes;
+        biomes = std::vector<const Biome*>(new_biomes.size());
+        const AssetsManager& assets_manager = AssetsManager::getInstance();
+        for (size_t id = 0; id < new_biomes.size(); ++id)
+        {
+            biomes[id] = assets_manager.GetBiome(id);
+        }
 
 #if USE_GUI
         modified_since_last_rendered = true;
@@ -743,7 +725,7 @@ namespace Botcraft
             return;
         }
 
-        biomes[i] = new_biome;
+        biomes[i] = AssetsManager::getInstance().GetBiome(new_biome);
 
 #if USE_GUI
         modified_since_last_rendered = true;
@@ -751,11 +733,11 @@ namespace Botcraft
     }
 #endif
 
-    bool Chunk::IsInRange(const Position& pos, const bool no_gui) const
+    bool Chunk::IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const
     {
-        if (no_gui)
+        if (ignore_gui_borders)
         {
-            return pos.x >= 0 && pos.x < CHUNK_WIDTH&&
+            return pos.x >= 0 && pos.x < CHUNK_WIDTH &&
                 pos.y >= min_y && pos.y < height + min_y &&
                 pos.z >= 0 && pos.z < CHUNK_WIDTH;
         }
@@ -764,7 +746,7 @@ namespace Botcraft
             pos.y >= min_y && pos.y < height + min_y &&
             pos.z >= -1 && pos.z <= CHUNK_WIDTH;
 #else
-        return pos.x >= 0 && pos.x < CHUNK_WIDTH&&
+        return pos.x >= 0 && pos.x < CHUNK_WIDTH &&
             pos.y >= min_y && pos.y < height + min_y &&
             pos.z >= 0 && pos.z < CHUNK_WIDTH;
 #endif
@@ -880,8 +862,9 @@ namespace Botcraft
     }
 #endif
 
-    void Chunk::UpdateNeighbour(const std::shared_ptr<Chunk> neighbour, const Orientation direction)
+    void Chunk::UpdateNeighbour(Chunk* const neighbour, const Orientation direction)
     {
+#if USE_GUI
         Position this_dest_position = Position(0, 0, 0);
         Position this_src_position = Position(0, 0, 0);
         Position neighbour_dest_position = Position(0, 0, 0);
@@ -1027,6 +1010,7 @@ namespace Botcraft
         default:
             break;
         }
+#endif
     }
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
@@ -1038,11 +1022,6 @@ namespace Botcraft
         return dimension;
     }
 
-    const std::unordered_map<Position, std::shared_ptr<NBT::Value> >& Chunk::GetBlockEntitiesData() const
-    {
-        return block_entities_data;
-    }
-
     bool Chunk::HasSection(const int y) const
     {
         return sections[y] != nullptr;
@@ -1051,9 +1030,9 @@ namespace Botcraft
     void Chunk::AddSection(const int y)
     {
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        sections[y] = std::make_shared<Section>(dimension == Dimension::Overworld);
+        sections[y] = std::make_unique<Section>(dimension == Dimension::Overworld);
 #else
-        sections[y] = std::make_shared<Section>(dimension == "minecraft:overworld");
+        sections[y] = std::make_unique<Section>(dimension == "minecraft:overworld");
 #endif
     }
 

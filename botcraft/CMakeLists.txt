@@ -27,7 +27,6 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/World/Biome.hpp
     include/botcraft/Game/World/Blockstate.hpp
     include/botcraft/Game/World/Chunk.hpp
-    include/botcraft/Game/World/Section.hpp
     include/botcraft/Game/World/World.hpp
 
     include/botcraft/Game/Entities/EntityManager.hpp
@@ -228,6 +227,8 @@ set(botcraft_PRIVATE_HDR
     private_include/botcraft/Network/DNS/DNSSrvData.hpp
 
     private_include/botcraft/Utilities/StringUtilities.hpp
+
+    private_include/botcraft/Game/World/Section.hpp
 )
 
 set(botcraft_SRC
