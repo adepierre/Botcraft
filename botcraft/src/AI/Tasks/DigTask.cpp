@@ -52,22 +52,16 @@ namespace Botcraft
         }
 
         std::shared_ptr<World> world = c.GetWorld();
-        const Blockstate* blockstate;
-        bool is_head_in_fluid = false;
+        const Blockstate* blockstate = world->GetBlock(pos);
+
+        // No block
+        if (blockstate == nullptr || blockstate->IsAir())
         {
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            const Block* block = world->GetBlock(pos);
-
-            // No block
-            if (!block || block->GetBlockstate()->IsAir())
-            {
-                return Status::Success;
-            }
-            blockstate = block->GetBlockstate();
-
-            block = world->GetBlock(eyes_block);
-            is_head_in_fluid = block && block->GetBlockstate()->IsFluid();
+            return Status::Success;
         }
+
+        const Blockstate* head_blockstate = world->GetBlock(eyes_block);
+        bool is_head_in_fluid = head_blockstate != nullptr && head_blockstate->IsFluid();
 
         // Not breakable
         if (blockstate->IsFluid() ||
@@ -151,10 +145,7 @@ namespace Botcraft
         msg_digging->SetPos(pos.ToNetworkPosition());
         msg_digging->SetDirection(static_cast<int>(face));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        {
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            msg_digging->SetSequence(world->GetNextWorldInteractionSequenceId());
-        }
+        msg_digging->SetSequence(world->GetNextWorldInteractionSequenceId());
 #endif
         network_manager->Send(msg_digging);
 
@@ -187,10 +178,7 @@ namespace Botcraft
                 msg_finish->SetPos(pos.ToNetworkPosition());
                 msg_finish->SetDirection(static_cast<int>(face));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-                {
-                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                    msg_finish->SetSequence(world->GetNextWorldInteractionSequenceId());
-                }
+                msg_finish->SetSequence(world->GetNextWorldInteractionSequenceId());
 #endif
                 network_manager->Send(msg_finish);
 
@@ -201,14 +189,11 @@ namespace Botcraft
                 last_time_send_swing = now;
                 network_manager->Send(swing_packet);
             }
-            {
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                const Block* block = world->GetBlock(pos);
+            const Blockstate* block = world->GetBlock(pos);
 
-                if (!block || block->GetBlockstate()->IsAir())
-                {
-                    return Status::Success;
-                }
+            if (block == nullptr || block->IsAir())
+            {
+                return Status::Success;
             }
             c.Yield();
         }

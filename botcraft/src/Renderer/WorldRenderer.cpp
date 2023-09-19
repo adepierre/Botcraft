@@ -7,7 +7,6 @@
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/Biome.hpp"
-#include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Blockstate.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 
@@ -159,7 +158,7 @@ namespace Botcraft
             }
         }
 
-        void WorldRenderer::UpdateChunk(const int x_, const int z_, const std::shared_ptr<const Botcraft::Chunk> chunk)
+        void WorldRenderer::UpdateChunk(const int x_, const int z_, const std::optional<Botcraft::Chunk>& chunk)
         {
             // Remove any previous version of this chunk
             {
@@ -185,13 +184,11 @@ namespace Botcraft
                 }
             }
 
-            if (chunk == nullptr)
+            if (!chunk.has_value())
             {
                 blocks_faces_should_be_updated = true;
                 return;
             }
-
-            auto& AssetsManager_ = AssetsManager::getInstance();
 
             // For each block in the chunk, check its neighbours
             // to see which face to draw
@@ -212,9 +209,8 @@ namespace Botcraft
                         pos.x = x;
 
                         // If this block is air, just skip it
-                        const Block* this_block = chunk->GetBlock(pos);
-                        if (this_block == nullptr ||
-                            this_block->GetBlockstate()->IsAir())
+                        const Blockstate* this_block = chunk->GetBlock(pos);
+                        if (this_block == nullptr || this_block->IsAir())
                         {
                             continue;
                         }
@@ -222,15 +218,7 @@ namespace Botcraft
                         // Else check its neighbours to find which face to draw
                         for (int i = 0; i < 6; ++i)
                         {
-                            const Block* neighbour_block = chunk->GetBlock(pos + neighbour_positions[i]);
-                            if (neighbour_block == nullptr)
-                            {
-                                neighbour_blockstates[i] = nullptr;
-                            }
-                            else
-                            {
-                                neighbour_blockstates[i] = neighbour_block->GetBlockstate();
-                            }
+                            neighbour_blockstates[i] = chunk->GetBlock(pos + neighbour_positions[i]);
                         }
 
                         bool is_surrounded_by_opaque = false;
@@ -257,11 +245,11 @@ namespace Botcraft
                         }
 
                         //Add all faces of the current state
-                        const std::vector<FaceDescriptor>& current_faces = this_block->GetBlockstate()->GetModel(this_block->GetModelId()).GetFaces();
+                        const std::vector<FaceDescriptor>& current_faces = this_block->GetModel(this_block->GetModelId(pos)).GetFaces();
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
-                        const Biome* current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, z));
+                        const Biome* current_biome = chunk->GetBiome(x, z);
 #else
-                        const Biome* current_biome = AssetsManager_.GetBiome(chunk->GetBiome(x, y, z));
+                        const Biome* current_biome = chunk->GetBiome(x, y, z);
 #endif
 
                         for (int i = 0; i < current_faces.size(); ++i)
@@ -272,13 +260,12 @@ namespace Botcraft
                             if (current_faces[i].cullface_direction == Orientation::None ||
                                 !neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)] ||
                                 (neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)]->IsTransparent() &&
-                                    neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)]->GetName() != this_block->GetBlockstate()->GetName())
+                                    neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)]->GetName() != this_block->GetName())
                                 )
                             {
                                 AddFace(pos.x + CHUNK_WIDTH * x_, pos.y, pos.z + CHUNK_WIDTH * z_,
                                     current_faces[i].face, current_faces[i].texture_names,
-                                    GetColorModifier(pos.y, current_biome, this_block->GetBlockstate(),
-                                        current_faces[i].use_tintindexes));
+                                    GetColorModifier(pos.y, current_biome, this_block, current_faces[i].use_tintindexes));
                             }
                         }
                     }

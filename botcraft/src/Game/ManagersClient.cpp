@@ -3,7 +3,6 @@
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/World.hpp"
-#include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Biome.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
@@ -157,7 +156,7 @@ namespace Botcraft
         inventory_manager = std::make_shared<InventoryManager>();
         entity_manager = std::make_shared<EntityManager>();
 
-        network_manager->AddHandler(world->GetAsyncHandler());
+        network_manager->AddHandler(world->GetHandler());
         network_manager->AddHandler(inventory_manager.get());
         network_manager->AddHandler(entity_manager.get());
 

@@ -122,11 +122,7 @@ namespace Botcraft
 #endif
         place_block_msg->SetHand(static_cast<int>(Hand::Right));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        {
-            std::shared_ptr<World> world = client.GetWorld();
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            place_block_msg->SetSequence(world->GetNextWorldInteractionSequenceId());
-        }
+        place_block_msg->SetSequence(client.GetWorld()->GetNextWorldInteractionSequenceId());
 #endif
         client.GetNetworkManager()->Send(place_block_msg);
 

@@ -233,20 +233,6 @@ void UserControlledClient::CreateTestWorld()
 #endif
             pos = Position(-(x * biome_spacing) - 1, 0, 1);
 
-            const Block *block = world->GetBlock(pos);
-            const Blockstate* previous_blockstate;
-            if (block != nullptr)
-            {
-                previous_blockstate = block->GetBlockstate();
-            }
-            else
-            {
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
-#else
-                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
-#endif
-            }
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
             world->SetBlock(pos, 18, 0);
 #else
@@ -258,20 +244,6 @@ void UserControlledClient::CreateTestWorld()
             world->SetBiome(pos.x, pos.y, pos.z, i);
 #endif
             pos = Position(-(x * biome_spacing) - 1, 0, 2);
-
-            block = world->GetBlock(pos);
-            if (block != nullptr)
-            {
-                previous_blockstate = block->GetBlockstate();
-            }
-            else
-            {
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
-#else
-                previous_blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
-#endif
-            }
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
             world->SetBlock(pos, 9, 0);

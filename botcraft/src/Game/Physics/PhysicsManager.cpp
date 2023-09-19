@@ -85,18 +85,14 @@ namespace Botcraft
                 std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
                 if (local_player && local_player->GetPosition().y < 1000.0)
                 {
-                    bool is_loaded = false;
                     std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
-                    {
-                        std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
-                        const Position player_position = Position(
-                            static_cast<int>(std::floor(local_player->GetX())),
-                            static_cast<int>(std::floor(local_player->GetY())),
-                            static_cast<int>(std::floor(local_player->GetZ()))
-                        );
+                    const Position player_position = Position(
+                        static_cast<int>(std::floor(local_player->GetX())),
+                        static_cast<int>(std::floor(local_player->GetY())),
+                        static_cast<int>(std::floor(local_player->GetZ()))
+                    );
 
-                        is_loaded = world->IsLoaded(player_position);
-                    }
+                    const bool is_loaded = world->IsLoaded(player_position);
 
                     if (is_loaded)
                     {
@@ -209,27 +205,22 @@ namespace Botcraft
                 {
                     cube_pos.z = z;
 
-                    Block block;
-                    {
-                        std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
-                        const Block* block_ptr = world->GetBlock(cube_pos);
+                    const Blockstate* block= world->GetBlock(cube_pos);
 
-                        if (block_ptr == nullptr)
-                        {
-                            continue;
-                        }
-                        block = *block_ptr;
-                    }
-
-                    // If the block is not solid and it's not a climbable block below us,
-                    // it doesn't collide so ignore it
-                    if (!block.GetBlockstate()->IsSolid()
-                        && (!block.GetBlockstate()->IsClimbable() || cube_pos.y >= std::floor(player_position.y)))
+                    if (block == nullptr)
                     {
                         continue;
                     }
 
-                    const std::vector<AABB>& block_colliders = block.GetBlockstate()->GetModel(block.GetModelId()).GetColliders();
+                    // If the block is not solid and it's not a climbable block below us,
+                    // it doesn't collide so ignore it
+                    if (!block->IsSolid()
+                        && (!block->IsClimbable() || cube_pos.y >= std::floor(player_position.y)))
+                    {
+                        continue;
+                    }
+
+                    const std::vector<AABB>& block_colliders = block->GetModel(block->GetModelId(cube_pos)).GetColliders();
 
                     for (int i = 0; i < block_colliders.size(); ++i)
                     {
@@ -244,7 +235,7 @@ namespace Botcraft
                         // If we collide with the bottom block with go down user input
                         // and it's a climbable block, then we should pass through
                         const bool pass_through = normal.y == 1.0
-                            && block.GetBlockstate()->IsClimbable()
+                            && block->IsClimbable()
                             && player_inputs.y < 0;
 
                         // If we collide with the bottom block and we shouldn't pass through
@@ -296,15 +287,13 @@ namespace Botcraft
         local_player->SetPosition(local_player->GetPosition() + player_movement_speed + player_movement_inputs);
         local_player->SetOnGround(has_hit_down);
         // Update climbing state
-        {
-            std::lock_guard<std::mutex> mutex_guard(world->GetMutex());
-            const Block* block_ptr = world->GetBlock(Position(
-                static_cast<int>(std::floor(local_player->GetX())),
-                static_cast<int>(std::floor(local_player->GetY())),
-                static_cast<int>(std::floor(local_player->GetZ())))
-            );
-            local_player->SetIsClimbing(block_ptr && block_ptr->GetBlockstate()->IsClimbable());
-        }
+        const Blockstate* block = world->GetBlock(Position(
+            static_cast<int>(std::floor(local_player->GetX())),
+            static_cast<int>(std::floor(local_player->GetY())),
+            static_cast<int>(std::floor(local_player->GetZ())))
+        );
+        local_player->SetIsClimbing(block != nullptr && block->IsClimbable());
+
         if (has_hit_up)
         {
             local_player->SetSpeedY(0.0);

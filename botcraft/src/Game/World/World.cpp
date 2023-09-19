@@ -159,6 +159,11 @@ namespace Botcraft
         return output;
     }
 
+    Utilities::ScopeLockedWrapper<const std::unordered_map<std::pair<int, int>, Chunk>, std::shared_mutex, std::shared_lock> World::GetTerrain() const
+    {
+        return Utilities::ScopeLockedWrapper<const std::unordered_map<std::pair<int, int>, Chunk>, std::shared_mutex, std::shared_lock>(terrain, world_mutex);
+    }
+
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
     void World::SetBiome(const int x, const int z, const unsigned char biome)
 #elif PROTOCOL_VERSION < 552 /* < 1.15 */

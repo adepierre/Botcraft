@@ -36,29 +36,29 @@ namespace Botcraft
         return (static_cast<char>(a) & static_cast<char>(b)) > 0;
     }
 
-    BlockPathfindingState GetBlockGoThroughState(const Block* block, const bool take_damage)
+    BlockPathfindingState GetBlockGoThroughState(const Blockstate* block, const bool take_damage)
     {
         if (block == nullptr)
         {
             return BlockPathfindingState::Empty;
         }
 
-        if (take_damage && block->GetBlockstate()->IsHazardous())
+        if (take_damage && block->IsHazardous())
         {
             return BlockPathfindingState::Hazardous;
         }
 
-        if (block->GetBlockstate()->IsFluid())
+        if (block->IsFluid())
         {
             return BlockPathfindingState::Climbable | BlockPathfindingState::Fluid;
         }
 
-        if (block->GetBlockstate()->IsClimbable())
+        if (block->IsClimbable())
         {
             return BlockPathfindingState::Climbable;
         }
 
-        return block->GetBlockstate()->IsSolid() ? BlockPathfindingState::Solid : BlockPathfindingState::Empty;
+        return block->IsSolid() ? BlockPathfindingState::Solid : BlockPathfindingState::Empty;
     }
 
     std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump)
@@ -104,11 +104,8 @@ namespace Botcraft
 
         bool end_is_inside_solid = false;
         std::shared_ptr<World> world = client.GetWorld();
-        {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            const Block* block = world->GetBlock(end);
-            end_is_inside_solid = block != nullptr && block->GetBlockstate()->IsSolid();
-        }
+        const Blockstate* block = world->GetBlock(end);
+        end_is_inside_solid = block != nullptr && block->IsSolid();
         const bool takes_damage = !client.GetCreativeMode();
 
         while (!nodes_to_explore.empty())
@@ -144,30 +141,26 @@ namespace Botcraft
             // 3
             // 4
             // 5
+            const Blockstate* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
+            vertical_surroundings[0] = GetBlockGoThroughState(block, takes_damage);
+            block = world->GetBlock(current_node.pos + Position(0, 1, 0));
+            vertical_surroundings[1] = GetBlockGoThroughState(block, takes_damage);
+            // Our feet block (should be climbable or empty)
+            block = world->GetBlock(current_node.pos);
+            vertical_surroundings[2] = GetBlockGoThroughState(block, takes_damage);
+
+            // if 3 is solid or hazardous, no down pathfinding is possible,
+            // so we can skip a few checks
+            block = world->GetBlock(current_node.pos + Position(0, -1, 0));
+            vertical_surroundings[3] = GetBlockGoThroughState(block, takes_damage);
+
+            // If we can move down, we need 4 and 5
+            if (vertical_surroundings[3] != BlockPathfindingState::Solid && vertical_surroundings[3] != BlockPathfindingState::Hazardous)
             {
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
-
-                const Block* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
-                vertical_surroundings[0] = GetBlockGoThroughState(block, takes_damage);
-                block = world->GetBlock(current_node.pos + Position(0, 1, 0));
-                vertical_surroundings[1] = GetBlockGoThroughState(block, takes_damage);
-                // Our feet block (should be climbable or empty)
-                block = world->GetBlock(current_node.pos);
-                vertical_surroundings[2] = GetBlockGoThroughState(block, takes_damage);
-
-                // if 3 is solid or hazardous, no down pathfinding is possible,
-                // so we can skip a few checks
-                block = world->GetBlock(current_node.pos + Position(0, -1, 0));
-                vertical_surroundings[3] = GetBlockGoThroughState(block, takes_damage);
-
-                // If we can move down, we need 4 and 5
-                if (vertical_surroundings[3] != BlockPathfindingState::Solid && vertical_surroundings[3] != BlockPathfindingState::Hazardous)
-                {
-                    block = world->GetBlock(current_node.pos + Position(0, -2, 0));
-                    vertical_surroundings[4] = GetBlockGoThroughState(block, takes_damage);
-                    block = world->GetBlock(current_node.pos + Position(0, -3, 0));
-                    vertical_surroundings[5] = GetBlockGoThroughState(block, takes_damage);
-                }
+                block = world->GetBlock(current_node.pos + Position(0, -2, 0));
+                vertical_surroundings[4] = GetBlockGoThroughState(block, takes_damage);
+                block = world->GetBlock(current_node.pos + Position(0, -3, 0));
+                vertical_surroundings[5] = GetBlockGoThroughState(block, takes_damage);
             }
 
 
@@ -312,20 +305,16 @@ namespace Botcraft
                 && vertical_surroundings[5] == BlockPathfindingState::Empty
                 )
             {
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
-
-                const Block* block;
-
                 for (int y = -4; current_node.pos.y + y >= world->GetMinY(); --y)
                 {
                     block = world->GetBlock(current_node.pos + Position(0, y, 0));
 
-                    if (block && block->GetBlockstate()->IsSolid())
+                    if (block != nullptr && block->IsSolid())
                     {
                         break;
                     }
 
-                    if (block && block->GetBlockstate()->IsClimbable())
+                    if (block != nullptr && block->IsClimbable())
                     {
                         const float new_cost = cost[current_node.pos] + std::abs(y);
                         const Position new_pos = current_node.pos + Position(0, y + 1, 0);
@@ -367,47 +356,44 @@ namespace Botcraft
                 // v3   3   9 --> ?  ?  ?
                 // v4   4  10 --> ?  ?  ?
                 // v5   5  11 --> ?  ?  ?
+
+                // if 1 is solid, no horizontal pathfinding is possible,
+                // so we can skip a lot of checks
+                block = world->GetBlock(next_location + Position(0, 1, 0));
+                horizontal_surroundings[1] = GetBlockGoThroughState(block, takes_damage);
+                const bool horizontal_movement = horizontal_surroundings[1] != BlockPathfindingState::Solid && horizontal_surroundings[1] != BlockPathfindingState::Hazardous;
+
+                // If we can move horizontally, we need the full column
+                if (horizontal_movement)
                 {
-                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                    block = world->GetBlock(next_location + Position(0, 2, 0));
+                    horizontal_surroundings[0] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_location);
+                    horizontal_surroundings[2] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_location + Position(0, -1, 0));
+                    horizontal_surroundings[3] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_location + Position(0, -2, 0));
+                    horizontal_surroundings[4] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_location + Position(0, -3, 0));
+                    horizontal_surroundings[5] = GetBlockGoThroughState(block, takes_damage);
+                }
 
-                    // if 1 is solid, no horizontal pathfinding is possible,
-                    // so we can skip a lot of checks
-                    const Block* block = world->GetBlock(next_location + Position(0, 1, 0));
-                    horizontal_surroundings[1] = GetBlockGoThroughState(block, takes_damage);
-                    const bool horizontal_movement = horizontal_surroundings[1] != BlockPathfindingState::Solid && horizontal_surroundings[1] != BlockPathfindingState::Hazardous;
-
-                    // If we can move horizontally, we need the full column
-                    if (horizontal_movement)
-                    {
-                        block = world->GetBlock(next_location + Position(0, 2, 0));
-                        horizontal_surroundings[0] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_location);
-                        horizontal_surroundings[2] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_location + Position(0, -1, 0));
-                        horizontal_surroundings[3] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_location + Position(0, -2, 0));
-                        horizontal_surroundings[4] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_location + Position(0, -3, 0));
-                        horizontal_surroundings[5] = GetBlockGoThroughState(block, takes_damage);
-                    }
-
-                    // You can't make large jumps if your feet are in a climbable block
-                    // If we can jump, then we need the third column
-                    if (allow_jump && !(vertical_surroundings[2] & BlockPathfindingState::Climbable))
-                    {
-                        block = world->GetBlock(next_next_location + Position(0, 2, 0));
-                        horizontal_surroundings[6] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_next_location + Position(0, 1, 0));
-                        horizontal_surroundings[7] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_next_location);
-                        horizontal_surroundings[8] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_next_location + Position(0, -1, 0));
-                        horizontal_surroundings[9] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_next_location + Position(0, -2, 0));
-                        horizontal_surroundings[10] = GetBlockGoThroughState(block, takes_damage);
-                        block = world->GetBlock(next_next_location + Position(0, -3, 0));
-                        horizontal_surroundings[11] = GetBlockGoThroughState(block, takes_damage);
-                    }
+                // You can't make large jumps if your feet are in a climbable block
+                // If we can jump, then we need the third column
+                if (allow_jump && !(vertical_surroundings[2] & BlockPathfindingState::Climbable))
+                {
+                    block = world->GetBlock(next_next_location + Position(0, 2, 0));
+                    horizontal_surroundings[6] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_next_location + Position(0, 1, 0));
+                    horizontal_surroundings[7] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_next_location);
+                    horizontal_surroundings[8] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_next_location + Position(0, -1, 0));
+                    horizontal_surroundings[9] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_next_location + Position(0, -2, 0));
+                    horizontal_surroundings[10] = GetBlockGoThroughState(block, takes_damage);
+                    block = world->GetBlock(next_next_location + Position(0, -3, 0));
+                    horizontal_surroundings[11] = GetBlockGoThroughState(block, takes_damage);
                 }
 
                 // Now that we know the surroundings, we can check all
@@ -578,20 +564,16 @@ namespace Botcraft
                     && horizontal_surroundings[5] == BlockPathfindingState::Empty
                     )
                 {
-                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
-
-                    const Block* block;
-
                     for (int y = -4; next_location.y + y >= world->GetMinY(); --y)
                     {
                         block = world->GetBlock(next_location + Position(0, y, 0));
 
-                        if (block && block->GetBlockstate()->IsSolid())
+                        if (block != nullptr && block->IsSolid())
                         {
                             break;
                         }
 
-                        if (block && block->GetBlockstate()->IsClimbable())
+                        if (block != nullptr && block->IsClimbable())
                         {
                             const float new_cost = cost[current_node.pos] + std::abs(y) + 1.5f;
                             const Position new_pos = next_location + Position(0, y + 1, 0);
@@ -1244,11 +1226,7 @@ namespace Botcraft
             );
 
             std::vector<Position> path;
-            bool is_goal_loaded;
-            {
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                is_goal_loaded = world->IsLoaded(goal);
-            }
+            const bool is_goal_loaded = world->IsLoaded(goal);
 
             const int current_diff_xz = std::abs(goal.x - current_position.x) + std::abs(goal.z - current_position.z);
             const int current_diff = current_diff_xz + std::abs(goal.y - current_position.y);
@@ -1302,15 +1280,12 @@ namespace Botcraft
                 // Basic verification to check we won't try to walk on air.
                 // If so, it means some blocks have changed, better to
                 // recompute a new path
+                const Blockstate* next_target = world->GetBlock(path[i]);
+                const Blockstate* below = world->GetBlock(path[i] + Position(0, -1, 0));
+                if ((next_target == nullptr || (!next_target->IsClimbable() && !next_target->IsFluid())) &&
+                    (below == nullptr || below->IsAir()))
                 {
-                    std::lock_guard<std::mutex> lock(world->GetMutex());
-                    const Block* next_target = world->GetBlock(path[i]);
-                    const Block* below = world->GetBlock(path[i] + Position(0, -1, 0));
-                    if ((next_target == nullptr || (!next_target->GetBlockstate()->IsClimbable() && !next_target->GetBlockstate()->IsFluid())) &&
-                        (below == nullptr || below->GetBlockstate()->IsAir()))
-                    {
-                        break;
-                    }
+                    break;
                 }
                 const bool succeeded = Move(client, local_player, path[i], movement_speed, 0.5f * movement_speed);
 

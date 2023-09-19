@@ -5,11 +5,12 @@
 
 #include <glm/glm.hpp>
 
-#include <unordered_map>
-#include <mutex>
 #include <memory>
-#include <vector>
+#include <mutex>
+#include <optional>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace Botcraft
 {
@@ -47,7 +48,7 @@ namespace Botcraft
             void UpdateViewMatrix();
             void SetCameraProjection(const glm::mat4& proj);
             void UpdateFaces();
-            void UpdateChunk(const int x_, const int z_, const std::shared_ptr<const Botcraft::Chunk> chunk);
+            void UpdateChunk(const int x_, const int z_, const std::optional<Botcraft::Chunk>& chunk);
             void UpdateEntity(const int id, const std::vector<Face>& faces);
             void UseAtlasTextureGL();
             void ClearFaces();

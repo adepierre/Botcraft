@@ -7,6 +7,8 @@
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/World/Blockstate.hpp"
+#include "botcraft/Game/World/Chunk.hpp"
+#include "botcraft/Utilities/ScopeLockedWrapper.hpp"
 
 #include "protocolCraft/Handler.hpp"
 
@@ -28,7 +30,6 @@ namespace std
 namespace Botcraft
 {
     class Biome;
-    class Chunk;
     class AsyncHandler;
 
     class World : public ProtocolCraft::Handler
@@ -114,6 +115,8 @@ namespace Botcraft
         /// @param pos Positions of the blocks
         /// @return A vector of const pointer to the blockstate at each position, nullptr if not loaded
         std::vector<const Blockstate*> GetBlocks(const std::vector<Position>& pos) const;
+
+        Utilities::ScopeLockedWrapper<const std::unordered_map<std::pair<int, int>, Chunk>, std::shared_mutex, std::shared_lock> GetTerrain() const;
 
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
         /// @brief Set biome of given block column. Does nothing if not loaded. Thread-safe

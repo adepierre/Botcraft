@@ -46,37 +46,37 @@ bool IdentifyBaseCampLayout(SimpleBehaviourClient& client)
     std::shared_ptr<World> world = client.GetWorld();
     Position current_position;
     // Loop through all loaded blocks to find the one we are looking for
-    for (const auto& [coords, chunk] : world->GetAllChunks())
     {
-        for (int y = world->GetMinY(); y < world->GetMinY() + world->GetHeight(); ++y)
+        auto all_chunks = world->GetTerrain();
+        for (const auto& [coords, chunk] : *all_chunks)
         {
-            current_position.y = y;
-            for (int x = 0; x < CHUNK_WIDTH; ++x)
+            for (int y = chunk.GetMinY(); y < chunk.GetMinY() + chunk.GetHeight(); ++y)
             {
-                current_position.x = coords.first * CHUNK_WIDTH + x;
+                current_position.y = y;
                 for (int z = 0; z < CHUNK_WIDTH; ++z)
                 {
-                    current_position.z = coords.second * CHUNK_WIDTH + z;
-                    const Blockstate* blockstate = nullptr;
+                    current_position.z = z;
+                    for (int x = 0; x < CHUNK_WIDTH; ++x)
                     {
-                        std::lock_guard<std::mutex> lock_world(world->GetMutex());
-                        const Block* block = world->GetBlock(current_position);
-                        if (block != nullptr)
-                        {
-                            blockstate = block->GetBlockstate();
-                        }
-                        else
+                        current_position.x = x;
+                        const Blockstate* blockstate = chunk.GetBlock(current_position);
+                        if (blockstate == nullptr)
                         {
                             continue;
                         }
-                    }
 
-                    if (const auto it = found_blocks.find(blockstate->GetName()); it != found_blocks.end())
-                    {
-                        it->second.push_back(current_position);
-                        if (bot_index == 0)
+                        if (const auto it = found_blocks.find(blockstate->GetName()); it != found_blocks.end())
                         {
-                            LOG_INFO(blockstate->GetName() << "(" << block_item_mapping.at(blockstate->GetName()) << ") found at " << current_position);
+                            const Position world_coordinates(
+                                coords.first * CHUNK_WIDTH + x,
+                                y,
+                                coords.second * CHUNK_WIDTH + z
+                            );
+                            it->second.push_back(world_coordinates);
+                            if (bot_index == 0)
+                            {
+                                LOG_INFO(blockstate->GetName() << "(" << block_item_mapping.at(blockstate->GetName()) << ") found at " << world_coordinates);
+                            }
                         }
                     }
                 }
@@ -123,9 +123,7 @@ std::unordered_set<Position> CollectBlocks(const std::shared_ptr<World> world, c
         for (int z = start.z; z <= end.z; ++z)
         {
             p.z = z;
-            std::scoped_lock<std::mutex> lock(world->GetMutex());
-            const Block* block = world->GetBlock(p);
-            const Blockstate* blockstate = block == nullptr ? nullptr : block->GetBlockstate();
+            const Blockstate* blockstate = world->GetBlock(p);
             if (blockstate == nullptr || blockstate->IsAir())
             {
                 continue;

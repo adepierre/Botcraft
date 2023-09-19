@@ -45,7 +45,6 @@ Status InitializeBlocks(BehaviourClient& client, const int radius)
 
     {
         std::shared_ptr<World> world = client.GetWorld();
-        std::lock_guard<std::mutex> lock_world(world->GetMutex());
         Position current_pos;
         for (int x = -radius; x < radius + 1; ++x)
         {
@@ -57,12 +56,12 @@ Status InitializeBlocks(BehaviourClient& client, const int radius)
                 {
                     current_pos.z = my_pos.z + z;
 
-                    const Block* block = world->GetBlock(current_pos);
-                    if (!block)
+                    const Blockstate* block = world->GetBlock(current_pos);
+                    if (block == nullptr)
                     {
                         continue;
                     }
-                    const std::string& block_name = block->GetBlockstate()->GetName();
+                    const std::string& block_name = block->GetName();
                     if (block_name == "minecraft:red_bed")
                     {
                         bed_position = current_pos;
@@ -237,20 +236,17 @@ Status StartSpawners(BehaviourClient& client)
 
     const Position& lever_pos = blackboard.Get<Position>("DispenserFarmBot.stone_lever_position");
     
+    const Blockstate* block = world->GetBlock(lever_pos);
+
+    if (block == nullptr || block->GetName() != "minecraft:lever")
     {
-        std::lock_guard<std::mutex> lock_world(world->GetMutex());
-        const Block* block = world->GetBlock(lever_pos);
+        LOG_WARNING("Error trying to start spawners, no lever at " << lever_pos);
+        return Status::Failure;
+    }
 
-        if (!block || block->GetBlockstate()->GetName() != "minecraft:lever")
-        {
-            LOG_WARNING("Error trying to start spawners, no lever at " << lever_pos);
-            return Status::Failure;
-        }
-
-        if (block->GetBlockstate()->GetVariableValue("powered") == "true")
-        {
-            return Status::Success;
-        }
+    if (block->GetVariableValue("powered") == "true")
+    {
+        return Status::Success;
     }
 
     // PULL THE LEVER, KRONK!
@@ -521,12 +517,11 @@ Status MineCobblestone(BehaviourClient& client)
 
     const Position* mining_pos = nullptr;
     {
-        std::lock_guard<std::mutex> world_lock(world->GetMutex());
         for (int i = 0; i < stone_positions.size(); ++i)
         {
-            const Block* block = world->GetBlock(stone_positions[i]);
+            const Blockstate* block = world->GetBlock(stone_positions[i]);
             // Depending on the tick on which lava flows we could also get some cobble
-            if (block && (block->GetBlockstate()->GetName() == "minecraft:stone" || block->GetBlockstate()->GetName() == "minecraft:cobblestone"))
+            if (block != nullptr && (block->GetName() == "minecraft:stone" || block->GetName() == "minecraft:cobblestone"))
             {
                 mining_pos = stone_positions.data() + i;
                 break;
@@ -559,17 +554,14 @@ Status MineCobblestone(BehaviourClient& client)
             return Status::Failure;
         }
 
+        for (int i = 0; i < stone_positions.size(); ++i)
         {
-            std::lock_guard<std::mutex> world_lock(world->GetMutex());
-            for (int i = 0; i < stone_positions.size(); ++i)
+            const Blockstate* block = world->GetBlock(stone_positions[i]);
+            // Depending on the tick on which lava flows we could also get some cobble
+            if (block != nullptr && (block->GetName() == "minecraft:stone" || block->GetName() == "minecraft:cobblestone"))
             {
-                const Block* block = world->GetBlock(stone_positions[i]);
-                // Depending on the tick on which lava flows we could also get some cobble
-                if (block && (block->GetBlockstate()->GetName() == "minecraft:stone" || block->GetBlockstate()->GetName() == "minecraft:cobblestone"))
-                {
-                    mining_pos = stone_positions.data() + i;
-                    break;
-                }
+                mining_pos = stone_positions.data() + i;
+                break;
             }
         }
 
@@ -775,12 +767,8 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
 
     for (int i = 0; i < positions.size(); ++i)
     {
-        bool ready_to_harvest = false;
-        {
-            std::lock_guard<std::mutex> lock_world(world->GetMutex());
-            const Block* block = world->GetBlock(positions[i]);
-            ready_to_harvest = !block->GetBlockstate()->IsAir() && block->GetBlockstate()->GetVariableValue("age") == "7";
-        }
+        const Blockstate* block = world->GetBlock(positions[i]);
+        const bool ready_to_harvest = block != nullptr && !block->IsAir() && block->GetVariableValue("age") == "7";
 
         if (ready_to_harvest)
         {
@@ -862,12 +850,8 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
 
     for (int i = positions.size() - 1; i >= 0; --i)
     {
-        bool to_replant = false;
-        {
-            std::lock_guard<std::mutex> lock_world(world->GetMutex());
-            const Block* block = world->GetBlock(positions[i]);
-            to_replant = block->GetBlockstate()->IsAir();
-        }
+        const Blockstate* block = world->GetBlock(positions[i]);
+        const bool to_replant = block != nullptr && block->IsAir();
 
         if (to_replant)
         {

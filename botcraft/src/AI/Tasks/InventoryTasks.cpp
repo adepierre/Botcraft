@@ -421,12 +421,11 @@ namespace Botcraft
                 second_choice_face_candidates.reserve(6);
                 for (int face_idx = 0; face_idx < 6; face_idx++)
                 {
-                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                    const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[face_idx]);
+                    const Blockstate* neighbour_block = world->GetBlock(pos + neighbour_offsets[face_idx]);
                     // Placing against fluids is not allowed
-                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir() && !neighbour_block->GetBlockstate()->IsFluid())
+                    if (neighbour_block != nullptr && !neighbour_block->IsAir() && !neighbour_block->IsFluid())
                     {
-                        (neighbour_block->GetBlockstate()->IsSolid() ? premium_face_candidates : second_choice_face_candidates).push_back(static_cast<PlayerDiggingFace>(face_idx));
+                        (neighbour_block->IsSolid() ? premium_face_candidates : second_choice_face_candidates).push_back(static_cast<PlayerDiggingFace>(face_idx));
                     }
                 }
                 if (premium_face_candidates.size() + second_choice_face_candidates.size() == 0)
@@ -455,17 +454,15 @@ namespace Botcraft
         }
         else // Check if block is air
         {
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
+            const Blockstate* block = world->GetBlock(pos);
 
-            const Block* block = world->GetBlock(pos);
-
-            if (block && !block->GetBlockstate()->IsAir() && !block->GetBlockstate()->IsFluid())
+            if (block != nullptr && !block->IsAir() && !block->IsFluid())
             {
                 return Status::Failure;
             }
 
-            const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[static_cast<int>(face.value())]);
-            midair_placing = !neighbour_block || neighbour_block->GetBlockstate()->IsAir();
+            const Blockstate* neighbour_block = world->GetBlock(pos + neighbour_offsets[static_cast<int>(face.value())]);
+            midair_placing = neighbour_block == nullptr || neighbour_block->IsAir();
 
             if (!allow_midair_placing && midair_placing)
             {
@@ -553,10 +550,7 @@ namespace Botcraft
 #endif
         place_block_msg->SetHand(static_cast<int>(Hand::Right));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        {
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            place_block_msg->SetSequence(world->GetNextWorldInteractionSequenceId());
-        }
+        place_block_msg->SetSequence(world->GetNextWorldInteractionSequenceId());
 #endif
 
 
@@ -580,10 +574,9 @@ namespace Botcraft
             }
             if (!is_block_ok)
             {
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                const Block* block = world->GetBlock(pos);
+                const Blockstate* block = world->GetBlock(pos);
 
-                if (block && block->GetBlockstate()->GetName() == item_name)
+                if (block != nullptr && block->GetName() == item_name)
                 {
                     is_block_ok = true;
                 }
@@ -667,11 +660,7 @@ namespace Botcraft
         std::shared_ptr<ServerboundUseItemPacket> use_item_msg = std::make_shared<ServerboundUseItemPacket>();
         use_item_msg->SetHand(static_cast<int>(Hand::Left));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        {
-            std::shared_ptr<World> world = client.GetWorld();
-            std::lock_guard<std::mutex> world_guard(world->GetMutex());
-            use_item_msg->SetSequence(world->GetNextWorldInteractionSequenceId());
-        }
+        use_item_msg->SetSequence(client.GetWorld()->GetNextWorldInteractionSequenceId());
 #endif
         network_manager->Send(use_item_msg);
 

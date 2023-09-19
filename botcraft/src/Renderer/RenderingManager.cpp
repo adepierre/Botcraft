@@ -26,7 +26,6 @@
 
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/World.hpp"
-#include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 
 #include "botcraft/Game/Entities/EntityManager.hpp"
@@ -153,14 +152,10 @@ namespace Botcraft
                     ImGui::Begin("Targeted cube", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
                     Position raycasted_pos;
                     Position raycasted_normal;
-                    const Blockstate* raycasted_blockstate;
-                    {
-                        std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                        raycasted_blockstate =
-                            world->Raycast(Vector3<double>(world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y, world_renderer->GetCamera()->GetPosition().z),
+                    const Blockstate* raycasted_blockstate =
+                        world->Raycast(Vector3<double>(world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y, world_renderer->GetCamera()->GetPosition().z),
                             Vector3<double>(world_renderer->GetCamera()->GetFront().x, world_renderer->GetCamera()->GetFront().y, world_renderer->GetCamera()->GetFront().z),
                             6.0f, raycasted_pos, raycasted_normal);
-                    }
                     if (raycasted_blockstate)
                     {
                         ImGui::Text("Watching block at %i, %i, %i", raycasted_pos.x, raycasted_pos.y, raycasted_pos.z);
@@ -613,16 +608,13 @@ namespace Botcraft
                     }
                     mutex_updating.unlock();
 
-                    std::shared_ptr<const Botcraft::Chunk> chunk;
+                    std::optional<Botcraft::Chunk> chunk;
                     // Get the new values in the world
-                    world->GetMutex().lock();
                     bool has_chunk_been_modified = world->HasChunkBeenModified(pos.x, pos.z);
                     if (has_chunk_been_modified)
                     {
-                        chunk = world->GetChunkCopy(pos.x, pos.z);
-                        world->ResetChunkModificationState(pos.x, pos.z);
+                        chunk = world->ResetChunkModificationState(pos.x, pos.z);
                     }
-                    world->GetMutex().unlock();
 
                     if (has_chunk_been_modified)
                     {

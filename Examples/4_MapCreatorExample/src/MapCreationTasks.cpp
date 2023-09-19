@@ -11,11 +11,12 @@
 #include "botcraft/AI/Tasks/AllTasks.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
-#include <iostream>
 #include <fstream>
-#include <unordered_set>
-#include <set>
+#include <iostream>
 #include <iterator>
+#include <random>
+#include <set>
+#include <unordered_set>
 
 using namespace Botcraft;
 using namespace ProtocolCraft;
@@ -35,25 +36,27 @@ Status GetAllChestsAround(BehaviourClient& c)
 
     Position checked_position;
     {
-        std::lock_guard<std::mutex> world_guard(world->GetMutex());
-        const Block* block;
-        const std::map<std::pair<int, int>, std::shared_ptr<Chunk> >& all_chunks = world->GetAllChunks();
-
-        for (auto it = all_chunks.begin(); it != all_chunks.end(); ++it)
+        auto all_chunks = world->GetTerrain();
+        for (auto it = all_chunks->begin(); it != all_chunks->end(); ++it)
         {
             for (int x = 0; x < CHUNK_WIDTH; ++x)
             {
-                checked_position.x = it->first.first * CHUNK_WIDTH + x;
-                for (int y = 0; y < world->GetHeight(); ++y)
+                checked_position.x = x;
+                for (int y = 0; y < it->second.GetHeight(); ++y)
                 {
-                    checked_position.y = y + world->GetMinY();
+                    checked_position.y = y + it->second.GetMinY();
                     for (int z = 0; z < CHUNK_WIDTH; ++z)
                     {
-                        checked_position.z = it->first.second * CHUNK_WIDTH + z;
-                        block = world->GetBlock(checked_position);
-                        if (block && block->GetBlockstate()->GetName() == "minecraft:chest")
+                        checked_position.z = z;
+                        const Blockstate* block = it->second.GetBlock(checked_position);
+                        if (block != nullptr && block->GetName() == "minecraft:chest")
                         {
-                            chests_pos.push_back(checked_position);
+                            const Position world_position(
+                                it->first.first * CHUNK_WIDTH + x,
+                                y + world->GetMinY(),
+                                it->first.second * CHUNK_WIDTH + z
+                            );
+                            chests_pos.push_back(world_position);
                         }
                     }
                 }
@@ -408,23 +411,14 @@ Status FindNextTask(BehaviourClient& c)
 
             const int target_palette = target[pos.x - start.x][pos.y - start.y][pos.z - start.z];
             const std::string& target_name = palette.at(target_palette);
-            const Blockstate* blockstate;
+            const Blockstate* blockstate = world->GetBlock(pos);
+            if (blockstate == nullptr)
             {
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                const Block* block = world->GetBlock(pos);
-
-                if (!block)
-                {
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-                    blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
+                blockstate = AssetsManager::getInstance().Blockstates().at(0).at(0).get();
 #else
-                    blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
+                blockstate = AssetsManager::getInstance().Blockstates().at(0).get();
 #endif
-                }
-                else
-                {
-                    blockstate = block->GetBlockstate();
-                }
             }
 
             // Empty space requiring block placement
@@ -434,14 +428,12 @@ Status FindNextTask(BehaviourClient& c)
             {
                 for (int i = 0; i < neighbour_offsets.size(); ++i)
                 {
-                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                    const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[i]);
-
-                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
+                    const Blockstate* neighbour_blockstate = world->GetBlock(pos + neighbour_offsets[i]);
+                    if (neighbour_blockstate != nullptr && !neighbour_blockstate->IsAir())
                     {
                         pos_candidates.push_back(pos);
                         item_candidates.push_back(target_name);
-                        face_candidates.push_back((PlayerDiggingFace)i);
+                        face_candidates.push_back(static_cast<PlayerDiggingFace>(i));
                         break;
                     }
                 }
@@ -452,10 +444,9 @@ Status FindNextTask(BehaviourClient& c)
             {
                 for (int i = 0; i < neighbour_offsets.size(); ++i)
                 {
-                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                    const Block* neighbour_block = world->GetBlock(pos + neighbour_offsets[i]);
+                    const Blockstate* neighbour_block = world->GetBlock(pos + neighbour_offsets[i]);
 
-                    if (neighbour_block && !neighbour_block->GetBlockstate()->IsAir())
+                    if (neighbour_block != nullptr && !neighbour_block->IsAir())
                     {
                         pos_candidates.push_back(pos);
                         item_candidates.push_back("");
@@ -613,28 +604,22 @@ Status CheckCompletion(BehaviourClient& c)
                 target_pos.z = z - start.z;
 
                 const short target_id = target[target_pos.x][target_pos.y][target_pos.z];
-                const Blockstate* blockstate;
+                const Blockstate* blockstate = world->GetBlock(world_pos);
+                if (blockstate == nullptr)
                 {
-                    std::lock_guard<std::mutex> world_guard(world->GetMutex());
-                    const Block* block = world->GetBlock(world_pos);
-
-                    if (!block)
+                    if (target_id != -1)
                     {
-                        if (target_id != -1)
+                        if (!full_check)
                         {
-                            if (!full_check)
-                            {
-                                return Status::Failure;
-                            }
-                            missing_blocks++;
-                            if (log_details && missing_blocks < 100) // Don't print more than 100 missing blocks
-                            {
-                                LOG_INFO("Missing " << palette.at(target_id) << " in " << world_pos);
-                            }
+                            return Status::Failure;
                         }
-                        continue;
+                        missing_blocks++;
+                        if (log_details && missing_blocks < 100) // Don't print more than 100 missing blocks
+                        {
+                            LOG_INFO("Missing " << palette.at(target_id) << " in " << world_pos);
+                        }
                     }
-                    blockstate = block->GetBlockstate();
+                    continue;
                 }
 
                 if (target_id == -1)

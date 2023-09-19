@@ -4,7 +4,6 @@
 #include <iterator>
 
 #include "botcraft/Game/World/World.hpp"
-#include "botcraft/Game/World/Block.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
@@ -317,11 +316,9 @@ void ChatCommandClient::CheckPerimeter(const Position &pos, const float radius, 
                     continue;
                 }
 
-                std::lock_guard<std::mutex> world_guard(world->GetMutex());
+                const Blockstate* block = world->GetBlock(current_position);
 
-                const Block *block = world->GetBlock(current_position);
-
-                if (!block || !block->GetBlockstate()->IsAir())
+                if (block == nullptr || !block->IsAir())
                 {
                     continue;
                 }
@@ -329,14 +326,14 @@ void ChatCommandClient::CheckPerimeter(const Position &pos, const float radius, 
                 Position adjacent_position = current_position;
                 adjacent_position.y -= 1;
 
-                const Block *adjacent_block = world->GetBlock(adjacent_position);
+                const Blockstate *adjacent_block = world->GetBlock(adjacent_position);
                 
                 if (!adjacent_block ||
-                    adjacent_block->GetBlockstate()->IsFluid() ||
-                    !adjacent_block->GetBlockstate()->IsSolid() ||
-                    adjacent_block->GetBlockstate()->IsTransparent() ||
-                    adjacent_block->GetBlockstate()->GetName() == "minecraft:bedrock" ||
-                    adjacent_block->GetBlockstate()->GetName() == "minecraft:barrier")
+                    adjacent_block->IsFluid() ||
+                    !adjacent_block->IsSolid() ||
+                    adjacent_block->IsTransparent() ||
+                    adjacent_block->GetName() == "minecraft:bedrock" ||
+                    adjacent_block->GetName() == "minecraft:barrier")
                 {
                     continue;
                 }
@@ -346,8 +343,8 @@ void ChatCommandClient::CheckPerimeter(const Position &pos, const float radius, 
                 adjacent_block = world->GetBlock(adjacent_position);
 
                 if (adjacent_block &&
-                    (adjacent_block->GetBlockstate()->IsSolid() ||
-                    adjacent_block->GetBlockstate()->IsFluid()))
+                    (adjacent_block->IsSolid() ||
+                    adjacent_block->IsFluid()))
                 {
                     continue;
                 }

@@ -139,32 +139,26 @@ Status Init(SimpleBehaviourClient& client)
             LOG_ERROR("Work area of " << client.GetNetworkManager()->GetMyName() << " (from " << this_bot_start << "to " << this_bot_end << ") is not fully loaded, please move it closer before launching it");
             return Status::Failure;
         }
+        // Check the whole area is loaded (required for the planning algorithm to work properly)
+        if (world->IsLoaded(this_bot_end) && world->IsLoaded(this_bot_start))
         {
-            std::lock_guard<std::mutex> player_lock(world->GetMutex());
-            // Check the whole area is loaded (required for the planning algorithm to work properly)
-            if (world->IsLoaded(this_bot_end) && world->IsLoaded(this_bot_start))
-            {
-                break;
-            }
+            break;
         }
         client.Yield();
     }
 
+    // Get top of ladder pillar (first solid block going downard
+    // from the top of the working area)
+    Position block_pos = ladder_pillar_position;
+    for (int y = this_bot_start.y; y >= world->GetMinY(); --y)
     {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
-        // Get top of ladder pillar (first solid block going downard
-        // from the top of the working area)
-        Position block_pos = ladder_pillar_position;
-        for (int y = this_bot_start.y; y >= world->GetMinY(); --y)
+        block_pos.y = y;
+        const Blockstate* block = world->GetBlock(block_pos);
+        if (block != nullptr && block->IsSolid())
         {
-            block_pos.y = y;
-            const Block* block = world->GetBlock(block_pos);
-            if (block && block->GetBlockstate()->IsSolid())
-            {
-                ladder_pillar_position.y = y;
-                ladder_position.y = y;
-                break;
-            }
+            ladder_pillar_position.y = y;
+            ladder_position.y = y;
+            break;
         }
     }
 
@@ -201,7 +195,6 @@ Status Init(SimpleBehaviourClient& client)
     // Check the whole area for spawner/shrieker and log them to user
     if (bot_index == 0)
     {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
         Position current_position;
         for (int y = min_block.y - 16; y <= max_block.y + 16; ++y)
         {
@@ -212,15 +205,15 @@ Status Init(SimpleBehaviourClient& client)
                 for (int z = min_block.z - 16; z <= max_block.z + 16; ++z)
                 {
                     current_position.z = z;
-                    const Block* block = world->GetBlock(current_position);
-                    if (block != nullptr && !block->GetBlockstate()->IsAir())
+                    const Blockstate* block = world->GetBlock(current_position);
+                    if (block != nullptr && !block->IsAir())
                     {
-                        if (block->GetBlockstate()->GetName() == "minecraft:spawner")
+                        if (block->GetName() == "minecraft:spawner")
                         {
                             LOG_WARNING("Spawner detected at " << current_position << ". Please make sure it's spawnproofed as I don't like to die (it tickles)");
                         }
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-                        else if (block->GetBlockstate()->GetName() == "minecraft:sculk_shrieker")
+                        else if (block->GetName() == "minecraft:sculk_shrieker")
                         {
                             LOG_WARNING("Shrieker detected at " << current_position << ". Please make sure it won't spawn a warden. They hit hard.");
                         }
@@ -282,16 +275,8 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         StartSprinting(client);
     }
 
-    const Blockstate* blockstate = nullptr;
     // Get this position blockstate
-    {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
-        const Block* block = world->GetBlock(action.first);
-        if (block != nullptr)
-        {
-            blockstate = block->GetBlockstate();
-        }
-    }
+    const Blockstate* blockstate = world->GetBlock(action.first);
 
     // If we need to spare this block or if it's one we can't break anyway
     if (blockstate != nullptr &&
@@ -559,19 +544,15 @@ Botcraft::Status ValidateCurrentLayer(Botcraft::SimpleBehaviourClient& client)
             LOG_WARNING("Timeout waiting for chunk loading");
             return Status::Failure;
         }
+        if (world->IsLoaded(start_block) && world->IsLoaded(end_block))
         {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            if (world->IsLoaded(start_block) && world->IsLoaded(end_block))
-            {
-                break;
-            }
+            break;
         }
         client.Yield();
     }
 
     // Check previous layers are indeed done
     {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
         Position current_position;
         for (int y = start_block.y; y > current_layer; --y)
         {
@@ -582,8 +563,8 @@ Botcraft::Status ValidateCurrentLayer(Botcraft::SimpleBehaviourClient& client)
                 for (int z = start_block.z; z <= end_block.z; ++z)
                 {
                     current_position.z = z;
-                    const Block* block = world->GetBlock(current_position);
-                    if (block != nullptr && !block->GetBlockstate()->IsAir() && spared_blocks.find(block->GetBlockstate()->GetName()) == spared_blocks.cend())
+                    const Blockstate* block = world->GetBlock(current_position);
+                    if (block != nullptr && !block->IsAir() && spared_blocks.find(block->GetName()) == spared_blocks.cend())
                     {
                         blackboard.Set<int>("Eater.current_layer", y);
                         return Status::Success;
@@ -660,12 +641,8 @@ Status CleanInventory(SimpleBehaviourClient& client)
         static_cast<int>(std::floor(init_position.z))
     );
 
-    bool on_fluid = false;
-    {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
-        const Block* block = world->GetBlock(block_position + Position(0, -1, 0));
-        on_fluid = block != nullptr && (block->GetBlockstate()->IsFluid() || block->GetBlockstate()->IsWaterlogged());
-    }
+    const Blockstate* block = world->GetBlock(block_position + Position(0, -1, 0));
+    const bool on_fluid = block != nullptr && (block->IsFluid() || block->IsWaterlogged());
 
     // It's not a good idea to drop lava on top of a fluid, best case it's,
     // water and you'll get obsidian, worst case it's lava and you'll get
@@ -790,20 +767,14 @@ Status CleanInventory(SimpleBehaviourClient& client)
 #endif
     use_item_on->SetHand(static_cast<int>(Hand::Right));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    {
-        std::lock_guard<std::mutex> world_guard(world->GetMutex());
-        use_item_on->SetSequence(world->GetNextWorldInteractionSequenceId());
-    }
+    use_item_on->SetSequence(world->GetNextWorldInteractionSequenceId());
 #endif
     network_manager->Send(use_item_on);
     // Use item
     std::shared_ptr<ProtocolCraft::ServerboundUseItemPacket> use_item = std::make_shared<ProtocolCraft::ServerboundUseItemPacket>();
     use_item->SetHand(static_cast<int>(Hand::Right));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    {
-        std::lock_guard<std::mutex> world_guard(world->GetMutex());
-        use_item->SetSequence(world->GetNextWorldInteractionSequenceId());
-    }
+    use_item->SetSequence(world->GetNextWorldInteractionSequenceId());
 #endif
     network_manager->Send(use_item);
 
@@ -816,13 +787,10 @@ Status CleanInventory(SimpleBehaviourClient& client)
             LOG_WARNING("Timeout waiting for lava trying to clean inventory");
             return Status::Failure;
         }
+        const Blockstate* block = world->GetBlock(block_position);
+        if (block != nullptr && block->GetName() == "minecraft:lava")
         {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            const Block* block = world->GetBlock(block_position);
-            if (block != nullptr && block->GetBlockstate()->GetName() == "minecraft:lava")
-            {
-                break;
-            }
+            break;
         }
         client.Yield();
     }
@@ -836,11 +804,8 @@ Status CleanInventory(SimpleBehaviourClient& client)
     }
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    {
-        std::lock_guard<std::mutex> world_guard(world->GetMutex());
-        use_item_on->SetSequence(world->GetNextWorldInteractionSequenceId());
-        use_item->SetSequence(world->GetNextWorldInteractionSequenceId());
-    }
+    use_item_on->SetSequence(world->GetNextWorldInteractionSequenceId());
+    use_item->SetSequence(world->GetNextWorldInteractionSequenceId());
 #endif
     network_manager->Send(use_item_on);
     network_manager->Send(use_item);
