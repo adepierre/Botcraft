@@ -11,7 +11,7 @@ void ShowHelp(const char* argv0)
     std::cout << "Usage: " << argv0 << " <options>\n"
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
-        << "\t--online\tIf 0, create a local world for testing instead of connecting to a server, default 1\n"
+        << "\t--connect\tIf 0, create a local world for testing instead of connecting to a server, default 1\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
         << "\t--login\t\tPlayer name in offline mode, empty for Microsoft account, default: BCUserControl\n"
         << std::endl;
@@ -20,7 +20,7 @@ void ShowHelp(const char* argv0)
 struct Args
 {
     bool help = false;
-    bool ONLINE = true;
+    bool connect = true;
     std::string address = "127.0.0.1:25565";
     std::string login = "BCUserControl";
 
@@ -59,9 +59,9 @@ int main(int argc, char* argv[])
             }
         }
 
-        UserControlledClient client(args.ONLINE, true);
+        UserControlledClient client(args.connect, true);
         
-        if (args.ONLINE)
+        if (args.connect)
         {
             client.SetAutoRespawn(true);
             LOG_INFO("Starting connection process");
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
-        if (args.ONLINE)
+        if (args.connect)
         {
             client.Disconnect();
         }
@@ -104,15 +104,15 @@ Args ParseCommandLine(int argc, char* argv[])
             args.help = true;
             return args;
         }
-        else if (arg == "--online")
+        else if (arg == "--connect")
         {
             if (i + 1 < argc)
             {
-                args.ONLINE = std::stoi(argv[++i]);
+                args.connect = static_cast<bool>(std::stoi(argv[++i]));
             }
             else
             {
-                LOG_FATAL("--online requires an argument");
+                LOG_FATAL("--connect requires an argument");
                 args.return_code = 1;
                 return args;
             }
