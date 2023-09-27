@@ -190,12 +190,9 @@ TEST_CASE("place block")
         bot->SyncAction(Botcraft::PlaceBlock, "minecraft:diamond_block", pos, std::nullopt, true, false);
     }
 
-    {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
-        const Botcraft::Block* block = world->GetBlock(pos);
-        REQUIRE(block);
-        REQUIRE(block->GetBlockstate()->GetName() == "minecraft:diamond_block");
-    }
+    const Botcraft::Blockstate* block = world->GetBlock(pos);
+    REQUIRE(block != nullptr);
+    REQUIRE(block->GetName() == "minecraft:diamond_block");
 }
 
 TEST_CASE("eat")

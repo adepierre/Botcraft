@@ -96,14 +96,11 @@ public:
             const int num_chunk_to_load = (MinecraftServer::options.view_distance + 1) * (MinecraftServer::options.view_distance + 1);
             if (!Botcraft::Utilities::WaitForCondition([&]()
                 {
-                    // If the client has not received ClientboundGameProfilePacket yet world is still nullptr
-                    if (client->GetWorld())
+                    std::shared_ptr<Botcraft::World> world = client->GetWorld();
+                    // If the client has not received a ClientboundGameProfilePacket yet world is still nullptr
+                    if (world != nullptr && world->GetTerrain()->size() >= num_chunk_to_load)
                     {
-                        std::lock_guard<std::mutex> world_lock(client->GetWorld()->GetMutex());
-                        if (client->GetWorld()->GetAllChunks().size() >= num_chunk_to_load)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                     return false;
                 }, 10000))

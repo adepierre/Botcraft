@@ -247,11 +247,8 @@ TEST_CASE("water walking pathfinding")
     {
         std::lock_guard<std::mutex> lock(local_player->GetMutex());
         CHECK_THAT(local_player->GetPosition().SqrDist(init_position + delta), Catch::Matchers::WithinAbs(0.0, 0.1));
-        {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            const Botcraft::Block* should_be_air = world->GetBlock(init_position_int + string_control_check_delta);
-            CHECK((should_be_air == nullptr || should_be_air->GetBlockstate()->IsAir())); // Extra parenthesis as || is not supported without in catch2
-        }
+        const Botcraft::Blockstate* should_be_air = world->GetBlock(init_position_int + string_control_check_delta);
+        CHECK((should_be_air == nullptr || should_be_air->IsAir())); // Extra parenthesis as || is not supported without in catch2
     }
 }
 
@@ -275,12 +272,9 @@ TEST_CASE("ladder walking pathfinding")
     {
         std::lock_guard<std::mutex> lock(local_player->GetMutex());
         CHECK_THAT(local_player->GetPosition().SqrDist(init_position + delta), Catch::Matchers::WithinAbs(0.0, 0.1));
-        {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            const Botcraft::Block* should_not_be_air = world->GetBlock(init_position_int + string_control_check_delta);
-            REQUIRE_FALSE(should_not_be_air == nullptr);
-            CHECK_FALSE(should_not_be_air->GetBlockstate()->IsAir());
-        }
+        const Botcraft::Blockstate* should_not_be_air = world->GetBlock(init_position_int + string_control_check_delta);
+        REQUIRE_FALSE(should_not_be_air == nullptr);
+        CHECK_FALSE(should_not_be_air->IsAir());
     }
 }
 

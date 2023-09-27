@@ -47,7 +47,6 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
     };
 
     if (!Botcraft::Utilities::WaitForCondition([&]() {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
             for (size_t i = 0; i < wait_loaded.size(); ++i)
             {
                 if (!bot->GetWorld()->IsLoaded(Botcraft::Position(wait_loaded[i].first, 2, wait_loaded[i].second)))

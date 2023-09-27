@@ -20,16 +20,16 @@ TEST_CASE("say")
     REQUIRE_NOTHROW(MinecraftServer::GetInstance().WaitLine(".*: (?:\\[Not Secure\\] )?[[<]" + botname + "[>\\]] Hello, world!.*", 5000));
 }
 
-bool IsLitRedstoneLamp(const Botcraft::Block* block)
+bool IsLitRedstoneLamp(const Botcraft::Blockstate* block)
 {
     if (block == nullptr)
     {
         return false;
     }
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-    return block->GetBlockstate()->GetName() == "minecraft:redstone_lamp" && block->GetBlockstate()->GetVariableValue("lit") == "true";
+    return block->GetName() == "minecraft:redstone_lamp" && block->GetVariableValue("lit") == "true";
 #else
-    return block->GetBlockstate()->GetName() == "minecraft:lit_redstone_lamp";
+    return block->GetName() == "minecraft:lit_redstone_lamp";
 #endif
 }
 
@@ -46,8 +46,7 @@ TEST_CASE("interact")
 
     REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            const Botcraft::Block* block = world->GetBlock(lamp);
+            const Botcraft::Blockstate* block = world->GetBlock(lamp);
             return IsLitRedstoneLamp(block);
         }, 5000));
 }

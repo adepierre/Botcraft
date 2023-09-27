@@ -19,9 +19,8 @@ void TestDig(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const Botcra
     std::shared_ptr<Botcraft::World> world = bot->GetWorld();
     CHECK(Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
-            const Botcraft::Block* block = world->GetBlock(pos);
-            return block == nullptr || block->GetBlockstate()->IsAir();
+            const Botcraft::Blockstate* block = world->GetBlock(pos);
+            return block == nullptr || block->IsAir();
         }, 5000));
 
     const double elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;

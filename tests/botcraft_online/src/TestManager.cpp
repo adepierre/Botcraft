@@ -427,12 +427,9 @@ void TestManager::LoadStructure(const std::string& filename, const Botcraft::Pos
 void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
 {
     std::shared_ptr<Botcraft::World> world = chunk_loader->GetWorld();
+    if (chunk_loader->GetWorld()->IsLoaded(pos))
     {
-        std::lock_guard<std::mutex> lock(world->GetMutex());
-        if (chunk_loader->GetWorld()->IsLoaded(pos))
-        {
-            return;
-        }
+        return;
     }
 
     Teleport(chunk_loader_name, pos);
@@ -452,7 +449,6 @@ void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
 
     if (!Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(world->GetMutex());
             for (size_t i = 0; i < wait_loaded.size(); ++i)
             {
                 if (!world->IsLoaded(Botcraft::Position(wait_loaded[i].first, pos.y, wait_loaded[i].second)))
