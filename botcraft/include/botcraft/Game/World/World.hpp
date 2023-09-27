@@ -15,11 +15,11 @@
 namespace std
 {
     template<>
-    struct hash<std::pair<int, int>>
+    struct hash<pair<int, int>>
     {
-        inline size_t operator()(const std::pair<int, int>& p) const
+        inline size_t operator()(const pair<int, int>& p) const
         {
-            std::hash<float> hasher;
+            hash<float> hasher;
             size_t value = hasher(p.first);
             value ^= hasher(p.second) + 0x9e3779b9 + (value << 6) + (value >> 2);
             return value;
@@ -251,6 +251,9 @@ namespace Botcraft
 
         void SetBlockImpl(const Position& pos, const BlockstateId id);
         const Blockstate* GetBlockImpl(const Position& pos) const;
+
+        int GetHeightImpl() const;
+        int GetMinYImpl() const;
 
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
         void SetBiomeImpl(const int x, const int z, const unsigned char biome);

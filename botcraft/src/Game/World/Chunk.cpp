@@ -16,23 +16,6 @@ namespace Botcraft
         GlobalPalette
     };
 
-    Chunk::Chunk()
-    {
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        dimension = Dimension::None;
-#else
-        dimension = "";
-#endif
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
-        height = 0;
-        min_y = 0;
-#endif
-
-#if USE_GUI
-        modified_since_last_rendered = false;
-#endif
-    }
-
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
     Chunk::Chunk(const Dimension &dim)
 #elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */

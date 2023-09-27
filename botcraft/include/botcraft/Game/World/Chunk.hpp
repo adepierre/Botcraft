@@ -22,7 +22,6 @@ namespace Botcraft
     class Chunk
     {
     public:
-        Chunk();
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         Chunk(const Dimension &dim);
 #elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */

@@ -68,7 +68,7 @@ namespace Botcraft
         return 256;
 #else
         std::shared_lock<std::shared_mutex> lock(world_mutex);
-        return dimension_height.at(current_dimension);
+        return GetHeightImpl();
 #endif
     }
 
@@ -78,7 +78,7 @@ namespace Botcraft
         return 0;
 #else
         std::shared_lock<std::shared_mutex> lock(world_mutex);
-        return dimension_min_y.at(current_dimension);
+        return GetMinYImpl();
 #endif
     }
 
@@ -713,9 +713,9 @@ namespace Botcraft
         if (it == terrain.end())
         {
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-            terrain[{x, z}] = Chunk(dim);
+            terrain.insert({ {x, z}, Chunk(dim) });
 #else
-            terrain[{x, z}] = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim);
+            terrain.insert({ { x, z }, Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim) });
 #endif
         }
         // This may already exists in this dimension if this is a shared world
@@ -723,9 +723,9 @@ namespace Botcraft
         {
             UnloadChunkImpl(x, z);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-            terrain[{x, z}] = Chunk(dim);
+            it->second = Chunk(dim);
 #else
-            terrain[{x, z}] = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim);
+            it->second = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim);
 #endif
         }
 
@@ -794,6 +794,23 @@ namespace Botcraft
         return it->second.GetBlock(chunk_pos);
     }
 
+    int World::GetHeightImpl() const
+    {
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+        return 256;
+#else
+        return dimension_height.at(current_dimension);
+#endif
+    }
+
+    int World::GetMinYImpl() const
+    {
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+        return 0;
+#else
+        return dimension_min_y.at(current_dimension);
+#endif
+    }
 
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
     void World::SetBiomeImpl(const int x, const int z, const unsigned char biome)
@@ -927,7 +944,7 @@ namespace Botcraft
     Chunk* World::GetChunk(const int x, const int z)
     {
         auto it = terrain.find({ x,z });
-        if (it != terrain.end())
+        if (it == terrain.end())
         {
             return nullptr;
         }
@@ -1002,14 +1019,14 @@ namespace Botcraft
 
         if (chunk == nullptr)
         {
-            AddChunk(x, z, dim);
+            AddChunkImpl(x, z, dim);
             chunk = GetChunk(x, z);
         }
 
         int counter_arrays = 0;
         Position pos1, pos2;
 
-        const int num_sections = GetHeight() / 16 + 2;
+        const int num_sections = GetHeightImpl() / 16 + 2;
 
         for (int i = 0; i < num_sections; ++i)
         {
@@ -1026,7 +1043,7 @@ namespace Botcraft
                 {
                     for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
                     {
-                        pos1.y = block_y + section_Y * SECTION_HEIGHT + GetMinY();
+                        pos1.y = block_y + section_Y * SECTION_HEIGHT + GetMinYImpl();
                         pos2.y = pos1.y;
                         for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
                         {
@@ -1064,7 +1081,7 @@ namespace Botcraft
                 {
                     for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
                     {
-                        pos1.y = block_y + section_Y * SECTION_HEIGHT + GetMinY();
+                        pos1.y = block_y + section_Y * SECTION_HEIGHT + GetMinYImpl();
                         pos2.y = pos1.y;
                         for (int block_z = 0; block_z < CHUNK_WIDTH; ++block_z)
                         {
