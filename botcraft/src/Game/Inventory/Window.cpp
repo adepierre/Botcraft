@@ -81,9 +81,14 @@ namespace Botcraft
         case InventoryType::Anvil:
         case InventoryType::CartographyTable:
         case InventoryType::Grindstone:
+#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
         case InventoryType::Smithing:
+#endif
             return 3;
         case InventoryType::Loom:
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
+        case InventoryType::Smithing:
+#endif
             return 4;
         case InventoryType::Hopper:
         case InventoryType::BrewingStand:
