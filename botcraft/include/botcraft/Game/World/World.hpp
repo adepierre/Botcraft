@@ -306,7 +306,7 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-        bool LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes);
+        void LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes);
 #endif
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 719 /* < 1.16 */

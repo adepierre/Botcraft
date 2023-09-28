@@ -1024,7 +1024,6 @@ namespace Botcraft
         Chunk* chunk = GetChunk(x, z);
         if (chunk != nullptr)
         {
-            LOG_WARNING(x << " " << z << " " << biomes[0]);
             chunk->SetBiomes(biomes);
         }
     }

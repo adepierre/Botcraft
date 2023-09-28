@@ -685,9 +685,9 @@ namespace Botcraft
         }
         biomes = std::vector<const Biome*>(new_biomes.size());
         const AssetsManager& assets_manager = AssetsManager::getInstance();
-        for (size_t id = 0; id < new_biomes.size(); ++id)
+        for (size_t idx = 0; idx < new_biomes.size(); ++idx)
         {
-            biomes[id] = assets_manager.GetBiome(id);
+            biomes[idx] = assets_manager.GetBiome(new_biomes[idx]);
         }
 
 #if USE_GUI
