@@ -139,7 +139,7 @@ void UserControlledClient::CreateTestWorld()
                 pos = Position(x, 0, -2 * z - 1);
             }
 
-            world->SetBlock(pos, id, z);
+            world->SetBlock(pos, { id, z });
             world->SetBiome(pos.x, pos.z, 0);
         }
         x++;
@@ -222,7 +222,7 @@ void UserControlledClient::CreateTestWorld()
             Position pos(-(x * biome_spacing) - 1, 0, 0);
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-            world->SetBlock(pos, 2, 0);
+            world->SetBlock(pos, { 2, 0 });
 #else
             world->SetBlock(pos, 9);
 #endif
@@ -234,7 +234,7 @@ void UserControlledClient::CreateTestWorld()
             pos = Position(-(x * biome_spacing) - 1, 0, 1);
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-            world->SetBlock(pos, 18, 0);
+            world->SetBlock(pos, { 18, 0 });
 #else
             world->SetBlock(pos, 157);
 #endif
@@ -246,7 +246,7 @@ void UserControlledClient::CreateTestWorld()
             pos = Position(-(x * biome_spacing) - 1, 0, 2);
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-            world->SetBlock(pos, 9, 0);
+            world->SetBlock(pos, { 9, 0 });
 #else
             world->SetBlock(pos, 34);
 #endif

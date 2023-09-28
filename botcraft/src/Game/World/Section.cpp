@@ -10,7 +10,7 @@ namespace Botcraft
         // +2 because we also store the neighbour section blocks
         data_blocks = std::vector<const Blockstate*>((CHUNK_WIDTH + 2) * (CHUNK_WIDTH + 2) * SECTION_HEIGHT);
 #else
-        data_blocks = std::vector<Block>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT);
+        data_blocks = std::vector<const Blockstate*>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT);
 #endif
 
         block_light = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT);

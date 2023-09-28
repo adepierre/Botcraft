@@ -584,7 +584,7 @@ namespace Botcraft
         models = { model_ };
     }
 
-    unsigned int Blockstate::GetId() const
+    BlockstateId Blockstate::GetId() const
     {
         return blockstate_id;
     }

@@ -74,16 +74,16 @@ namespace Botcraft
             auto it2 = it->second.find(id.second);
             if (it2 != it->second.end())
             {
-                return blockstate = it2->second.get();
+                return it2->second.get();
             }
             else
             {
-                return blockstate = it->second.at(0).get();
+                return it->second.at(0).get();
             }
         }
         else
         {
-            return blockstate = blockstates_map.at(-1).at(0).get();
+            return blockstates_map.at(-1).at(0).get();
         }
 #else
         auto it = blockstates_map.find(id);

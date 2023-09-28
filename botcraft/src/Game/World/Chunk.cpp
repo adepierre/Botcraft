@@ -637,7 +637,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-    const Dimension Chunk::GetDimension() const
+    Dimension Chunk::GetDimension() const
 #else
     const std::string& Chunk::GetDimension() const
 #endif

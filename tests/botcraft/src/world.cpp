@@ -53,17 +53,18 @@ TEST_CASE("Set/Get blocks")
     world.SetDimensionHeight(dimension, 256);
 #endif
     world.SetCurrentDimension(dimension);
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+    const BlockstateId id = { 0,0 };
+#else
+    const BlockstateId id = 0;
+#endif
 
     // Does nothing: chunk not loaded
-    world.SetBlock(Position(0, 0, 0), 0);
+    world.SetBlock(Position(0, 0, 0), id);
     REQUIRE(world.GetBlock(Position(0, 0, 0)) == nullptr);
 
     world.LoadChunk(0, 0, dimension);
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-    world.SetBlock(Position(0, 0, 0), { 0,0 });
-#else
-    world.SetBlock(Position(0, 0, 0), 0);
-#endif
+    world.SetBlock(Position(0, 0, 0), id);
     REQUIRE(world.GetBlock(Position(0, 0, 0)) != nullptr);
     REQUIRE(world.GetBlock(Position(0, 0, 0))->GetName() == "minecraft:air");
 }

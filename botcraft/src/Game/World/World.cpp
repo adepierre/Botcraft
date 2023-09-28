@@ -512,7 +512,7 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        SetCurrentDimensionImplstatic_cast<Dimension>(msg.GetDimension()));
+        SetCurrentDimensionImpl(static_cast<Dimension>(msg.GetDimension()));
 #else
         SetCurrentDimensionImpl(msg.GetDimension().GetFull());
 #endif
@@ -537,7 +537,7 @@ namespace Botcraft
 
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        SetCurrentDimensionImpl(static_cast<Dimension>(msg.GetDimension())=;
+        SetCurrentDimensionImpl(static_cast<Dimension>(msg.GetDimension()));
 #else
         SetCurrentDimensionImpl(msg.GetDimension().GetFull());
 #endif
