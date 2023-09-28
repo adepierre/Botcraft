@@ -352,7 +352,7 @@ namespace Botcraft
 #endif
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        current_dimension = dimension;
+        SetCurrentDimensionImpl(dimension);
     }
 
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
@@ -501,9 +501,9 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        current_dimension = static_cast<Dimension>(msg.GetDimension());
+        SetCurrentDimensionImplstatic_cast<Dimension>(msg.GetDimension()));
 #else
-        current_dimension = msg.GetDimension().GetFull();
+        SetCurrentDimensionImpl(msg.GetDimension().GetFull());
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
@@ -526,9 +526,9 @@ namespace Botcraft
 
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        current_dimension = static_cast<Dimension>(msg.GetDimension());
+        SetCurrentDimensionImpl(static_cast<Dimension>(msg.GetDimension())=;
 #else
-        current_dimension = msg.GetDimension().GetFull();
+        SetCurrentDimensionImpl(msg.GetDimension().GetFull());
 #endif
 
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
@@ -603,9 +603,9 @@ namespace Botcraft
     void World::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
     {
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        Dimension chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
+        const Dimension chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
 #else
-        std::string chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
+        const std::string chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
 #endif
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -622,6 +622,16 @@ namespace Botcraft
 
         { // lock scope
             std::scoped_lock<std::shared_mutex> lock(world_mutex);
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+            if (auto it = delayed_light_updates.find({ msg.GetX(), msg.GetZ() }); it != delayed_light_updates.end())
+            {
+                UpdateChunkLight(it->second.GetX(), it->second.GetZ(), current_dimension,
+                    it->second.GetSkyYMask(), it->second.GetEmptySkyYMask(), it->second.GetSkyUpdates(), true);
+                UpdateChunkLight(it->second.GetX(), it->second.GetZ(), current_dimension,
+                    it->second.GetBlockYMask(), it->second.GetEmptyBlockYMask(), it->second.GetBlockUpdates(), false);
+                delayed_light_updates.erase(it);
+            }
+#endif
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
             LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBuffer(), msg.GetAvailableSections(), msg.GetFullChunk());
 #else
@@ -666,6 +676,11 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+        if (GetChunk(msg.GetX(), msg.GetZ()) == nullptr)
+        {
+            delayed_light_updates[{msg.GetX(), msg.GetZ()}] = msg;
+            return;
+        }
         UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
             msg.GetSkyYMask(), msg.GetEmptySkyYMask(), msg.GetSkyUpdates(), true);
         UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
@@ -792,6 +807,18 @@ namespace Botcraft
         );
 
         return it->second.GetBlock(chunk_pos);
+    }
+
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+    void World::SetCurrentDimensionImpl(const Dimension dimension)
+#else
+    void World::SetCurrentDimensionImpl(const std::string& dimension)
+#endif
+    {
+        current_dimension = dimension;
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+        delayed_light_updates.clear();
+#endif
     }
 
     int World::GetHeightImpl() const
@@ -997,6 +1024,7 @@ namespace Botcraft
         Chunk* chunk = GetChunk(x, z);
         if (chunk != nullptr)
         {
+            LOG_WARNING(x << " " << z << " " << biomes[0]);
             chunk->SetBiomes(biomes);
         }
     }
@@ -1019,8 +1047,8 @@ namespace Botcraft
 
         if (chunk == nullptr)
         {
-            AddChunkImpl(x, z, dim);
-            chunk = GetChunk(x, z);
+            LOG_WARNING("Trying to update lights in an unloaded chunk");
+            return;
         }
 
         int counter_arrays = 0;

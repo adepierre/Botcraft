@@ -252,6 +252,12 @@ namespace Botcraft
         void SetBlockImpl(const Position& pos, const BlockstateId id);
         const Blockstate* GetBlockImpl(const Position& pos) const;
 
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+        void SetCurrentDimensionImpl(const Dimension dimension);
+#else
+        void SetCurrentDimensionImpl(const std::string& dimension);
+#endif
+
         int GetHeightImpl() const;
         int GetMinYImpl() const;
 
@@ -316,6 +322,10 @@ namespace Botcraft
     private:
         std::unordered_map<std::pair<int, int>, Chunk> terrain;
         mutable std::shared_mutex world_mutex;
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+        std::unordered_map<std::pair<int, int>, ProtocolCraft::ClientboundLightUpdatePacket> delayed_light_updates;
+#endif
 
         const bool is_shared;
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
