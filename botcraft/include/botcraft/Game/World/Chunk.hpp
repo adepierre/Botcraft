@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <unordered_map>
 #include <memory>
+#include <unordered_map>
+#include <vector>
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/World/Blockstate.hpp"
@@ -93,6 +93,12 @@ namespace Botcraft
         void LoadBiomesData(const std::vector<unsigned char>& data);
 #endif
         void UpdateNeighbour(Chunk* const neighbour, const Orientation direction);
+
+        /// @brief Increment load counter by 1
+        void IncrementLoadCounter();
+        /// @brief Decrement load counter by 1
+        /// @return New counter value
+        int DecrementLoadCounter();
         
     private:
         bool IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const;
@@ -119,5 +125,6 @@ namespace Botcraft
 #if USE_GUI
         bool modified_since_last_rendered;
 #endif
+        int load_counter;
     };
 } // Botcraft

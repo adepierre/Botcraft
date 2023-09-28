@@ -84,13 +84,13 @@ namespace Botcraft
         /// @param x X chunk coordinate
         /// @param z Z chunk coordinate
         /// @param dim Dimension in which the chunk is added
-        void AddChunk(const int x, const int z, const Dimension dim);
+        void LoadChunk(const int x, const int z, const Dimension dim);
 #else
         /// @brief Add a chunk at given coordinates. If already exists in another dimension, will be erased first. Thread-safe
         /// @param x X chunk coordinate
         /// @param z Z chunk coordinate
         /// @param dim Dimension in which the chunk is added
-        void AddChunk(const int x, const int z, const std::string& dim);
+        void LoadChunk(const int x, const int z, const std::string& dim);
 #endif
         /// @brief Remove a chunk at given coordinates. Thread-safe
         /// @param x X chunk coordinate
@@ -243,9 +243,9 @@ namespace Botcraft
 
     private:
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        void AddChunkImpl(const int x, const int z, const Dimension dim);
+        void LoadChunkImpl(const int x, const int z, const Dimension dim);
 #else
-        void AddChunkImpl(const int x, const int z, const std::string& dim);
+        void LoadChunkImpl(const int x, const int z, const std::string& dim);
 #endif
         void UnloadChunkImpl(const int x, const int z);
 

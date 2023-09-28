@@ -41,6 +41,7 @@ namespace Botcraft
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
+        load_counter = 0;
     }
 
     Chunk::Chunk(const Chunk& c)
@@ -67,6 +68,7 @@ namespace Botcraft
         }
 
         block_entities_data = c.block_entities_data;
+        load_counter = c.load_counter;
     }
 
     Position Chunk::BlockCoordsToChunkCoords(const Position& pos)
@@ -634,6 +636,28 @@ namespace Botcraft
 //#endif
     }
 
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+    const Dimension Chunk::GetDimension() const
+#else
+    const std::string& Chunk::GetDimension() const
+#endif
+    {
+        return dimension;
+    }
+
+    bool Chunk::HasSection(const int y) const
+    {
+        return sections[y] != nullptr;
+    }
+
+    void Chunk::AddSection(const int y)
+    {
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+        sections[y] = std::make_unique<Section>(dimension == Dimension::Overworld);
+#else
+        sections[y] = std::make_unique<Section>(dimension == "minecraft:overworld");
+#endif
+    }
 
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
     const Biome* Chunk::GetBiome(const int x, const int z) const
@@ -713,117 +737,6 @@ namespace Botcraft
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
-    }
-#endif
-
-    bool Chunk::IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const
-    {
-        if (ignore_gui_borders)
-        {
-            return pos.x >= 0 && pos.x < CHUNK_WIDTH &&
-                pos.y >= min_y && pos.y < height + min_y &&
-                pos.z >= 0 && pos.z < CHUNK_WIDTH;
-        }
-#if USE_GUI
-        return pos.x >= -1 && pos.x <= CHUNK_WIDTH &&
-            pos.y >= min_y && pos.y < height + min_y &&
-            pos.z >= -1 && pos.z <= CHUNK_WIDTH;
-#else
-        return pos.x >= 0 && pos.x < CHUNK_WIDTH &&
-            pos.y >= min_y && pos.y < height + min_y &&
-            pos.z >= 0 && pos.z < CHUNK_WIDTH;
-#endif
-    }
-
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
-    void Botcraft::Chunk::LoadSectionBiomeData(const int section_y, ProtocolCraft::ReadIterator& iter, size_t& length)
-    {
-        // Paletted biomes
-        unsigned char bits_per_biome = ReadData<unsigned char>(iter, length);
-
-        Palette palette_type = (bits_per_biome == 0 ? Palette::SingleValue : (bits_per_biome <= 3 ? Palette::SectionPalette : Palette::GlobalPalette));
-
-        int palette_value = 0;
-        int palette_length = 0;
-        std::vector<int> palette;
-        switch (palette_type)
-        {
-        case Botcraft::Palette::SingleValue:
-            palette_value = ReadData<VarInt>(iter, length);
-            break;
-        case Botcraft::Palette::SectionPalette:
-            palette_length = ReadData<VarInt>(iter, length);
-            palette = std::vector<int>(palette_length);
-            for (int i = 0; i < palette_length; ++i)
-            {
-                palette[i] = ReadData<VarInt>(iter, length);
-            }
-            break;
-        case Botcraft::Palette::GlobalPalette:
-            break;
-        default:
-            break;
-        }
-
-        //A mask 0...01..1 with bits_per_biome ones
-        unsigned int individual_value_mask = (unsigned int)((1 << bits_per_biome) - 1);
-
-        //Data array length
-        int data_array_size = ReadData<VarInt>(iter, length);
-
-        //Data array
-        std::vector<unsigned long long int> data_array = std::vector<unsigned long long int>(data_array_size);
-        for (int i = 0; i < data_array_size; ++i)
-        {
-            data_array[i] = ReadData<unsigned long long int>(iter, length);
-        }
-
-        //Biomes data
-        int bit_offset = 0;
-        for (int block_y = 0; block_y < SECTION_HEIGHT / 4; ++block_y)
-        {
-            for (int block_z = 0; block_z < CHUNK_WIDTH / 4; ++block_z)
-            {
-                for (int block_x = 0; block_x < CHUNK_WIDTH / 4; ++block_x)
-                {
-                    const int biome_index = section_y * 64 + block_y * 16 + block_z * 4 + block_x;
-                    if (palette_type == Palette::SingleValue)
-                    {
-                        SetBiome(biome_index, palette_value);
-                        continue;
-                    }
-
-                    // Entries don't span across multiple longs
-                    if (64 - (bit_offset % 64) < bits_per_biome)
-                    {
-                        bit_offset += 64 - (bit_offset % 64);
-                    }
-                    int start_long_index = bit_offset / 64;
-                    int end_long_index = start_long_index;
-                    int start_offset = bit_offset % 64;
-                    bit_offset += bits_per_biome;
-
-                    unsigned int raw_id;
-                    if (start_long_index == end_long_index)
-                    {
-                        raw_id = (unsigned int)(data_array[start_long_index] >> start_offset);
-                    }
-                    else
-                    {
-                        int end_offset = 64 - start_offset;
-                        raw_id = (unsigned int)(data_array[start_long_index] >> start_offset | data_array[end_long_index] << end_offset);
-                    }
-                    raw_id &= individual_value_mask;
-
-                    if (palette_type == Palette::SectionPalette)
-                    {
-                        raw_id = palette[raw_id];
-                    }
-
-                    SetBiome(biome_index, raw_id);
-                }
-            }
-        }
     }
 #endif
 
@@ -996,27 +909,124 @@ namespace Botcraft
 #endif
     }
 
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-    const Dimension Chunk::GetDimension() const
+    void Botcraft::Chunk::IncrementLoadCounter()
+    {
+        ++load_counter;
+    }
+
+    int Botcraft::Chunk::DecrementLoadCounter()
+    {
+        return --load_counter;
+    }
+
+    bool Chunk::IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const
+    {
+        if (ignore_gui_borders)
+        {
+            return pos.x >= 0 && pos.x < CHUNK_WIDTH &&
+                pos.y >= min_y && pos.y < height + min_y &&
+                pos.z >= 0 && pos.z < CHUNK_WIDTH;
+        }
+#if USE_GUI
+        return pos.x >= -1 && pos.x <= CHUNK_WIDTH &&
+            pos.y >= min_y && pos.y < height + min_y &&
+            pos.z >= -1 && pos.z <= CHUNK_WIDTH;
 #else
-    const std::string& Chunk::GetDimension() const
-#endif
-    {
-        return dimension;
-    }
-
-    bool Chunk::HasSection(const int y) const
-    {
-        return sections[y] != nullptr;
-    }
-
-    void Chunk::AddSection(const int y)
-    {
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        sections[y] = std::make_unique<Section>(dimension == Dimension::Overworld);
-#else
-        sections[y] = std::make_unique<Section>(dimension == "minecraft:overworld");
+        return pos.x >= 0 && pos.x < CHUNK_WIDTH &&
+            pos.y >= min_y && pos.y < height + min_y &&
+            pos.z >= 0 && pos.z < CHUNK_WIDTH;
 #endif
     }
 
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
+    void Botcraft::Chunk::LoadSectionBiomeData(const int section_y, ProtocolCraft::ReadIterator& iter, size_t& length)
+    {
+        // Paletted biomes
+        unsigned char bits_per_biome = ReadData<unsigned char>(iter, length);
+
+        Palette palette_type = (bits_per_biome == 0 ? Palette::SingleValue : (bits_per_biome <= 3 ? Palette::SectionPalette : Palette::GlobalPalette));
+
+        int palette_value = 0;
+        int palette_length = 0;
+        std::vector<int> palette;
+        switch (palette_type)
+        {
+        case Botcraft::Palette::SingleValue:
+            palette_value = ReadData<VarInt>(iter, length);
+            break;
+        case Botcraft::Palette::SectionPalette:
+            palette_length = ReadData<VarInt>(iter, length);
+            palette = std::vector<int>(palette_length);
+            for (int i = 0; i < palette_length; ++i)
+            {
+                palette[i] = ReadData<VarInt>(iter, length);
+            }
+            break;
+        case Botcraft::Palette::GlobalPalette:
+            break;
+        default:
+            break;
+        }
+
+        //A mask 0...01..1 with bits_per_biome ones
+        unsigned int individual_value_mask = (unsigned int)((1 << bits_per_biome) - 1);
+
+        //Data array length
+        int data_array_size = ReadData<VarInt>(iter, length);
+
+        //Data array
+        std::vector<unsigned long long int> data_array = std::vector<unsigned long long int>(data_array_size);
+        for (int i = 0; i < data_array_size; ++i)
+        {
+            data_array[i] = ReadData<unsigned long long int>(iter, length);
+        }
+
+        //Biomes data
+        int bit_offset = 0;
+        for (int block_y = 0; block_y < SECTION_HEIGHT / 4; ++block_y)
+        {
+            for (int block_z = 0; block_z < CHUNK_WIDTH / 4; ++block_z)
+            {
+                for (int block_x = 0; block_x < CHUNK_WIDTH / 4; ++block_x)
+                {
+                    const int biome_index = section_y * 64 + block_y * 16 + block_z * 4 + block_x;
+                    if (palette_type == Palette::SingleValue)
+                    {
+                        SetBiome(biome_index, palette_value);
+                        continue;
+                    }
+
+                    // Entries don't span across multiple longs
+                    if (64 - (bit_offset % 64) < bits_per_biome)
+                    {
+                        bit_offset += 64 - (bit_offset % 64);
+                    }
+                    int start_long_index = bit_offset / 64;
+                    int end_long_index = start_long_index;
+                    int start_offset = bit_offset % 64;
+                    bit_offset += bits_per_biome;
+
+                    unsigned int raw_id;
+                    if (start_long_index == end_long_index)
+                    {
+                        raw_id = (unsigned int)(data_array[start_long_index] >> start_offset);
+                    }
+                    else
+                    {
+                        int end_offset = 64 - start_offset;
+                        raw_id = (unsigned int)(data_array[start_long_index] >> start_offset | data_array[end_long_index] << end_offset);
+                    }
+                    raw_id &= individual_value_mask;
+
+                    if (palette_type == Palette::SectionPalette)
+                    {
+                        raw_id = palette[raw_id];
+                    }
+
+                    SetBiome(biome_index, raw_id);
+                }
+            }
+        }
+    }
+#endif
 } //Botcraft

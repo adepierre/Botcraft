@@ -75,8 +75,9 @@ namespace Botcraft
         rendering_manager.reset();
 #endif
 
-        if (world && !world->IsShared())
+        if (world)
         {
+            world->UnloadAllChunks();
             world.reset();
         }
     }

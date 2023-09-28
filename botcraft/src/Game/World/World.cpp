@@ -114,13 +114,13 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-    void World::AddChunk(const int x, const int z, const Dimension dim)
+    void World::LoadChunk(const int x, const int z, const Dimension dim)
 #else
-    void World::AddChunk(const int x, const int z, const std::string& dim)
+    void World::LoadChunk(const int x, const int z, const std::string& dim)
 #endif
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        AddChunkImpl(x, z, dim);
+        LoadChunkImpl(x, z, dim);
     }
 
     void World::UnloadChunk(const int x, const int z)
@@ -132,7 +132,18 @@ namespace Botcraft
     void World::UnloadAllChunks()
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        terrain = std::unordered_map<std::pair<int, int>, Chunk>();
+        for (auto it = terrain.begin(); it != terrain.end();)
+        {
+            const int load_count = it->second.DecrementLoadCounter();
+            if (load_count == 0)
+            {
+                terrain.erase(it++);
+            }
+            else
+            {
+                ++it;
+            }
+        }
     }
 
     void World::SetBlock(const Position& pos, const BlockstateId id)
@@ -602,20 +613,12 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
     void World::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
     {
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        const Dimension chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
-#else
-        const std::string chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
-#endif
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         if (msg.GetFullChunk())
         {
 #endif
-            if (chunk_dim != current_dimension)
-            {
-                AddChunk(msg.GetX(), msg.GetZ(), current_dimension);
-            }
+            LoadChunk(msg.GetX(), msg.GetZ(), current_dimension);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         }
 #endif
@@ -651,12 +654,7 @@ namespace Botcraft
 #else
     void World::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)
     {
-        std::string chunk_dim = GetDimension(msg.GetX(), msg.GetZ());
-
-        if (chunk_dim != current_dimension)
-        {
-            AddChunk(msg.GetX(), msg.GetZ(), current_dimension);
-        }
+        LoadChunk(msg.GetX(), msg.GetZ(), current_dimension);
 
         {
             // lock scope
@@ -719,29 +717,39 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-    void World::AddChunkImpl(const int x, const int z, const Dimension dim)
+    void World::LoadChunkImpl(const int x, const int z, const Dimension dim)
 #else
-    void World::AddChunkImpl(const int x, const int z, const std::string& dim)
+    void World::LoadChunkImpl(const int x, const int z, const std::string& dim)
 #endif
     {
         auto it = terrain.find({ x,z });
         if (it == terrain.end())
         {
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-            terrain.insert({ {x, z}, Chunk(dim) });
+            auto inserted = terrain.insert({ {x, z}, Chunk(dim) });
 #else
-            terrain.insert({ { x, z }, Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim) });
+            auto inserted = terrain.insert({ { x, z }, Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim) });
 #endif
+            inserted.first->second.IncrementLoadCounter();
         }
         // This may already exists in this dimension if this is a shared world
         else if (it->second.GetDimension() != dim)
         {
+            if (is_shared)
+            {
+                LOG_WARNING("Changing dimension with a shared world is not supported and can lead to wrong world data");
+            }
             UnloadChunkImpl(x, z);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
             it->second = Chunk(dim);
 #else
             it->second = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim);
 #endif
+            it->second.IncrementLoadCounter();
+        }
+        else
+        {
+            it->second.IncrementLoadCounter();
         }
 
         //Not necessary, from void to air, there is no difference
@@ -753,10 +761,14 @@ namespace Botcraft
         auto it = terrain.find({ x, z });
         if (it != terrain.end())
         {
-            terrain.erase(it);
+            const int load_counter = it->second.DecrementLoadCounter();
+            if (load_counter == 0)
+            {
+                terrain.erase(it);
 #if USE_GUI
-            UpdateChunk(x, z);
+                UpdateChunk(x, z);
 #endif
+            }
         }
     }
 
@@ -1001,7 +1013,9 @@ namespace Botcraft
 #else
             chunk->LoadChunkData(data);
 #endif
+#if USE_GUI
             UpdateChunk(x, z);
+#endif
         }
     }
 

@@ -19,19 +19,19 @@ TEST_CASE("Add/Remove chunks")
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     world.SetDimensionMinY(dimension, 0);
     world.SetDimensionHeight(dimension, 256);
-    world.SetCurrentDimension(dimension);
 #endif
+    world.SetCurrentDimension(dimension);
 
     REQUIRE(world.GetTerrain()->size() == 0);
 
-    world.AddChunk(0, 0, dimension);
+    world.LoadChunk(0, 0, dimension);
     REQUIRE(world.GetTerrain()->size() == 1);
 
     world.UnloadChunk(0, 0);
     REQUIRE(world.GetTerrain()->size() == 0);
 
-    world.AddChunk(0, 0, dimension);
-    world.AddChunk(0, 1, dimension);
+    world.LoadChunk(0, 0, dimension);
+    world.LoadChunk(0, 1, dimension);
     REQUIRE(world.GetTerrain()->size() == 2);
 
     world.UnloadAllChunks();
@@ -51,14 +51,14 @@ TEST_CASE("Set/Get blocks")
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     world.SetDimensionMinY(dimension, 0);
     world.SetDimensionHeight(dimension, 256);
-    world.SetCurrentDimension(dimension);
 #endif
+    world.SetCurrentDimension(dimension);
 
     // Does nothing: chunk not loaded
     world.SetBlock(Position(0, 0, 0), 0);
     REQUIRE(world.GetBlock(Position(0, 0, 0)) == nullptr);
 
-    world.AddChunk(0, 0, dimension);
+    world.LoadChunk(0, 0, dimension);
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
     world.SetBlock(Position(0, 0, 0), { 0,0 });
 #else
@@ -81,8 +81,8 @@ TEST_CASE("Set/Get biomes")
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     world.SetDimensionMinY(dimension, 0);
     world.SetDimensionHeight(dimension, 256);
-    world.SetCurrentDimension(dimension);
 #endif
+    world.SetCurrentDimension(dimension);
 
     // Does nothing: chunk not loaded
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
@@ -92,7 +92,7 @@ TEST_CASE("Set/Get biomes")
 #endif
     REQUIRE(world.GetBiome(Position(0, 0, 0)) == nullptr);
 
-    world.AddChunk(0, 0, dimension);
+    world.LoadChunk(0, 0, dimension);
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
     world.SetBiome(0, 0, 0);
 #else
@@ -116,11 +116,11 @@ TEST_CASE("Neighbour chunk update")
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     world.SetDimensionMinY(dimension, 0);
     world.SetDimensionHeight(dimension, 256);
-    world.SetCurrentDimension(dimension);
 #endif
+    world.SetCurrentDimension(dimension);
 
-    world.AddChunk(0, 0, dimension);
-    world.AddChunk(0, 1, dimension);
+    world.LoadChunk(0, 0, dimension);
+    world.LoadChunk(0, 1, dimension);
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
     const BlockstateId id = { 1,0 };
 #else
@@ -136,3 +136,43 @@ TEST_CASE("Neighbour chunk update")
     }
 }
 #endif
+
+TEST_CASE("Shared world")
+{
+    World world = World(true);
+
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+    const Dimension dimension = Dimension::Overworld;
+#else
+    const std::string dimension = "minecraft:overworld";
+#endif
+
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
+    world.SetDimensionMinY(dimension, 0);
+    world.SetDimensionHeight(dimension, 256);
+#endif
+    world.SetCurrentDimension(dimension);
+    REQUIRE(world.GetTerrain()->size() == 0);
+
+    world.LoadChunk(0, 0, dimension);
+    world.LoadChunk(0, 0, dimension);
+    REQUIRE(world.GetTerrain()->size() == 1);
+
+    world.UnloadChunk(0, 0);
+    REQUIRE(world.GetTerrain()->size() == 1);
+    world.UnloadChunk(0, 0);
+    REQUIRE(world.GetTerrain()->size() == 0);
+
+    world.LoadChunk(0, 0, dimension);
+    world.LoadChunk(0, 1, dimension);
+    REQUIRE(world.GetTerrain()->size() == 2);
+
+    world.LoadChunk(0, 0, dimension);
+    world.LoadChunk(0, 1, dimension);
+    REQUIRE(world.GetTerrain()->size() == 2);
+
+    world.UnloadAllChunks();
+    REQUIRE(world.GetTerrain()->size() == 2);
+    world.UnloadAllChunks();
+    REQUIRE(world.GetTerrain()->size() == 0);
+}

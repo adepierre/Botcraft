@@ -113,10 +113,10 @@ void UserControlledClient::CreateTestWorld()
     for (int i = 0; i < (max_id - min_id) / 16 / 16 + 1; ++i)
 #endif
     {
-        world->AddChunk(i, 0, dimension);
-        world->AddChunk(i, 1, dimension);
-        world->AddChunk(i, -1, dimension);
-        world->AddChunk(i, -2, dimension);
+        world->LoadChunk(i, 0, dimension);
+        world->LoadChunk(i, 1, dimension);
+        world->LoadChunk(i, -1, dimension);
+        world->LoadChunk(i, -2, dimension);
     }
 
     int x = 0;
@@ -210,7 +210,7 @@ void UserControlledClient::CreateTestWorld()
 
     for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
     {
-        world->AddChunk(-i - 1, 0, dimension);
+        world->LoadChunk(-i - 1, 0, dimension);
     }
 
     x = 0;
