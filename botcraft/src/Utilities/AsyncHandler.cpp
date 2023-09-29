@@ -31,8 +31,10 @@ namespace Botcraft
 
     void AsyncHandler::Handle(ProtocolCraft::Message& msg)
     {
-        std::unique_lock<std::mutex> lck(processing_mutex);
-        msg_to_process.push(msg.Clone());
+        {
+            std::unique_lock<std::mutex> lck(processing_mutex);
+            msg_to_process.push(msg.Clone());
+        }
         processing_condition_variable.notify_all();
     }
 
