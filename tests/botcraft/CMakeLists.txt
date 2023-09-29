@@ -5,6 +5,8 @@ set(SRC_FILES
     src/blackboard.cpp
     src/blockstate.cpp
     src/world.cpp
+
+    src/init.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
