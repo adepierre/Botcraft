@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
         std::vector<std::shared_ptr<Botcraft::World> > shared_worlds(args.num_world);
         for (int i = 0; i < args.num_world; ++i)
         {
-            shared_worlds[i] = std::make_shared<Botcraft::World>(true, false);
+            shared_worlds[i] = std::make_shared<Botcraft::World>(true);
         }
         std::vector<std::string> names(args.num_bot);
         std::vector<std::shared_ptr<WorldEaterClient> > clients(args.num_bot);

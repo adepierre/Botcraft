@@ -30,25 +30,17 @@ namespace std
 namespace Botcraft
 {
     class Biome;
-    class AsyncHandler;
 
     class World : public ProtocolCraft::Handler
     {
     public:
         /// @brief
         /// @param is_shared_ If true, this world can be shared by multiple bot
-        /// instances (assuming they are all in the **same dimension**)
-        /// @param async_handler_ If true, all packets will be copied and processed
-        /// on another specific thread instead of directly on the main network processing one
-        /// This adds a **lot** of copy but can prevent connection timeouts when CPU is too
-        /// slow to cope with all chunk data sent upon dimension loading
-        World(const bool is_shared_, const bool async_handler_ = false);
+        /// instances (assuming they are all in the **same dimension** and don't
+        /// disconnect while the other are still using the world)
+        World(const bool is_shared_);
 
         ~World();
-
-        /// @brief Get the handler associated to this world, either this or async handler
-        /// @return A pointer to the handler
-        ProtocolCraft::Handler* GetHandler();
 
         /// @brief Check if a position is in a loaded chunk. Thread-safe
         /// @param pos Block position
@@ -333,8 +325,6 @@ namespace Botcraft
 #else
         std::string current_dimension;
 #endif
-
-        std::unique_ptr<AsyncHandler> async_handler;
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         std::atomic<int> world_interaction_sequence_id;

@@ -151,13 +151,13 @@ namespace Botcraft
     {
         if (!world)
         {
-            world = std::make_shared<World>(false, false);
+            world = std::make_shared<World>(false);
         }
 
         inventory_manager = std::make_shared<InventoryManager>();
         entity_manager = std::make_shared<EntityManager>();
 
-        network_manager->AddHandler(world->GetHandler());
+        network_manager->AddHandler(world.get());
         network_manager->AddHandler(inventory_manager.get());
         network_manager->AddHandler(entity_manager.get());
 

@@ -1,29 +1,19 @@
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/World.hpp"
 
-#include "botcraft/Utilities/AsyncHandler.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
 #include <memory>
 
 namespace Botcraft
 {
-    World::World(const bool is_shared_, const bool async_handler_) : is_shared(is_shared_)
+    World::World(const bool is_shared_) : is_shared(is_shared_)
     {
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         current_dimension = Dimension::None;
 #else
         current_dimension = "";
 #endif
-
-        if (async_handler_)
-        {
-            async_handler = std::make_unique<AsyncHandler>(this);
-        }
-        else
-        {
-            async_handler = nullptr;
-        }
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         world_interaction_sequence_id = 0;
@@ -33,18 +23,6 @@ namespace Botcraft
     World::~World()
     {
 
-    }
-
-    ProtocolCraft::Handler* World::GetHandler()
-    {
-        if (async_handler != nullptr)
-        {
-            return async_handler.get();
-        }
-        else
-        {
-            return this;
-        }
     }
 
     bool World::IsLoaded(const Position& pos) const
@@ -1060,7 +1038,7 @@ namespace Botcraft
 
         if (chunk == nullptr)
         {
-            LOG_WARNING("Trying to update lights in an unloaded chunk");
+            LOG_WARNING("Trying to update lights in an unloaded chunk: (" << x << "," << z << ")");
             return;
         }
 
