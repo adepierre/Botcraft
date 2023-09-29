@@ -24,7 +24,7 @@ namespace ProtocolCraft
 
         virtual std::shared_ptr<Message> Clone() const override
         {
-            return std::shared_ptr<TDerived>(new TDerived(static_cast<const TDerived&>(*this)));
+            return std::make_shared<TDerived>(*reinterpret_cast<const TDerived*>(this));
         }
     protected:
         virtual void DispatchImpl(Handler* handler) override;
