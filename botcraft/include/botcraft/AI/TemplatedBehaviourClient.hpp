@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 #include "botcraft/AI/BehaviourClient.hpp"
 #include "botcraft/AI/BehaviourTree.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
@@ -90,11 +92,14 @@ namespace Botcraft
         /// @brief Start the behaviour thread loop.
         void StartBehaviour()
         {
-            std::unique_lock<std::mutex> lock(behaviour_mutex);
+            tree_loop_ready = false;
             behaviour_thread = std::thread(&TemplatedBehaviourClient<TDerived>::TreeLoop, this);
-            // Wait for the first Yield call to be sure 
-            // the thread is started and ready to run
-            behaviour_cond_var.wait(lock);
+
+            // Wait for the thread to start and ready to run
+            while (!tree_loop_ready)
+            {
+                Utilities::SleepFor(std::chrono::milliseconds(10));
+            }
         }
 
         /// @brief Blocking call, will return only when the client is
@@ -155,7 +160,7 @@ namespace Botcraft
                     .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
                 .end());
 
-            // Perform one step to get out of the Yield lock
+            // Perform one step to get out of the Yield lock and swap tree
             BehaviourStep();
 
             // Wait for the tree to be set as active one
@@ -234,6 +239,7 @@ namespace Botcraft
         void TreeLoop()
         {
             Logger::GetInstance().RegisterThread("Behaviour - " + GetNetworkManager()->GetMyName());
+            tree_loop_ready = true;
             while (true)
             {
                 try
@@ -284,5 +290,7 @@ namespace Botcraft
         std::thread behaviour_thread;
         std::condition_variable behaviour_cond_var;
         std::mutex behaviour_mutex;
+
+        std::atomic<bool> tree_loop_ready;
     };
 } // namespace Botcraft
