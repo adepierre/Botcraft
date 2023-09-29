@@ -21,7 +21,7 @@ namespace ProtocolCraft
         }
         
 
-        const std::vector<Slot>& GeItems() const
+        const std::vector<Slot>& GetItems() const
         {
             return items;
         }
