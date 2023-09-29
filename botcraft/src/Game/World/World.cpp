@@ -92,27 +92,27 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-    void World::LoadChunk(const int x, const int z, const Dimension dim)
+    void World::LoadChunk(const int x, const int z, const Dimension dim, const std::thread::id& loader_id)
 #else
-    void World::LoadChunk(const int x, const int z, const std::string& dim)
+    void World::LoadChunk(const int x, const int z, const std::string& dim, const std::thread::id& loader_id)
 #endif
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        LoadChunkImpl(x, z, dim);
+        LoadChunkImpl(x, z, dim, loader_id);
     }
 
-    void World::UnloadChunk(const int x, const int z)
+    void World::UnloadChunk(const int x, const int z, const std::thread::id& loader_id)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        UnloadChunkImpl(x, z);
+        UnloadChunkImpl(x, z, loader_id);
     }
 
-    void World::UnloadAllChunks()
+    void World::UnloadAllChunks(const std::thread::id& loader_id)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
         for (auto it = terrain.begin(); it != terrain.end();)
         {
-            const int load_count = it->second.DecrementLoadCounter();
+            const int load_count = it->second.RemoveLoader(loader_id);
             if (load_count == 0)
             {
                 terrain.erase(it++);
@@ -511,7 +511,7 @@ namespace Botcraft
 
     void World::Handle(ProtocolCraft::ClientboundRespawnPacket& msg)
     {
-        UnloadAllChunks();
+        UnloadAllChunks(std::this_thread::get_id());
 
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
@@ -585,7 +585,7 @@ namespace Botcraft
 
     void World::Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg)
     {
-        UnloadChunk(msg.GetX(), msg.GetZ());
+        UnloadChunk(msg.GetX(), msg.GetZ(), std::this_thread::get_id());
     }
 
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
@@ -596,7 +596,7 @@ namespace Botcraft
         if (msg.GetFullChunk())
         {
 #endif
-            LoadChunk(msg.GetX(), msg.GetZ(), current_dimension);
+            LoadChunk(msg.GetX(), msg.GetZ(), current_dimension, std::this_thread::get_id());
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         }
 #endif
@@ -632,7 +632,7 @@ namespace Botcraft
 #else
     void World::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)
     {
-        LoadChunk(msg.GetX(), msg.GetZ(), current_dimension);
+        LoadChunk(msg.GetX(), msg.GetZ(), current_dimension, std::this_thread::get_id());
 
         {
             // lock scope
@@ -695,9 +695,9 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-    void World::LoadChunkImpl(const int x, const int z, const Dimension dim)
+    void World::LoadChunkImpl(const int x, const int z, const Dimension dim, const std::thread::id& loader_id)
 #else
-    void World::LoadChunkImpl(const int x, const int z, const std::string& dim)
+    void World::LoadChunkImpl(const int x, const int z, const std::string& dim, const std::thread::id& loader_id)
 #endif
     {
         auto it = terrain.find({ x,z });
@@ -708,7 +708,7 @@ namespace Botcraft
 #else
             auto inserted = terrain.insert({ { x, z }, Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim) });
 #endif
-            inserted.first->second.IncrementLoadCounter();
+            inserted.first->second.AddLoader(loader_id);
         }
         // This may already exists in this dimension if this is a shared world
         else if (it->second.GetDimension() != dim)
@@ -717,29 +717,29 @@ namespace Botcraft
             {
                 LOG_WARNING("Changing dimension with a shared world is not supported and can lead to wrong world data");
             }
-            UnloadChunkImpl(x, z);
+            UnloadChunkImpl(x, z, loader_id);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
             it->second = Chunk(dim);
 #else
             it->second = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim);
 #endif
-            it->second.IncrementLoadCounter();
+            it->second.AddLoader(loader_id);
         }
         else
         {
-            it->second.IncrementLoadCounter();
+            it->second.AddLoader(loader_id);
         }
 
         //Not necessary, from void to air, there is no difference
         //UpdateChunk(x, z);
     }
 
-    void World::UnloadChunkImpl(const int x, const int z)
+    void World::UnloadChunkImpl(const int x, const int z, const std::thread::id& loader_id)
     {
         auto it = terrain.find({ x, z });
         if (it != terrain.end())
         {
-            const int load_counter = it->second.DecrementLoadCounter();
+            const size_t load_counter = it->second.RemoveLoader(loader_id);
             if (load_counter == 0)
             {
                 terrain.erase(it);

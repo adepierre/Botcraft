@@ -268,6 +268,11 @@ namespace Botcraft
         Send(chat_command);
     }
 
+    std::thread::id NetworkManager::GetProcessingThreadId() const
+    {
+        return m_thread_process.get_id();
+    }
+
     void NetworkManager::WaitForNewPackets()
     {
         Logger::GetInstance().RegisterThread("NetworkPacketProcessing - " + name);

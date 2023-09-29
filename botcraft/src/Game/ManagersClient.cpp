@@ -55,6 +55,12 @@ namespace Botcraft
 
     void ManagersClient::Disconnect()
     {
+        std::thread::id network_process_thread_id;
+        if (network_manager)
+        {
+            network_process_thread_id = network_manager->GetProcessingThreadId();
+        }
+
         ConnectionClient::Disconnect();
 
         game_mode = GameType::None;
@@ -77,7 +83,7 @@ namespace Botcraft
 
         if (world)
         {
-            world->UnloadAllChunks();
+            world->UnloadAllChunks(network_process_thread_id);
             world.reset();
         }
     }

@@ -40,6 +40,8 @@ namespace Botcraft
         void SendChatMessage(const std::string& message);
         void SendChatCommand(const std::string& command);
 
+        std::thread::id GetProcessingThreadId() const;
+
     private:
         void WaitForNewPackets();
         void ProcessPacket(const std::vector<unsigned char>& packet);

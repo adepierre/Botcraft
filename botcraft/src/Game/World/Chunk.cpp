@@ -41,7 +41,6 @@ namespace Botcraft
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
-        load_counter = 0;
     }
 
     Chunk::Chunk(const Chunk& c)
@@ -68,7 +67,7 @@ namespace Botcraft
         }
 
         block_entities_data = c.block_entities_data;
-        load_counter = c.load_counter;
+        loaded_from = c.loaded_from;
     }
 
     Position Chunk::BlockCoordsToChunkCoords(const Position& pos)
@@ -909,14 +908,15 @@ namespace Botcraft
 #endif
     }
 
-    void Botcraft::Chunk::IncrementLoadCounter()
+    void Chunk::AddLoader(const std::thread::id& thread_id)
     {
-        ++load_counter;
+        loaded_from.insert(thread_id);
     }
 
-    int Botcraft::Chunk::DecrementLoadCounter()
+    size_t Chunk::RemoveLoader(const std::thread::id& thread_id)
     {
-        return --load_counter;
+        loaded_from.erase(thread_id);
+        return loaded_from.size();
     }
 
     bool Chunk::IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const

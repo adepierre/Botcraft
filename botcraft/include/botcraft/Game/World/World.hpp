@@ -36,8 +36,7 @@ namespace Botcraft
     public:
         /// @brief
         /// @param is_shared_ If true, this world can be shared by multiple bot
-        /// instances (assuming they are all in the **same dimension** and don't
-        /// disconnect while the other are still using the world)
+        /// instances (assuming they all are and stay in the **same dimension**)
         World(const bool is_shared_);
 
         ~World();
@@ -76,21 +75,25 @@ namespace Botcraft
         /// @param x X chunk coordinate
         /// @param z Z chunk coordinate
         /// @param dim Dimension in which the chunk is added
-        void LoadChunk(const int x, const int z, const Dimension dim);
+        /// @param loader_id Id of the loader of this chunk (used for shared worlds), default: current thread id
+        void LoadChunk(const int x, const int z, const Dimension dim, const std::thread::id& loader_id = std::this_thread::get_id());
 #else
         /// @brief Add a chunk at given coordinates. If already exists in another dimension, will be erased first. Thread-safe
         /// @param x X chunk coordinate
         /// @param z Z chunk coordinate
         /// @param dim Dimension in which the chunk is added
-        void LoadChunk(const int x, const int z, const std::string& dim);
+        /// @param loader_id Id of the loader of this chunk (used for shared worlds), default: current thread id
+        void LoadChunk(const int x, const int z, const std::string& dim, const std::thread::id& loader_id = std::this_thread::get_id());
 #endif
         /// @brief Remove a chunk at given coordinates. Thread-safe
         /// @param x X chunk coordinate
         /// @param z Z chunk coordinate
-        void UnloadChunk(const int x, const int z);
+        /// @param loader_id Id of the loader of this chunk (used for shared worlds), default: current thread id
+        void UnloadChunk(const int x, const int z, const std::thread::id& loader_id = std::this_thread::get_id());
 
         /// @brief Remove all chunks from memory
-        void UnloadAllChunks();
+        /// @param loader_id Id of the loader of this chunk (used for shared worlds), default: current thread id
+        void UnloadAllChunks(const std::thread::id& loader_id = std::this_thread::get_id());
 
 
         /// @brief Set block at given pos. Does nothing if pos is not loaded. Thread-safe
@@ -235,11 +238,11 @@ namespace Botcraft
 
     private:
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        void LoadChunkImpl(const int x, const int z, const Dimension dim);
+        void LoadChunkImpl(const int x, const int z, const Dimension dim, const std::thread::id& loader_id);
 #else
-        void LoadChunkImpl(const int x, const int z, const std::string& dim);
+        void LoadChunkImpl(const int x, const int z, const std::string& dim, const std::thread::id& loader_id);
 #endif
-        void UnloadChunkImpl(const int x, const int z);
+        void UnloadChunkImpl(const int x, const int z, const std::thread::id& loader_id);
 
         void SetBlockImpl(const Position& pos, const BlockstateId id);
         const Blockstate* GetBlockImpl(const Position& pos) const;

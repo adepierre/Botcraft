@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <thread>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "botcraft/Game/Enums.hpp"
@@ -94,11 +96,13 @@ namespace Botcraft
 #endif
         void UpdateNeighbour(Chunk* const neighbour, const Orientation direction);
 
-        /// @brief Increment load counter by 1
-        void IncrementLoadCounter();
-        /// @brief Decrement load counter by 1
-        /// @return New counter value
-        int DecrementLoadCounter();
+        /// @brief Add a thread to the loaders list
+        /// @param thread_id Id of the thread
+        void AddLoader(const std::thread::id& thread_id);
+        /// @brief Remove a thread from the loaders list
+        /// @param thread_id Id of the thread
+        /// @return Number of remaining loaders
+        size_t RemoveLoader(const std::thread::id& thread_id);
         
     private:
         bool IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const;
@@ -125,6 +129,6 @@ namespace Botcraft
 #if USE_GUI
         bool modified_since_last_rendered;
 #endif
-        int load_counter;
+        std::unordered_set<std::thread::id> loaded_from;
     };
 } // Botcraft

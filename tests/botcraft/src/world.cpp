@@ -140,6 +140,13 @@ TEST_CASE("Neighbour chunk update")
 
 TEST_CASE("Shared world")
 {
+    std::thread thread1 = std::thread([]() {});
+    std::thread thread2 = std::thread([]() {});
+    const std::thread::id thread_id1 = thread1.get_id();
+    const std::thread::id thread_id2 = thread2.get_id();
+    thread1.join();
+    thread2.join();
+
     World world = World(true);
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
@@ -155,25 +162,31 @@ TEST_CASE("Shared world")
     world.SetCurrentDimension(dimension);
     REQUIRE(world.GetTerrain()->size() == 0);
 
-    world.LoadChunk(0, 0, dimension);
-    world.LoadChunk(0, 0, dimension);
-    REQUIRE(world.GetTerrain()->size() == 1);
+    SECTION("Load same chunk")
+    {
+        world.LoadChunk(0, 0, dimension, thread_id1);
+        world.LoadChunk(0, 0, dimension, thread_id2);
+        REQUIRE(world.GetTerrain()->size() == 1);
 
-    world.UnloadChunk(0, 0);
-    REQUIRE(world.GetTerrain()->size() == 1);
-    world.UnloadChunk(0, 0);
-    REQUIRE(world.GetTerrain()->size() == 0);
+        world.UnloadChunk(0, 0, thread_id1);
+        REQUIRE(world.GetTerrain()->size() == 1);
+        world.UnloadChunk(0, 0, thread_id1);
+        REQUIRE(world.GetTerrain()->size() == 1);
+        world.UnloadChunk(0, 0, thread_id2);
+        REQUIRE(world.GetTerrain()->size() == 0);
+    }
 
-    world.LoadChunk(0, 0, dimension);
-    world.LoadChunk(0, 1, dimension);
-    REQUIRE(world.GetTerrain()->size() == 2);
+    SECTION("Load different chunks")
+    {
+        world.LoadChunk(0, 0, dimension, thread_id1);
+        world.LoadChunk(0, 1, dimension, thread_id2);
+        REQUIRE(world.GetTerrain()->size() == 2);
 
-    world.LoadChunk(0, 0, dimension);
-    world.LoadChunk(0, 1, dimension);
-    REQUIRE(world.GetTerrain()->size() == 2);
-
-    world.UnloadAllChunks();
-    REQUIRE(world.GetTerrain()->size() == 2);
-    world.UnloadAllChunks();
-    REQUIRE(world.GetTerrain()->size() == 0);
+        world.UnloadAllChunks(thread_id1);
+        REQUIRE(world.GetTerrain()->size() == 1);
+        world.UnloadAllChunks(thread_id1);
+        REQUIRE(world.GetTerrain()->size() == 1);
+        world.UnloadAllChunks(thread_id2);
+        REQUIRE(world.GetTerrain()->size() == 0);
+    }
 }
