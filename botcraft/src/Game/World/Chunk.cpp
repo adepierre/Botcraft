@@ -171,7 +171,7 @@ namespace Botcraft
             }
 
             //A mask 0...01..1 with bits_per_block ones
-            unsigned int individual_value_mask = (unsigned int)((1 << bits_per_block) - 1);
+            unsigned int individual_value_mask = static_cast<unsigned int>((1 << bits_per_block) - 1);
 
             //Data array length
             int data_array_size = ReadData<VarInt>(iter, length);
@@ -217,12 +217,12 @@ namespace Botcraft
                         unsigned int raw_id;
                         if (start_long_index == end_long_index)
                         {
-                            raw_id = (unsigned int)(data_array[start_long_index] >> start_offset);
+                            raw_id = static_cast<unsigned int>(data_array[start_long_index] >> start_offset);
                         }
                         else
                         {
                             int end_offset = 64 - start_offset;
-                            raw_id = (unsigned int)(data_array[start_long_index] >> start_offset | data_array[end_long_index] << end_offset);
+                            raw_id = static_cast<unsigned int>(data_array[start_long_index] >> start_offset | data_array[end_long_index] << end_offset);
                         }
                         raw_id &= individual_value_mask;
 
@@ -360,7 +360,7 @@ namespace Botcraft
             }
 
             //A mask 0...01..1 with bits_per_block ones
-            unsigned int individual_value_mask = (unsigned int)((1 << bits_per_block) - 1);
+            unsigned int individual_value_mask = static_cast<unsigned int>((1 << bits_per_block) - 1);
 
             //Data array length
             int data_array_size = ReadData<VarInt>(iter, length);
@@ -405,12 +405,12 @@ namespace Botcraft
                             unsigned int raw_id;
                             if (start_long_index == end_long_index)
                             {
-                                raw_id = (unsigned int)(data_array[start_long_index] >> start_offset);
+                                raw_id = static_cast<unsigned int>(data_array[start_long_index] >> start_offset);
                             }
                             else
                             {
                                 int end_offset = 64 - start_offset;
-                                raw_id = (unsigned int)(data_array[start_long_index] >> start_offset | data_array[end_long_index] << end_offset);
+                                raw_id = static_cast<unsigned int>(data_array[start_long_index] >> start_offset | data_array[end_long_index] << end_offset);
                             }
                             raw_id &= individual_value_mask;
 
@@ -956,7 +956,7 @@ namespace Botcraft
         }
 
         //A mask 0...01..1 with bits_per_biome ones
-        unsigned int individual_value_mask = (unsigned int)((1 << bits_per_biome) - 1);
+        unsigned int individual_value_mask = static_cast<unsigned int>((1 << bits_per_biome) - 1);
 
         //Data array length
         int data_array_size = ReadData<VarInt>(iter, length);
@@ -996,12 +996,12 @@ namespace Botcraft
                     unsigned int raw_id;
                     if (start_long_index == end_long_index)
                     {
-                        raw_id = (unsigned int)(data_array[start_long_index] >> start_offset);
+                        raw_id = static_cast<unsigned int>(data_array[start_long_index] >> start_offset);
                     }
                     else
                     {
                         int end_offset = 64 - start_offset;
-                        raw_id = (unsigned int)(data_array[start_long_index] >> start_offset | data_array[end_long_index] << end_offset);
+                        raw_id = static_cast<unsigned int>(data_array[start_long_index] >> start_offset | data_array[end_long_index] << end_offset);
                     }
                     raw_id &= individual_value_mask;
 
