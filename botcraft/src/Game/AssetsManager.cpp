@@ -66,10 +66,9 @@ namespace Botcraft
 
     const Blockstate* AssetsManager::GetBlockstate(const BlockstateId id) const
     {
-        auto& blockstates_map = AssetsManager::getInstance().Blockstates();
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-        auto it = blockstates_map.find(id.first);
-        if (it != blockstates_map.end())
+        auto it = blockstates.find(id.first);
+        if (it != blockstates.end())
         {
             auto it2 = it->second.find(id.second);
             if (it2 != it->second.end())
@@ -83,17 +82,25 @@ namespace Botcraft
         }
         else
         {
-            return blockstates_map.at(-1).at(0).get();
+            return blockstates.at(-1).at(0).get();
         }
 #else
-        auto it = blockstates_map.find(id);
-        if (it != blockstates_map.end())
+        if (id < flattened_blockstates_size)
+        {
+            const Blockstate* block = flattened_blockstates[id];
+            if (block != nullptr)
+            {
+                return block;
+            }
+        }
+        auto it = blockstates.find(id);
+        if (it != blockstates.end())
         {
             return it->second.get();
         }
         else
         {
-            return blockstates_map.at(-1).get();
+            return blockstates.at(-1).get();
         }
 #endif
         return nullptr;
@@ -699,8 +706,29 @@ namespace Botcraft
                 }
             }
         }
+        FlattenBlocks();
 #endif
     }
+
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+    void AssetsManager::FlattenBlocks()
+    {
+        int max_id = -1;
+        for (const auto& [id, block] : blockstates)
+        {
+            max_id = std::max(id, max_id);
+        }
+        flattened_blockstates = std::vector<const Blockstate*>(max_id + 1, nullptr);
+        flattened_blockstates_size = flattened_blockstates.size();
+        for (const auto& [id, block] : blockstates)
+        {
+            if (id >= 0)
+            {
+                flattened_blockstates[id] = block.get();
+            }
+        }
+    }
+#endif
 
     void AssetsManager::LoadBiomesFile()
     {

@@ -56,6 +56,9 @@ namespace Botcraft
         AssetsManager();
 
         void LoadBlocksFile();
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+        void FlattenBlocks();
+#endif
         void LoadBiomesFile();
         void LoadItemsFile();
 #if USE_GUI
@@ -72,6 +75,8 @@ namespace Botcraft
         std::unordered_map<int, std::unordered_map<unsigned char, std::unique_ptr<Blockstate> > > blockstates;
 #else
         std::unordered_map<int, std::unique_ptr<Blockstate> > blockstates;
+        std::vector<const Blockstate*> flattened_blockstates;
+        size_t flattened_blockstates_size;
 #endif
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
         std::unordered_map<unsigned char, std::unique_ptr<Biome> > biomes;
