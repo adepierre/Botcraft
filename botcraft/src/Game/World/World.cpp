@@ -632,18 +632,14 @@ namespace Botcraft
 #else
     void World::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)
     {
-        LoadChunk(msg.GetX(), msg.GetZ(), current_dimension, std::this_thread::get_id());
-
-        {
-            // lock scope
-            std::scoped_lock<std::shared_mutex> lock(world_mutex);
-            LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBuffer());
-            LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBlockEntitiesData());
-            UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-                msg.GetLightData().GetSkyYMask(), msg.GetLightData().GetEmptySkyYMask(), msg.GetLightData().GetSkyUpdates(), true);
-            UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-                msg.GetLightData().GetBlockYMask(), msg.GetLightData().GetEmptyBlockYMask(), msg.GetLightData().GetBlockUpdates(), false);
-        }
+        std::scoped_lock<std::shared_mutex> lock(world_mutex);
+        LoadChunkImpl(msg.GetX(), msg.GetZ(), current_dimension, std::this_thread::get_id());
+        LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBuffer());
+        LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBlockEntitiesData());
+        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
+            msg.GetLightData().GetSkyYMask(), msg.GetLightData().GetEmptySkyYMask(), msg.GetLightData().GetSkyUpdates(), true);
+        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
+            msg.GetLightData().GetBlockYMask(), msg.GetLightData().GetEmptyBlockYMask(), msg.GetLightData().GetBlockUpdates(), false);
     }
 #endif
 
