@@ -3,8 +3,6 @@
 
 #include "botcraft/Utilities/Logger.hpp"
 
-#include <memory>
-
 namespace Botcraft
 {
     World::World(const bool is_shared_) : is_shared(is_shared_)
@@ -199,12 +197,7 @@ namespace Botcraft
             static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
             });
 
-        if (it != terrain.end() &&
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-            it->second.GetDimension() == Dimension::Overworld)
-#else
-            it->second.GetDimension() == "minecraft:overworld")
-#endif
+        if (it != terrain.end() && it->second.GetHasSkyLight())
         {
             const int in_chunk_x = (pos.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
             const int in_chunk_z = (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
@@ -331,7 +324,7 @@ namespace Botcraft
 #endif
         }
 
-        return it->second.GetDimension();
+        return index_dimension_map.at(it->second.GetDimensionIndex());
     }
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
@@ -696,18 +689,24 @@ namespace Botcraft
     void World::LoadChunkImpl(const int x, const int z, const std::string& dim, const std::thread::id& loader_id)
 #endif
     {
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+        const bool has_sky_light = dim == Dimension::Overworld;
+#else
+        const bool has_sky_light = dim == "minecraft:overworld";
+#endif
+        const size_t dim_index = GetDimIndex(dim);
         auto it = terrain.find({ x,z });
         if (it == terrain.end())
         {
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-            auto inserted = terrain.insert({ {x, z}, Chunk(dim) });
+            auto inserted = terrain.insert({ {x, z}, Chunk(dim_index, has_sky_light) });
 #else
-            auto inserted = terrain.insert({ { x, z }, Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim) });
+            auto inserted = terrain.insert({ { x, z }, Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim_index, has_sky_light)});
 #endif
             inserted.first->second.AddLoader(loader_id);
         }
         // This may already exists in this dimension if this is a shared world
-        else if (it->second.GetDimension() != dim)
+        else if (it->second.GetDimensionIndex() != dim_index)
         {
             if (is_shared)
             {
@@ -715,9 +714,9 @@ namespace Botcraft
             }
             UnloadChunkImpl(x, z, loader_id);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-            it->second = Chunk(dim);
+            it->second = Chunk(dim_index);
 #else
-            it->second = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim);
+            it->second = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim_index, has_sky_light);
 #endif
             it->second.AddLoader(loader_id);
         }
@@ -1125,4 +1124,19 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+    size_t World::GetDimIndex(const Dimension dim)
+#else
+    size_t World::GetDimIndex(const std::string& dim)
+#endif
+    {
+        auto it = dimension_index_map.find(dim);
+
+        if (it == dimension_index_map.end())
+        {
+            index_dimension_map.insert({ dimension_index_map.size(), dim });
+            it = dimension_index_map.insert({ dim, dimension_index_map.size() }).first;
+        }
+        return it->second;
+    }
 } // Botcraft

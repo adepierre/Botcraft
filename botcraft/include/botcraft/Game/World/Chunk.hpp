@@ -24,12 +24,10 @@ namespace Botcraft
     class Chunk
     {
     public:
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        Chunk(const Dimension &dim);
-#elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-        Chunk(const std::string& dim);
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+        Chunk(const size_t dim_index, const bool has_sky_light_);
 #else
-        Chunk(const int min_y_, const unsigned int height_, const std::string& dim);
+        Chunk(const int min_y_, const unsigned int height_, const size_t dim_index, const bool has_sky_light_);
 #endif
         Chunk(const Chunk& c);
 
@@ -72,11 +70,8 @@ namespace Botcraft
         unsigned char GetSkyLight(const Position &pos) const;
         void SetSkyLight(const Position &pos, const unsigned char v);
 
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        Dimension GetDimension() const;
-#else
-        const std::string& GetDimension() const;
-#endif
+        size_t GetDimensionIndex() const;
+        bool GetHasSkyLight() const;
 
         bool HasSection(const int y) const;
         void AddSection(const int y);
@@ -114,11 +109,10 @@ namespace Botcraft
         std::vector<const Biome*> biomes;
 
         std::unordered_map<Position, ProtocolCraft::NBT::Value> block_entities_data;
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        Dimension dimension;
-#else
-        std::string dimension;
-#endif
+
+        size_t dimension_index;
+        bool has_sky_light;
+
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
         static constexpr int min_y = 0;
         static constexpr int height = 256;

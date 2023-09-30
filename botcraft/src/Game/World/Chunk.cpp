@@ -16,15 +16,14 @@ namespace Botcraft
         GlobalPalette
     };
 
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-    Chunk::Chunk(const Dimension &dim)
-#elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-    Chunk::Chunk(const std::string& dim)
+#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+    Chunk::Chunk(const size_t dim_index, const bool has_sky_light_)
 #else
-    Chunk::Chunk(const int min_y_, const unsigned int height_, const std::string& dim)
+    Chunk::Chunk(const int min_y_, const unsigned int height_, const size_t dim_index, const bool has_sky_light_)
 #endif
     {
-        dimension = dim;
+        dimension_index = dim_index;
+        has_sky_light = has_sky_light_;
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         height = height_;
         min_y = min_y_;
@@ -45,7 +44,8 @@ namespace Botcraft
 
     Chunk::Chunk(const Chunk& c)
     {
-        dimension = c.dimension;
+        dimension_index = c.dimension_index;
+        has_sky_light = c.has_sky_light;
         biomes = c.biomes;
 
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
@@ -266,7 +266,7 @@ namespace Botcraft
             }
 
             //Sky light
-            if (GetDimension() == Dimension::Overworld)
+            if (has_sky_light)
             {
                 for (int block_y = 0; block_y < SECTION_HEIGHT; ++block_y)
                 {
@@ -591,12 +591,7 @@ namespace Botcraft
 
     unsigned char Chunk::GetSkyLight(const Position &pos) const
     {
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        if (dimension != Dimension::Overworld
-#else
-        if (dimension != "minecraft:overworld"
-#endif
-            || !IsInsideChunk(pos, true))
+        if (!has_sky_light || !IsInsideChunk(pos, true))
         {
             return 0;
         }
@@ -612,12 +607,7 @@ namespace Botcraft
 
     void Chunk::SetSkyLight(const Position &pos, const unsigned char v)
     {
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        if (dimension != Dimension::Overworld
-#else
-        if (dimension != "minecraft:overworld"
-#endif
-            || !IsInsideChunk(pos, true))
+        if (!has_sky_light || !IsInsideChunk(pos, true))
         {
             return;
         }
@@ -635,13 +625,14 @@ namespace Botcraft
 //#endif
     }
 
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-    Dimension Chunk::GetDimension() const
-#else
-    const std::string& Chunk::GetDimension() const
-#endif
+    size_t Chunk::GetDimensionIndex() const
     {
-        return dimension;
+        return dimension_index;
+    }
+
+    bool Chunk::GetHasSkyLight() const
+    {
+        return has_sky_light;
     }
 
     bool Chunk::HasSection(const int y) const
@@ -651,11 +642,7 @@ namespace Botcraft
 
     void Chunk::AddSection(const int y)
     {
-#if PROTOCOL_VERSION < 719 /* < 1.16 */
-        sections[y] = std::make_unique<Section>(dimension == Dimension::Overworld);
-#else
-        sections[y] = std::make_unique<Section>(dimension == "minecraft:overworld");
-#endif
+        sections[y] = std::make_unique<Section>(has_sky_light);
     }
 
 #if PROTOCOL_VERSION < 552 /* < 1.15 */

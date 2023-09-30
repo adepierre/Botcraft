@@ -314,6 +314,12 @@ namespace Botcraft
             const std::vector<std::vector<char> >& data, const bool sky);
 #endif
 
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+        size_t GetDimIndex(const Dimension dim);
+#else
+        size_t GetDimIndex(const std::string& dim);
+#endif
+
     private:
         std::unordered_map<std::pair<int, int>, Chunk> terrain;
         mutable std::shared_mutex world_mutex;
@@ -325,8 +331,12 @@ namespace Botcraft
         const bool is_shared;
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         Dimension current_dimension;
+        std::unordered_map<Dimension, size_t> dimension_index_map;
+        std::unordered_map<size_t, Dimension> index_dimension_map;
 #else
         std::string current_dimension;
+        std::unordered_map<std::string, size_t> dimension_index_map;
+        std::unordered_map<size_t, std::string> index_dimension_map;
 #endif
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
