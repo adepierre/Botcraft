@@ -2,6 +2,8 @@
 #include "botcraft/Game/World/World.hpp"
 
 #include "botcraft/Utilities/Logger.hpp"
+#include <fstream>
+#include <filesystem>
 
 namespace Botcraft
 {
@@ -714,7 +716,7 @@ namespace Botcraft
             }
             UnloadChunkImpl(x, z, loader_id);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-            it->second = Chunk(dim_index);
+            it->second = Chunk(dim_index, has_sky_light);
 #else
             it->second = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim_index, has_sky_light);
 #endif
