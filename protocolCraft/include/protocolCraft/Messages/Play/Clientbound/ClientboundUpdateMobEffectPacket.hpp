@@ -38,6 +38,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x68;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x6C;
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+        static constexpr int packet_id = 0x6E;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -142,7 +144,7 @@ namespace ProtocolCraft
             effect_duration_ticks = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            factor_data = ReadOptional<NBT::Value>(iter, length);
+            factor_data = ReadOptional<NBT::UnnamedValue>(iter, length);
 #endif
         }
 
@@ -158,7 +160,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(effect_duration_ticks, container);
             WriteData<char>(flags, container);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteOptional<NBT::Value>(factor_data, container);
+            WriteOptional<NBT::UnnamedValue>(factor_data, container);
 #endif
         }
 

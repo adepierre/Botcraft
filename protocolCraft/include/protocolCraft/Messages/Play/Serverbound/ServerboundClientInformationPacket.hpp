@@ -2,6 +2,11 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#include "protocolCraft/Types/ClientInformation.hpp"
+#endif
+
+
 namespace ProtocolCraft
 {
     class ServerboundClientInformationPacket : public BaseMessage<ServerboundClientInformationPacket>
@@ -28,6 +33,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x07;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x08;
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+        static constexpr int packet_id = 0x09;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -39,6 +46,8 @@ namespace ProtocolCraft
 
         }
 
+
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetLanguage(const std::string &language_)
         {
             language = language_;
@@ -81,8 +90,15 @@ namespace ProtocolCraft
             allow_listing = allow_listing_;
         }
 #endif
+#else
+        void SetClientInformation(const ClientInformation& client_information_)
+        {
+            client_information = client_information_;
+        }
+#endif
 
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         const std::string& GetLanguage() const
         {
             return language;
@@ -125,10 +141,17 @@ namespace ProtocolCraft
             return allow_listing;
         }
 #endif
+#else
+        const ClientInformation& GetClientInformation() const
+        {
+            return client_information;
+        }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             language = ReadData<std::string>(iter, length);
             view_distance = ReadData<char>(iter, length);
             chat_visibility = ReadData<VarInt>(iter, length);
@@ -141,10 +164,14 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
             allow_listing = ReadData<bool>(iter, length);
 #endif
+#else
+            client_information = ReadData<ClientInformation>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<std::string>(language, container);
             WriteData<char>(view_distance, container);
             WriteData<VarInt>(chat_visibility, container);
@@ -157,12 +184,16 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
             WriteData<bool>(allow_listing, container);
 #endif
+#else
+            WriteData<ClientInformation>(client_information, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["language"] = language;
             output["view_distance"] = view_distance;
             output["chat_visibility"] = chat_visibility;
@@ -175,11 +206,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
             output["allow_listing"] = allow_listing;
 #endif
+#else
+            output["client_information"] = client_information;
+#endif
 
             return output;
         }
 
     private:
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         std::string language;
         char view_distance = 0;
         int chat_visibility = 0;
@@ -191,6 +226,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         bool allow_listing = false;
+#endif
+#else
+        ClientInformation client_information;
 #endif
     };
 } //ProtocolCraft

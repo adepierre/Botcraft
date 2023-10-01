@@ -8,7 +8,8 @@ namespace ProtocolCraft
     class ClientboundBundlePacket : public BaseMessage<ClientboundBundlePacket>
     {
     public:
-#if   PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
+#if   PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */ ||  \
+      PROTOCOL_VERSION == 764 /* 1.20.2 */
         static constexpr int packet_id = 0x00;
 #else
 #error "Protocol version not implemented"

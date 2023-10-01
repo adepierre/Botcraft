@@ -16,6 +16,19 @@
 #include "protocolCraft/Messages/Status/Clientbound/ClientboundPongResponsePacket.hpp"
 #include "protocolCraft/Messages/Status/Clientbound/ClientboundStatusResponsePacket.hpp"
 
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+// Configuration Clientbound
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundCustomPayloadPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundDisconnectPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundFinishConfigurationPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundKeepAlivePacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundPingPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundRegistryDataPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateTagsPacket.hpp"
+#endif
+
 // Play clientbound
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockUpdatePacket.hpp"
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
@@ -68,7 +81,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddMobPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddPaintingPacket.hpp"
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddPlayerPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAnimatePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAwardStatsPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockDestructionPacket.hpp"
@@ -210,7 +225,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundDisguisedChatPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoRemovePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoUpdatePacket.hpp"
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
+#endif
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBundlePacket.hpp"
@@ -218,10 +235,16 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundDamageEventPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundHurtAnimationPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundChunkBatchFinishedPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundChunkBatchStartPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPongResponsePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundStartConfigurationPacket.hpp"
+#endif
 
 namespace ProtocolCraft
 {
-    using AllClientboundLoginPacket = std::tuple<
+    using AllClientboundLoginMessages = std::tuple<
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         ClientboundCustomQueryPacket,
 #endif
@@ -231,12 +254,26 @@ namespace ProtocolCraft
         ClientboundLoginCompressionPacket
     >;
 
-    using AllClientboundStatusPacket = std::tuple<
+    using AllClientboundStatusMessages = std::tuple<
         ClientboundStatusResponsePacket,
-        ClientboundPongResponsePacket
+        ClientboundPongResponseStatusPacket
     >;
 
-    using AllClientboundPlayPacket = std::tuple<
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    using AllClientboundConfigurationMessages = std::tuple<
+        ClientboundCustomPayloadConfigurationPacket,
+        ClientboundDisconnectConfigurationPacket,
+        ClientboundFinishConfigurationPacket,
+        ClientboundKeepAliveConfigurationPacket,
+        ClientboundPingConfigurationPacket,
+        ClientboundRegistryDataPacket,
+        ClientboundResourcePackConfigurationPacket,
+        ClientboundUpdateEnabledFeaturesPacket,
+        ClientboundUpdateTagsConfigurationPacket
+    >;
+#endif
+
+    using AllClientboundPlayMessages = std::tuple<
         ClientboundUpdateAdvancementsPacket,
         ClientboundSetEntityLinkPacket,
         ClientboundBlockEventPacket,
@@ -353,7 +390,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         ClientboundAddPaintingPacket,
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         ClientboundAddPlayerPacket,
+#endif
         ClientboundSetDefaultSpawnPositionPacket,
         ClientboundAwardStatsPacket,
 #if PROTOCOL_VERSION > 342 /* > 1.12.2 */
@@ -433,7 +472,9 @@ namespace ProtocolCraft
         ClientboundDisguisedChatPacket,
         ClientboundPlayerInfoRemovePacket,
         ClientboundPlayerInfoUpdatePacket,
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         ClientboundUpdateEnabledFeaturesPacket,
+#endif
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         ClientboundBundlePacket,
@@ -441,12 +482,21 @@ namespace ProtocolCraft
         ClientboundDamageEventPacket,
         ClientboundHurtAnimationPacket,
 #endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        ClientboundChunkBatchFinishedPacket,
+        ClientboundChunkBatchStartPacket,
+        ClientboundPongResponsePacket,
+        ClientboundStartConfigurationPacket,
+#endif
         ClientboundSetCarriedItemPacket
     >;
 
     using AllClientboundMessages = Internal::tuple_cat_t<
-        AllClientboundLoginPacket,
-        AllClientboundStatusPacket,
-        AllClientboundPlayPacket
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        AllClientboundConfigurationMessages,
+#endif
+        AllClientboundLoginMessages,
+        AllClientboundStatusMessages,
+        AllClientboundPlayMessages
     >;
 } //ProtocolCraft

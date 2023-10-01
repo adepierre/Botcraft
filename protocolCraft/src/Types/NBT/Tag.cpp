@@ -91,6 +91,121 @@ namespace ProtocolCraft
             return name;
         }
 
+        void Tag::ReadUnnamedImpl(ReadIterator& iter, size_t& length)
+        {
+            const TagType type = static_cast<TagType>(ReadData<char>(iter, length));
+
+            if (type == TagType::TagEnd)
+            {
+                val = Internal::TagVariant();
+                return;
+            }
+
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+            // Name is read but ignored
+            name = ReadNBTString(iter, length);
+#endif
+            name = "";
+
+            switch (type)
+            {
+            case TagType::TagEnd:
+                // Should not happen but for completeness
+                break;
+            case TagType::TagByte:
+                val = ReadData<char>(iter, length);
+                break;
+            case TagType::TagShort:
+                val = ReadData<short>(iter, length);
+                break;
+            case TagType::TagInt:
+                val = ReadData<int>(iter, length);
+                break;
+            case TagType::TagLong:
+                val = ReadData<long long int>(iter, length);
+                break;
+            case TagType::TagFloat:
+                val = ReadData<float>(iter, length);
+                break;
+            case TagType::TagDouble:
+                val = ReadData<double>(iter, length);
+                break;
+            case TagType::TagByteArray:
+                val = ReadVector<char, int>(iter, length);
+                break;
+            case TagType::TagString:
+                val = ReadNBTString(iter, length);
+                break;
+            case TagType::TagList:
+                val = ReadData<TagList>(iter, length);
+                break;
+            case TagType::TagCompound:
+                val = ReadData<TagCompound>(iter, length);
+                break;
+            case TagType::TagIntArray:
+                val = ReadVector<int, int>(iter, length);
+                break;
+            case TagType::TagLongArray:
+                val = ReadVector<long long int, int>(iter, length);
+                break;
+            default:
+                break;
+            }
+        }
+
+        void Tag::WriteUnnamedImpl(WriteContainer& container) const
+        {
+            WriteData<char>(static_cast<char>(val.index()), container);
+
+            if (std::holds_alternative<TagEnd>(val))
+            {
+                return;
+            }
+
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+            // Always empty string is written as this is unnamed
+            WriteNBTString("", container);
+#endif
+
+            std::visit([&](auto&& arg)
+                {
+                    using T = std::decay_t<decltype(arg)>;
+
+                    if constexpr (std::is_same_v<T, TagEnd>)
+                    {
+                        return;
+                    }
+                    else if constexpr (std::is_same_v<T, TagByteArray>)
+                    {
+                        WriteVector<char, int>(arg, container);
+                    }
+                    else if constexpr (std::is_same_v<T, TagString>)
+                    {
+                        WriteNBTString(arg, container);
+                    }
+                    else if constexpr (std::is_same_v<T, RecursiveWrapper<TagList>>)
+                    {
+                        WriteData<TagList>(arg.get(), container);
+                    }
+                    else if constexpr (std::is_same_v<T, RecursiveWrapper<TagCompound>>)
+                    {
+                        WriteData<TagCompound>(arg.get(), container);
+                    }
+                    else if constexpr (std::is_same_v<T, TagIntArray>)
+                    {
+                        WriteVector<int, int>(arg, container);
+                    }
+                    else if constexpr (std::is_same_v<T, TagLongArray>)
+                    {
+                        WriteVector<long long int, int>(arg, container);
+                    }
+                    else
+                    {
+                        WriteData<T>(arg, container);
+                    }
+                }, val);
+        }
+
         void Tag::ReadImpl(ReadIterator& iter, size_t& length)
         {
             const TagType type = static_cast<TagType>(ReadData<char>(iter, length));

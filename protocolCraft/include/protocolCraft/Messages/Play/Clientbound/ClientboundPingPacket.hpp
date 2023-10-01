@@ -19,6 +19,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x2E;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x32;
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+        static constexpr int packet_id = 0x33;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -42,12 +44,12 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             id_ = ReadData<int>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<int>(id_, container);
         }

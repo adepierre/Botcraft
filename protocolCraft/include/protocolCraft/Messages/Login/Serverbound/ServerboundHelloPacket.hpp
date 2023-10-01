@@ -33,10 +33,17 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetProfileId(const std::optional<UUID>& profile_id_)
         {
             profile_id = profile_id_;
         }
+#else
+        void SetProfileId(const UUID& profile_id_)
+        {
+            profile_id = profile_id_;
+        }
+#endif
 #endif
 
         const std::string& GetName_() const
@@ -52,10 +59,17 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         const std::optional<UUID>& GetProfileId() const
         {
             return profile_id;
         }
+#else
+        const UUID& GetProfileId() const
+        {
+            return profile_id;
+        }
+#endif
 #endif
 #else
         void SetGameProfile(const std::string &n)
@@ -78,7 +92,11 @@ namespace ProtocolCraft
             public_key = ReadOptional<ProfilePublicKey>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             profile_id = ReadOptional<UUID>(iter, length);
+#else
+            profile_id = ReadData<UUID>(iter, length);
+#endif
 #endif
 #else
             game_profile = ReadData<std::string>(iter, length);
@@ -93,7 +111,11 @@ namespace ProtocolCraft
             WriteOptional<ProfilePublicKey>(public_key, container);
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteOptional<UUID>(profile_id, container);
+#else
+            WriteData<UUID>(profile_id, container);
+#endif
 #endif
 #else
             WriteData<std::string>(game_profile, container);
@@ -113,10 +135,14 @@ namespace ProtocolCraft
             }
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             if (profile_id.has_value())
             {
                 output["profile_id"] = profile_id.value();
             }
+#else
+            output["profile_id"] = profile_id;
+#endif
 #endif
 #else
             output["game_profile"] = game_profile;
@@ -131,8 +157,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         std::optional<ProfilePublicKey> public_key;
 #endif
-#if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION > 759 /* > 1.19 */ 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         std::optional<UUID> profile_id;
+#else
+        UUID profile_id = {};
+#endif
 #endif
 #else
         std::string game_profile;

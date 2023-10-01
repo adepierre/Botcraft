@@ -173,7 +173,7 @@ namespace ProtocolCraft
             available_sections = ReadVector<unsigned long long int>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 442 /* > 1.13.2 */
-            heightmaps = ReadData<NBT::Value>(iter, length);
+            heightmaps = ReadData<NBT::UnnamedValue>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 551 /* > 1.14.4 */
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -199,7 +199,12 @@ namespace ProtocolCraft
 #endif
 #endif
             buffer = ReadVector<unsigned char>(iter, length);
-            block_entities_tags = ReadVector<NBT::Value>(iter, length);
+            block_entities_tags = ReadVector<NBT::Value>(iter, length,
+                [](ReadIterator& i, size_t& l)
+                {
+                    return ReadData<NBT::UnnamedValue>(i, l);
+                }
+            );
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
@@ -218,7 +223,7 @@ namespace ProtocolCraft
             WriteVector<unsigned long long int>(available_sections, container);
 #endif
 #if PROTOCOL_VERSION > 442 /* > 1.13.2 */
-            WriteData<NBT::Value>(heightmaps, container);
+            WriteData<NBT::UnnamedValue>(heightmaps, container);
 #endif
 #if PROTOCOL_VERSION > 551 /* > 1.14.4 */
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -243,7 +248,12 @@ namespace ProtocolCraft
 #endif
 #endif
             WriteVector<unsigned char>(buffer, container);
-            WriteVector<NBT::Value>(block_entities_tags, container);
+            WriteVector<NBT::Value>(block_entities_tags, container,
+                [](const NBT::UnnamedValue& i, WriteContainer& c)
+                {
+                    WriteData<NBT::UnnamedValue>(i, c);
+                }
+            );
         }
 
         virtual Json::Value SerializeImpl() const override

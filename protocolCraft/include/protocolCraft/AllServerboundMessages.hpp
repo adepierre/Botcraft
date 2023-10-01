@@ -9,15 +9,29 @@
 
 
 // Login serverbound
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */ 
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundHelloPacket.hpp"
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundKeyPacket.hpp"
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#include "protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryAnswerPacket.hpp"
+#include "protocolCraft/Messages/Login/Serverbound/ServerboundLoginAcknowledgedPacket.hpp"
+#endif
 
-//Status Serverbound
+// Status Serverbound
 #include "protocolCraft/Messages/Status/Serverbound/ServerboundPingRequestPacket.hpp"
 #include "protocolCraft/Messages/Status/Serverbound/ServerboundStatusRequestPacket.hpp"
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+// Configuration Serverbound
+#include "protocolCraft/Messages/Configuration/Serverbound/ServerboundClientInformationPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Serverbound/ServerboundCustomPayloadPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Serverbound/ServerboundFinishConfigurationPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Serverbound/ServerboundKeepAlivePacket.hpp"
+#include "protocolCraft/Messages/Configuration/Serverbound/ServerboundPongPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Serverbound/ServerboundResourcePackPacket.hpp"
+#endif
 
 // Play serverbound
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatPacket.hpp"
@@ -108,11 +122,20 @@
 #if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatSessionUpdatePacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundChunkBatchReceivedPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundConfigurationAcknowledgedPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundPingRequestPacket.hpp"
+#endif
 
 namespace ProtocolCraft
 {
     using AllServerboundLoginMessages = std::tuple<
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        ServerboundCustomQueryAnswerPacket,
+        ServerboundLoginAcknowledgedPacket,
+#endif
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         ServerboundCustomQueryPacket,
 #endif
         ServerboundHelloPacket,
@@ -121,12 +144,23 @@ namespace ProtocolCraft
 
     using AllServerboundStatusMessages = std::tuple<
         ServerboundStatusRequestPacket,
-        ServerboundPingRequestPacket
+        ServerboundPingRequestStatusPacket
     >;
 
     using AllServerboundHandshakeMessages = std::tuple<
         ServerboundClientIntentionPacket
     >;
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    using AllServerboundConfigurationMessages = std::tuple<
+        ServerboundClientInformationConfigurationPacket,
+        ServerboundCustomPayloadConfigurationPacket,
+        ServerboundFinishConfigurationPacket,
+        ServerboundKeepAliveConfigurationPacket,
+        ServerboundPongConfigurationPacket,
+        ServerboundResourcePackConfigurationPacket
+    >;
+#endif
 
     using AllServerboundPlayMessages = std::tuple<
         ServerboundSeenAdvancementsPacket,
@@ -225,10 +259,18 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         ServerboundChatSessionUpdatePacket,
 #endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        ServerboundChunkBatchReceivedPacket,
+        ServerboundConfigurationAcknowledgedPacket,
+        ServerboundPingRequestPacket,
+#endif
         ServerboundKeepAlivePacket
     >;
 
     using AllServerboundMessages = Internal::tuple_cat_t <
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        AllServerboundConfigurationMessages,
+#endif
         AllServerboundLoginMessages,
         AllServerboundStatusMessages,
         AllServerboundHandshakeMessages,

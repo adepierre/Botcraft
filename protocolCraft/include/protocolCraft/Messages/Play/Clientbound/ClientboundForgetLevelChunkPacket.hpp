@@ -1,6 +1,9 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#include "protocolCraft/Types/ChunkPos.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -35,6 +38,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x1B;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x1E;
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+        static constexpr int packet_id = 0x1F;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -46,6 +51,7 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetX(const int x_)
         {
             x = x_;
@@ -55,7 +61,14 @@ namespace ProtocolCraft
         {
             z = z_;
         }
+#else
+        void SetPos(const ChunkPos& pos_)
+        {
+            pos = pos_;
+        }
+#endif
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         int GetX() const
         {
             return x;
@@ -65,32 +78,54 @@ namespace ProtocolCraft
         {
             return z;
         }
+#else
+        const ChunkPos& GetPos() const
+        {
+            return pos;
+        }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             x = ReadData<int>(iter, length);
             z = ReadData<int>(iter, length);
+#else
+            pos = ReadData<ChunkPos>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<int>(x, container);
             WriteData<int>(z, container);
+#else
+            WriteData<ChunkPos>(pos, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["x"] = x;
             output["z"] = z;
+#else
+            output["pos"] = pos;
+#endif
 
             return output;
         }
 
     private:
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         int x = 0;
         int z = 0;
+#else
+        ChunkPos pos;
+#endif
     };
 } //ProtocolCraft

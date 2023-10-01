@@ -4,13 +4,13 @@
 
 namespace ProtocolCraft
 {
-    class ClientboundPongResponsePacket : public BaseMessage<ClientboundPongResponsePacket>
+    class ClientboundPongResponseStatusPacket : public BaseMessage<ClientboundPongResponseStatusPacket>
     {
     public:
         static constexpr int packet_id = 0x01;
-        static constexpr std::string_view packet_name = "Pong Response";
+        static constexpr std::string_view packet_name = "Pong Response (Status)";
 
-        virtual ~ClientboundPongResponsePacket() override
+        virtual ~ClientboundPongResponseStatusPacket() override
         {
 
         }

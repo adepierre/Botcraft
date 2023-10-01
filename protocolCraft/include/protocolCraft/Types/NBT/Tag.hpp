@@ -113,6 +113,8 @@ namespace ProtocolCraft
             bool contains(const std::string& s) const;
 
         protected:
+            void ReadUnnamedImpl(ReadIterator& iter, size_t& length);
+            void WriteUnnamedImpl(WriteContainer& container) const;
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
             virtual void WriteImpl(WriteContainer& container) const override;
             virtual Json::Value SerializeImpl() const override;

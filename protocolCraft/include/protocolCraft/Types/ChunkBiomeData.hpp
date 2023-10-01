@@ -2,6 +2,7 @@
 
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Types/ChunkPos.hpp"
 
 namespace ProtocolCraft
 {
@@ -13,14 +14,9 @@ namespace ProtocolCraft
 
         }
 
-        void SetZ(const int z_)
+        void SetPos(const ChunkPos& pos_)
         {
-            z = z_;
-        }
-
-        void SetX(const int x_)
-        {
-            x = x_;
+            pos = pos_;
         }
 
         void SetBuffer(const std::vector<unsigned char>& buffer_)
@@ -29,14 +25,9 @@ namespace ProtocolCraft
         }
 
 
-        int GetX() const
+        const ChunkPos& GetPos() const
         {
-            return x;
-        }
-
-        int GetZ() const
-        {
-            return z;
+            return pos;
         }
 
         const std::vector<unsigned char>& GetBuffer() const
@@ -47,16 +38,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
-            const long long int xz = ReadData<long long int>(iter, length);
-            x = static_cast<int>(xz & 0xFFFFFFFFL);
-            z = static_cast<int>((xz >> 32) & 0xFFFFFFFFL);
+            pos = ReadData<ChunkPos>(iter, length);
             buffer = ReadVector<unsigned char>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
-            const long long int xz = (static_cast<long long int>(x) & 0xFFFFFFFFL) | ((static_cast<long long int>(z) & 0xFFFFFFFFL) << 32);
-            WriteData<long long int>(xz, container);
+            WriteData<ChunkPos>(pos, container);
             WriteVector<unsigned char>(buffer, container);
         }
 
@@ -64,16 +52,14 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["x"] = x;
-            output["z"] = z;
+            output["pos"] = pos;
             output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
 
             return output;
         }
 
     private:
-        int x = 0;
-        int z = 0;
+        ChunkPos pos;
         std::vector<unsigned char> buffer;
     };
 }

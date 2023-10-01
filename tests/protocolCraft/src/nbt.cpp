@@ -401,3 +401,43 @@ TEST_CASE("Compressed bigtest nbt")
     }
 #endif
 }
+
+TEST_CASE("Unnamed NBT")
+{
+    std::vector<unsigned char> data = {
+        0x0A, // TagCompound
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+        0x00, 0x0B, // Name length
+        0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, // Name
+#endif
+        0x08, // TagString
+        0x00, 0x04, // Name length
+        0x6E, 0x61, 0x6D, 0x65, // Name
+        0x00, 0x09, // String length
+        0x42, 0x61, 0x6E, 0x61, 0x6E, 0x72, 0x61, 0x6D, 0x61, // String content
+        0x00 // TagEnd
+    };
+    ReadIterator iter = data.begin();
+    size_t length = data.size();
+
+    NBT::Value nbt = ReadData<NBT::UnnamedValue>(iter, length);
+
+    CHECK(nbt.HasData());
+    CHECK(nbt.is<NBT::TagCompound>());
+    CHECK(nbt.size() == 1);
+    CHECK(nbt.GetName() == "");
+    CHECK(nbt["name"].is<NBT::TagString>());
+    CHECK(nbt["name"].get<NBT::TagString>() == "Bananrama");
+
+    std::vector<unsigned char> serialized;
+    serialized.reserve(data.size());
+
+    WriteData<NBT::UnnamedValue>(nbt, serialized);
+
+    // Name has been removed
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+    CHECK(serialized.size() == data.size() - 11);
+#else
+    CHECK(serialized == data);
+#endif
+}

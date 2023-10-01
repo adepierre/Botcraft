@@ -35,6 +35,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x62;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x66;
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+        static constexpr int packet_id = 0x69;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -72,13 +74,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             transaction_id = ReadData<VarInt>(iter, length);
-            tag = ReadData<NBT::Value>(iter, length);
+            tag = ReadData<NBT::UnnamedValue>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(transaction_id, container);
-            WriteData<NBT::Value>(tag, container);
+            WriteData<NBT::UnnamedValue>(tag, container);
         }
 
         virtual Json::Value SerializeImpl() const override

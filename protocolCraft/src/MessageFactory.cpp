@@ -39,11 +39,15 @@ namespace ProtocolCraft
         switch (state)
         {
         case ConnectionState::Login:
-            return AutomaticMessageFactory<AllClientboundLoginPacket>(id);
+            return AutomaticMessageFactory<AllClientboundLoginMessages>(id);
         case ConnectionState::Status:
-            return AutomaticMessageFactory<AllClientboundStatusPacket>(id);
+            return AutomaticMessageFactory<AllClientboundStatusMessages>(id);
         case ConnectionState::Play:
-            return AutomaticMessageFactory<AllClientboundPlayPacket>(id);
+            return AutomaticMessageFactory<AllClientboundPlayMessages>(id);
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        case ConnectionState::Configuration:
+            return AutomaticMessageFactory<AllClientboundConfigurationMessages>(id);
+#endif
         default:
             return nullptr;
         }
@@ -61,6 +65,10 @@ namespace ProtocolCraft
             return AutomaticMessageFactory<AllServerboundStatusMessages>(id);
         case ConnectionState::Play:
             return AutomaticMessageFactory<AllServerboundPlayMessages>(id);
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        case ConnectionState::Configuration:
+            return AutomaticMessageFactory<AllServerboundConfigurationMessages>(id);
+#endif
         default:
             return nullptr;
         }

@@ -32,6 +32,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x4D;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x51;
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+        static constexpr int packet_id = 0x53;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -43,10 +45,17 @@ namespace ProtocolCraft
 
         }
 
-        void SetSlot(const char slot_)
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+       void SetSlot(const char slot_)
         {
             slot = slot_;
         }
+#else
+        void SetSlot(const int slot_)
+        {
+            slot = slot_;
+        }
+#endif
 
         void SetObjectiveName(const std::string& objective_name_)
         {
@@ -54,10 +63,17 @@ namespace ProtocolCraft
         }
 
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         char GetSlot() const
         {
             return slot;
         }
+#else
+        int GetSlot() const
+        {
+            return slot;
+        }
+#endif
 
         const std::string& GetObjectiveName() const
         {
@@ -68,13 +84,21 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             slot = ReadData<char>(iter, length);
+#else
+            slot = ReadData<VarInt>(iter, length);
+#endif
             objective_name = ReadData<std::string>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<char>(slot, container);
+#else
+            WriteData<VarInt>(slot, container);
+#endif
             WriteData<std::string>(objective_name, container);
         }
 
@@ -89,7 +113,11 @@ namespace ProtocolCraft
         }
 
     private:
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         char slot = 0;
+#else
+        int slot = 0;
+#endif
         std::string objective_name;
 
     };

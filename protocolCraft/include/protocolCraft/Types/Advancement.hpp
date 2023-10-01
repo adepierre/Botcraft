@@ -25,10 +25,12 @@ namespace ProtocolCraft
             display_data = display_data_;
         }
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetCriteria(const std::vector<Identifier>& criteria_)
         {
             criteria = criteria_;
         }
+#endif
         
         void SetRequirements(const std::vector<std::vector<std::string> >& requirements_)
         {
@@ -53,10 +55,12 @@ namespace ProtocolCraft
             return display_data;
         }
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         const std::vector<Identifier>& GetCriteria() const
         {
             return criteria;
         }
+#endif
         
         const std::vector<std::vector<std::string> >& GetRequirements() const
         {
@@ -75,7 +79,9 @@ namespace ProtocolCraft
         {
             parent_id = ReadOptional<Identifier>(iter, length);
             display_data = ReadOptional<AdvancementDisplay>(iter, length);
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             criteria = ReadVector<Identifier>(iter, length);
+#endif
             requirements = ReadVector<std::vector<std::string>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
@@ -91,7 +97,9 @@ namespace ProtocolCraft
         {
             WriteOptional<Identifier>(parent_id, container);
             WriteOptional<AdvancementDisplay>(display_data, container);
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteVector<Identifier>(criteria, container);
+#endif
             WriteVector<std::vector<std::string>>(requirements, container,
                 [](const std::vector<std::string>& v, WriteContainer& c)
                 {
@@ -115,7 +123,9 @@ namespace ProtocolCraft
             {
                 output["display_data"] = display_data.value();
             }
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["criteria"] = criteria;
+#endif
             output["requirements"] = requirements;
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             output["sends_telemetry_event"] = sends_telemetry_event;
@@ -127,7 +137,9 @@ namespace ProtocolCraft
     private:
         std::optional<Identifier> parent_id;
         std::optional<AdvancementDisplay> display_data;
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         std::vector<Identifier> criteria;
+#endif
         std::vector<std::vector<std::string> > requirements;
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         bool sends_telemetry_event = false;

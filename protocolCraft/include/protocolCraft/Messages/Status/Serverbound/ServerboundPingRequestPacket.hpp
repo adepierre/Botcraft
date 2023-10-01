@@ -4,13 +4,13 @@
 
 namespace ProtocolCraft
 {
-    class ServerboundPingRequestPacket : public BaseMessage<ServerboundPingRequestPacket>
+    class ServerboundPingRequestStatusPacket : public BaseMessage<ServerboundPingRequestStatusPacket>
     {
     public:
         static constexpr int packet_id = 0x01;
-        static constexpr std::string_view packet_name = "Ping Request";
+        static constexpr std::string_view packet_name = "Ping Request (Status)";
 
-        virtual ~ServerboundPingRequestPacket() override
+        virtual ~ServerboundPingRequestStatusPacket() override
         {
 
         }

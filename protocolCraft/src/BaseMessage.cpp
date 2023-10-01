@@ -16,11 +16,15 @@ namespace ProtocolCraft
 
 
     // Login serverbound
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
     template class BaseMessage<ServerboundCustomQueryPacket>;
 #endif
     template class BaseMessage<ServerboundHelloPacket>;
     template class BaseMessage<ServerboundKeyPacket>;
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    template class BaseMessage<ServerboundCustomQueryAnswerPacket>;
+    template class BaseMessage<ServerboundLoginAcknowledgedPacket>;
+#endif
 
     // Login clientbound
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
@@ -33,11 +37,32 @@ namespace ProtocolCraft
 
     // Status serverbound
     template class BaseMessage<ServerboundStatusRequestPacket>;
-    template class BaseMessage<ServerboundPingRequestPacket>;
+    template class BaseMessage<ServerboundPingRequestStatusPacket>;
 
     // Status clientbound
     template class BaseMessage<ClientboundStatusResponsePacket>;
-    template class BaseMessage<ClientboundPongResponsePacket>;
+    template class BaseMessage<ClientboundPongResponseStatusPacket>;
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    // Configuration serverbound
+    template class BaseMessage<ServerboundClientInformationConfigurationPacket>;
+    template class BaseMessage<ServerboundCustomPayloadConfigurationPacket>;
+    template class BaseMessage<ServerboundFinishConfigurationPacket>;
+    template class BaseMessage<ServerboundKeepAliveConfigurationPacket>;
+    template class BaseMessage<ServerboundPongConfigurationPacket>;
+    template class BaseMessage<ServerboundResourcePackConfigurationPacket>;
+
+    // Configuration clientbound
+    template class BaseMessage<ClientboundCustomPayloadConfigurationPacket>;
+    template class BaseMessage<ClientboundDisconnectConfigurationPacket>;
+    template class BaseMessage<ClientboundFinishConfigurationPacket>;
+    template class BaseMessage<ClientboundKeepAliveConfigurationPacket>;
+    template class BaseMessage<ClientboundPingConfigurationPacket>;
+    template class BaseMessage<ClientboundRegistryDataPacket>;
+    template class BaseMessage<ClientboundResourcePackConfigurationPacket>;
+    template class BaseMessage<ClientboundUpdateEnabledFeaturesPacket>;
+    template class BaseMessage<ClientboundUpdateTagsConfigurationPacket>;
+#endif
 
 
     // Play serverbound
@@ -139,6 +164,11 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
     template class BaseMessage<ServerboundChatSessionUpdatePacket>;
+#endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    template class BaseMessage<ServerboundChunkBatchReceivedPacket>;
+    template class BaseMessage<ServerboundConfigurationAcknowledgedPacket>;
+    template class BaseMessage<ServerboundPingRequestPacket>;
 #endif
 
     // Play clientbound
@@ -258,7 +288,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
     template class BaseMessage<ClientboundAddPaintingPacket>;
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     template class BaseMessage<ClientboundAddPlayerPacket>;
+#endif
     template class BaseMessage<ClientboundSetDefaultSpawnPositionPacket>;
     template class BaseMessage<ClientboundAwardStatsPacket>;
 #if PROTOCOL_VERSION > 342 /* > 1.12.2 */
@@ -339,12 +371,20 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundDisguisedChatPacket>;
     template class BaseMessage<ClientboundPlayerInfoRemovePacket>;
     template class BaseMessage<ClientboundPlayerInfoUpdatePacket>;
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     template class BaseMessage<ClientboundUpdateEnabledFeaturesPacket>;
+#endif
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
     template class BaseMessage<ClientboundBundlePacket>;
     template class BaseMessage<ClientboundChunksBiomesPacket>;
     template class BaseMessage<ClientboundDamageEventPacket>;
     template class BaseMessage<ClientboundHurtAnimationPacket>;
+#endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    template class BaseMessage<ClientboundChunkBatchFinishedPacket>;
+    template class BaseMessage<ClientboundChunkBatchStartPacket>;
+    template class BaseMessage<ClientboundPongResponsePacket>;
+    template class BaseMessage<ClientboundStartConfigurationPacket>;
 #endif
 }

@@ -1,5 +1,6 @@
 #include <iterator>
 #include <fstream>
+#include <utility>
 
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Utilities/GZip.hpp"
@@ -8,7 +9,48 @@ namespace ProtocolCraft
 {
     namespace NBT
     {
+        UnnamedValue::UnnamedValue()
+        {
+
+        }
+
+        UnnamedValue::UnnamedValue(const Value& named) : Tag(named)
+        {
+
+        }
+
+        UnnamedValue::UnnamedValue(Value&& named) : Tag(std::move(named))
+        {
+
+        }
+
+        UnnamedValue::~UnnamedValue()
+        {
+
+        }
+
+        void UnnamedValue::ReadImpl(ReadIterator& iter, size_t& length)
+        {
+            Tag::ReadUnnamedImpl(iter, length);
+        }
+
+        void UnnamedValue::WriteImpl(WriteContainer& container) const
+        {
+            Tag::WriteUnnamedImpl(container);
+        }
+
+
         Value::Value()
+        {
+
+        }
+
+        Value::Value(const UnnamedValue& unnamed) : Tag(unnamed)
+        {
+
+        }
+
+        Value::Value(UnnamedValue&& unnamed) : Tag(std::move(unnamed))
         {
 
         }

@@ -8,6 +8,9 @@ namespace ProtocolCraft
         Handshake = 0,
         Status = 1,
         Login = 2,
-        Play = 3
+        Play = 3,
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        Configuration = 4
+#endif
     };
 } // ProtocolCraft

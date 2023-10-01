@@ -2,10 +2,13 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #include "protocolCraft/Types/GlobalPos.hpp"
 #endif
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#include "protocolCraft/Types/CommonPlayerSpawnInfo.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -38,6 +41,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x24;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x28;
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+        static constexpr int packet_id = 0x29;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -54,7 +59,7 @@ namespace ProtocolCraft
             player_id = player_id_;
         }
 
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetSeed(const long long int seed_)
         {
             seed = seed_;
@@ -68,43 +73,51 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetGameType(const unsigned char game_type_)
         {
             game_type = game_type_;
         }
+#endif
 
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetPreviousGameType(const unsigned char previous_game_type_)
         {
             previous_game_type = previous_game_type_;
         }
+#endif
 
         void SetLevels(const std::vector<Identifier>& levels_)
         {
             levels = levels_;
         }
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetRegistryHolder(const NBT::Value& registry_holder_)
         {
             registry_holder = registry_holder_;
         }
+#endif
 
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         void SetDimensionType(const NBT::Value& dimension_type_)
         {
             dimension_type = dimension_type_;
         }
-#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetDimensionType(const Identifier& dimension_type_)
         {
             dimension_type = dimension_type_;
         }
 #endif
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetDimension(const Identifier& dimension_)
         {
             dimension = dimension_;
         }
+#endif
 #else
         void SetDimension(const int dimension_)
         {
@@ -163,7 +176,7 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetIsDebug(const bool is_debug_)
         {
             is_debug = is_debug_;
@@ -175,17 +188,29 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetLastDeathLocation(const std::optional<GlobalPos>& last_death_location_)
         {
             last_death_location = last_death_location_;
         }
 #endif
 
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetPortalCooldown(const int portal_cooldown_)
         {
             portal_cooldown = portal_cooldown_;
+        }
+#endif
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        void SetDoLimitedCrafting(const bool do_limited_crafting_)
+        {
+            do_limited_crafting = do_limited_crafting_;
+        }
+
+        void SetCommonPlayerSpawnInfo(const CommonPlayerSpawnInfo& common_player_spawn_info_)
+        {
+            common_player_spawn_info = common_player_spawn_info_;
         }
 #endif
 
@@ -195,7 +220,7 @@ namespace ProtocolCraft
             return player_id;
         }
 
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         long long int GetSeed() const
         {
             return seed;
@@ -209,43 +234,51 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         unsigned char GetGameType() const
         {
             return game_type;
         }
+#endif
 
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         unsigned char GetPreviousGameType() const
         {
             return previous_game_type;
         }
+#endif
 
         const std::vector<Identifier>& GetLevels() const
         {
             return levels;
         }
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         const NBT::Value& GetRegistryHolder() const
         {
             return registry_holder;
         }
+#endif
 
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         const NBT::Value& GetDimensionType() const
         {
             return dimension_type;
         }
-#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         const Identifier& GetDimensionType() const
         {
             return dimension_type;
         }
 #endif
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         const Identifier& GetDimension() const
         {
             return dimension;
         }
+#endif
 #else
         int GetDimension() const
         {
@@ -303,7 +336,7 @@ namespace ProtocolCraft
             return show_death_screen;
         }
 #endif
-#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         bool GetIsDebug() const
         {
             return is_debug;
@@ -315,17 +348,29 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         const std::optional<GlobalPos>& GetLastDeathLocation() const
         {
             return last_death_location;
         }
 #endif
 
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         int GetPortalCooldown() const
         {
             return portal_cooldown;
+        }
+#endif
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        bool GetDoLimitedCrafting() const
+        {
+            return do_limited_crafting;
+        }
+
+        const CommonPlayerSpawnInfo& GetCommonPlayerSpanwInfo() const
+        {
+            return common_player_spawn_info;
         }
 #endif
 
@@ -336,23 +381,30 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
             hardcore = ReadData<bool>(iter, length);
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             game_type = ReadData<unsigned char>(iter, length);
+#endif
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             previous_game_type = ReadData<unsigned char>(iter, length);
+#endif
             levels = ReadVector<Identifier>(iter, length);
-            registry_holder = ReadData<NBT::Value>(iter, length);
-#if PROTOCOL_VERSION > 747 /* > 1.16.1 */
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-            dimension_type = ReadData<NBT::Value>(iter, length);
-#else
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+            registry_holder = ReadData<NBT::UnnamedValue>(iter, length);
+#endif
+
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
+            dimension_type = ReadData<NBT::UnnamedValue>(iter, length);
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             dimension_type = ReadData<Identifier>(iter, length);
 #endif
-#endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             dimension = ReadData<Identifier>(iter, length);
+#endif
 #else
             dimension = ReadData<int>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             seed = ReadData<long long int>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
@@ -376,15 +428,19 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 565 /* > 1.14.4 */
             show_death_screen = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             is_debug = ReadData<bool>(iter, length);
             is_flat = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             last_death_location = ReadOptional<GlobalPos>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             portal_cooldown = ReadData<VarInt>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+            do_limited_crafting = ReadData<bool>(iter, length);
+            common_player_spawn_info = ReadData<CommonPlayerSpawnInfo>(iter, length);
 #endif
         }
 
@@ -394,23 +450,29 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
             WriteData<bool>(hardcore, container);
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<unsigned char>(game_type, container);
+#endif
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<unsigned char>(previous_game_type, container);
+#endif
             WriteVector<Identifier>(levels, container);
-            WriteData<NBT::Value>(registry_holder, container);
-#if PROTOCOL_VERSION > 747 /* > 1.16.1 */
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-            WriteData<NBT::Value>(dimension_type, container);
-#else
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+            WriteData<NBT::UnnamedValue>(registry_holder, container);
+#endif
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
+            WriteData<NBT::UnnamedValue>(dimension_type, container);
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<Identifier>(dimension_type, container);
 #endif
-#endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<Identifier>(dimension, container);
+#endif
 #else
             WriteData<int>(dimension, container);
 #endif
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<long long int>(seed, container);
 #endif
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
@@ -434,15 +496,19 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 565 /* > 1.14.4 */
             WriteData<bool>(show_death_screen, container);
 #endif
-#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<bool>(is_debug, container);
             WriteData<bool>(is_flat, container);
 #endif
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteOptional<GlobalPos>(last_death_location, container);
 #endif
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<VarInt>(portal_cooldown, container);
+#endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+            WriteData<bool>(do_limited_crafting, container);
+            WriteData<CommonPlayerSpawnInfo>(common_player_spawn_info, container);
 #endif
         }
 
@@ -454,18 +520,26 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
             output["hardcore"] = hardcore;
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["game_type"] = game_type;
+#endif
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["previous_game_type"] = previous_game_type;
+#endif
             output["levels"] = levels;
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["registry_holder"] = registry_holder;
+#endif
 
-#if PROTOCOL_VERSION > 747 /* > 1.16.1 */
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["dimension_type"] = dimension_type;
 #endif
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["dimension"] = dimension;
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
+#endif
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["seed"] = seed;
 #endif
             output["difficulty"] = difficulty;
@@ -483,18 +557,22 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 565 /* > 1.14.4 */
             output["show_death_screen"] = show_death_screen;
 #endif
-#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["is_debug"] = is_debug;
             output["is_flat"] = is_flat;
 #endif
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             if (last_death_location.has_value())
             {
                 output["last_death_location"] = last_death_location.value();
             }
 #endif
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             output["portal_cooldown"] = portal_cooldown;
+#endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+            output["do_limited_crafting"] = do_limited_crafting;
+            output["common_player_spawn_info"] = common_player_spawn_info;
 #endif
 
             return output;
@@ -502,23 +580,31 @@ namespace ProtocolCraft
 
     private:
         int player_id = 0;
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         long long int seed = 0;
 #endif
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         bool hardcore = false;
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         unsigned char game_type = 0;
+#endif
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         unsigned char previous_game_type = 0;
+#endif
         std::vector<Identifier> levels;
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         NBT::Value registry_holder;
+#endif
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         NBT::Value dimension_type;
-#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#elif PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         Identifier dimension_type;
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         Identifier dimension;
+#endif
 #else
         int dimension = 0;
 #endif
@@ -541,15 +627,19 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 565 /* > 1.14.4 */
         bool show_death_screen = false;
 #endif
-#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         bool is_debug = false;
         bool is_flat = false;
 #endif
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         std::optional<GlobalPos> last_death_location;
 #endif
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
+#if PROTOCOL_VERSION > 762 /* > 1.19.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         int portal_cooldown = 0;
+#endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        bool do_limited_crafting = false;
+        CommonPlayerSpawnInfo common_player_spawn_info;
 #endif
     };
 } //ProtocolCraft

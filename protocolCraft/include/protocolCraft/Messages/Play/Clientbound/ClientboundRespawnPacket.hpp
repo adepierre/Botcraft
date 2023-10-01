@@ -1,14 +1,19 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/enums.hpp"
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #include "protocolCraft/Types/Identifier.hpp"
+#endif
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #endif
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #include "protocolCraft/Types/GlobalPos.hpp"
 #endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#include "protocolCraft/Types/CommonPlayerSpawnInfo.hpp"
+#endif
+
 
 namespace ProtocolCraft
 {
@@ -43,6 +48,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x3D;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x41;
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+        static constexpr int packet_id = 0x43;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -54,6 +61,7 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #if PROTOCOL_VERSION > 729 /* > 1.15.2 */
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         void SetDimensionType(const NBT::Value& dimension_type_)
@@ -143,8 +151,20 @@ namespace ProtocolCraft
             portal_cooldown = portal_cooldown_;
         }
 #endif
+#else
+        void SetCommonPlayerSpawnInfo(const CommonPlayerSpawnInfo& common_player_spawn_info_)
+        {
+            common_player_spawn_info = common_player_spawn_info_;
+        }
+
+        void SetDataToKeep(const unsigned char data_to_keep_)
+        {
+            data_to_keep = data_to_keep_;
+        }
+#endif
 
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #if PROTOCOL_VERSION > 729 /* > 1.15.2 */
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         const NBT::Value& GetDimensionType() const
@@ -235,14 +255,26 @@ namespace ProtocolCraft
             return portal_cooldown;
         }
 #endif
+#else
+        const CommonPlayerSpawnInfo& GetCommonPlayerSpanwInfo() const
+        {
+            return common_player_spawn_info;
+        }
+
+        unsigned char GetDataToKeep() const
+        {
+            return data_to_keep;
+        }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator &iter, size_t &length) override
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #if PROTOCOL_VERSION > 729 /* > 1.15.2 */
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-            dimension_type = ReadData<NBT::Value>(iter, length);
+            dimension_type = ReadData<NBT::UnnamedValue>(iter, length);
 #else
             dimension_type = ReadData<Identifier>(iter, length);
 #endif
@@ -276,14 +308,19 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             portal_cooldown = ReadData<VarInt>(iter, length);
 #endif
+#else
+            common_player_spawn_info = ReadData<CommonPlayerSpawnInfo>(iter, length);
+            data_to_keep = ReadData<unsigned char>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer &container) const override
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #if PROTOCOL_VERSION > 729 /* > 1.15.2 */
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-            WriteData<NBT::Value>(dimension_type, container);
+            WriteData<NBT::UnnamedValue>(dimension_type, container);
 #else
             WriteData<Identifier>(dimension_type, container);
 #endif
@@ -317,12 +354,17 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             WriteData<VarInt>(portal_cooldown, container);
 #endif
+#else
+            WriteData<CommonPlayerSpawnInfo>(common_player_spawn_info, container);
+            WriteData<unsigned char>(data_to_keep, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #if PROTOCOL_VERSION > 729 /* > 1.15.2 */
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */
             output["dimension_type"] = dimension_type;
@@ -359,11 +401,16 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             output["portal_cooldown"] = portal_cooldown;
 #endif
+#else
+            output["common_player_spawn_info"] = common_player_spawn_info;
+            output["data_to_keep"] = data_to_keep;
+#endif
 
             return output;
     }
 
     private:
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #if PROTOCOL_VERSION > 729 /* > 1.15.2 */
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
         NBT::Value dimension_type;
@@ -398,6 +445,10 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         int portal_cooldown = 0;
+#endif
+#else
+        CommonPlayerSpawnInfo common_player_spawn_info;
+        unsigned char data_to_keep = 0;
 #endif
     };
 } //ProtocolCraft
