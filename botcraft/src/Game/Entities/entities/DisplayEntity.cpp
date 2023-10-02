@@ -4,8 +4,14 @@
 namespace Botcraft
 {
     const std::array<std::string, DisplayEntity::metadata_count> DisplayEntity::metadata_names{ {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         "data_interpolation_start_delta_ticks_id",
         "data_interpolation_duration_id",
+#else
+        "data_transformation_interpolation_start_delta_ticks_id",
+        "data_transformation_interpolation_duration_id",
+        "data_pos_rot_interpolation_duration_id",
+#endif
         "data_translation_id",
         "data_scale_id",
         "data_left_rotation_id",
@@ -23,8 +29,14 @@ namespace Botcraft
     DisplayEntity::DisplayEntity()
     {
         // Initialize all metadata with default values
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         SetDataInterpolationStartDeltaTicksId(0);
         SetDataInterpolationDurationId(0);
+#else
+        SetDataTransformationInterpolationStartDeltaTicksId(0);
+        SetDataTransformationInterpolationDurationId(0);
+        SetDataPosRotInterpolationDurationId(0);
+#endif
         SetDataTranslationId({0.0f, 0.0f, 0.0f});
         SetDataScaleId({1.0f, 1.0f, 1.0f});
         SetDataLeftRotationId({0.0f, 0.0f, 0.0f, 0.0f});
@@ -54,9 +66,15 @@ namespace Botcraft
     ProtocolCraft::Json::Value DisplayEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = Entity::Serialize();
-        
+
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         output["metadata"]["data_interpolation_start_delta_ticks_id"] = GetDataInterpolationStartDeltaTicksId();
         output["metadata"]["data_interpolation_duration_id"] = GetDataInterpolationDurationId();
+#else
+        output["metadata"]["data_transformation_interpolation_start_delta_ticks_id"] = GetDataTransformationInterpolationStartDeltaTicksId();
+        output["metadata"]["data_transformation_interpolation_duration_id"] = GetDataTransformationInterpolationDurationId();
+        output["metadata"]["data_pos_rot_interpolation_duration_id"] = GetDataPosRotInterpolationDurationId();
+#endif
         output["metadata"]["data_translation_id"] = GetDataTranslationId().Serialize();
         output["metadata"]["data_scale_id"] = GetDataScaleId().Serialize();
         output["metadata"]["data_left_rotation_id"] = GetDataLeftRotationId();
@@ -86,7 +104,8 @@ namespace Botcraft
         }
     }
 
-    
+
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     int DisplayEntity::GetDataInterpolationStartDeltaTicksId() const
     {
         return std::any_cast<int>(metadata.at("data_interpolation_start_delta_ticks_id"));
@@ -96,6 +115,22 @@ namespace Botcraft
     {
         return std::any_cast<int>(metadata.at("data_interpolation_duration_id"));
     }
+#else
+    int DisplayEntity::GetDataTransformationInterpolationStartDeltaTicksId() const
+    {
+        return std::any_cast<int>(metadata.at("data_transformation_interpolation_start_delta_ticks_id"));
+    }
+
+    int DisplayEntity::GetDataTransformationInterpolationDurationId() const
+    {
+        return std::any_cast<int>(metadata.at("data_transformation_interpolation_duration_id"));
+    }
+
+    int DisplayEntity::GetDataPosRotInterpolationDurationId() const
+    {
+        return std::any_cast<int>(metadata.at("data_pos_rot_interpolation_duration_id"));
+    }
+#endif
     
     Vector3<float> DisplayEntity::GetDataTranslationId() const
     {
@@ -157,7 +192,8 @@ namespace Botcraft
         return std::any_cast<int>(metadata.at("data_glow_color_override_id"));
     }
     
-    
+
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     void DisplayEntity::SetDataInterpolationStartDeltaTicksId(const int data_interpolation_start_delta_ticks_id)
     {
         metadata["data_interpolation_start_delta_ticks_id"] = data_interpolation_start_delta_ticks_id;
@@ -167,6 +203,22 @@ namespace Botcraft
     {
         metadata["data_interpolation_duration_id"] = data_interpolation_duration_id;
     }
+#else
+    void DisplayEntity::SetDataTransformationInterpolationStartDeltaTicksId(const int data_transformation_interpolation_start_delta_ticks_id)
+    {
+        metadata["data_transformation_interpolation_start_delta_ticks_id"] = data_transformation_interpolation_start_delta_ticks_id;
+    }
+
+    void DisplayEntity::SetDataTransformationInterpolationDurationId(const int data_transformation_interpolation_duration_id)
+    {
+        metadata["data_transformation_interpolation_duration_id"] = data_transformation_interpolation_duration_id;
+    }
+
+    void DisplayEntity::SetDataPosRotInterpolationDurationId(const int data_pos_rot_interpolation_duration_id)
+    {
+        metadata["data_pos_rot_interpolation_duration_id"] = data_pos_rot_interpolation_duration_id;
+    }
+#endif
     
     void DisplayEntity::SetDataTranslationId(const Vector3<float> data_translation_id)
     {

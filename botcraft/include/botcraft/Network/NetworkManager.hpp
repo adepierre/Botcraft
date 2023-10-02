@@ -65,6 +65,15 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
 #endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        virtual void Handle(ProtocolCraft::ClientboundFinishConfigurationPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundKeepAliveConfigurationPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPingConfigurationPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPingPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundStartConfigurationPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundChunkBatchStartPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundChunkBatchFinishedPacket& msg) override;
+#endif
 
     private:
         std::vector<ProtocolCraft::Handler*> subscribed;
@@ -90,6 +99,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
         ProtocolCraft::UUID chat_session_uuid;
         std::atomic<int> message_sent_index;
+#endif
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        std::chrono::steady_clock::time_point chunk_batch_start_time;
 #endif
 
     };

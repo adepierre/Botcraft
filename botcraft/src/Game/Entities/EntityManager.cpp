@@ -222,6 +222,7 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     void EntityManager::Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg)
     {
         std::lock_guard<std::mutex> entity_manager_locker(entity_manager_mutex);
@@ -246,6 +247,7 @@ namespace Botcraft
         entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
     }
+#endif
 
     void EntityManager::Handle(ProtocolCraft::ClientboundSetHealthPacket& msg)
     {

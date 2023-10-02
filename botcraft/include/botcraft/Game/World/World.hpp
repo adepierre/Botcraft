@@ -235,6 +235,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         virtual void Handle(ProtocolCraft::ClientboundChunksBiomesPacket& msg) override;
 #endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        virtual void Handle(ProtocolCraft::ClientboundRegistryDataPacket& msg) override;
+#endif
 
     private:
 #if PROTOCOL_VERSION < 719 /* < 1.16 */

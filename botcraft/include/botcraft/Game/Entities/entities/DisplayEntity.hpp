@@ -8,7 +8,11 @@ namespace Botcraft
     class DisplayEntity : public Entity
     {
     protected:
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         static constexpr int metadata_count = 14;
+#else
+        static constexpr int metadata_count = 15;
+#endif
         static const std::array<std::string, metadata_count> metadata_names;
         static constexpr int hierarchy_metadata_count = Entity::metadata_count + Entity::hierarchy_metadata_count;
 
@@ -23,8 +27,14 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         int GetDataInterpolationStartDeltaTicksId() const;
         int GetDataInterpolationDurationId() const;
+#else
+        int GetDataTransformationInterpolationStartDeltaTicksId() const;
+        int GetDataTransformationInterpolationDurationId() const;
+        int GetDataPosRotInterpolationDurationId() const;
+#endif
         Vector3<float> GetDataTranslationId() const;
         Vector3<float> GetDataScaleId() const;
         std::array<float, 4> GetDataLeftRotationId() const;
@@ -37,9 +47,15 @@ namespace Botcraft
         float GetDataWidthId() const;
         float GetDataHeightId() const;
         int GetDataGlowColorOverrideId() const;
-        
+
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void SetDataInterpolationStartDeltaTicksId(const int data_interpolation_start_delta_ticks_id);
         void SetDataInterpolationDurationId(const int data_interpolation_duration_id);
+#else
+        void SetDataTransformationInterpolationStartDeltaTicksId(const int data_transformation_interpolation_start_delta_ticks_id);
+        void SetDataTransformationInterpolationDurationId(const int data_transformation_interpolation_duration_id);
+        void SetDataPosRotInterpolationDurationId(const int data_pos_rot_interpolation_duration_id);
+#endif
         void SetDataTranslationId(const Vector3<float> data_translation_id);
         void SetDataScaleId(const Vector3<float> data_scale_id);
         void SetDataLeftRotationId(const std::array<float, 4> data_left_rotation_id);

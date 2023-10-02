@@ -17,6 +17,8 @@
 #include "protocolCraft/BinaryReadWrite.hpp"
 #include "protocolCraft/MessageFactory.hpp"
 
+using namespace ProtocolCraft;
+
 namespace Botcraft
 {
     NetworkManager::NetworkManager(const std::string& address, const std::string& login, const bool force_microfost_auth)
@@ -43,7 +45,7 @@ namespace Botcraft
         compression = -1;
         AddHandler(this);
 
-        state = ProtocolCraft::ConnectionState::Handshake;
+        state = ConnectionState::Handshake;
 
         //Start the thread to process the incoming packets
         m_thread_process = std::thread(&NetworkManager::WaitForNewPackets, this);
@@ -54,16 +56,16 @@ namespace Botcraft
         // TODO: make this in a cleaner way?
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        std::shared_ptr<ProtocolCraft::ServerboundClientIntentionPacket> handshake_msg = std::make_shared<ProtocolCraft::ServerboundClientIntentionPacket>();
+        std::shared_ptr<ServerboundClientIntentionPacket> handshake_msg = std::make_shared<ServerboundClientIntentionPacket>();
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
         handshake_msg->SetHostName(com->GetIp());
         handshake_msg->SetPort(com->GetPort());
-        handshake_msg->SetIntention(static_cast<int>(ProtocolCraft::ConnectionState::Login));
+        handshake_msg->SetIntention(static_cast<int>(ConnectionState::Login));
         Send(handshake_msg);
 
-        state = ProtocolCraft::ConnectionState::Login;
+        state = ConnectionState::Login;
 
-        std::shared_ptr<ProtocolCraft::ServerboundHelloPacket> loginstart_msg = std::make_shared<ProtocolCraft::ServerboundHelloPacket>();
+        std::shared_ptr<ServerboundHelloPacket> loginstart_msg = std::make_shared<ServerboundHelloPacket>();
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         loginstart_msg->SetGameProfile(name);
 #else
@@ -71,7 +73,7 @@ namespace Botcraft
         if (authentifier)
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            ProtocolCraft::ProfilePublicKey key;
+            ProfilePublicKey key;
             key.SetTimestamp(authentifier->GetKeyTimestamp());
             key.SetKey(Utilities::RSAToBytes(authentifier->GetPublicKey()));
             key.SetSignature(Utilities::DecodeBase64(authentifier->GetKeySignature()));
@@ -88,7 +90,7 @@ namespace Botcraft
         Send(loginstart_msg);
     }
 
-    NetworkManager::NetworkManager(const ProtocolCraft::ConnectionState constant_connection_state)
+    NetworkManager::NetworkManager(const ConnectionState constant_connection_state)
     {
         state = constant_connection_state;
         compression = -1;
@@ -101,7 +103,7 @@ namespace Botcraft
 
     void NetworkManager::Close()
     {
-        state = ProtocolCraft::ConnectionState::None;
+        state = ConnectionState::None;
 
         if (com)
         {
@@ -119,12 +121,12 @@ namespace Botcraft
         com.reset();
     }
 
-    void NetworkManager::AddHandler(ProtocolCraft::Handler* h)
+    void NetworkManager::AddHandler(Handler* h)
     {
         subscribed.push_back(h);
     }
 
-    void NetworkManager::Send(const std::shared_ptr<ProtocolCraft::Message> msg)
+    void NetworkManager::Send(const std::shared_ptr<Message> msg)
     {
         if (com)
         {
@@ -146,7 +148,7 @@ namespace Botcraft
                 else
                 {
                     std::vector<unsigned char> compressed_msg;
-                    ProtocolCraft::WriteData<ProtocolCraft::VarInt>(static_cast<int>(msg_data.size()), compressed_msg);
+                    WriteData<VarInt>(static_cast<int>(msg_data.size()), compressed_msg);
                     std::vector<unsigned char> compressed_data = Compress(msg_data);
                     compressed_msg.insert(compressed_msg.end(), compressed_data.begin(), compressed_data.end());
                     com->SendPacket(compressed_msg);
@@ -158,7 +160,7 @@ namespace Botcraft
         }
     }
 
-    const ProtocolCraft::ConnectionState NetworkManager::GetConnectionState() const
+    const ConnectionState NetworkManager::GetConnectionState() const
     {
         return state;
     }
@@ -177,7 +179,7 @@ namespace Botcraft
         }
 #endif
 
-        std::shared_ptr<ProtocolCraft::ServerboundChatPacket> chat_message = std::make_shared<ProtocolCraft::ServerboundChatPacket>();
+        std::shared_ptr<ServerboundChatPacket> chat_message = std::make_shared<ServerboundChatPacket>();
         chat_message->SetMessage(message);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -192,7 +194,7 @@ namespace Botcraft
             signature = authentifier->GetMessageSignature(message, salt, timestamp);
 #elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
             // 1.19.1 and 1.19.2
-            ProtocolCraft::LastSeenMessagesUpdate last_seen_update;
+            LastSeenMessagesUpdate last_seen_update;
             {
                 std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
                 last_seen_update = chat_context.GetLastSeenMessagesUpdate();
@@ -215,7 +217,7 @@ namespace Botcraft
             chat_message->SetTimestamp(timestamp);
 
 #if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
-            ProtocolCraft::SaltSignature salt_signature;
+            SaltSignature salt_signature;
             salt_signature.SetSalt(salt);
             salt_signature.SetSignature(signature);
 
@@ -237,7 +239,7 @@ namespace Botcraft
     void NetworkManager::SendChatCommand(const std::string& command)
     {
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        std::shared_ptr<ProtocolCraft::ServerboundChatCommandPacket> chat_command = std::make_shared<ProtocolCraft::ServerboundChatCommandPacket>();
+        std::shared_ptr<ServerboundChatCommandPacket> chat_command = std::make_shared<ServerboundChatCommandPacket>();
         chat_command->SetCommand(command);
         chat_command->SetTimestamp(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
@@ -248,7 +250,7 @@ namespace Botcraft
         chat_command->SetSignedPreview(false);
 #endif
 #if PROTOCOL_VERSION == 760 /* 1.19.1/2 */
-        ProtocolCraft::LastSeenMessagesUpdate last_seen_update;
+        LastSeenMessagesUpdate last_seen_update;
         if (authentifier)
         {
             std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
@@ -262,7 +264,7 @@ namespace Botcraft
         // TODO: when this shouldn't be empty? Can't find a situation where it's filled with something
         chat_command->SetArgumentSignatures({});
 #else
-        std::shared_ptr<ProtocolCraft::ServerboundChatPacket> chat_command = std::make_shared<ProtocolCraft::ServerboundChatPacket>();
+        std::shared_ptr<ServerboundChatPacket> chat_command = std::make_shared<ServerboundChatPacket>();
         chat_command->SetMessage("/" + command);
 #endif
         Send(chat_command);
@@ -278,7 +280,7 @@ namespace Botcraft
         Logger::GetInstance().RegisterThread("NetworkPacketProcessing - " + name);
         try
         {
-            while (state != ProtocolCraft::ConnectionState::None)
+            while (state != ConnectionState::None)
             {
                 {
                     std::unique_lock<std::mutex> lck(mutex_process);
@@ -305,8 +307,8 @@ namespace Botcraft
                         {
 #ifdef USE_COMPRESSION
                             size_t length = packet.size();
-                            ProtocolCraft::ReadIterator iter = packet.begin();
-                            int data_length = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length);
+                            ReadIterator iter = packet.begin();
+                            int data_length = ReadData<VarInt>(iter, length);
 
                             //Packet not compressed
                             if (data_length == 0)
@@ -353,9 +355,9 @@ namespace Botcraft
         std::vector<unsigned char>::const_iterator packet_iterator = packet.begin();
         size_t length = packet.size();
 
-        const int packet_id = ProtocolCraft::ReadData<ProtocolCraft::VarInt>(packet_iterator, length);
+        const int packet_id = ReadData<VarInt>(packet_iterator, length);
 
-        std::shared_ptr<ProtocolCraft::Message> msg = ProtocolCraft::CreateClientboundMessage(state, packet_id);
+        std::shared_ptr<Message> msg = CreateClientboundMessage(state, packet_id);
 
         if (msg)
         {
@@ -376,22 +378,28 @@ namespace Botcraft
         process_condition.notify_all();
     }
 
-    void NetworkManager::Handle(ProtocolCraft::Message& msg)
+    void NetworkManager::Handle(Message& msg)
     {
 
     }
 
-    void NetworkManager::Handle(ProtocolCraft::ClientboundLoginCompressionPacket& msg)
+    void NetworkManager::Handle(ClientboundLoginCompressionPacket& msg)
     {
         compression = msg.GetCompressionThreshold();
     }
 
-    void NetworkManager::Handle(ProtocolCraft::ClientboundGameProfilePacket& msg)
+    void NetworkManager::Handle(ClientboundGameProfilePacket& msg)
     {
-        state = ProtocolCraft::ConnectionState::Play;
+#if PROTOCOL_VERSION < 764 /* < 1.20.1 */
+        state = ConnectionState::Play;
+#else
+        state = ConnectionState::Configuration;
+        std::shared_ptr<ServerboundLoginAcknowledgedPacket> login_ack_msg = std::make_shared<ServerboundLoginAcknowledgedPacket>();
+        Send(login_ack_msg);
+#endif
     }
 
-    void NetworkManager::Handle(ProtocolCraft::ClientboundHelloPacket& msg)
+    void NetworkManager::Handle(ClientboundHelloPacket& msg)
     {
         if (authentifier == nullptr)
         {
@@ -423,7 +431,7 @@ namespace Botcraft
 
         authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());
 
-        std::shared_ptr<ProtocolCraft::ServerboundKeyPacket> response_msg = std::make_shared<ProtocolCraft::ServerboundKeyPacket>();
+        std::shared_ptr<ServerboundKeyPacket> response_msg = std::make_shared<ServerboundKeyPacket>();
         response_msg->SetKeyBytes(encrypted_shared_secret);
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
@@ -431,7 +439,7 @@ namespace Botcraft
         response_msg->SetNonce(encrypted_nonce);
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
         // 1.19, 1.19.1, 1.19.2 behaviour, send salted nonce signature
-        ProtocolCraft::SaltSignature salt_signature;
+        SaltSignature salt_signature;
         salt_signature.SetSalt(salt);
         salt_signature.SetSignature(salted_nonce_signature);
         response_msg->SetSaltSignature(salt_signature);
@@ -449,15 +457,15 @@ namespace Botcraft
 #endif
     }
 
-    void NetworkManager::Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg)
+    void NetworkManager::Handle(ClientboundKeepAlivePacket& msg)
     {
-        std::shared_ptr<ProtocolCraft::ServerboundKeepAlivePacket> keep_alive_msg = std::make_shared<ProtocolCraft::ServerboundKeepAlivePacket>();
+        std::shared_ptr<ServerboundKeepAlivePacket> keep_alive_msg = std::make_shared<ServerboundKeepAlivePacket>();
         keep_alive_msg->SetId_(msg.GetId_());
         Send(keep_alive_msg);
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-    void NetworkManager::Handle(ProtocolCraft::ClientboundCustomQueryPacket& msg)
+    void NetworkManager::Handle(ClientboundCustomQueryPacket& msg)
     {
         // Vanilla like response when asked by fabric API
         // Not implemented in fabric before December 05 2020,
@@ -465,10 +473,16 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 753 /* > 1.16.3 */
         if (msg.GetIdentifier().GetFull() == "fabric-networking-api-v1:early_registration")
         {
-            std::shared_ptr<ProtocolCraft::ServerboundCustomQueryPacket> custom_query_response = std::make_shared<ProtocolCraft::ServerboundCustomQueryPacket>();
-            custom_query_response->SetTransactionId(msg.GetTransactionId());
-            custom_query_response->SetData(std::nullopt);
-            Send(custom_query_response);
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+            std::shared_ptr<ServerboundCustomQueryPacket> custom_query_anwser = std::make_shared<ServerboundCustomQueryPacket>();
+            custom_query_anwser->SetTransactionId(msg.GetTransactionId());
+            custom_query_anwser->SetData(std::nullopt);
+#else
+            std::shared_ptr<ServerboundCustomQueryAnswerPacket> custom_query_anwser = std::make_shared<ServerboundCustomQueryAnswerPacket>();
+            custom_query_anwser->SetTransactionId(msg.GetTransactionId());
+            custom_query_anwser->SetPayload(std::nullopt);
+#endif
+            Send(custom_query_anwser);
             return;
         }
 #endif
@@ -476,7 +490,7 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
-    void NetworkManager::Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg)
+    void NetworkManager::Handle(ClientboundPlayerChatPacket& msg)
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         chat_context.AddSeenMessage(msg.GetMessage_().GetHeaderSignature(), msg.GetMessage_().GetSignedHeader().GetSender());
@@ -489,7 +503,7 @@ namespace Botcraft
 
             if (chat_context.GetOffset() > 64)
             {
-                std::shared_ptr<ProtocolCraft::ServerboundChatAckPacket> ack_msg = std::make_shared<ProtocolCraft::ServerboundChatAckPacket>();
+                std::shared_ptr<ServerboundChatAckPacket> ack_msg = std::make_shared<ServerboundChatAckPacket>();
                 ack_msg->SetOffset(chat_context.GetAndResetOffset());
                 Send(ack_msg);
             }
@@ -498,7 +512,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    void NetworkManager::Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& msg)
+    void NetworkManager::Handle(ClientboundPlayerChatHeaderPacket& msg)
     {
         chat_context.AddSeenMessage(msg.GetHeaderSignature(), msg.GetHeader().GetSender());
     }
@@ -506,20 +520,20 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
-    void NetworkManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
+    void NetworkManager::Handle(ClientboundLoginPacket& msg)
     {
         if (authentifier)
         {
-            std::shared_ptr<ProtocolCraft::ServerboundChatSessionUpdatePacket> chat_session_msg = std::make_shared<ProtocolCraft::ServerboundChatSessionUpdatePacket>();
-            ProtocolCraft::RemoteChatSessionData chat_session_data;
+            std::shared_ptr<ServerboundChatSessionUpdatePacket> chat_session_msg = std::make_shared<ServerboundChatSessionUpdatePacket>();
+            RemoteChatSessionData chat_session_data;
 
-            ProtocolCraft::ProfilePublicKey key;
+            ProfilePublicKey key;
             key.SetTimestamp(authentifier->GetKeyTimestamp());
             key.SetKey(Utilities::RSAToBytes(authentifier->GetPublicKey()));
             key.SetSignature(Utilities::DecodeBase64(authentifier->GetKeySignature()));
 
             chat_session_data.SetProfilePublicKey(key);
-            chat_session_uuid = ProtocolCraft::UUID();
+            chat_session_uuid = UUID();
             std::mt19937 rnd = std::mt19937(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
             std::uniform_int_distribution<int> distrib(std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max());
             for (size_t i = 0; i < chat_session_uuid.size(); ++i)
@@ -531,6 +545,57 @@ namespace Botcraft
             chat_session_msg->SetChatSession(chat_session_data);
             Send(chat_session_msg);
         }
+    }
+#endif
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    void NetworkManager::Handle(ClientboundFinishConfigurationPacket& msg)
+    {
+        state = ConnectionState::Play;
+        std::shared_ptr<ServerboundFinishConfigurationPacket> finish_config_msg = std::make_shared<ServerboundFinishConfigurationPacket>();
+        Send(finish_config_msg);
+    }
+
+    void NetworkManager::Handle(ClientboundKeepAliveConfigurationPacket& msg)
+    {
+        std::shared_ptr<ServerboundKeepAliveConfigurationPacket> keep_alive_msg = std::make_shared<ServerboundKeepAliveConfigurationPacket>();
+        keep_alive_msg->SetId_(msg.GetId_());
+        Send(keep_alive_msg);
+    }
+
+    void NetworkManager::Handle(ClientboundPingConfigurationPacket& msg)
+    {
+        std::shared_ptr<ServerboundPongConfigurationPacket> pong_msg = std::make_shared<ServerboundPongConfigurationPacket>();
+        pong_msg->SetId_(msg.GetId_());
+        Send(pong_msg);
+    }
+
+    void NetworkManager::Handle(ClientboundPingPacket& msg)
+    {
+        std::shared_ptr<ServerboundPongPacket> pong_msg = std::make_shared<ServerboundPongPacket>();
+        pong_msg->SetId_(msg.GetId_());
+        Send(pong_msg);
+    }
+
+    void NetworkManager::Handle(ClientboundStartConfigurationPacket& msg)
+    {
+        state = ConnectionState::Configuration;
+        std::shared_ptr<ServerboundConfigurationAcknowledgedPacket> config_ack_msg = std::make_shared<ServerboundConfigurationAcknowledgedPacket>();
+        Send(config_ack_msg);
+    }
+
+    void NetworkManager::Handle(ClientboundChunkBatchStartPacket& msg)
+    {
+        chunk_batch_start_time = std::chrono::steady_clock::now();
+    }
+
+    void NetworkManager::Handle(ClientboundChunkBatchFinishedPacket& msg)
+    {
+        const long long int time_elapsed_ms = std::max(1LL, std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - chunk_batch_start_time).count());
+        std::shared_ptr<ServerboundChunkBatchReceivedPacket> chunk_per_tick_msg = std::make_shared<ServerboundChunkBatchReceivedPacket>();
+        // Ask as many chunks as we can process in one tick (50 ms)
+        chunk_per_tick_msg->SetDesiredChunksPerTick(msg.GetBatchSize() * 50.0f / time_elapsed_ms);
+        Send(chunk_per_tick_msg);
     }
 #endif
 }

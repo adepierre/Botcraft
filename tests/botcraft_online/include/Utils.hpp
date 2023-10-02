@@ -55,7 +55,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
                 }
             }
             return true;
-        }, 10000))
+        }, 15000))
     {
         throw std::runtime_error("Timeout waiting " + botname + " to load surroundings");
     }

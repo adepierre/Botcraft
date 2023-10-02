@@ -110,7 +110,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 721 /* < 1.16 */
             virtual void Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg) override;
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             virtual void Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg) override;
+#endif
             virtual void Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg) override;
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg) override;

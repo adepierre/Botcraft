@@ -486,14 +486,16 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         SetCurrentDimensionImpl(static_cast<Dimension>(msg.GetDimension()));
-#else
+#elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
         SetCurrentDimensionImpl(msg.GetDimension().GetFull());
+#else
+        SetCurrentDimensionImpl(msg.GetCommonPlayerSpanwInfo().GetDimension().GetFull());
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         dimension_height[current_dimension] = msg.GetDimensionType()["height"].get<int>();
         dimension_min_y[current_dimension] = msg.GetDimensionType()["min_y"].get<int>();
-#else
+#elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
         for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
@@ -511,8 +513,10 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         SetCurrentDimensionImpl(static_cast<Dimension>(msg.GetDimension()));
-#else
+#elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
         SetCurrentDimensionImpl(msg.GetDimension().GetFull());
+#else
+        SetCurrentDimensionImpl(msg.GetCommonPlayerSpanwInfo().GetDimension().GetFull());
 #endif
 
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
@@ -580,7 +584,11 @@ namespace Botcraft
 
     void World::Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg)
     {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         UnloadChunk(msg.GetX(), msg.GetZ(), std::this_thread::get_id());
+#else
+        UnloadChunk(msg.GetPos().GetX(), msg.GetPos().GetZ(), std::this_thread::get_id());
+#endif
     }
 
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
@@ -672,15 +680,28 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
         for (const auto& chunk_data : msg.GetChunkBiomeData())
         {
-            auto it = terrain.find({ chunk_data.GetX(), chunk_data.GetZ() });
+            auto it = terrain.find({ chunk_data.GetPos().GetX(), chunk_data.GetPos().GetZ()});
             if (it != terrain.end())
             {
                 it->second.LoadBiomesData(chunk_data.GetBuffer());
             }
             else
             {
-                LOG_WARNING("Trying to load biomes data in non loaded chunk (" << chunk_data.GetX() << ", " << chunk_data.GetZ() << ")");
+                LOG_WARNING("Trying to load biomes data in non loaded chunk (" << chunk_data.GetPos().GetX() << ", " << chunk_data.GetPos().GetZ() << ")");
             }
+        }
+    }
+#endif
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    void World::Handle(ProtocolCraft::ClientboundRegistryDataPacket& msg)
+    {
+        std::scoped_lock<std::shared_mutex> lock(world_mutex);
+        for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
+        {
+            const std::string& dim_name = d["name"].get<std::string>();
+            dimension_height[dim_name] = static_cast<unsigned int>(d["element"]["height"].get<int>());
+            dimension_min_y[dim_name] = d["element"]["min_y"].get<int>();
         }
     }
 #endif

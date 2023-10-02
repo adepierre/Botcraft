@@ -33,7 +33,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 721 /* < 1.16 */
         virtual void Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg) override;
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         virtual void Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg) override;
+#endif
         virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg) override;

@@ -50,7 +50,7 @@ namespace Botcraft
 
     void ConnectionClient::SendChatMessage(const std::string& msg)
     {
-        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
+        if (network_manager && network_manager->GetConnectionState() == ConnectionState::Play)
         {
             network_manager->SendChatMessage(msg);
         }
@@ -58,7 +58,7 @@ namespace Botcraft
 
     void ConnectionClient::SendChatCommand(const std::string& command)
     {
-        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
+        if (network_manager && network_manager->GetConnectionState() == ConnectionState::Play)
         {
             network_manager->SendChatCommand(command);
         }
@@ -66,7 +66,7 @@ namespace Botcraft
 
     void ConnectionClient::Respawn()
     {
-        if (network_manager && network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
+        if (network_manager && network_manager->GetConnectionState() == ConnectionState::Play)
         {
             std::shared_ptr<ServerboundClientCommandPacket> status_message = std::make_shared<ServerboundClientCommandPacket>();
             status_message->SetAction(0);
@@ -120,4 +120,13 @@ namespace Botcraft
 
         network_manager->Send(confirm_msg);
     }
+
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+    void ConnectionClient::Handle(ClientboundDisconnectConfigurationPacket& msg)
+    {
+        LOG_INFO("Disconnect during configuration with reason: " << msg.GetReason().GetRawText());
+
+        should_be_closed = true;
+    }
+#endif
 } //Botcraft

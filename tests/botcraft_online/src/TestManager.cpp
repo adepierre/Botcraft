@@ -457,7 +457,7 @@ void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
                 }
             }
             return true;
-        }, 5000))
+        }, 15000))
     {
         throw std::runtime_error("Timeout waiting " + chunk_loader_name + " to load surroundings");
     }

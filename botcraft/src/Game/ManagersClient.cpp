@@ -190,7 +190,11 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundLoginPacket &msg)
     {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         game_mode = static_cast<GameType>(msg.GetGameType() & 0x03);
+#else
+        game_mode = static_cast<GameType>(msg.GetCommonPlayerSpanwInfo().GetGameType());
+#endif
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         is_hardcore = msg.GetHardcore();
 #else
@@ -222,12 +226,23 @@ namespace Botcraft
         }
 
         std::shared_ptr<ServerboundClientInformationPacket> settings_msg = std::make_shared<ServerboundClientInformationPacket>();
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         settings_msg->SetLanguage("fr_FR");
         settings_msg->SetViewDistance(10);
         settings_msg->SetChatVisibility(static_cast<int>(ChatMode::Enabled));
         settings_msg->SetChatColors(true);
         settings_msg->SetModelCustomisation(0xFF);
         settings_msg->SetMainHand(1); // 1 is right handed, 0 is left handed
+#else
+        ClientInformation info;
+        info.SetLanguage("fr_FR");
+        info.SetViewDistance(10);
+        info.SetChatVisibility(static_cast<int>(ChatMode::Enabled));
+        info.SetChatColors(true);
+        info.SetModelCustomisation(0xFF);
+        info.SetMainHand(1); // 1 is right handed, 0 is left handed
+        settings_msg->SetClientInformation(info);
+#endif
 
         network_manager->Send(settings_msg);
     }
@@ -237,7 +252,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 464 /* < 1.14 */
         difficulty = static_cast<Difficulty>(msg.GetDifficulty());
 #endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         game_mode = static_cast<GameType>(msg.GetPlayerGameType());
+#else
+        game_mode = static_cast<GameType>(msg.GetCommonPlayerSpanwInfo().GetGameType());
+#endif
     }
 
     void ManagersClient::Handle(ProtocolCraft::ClientboundSetTimePacket& msg)

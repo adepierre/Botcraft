@@ -38,13 +38,16 @@ namespace Botcraft
         void Respawn();
 
     protected:
-        virtual void Handle(ProtocolCraft::Message &msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket &msg) override;
+        virtual void Handle(ProtocolCraft::Message& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket& msg) override;
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
 #endif
-        virtual void Handle(ProtocolCraft::ClientboundDisconnectPacket &msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket &msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundDisconnectPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg) override;
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        virtual void Handle(ProtocolCraft::ClientboundDisconnectConfigurationPacket& msg) override;
+#endif
         
     protected:
         std::shared_ptr<NetworkManager> network_manager;

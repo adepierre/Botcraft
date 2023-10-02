@@ -704,7 +704,11 @@ namespace Botcraft
 
         void RenderingManager::Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg)
         {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             AddChunkToUpdate(msg.GetX(), msg.GetZ());
+#else
+            AddChunkToUpdate(msg.GetPos().GetX(), msg.GetPos().GetZ());
+#endif
         }
 
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
@@ -735,10 +739,12 @@ namespace Botcraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg)
         {
             AddEntityToUpdate(msg.GetEntityId());
         }
+#endif
 
         void RenderingManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg)
         {
