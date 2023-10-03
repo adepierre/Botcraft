@@ -291,7 +291,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: ${{ runner.workspace }}/build
-          key: build_cache_${{ runner.os }}_-${{ inputs.version }}_${{ github.run_id }}
+          key: build_cache_${{ runner.os }}_${{ inputs.version }}_${{ github.run_id }}
 
       - name: Run tests
         shell: bash
