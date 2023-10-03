@@ -540,6 +540,7 @@ namespace Botcraft
 
     void World::Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg)
     {
+        std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
         for (int i = 0; i < msg.GetRecordCount(); ++i)
         {
@@ -566,7 +567,6 @@ namespace Botcraft
             Position cube_pos(x_pos, y_pos, z_pos);
 
             {
-                std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
                 unsigned int id;
                 unsigned char metadata;
