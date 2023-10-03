@@ -36,7 +36,7 @@ Status GetAllChestsAround(BehaviourClient& c)
 
     Position checked_position;
     {
-        auto all_chunks = world->GetTerrain();
+        auto all_chunks = world->GetChunks();
         for (auto it = all_chunks->begin(); it != all_chunks->end(); ++it)
         {
             for (int x = 0; x < CHUNK_WIDTH; ++x)

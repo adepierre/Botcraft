@@ -111,7 +111,11 @@ namespace Botcraft
         /// @return A vector of const pointer to the blockstate at each position, nullptr if not loaded
         std::vector<const Blockstate*> GetBlocks(const std::vector<Position>& pos) const;
 
-        Utilities::ScopeLockedWrapper<const std::unordered_map<std::pair<int, int>, Chunk>, std::shared_mutex, std::shared_lock> GetTerrain() const;
+        /// @brief Get a read-only locked version of all the loaded chunks
+        /// @return Basically an object you can use as a std::unordered_map<std::pair<int, int>, Chunk>*.
+        /// **ALL WORLD UPDATE WILL BE BLOCKED WHILE THIS OBJECT IS ALIVE**, make sure it goes out of scope
+        /// as soon as you don't need it.
+        Utilities::ScopeLockedWrapper<const std::unordered_map<std::pair<int, int>, Chunk>, std::shared_mutex, std::shared_lock> GetChunks() const;
 
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
         /// @brief Set biome of given block column. Does nothing if not loaded. Thread-safe

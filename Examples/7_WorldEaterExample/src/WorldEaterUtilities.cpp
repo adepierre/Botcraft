@@ -47,7 +47,7 @@ bool IdentifyBaseCampLayout(SimpleBehaviourClient& client)
     Position current_position;
     // Loop through all loaded blocks to find the one we are looking for
     {
-        auto all_chunks = world->GetTerrain();
+        auto all_chunks = world->GetChunks();
         for (const auto& [coords, chunk] : *all_chunks)
         {
             for (int y = chunk.GetMinY(); y < chunk.GetMinY() + chunk.GetHeight(); ++y)

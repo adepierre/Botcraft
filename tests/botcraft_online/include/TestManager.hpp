@@ -92,13 +92,13 @@ public:
         }
         else
         {
-            // If this is not a ConnectionClient, wait for all the chunks to be loaded
+            // If this is not a ConnectionClient, wait for a good amount of chunks to be loaded
             const int num_chunk_to_load = (MinecraftServer::options.view_distance + 1) * (MinecraftServer::options.view_distance + 1);
             if (!Botcraft::Utilities::WaitForCondition([&]()
                 {
                     std::shared_ptr<Botcraft::World> world = client->GetWorld();
                     // If the client has not received a ClientboundGameProfilePacket yet world is still nullptr
-                    if (world != nullptr && world->GetTerrain()->size() >= num_chunk_to_load)
+                    if (world != nullptr && world->GetChunks()->size() >= num_chunk_to_load)
                     {
                         return true;
                     }
