@@ -119,7 +119,7 @@ jobs:
             ${{ runner.workspace }}/build/3rdparty/glfw/install
             ${{ runner.workspace }}/build/3rdparty/openssl/install
             ${{ runner.workspace }}/build/3rdparty/zlib/install
-          key: linux-deps
+          key: Linux-deps
 
       - name: Configure cmake
         shell: bash
