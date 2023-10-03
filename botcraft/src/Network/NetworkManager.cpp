@@ -591,7 +591,8 @@ namespace Botcraft
 
     void NetworkManager::Handle(ClientboundChunkBatchFinishedPacket& msg)
     {
-        const long long int time_elapsed_ms = std::max(1LL, std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - chunk_batch_start_time).count());
+        using count_return = decltype(std::declval<std::chrono::milliseconds>().count());
+        const count_return time_elapsed_ms = std::max(static_cast<count_return>(1), std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - chunk_batch_start_time).count());
         std::shared_ptr<ServerboundChunkBatchReceivedPacket> chunk_per_tick_msg = std::make_shared<ServerboundChunkBatchReceivedPacket>();
         // Ask as many chunks as we can process in one tick (50 ms)
         chunk_per_tick_msg->SetDesiredChunksPerTick(msg.GetBatchSize() * 50.0f / time_elapsed_ms);
