@@ -471,27 +471,6 @@ namespace Botcraft
             }
         }
 
-        // Check if any entity is in the middle
-        {
-            const AABB this_box_collider = AABB(Vector3<double>(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5), Vector3<double>(0.5, 0.5, 0.5));
-
-            std::lock_guard<std::mutex> entity_manager_guard(entity_manager->GetMutex());
-            const std::unordered_map<int, std::shared_ptr<Entity> >& entities = entity_manager->GetEntities();
-            for (auto it = entities.begin(); it != entities.end(); ++it)
-            {
-                // xp orbs and items don't prevent block placing
-                if (it->second->GetType() == EntityType::ExperienceOrb ||
-                    it->second->GetType() == EntityType::ItemEntity)
-                {
-                    continue;
-                }
-                if (this_box_collider.Collide(it->second->GetCollider()))
-                {
-                    return Status::Failure;
-                }
-            }
-        }
-
         // Check if item in inventory
         if (SetItemInHand(client, item_name, Hand::Right) == Status::Failure)
         {
