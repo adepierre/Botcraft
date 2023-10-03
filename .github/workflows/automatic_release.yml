@@ -21,100 +21,181 @@ permissions:
 
 
 jobs:
-  build_os_matrix:
-    name: ${{ matrix.config.name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {
-              name: Windows,
-              os: windows-latest
-            }
-          - {
-              name: Linux,
-              os: ubuntu-latest
-            }
-    uses: ./.github/workflows/botcraft_build.yml
-    with:
-      os: ${{ matrix.config.os }}
+  # build_os_matrix:
+  #   name: ${{ matrix.config.name }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       config:
+  #         - {
+  #             name: Windows,
+  #             os: windows-latest
+  #           }
+  #         - {
+  #             name: Linux,
+  #             os: ubuntu-latest
+  #           }
+  #   uses: ./.github/workflows/botcraft_build.yml
+  #   with:
+  #     os: ${{ matrix.config.os }}
 
 
-  release:
+  # release:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build_os_matrix
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         # Fetch depth 0 to get all tags and commits to generate release note changelog
+  #         fetch-depth: 0
+
+  #     - name: Download Windows artifact
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: botcraft-Windows
+  #         path: windows
+
+  #     - name: Download Linux artifact
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: botcraft-Linux
+  #         path: linux
+
+  #     - name: Download doc artifact
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: botcraft-doc
+  #         path: doc
+
+  #     - name: Download version artifact
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: MC-version
+  #         path: version
+
+  #     - name: Retrieve MC game version
+  #       id: mc-version
+  #       run: echo "version=$(cat version/version.txt)" >> $GITHUB_OUTPUT
+
+  #     - name: Create release note
+  #       run: |
+  #           echo Automatically built library with the latest version of the code for Minecraft ${{ steps.mc-version.outputs.version }} and all options enabled. Examples are in \`\`bin\`\` folder. If you want to run any example other than 0_HelloWorld and 3_SimpleAFKExample, you first need to run the provided \`\`download_mc_assets\`\` script to automatically populate the \`\`Assets\`\` folder by downloading and extracting the official Minecraft client. > release_note.txt
+  #           echo -en '\n' >> release_note.txt
+  #           echo "If you are on Windows < 10, the script won't work and you'll have to do it manually as curl and tar commands have only been added recently." >> release_note.txt
+  #           echo Linux version is compiled using Ubuntu with all dependencies included and should work on other distributions. You might have to install the unzip command to run the script though. >> release_note.txt
+  #           echo -en '\n' >> release_note.txt
+  #           echo "💡 If you need binaries for a previous version of Minecraft, you can open [an issue using this link](https://github.com/${{ github.repository }}/issues/new?assignees=&labels=version+request&template=version-request.yml&title=%5BVersion+request%5D) and it will be automagically generated for you." >> release_note.txt
+  #           echo -en '\n' >> release_note.txt
+  #           echo **Changes:** >> release_note.txt
+
+  #     - name: Append git commits
+  #       run: git log latest..HEAD --oneline --no-merges >> release_note.txt
+
+  #     - name: Rename artifacts
+  #       run: |
+  #         mv linux/botcraft.zip botcraft-linux-${{ steps.mc-version.outputs.version }}.zip
+  #         mv windows/botcraft.zip botcraft-windows-${{ steps.mc-version.outputs.version }}.zip
+  #         mv doc/doc.zip botcraft-doc-${{ steps.mc-version.outputs.version }}.zip
+
+  #     - name: Remove old latest release
+  #       run: gh release delete latest --repo ${{ github.repository }} --cleanup-tag -y
+  #       env:
+  #         GH_TOKEN: ${{ github.token }}
+
+  #     - name: Create new latest release
+  #       run: >
+  #         gh release create latest
+  #         botcraft-linux-${{ steps.mc-version.outputs.version }}.zip
+  #         botcraft-windows-${{ steps.mc-version.outputs.version }}.zip
+  #         botcraft-doc-${{ steps.mc-version.outputs.version }}.zip
+  #         --repo ${{ github.repository }}
+  #         --latest
+  #         -F release_note.txt
+  #         -t Latest
+  #       env:
+  #         GH_TOKEN: ${{ github.token }}
+
+  build_doc:
     runs-on: ubuntu-latest
-    needs:
-      - build_os_matrix
     steps:
       - uses: actions/checkout@v4
         with:
-          # Fetch depth 0 to get all tags and commits to generate release note changelog
-          fetch-depth: 0
+          fetch-depth: 1
 
-      - name: Download Windows artifact
-        uses: actions/download-artifact@v3
+      - name: Install deps
+        run: |
+          sudo apt update
+          sudo apt install -y xorg-dev
+          wget https://github.com/doxygen/doxygen/releases/download/Release_1_9_8/doxygen-1.9.8.linux.bin.tar.gz
+          tar xzvf doxygen-1.9.8.linux.bin.tar.gz
+          cd doxygen-1.9.8
+          sudo make install
+
+      - name: Create build folder
+        run: cmake -E make_directory ${{ runner.workspace }}/build
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
         with:
-          name: botcraft-Windows
-          path: windows
+          path: |
+            ${{ runner.workspace }}/build/3rdparty/catch2/install
+            ${{ runner.workspace }}/build/3rdparty/glad/install
+            ${{ runner.workspace }}/build/3rdparty/glfw/install
+            ${{ runner.workspace }}/build/3rdparty/openssl/install
+            ${{ runner.workspace }}/build/3rdparty/zlib/install
+          key: Linux-deps
 
-      - name: Download Linux artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: botcraft-Linux
-          path: linux
+      - name: Configure cmake
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: >
+          cmake -G "Unix Makefiles"
+          -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+          -DBOTCRAFT_GAME_VERSION=latest
+          -DBOTCRAFT_USE_OPENGL_GUI=ON
+          -DBOTCRAFT_USE_IMGUI=ON
+          -DBOTCRAFT_COMPRESSION=ON
+          -DBOTCRAFT_ENCRYPTION=ON
+          -DBOTCRAFT_BUILD_EXAMPLES=OFF
+          -DBOTCRAFT_BUILD_TESTS=OFF
+          -DBOTCRAFT_BUILD_TESTS_ONLINE=OFF
+          -DBOTCRAFT_WINDOWS_BETTER_SLEEP=ON
+          -DBOTCRAFT_FORCE_LOCAL_ZLIB=ON
+          -DBOTCRAFT_FORCE_LOCAL_OPENSSL=ON
+          -DBOTCRAFT_FORCE_LOCAL_GLFW=ON
+          -DBOTCRAFT_FORCE_LOCAL_GLAD=ON
+          -DBOTCRAFT_FORCE_LOCAL_CATCH=ON
+          -DBOTCRAFT_INSTALL_MC_ASSETS=OFF
+          -DBOTCRAFT_USE_PRECOMPILED_HEADERS=ON
+          -DBOTCRAFT_BUILD_DOC=ON
+          -DBOTCRAFT_OUTPUT_DIR=output
+          -DCMAKE_INSTALL_PREFIX=install/botcraft
+          -S $GITHUB_WORKSPACE
+          -B .
 
-      - name: Download doc artifact
-        uses: actions/download-artifact@v3
+      - name: Generate doc
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --build . --target doc_doxygen
+
+      - name: Create doc archive
+        working-directory: ${{ runner.workspace }}/build/output/doc
+        run: cmake -E tar "cf" "doc.zip" --format=zip $(cat ${{ runner.workspace }}/build/version.txt)/
+
+      - name: Upload doc as zip
+        uses: actions/upload-artifact@v3
         with:
           name: botcraft-doc
-          path: doc
+          path: ${{ runner.workspace }}/build/output/doc/doc.zip
+          retention-days: 1
 
-      - name: Download version artifact
-        uses: actions/download-artifact@v3
+      - name: Upload version artifact
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v3
         with:
           name: MC-version
-          path: version
-
-      - name: Retrieve MC game version
-        id: mc-version
-        run: echo "version=$(cat version/version.txt)" >> $GITHUB_OUTPUT
-
-      - name: Create release note
-        run: |
-            echo Automatically built library with the latest version of the code for Minecraft ${{ steps.mc-version.outputs.version }} and all options enabled. Examples are in \`\`bin\`\` folder. If you want to run any example other than 0_HelloWorld and 3_SimpleAFKExample, you first need to run the provided \`\`download_mc_assets\`\` script to automatically populate the \`\`Assets\`\` folder by downloading and extracting the official Minecraft client. > release_note.txt
-            echo -en '\n' >> release_note.txt
-            echo "If you are on Windows < 10, the script won't work and you'll have to do it manually as curl and tar commands have only been added recently." >> release_note.txt
-            echo Linux version is compiled using Ubuntu with all dependencies included and should work on other distributions. You might have to install the unzip command to run the script though. >> release_note.txt
-            echo -en '\n' >> release_note.txt
-            echo "💡 If you need binaries for a previous version of Minecraft, you can open [an issue using this link](https://github.com/${{ github.repository }}/issues/new?assignees=&labels=version+request&template=version-request.yml&title=%5BVersion+request%5D) and it will be automagically generated for you." >> release_note.txt
-            echo -en '\n' >> release_note.txt
-            echo **Changes:** >> release_note.txt
-
-      - name: Append git commits
-        run: git log latest..HEAD --oneline --no-merges >> release_note.txt
-
-      - name: Rename artifacts
-        run: |
-          mv linux/botcraft.zip botcraft-linux-${{ steps.mc-version.outputs.version }}.zip
-          mv windows/botcraft.zip botcraft-windows-${{ steps.mc-version.outputs.version }}.zip
-          mv doc/doc.zip botcraft-doc-${{ steps.mc-version.outputs.version }}.zip
-
-      - name: Remove old latest release
-        run: gh release delete latest --repo ${{ github.repository }} --cleanup-tag -y
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Create new latest release
-        run: >
-          gh release create latest
-          botcraft-linux-${{ steps.mc-version.outputs.version }}.zip
-          botcraft-windows-${{ steps.mc-version.outputs.version }}.zip
-          botcraft-doc-${{ steps.mc-version.outputs.version }}.zip
-          --repo ${{ github.repository }}
-          --latest
-          -F release_note.txt
-          -t Latest
-        env:
-          GH_TOKEN: ${{ github.token }}
+          path: ${{ runner.workspace }}/build/version.txt
+          retention-days: 1
 
 
   deploy_doc:
@@ -125,9 +206,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs:
-      - build_os_matrix
-      # Only deploy the doc if a release was successfully created
-      - release
+      - build_doc
 
     steps:
       - name: Download doc artifact
@@ -145,6 +224,12 @@ jobs:
       - name: Unzip doc
         working-directory: doc
         run: cmake -E tar "xzf" "doc.zip"
+
+      - name: ls doc
+        run: ls doc/
+
+      - name: cat version
+        run: echo $(cat version/version.txt)
 
       - name: Upload raw doc files for pages
         uses: actions/upload-pages-artifact@v1
