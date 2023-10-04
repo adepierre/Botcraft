@@ -106,8 +106,8 @@ namespace Botcraft
             const bool on_ground = true, const bool head_in_fluid_wo_aqua_affinity = false) const;
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-        static unsigned int IdMetadataToId(const unsigned int id_, const unsigned char metadata_);
-        static void IdToIdMetadata(const unsigned int input_id, unsigned int &output_id, unsigned char &output_metadata);
+        static unsigned int IdMetadataToId(const int id_, const unsigned char metadata_);
+        static void IdToIdMetadata(const unsigned int input_id, int &output_id, unsigned char &output_metadata);
 #endif
         static void ClearCache();
 

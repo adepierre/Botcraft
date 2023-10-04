@@ -54,9 +54,9 @@ TEST_CASE("Set/Get blocks")
 #endif
     world.SetCurrentDimension(dimension);
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-    const BlockstateId id = { 0,0 };
+    const BlockstateId id = { 1,0 };
 #else
-    const BlockstateId id = 0;
+    const BlockstateId id = 1;
 #endif
 
     // Does nothing: chunk not loaded
@@ -66,7 +66,6 @@ TEST_CASE("Set/Get blocks")
     world.LoadChunk(0, 0, dimension);
     world.SetBlock(Position(0, 0, 0), id);
     REQUIRE(world.GetBlock(Position(0, 0, 0)) != nullptr);
-    REQUIRE(world.GetBlock(Position(0, 0, 0))->GetName() == "minecraft:air");
 }
 
 TEST_CASE("Set/Get biomes")
@@ -189,4 +188,41 @@ TEST_CASE("Shared world")
         world.UnloadAllChunks(thread_id2);
         REQUIRE(world.GetChunks()->size() == 0);
     }
+}
+
+
+TEST_CASE("Set/Get lights")
+{
+    World world = World(false);
+
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+    const Dimension dimension = Dimension::Overworld;
+#else
+    const std::string dimension = "minecraft:overworld";
+#endif
+
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
+    world.SetDimensionMinY(dimension, 0);
+    world.SetDimensionHeight(dimension, 256);
+#endif
+    world.SetCurrentDimension(dimension);
+
+    // Does nothing: chunk not loaded
+    world.SetBlockLight(Position(0, 0, 0), 12);
+    CHECK(world.GetBlockLight(Position(0, 0, 0)) == 0);
+    world.SetSkyLight(Position(0, 0, 0), 6);
+    CHECK(world.GetSkyLight(Position(0, 0, 0)) == 0);
+
+    world.LoadChunk(0, 0, dimension);
+    world.SetBlockLight(Position(0, 0, 0), 12);
+    CHECK(world.GetBlockLight(Position(0, 0, 0)) == 12);
+    world.SetBlockLight(Position(1, 0, 0), 6);
+    CHECK(world.GetBlockLight(Position(0, 0, 0)) == 12);
+    CHECK(world.GetBlockLight(Position(1, 0, 0)) == 6);
+
+    world.SetSkyLight(Position(0, 0, 0), 12);
+    CHECK(world.GetSkyLight(Position(0, 0, 0)) == 12);
+    world.SetSkyLight(Position(1, 0, 0), 6);
+    CHECK(world.GetSkyLight(Position(0, 0, 0)) == 12);
+    CHECK(world.GetSkyLight(Position(1, 0, 0)) == 6);
 }

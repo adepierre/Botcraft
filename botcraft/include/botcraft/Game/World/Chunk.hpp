@@ -106,7 +106,7 @@ namespace Botcraft
 #endif
     private:
         std::vector<std::shared_ptr<Section> > sections;
-        std::vector<const Biome*> biomes;
+        std::vector<unsigned char> biomes;
 
         std::unordered_map<Position, ProtocolCraft::NBT::Value> block_entities_data;
 

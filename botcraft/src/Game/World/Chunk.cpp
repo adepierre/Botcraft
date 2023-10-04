@@ -30,10 +30,10 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
-        biomes = std::vector<const Biome*>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
+        biomes = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH, 0);
 #else
         // Each section has 64 biomes, one for each 4*4*4 cubes
-        biomes = std::vector<const Biome*>(64 * height / SECTION_HEIGHT, 0);
+        biomes = std::vector<unsigned char>(64 * height / SECTION_HEIGHT, 0);
 #endif
         sections = std::vector<std::shared_ptr<Section> >(height / SECTION_HEIGHT);
 
@@ -232,7 +232,7 @@ namespace Botcraft
                         }
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-                        unsigned int id;
+                        int id;
                         unsigned char metadata;
 
                         Blockstate::IdToIdMetadata(raw_id, id, metadata);
@@ -517,10 +517,33 @@ namespace Botcraft
             return nullptr;
         }
 
-        return *(sections[section_y]->data_blocks.data() + Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z));
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        BlockstateId block_id;
+        const unsigned short stored_id = *(sections[section_y]->data_blocks.data() + Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z));
+        Blockstate::IdToIdMetadata(static_cast<unsigned int>(stored_id), block_id.first, block_id.second);
+#else
+        const BlockstateId block_id = static_cast<BlockstateId>(*(sections[section_y]->data_blocks.data() + Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)));
+#endif
+        return AssetsManager::getInstance().GetBlockstate(block_id);
     }
 
     void Chunk::SetBlock(const Position& pos, const Blockstate* block)
+    {
+        if (block == nullptr)
+        {
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+            SetBlock(pos, { -1, 0 });
+#else
+            SetBlock(pos, -1);
+#endif
+        }
+        else
+        {
+            SetBlock(pos, block->GetId());
+        }
+    }
+
+    void Chunk::SetBlock(const Position& pos, const BlockstateId id)
     {
         if (!IsInsideChunk(pos, false))
         {
@@ -530,7 +553,11 @@ namespace Botcraft
         const int section_y = (pos.y - min_y) / SECTION_HEIGHT;
         if (!sections[section_y])
         {
-            if (block == nullptr)
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+            if (id.first == 0)
+#else
+            if (id == 0)
+#endif
             {
                 return;
             }
@@ -540,16 +567,16 @@ namespace Botcraft
             }
         }
 
-        sections[section_y]->data_blocks[Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = block;
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        const unsigned short block_id = static_cast<unsigned short>(Blockstate::IdMetadataToId(id.first, id.second));
+#else
+        const unsigned short block_id = static_cast<unsigned short>(id);
+#endif
+        sections[section_y]->data_blocks[Section::CoordsToBlockIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = block_id;
 
 #if USE_GUI
         modified_since_last_rendered = true;
 #endif
-    }
-
-    void Chunk::SetBlock(const Position &pos, const BlockstateId id)
-    {
-        SetBlock(pos, AssetsManager::getInstance().GetBlockstate(id));
     }
 
     unsigned char Chunk::GetBlockLight(const Position &pos) const
@@ -565,7 +592,7 @@ namespace Botcraft
             return 0;
         }
 
-        return sections[section_y]->block_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)];
+        return (sections[section_y]->block_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] >> (4 * (pos.x % 2))) & 0x0F;
     }
 
     void Chunk::SetBlockLight(const Position &pos, const unsigned char v)
@@ -581,8 +608,17 @@ namespace Botcraft
             AddSection(section_y);
         }
 
-        sections[section_y]->block_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = v;
-
+        unsigned char* packed_value = sections[section_y]->block_light.data() + Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z);
+        if (pos.x % 2 == 1)
+        {
+            const unsigned char first_value = *packed_value & 0x0F;
+            *packed_value = first_value | ((v & 0x0F) << 4);
+        }
+        else
+        {
+            const unsigned char second_value = *packed_value & 0xF0;
+            *packed_value = second_value | (v & 0x0F);
+        }
         // Not necessary as we don't render lights
 //#if USE_GUI
 //        modified_since_last_rendered = true;
@@ -602,7 +638,7 @@ namespace Botcraft
             return 0;
         }
 
-        return sections[section_y]->sky_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)];
+        return (sections[section_y]->sky_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] >> (4 * (pos.x % 2))) & 0x0F;
     }
 
     void Chunk::SetSkyLight(const Position &pos, const unsigned char v)
@@ -618,7 +654,18 @@ namespace Botcraft
             AddSection(section_y);
         }
 
-        sections[section_y]->block_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] = v;
+        unsigned char* packed_value = sections[section_y]->sky_light.data() + Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z);
+        if (pos.x % 2 == 1)
+        {
+            const unsigned char first_value = *packed_value & 0x0F;
+            *packed_value = first_value | ((v & 0x0F) << 4);
+        }
+        else
+        {
+            const unsigned char second_value = *packed_value & 0xF0;
+            *packed_value = second_value | (v & 0x0F);
+        }
+
         // Not necessary as we don't render lights
 //#if USE_GUI
 //        modified_since_last_rendered = true;
@@ -653,7 +700,7 @@ namespace Botcraft
             return nullptr;
         }
 
-        return biomes[z * CHUNK_WIDTH + x];
+        return AssetsManager::getInstance().GetBiome(biomes[z * CHUNK_WIDTH + x]);
     }
 
     void Chunk::SetBiome(const int x, const int z, const int b)
@@ -663,7 +710,7 @@ namespace Botcraft
             return;
         }
 
-        biomes[z * CHUNK_WIDTH + x] = AssetsManager::getInstance().GetBiome(b);;
+        biomes[z * CHUNK_WIDTH + x] = static_cast<unsigned char>(b);
 
 #if USE_GUI
         modified_since_last_rendered = true;
@@ -683,7 +730,7 @@ namespace Botcraft
             return nullptr;
         }
 
-        return biomes[i];
+        return AssetsManager::getInstance().GetBiome(biomes[i]);
     }
 
     void Chunk::SetBiomes(const std::vector<int>& new_biomes)
@@ -693,11 +740,10 @@ namespace Botcraft
             LOG_ERROR("Trying to set biomes with a wrong size");
             return;
         }
-        biomes = std::vector<const Biome*>(new_biomes.size());
-        const AssetsManager& assets_manager = AssetsManager::getInstance();
+        biomes = std::vector<unsigned char>(new_biomes.size());
         for (size_t idx = 0; idx < new_biomes.size(); ++idx)
         {
-            biomes[idx] = assets_manager.GetBiome(new_biomes[idx]);
+            biomes[idx] = static_cast<unsigned char>(new_biomes[idx]);
         }
 
 #if USE_GUI
@@ -718,7 +764,7 @@ namespace Botcraft
             return;
         }
 
-        biomes[i] = AssetsManager::getInstance().GetBiome(new_biome);
+        biomes[i] = static_cast<unsigned char>(new_biome);
 
 #if USE_GUI
         modified_since_last_rendered = true;

@@ -718,6 +718,10 @@ namespace Botcraft
         {
             max_id = std::max(id, max_id);
         }
+        if (max_id > std::numeric_limits<unsigned short>::max())
+        {
+            LOG_ERROR("Too many blockstates, compact chunk representation will be broken");
+        }
         flattened_blockstates = std::vector<const Blockstate*>(max_id + 1, nullptr);
         flattened_blockstates_size = flattened_blockstates.size();
         for (const auto& [id, block] : blockstates)
@@ -754,6 +758,7 @@ namespace Botcraft
         }
 
         //Load all the biomes from JSON file
+        int max_biome_id = 0;
         for (const auto& element : json.get_array())
         {
             unsigned char id = 0;

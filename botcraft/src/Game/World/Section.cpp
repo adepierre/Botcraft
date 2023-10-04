@@ -8,15 +8,15 @@ namespace Botcraft
     {
 #if USE_GUI
         // +2 because we also store the neighbour section blocks
-        data_blocks = std::vector<const Blockstate*>((CHUNK_WIDTH + 2) * (CHUNK_WIDTH + 2) * SECTION_HEIGHT);
+        data_blocks = std::vector<unsigned short>((CHUNK_WIDTH + 2) * (CHUNK_WIDTH + 2) * SECTION_HEIGHT);
 #else
-        data_blocks = std::vector<const Blockstate*>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT);
+        data_blocks = std::vector<unsigned short>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT);
 #endif
 
-        block_light = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT);
+        block_light = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT / 2);
         if (has_sky_light)
         {
-            sky_light = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT);
+            sky_light = std::vector<unsigned char>(CHUNK_WIDTH * CHUNK_WIDTH * SECTION_HEIGHT / 2);
         }
     }
 
@@ -31,6 +31,6 @@ namespace Botcraft
 
     size_t Section::CoordsToLightIndex(const int x, const int y, const int z)
     {
-        return (y * CHUNK_WIDTH + z) * CHUNK_WIDTH + x;
+        return ((y * CHUNK_WIDTH + z) * CHUNK_WIDTH + x) / 2;
     }
 } // Botcraft

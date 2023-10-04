@@ -738,12 +738,12 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-    unsigned int Blockstate::IdMetadataToId(const unsigned int id_, const unsigned char metadata_)
+    unsigned int Blockstate::IdMetadataToId(const int id_, const unsigned char metadata_)
     {
         return id_ << 4 | metadata_;
     }
 
-    void Blockstate::IdToIdMetadata(const unsigned int input_id, unsigned int &output_id, unsigned char &output_metadata)
+    void Blockstate::IdToIdMetadata(const unsigned int input_id, int &output_id, unsigned char &output_metadata)
     {
         output_id = input_id >> 4;
         output_metadata = input_id & 0x0F;

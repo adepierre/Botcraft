@@ -2,8 +2,6 @@
 #include "botcraft/Game/World/World.hpp"
 
 #include "botcraft/Utilities/Logger.hpp"
-#include <fstream>
-#include <filesystem>
 
 namespace Botcraft
 {
@@ -529,7 +527,7 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-        unsigned int id;
+        int id;
         unsigned char metadata;
         Blockstate::IdToIdMetadata(msg.GetBlockstate(), id, metadata);
         SetBlockImpl(msg.GetPos(), { id, metadata });
@@ -568,7 +566,7 @@ namespace Botcraft
 
             {
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-                unsigned int id;
+                int id;
                 unsigned char metadata;
                 Blockstate::IdToIdMetadata(msg.GetRecords()[i].GetBlockId(), id, metadata);
 
@@ -635,14 +633,14 @@ namespace Botcraft
 #else
     void World::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)
     {
-        std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        LoadChunkImpl(msg.GetX(), msg.GetZ(), current_dimension, std::this_thread::get_id());
-        LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBuffer());
-        LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBlockEntitiesData());
-        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-            msg.GetLightData().GetSkyYMask(), msg.GetLightData().GetEmptySkyYMask(), msg.GetLightData().GetSkyUpdates(), true);
-        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-            msg.GetLightData().GetBlockYMask(), msg.GetLightData().GetEmptyBlockYMask(), msg.GetLightData().GetBlockUpdates(), false);
+            std::scoped_lock<std::shared_mutex> lock(world_mutex);
+            LoadChunkImpl(msg.GetX(), msg.GetZ(), current_dimension, std::this_thread::get_id());
+            LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBuffer());
+            LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBlockEntitiesData());
+            UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
+                msg.GetLightData().GetSkyYMask(), msg.GetLightData().GetEmptySkyYMask(), msg.GetLightData().GetSkyUpdates(), true);
+            UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
+                msg.GetLightData().GetBlockYMask(), msg.GetLightData().GetEmptyBlockYMask(), msg.GetLightData().GetBlockUpdates(), false);
     }
 #endif
 
