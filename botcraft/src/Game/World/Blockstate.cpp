@@ -1,6 +1,7 @@
 #include <sstream>
 #include <fstream>
 #include <deque>
+#include <set>
 
 #include "botcraft/Game/World/Blockstate.hpp"
 #include "botcraft/Utilities/Logger.hpp"
@@ -42,74 +43,78 @@ namespace Botcraft
 
         if (rotation_x != 0)
         {
-            std::vector<AABB> &colliders = output.GetColliders();
-
-            for (int i = 0; i < colliders.size(); ++i)
+            const std::set<AABB> &colliders = output.GetColliders();
+            std::set<AABB> new_colliders;
+            for (const auto& collider : colliders)
             {
                 Vector3<double> new_center;
                 switch (rotation_x / 90)
                 {
                 case 0:
+                    new_colliders.insert(collider);
                     break;
                 case 1:
-                    new_center = colliders[i].GetCenter() - 0.5;
+                    new_center = collider.GetCenter() - 0.5;
                     new_center = Vector3<double>(new_center.x, new_center.z, -new_center.y);
                     new_center = new_center + 0.5;
-                    colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().x, colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y));
+                    new_colliders.insert(AABB(new_center, Vector3<double>(collider.GetHalfSize().x, collider.GetHalfSize().z, collider.GetHalfSize().y)));
                     break;
                 case 2:
-                    new_center = colliders[i].GetCenter() - 0.5;
+                    new_center = collider.GetCenter() - 0.5;
                     new_center = Vector3<double>(new_center.x, -new_center.y, -new_center.z);
                     new_center = new_center + 0.5;
-                    colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().x, colliders[i].GetHalfSize().y, colliders[i].GetHalfSize().z));
+                    new_colliders.insert(AABB(new_center, Vector3<double>(collider.GetHalfSize().x, collider.GetHalfSize().y, collider.GetHalfSize().z)));
                     break;
                 case 3:
-                    new_center = colliders[i].GetCenter() - 0.5;
+                    new_center = collider.GetCenter() - 0.5;
                     new_center = Vector3<double>(new_center.x, -new_center.z, new_center.y);
                     new_center = new_center + 0.5;
-                    colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().x, colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y));
+                    new_colliders.insert(AABB(new_center, Vector3<double>(collider.GetHalfSize().x, collider.GetHalfSize().z, collider.GetHalfSize().y)));
                     break;
                 default:
                     LOG_ERROR("Blockstate X rotation should be in 90 degrees steps");
                     break;
                 }
             }
+            output.SetColliders(new_colliders);
         }
 
         if (rotation_y != 0)
         {
-            std::vector<AABB> &colliders = output.GetColliders();
-
-            for (int i = 0; i < colliders.size(); ++i)
+            const std::set<AABB> &colliders = output.GetColliders();
+            std::set<AABB> new_colliders;
+            for (const auto& collider : colliders)
             {
                 Vector3<double> new_center;
                 switch (rotation_y / 90)
                 {
                 case 0:
+                    new_colliders.insert(collider);
                     break;
                 case 1:
-                    new_center = colliders[i].GetCenter() - 0.5;
+                    new_center = collider.GetCenter() - 0.5;
                     new_center = Vector3<double>(-new_center.z, new_center.y, new_center.x);
                     new_center = new_center + 0.5;
-                    colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y, colliders[i].GetHalfSize().x));
+                    new_colliders.insert(AABB(new_center, Vector3<double>(collider.GetHalfSize().z, collider.GetHalfSize().y, collider.GetHalfSize().x)));
                     break;
                 case 2:
-                    new_center = colliders[i].GetCenter() - 0.5;
+                    new_center = collider.GetCenter() - 0.5;
                     new_center = Vector3<double>(-new_center.x, new_center.y, -new_center.z);
                     new_center = new_center + 0.5;
-                    colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().x, colliders[i].GetHalfSize().y, colliders[i].GetHalfSize().z));
+                    new_colliders.insert(AABB(new_center, Vector3<double>(collider.GetHalfSize().x, collider.GetHalfSize().y, collider.GetHalfSize().z)));
                     break;
                 case 3:
-                    new_center = colliders[i].GetCenter() - 0.5;
+                    new_center = collider.GetCenter() - 0.5;
                     new_center = Vector3<double>(new_center.z, new_center.y, -new_center.x);
                     new_center = new_center + 0.5;
-                    colliders[i] = AABB(new_center, Vector3<double>(colliders[i].GetHalfSize().z, colliders[i].GetHalfSize().y, colliders[i].GetHalfSize().x));
+                    new_colliders.insert(AABB(new_center, Vector3<double>(collider.GetHalfSize().z, collider.GetHalfSize().y, collider.GetHalfSize().x)));
                     break;
                 default:
                     LOG_ERROR("Blockstate Y rotation should be in 90 degrees steps");
                     break;
                 }
             }
+            output.SetColliders(new_colliders);
         }
 
 #ifdef USE_GUI
@@ -237,6 +242,8 @@ namespace Botcraft
 
     // Blockstate implementation starts here
     std::map<std::string, Json::Value> Blockstate::cached_jsons;
+    std::set<std::string> Blockstate::unique_strings;
+    std::deque<Model> Blockstate::unique_models;
 
     Blockstate::Blockstate(const BlockstateProperties& properties)
     {
@@ -253,7 +260,7 @@ namespace Botcraft
         hazardous = properties.hazardous;
         hardness = properties.hardness;
         tint_type = properties.tint_type;
-        m_name = properties.name;
+        m_name = GetUniqueStringPtr(properties.name);
         any_tool_harvest = properties.any_tool_harvest;
         best_tools = properties.best_tools;
 
@@ -261,18 +268,13 @@ namespace Botcraft
 
         if (properties.path == "none")
         {
-            models.push_back(Model());
-            models_weights.push_back(1);
-            weights_sum += 1;
+            LoadWeightedModels({ {Model(), 1} });
             return;
         }
 
         if (properties.path.empty())
         {
-            models.push_back(Model::GetModel("", false));
-            models_weights.push_back(1);
-            weights_sum += 1;
-
+            LoadWeightedModels({ {Model::GetModel("", false), 1} });
             return;
         }
 
@@ -307,23 +309,20 @@ namespace Botcraft
             {
                 LOG_ERROR("Error reading blockstate file at " << full_filepath << '\n' << e.what());
             }
-            
-            models.push_back(Model::GetModel("", false));
-            models_weights.push_back(1);
-            weights_sum += 1;
 
+            LoadWeightedModels({ {Model::GetModel("", false), 1} });
             return;
         }
 
         const Json::Value& json = cached_jsons[full_filepath];
 
         // We store the models in a deque for efficiency
-        std::deque<Model> models_deque;
+        std::deque<std::pair<Model, int>> weighted_models;
 
         for (int i = 0; i < properties.variables.size(); ++i)
         {
             std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
-            variables[splitted[0]] = splitted[1];
+            variables[GetUniqueStringPtr(splitted[0])] = GetUniqueStringPtr(splitted[1]);
         }
 
         //If it's a "normal" blockstate
@@ -378,26 +377,18 @@ namespace Botcraft
                 {
                     for (const auto& model : variant_value.get_array())
                     {
-                        const int weight = WeightFromJson(model);
-                        models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(model), properties.custom), model));
-                        models_weights.push_back(weight);
-                        weights_sum += weight;
+                        weighted_models.push_back({ ModelModificationFromJson(Model::GetModel(ModelNameFromJson(model), properties.custom), model), WeightFromJson(model) });
                     }
                 }
                 else
                 {
-                    const int weight = WeightFromJson(variant_value);
-                    models_deque.push_back(ModelModificationFromJson(Model::GetModel(ModelNameFromJson(variant_value), properties.custom), variant_value));
-                    models_weights.push_back(weight);
-                    weights_sum += weight;
+                    weighted_models.push_back({ ModelModificationFromJson(Model::GetModel(ModelNameFromJson(variant_value), properties.custom), variant_value), WeightFromJson(variant_value) });
                 }
             }
             else
             {
                 LOG_ERROR("Error reading " << full_filepath);
-                models_deque.push_back(Model::GetModel("", false));
-                models_weights.push_back(1);
-                weights_sum += 1;
+                weighted_models.push_back({ Model::GetModel("", false), 1 });
             }
         }
 
@@ -405,9 +396,7 @@ namespace Botcraft
         if (json.contains("multipart"))
         {
             //Start with an empty model
-            models_deque.push_back(Model());
-            models_weights.push_back(1);
-            weights_sum = 0;
+            weighted_models.push_back({ Model(), 1 });
 
             for (const auto& part : json["multipart"].get_array())
             {
@@ -417,26 +406,24 @@ namespace Botcraft
                     //If there are several models
                     if (part["apply"].is_array())
                     {
-                        size_t num_models = models_deque.size();
+                        size_t num_models = weighted_models.size();
                         for (const auto& m : part["apply"].get_array())
                         {
                             const std::string model_name = ModelNameFromJson(m);
                             for (int k = 0; k < num_models; ++k)
                             {
-                                models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, properties.custom), m));
-                                models_weights.push_back(models_weights[k] * WeightFromJson(m));
+                                weighted_models.push_back({ weighted_models[k].first + ModelModificationFromJson(Model::GetModel(model_name, properties.custom), m), weighted_models[k].second * WeightFromJson(m) });
                             }
                         }
-                        models_deque.erase(models_deque.begin(), models_deque.begin() + num_models);
-                        models_weights.erase(models_weights.begin(), models_weights.begin() + num_models);
+                        weighted_models.erase(weighted_models.begin(), weighted_models.begin() + num_models);
                     }
                     else
                     {
                         const std::string model_name = ModelNameFromJson(part["apply"]);
-                        for (int k = 0; k < models_deque.size(); ++k)
+                        for (int k = 0; k < weighted_models.size(); ++k)
                         {
-                            models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, properties.custom), part["apply"]);
-                            models_weights[k] *= WeightFromJson(part["apply"]);
+                            weighted_models[k].first += ModelModificationFromJson(Model::GetModel(model_name, properties.custom), part["apply"]);
+                            weighted_models[k].second *= WeightFromJson(part["apply"]);
                         }
                     }
                 }
@@ -518,40 +505,33 @@ namespace Botcraft
                         //If there are several models
                         if (part["apply"].is_array())
                         {
-                            size_t num_models = models_deque.size();
+                            size_t num_models = weighted_models.size();
                             for (const auto& m : part["apply"].get_array())
                             {
                                 const std::string model_name = ModelNameFromJson(m);
                                 const int model_weight = WeightFromJson(m);
                                 for (int k = 0; k < num_models; ++k)
                                 {
-                                    models_deque.push_back(models_deque[k] + ModelModificationFromJson(Model::GetModel(model_name, properties.custom), m));
-                                    models_weights.push_back(models_weights[k] * model_weight);
+                                    weighted_models.push_back({ weighted_models[k].first + ModelModificationFromJson(Model::GetModel(model_name, properties.custom), m), weighted_models[k].second * model_weight });
                                 }
                             }
-                            models_deque.erase(models_deque.begin(), models_deque.begin() + num_models);
-                            models_weights.erase(models_weights.begin(), models_weights.begin() + num_models);
+                            weighted_models.erase(weighted_models.begin(), weighted_models.begin() + num_models);
                         }
                         else
                         {
                             const std::string model_name = ModelNameFromJson(part["apply"]);
                             const int model_weight = WeightFromJson(part["apply"]);
-                            for (int k = 0; k < models_deque.size(); ++k)
+                            for (int k = 0; k < weighted_models.size(); ++k)
                             {
-                                models_deque[k] += ModelModificationFromJson(Model::GetModel(model_name, properties.custom), part["apply"]);
-                                models_weights[k] *= model_weight;
+                                weighted_models[k].first += ModelModificationFromJson(Model::GetModel(model_name, properties.custom), part["apply"]);
+                                weighted_models[k].second *= model_weight;
                             }
                         }
                     }
                 }
             }
-
-            for (int i = 0; i < models_weights.size(); ++i)
-            {
-                weights_sum += models_weights[i];
-            }
         }
-        models = std::vector<Model>(std::make_move_iterator(models_deque.begin()), std::make_move_iterator(models_deque.end()));
+        LoadWeightedModels(weighted_models);
     }
 
     Blockstate::Blockstate(const BlockstateProperties& properties, const Model &model_)
@@ -569,19 +549,16 @@ namespace Botcraft
         hardness = properties.hardness;
         fluid = properties.fluid;
         tint_type = properties.tint_type;
-        m_name = properties.name;
+        m_name = GetUniqueStringPtr(properties.name);
         any_tool_harvest = properties.any_tool_harvest;
         best_tools = properties.best_tools;
         for (int i = 0; i < properties.variables.size(); ++i)
         {
             std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
-            variables[splitted[0]] = splitted[1];
+            variables[GetUniqueStringPtr(splitted[0])] = GetUniqueStringPtr(splitted[1]);
         }
 
-        weights_sum = 1;
-
-        models_weights = { 1 };
-        models = { model_ };
+        LoadWeightedModels({ {model_, 1} });
     }
 
     BlockstateId Blockstate::GetId() const
@@ -591,7 +568,7 @@ namespace Botcraft
 
     const Model& Blockstate::GetModel(const unsigned short index) const
     {
-        return models[index];
+        return unique_models.at(models_indices[index]);
     }
 
     unsigned char Blockstate::GetModelId(const Position& pos) const
@@ -613,12 +590,12 @@ namespace Botcraft
 
     const std::string& Blockstate::GetName() const
     {
-        return m_name;
+        return *m_name;
     }
 
     const std::string& Blockstate::GetVariableValue(const std::string& variable) const
     {
-        return variables.at(variable);
+        return *variables.at(&variable);
     }
 
     bool Blockstate::IsAir() const
@@ -653,8 +630,19 @@ namespace Botcraft
 
     bool Blockstate::IsWaterlogged() const
     {
-        const auto it = variables.find("waterlogged");
-        return it != variables.cend() && it->second == "true";
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        // No waterlogging before 1.13
+        return false;
+#else
+        static const std::string* waterlogged_unique_string_ptr = nullptr;
+        // Check for init everytime just in case someone called IsWaterlogged before loading blockstates
+        if (waterlogged_unique_string_ptr == nullptr)
+        {
+            waterlogged_unique_string_ptr = GetUniqueStringPtr("waterlogged");
+        }
+        const auto it = variables.find(waterlogged_unique_string_ptr);
+        return it != variables.cend() && *it->second == "true";
+#endif
     }
 
     float Blockstate::GetHardness() const
@@ -753,12 +741,13 @@ namespace Botcraft
     void Blockstate::ClearCache()
     {
         cached_jsons.clear();
+        unique_models.shrink_to_fit();
     }
 
 #if USE_GUI
     void Blockstate::UpdateModelsWithAtlasData(const Renderer::Atlas* atlas)
     {
-        for (auto& m : models)
+        for (auto& m : unique_models)
         {
             for (auto& f : m.GetFaces())
             {
@@ -804,8 +793,65 @@ namespace Botcraft
     }
 #endif
 
-    int Blockstate::GetNumModels() const
+    size_t Blockstate::GetNumModels() const
     {
-        return static_cast<int>(models.size());
+        return models_indices.size();
+    }
+
+    void Blockstate::LoadWeightedModels(const std::deque<std::pair<Model, int>>& models_to_load)
+    {
+        models_indices.clear();
+        models_indices.reserve(models_to_load.size());
+        models_weights.clear();
+        models_weights.reserve(models_to_load.size());
+        weights_sum = 0;
+
+        for (const auto& [m, w] : models_to_load)
+        {
+            bool already_present = false;
+            for (size_t i = 0; i < models_indices.size(); ++i)
+            {
+                if (unique_models[models_indices[i]].IsSame(m))
+                {
+                    already_present = true;
+                    models_weights[i] += w;
+                    weights_sum += w;
+                    break;
+                }
+            }
+            if (already_present)
+            {
+                continue;
+            }
+
+            models_indices.push_back(GetUniqueModelIndex(m));
+            models_weights.push_back(w);
+            weights_sum += w;
+        }
+
+        models_indices.shrink_to_fit();
+        models_weights.shrink_to_fit();
+    }
+
+    const std::string* Blockstate::GetUniqueStringPtr(const std::string& s)
+    {
+        return &*unique_strings.insert(s).first;
+    }
+
+    size_t Blockstate::GetUniqueModelIndex(const Model& model)
+    {
+        // Don't bother searching for a preexisting vector if USE_GUI
+        // as IsSame always returns false anyway
+#if !USE_GUI
+        for (size_t i = 0; i < unique_models.size(); ++i)
+        {
+            if (model.IsSame(unique_models[i]))
+            {
+                return i;
+            }
+        }
+#endif
+        unique_models.push_back(model);
+        return unique_models.size() - 1;
     }
 } //Botcraft

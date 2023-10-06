@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -54,8 +55,13 @@ namespace Botcraft
             return m1;
         }
 
-        const std::vector<AABB> &GetColliders() const;
-        std::vector<AABB> &GetColliders();
+        /// @brief Compare two models. Will never return true if compiled with GUI
+        /// @param other Model to compare to
+        /// @return True if both models are the same, false otherwise
+        bool IsSame(const Model& other) const;
+
+        const std::set<AABB> &GetColliders() const;
+        void SetColliders(const std::set<AABB>& colliders_);
 
         static void ClearCache();
 
@@ -66,15 +72,14 @@ namespace Botcraft
     private:
         static std::unordered_map<std::string, Model> cached_models;
 
-        bool ambient_occlusion;
-
 #if USE_GUI
+        bool ambient_occlusion;
         std::map<std::string, std::string> textures_variables;
         std::map<std::string, std::pair<int, int> > textures_base_size;
 
         //All the faces of this model
         std::vector<FaceDescriptor> faces;
 #endif
-        std::vector<AABB> colliders;
+        std::set<AABB> colliders;
     };
 } // Botcraft

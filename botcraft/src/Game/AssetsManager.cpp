@@ -959,17 +959,7 @@ namespace Botcraft
 #if USE_GUI
     void AssetsManager::UpdateModelsWithAtlasData()
     {
-        for (auto it = blockstates.begin(); it != blockstates.end(); ++it)
-        {
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-            {
-                it2->second->UpdateModelsWithAtlasData(atlas.get());
-            }
-#else
-            it->second->UpdateModelsWithAtlasData(atlas.get());
-#endif
-        }
+        Blockstate::UpdateModelsWithAtlasData(atlas.get());
     }
 #endif
 

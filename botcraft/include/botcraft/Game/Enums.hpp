@@ -64,7 +64,7 @@ namespace Botcraft
     };
     std::ostream& operator<<(std::ostream& os, const Hand v);
 
-    enum class TintType
+    enum class TintType: char
     {
         None,
         Water,
@@ -173,7 +173,7 @@ namespace Botcraft
         Helmet
     };
 
-    enum class ToolMaterial
+    enum class ToolMaterial: char
     {
         None = 0,
         Wood,
@@ -187,7 +187,7 @@ namespace Botcraft
         NUM_TOOL_MATERIAL
     };
 
-    enum class ToolType
+    enum class ToolType: char
     {
         None = 0,
         Axe,

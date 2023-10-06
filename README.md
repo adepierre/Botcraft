@@ -49,7 +49,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - Full entity support (type, data and metadata)
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system ([wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
-- extremely resource efficient (CPU/RAM) AFK bots
+- Extremely resource efficient (CPU/RAM) bots (<5 Mb for AFK bots, <100 Mb for headless working bots)
 - Bot control with mouse and keyboard
 - Custom framework to easily test the bot behaviours on a vanilla server ([wiki page](https://github.com/adepierre/Botcraft/wiki/Test-framework) for details)
 
@@ -58,8 +58,9 @@ Available bot behaviours includes:
 - Block breaking (including with correct tool/haste effects)
 - Inventory managing (including interactions with chest/anvil/brewing stand...)
 - Block placing (vanilla or mid-air)
-- Item use (fishing rods, food ...)
-- Block interaction (button, lever, bed etc...)
+- Entity interactions (attack, ride...)
+- Item use (fishing rods, food eating...)
+- Block interaction (button, lever, bed...)
 - Villager trading (only for versions 1.14+)
 - Crafting
 
@@ -119,14 +120,16 @@ Optional dependencies (doc generation)
 ## Building and testing
 
 To build the library yourself, with both encryption and compression support, but without OpenGL rendering support:
-```
+```bash
 git clone https://github.com/adepierre/Botcraft.git
 cd Botcraft
 mkdir build
 cd build
 cmake -DBOTCRAFT_GAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_BUILD_TESTS=ON -DBOTCRAFT_BUILD_TESTS_ONLINE=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
 cmake --build . --config Release
+# Run all tests
 ctest -C Release
+# Build doc
 cmake --build . --target doc_doxygen
 ```
 
@@ -152,9 +155,9 @@ There are several cmake options you can modify:
 
 Examples can be found in the [Examples](Examples/) folder:
 - [0_HelloWorld](Examples/0_HelloWorld): Connect to a server, sends Hello World! in the chat then disconnect
-- [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI enabled. Mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering, or in a real server.
+- [1_UserControlledExample](Examples/1_UserControlledExample): Best with GUI enabled. Mouse and keyboard controlled player. Can be used in a dummy offline world (without any server) to test things like physics or rendering and in real servers.
 - [2_ChatCommandExample](Examples/2_ChatCommandExample): Simple bot that obeys commands sent through chat. Should work with chat from vanilla and non-vanilla servers (paper, forge ...)
-- [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Highly CPU/RAM efficient AFK only bot. Simply connect to a server and stay still doing nothing.
+- [3_SimpleAFKExample](Examples/3_SimpleAFKExample): Very lightweight AFK bot. Simply connect to a server and stay still doing nothing.
 - [4_MapCreatorExample](Examples/4_MapCreatorExample): Much more complex example, with autonomous behaviour implemented to build a map based pixel art. Can be launched with multiple bot simultaneously. They can share their internal representation of the world to save some RAM, at the cost of slowing down if too many share the same (due to concurrent access). Only extensively tested on 1.16.5, but should work with minor to none adaptation on previous/older versions.
 - [5_MobHitterExample](Examples/5_MobHitterExample): Entity processing example. Attack every monster in range, with a per-entity cooldown of 0.5s. /!\ This is only an example about entities, no eating is performed, so would starve to death pretty quickly if used as-is.
 - [6_DispenserFarmExample](Examples/6_DispenserFarmExample): A full example with a real usecase in mind. Fully autonomous dispenser farm. More detailed explanations can be found on the associated [wiki page](https://github.com/adepierre/Botcraft/wiki/Dispensers-example).
@@ -170,7 +173,7 @@ Botcraft has multiple ``XXXClient`` classes you can inherit from depending on wh
 
 ## Connection
 
-Botcraft supports both servers in offline ("cracked") and online mode. If the server is in online mode, a valid Microsoft account (Mojang account are not valid anymore) owning the game is required. Detailed information about how to connect with offline or  Microsoft accounts can be found in the [wiki page](https://github.com/adepierre/Botcraft/wiki/Connection).
+Botcraft supports both servers in offline ("cracked") and online mode. If the server is in online mode, a valid Microsoft account (Mojang accounts are not valid anymore) owning the game is required. Detailed information about how to connect with offline or  Microsoft accounts can be found in the [wiki page](https://github.com/adepierre/Botcraft/wiki/Connection).
 
 ## Mod support
 

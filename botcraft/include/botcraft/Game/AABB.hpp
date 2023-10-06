@@ -24,6 +24,9 @@ namespace Botcraft
 
         const bool Intersect(const Vector3<double> &origin, const Vector3<double> &direction) const;
 
+        bool operator<(const AABB& other) const;
+        bool operator==(const AABB& other) const;
+
         template <typename T>
         friend AABB operator+(AABB box, const Vector3<T> &offset)
         {

@@ -220,17 +220,18 @@ namespace Botcraft
                         continue;
                     }
 
-                    const std::vector<AABB>& block_colliders = block->GetModel(block->GetModelId(cube_pos)).GetColliders();
+                    const std::set<AABB>& block_colliders = block->GetModel(block->GetModelId(cube_pos)).GetColliders();
 
-                    for (int i = 0; i < block_colliders.size(); ++i)
+                    for (const auto& collider : block_colliders)
                     {
-                        if (!broadphase_collider.Collide(block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z)))
+                        const AABB shifted_collider = collider + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z);
+                        if (!broadphase_collider.Collide(shifted_collider))
                         {
                             continue;
                         }
 
                         Vector3<double> normal;
-                        const double speed_fraction = local_player->GetCollider().SweptCollide(player_movement_speed + player_movement_inputs, block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z), normal);
+                        const double speed_fraction = local_player->GetCollider().SweptCollide(player_movement_speed + player_movement_inputs, shifted_collider, normal);
 
                         // If we collide with the bottom block with go down user input
                         // and it's a climbable block, then we should pass through
@@ -257,7 +258,7 @@ namespace Botcraft
                         // through the block
                         else if (speed_fraction < 1.0 && pass_through)
                         {
-                            const double block_top_y = (block_colliders[i] + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z)).GetMax().y;
+                            const double block_top_y = shifted_collider.GetMax().y;
                             player_movement_speed.y = std::max(player_movement_speed.y, block_top_y - player_position.y);
                         }
 

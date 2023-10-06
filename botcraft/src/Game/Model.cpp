@@ -15,7 +15,9 @@ namespace Botcraft
 
     Model::Model()
     {
+#if USE_GUI
         ambient_occlusion = false;
+#endif
     }
 
     const Model& Model::GetModel(const std::string& filepath, const bool custom)
@@ -68,9 +70,9 @@ namespace Botcraft
         //Create default model (Full solid cube)
         if (error)
         {
+            colliders.insert(AABB(Vector3<double>(0.5, 0.5, 0.5), Vector3<double>(0.5, 0.5, 0.5)));
+#if USE_GUI
             ambient_occlusion = false;
-            colliders.push_back(AABB(Vector3<double>(0.5, 0.5, 0.5), Vector3<double>(0.5, 0.5, 0.5)));
-#ifdef USE_GUI
             faces = std::vector<FaceDescriptor>();
             for (int i = 0; i < 6; ++i)
             {
@@ -86,7 +88,9 @@ namespace Botcraft
         }
 
         //Default values
+#if USE_GUI
         ambient_occlusion = true;
+#endif
 
         if (obj.contains("parent"))
         {
@@ -110,15 +114,14 @@ namespace Botcraft
 #endif
         }
 
+#if USE_GUI
         if (obj.contains("ambientocclusion"))
         {
             ambient_occlusion = obj["ambientocclusion"].get<bool>();
         }
+#endif
 
-        if (obj.contains("display"))
-        {
-            //TODO do something with display information?
-        }
+        //TODO do something with display information?
 
 #if USE_GUI
         if (obj.contains("textures_base_size"))
@@ -182,7 +185,7 @@ namespace Botcraft
                     end_z = element["to"][2].get_number<int>();
                 }
 
-                colliders.push_back(AABB(Vector3<double>(start_x + end_x, start_y + end_y, start_z + end_z) / 2.0 / 16.0, Vector3<double>(std::abs(end_x - start_x), std::abs(end_y - start_y), std::abs(end_z - start_z)) / 2.0 / 16.0));
+                colliders.insert(AABB(Vector3<double>(start_x + end_x, start_y + end_y, start_z + end_z) / 2.0 / 16.0, Vector3<double>(std::abs(end_x - start_x), std::abs(end_y - start_y), std::abs(end_z - start_z)) / 2.0 / 16.0));
 
 #if USE_GUI
                 if (element.contains("rotation"))
@@ -495,10 +498,10 @@ namespace Botcraft
 
     Model::Model(const unsigned char height, const std::string &texture)
     {
-        ambient_occlusion = false;
-        colliders = std::vector<AABB>({ AABB(Vector3<double>(0.5, (height + 1.0) / 2.0 / 16.0, 0.5), Vector3<double>(0.5, (height + 1.0) / 2.0 / 16.0, 0.5)) });
+        colliders = std::set<AABB>({ AABB(Vector3<double>(0.5, (height + 1.0) / 2.0 / 16.0, 0.5), Vector3<double>(0.5, (height + 1.0) / 2.0 / 16.0, 0.5)) });
 
-#ifdef USE_GUI
+#if USE_GUI
+        ambient_occlusion = false;
         faces = std::vector<FaceDescriptor>(6);
         for (int i = 0; i < 6; ++i)
         {
@@ -560,22 +563,33 @@ namespace Botcraft
 
     Model &Model::operator+=(const Model &m)
     {
+        this->colliders.insert(m.colliders.begin(), m.colliders.end());
+#if USE_GUI
         this->ambient_occlusion = this->ambient_occlusion || m.ambient_occlusion;
-        this->colliders.insert(this->colliders.end(), m.colliders.begin(), m.colliders.end());
-#ifdef USE_GUI
         this->faces.insert(this->faces.end(), m.faces.begin(), m.faces.end());
 #endif
         return *this;
     }
 
-    const std::vector<AABB> &Model::GetColliders() const
+    bool Model::IsSame(const Model& other) const
+    {
+        // If we use GUI, models differ in how they are rendered.
+        // TODO: find a way to check if rendered models are the same?
+#if USE_GUI
+        return false;
+#else
+        return colliders == other.colliders;
+#endif
+    }
+
+    const std::set<AABB>& Model::GetColliders() const
     {
         return colliders;
     }
 
-    std::vector<AABB> &Model::GetColliders()
+    void Model::SetColliders(const std::set<AABB>& colliders_)
     {
-        return colliders;
+        colliders = colliders_;
     }
 
     void Model::ClearCache()
@@ -583,7 +597,7 @@ namespace Botcraft
         cached_models.clear();
     }
 
-#ifdef USE_GUI
+#if USE_GUI
     const std::vector<FaceDescriptor> &Model::GetFaces() const
     {
         return faces;

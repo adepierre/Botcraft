@@ -418,10 +418,10 @@ namespace Botcraft
 
             if (block != nullptr && !block->IsAir())
             {
-                const auto& cubes = block->GetModel(block->GetModelId(out_pos)).GetColliders();
-                for (int i = 0; i < cubes.size(); ++i)
+                const auto& colliders = block->GetModel(block->GetModelId(out_pos)).GetColliders();
+                for (const auto& collider : colliders)
                 {
-                    const AABB current_cube = cubes[i] + out_pos;
+                    const AABB current_cube = collider + out_pos;
                     if (current_cube.Intersect(origin, direction))
                     {
                         return block;

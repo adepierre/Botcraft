@@ -162,4 +162,15 @@ namespace Botcraft
 
         return tmin <= tmax;
     }
+
+    bool AABB::operator<(const AABB& other) const
+    {
+        return center < other.center ||
+            (center == other.center && half_size < other.half_size);
+    }
+
+    bool AABB::operator==(const AABB& other) const
+    {
+        return center == other.center && half_size == other.half_size;
+    }
 } // Botcraft

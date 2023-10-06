@@ -1,8 +1,9 @@
 #pragma once
 
+#include <deque>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include "protocolCraft/Utilities/Json.hpp"
 
@@ -78,7 +79,7 @@ namespace Botcraft
         BlockstateId GetId() const;
         const Model& GetModel(const unsigned short index) const;
         unsigned char GetModelId(const Position& pos) const;
-        int GetNumModels() const;
+        size_t GetNumModels() const;
         const std::string& GetName() const;
         const std::string& GetVariableValue(const std::string& variable) const;
 
@@ -112,11 +113,29 @@ namespace Botcraft
         static void ClearCache();
 
 #if USE_GUI
-        void UpdateModelsWithAtlasData(const Renderer::Atlas* atlas);
+        static void UpdateModelsWithAtlasData(const Renderer::Atlas* atlas);
 #endif
 
     private:
+        void LoadWeightedModels(const std::deque<std::pair<Model, int>>& models_to_load);
+
+        // std::set does not invalidate pointers when growing
+        static std::set<std::string> unique_strings;
+        static const std::string* GetUniqueStringPtr(const std::string& s);
+        static std::deque<Model> unique_models;
+        static size_t GetUniqueModelIndex(const Model& model);
         static std::map<std::string, ProtocolCraft::Json::Value> cached_jsons;
+
+        struct string_ptr_compare
+        {
+            bool operator()(const std::string* a, const std::string* b) const
+            {
+                return *a < *b;
+            }
+        };
+
+    private:
+        BlockstateId blockstate_id;
 
         bool air;
         bool transparent;
@@ -126,17 +145,15 @@ namespace Botcraft
         bool hazardous;
         float hardness;
         TintType tint_type;
-        std::string m_name;
+        const std::string* m_name;
 
-        std::vector<Model> models;
+        std::vector<size_t> models_indices;
         std::vector<int> models_weights;
         int weights_sum;
 
         bool any_tool_harvest;
         std::vector<BestTool> best_tools;
 
-        std::unordered_map<std::string, std::string> variables;
-
-        BlockstateId blockstate_id;
+        std::map<const std::string*, const std::string*, string_ptr_compare> variables; // map is smaller in RAM than unordered_map
     };
 } // Botcraft
