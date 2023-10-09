@@ -21,7 +21,7 @@ namespace ProtocolCraft
 
         void SetRegistryHolder(const NBT::Value& registry_holder_)
         {
-            registry_holder = registry_holder;
+            registry_holder = registry_holder_;
         }
 
         const NBT::Value& GetRegistryHolder() const
