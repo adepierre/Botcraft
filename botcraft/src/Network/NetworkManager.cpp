@@ -390,7 +390,7 @@ namespace Botcraft
 
     void NetworkManager::Handle(ClientboundGameProfilePacket& msg)
     {
-#if PROTOCOL_VERSION < 764 /* < 1.20.1 */
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         state = ConnectionState::Play;
 #else
         state = ConnectionState::Configuration;
