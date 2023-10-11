@@ -97,7 +97,7 @@ namespace Botcraft
         LastSeenMessagesTracker chat_context;
 #endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
-        ProtocolCraft::UUID chat_session_uuid;
+        ProtocolCraft::UUID chat_session_uuid{};
         std::atomic<int> message_sent_index;
 #endif
 
