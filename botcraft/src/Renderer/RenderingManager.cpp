@@ -178,123 +178,128 @@ namespace Botcraft
                 glClearColor(current_color[0], current_color[1], current_color[2], 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                //Change view matrix
-                world_renderer->UpdateViewMatrix();
 
-                if (has_proj_changed)
+                if (current_window_height > 0 && current_window_width > 0)
                 {
-                    glm::mat4 projection = glm::perspective(glm::radians(45.0f), current_window_width / static_cast<float>(current_window_height), 0.1f, 200.0f);
-                    my_shader->SetMat4("projection", projection);
-                    world_renderer->SetCameraProjection(projection);
-                    has_proj_changed = false;
-                }
-                
-                world_renderer->UpdateFaces();
+                    //Change view matrix
+                    world_renderer->UpdateViewMatrix();
 
-                my_shader->Use();
+                    if (has_proj_changed)
+                    {
+                        glm::mat4 projection = glm::perspective(glm::radians(45.0f), current_window_width / static_cast<float>(current_window_height), 0.1f, 200.0f);
+                        my_shader->SetMat4("projection", projection);
+                        world_renderer->SetCameraProjection(projection);
+                        has_proj_changed = false;
+                    }
 
-                //Draw all faces
-                world_renderer->UseAtlasTextureGL();
+                    world_renderer->UpdateFaces();
+
+                    my_shader->Use();
+
+                    //Draw all faces
+                    world_renderer->UseAtlasTextureGL();
 
 #ifdef USE_IMGUI
-                int num_chunks, num_rendered_chunks, num_entities, num_rendered_entities, num_faces, num_rendered_faces;
-                world_renderer->RenderFaces(&num_chunks, &num_rendered_chunks, &num_entities, &num_rendered_entities, &num_faces, &num_rendered_faces);
-                {
-                    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), 0.0f), 0, ImVec2(1.0f, 0.0f));
-                    ImGui::SetNextWindowSize(ImVec2(180.0f, 170.0f));
-                    ImGui::Begin("Rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-                    ImGui::Text("Lim. FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
-                    ImGui::Text("Real FPS: %.1f (%.2fms)", 1.0 / real_fps, real_fps * 1000.0);
-                    ImGui::Text("Loaded sections: %i", num_chunks);
-                    ImGui::Text("Rendered sections: %i", num_rendered_chunks);
-                    ImGui::Text("Num entities: %i", num_entities);
-                    ImGui::Text("Rendered entities: %i", num_rendered_entities);
-                    ImGui::Text("Loaded faces: %i", num_faces);
-                    ImGui::Text("Rendered faces: %i", num_rendered_faces);
-                    ImGui::End();
-                }
+                    int num_chunks, num_rendered_chunks, num_entities, num_rendered_entities, num_faces, num_rendered_faces;
+                    world_renderer->RenderFaces(&num_chunks, &num_rendered_chunks, &num_entities, &num_rendered_entities, &num_faces, &num_rendered_faces);
+                    {
+                        ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), 0.0f), 0, ImVec2(1.0f, 0.0f));
+                        ImGui::SetNextWindowSize(ImVec2(180.0f, 170.0f));
+                        ImGui::Begin("Rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+                        ImGui::Text("Lim. FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
+                        ImGui::Text("Real FPS: %.1f (%.2fms)", 1.0 / real_fps, real_fps * 1000.0);
+                        ImGui::Text("Loaded sections: %i", num_chunks);
+                        ImGui::Text("Rendered sections: %i", num_rendered_chunks);
+                        ImGui::Text("Num entities: %i", num_entities);
+                        ImGui::Text("Rendered entities: %i", num_rendered_entities);
+                        ImGui::Text("Loaded faces: %i", num_faces);
+                        ImGui::Text("Rendered faces: %i", num_rendered_faces);
+                        ImGui::End();
+                    }
 #else
-                world_renderer->RenderFaces();
+                    world_renderer->RenderFaces();
 #endif
 
-                glBindVertexArray(0);
-                glBindTexture(GL_TEXTURE_2D, 0);
+                    glBindVertexArray(0);
+                    glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef USE_IMGUI
-                // Draw the behaviour if it's open
-                if (behaviour_open)
-                {
-                    const int blackboard_width = static_cast<int>((static_cast<float>(current_window_width) - 30.0f) / 4.0f);
-
-                    ImGui::SetNextWindowPos(ImVec2(15.0f, 15.0f), 0, ImVec2(0.0f, 0.0f));
-                    ImGui::SetNextWindowSize(ImVec2(blackboard_width, current_window_height - 30.0f));
-                    ImGui::Begin("Blackboard", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoCollapse);
-                    behaviour_renderer->RenderBlackboard();
-                    ImGui::End();
-
-                    ImGui::SetNextWindowPos(ImVec2(15.0f + blackboard_width, 15.0f), 0, ImVec2(0.0f, 0.0f));
-                    ImGui::SetNextWindowSize(ImVec2(current_window_width - blackboard_width - 30.0f, current_window_height - 30.0f));
-                    ImGui::Begin("Behaviour", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-                    behaviour_renderer->RenderNodes();
-                    ImGui::End();
-                }
-
-                // Draw the inventory if it's open
-                if (inventory_open)
-                {
-                    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), static_cast<float>(current_window_height)), 0, ImVec2(1.0f, 1.0f));
-                    ImGui::SetNextWindowSize(ImVec2(300.0f, current_window_height - 175.0f));
-                    ImGui::Begin("Inventory", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-                    if (inventory_manager && inventory_manager->GetPlayerInventory())
+                    // Draw the behaviour if it's open
+                    if (behaviour_open)
                     {
-                        const std::map<short, ProtocolCraft::Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
-                        for (short i = 0; i <= Window::INVENTORY_OFFHAND_INDEX; ++i)
+                        const int blackboard_width = static_cast<int>((static_cast<float>(current_window_width) - 30.0f) / 4.0f);
+
+                        ImGui::SetNextWindowPos(ImVec2(15.0f, 15.0f), 0, ImVec2(0.0f, 0.0f));
+                        ImGui::SetNextWindowSize(ImVec2(blackboard_width, current_window_height - 30.0f));
+                        ImGui::Begin("Blackboard", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoCollapse);
+                        behaviour_renderer->RenderBlackboard();
+                        ImGui::End();
+
+                        ImGui::SetNextWindowPos(ImVec2(15.0f + blackboard_width, 15.0f), 0, ImVec2(0.0f, 0.0f));
+                        ImGui::SetNextWindowSize(ImVec2(current_window_width - blackboard_width - 30.0f, current_window_height - 30.0f));
+                        ImGui::Begin("Behaviour", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+                        behaviour_renderer->RenderNodes();
+                        ImGui::End();
+                    }
+
+                    // Draw the inventory if it's open
+                    if (inventory_open)
+                    {
+                        ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), static_cast<float>(current_window_height)), 0, ImVec2(1.0f, 1.0f));
+                        ImGui::SetNextWindowSize(ImVec2(300.0f, current_window_height - 175.0f));
+                        ImGui::Begin("Inventory", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+                        if (inventory_manager && inventory_manager->GetPlayerInventory())
                         {
-                            auto it = slots.find(i);
-                            if (it == slots.end())
+                            const std::map<short, ProtocolCraft::Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
+                            for (short i = 0; i <= Window::INVENTORY_OFFHAND_INDEX; ++i)
                             {
-                                continue;
-                            }
-                            if (i == Window::INVENTORY_CRAFTING_OUTPUT_INDEX)
-                            {
-                                ImGui::Text("Crafting output");
-                            }
-                            else if (i == Window::INVENTORY_CRAFTING_INPUT_START)
-                            {
-                                ImGui::Text("Crafting input");
-                            }
-                            else if (i == Window::INVENTORY_ARMOR_START)
-                            {
-                                ImGui::Text("Equiped Armor");
-                            }
-                            else if (i == Window::INVENTORY_STORAGE_START)
-                            {
-                                ImGui::Text("Inventory");
-                            }
-                            else if (i == Window::INVENTORY_HOTBAR_START)
-                            {
-                                ImGui::Text("Hotbar");
-                            }
-                            else if (i == Window::INVENTORY_OFFHAND_INDEX)
-                            {
-                                ImGui::Text("Offhand");
-                            }
-                            const std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName();
-                            if (name != "minecraft:air")
-                            {
-                                ImGui::Text(std::string("    (%i) " + name + " (x%i)").c_str(), i, it->second.GetItemCount());
+                                auto it = slots.find(i);
+                                if (it == slots.end())
+                                {
+                                    continue;
+                                }
+                                if (i == Window::INVENTORY_CRAFTING_OUTPUT_INDEX)
+                                {
+                                    ImGui::Text("Crafting output");
+                                }
+                                else if (i == Window::INVENTORY_CRAFTING_INPUT_START)
+                                {
+                                    ImGui::Text("Crafting input");
+                                }
+                                else if (i == Window::INVENTORY_ARMOR_START)
+                                {
+                                    ImGui::Text("Equiped Armor");
+                                }
+                                else if (i == Window::INVENTORY_STORAGE_START)
+                                {
+                                    ImGui::Text("Inventory");
+                                }
+                                else if (i == Window::INVENTORY_HOTBAR_START)
+                                {
+                                    ImGui::Text("Hotbar");
+                                }
+                                else if (i == Window::INVENTORY_OFFHAND_INDEX)
+                                {
+                                    ImGui::Text("Offhand");
+                                }
+                                const std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName();
+                                if (name != "minecraft:air")
+                                {
+                                    ImGui::Text(std::string("    (%i) " + name + " (x%i)").c_str(), i, it->second.GetItemCount());
+                                }
                             }
                         }
+                        ImGui::End();
                     }
-                    ImGui::End();
+
+
+                    ImGui::Render();
+
+                    // Render ImGui
+                    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
                 }
 
-
-                ImGui::Render();
-
-                // Render ImGui
-                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#endif
                 glfwSwapBuffers(window);
                 glfwPollEvents();
 
