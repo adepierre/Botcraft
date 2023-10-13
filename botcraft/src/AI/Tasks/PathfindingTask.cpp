@@ -741,6 +741,27 @@ namespace Botcraft
             }
         }
 
+        // There were no node respecting the criteria in the search,
+        // this might mean we reached search limit
+        // Take closest node to the goal in this case
+        if (best_dist == std::numeric_limits<int>::max())
+        {
+            for (auto it = came_from.begin(); it != came_from.end(); ++it)
+            {
+                const Position diff = it->first - end;
+                const int d_xz = std::abs(diff.x) + std::abs(diff.z);
+                const int d = d_xz + std::abs(diff.y);
+                const Position diff_start = it->first - start;
+                const int d_start = std::abs(diff_start.x) + std::abs(diff_start.y) + std::abs(diff_start.z);
+                if (d < best_dist || (d == best_dist && d_start < best_dist_start))
+                {
+                    best_dist = d;
+                    best_dist_start = d_start;
+                    it_end_path = it;
+                }
+            }
+        }
+
         std::deque<Position> output_deque;
         output_deque.push_front(it_end_path->first);
         while (it_end_path->second != start)
@@ -748,7 +769,7 @@ namespace Botcraft
             it_end_path = came_from.find(it_end_path->second);
             output_deque.push_front(it_end_path->first);
         }
-
+        
         return std::vector<Position>(output_deque.begin(), output_deque.end());
     }
 
