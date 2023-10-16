@@ -68,18 +68,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     char BatEntity::GetDataIdFlags() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_id_flags"));
     }
 
 
     void BatEntity::SetDataIdFlags(const char data_id_flags)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_flags"] = data_id_flags;
     }
 

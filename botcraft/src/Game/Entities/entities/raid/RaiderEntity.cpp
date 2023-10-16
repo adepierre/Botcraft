@@ -42,18 +42,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     bool RaiderEntity::GetIsCelebrating() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("is_celebrating"));
     }
 
 
     void RaiderEntity::SetIsCelebrating(const bool is_celebrating)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["is_celebrating"] = is_celebrating;
     }
 

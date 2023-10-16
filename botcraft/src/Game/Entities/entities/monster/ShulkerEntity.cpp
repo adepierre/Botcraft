@@ -83,52 +83,61 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     Direction ShulkerEntity::GetDataAttachFaceId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<Direction>(metadata.at("data_attach_face_id"));
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     const std::optional<Position>& ShulkerEntity::GetDataAttachPosId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::optional<Position>&>(metadata.at("data_attach_pos_id"));
     }
 #endif
 
     char ShulkerEntity::GetDataPeekId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_peek_id"));
     }
 
     char ShulkerEntity::GetDataColorId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_color_id"));
     }
 
 
     void ShulkerEntity::SetDataAttachFaceId(const Direction data_attach_face_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_attach_face_id"] = data_attach_face_id;
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     void ShulkerEntity::SetDataAttachPosId(const std::optional<Position>& data_attach_pos_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_attach_pos_id"] = data_attach_pos_id;
     }
 #endif
 
     void ShulkerEntity::SetDataPeekId(const char data_peek_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_peek_id"] = data_peek_id;
     }
 
     void ShulkerEntity::SetDataColorId(const char data_color_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_color_id"] = data_color_id;
     }
 

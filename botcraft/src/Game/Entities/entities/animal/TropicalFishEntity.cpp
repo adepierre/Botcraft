@@ -69,18 +69,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int TropicalFishEntity::GetDataIdTypeVariant() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_type_variant"));
     }
 
 
     void TropicalFishEntity::SetDataIdTypeVariant(const int data_id_type_variant)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_type_variant"] = data_id_type_variant;
     }
 

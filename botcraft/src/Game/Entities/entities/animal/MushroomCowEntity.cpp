@@ -73,18 +73,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     const std::string& MushroomCowEntity::GetDataType() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::string&>(metadata.at("data_type"));
     }
 
 
     void MushroomCowEntity::SetDataType(const std::string& data_type)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_type"] = data_type;
     }
 #endif

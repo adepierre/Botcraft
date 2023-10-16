@@ -73,6 +73,7 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
@@ -80,22 +81,26 @@ namespace Botcraft
     
     const ProtocolCraft::Slot& DisplayItemDisplayEntity::GetDataItemStackId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const ProtocolCraft::Slot&>(metadata.at("data_item_stack_id"));
     }
     
     char DisplayItemDisplayEntity::GetDataItemDisplayId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_item_display_id"));
     }
     
     
     void DisplayItemDisplayEntity::SetDataItemStackId(const ProtocolCraft::Slot& data_item_stack_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_item_stack_id"] = data_item_stack_id;
     }
     
     void DisplayItemDisplayEntity::SetDataItemDisplayId(const char data_item_display_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_item_display_id"] = data_item_display_id;
     }
     

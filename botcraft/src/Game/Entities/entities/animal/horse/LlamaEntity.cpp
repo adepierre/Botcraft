@@ -74,38 +74,45 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int LlamaEntity::GetDataStrengthId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_strength_id"));
     }
 
     int LlamaEntity::GetDataSwagId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_swag_id"));
     }
 
     int LlamaEntity::GetDataVariantId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_variant_id"));
     }
 
 
     void LlamaEntity::SetDataStrengthId(const int data_strength_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_strength_id"] = data_strength_id;
     }
 
     void LlamaEntity::SetDataSwagId(const int data_swag_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_swag_id"] = data_swag_id;
     }
 
     void LlamaEntity::SetDataVariantId(const int data_variant_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_variant_id"] = data_variant_id;
     }
 

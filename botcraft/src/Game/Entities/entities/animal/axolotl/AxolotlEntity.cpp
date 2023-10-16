@@ -75,38 +75,45 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int AxolotlEntity::GetDataVariant() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_variant"));
     }
 
     bool AxolotlEntity::GetDataPlayingDead() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_playing_dead"));
     }
 
     bool AxolotlEntity::GetFromBucket() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("from_bucket"));
     }
 
 
     void AxolotlEntity::SetDataVariant(const int data_variant)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_variant"] = data_variant;
     }
 
     void AxolotlEntity::SetDataPlayingDead(const bool data_playing_dead)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_playing_dead"] = data_playing_dead;
     }
 
     void AxolotlEntity::SetFromBucket(const bool from_bucket)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["from_bucket"] = from_bucket;
     }
 

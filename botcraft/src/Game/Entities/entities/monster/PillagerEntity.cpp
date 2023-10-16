@@ -69,18 +69,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     bool PillagerEntity::GetIsChargingCrossbow() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("is_charging_crossbow"));
     }
 
 
     void PillagerEntity::SetIsChargingCrossbow(const bool is_charging_crossbow)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["is_charging_crossbow"] = is_charging_crossbow;
     }
 

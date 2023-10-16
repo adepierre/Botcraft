@@ -1,10 +1,11 @@
 #pragma once
 
-#include <memory>
-#include <map>
-#include <optional>
 #include <any>
 #include <chrono>
+#include <map>
+#include <memory>
+#include <optional>
+#include <shared_mutex>
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
@@ -65,9 +66,9 @@ namespace Botcraft
         char GetDataSharedFlagsId() const;
         int GetDataAirSupplyId() const;
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        const std::optional<ProtocolCraft::Chat>& GetDataCustomName() const;
+        std::optional<ProtocolCraft::Chat> GetDataCustomName() const;
 #else
-        const std::string& GetDataCustomName() const;
+        std::string GetDataCustomName() const;
 #endif
         bool GetDataCustomNameVisible() const;
         bool GetDataSilent() const;
@@ -98,22 +99,22 @@ namespace Botcraft
 
         // Generic properties getter
         int GetEntityID() const;
-        const Vector3<double>& GetPosition() const;
+        Vector3<double> GetPosition() const;
         double GetX() const;
         double GetY() const;
         double GetZ() const;
         float GetYaw() const;
         float GetPitch() const;
-        const Vector3<double>& GetSpeed() const;
+        Vector3<double> GetSpeed() const;
         double GetSpeedX() const;
         double GetSpeedY() const;
         double GetSpeedZ() const;
         bool GetOnGround() const;
-        const std::map<EquipmentSlot, ProtocolCraft::Slot>& GetEquipments() const;
-        const ProtocolCraft::Slot& GetEquipment(const EquipmentSlot slot) const;
-        const std::vector<EntityEffect>& GetEffects() const;
+        std::map<EquipmentSlot, ProtocolCraft::Slot> GetEquipments() const;
+        ProtocolCraft::Slot GetEquipment(const EquipmentSlot slot) const;
+        std::vector<EntityEffect> GetEffects() const;
 #if USE_GUI
-        const std::vector<Renderer::Face>& GetFaces();
+        std::vector<Renderer::Face> GetFaces(const bool reset_uptodate_status);
         bool GetAreRenderedFacesUpToDate() const;
 #endif
 
@@ -202,6 +203,8 @@ namespace Botcraft
 #endif
 
     protected:
+        mutable std::shared_mutex entity_mutex;
+
         int entity_id;
         Vector3<double> position;
         float yaw;

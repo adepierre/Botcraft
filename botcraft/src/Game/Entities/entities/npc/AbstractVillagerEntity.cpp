@@ -42,18 +42,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int AbstractVillagerEntity::GetDataUnhappyCounter() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_unhappy_counter"));
     }
 
 
     void AbstractVillagerEntity::SetDataUnhappyCounter(const int data_unhappy_counter)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_unhappy_counter"] = data_unhappy_counter;
     }
 

@@ -71,28 +71,33 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     bool GuardianEntity::GetDataIdMoving() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_id_moving"));
     }
 
     int GuardianEntity::GetDataIdAttackTarget() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_attack_target"));
     }
 
 
     void GuardianEntity::SetDataIdMoving(const bool data_id_moving)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_moving"] = data_id_moving;
     }
 
     void GuardianEntity::SetDataIdAttackTarget(const int data_id_attack_target)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_attack_target"] = data_id_attack_target;
     }
 

@@ -42,18 +42,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     bool AbstractPiglinEntity::GetDataImmuneToZombification() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_immune_to_zombification"));
     }
 
 
     void AbstractPiglinEntity::SetDataImmuneToZombification(const bool data_immune_to_zombification)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_immune_to_zombification"] = data_immune_to_zombification;
     }
 

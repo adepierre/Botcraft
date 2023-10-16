@@ -83,23 +83,27 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     bool ZombieVillagerEntity::GetDataConvertingId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_converting_id"));
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const VillagerData& ZombieVillagerEntity::GetDataVillagerData() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const VillagerData&>(metadata.at("data_villager_data"));
     }
 #else
     int ZombieVillagerEntity::GetDataVillagerProfessionId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_villager_profession_id"));
     }
 #endif
@@ -107,17 +111,20 @@ namespace Botcraft
 
     void ZombieVillagerEntity::SetDataConvertingId(const bool data_converting_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_converting_id"] = data_converting_id;
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void ZombieVillagerEntity::SetDataVillagerData(const VillagerData& data_villager_data)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_villager_data"] = data_villager_data;
     }
 #else
     void ZombieVillagerEntity::SetDataVillagerProfessionId(const int data_villager_profession_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_villager_profession_id"] = data_villager_profession_id;
     }
 #endif

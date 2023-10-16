@@ -50,18 +50,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     char AbstractHorseEntity::GetDataIdFlags() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_id_flags"));
     }
 
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
     const std::optional<ProtocolCraft::UUID>& AbstractHorseEntity::GetDataIdOwnerUuid() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_id_owner_uuid"));
     }
 #endif
@@ -69,12 +72,14 @@ namespace Botcraft
 
     void AbstractHorseEntity::SetDataIdFlags(const char data_id_flags)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_flags"] = data_id_flags;
     }
 
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
     void AbstractHorseEntity::SetDataIdOwnerUuid(const std::optional<ProtocolCraft::UUID>& data_id_owner_uuid)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_owner_uuid"] = data_id_owner_uuid;
     }
 #endif

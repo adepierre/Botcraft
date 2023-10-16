@@ -82,6 +82,7 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
@@ -89,52 +90,62 @@ namespace Botcraft
     
     const ProtocolCraft::Chat& DisplayTextDisplayEntity::GetDataTextId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const ProtocolCraft::Chat&>(metadata.at("data_text_id"));
     }
     
     int DisplayTextDisplayEntity::GetDataLineWidthId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_line_width_id"));
     }
     
     int DisplayTextDisplayEntity::GetDataBackgroundColorId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_background_color_id"));
     }
     
     char DisplayTextDisplayEntity::GetDataTextOpacityId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_text_opacity_id"));
     }
     
     char DisplayTextDisplayEntity::GetDataStyleFlagsId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_style_flags_id"));
     }
     
     
     void DisplayTextDisplayEntity::SetDataTextId(const ProtocolCraft::Chat& data_text_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_text_id"] = data_text_id;
     }
     
     void DisplayTextDisplayEntity::SetDataLineWidthId(const int data_line_width_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_line_width_id"] = data_line_width_id;
     }
     
     void DisplayTextDisplayEntity::SetDataBackgroundColorId(const int data_background_color_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_background_color_id"] = data_background_color_id;
     }
     
     void DisplayTextDisplayEntity::SetDataTextOpacityId(const char data_text_opacity_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_text_opacity_id"] = data_text_opacity_id;
     }
     
     void DisplayTextDisplayEntity::SetDataStyleFlagsId(const char data_style_flags_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_style_flags_id"] = data_style_flags_id;
     }
     

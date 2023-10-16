@@ -92,43 +92,51 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int BoatEntity::GetDataIdHurt() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_hurt"));
     }
 
     int BoatEntity::GetDataIdHurtdir() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_hurtdir"));
     }
 
     float BoatEntity::GetDataIdDamage() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<float>(metadata.at("data_id_damage"));
     }
 
     int BoatEntity::GetDataIdType() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_type"));
     }
 
     bool BoatEntity::GetDataIdPaddleLeft() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_id_paddle_left"));
     }
 
     bool BoatEntity::GetDataIdPaddleRight() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_id_paddle_right"));
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     int BoatEntity::GetDataIdBubbleTime() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_bubble_time"));
     }
 #endif
@@ -136,37 +144,44 @@ namespace Botcraft
 
     void BoatEntity::SetDataIdHurt(const int data_id_hurt)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_hurt"] = data_id_hurt;
     }
 
     void BoatEntity::SetDataIdHurtdir(const int data_id_hurtdir)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_hurtdir"] = data_id_hurtdir;
     }
 
     void BoatEntity::SetDataIdDamage(const float data_id_damage)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_damage"] = data_id_damage;
     }
 
     void BoatEntity::SetDataIdType(const int data_id_type)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_type"] = data_id_type;
     }
 
     void BoatEntity::SetDataIdPaddleLeft(const bool data_id_paddle_left)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_paddle_left"] = data_id_paddle_left;
     }
 
     void BoatEntity::SetDataIdPaddleRight(const bool data_id_paddle_right)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_paddle_right"] = data_id_paddle_right;
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void BoatEntity::SetDataIdBubbleTime(const int data_id_bubble_time)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_bubble_time"] = data_id_bubble_time;
     }
 #endif

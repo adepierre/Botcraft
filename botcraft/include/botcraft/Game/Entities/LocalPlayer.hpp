@@ -1,7 +1,5 @@
 #pragma once
 
-#include <mutex>
-
 #include "botcraft/Game/Entities/entities/player/PlayerEntity.hpp"
 
 namespace Botcraft 
@@ -9,6 +7,8 @@ namespace Botcraft
 
     class LocalPlayer : public PlayerEntity
     {
+        friend class PhysicsManager;
+
     public:
         static constexpr float WALKING_SPEED = 4.317f;
         static constexpr float SPRINTING_SPEED = 5.612f;
@@ -17,16 +17,15 @@ namespace Botcraft
         LocalPlayer();
         virtual ~LocalPlayer();
 
-        std::mutex& GetMutex();
 
-        const Vector3<double>& GetFrontVector() const;
-        const Vector3<double>& GetXZVector() const;
-        const Vector3<double>& GetRightVector() const;
+        Vector3<double> GetFrontVector() const;
+        Vector3<double> GetXZVector() const;
+        Vector3<double> GetRightVector() const;
 
-        const Vector3<double>& GetPlayerInputs() const;
-        const double GetPlayerInputsX() const;
-        const double GetPlayerInputsY() const;
-        const double GetPlayerInputsZ() const;
+        Vector3<double> GetPlayerInputs() const;
+        double GetPlayerInputsX() const;
+        double GetPlayerInputsY() const;
+        double GetPlayerInputsZ() const;
         
         float GetFlyingSpeed() const;
         float GetWalkingSpeed() const;
@@ -61,6 +60,21 @@ namespace Botcraft
         void SetPlayerInputsX(const double x);
         void SetPlayerInputsY(const double y);
         void SetPlayerInputsZ(const double z);
+        /// @brief Set player inputs on X axis so it will reach a given target
+        /// on next physics update (i.e. player_inputs = target - pos - speed)
+        /// Thread-safe
+        /// @param x Target
+        void SetPlayerInputsTargetX(const double x);
+        /// @brief Set player inputs on Y axis so it will reach a given target
+        /// on next physics update (i.e. player_inputs = target - pos - speed)
+        /// Thread-safe
+        /// @param y Target
+        void SetPlayerInputsTargetY(const double y);
+        /// @brief Set player inputs on Z axis so it will reach a given target
+        /// on next physics update (i.e. player_inputs = target - pos - speed)
+        /// Thread-safe
+        /// @param z Target
+        void SetPlayerInputsTargetZ(const double z);
         void AddPlayerInputs(const Vector3<double>& p);
         void AddPlayerInputsX(const double x);
         void AddPlayerInputsY(const double y);
@@ -76,8 +90,6 @@ namespace Botcraft
         void UpdateVectors();
 
     private:
-        std::mutex player_mutex;
-
         Vector3<double> frontVector;
         Vector3<double> xzVector;
         Vector3<double> rightVector;

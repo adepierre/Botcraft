@@ -84,68 +84,81 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int PandaEntity::GetUnhappyCounter() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("unhappy_counter"));
     }
 
     int PandaEntity::GetSneezeCounter() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("sneeze_counter"));
     }
 
     int PandaEntity::GetEatCounter() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("eat_counter"));
     }
 
     char PandaEntity::GetMainGeneId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("main_gene_id"));
     }
 
     char PandaEntity::GetHiddenGeneId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("hidden_gene_id"));
     }
 
     char PandaEntity::GetDataIdFlags() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_id_flags"));
     }
 
 
     void PandaEntity::SetUnhappyCounter(const int unhappy_counter)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["unhappy_counter"] = unhappy_counter;
     }
 
     void PandaEntity::SetSneezeCounter(const int sneeze_counter)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["sneeze_counter"] = sneeze_counter;
     }
 
     void PandaEntity::SetEatCounter(const int eat_counter)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["eat_counter"] = eat_counter;
     }
 
     void PandaEntity::SetMainGeneId(const char main_gene_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["main_gene_id"] = main_gene_id;
     }
 
     void PandaEntity::SetHiddenGeneId(const char hidden_gene_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["hidden_gene_id"] = hidden_gene_id;
     }
 
     void PandaEntity::SetDataIdFlags(const char data_id_flags)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_flags"] = data_id_flags;
     }
 

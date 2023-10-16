@@ -92,28 +92,33 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     const ProtocolCraft::Slot& FireworkRocketEntity::GetDataIdFireworksItem() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const ProtocolCraft::Slot&>(metadata.at("data_id_fireworks_item"));
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const std::optional<int>& FireworkRocketEntity::GetDataAttachedToTarget() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::optional<int>&>(metadata.at("data_attached_to_target"));
     }
 
     bool FireworkRocketEntity::GetDataShotAtAngle() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_shot_at_angle"));
     }
 #else
     int FireworkRocketEntity::GetDataAttachedToTarget() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_attached_to_target"));
     }
 #endif
@@ -121,22 +126,26 @@ namespace Botcraft
 
     void FireworkRocketEntity::SetDataIdFireworksItem(const ProtocolCraft::Slot& data_id_fireworks_item)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_fireworks_item"] = data_id_fireworks_item;
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void FireworkRocketEntity::SetDataAttachedToTarget(const std::optional<int>& data_attached_to_target)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_attached_to_target"] = data_attached_to_target;
     }
 
     void FireworkRocketEntity::SetDataShotAtAngle(const bool data_shot_at_angle)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_shot_at_angle"] = data_shot_at_angle;
     }
 #else
     void FireworkRocketEntity::SetDataAttachedToTarget(const int data_attached_to_target)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_attached_to_target"] = data_attached_to_target;
     }
 #endif

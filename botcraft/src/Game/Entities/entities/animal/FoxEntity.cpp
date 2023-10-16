@@ -78,48 +78,57 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int FoxEntity::GetDataTypeId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_type_id"));
     }
 
     char FoxEntity::GetDataFlagsId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_flags_id"));
     }
 
     const std::optional<ProtocolCraft::UUID>& FoxEntity::GetDataTrustedId0() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_trusted_id_0"));
     }
 
     const std::optional<ProtocolCraft::UUID>& FoxEntity::GetDataTrustedId1() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_trusted_id_1"));
     }
 
 
     void FoxEntity::SetDataTypeId(const int data_type_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_type_id"] = data_type_id;
     }
 
     void FoxEntity::SetDataFlagsId(const char data_flags_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_flags_id"] = data_flags_id;
     }
 
     void FoxEntity::SetDataTrustedId0(const std::optional<ProtocolCraft::UUID>& data_trusted_id_0)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_trusted_id_0"] = data_trusted_id_0;
     }
 
     void FoxEntity::SetDataTrustedId1(const std::optional<ProtocolCraft::UUID>& data_trusted_id_1)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_trusted_id_1"] = data_trusted_id_1;
     }
 

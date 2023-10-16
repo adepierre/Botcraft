@@ -235,21 +235,24 @@ namespace Botcraft
 
     Entity::Entity()
     {
-        // Initialize base stuff
-        entity_id = 0;
-        position = Vector3<double>(0.0, 0.0, 0.0);
-        yaw = 0.0f;
-        pitch = 0.0f;
-        speed = Vector3<double>(0.0, 0.0, 0.0);
-        on_ground = false;
-        equipments = {
-            { EquipmentSlot::MainHand, ProtocolCraft::Slot() },
-            { EquipmentSlot::OffHand, ProtocolCraft::Slot() },
-            { EquipmentSlot::Boots, ProtocolCraft::Slot() },
-            { EquipmentSlot::Leggings, ProtocolCraft::Slot() },
-            { EquipmentSlot::ChestPlate, ProtocolCraft::Slot() },
-            { EquipmentSlot::Helmet, ProtocolCraft::Slot() }
-        };
+        {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+            // Initialize base stuff
+            entity_id = 0;
+            position = Vector3<double>(0.0, 0.0, 0.0);
+            yaw = 0.0f;
+            pitch = 0.0f;
+            speed = Vector3<double>(0.0, 0.0, 0.0);
+            on_ground = false;
+            equipments = {
+                { EquipmentSlot::MainHand, ProtocolCraft::Slot() },
+                { EquipmentSlot::OffHand, ProtocolCraft::Slot() },
+                { EquipmentSlot::Boots, ProtocolCraft::Slot() },
+                { EquipmentSlot::Leggings, ProtocolCraft::Slot() },
+                { EquipmentSlot::ChestPlate, ProtocolCraft::Slot() },
+                { EquipmentSlot::Helmet, ProtocolCraft::Slot() }
+            };
+        }
 
         // Initialize all metadata with default values
         SetDataSharedFlagsId(0);
@@ -278,6 +281,7 @@ namespace Botcraft
 
     AABB Entity::GetCollider() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2, position.z), Vector3<double>(GetWidth() / 2, GetHeight() / 2, GetWidth() / 2));
     }
 
@@ -549,50 +553,59 @@ namespace Botcraft
     void Entity::SetMetadataValue(const int index, const std::any& value)
     {
         assert(index >= 0 && index < metadata_count);
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata[metadata_names[index]] = value;
     }
 
 
     char Entity::GetDataSharedFlagsId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_shared_flags_id"));
     }
 
     int Entity::GetDataAirSupplyId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_air_supply_id"));
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-    const std::optional<ProtocolCraft::Chat>& Entity::GetDataCustomName() const
+    std::optional<ProtocolCraft::Chat> Entity::GetDataCustomName() const
     {
-        return std::any_cast<const std::optional<ProtocolCraft::Chat>&>(metadata.at("data_custom_name"));
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<std::optional<ProtocolCraft::Chat>>(metadata.at("data_custom_name"));
     }
 #else
-    const std::string& Entity::GetDataCustomName() const
+    std::string Entity::GetDataCustomName() const
     {
-        return std::any_cast<const std::string&>(metadata.at("data_custom_name"));
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<std::string>(metadata.at("data_custom_name"));
     }
 #endif
 
     bool Entity::GetDataCustomNameVisible() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_custom_name_visible"));
     }
 
     bool Entity::GetDataSilent() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_silent"));
     }
 
     bool Entity::GetDataNoGravity() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_no_gravity"));
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     Pose Entity::GetDataPose() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<Pose>(metadata.at("data_pose"));
     }
 #endif
@@ -600,6 +613,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
     int Entity::GetDataTicksFrozen() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_ticks_frozen"));
     }
 #endif
@@ -607,44 +621,52 @@ namespace Botcraft
 
     void Entity::SetDataSharedFlagsId(const char data_shared_flags_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_shared_flags_id"] = data_shared_flags_id;
     }
 
     void Entity::SetDataAirSupplyId(const int data_air_supply_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_air_supply_id"] = data_air_supply_id;
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void Entity::SetDataCustomName(const std::optional<ProtocolCraft::Chat>& data_custom_name)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_custom_name"] = data_custom_name;
     }
 #else
     void Entity::SetDataCustomName(const std::string& data_custom_name)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_custom_name"] = data_custom_name;
     }
 #endif
 
     void Entity::SetDataCustomNameVisible(const bool data_custom_name_visible)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_custom_name_visible"] = data_custom_name_visible;
     }
 
     void Entity::SetDataSilent(const bool data_silent)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_silent"] = data_silent;
     }
 
     void Entity::SetDataNoGravity(const bool data_no_gravity)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_no_gravity"] = data_no_gravity;
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void Entity::SetDataPose(const Pose data_pose)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_pose"] = data_pose;
     }
 #endif
@@ -652,6 +674,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
     void Entity::SetDataTicksFrozen(const int data_ticks_frozen)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_ticks_frozen"] = data_ticks_frozen;
     }
 #endif
@@ -659,86 +682,102 @@ namespace Botcraft
 
     int Entity::GetEntityID() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return entity_id;
     }
 
-    const Vector3<double>& Entity::GetPosition() const
+    Vector3<double> Entity::GetPosition() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return position;
     }
 
     double Entity::GetX() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return position.x;
     }
 
     double Entity::GetY() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return position.y;
     }
 
     double Entity::GetZ() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return position.z;
     }
 
     float Entity::GetYaw() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return yaw;
     }
 
     float Entity::GetPitch() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return pitch;
     }
 
-    const Vector3<double>& Entity::GetSpeed() const
+    Vector3<double> Entity::GetSpeed() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return speed;
     }
 
     double Entity::GetSpeedX() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return speed.x;
     }
 
     double Entity::GetSpeedY() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return speed.y;
     }
 
     double Entity::GetSpeedZ() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return speed.z;
     }
 
     bool Entity::GetOnGround() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return on_ground;
     }
 
-    const std::map<EquipmentSlot, ProtocolCraft::Slot>& Entity::GetEquipments() const
+    std::map<EquipmentSlot, ProtocolCraft::Slot> Entity::GetEquipments() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return equipments;
     }
 
-    const ProtocolCraft::Slot& Entity::GetEquipment(const EquipmentSlot slot) const
+    ProtocolCraft::Slot Entity::GetEquipment(const EquipmentSlot slot) const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return equipments.at(slot);
     }
 
-    const std::vector<EntityEffect>& Entity::GetEffects() const
+    std::vector<EntityEffect> Entity::GetEffects() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return effects;
     }
 
 #if USE_GUI
-    const std::vector<Renderer::Face>& Entity::GetFaces()
+    std::vector<Renderer::Face> Entity::GetFaces(const bool reset_uptodate_status)
     {
         if (faces.size() == 0)
         {
             InitializeFaces();
         }
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         if (!are_rendered_faces_up_to_date)
         {
             for (size_t i = 0; i < faces.size(); ++i)
@@ -746,11 +785,16 @@ namespace Botcraft
                 faces[i].UpdateMatrix(face_descriptors[i].transformations, face_descriptors[i].orientation);
             }
         }
+        if (reset_uptodate_status)
+        {
+            are_rendered_faces_up_to_date = true;
+        }
         return faces;
     }
 
     bool Entity::GetAreRenderedFacesUpToDate() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return are_rendered_faces_up_to_date;
     }
 #endif
@@ -758,11 +802,13 @@ namespace Botcraft
 
     void Entity::SetEntityID(const int entity_id_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         entity_id = entity_id_;
     }
 
     void Entity::SetPosition(const Vector3<double>& position_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
 #if USE_GUI
         if (position_ != position)
         {
@@ -781,6 +827,7 @@ namespace Botcraft
 
     void Entity::SetX(const double x_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
 #if USE_GUI
         if (x_ != position.x)
         {
@@ -796,6 +843,7 @@ namespace Botcraft
 
     void Entity::SetY(const double y_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
 #if USE_GUI
         if (y_ != position.y)
         {
@@ -811,6 +859,7 @@ namespace Botcraft
 
     void Entity::SetZ(const double z_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
 #if USE_GUI
         if (z_ != position.z)
         {
@@ -826,6 +875,7 @@ namespace Botcraft
 
     void Entity::SetYaw(const float yaw_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
 #if USE_GUI
         if (yaw_ != yaw)
         {
@@ -841,6 +891,7 @@ namespace Botcraft
 
     void Entity::SetPitch(const float pitch_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
 #if USE_GUI
         if (pitch_ != pitch)
         {
@@ -856,41 +907,49 @@ namespace Botcraft
 
     void Entity::SetSpeed(const Vector3<double>& speed_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         speed = speed_;
     }
 
     void Entity::SetSpeedX(const double speed_x_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         speed.x = speed_x_;
     }
 
     void Entity::SetSpeedY(const double speed_y_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         speed.y = speed_y_;
     }
 
     void Entity::SetSpeedZ(const double speed_z_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         speed.z = speed_z_;
     }
 
     void Entity::SetOnGround(const bool on_ground_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         on_ground = on_ground_;
     }
 
     void Entity::SetEquipment(const EquipmentSlot slot, const ProtocolCraft::Slot& item)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         equipments.at(slot) = item;
     }
 
     void Entity::SetEffects(const std::vector<EntityEffect>& effects_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         effects = effects_;
     }
 
     void Entity::RemoveEffect(const EntityEffectType type)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         for (auto it = effects.begin(); it != effects.end();)
         {
             if (it->type == type)
@@ -906,8 +965,19 @@ namespace Botcraft
 
     void Entity::AddEffect(const EntityEffect& effect)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         // First, remove any instance of this type of effect on the entity
-        RemoveEffect(effect.type);
+        for (auto it = effects.begin(); it != effects.end();)
+        {
+            if (it->type == effect.type)
+            {
+                it = effects.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
 
         // Then add the new one
         effects.push_back(effect);
@@ -916,6 +986,7 @@ namespace Botcraft
 #if USE_GUI
     void Entity::SetAreRenderedFacesUpToDate(const bool should_be_updated_)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         are_rendered_faces_up_to_date = should_be_updated_;
     }
 #endif
@@ -925,16 +996,19 @@ namespace Botcraft
     {
         ProtocolCraft::Json::Value output;
 
-        output["id"] = entity_id;
-        output["position"] = position.Serialize();
-        output["yaw"] = yaw;
-        output["pitch"] = pitch;
-        output["speed"] = speed.Serialize();
-        output["on_ground"] = on_ground;
-        output["equipment"] = ProtocolCraft::Json::Value();
-        for (auto& p : equipments)
         {
-            output["equipment"][std::to_string(static_cast<int>(p.first))] = p.second.Serialize();
+            std::shared_lock<std::shared_mutex> lock(entity_mutex);
+            output["id"] = entity_id;
+            output["position"] = position.Serialize();
+            output["yaw"] = yaw;
+            output["pitch"] = pitch;
+            output["speed"] = speed.Serialize();
+            output["on_ground"] = on_ground;
+            output["equipment"] = ProtocolCraft::Json::Value();
+            for (auto& p : equipments)
+            {
+                output["equipment"][std::to_string(static_cast<int>(p.first))] = p.second.Serialize();
+            }
         }
 
         output["metadata"] = ProtocolCraft::Json::Value();
@@ -1547,6 +1621,7 @@ namespace Botcraft
 #if USE_GUI
     void Entity::InitializeFaces()
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         const Renderer::Atlas* atlas = AssetsManager::getInstance().GetAtlas();
 
         // Generate default faces

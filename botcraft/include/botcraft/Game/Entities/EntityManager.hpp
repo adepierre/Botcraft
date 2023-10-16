@@ -1,9 +1,12 @@
 #pragma once
 
-#include "protocolCraft/Handler.hpp"
-#include <unordered_map>
 #include <memory>
-#include <mutex>
+#include <shared_mutex>
+#include <unordered_map>
+
+#include "protocolCraft/Handler.hpp"
+
+#include "botcraft/Utilities/ScopeLockedWrapper.hpp"
 
 namespace Botcraft
 {
@@ -16,11 +19,15 @@ namespace Botcraft
         EntityManager();
 
         std::shared_ptr<LocalPlayer> GetLocalPlayer();
-        const std::unordered_map<int, std::shared_ptr<Entity> >& GetEntities() const;
+
         std::shared_ptr<Entity> GetEntity(const int id) const;
         void AddEntity(const std::shared_ptr<Entity>& entity);
 
-        std::mutex& GetMutex();
+        /// @brief Get a read-only locked version of all the loaded entities (including local player)
+        /// @return Basically an object you can use as a std::unordered_map<int, std::shared_ptr<Entity>>*.
+        /// **ALL ENTITIES UPDATE WILL BE BLOCKED WHILE THIS OBJECT IS ALIVE**, make sure it goes out of scope
+        /// as soon as you don't need it.
+        Utilities::ScopeLockedWrapper<const std::unordered_map<int, std::shared_ptr<Entity>>, std::shared_mutex, std::shared_lock> GetEntities() const;
 
     protected:
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
@@ -63,6 +70,6 @@ namespace Botcraft
         // The current player is stored independently
         std::shared_ptr<LocalPlayer> local_player;
 
-        std::mutex entity_manager_mutex;
+        mutable std::shared_mutex entity_manager_mutex;
     };
 } // Botcraft

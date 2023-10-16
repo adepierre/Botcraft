@@ -94,43 +94,51 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     float AreaEffectCloudEntity::GetDataRadius() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<float>(metadata.at("data_radius"));
     }
 
     int AreaEffectCloudEntity::GetDataColor() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_color"));
     }
 
     bool AreaEffectCloudEntity::GetDataWaiting() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_waiting"));
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     const std::shared_ptr<ProtocolCraft::Particle>& AreaEffectCloudEntity::GetDataParticle() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::shared_ptr<ProtocolCraft::Particle>&>(metadata.at("data_particle"));
     }
 #else
     const std::optional<int>& AreaEffectCloudEntity::GetDataParticle() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::optional<int>&>(metadata.at("data_particle"));
     }
 
     int AreaEffectCloudEntity::GetDataParticleArgument1() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_particle_argument1"));
     }
 
     int AreaEffectCloudEntity::GetDataParticleArgument2() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_particle_argument2"));
     }
 #endif
@@ -138,6 +146,7 @@ namespace Botcraft
 
     void AreaEffectCloudEntity::SetDataRadius(const float data_radius)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_radius"] = data_radius;
 #if USE_GUI
         are_rendered_faces_up_to_date = false;
@@ -151,32 +160,38 @@ namespace Botcraft
 
     void AreaEffectCloudEntity::SetDataColor(const int data_color)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_color"] = data_color;
     }
 
     void AreaEffectCloudEntity::SetDataWaiting(const bool data_waiting)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_waiting"] = data_waiting;
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void AreaEffectCloudEntity::SetDataParticle(const std::shared_ptr<ProtocolCraft::Particle>& data_particle)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_particle"] = data_particle;
     }
 #else
     void AreaEffectCloudEntity::SetDataParticle(const std::optional<int>& data_particle)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_particle"] = data_particle;
     }
 
     void AreaEffectCloudEntity::SetDataParticleArgument1(const int data_particle_argument1)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_particle_argument1"] = data_particle_argument1;
     }
 
     void AreaEffectCloudEntity::SetDataParticleArgument2(const int data_particle_argument2)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_particle_argument2"] = data_particle_argument2;
     }
 #endif

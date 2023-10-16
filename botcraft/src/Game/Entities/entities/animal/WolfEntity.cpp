@@ -89,6 +89,7 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
@@ -96,23 +97,27 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 499 /* < 1.15 */
     float WolfEntity::GetDataHealthId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<float>(metadata.at("data_health_id"));
     }
 #endif
 
     bool WolfEntity::GetDataInterestedId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_interested_id"));
     }
 
     int WolfEntity::GetDataCollarColor() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_collar_color"));
     }
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     int WolfEntity::GetDataRemainingAngerTime() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_remaining_anger_time"));
     }
 #endif
@@ -121,23 +126,27 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 499 /* < 1.15 */
     void WolfEntity::SetDataHealthId(const float data_health_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_health_id"] = data_health_id;
     }
 #endif
 
     void WolfEntity::SetDataInterestedId(const bool data_interested_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_interested_id"] = data_interested_id;
     }
 
     void WolfEntity::SetDataCollarColor(const int data_collar_color)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_collar_color"] = data_collar_color;
     }
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     void WolfEntity::SetDataRemainingAngerTime(const int data_remaining_anger_time)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_remaining_anger_time"] = data_remaining_anger_time;
     }
 #endif

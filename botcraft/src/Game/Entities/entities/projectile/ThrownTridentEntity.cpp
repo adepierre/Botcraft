@@ -78,18 +78,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     char ThrownTridentEntity::GetIdLoyalty() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("id_loyalty"));
     }
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     bool ThrownTridentEntity::GetIdFoil() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("id_foil"));
     }
 #endif
@@ -97,12 +100,14 @@ namespace Botcraft
 
     void ThrownTridentEntity::SetIdLoyalty(const char id_loyalty)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["id_loyalty"] = id_loyalty;
     }
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     void ThrownTridentEntity::SetIdFoil(const bool id_foil)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["id_foil"] = id_foil;
     }
 #endif

@@ -88,6 +88,7 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
@@ -95,23 +96,27 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     const VillagerData& VillagerEntity::GetDataVillagerData() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const VillagerData&>(metadata.at("data_villager_data"));
     }
 
 
     void VillagerEntity::SetDataVillagerData(const VillagerData& data_villager_data)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_villager_data"] = data_villager_data;
     }
 #else
     int VillagerEntity::GetDataVillagerProfessionId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_villager_profession_id"));
     }
 
 
     void VillagerEntity::SetDataVillagerProfessionId(const int data_villager_profession_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_villager_profession_id"] = data_villager_profession_id;
     }
 #endif

@@ -89,23 +89,27 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     bool ZombieEntity::GetDataBabyId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_baby_id"));
     }
 
     int ZombieEntity::GetDataSpecialTypeId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_special_type_id"));
     }
 
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
     bool ZombieEntity::GetDataAreHandsUp() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_are_hands_up"));
     }
 #endif
@@ -113,6 +117,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     bool ZombieEntity::GetDataDrownedConversionId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_drowned_conversion_id"));
     }
 #endif
@@ -120,17 +125,20 @@ namespace Botcraft
 
     void ZombieEntity::SetDataBabyId(const bool data_baby_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_baby_id"] = data_baby_id;
     }
 
     void ZombieEntity::SetDataSpecialTypeId(const int data_special_type_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_special_type_id"] = data_special_type_id;
     }
 
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
     void ZombieEntity::SetDataAreHandsUp(const bool data_are_hands_up)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_are_hands_up"] = data_are_hands_up;
     }
 #endif
@@ -138,6 +146,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void ZombieEntity::SetDataDrownedConversionId(const bool data_drowned_conversion_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_drowned_conversion_id"] = data_drowned_conversion_id;
     }
 #endif

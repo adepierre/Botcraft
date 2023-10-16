@@ -76,28 +76,33 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     bool AllayEntity::GetDataDancing() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_dancing"));
     }
 
     bool AllayEntity::GetDataCanDuplicate() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_can_duplicate"));
     }
 
 
     void AllayEntity::SetDataDancing(const bool data_dancing)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_dancing"] = data_dancing;
     }
 
     void AllayEntity::SetDataCanDuplicate(const bool data_can_duplicate)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_can_duplicate"] = data_can_duplicate;
     }
 #endif

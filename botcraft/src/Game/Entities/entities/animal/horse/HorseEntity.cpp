@@ -77,18 +77,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int HorseEntity::GetDataIdTypeVariant() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_type_variant"));
     }
 
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
     const std::optional<int>& HorseEntity::GetArmorType() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::optional<int>&>(metadata.at("armor_type"));
     }
 #endif
@@ -96,12 +99,14 @@ namespace Botcraft
 
     void HorseEntity::SetDataIdTypeVariant(const int data_id_type_variant)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_type_variant"] = data_id_type_variant;
     }
 
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
     void HorseEntity::SetArmorType(const std::optional<int>& armor_type)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["armor_type"] = armor_type;
     }
 #endif

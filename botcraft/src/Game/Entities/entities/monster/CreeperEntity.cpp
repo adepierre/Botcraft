@@ -74,38 +74,45 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int CreeperEntity::GetDataSwellDir() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_swell_dir"));
     }
 
     bool CreeperEntity::GetDataIsPowered() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_is_powered"));
     }
 
     bool CreeperEntity::GetDataIsIgnited() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_is_ignited"));
     }
 
 
     void CreeperEntity::SetDataSwellDir(const int data_swell_dir)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_swell_dir"] = data_swell_dir;
     }
 
     void CreeperEntity::SetDataIsPowered(const bool data_is_powered)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_is_powered"] = data_is_powered;
     }
 
     void CreeperEntity::SetDataIsIgnited(const bool data_is_ignited)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_is_ignited"] = data_is_ignited;
     }
 

@@ -86,78 +86,93 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     char ArmorStandEntity::GetDataClientFlags() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_client_flags"));
     }
 
     const Vector3<float>& ArmorStandEntity::GetDataHeadPose() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Vector3<float>&>(metadata.at("data_head_pose"));
     }
 
     const Vector3<float>& ArmorStandEntity::GetDataBodyPose() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Vector3<float>&>(metadata.at("data_body_pose"));
     }
 
     const Vector3<float>& ArmorStandEntity::GetDataLeftArmPose() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Vector3<float>&>(metadata.at("data_left_arm_pose"));
     }
 
     const Vector3<float>& ArmorStandEntity::GetDataRightArmPose() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Vector3<float>&>(metadata.at("data_right_arm_pose"));
     }
 
     const Vector3<float>& ArmorStandEntity::GetDataLeftLegPose() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Vector3<float>&>(metadata.at("data_left_leg_pose"));
     }
 
     const Vector3<float>& ArmorStandEntity::GetDataRightLegPose() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Vector3<float>&>(metadata.at("data_right_leg_pose"));
     }
 
 
     void ArmorStandEntity::SetDataClientFlags(const char data_client_flags)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_client_flags"] = data_client_flags;
     }
 
     void ArmorStandEntity::SetDataHeadPose(const Vector3<float>& data_head_pose)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_head_pose"] = data_head_pose;
     }
 
     void ArmorStandEntity::SetDataBodyPose(const Vector3<float>& data_body_pose)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_body_pose"] = data_body_pose;
     }
 
     void ArmorStandEntity::SetDataLeftArmPose(const Vector3<float>& data_left_arm_pose)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_left_arm_pose"] = data_left_arm_pose;
     }
 
     void ArmorStandEntity::SetDataRightArmPose(const Vector3<float>& data_right_arm_pose)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_right_arm_pose"] = data_right_arm_pose;
     }
 
     void ArmorStandEntity::SetDataLeftLegPose(const Vector3<float>& data_left_leg_pose)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_left_leg_pose"] = data_left_leg_pose;
     }
 
     void ArmorStandEntity::SetDataRightLegPose(const Vector3<float>& data_right_leg_pose)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_right_leg_pose"] = data_right_leg_pose;
     }
 

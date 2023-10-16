@@ -77,48 +77,57 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int WitherBossEntity::GetDataTargetA() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_target_a"));
     }
 
     int WitherBossEntity::GetDataTargetB() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_target_b"));
     }
 
     int WitherBossEntity::GetDataTargetC() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_target_c"));
     }
 
     int WitherBossEntity::GetDataIdInv() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_inv"));
     }
 
 
     void WitherBossEntity::SetDataTargetA(const int data_target_a)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_target_a"] = data_target_a;
     }
 
     void WitherBossEntity::SetDataTargetB(const int data_target_b)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_target_b"] = data_target_b;
     }
 
     void WitherBossEntity::SetDataTargetC(const int data_target_c)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_target_c"] = data_target_c;
     }
 
     void WitherBossEntity::SetDataIdInv(const int data_id_inv)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_inv"] = data_id_inv;
     }
 

@@ -69,18 +69,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int PufferfishEntity::GetPuffState() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("puff_state"));
     }
 
 
     void PufferfishEntity::SetPuffState(const int puff_state)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["puff_state"] = puff_state;
     }
 

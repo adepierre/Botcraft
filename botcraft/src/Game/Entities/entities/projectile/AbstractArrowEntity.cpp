@@ -67,18 +67,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     char AbstractArrowEntity::GetIdFlags() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("id_flags"));
     }
 
 #if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
     const std::optional<ProtocolCraft::UUID>& AbstractArrowEntity::GetDataOwneruuidId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_owneruuid_id"));
     }
 #endif
@@ -86,6 +89,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     char AbstractArrowEntity::GetPierceLevel() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("pierce_level"));
     }
 #endif
@@ -93,12 +97,14 @@ namespace Botcraft
 
     void AbstractArrowEntity::SetIdFlags(const char id_flags)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["id_flags"] = id_flags;
     }
 
 #if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
     void AbstractArrowEntity::SetDataOwneruuidId(const std::optional<ProtocolCraft::UUID>& data_owneruuid_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_owneruuid_id"] = data_owneruuid_id;
     }
 #endif
@@ -106,6 +112,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void AbstractArrowEntity::SetPierceLevel(const char pierce_level)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["pierce_level"] = pierce_level;
     }
 #endif

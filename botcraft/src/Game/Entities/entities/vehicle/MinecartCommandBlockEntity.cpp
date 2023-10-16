@@ -71,28 +71,33 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     const std::string& MinecartCommandBlockEntity::GetDataIdCommandName() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const std::string&>(metadata.at("data_id_command_name"));
     }
 
     const ProtocolCraft::Chat& MinecartCommandBlockEntity::GetDataIdLastOutput() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const ProtocolCraft::Chat&>(metadata.at("data_id_last_output"));
     }
 
 
     void MinecartCommandBlockEntity::SetDataIdCommandName(const std::string& data_id_command_name)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_command_name"] = data_id_command_name;
     }
 
     void MinecartCommandBlockEntity::SetDataIdLastOutput(const ProtocolCraft::Chat& data_id_last_output)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_last_output"] = data_id_last_output;
     }
 

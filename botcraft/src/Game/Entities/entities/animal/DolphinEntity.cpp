@@ -75,38 +75,45 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     const Position& DolphinEntity::GetTreasurePos() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Position&>(metadata.at("treasure_pos"));
     }
 
     bool DolphinEntity::GetGotFish() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("got_fish"));
     }
 
     int DolphinEntity::GetMoistnessLevel() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("moistness_level"));
     }
 
 
     void DolphinEntity::SetTreasurePos(const Position& treasure_pos)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["treasure_pos"] = treasure_pos;
     }
 
     void DolphinEntity::SetGotFish(const bool got_fish)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["got_fish"] = got_fish;
     }
 
     void DolphinEntity::SetMoistnessLevel(const int moistness_level)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["moistness_level"] = moistness_level;
     }
 

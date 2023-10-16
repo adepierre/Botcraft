@@ -69,18 +69,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int WardenEntity::GetClientAngerLevel() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("client_anger_level"));
     }
 
 
     void WardenEntity::SetClientAngerLevel(const int client_anger_level)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["client_anger_level"] = client_anger_level;
     }
 

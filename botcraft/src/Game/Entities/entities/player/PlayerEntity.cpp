@@ -83,68 +83,81 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     float PlayerEntity::GetDataPlayerAbsorptionId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<float>(metadata.at("data_player_absorption_id"));
     }
 
     int PlayerEntity::GetDataScoreId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_score_id"));
     }
 
     char PlayerEntity::GetDataPlayerModeCustomisation() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_player_mode_customisation"));
     }
 
     char PlayerEntity::GetDataPlayerMainHand() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_player_main_hand"));
     }
 
     const ProtocolCraft::NBT::Value& PlayerEntity::GetDataShoulderLeft() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const ProtocolCraft::NBT::Value&>(metadata.at("data_shoulder_left"));
     }
 
     const ProtocolCraft::NBT::Value& PlayerEntity::GetDataShoulderRight() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const ProtocolCraft::NBT::Value&>(metadata.at("data_shoulder_right"));
     }
 
 
     void PlayerEntity::SetDataPlayerAbsorptionId(const float data_player_absorption_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_player_absorption_id"] = data_player_absorption_id;
     }
 
     void PlayerEntity::SetDataScoreId(const int data_score_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_score_id"] = data_score_id;
     }
 
     void PlayerEntity::SetDataPlayerModeCustomisation(const char data_player_mode_customisation)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_player_mode_customisation"] = data_player_mode_customisation;
     }
 
     void PlayerEntity::SetDataPlayerMainHand(const char data_player_main_hand)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_player_main_hand"] = data_player_main_hand;
     }
 
     void PlayerEntity::SetDataShoulderLeft(const ProtocolCraft::NBT::Value& data_shoulder_left)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_shoulder_left"] = data_shoulder_left;
     }
 
     void PlayerEntity::SetDataShoulderRight(const ProtocolCraft::NBT::Value& data_shoulder_right)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_shoulder_right"] = data_shoulder_right;
     }
 

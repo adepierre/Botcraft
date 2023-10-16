@@ -73,18 +73,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     const int PaintingEntity::GetDataPaintingVariantId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_painting_variant_id"));
     }
 
 
     void PaintingEntity::SetDataPaintingVariantId(const int data_painting_variant_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_painting_variant_id"] = data_painting_variant_id;
     }
 #endif

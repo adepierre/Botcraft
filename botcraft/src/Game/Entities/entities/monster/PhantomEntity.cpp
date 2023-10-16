@@ -69,18 +69,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int PhantomEntity::GetIdSize() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("id_size"));
     }
 
 
     void PhantomEntity::SetIdSize(const int id_size)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["id_size"] = id_size;
     }
 

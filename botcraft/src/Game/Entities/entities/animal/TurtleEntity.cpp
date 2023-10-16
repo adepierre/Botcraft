@@ -84,68 +84,81 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     const Position& TurtleEntity::GetHomePos() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Position&>(metadata.at("home_pos"));
     }
 
     bool TurtleEntity::GetHasEgg() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("has_egg"));
     }
 
     bool TurtleEntity::GetLayingEgg() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("laying_egg"));
     }
 
     const Position& TurtleEntity::GetTravelPos() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Position&>(metadata.at("travel_pos"));
     }
 
     bool TurtleEntity::GetGoingHome() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("going_home"));
     }
 
     bool TurtleEntity::GetTravelling() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("travelling"));
     }
 
 
     void TurtleEntity::SetHomePos(const Position& home_pos)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["home_pos"] = home_pos;
     }
 
     void TurtleEntity::SetHasEgg(const bool has_egg)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["has_egg"] = has_egg;
     }
 
     void TurtleEntity::SetLayingEgg(const bool laying_egg)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["laying_egg"] = laying_egg;
     }
 
     void TurtleEntity::SetTravelPos(const Position& travel_pos)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["travel_pos"] = travel_pos;
     }
 
     void TurtleEntity::SetGoingHome(const bool going_home)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["going_home"] = going_home;
     }
 
     void TurtleEntity::SetTravelling(const bool travelling)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["travelling"] = travelling;
     }
 

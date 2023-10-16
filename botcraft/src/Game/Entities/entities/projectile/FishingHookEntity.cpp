@@ -84,18 +84,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     int FishingHookEntity::GetDataHookedEntity() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_hooked_entity"));
     }
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     bool FishingHookEntity::GetDataBiting() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_biting"));
     }
 #endif
@@ -103,12 +106,14 @@ namespace Botcraft
 
     void FishingHookEntity::SetDataHookedEntity(const int data_hooked_entity)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_hooked_entity"] = data_hooked_entity;
     }
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     void FishingHookEntity::SetDataBiting(const bool data_biting)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_biting"] = data_biting;
     }
 #endif

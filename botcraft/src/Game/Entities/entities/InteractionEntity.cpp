@@ -76,6 +76,7 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
@@ -83,32 +84,38 @@ namespace Botcraft
     
     float InteractionEntity::GetDataWidthId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<float>(metadata.at("data_width_id"));
     }
     
     float InteractionEntity::GetDataHeightId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<float>(metadata.at("data_height_id"));
     }
     
     bool InteractionEntity::GetDataResponseId() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_response_id"));
     }
     
     
     void InteractionEntity::SetDataWidthId(const float data_width_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_width_id"] = data_width_id;
     }
     
     void InteractionEntity::SetDataHeightId(const float data_height_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_height_id"] = data_height_id;
     }
     
     void InteractionEntity::SetDataResponseId(const bool data_response_id)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_response_id"] = data_response_id;
     }
     

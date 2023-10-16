@@ -68,18 +68,21 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
 
     const Position& FallingBlockEntity::GetDataStartPos() const
     {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const Position&>(metadata.at("data_start_pos"));
     }
 
 
     void FallingBlockEntity::SetDataStartPos(const Position& data_start_pos)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_start_pos"] = data_start_pos;
     }
 
