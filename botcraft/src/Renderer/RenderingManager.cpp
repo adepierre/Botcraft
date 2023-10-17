@@ -651,7 +651,6 @@ namespace Botcraft
 
                     std::vector<Face> faces;
                     // Get the new values
-                    entity_manager->GetMutex().lock();
                     std::shared_ptr<Botcraft::Entity> entity = entity_manager->GetEntity(entity_id);
                     bool should_update = false;
                     if (entity == nullptr)
@@ -660,11 +659,9 @@ namespace Botcraft
                     }
                     else if (!entity->GetAreRenderedFacesUpToDate())
                     {
-                        faces = entity->GetFaces();
-                        entity->SetAreRenderedFacesUpToDate(true);
+                        faces = entity->GetFaces(true);
                         should_update = true;
                     }
-                    entity_manager->GetMutex().unlock();
 
                     if (should_update)
                     {

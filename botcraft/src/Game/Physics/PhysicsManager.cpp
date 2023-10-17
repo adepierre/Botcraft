@@ -83,13 +83,17 @@ namespace Botcraft
             if (network_manager->GetConnectionState() == ProtocolCraft::ConnectionState::Play)
             {
                 std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
-                if (local_player && local_player->GetPosition().y < 1000.0)
+                if (local_player != nullptr && local_player->GetY() < 1000.0)
                 {
-                    std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
+                    // As PhysicsManager is a friend of LocalPlayer, we can lock the whole entity
+                    // while physics is processed. This also means we can't use public interface
+                    // as it's thread-safe by design and would deadlock because of this global lock
+                    std::scoped_lock<std::shared_mutex> lock(local_player->entity_mutex);
+
                     const Position player_position = Position(
-                        static_cast<int>(std::floor(local_player->GetX())),
-                        static_cast<int>(std::floor(local_player->GetY())),
-                        static_cast<int>(std::floor(local_player->GetZ()))
+                        static_cast<int>(std::floor(local_player->position.x)),
+                        static_cast<int>(std::floor(local_player->position.y)),
+                        static_cast<int>(std::floor(local_player->position.z))
                     );
 
                     const bool is_loaded = world->IsLoaded(player_position);
@@ -99,14 +103,14 @@ namespace Botcraft
                         //Check that we did not go through a block
                         Physics();
 
-                        if (local_player->GetHasMoved() ||
-                            std::abs(local_player->GetSpeed().x) > 1e-3 ||
-                            std::abs(local_player->GetSpeed().y) > 1e-3 ||
-                            std::abs(local_player->GetSpeed().z) > 1e-3)
+                        if (local_player->has_moved ||
+                            std::abs(local_player->speed.x) > 1e-3 ||
+                            std::abs(local_player->speed.y) > 1e-3 ||
+                            std::abs(local_player->speed.z) > 1e-3)
                         {
                             has_moved = true;
                             // Reset the player move state until next tick
-                            local_player->SetHasMoved(false);
+                            local_player->has_moved = false;
                         }
                         else
                         {
@@ -114,11 +118,11 @@ namespace Botcraft
                         }
 
                         //Avoid forever falling if position is in the void
-                        if (!has_gravity && local_player->GetPosition().y <= world->GetMinY())
+                        if (!has_gravity && local_player->position.y <= world->GetMinY())
                         {
-                            local_player->SetY(world->GetMinY());
-                            local_player->SetSpeedY(0.0);
-                            local_player->SetOnGround(true);
+                            local_player->position.y = world->GetMinY();
+                            local_player->speed.y = 0.0;
+                            local_player->on_ground = true;
                         }
 
                         UpdatePlayerSpeed();
@@ -127,17 +131,17 @@ namespace Botcraft
 #if USE_GUI
                     if (rendering_manager && has_moved)
                     {
-                        rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
+                        rendering_manager->SetPosOrientation(local_player->position.x, local_player->position.y + 1.62, local_player->position.z, local_player->yaw, local_player->pitch);
                     }
 #endif
                     if (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_send).count() >= 1000)
                     {
-                        msg_position->SetX(local_player->GetPosition().x);
-                        msg_position->SetY(local_player->GetPosition().y);
-                        msg_position->SetZ(local_player->GetPosition().z);
-                        msg_position->SetYRot(local_player->GetYaw());
-                        msg_position->SetXRot(local_player->GetPitch());
-                        msg_position->SetOnGround(local_player->GetOnGround());
+                        msg_position->SetX(local_player->position.x);
+                        msg_position->SetY(local_player->position.y);
+                        msg_position->SetZ(local_player->position.z);
+                        msg_position->SetYRot(local_player->yaw);
+                        msg_position->SetXRot(local_player->pitch);
+                        msg_position->SetOnGround(local_player->on_ground);
 
                         network_manager->Send(msg_position);
                         last_send = std::chrono::steady_clock::now();
@@ -155,24 +159,28 @@ namespace Botcraft
             return;
         }
 
+        // Player mutex is already locked by calling function
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
-        // Player mutex is already locked by calling function
-        const Vector3<double>& player_position = local_player->GetPosition();
-        const Vector3<double>& player_inputs = local_player->GetPlayerInputs();
-
-        Vector3<double> player_movement_speed = local_player->GetSpeed();
+        // Copy speed
+        Vector3<double> player_movement_speed = local_player->speed;
         // Add negative epsilon speed to still trigger collisions and get on_ground correctly
         if (player_movement_speed.y == 0.0)
         {
             player_movement_speed.y -= 1e-7;
         }
-        Vector3<double> player_movement_inputs = player_inputs;
+        // Copy player inputs
+        Vector3<double> player_movement_inputs = local_player->player_inputs;
+
+        const AABB player_collider = AABB(
+            Vector3<double>(local_player->position.x, local_player->position.y + local_player->GetHeight() / 2, local_player->position.z),
+            Vector3<double>(local_player->GetWidth() / 2, local_player->GetHeight() / 2, local_player->GetWidth() / 2)
+        );
 
         // If gravity applies, you can't decide to go up with player inputs
         // (jump is applied to speed not inputs)
         bool has_pass_through;
-        if (!local_player->GetIsClimbing())
+        if (!local_player->is_climbing)
         {
             player_movement_inputs.y = std::min(player_movement_inputs.y, 0.0);
             has_pass_through = false;
@@ -185,8 +193,8 @@ namespace Botcraft
         Vector3<double> min_player_collider, max_player_collider;
         for (int i = 0; i < 3; ++i)
         {
-            min_player_collider[i] = std::min(local_player->GetCollider().GetMin()[i], local_player->GetCollider().GetMin()[i] + player_movement_speed[i] + player_movement_inputs[i]);
-            max_player_collider[i] = std::max(local_player->GetCollider().GetMax()[i], local_player->GetCollider().GetMax()[i] + player_movement_speed[i] + player_movement_inputs[i]);
+            min_player_collider[i] = std::min(player_collider.GetMin()[i], player_collider.GetMin()[i] + player_movement_speed[i] + player_movement_inputs[i]);
+            max_player_collider[i] = std::max(player_collider.GetMax()[i], player_collider.GetMax()[i] + player_movement_speed[i] + player_movement_inputs[i]);
         }
 
         AABB broadphase_collider = AABB((min_player_collider + max_player_collider) / 2.0, (max_player_collider - min_player_collider) / 2.0);
@@ -215,7 +223,7 @@ namespace Botcraft
                     // If the block is not solid and it's not a climbable block below us,
                     // it doesn't collide so ignore it
                     if (!block->IsSolid()
-                        && (!block->IsClimbable() || cube_pos.y >= std::floor(player_position.y)))
+                        && (!block->IsClimbable() || cube_pos.y >= std::floor(local_player->position.y)))
                     {
                         continue;
                     }
@@ -231,13 +239,13 @@ namespace Botcraft
                         }
 
                         Vector3<double> normal;
-                        const double speed_fraction = local_player->GetCollider().SweptCollide(player_movement_speed + player_movement_inputs, shifted_collider, normal);
+                        const double speed_fraction = player_collider.SweptCollide(player_movement_speed + player_movement_inputs, shifted_collider, normal);
 
                         // If we collide with the bottom block with go down user input
                         // and it's a climbable block, then we should pass through
                         const bool pass_through = normal.y == 1.0
                             && block->IsClimbable()
-                            && player_inputs.y < 0;
+                            && local_player->player_inputs.y < 0;
 
                         // If we collide with the bottom block and we shouldn't pass through
                         if (speed_fraction < 1.0 && !pass_through) 
@@ -259,7 +267,7 @@ namespace Botcraft
                         else if (speed_fraction < 1.0 && pass_through)
                         {
                             const double block_top_y = shifted_collider.GetMax().y;
-                            player_movement_speed.y = std::max(player_movement_speed.y, block_top_y - player_position.y);
+                            player_movement_speed.y = std::max(player_movement_speed.y, block_top_y - local_player->position.y);
                         }
 
                         if (pass_through)
@@ -285,48 +293,52 @@ namespace Botcraft
             player_movement_inputs.y = std::max(0.0, player_movement_inputs.y);
         }
 
-        local_player->SetPosition(local_player->GetPosition() + player_movement_speed + player_movement_inputs);
-        local_player->SetOnGround(has_hit_down);
+        local_player->position += player_movement_speed + player_movement_inputs;
+        local_player->on_ground = has_hit_down;
         // Update climbing state
         const Blockstate* block = world->GetBlock(Position(
-            static_cast<int>(std::floor(local_player->GetX())),
-            static_cast<int>(std::floor(local_player->GetY())),
-            static_cast<int>(std::floor(local_player->GetZ())))
+            static_cast<int>(std::floor(local_player->position.x)),
+            static_cast<int>(std::floor(local_player->position.y)),
+            static_cast<int>(std::floor(local_player->position.z)))
         );
-        local_player->SetIsClimbing(block != nullptr && block->IsClimbable());
+        local_player->is_climbing = block != nullptr && block->IsClimbable();
 
         if (has_hit_up)
         {
-            local_player->SetSpeedY(0.0);
+            local_player->speed.y = 0.0;
         }
     }
 
     void PhysicsManager::UpdatePlayerSpeed() const
     {
-        // Player mutex should already locked by calling function
+        // Player mutex is already locked by calling function
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
         // If currently climbing, then no gravity and just remove Y speed
-        local_player->SetSpeed(Vector3<double>(local_player->GetSpeedX() * 0.91, (local_player->GetIsClimbing() || !has_gravity) ? 0.0 : (local_player->GetSpeedY() - 0.08) * 0.98, local_player->GetSpeedZ() * 0.91));
+        local_player->speed = Vector3<double>(
+            local_player->speed.x * 0.91,
+            (local_player->is_climbing || !has_gravity) ? 0.0 : (local_player->speed.y - 0.08) * 0.98,
+            local_player->speed.z * 0.91
+        );
 
-        if (local_player->GetOnGround())
+        if (local_player->on_ground)
         {
             const Vector3<double> ground_drag(0.6, 0.0, 0.6);
             // TODO: adapt drag depending on blocks (slime, ice)
-            local_player->SetSpeed(local_player->GetSpeed() * ground_drag);
+            local_player->speed *= ground_drag;
         }
 
-        if (std::abs(local_player->GetSpeedX()) < 0.003)
+        if (std::abs(local_player->speed.x) < 0.003)
         {
-            local_player->SetSpeedX(0.0);
+            local_player->speed.x = 0.0;
         }
-        if (std::abs(local_player->GetSpeedZ()) < 0.003)
+        if (std::abs(local_player->speed.z) < 0.003)
         {
-            local_player->SetSpeedZ(0.0);
+            local_player->speed.z = 0.0;
         }
 
         // Reset player inputs
-        local_player->SetPlayerInputs(Vector3<double>(0.0));
+        local_player->player_inputs = Vector3<double>(0.0);
     }
 
 } //Botcraft

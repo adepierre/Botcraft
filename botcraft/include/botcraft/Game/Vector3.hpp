@@ -132,6 +132,14 @@ namespace Botcraft
             return *this;
         }
 
+        Vector3& operator*= (const Vector3& v)
+        {
+            x *= v.x;
+            y *= v.y;
+            z *= v.z;
+            return *this;
+        }
+
         const double dot(const Vector3 &v) const
         {
             double output = 0.0;

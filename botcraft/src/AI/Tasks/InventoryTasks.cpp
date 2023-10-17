@@ -380,16 +380,10 @@ namespace Botcraft
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
         
-        Vector3<double> player_pos;
-        {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            player_pos = local_player->GetPosition();
-        }
-
         // Compute the distance from the hand? Might be from somewhere else
-        player_pos.y += 1.0;
+        const Vector3<double> hand_pos = local_player->GetPosition() + Vector3<double>(0.0, 1.0, 0.0);
 
-        if (player_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 16.0f)
+        if (hand_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 16.0f)
         {
             if (GoTo(client, pos, 4, 0, 1) == Status::Failure)
             {
@@ -434,11 +428,7 @@ namespace Botcraft
                     return Status::Failure;
                 }
                 std::vector<PlayerDiggingFace>& face_candidates = (premium_face_candidates.size() > 0 ? premium_face_candidates : second_choice_face_candidates);
-                Vector3<double> player_orientation;
-                {
-                    std::lock_guard<std::mutex> lock(local_player->GetMutex());
-                    player_orientation = local_player->GetFrontVector();
-                }
+                const Vector3<double> player_orientation = local_player->GetFrontVector();
                 std::sort( // Find the face face closest to player looking direction
                     face_candidates.begin(), face_candidates.end(), [&](const PlayerDiggingFace a, const PlayerDiggingFace b) -> bool
                     {

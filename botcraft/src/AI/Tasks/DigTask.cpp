@@ -21,14 +21,9 @@ namespace Botcraft
     Status DigImpl(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face)
     {
         std::shared_ptr<LocalPlayer> local_player = c.GetEntityManager()->GetLocalPlayer();
-        Vector3<double> hand_pos;
-        {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            // Get hand (?) pos to check the distance to the center of the target block
-            // (unsure about the 1.0 distance, might be from the eyes or somewhere else)
-            hand_pos = local_player->GetPosition();
-            hand_pos.y += 1.0;
-        }
+        // Get hand (?) pos to check the distance to the center of the target block
+        // (unsure about the 1.0 distance, might be from the eyes or somewhere else)
+        const Vector3<double> hand_pos = local_player->GetPosition() + Vector3<double>(0.0, 1.0, 0.0);
 
         if (hand_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 20.0f)
         {
@@ -39,17 +34,12 @@ namespace Botcraft
             }
         }
 
-        Position eyes_block;
-        bool is_on_ground;
-        {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            eyes_block = Position(
-                static_cast<int>(std::floor(local_player->GetX())),
-                static_cast<int>(std::floor(local_player->GetY() + 1.6)),
-                static_cast<int>(std::floor(local_player->GetZ()))
-            );
-            is_on_ground = local_player->GetOnGround();
-        }
+        const Position eyes_block = Position(
+            static_cast<int>(std::floor(hand_pos.x)),
+            static_cast<int>(std::floor(hand_pos.y + 0.6)),
+            static_cast<int>(std::floor(hand_pos.z))
+        );
+        const bool is_on_ground = local_player->GetOnGround();
 
         std::shared_ptr<World> world = c.GetWorld();
         const Blockstate* blockstate = world->GetBlock(pos);
@@ -108,8 +98,6 @@ namespace Botcraft
         unsigned char mining_fatigue_amplifier = 0;
         if (!c.GetCreativeMode())
         {
-            std::scoped_lock<std::mutex> entity_manager_lock(c.GetEntityManager()->GetMutex());
-
             for (const auto& effect : local_player->GetEffects())
             {
                 if (effect.type == EntityEffectType::Haste && effect.end > std::chrono::steady_clock::now())
@@ -133,11 +121,8 @@ namespace Botcraft
 
         // TODO check line of sight
         // Look at block
-        {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            // TODO look at model AABB center instead of full block center
-            local_player->LookAt(Vector3<double>(0.5, 0.5, 0.5) + pos, true);
-        }
+        // TODO look at model AABB center instead of full block center
+        local_player->LookAt(Vector3<double>(0.5, 0.5, 0.5) + pos, true);
 
         std::shared_ptr<NetworkManager> network_manager = c.GetNetworkManager();
         std::shared_ptr<ServerboundPlayerActionPacket> msg_digging = std::make_shared<ServerboundPlayerActionPacket>();

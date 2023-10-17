@@ -18,11 +18,7 @@ namespace Botcraft
     {
         std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
 
-        std::shared_ptr<Entity> entity;
-        {
-            std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
-            entity = entity_manager->GetEntity(entity_id);
-        }
+        std::shared_ptr<Entity> entity = entity_manager->GetEntity(entity_id);
 
         if (!entity)
         {
@@ -32,16 +28,8 @@ namespace Botcraft
 
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
-        Vector3<double> entity_position;
-        {
-            std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
-            entity_position = entity->GetPosition();
-        }
-        Vector3<double> position;
-        {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            position = local_player->GetPosition();
-        }
+        Vector3<double> entity_position = entity->GetPosition();
+        Vector3<double> position = local_player->GetPosition();
 
         while (position.SqrDist(entity_position) > 16.0)
         {
@@ -53,11 +41,8 @@ namespace Botcraft
             entity_position = entity->GetPosition();
             position = local_player->GetPosition();
         }
-        
-        {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
-            local_player->LookAt(entity_position + Vector3<double>(0, entity->GetHeight() / 2.0, 0), true);
-        }
+
+        local_player->LookAt(entity_position + Vector3<double>(0, entity->GetHeight() / 2.0, 0), true);
 
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
         std::shared_ptr<ServerboundInteractPacket> msg_interact = std::make_shared<ServerboundInteractPacket>();

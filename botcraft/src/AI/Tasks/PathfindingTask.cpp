@@ -775,22 +775,15 @@ namespace Botcraft
 
     bool Move(BehaviourClient& client, std::shared_ptr<LocalPlayer>& local_player, const Position& target_pos, const float speed, const float climbing_speed)
     {
-        bool is_climbing;
-        Vector3<double> initial_position;
-        Position initial_block_pos;
+        const bool is_climbing = local_player->GetIsClimbing();;
+        const Vector3<double> initial_position = local_player->GetPosition();
+        const Position initial_block_pos(
+            static_cast<int>(std::floor(initial_position.x)),
+            static_cast<int>(std::floor(initial_position.y + 0.25)),
+            static_cast<int>(std::floor(initial_position.z))
+        );
         const Vector3<double> target_position(target_pos.x + 0.5, target_pos.y, target_pos.z + 0.5);
-
-        {
-            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-            is_climbing = local_player->GetIsClimbing();
-            initial_position = local_player->GetPosition();
-            initial_block_pos = Position(
-                static_cast<int>(std::floor(local_player->GetPosition().x)),
-                static_cast<int>(std::floor(local_player->GetPosition().y + 0.25)),
-                static_cast<int>(std::floor(local_player->GetPosition().z))
-            );
-            local_player->LookAt(target_position + Vector3<double>(0.0, 1.62, 0.0), true);
-        }
+        local_player->LookAt(target_position + Vector3<double>(0.0, 1.62, 0.0), true);
         const Vector3<double> motion_vector = target_position - initial_position;
 
         // If need to jump to catch climbable at head level
@@ -800,11 +793,7 @@ namespace Botcraft
             && !is_climbing
             )
         {
-            // Jump
-            {
-                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                local_player->Jump();
-            }
+            local_player->Jump();
 
             auto now = std::chrono::steady_clock::now();
             while (true)
@@ -814,23 +803,17 @@ namespace Botcraft
                 {
                     return false;
                 }
+                if (local_player->GetY() - initial_position.y >= 1.0f
+                    || local_player->GetIsClimbing())
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    if (local_player->GetY() - initial_position.y >= 1.0f
-                        || local_player->GetIsClimbing())
-                    {
-                        break;
-                    }
+                    break;
                 }
                 client.Yield();
             }
 
             // We are in the climbable block we want to reach,
             // now adjust Y position to target
-            {
-                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                local_player->SetPlayerInputsY(target_position.y + 0.001 - local_player->GetY() - local_player->GetSpeedY());
-            }
+            local_player->SetPlayerInputsTargetY(target_position.y + 0.001);
 
             // Wait for physics thread to update position
             now = std::chrono::steady_clock::now();
@@ -841,21 +824,17 @@ namespace Botcraft
                 {
                     return false;
                 }
+                if (std::abs(local_player->GetY() - target_position.y) <= 1e-2)
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    if (std::abs(local_player->GetY() - target_position.y) <= 1e-2)
-                    {
-                        break;
-                    }
+                    break;
                 }
                 client.Yield();
             }
         }
         // If we need to climb/go down
-        else if (std::abs(motion_vector.x) < 0.5
-            && std::abs(motion_vector.z) < 0.5
-            && std::abs(motion_vector.y) > 0.5
-            )
+        else if (std::abs(motion_vector.x) < 0.5 &&
+            std::abs(motion_vector.z) < 0.5 &&
+            std::abs(motion_vector.y) > 0.5)
         {
             // Get the real movement that has to be done
             // (without the optional free fall after)
@@ -881,24 +860,20 @@ namespace Botcraft
                 // Set the input to adjust position
                 else if (time_count > 1000 * std::abs(player_movement.y) / climbing_speed)
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                     // If the physics thread has updated the position to the target, we're good
                     if (std::abs(local_player->GetY() - (initial_position.y + player_movement.y)) <= 1e-2)
                     {
                         break;
                     }
                     // Else adjust the position to reach it on the next physics update
-                    local_player->SetPlayerInputsY(initial_position.y + player_movement.y + 0.001 - local_player->GetY() - local_player->GetSpeedY());
+                    local_player->SetPlayerInputsTargetY(initial_position.y + player_movement.y + 0.001);
                 }
                 // Otherwise just move partially toward the goal
                 else
                 {
                     long long int delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count();
                     const double delta_y = player_movement.y * delta_t / 1000.0 * climbing_speed;
-                    {
-                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                        local_player->AddPlayerInputsY(delta_y);
-                    }
+                    local_player->AddPlayerInputsY(delta_y);
                     previous_step = now;
                 }
                 client.Yield();
@@ -912,10 +887,7 @@ namespace Botcraft
             // If we are here, it means we need to
             // free fall into a climbable block
             start = std::chrono::steady_clock::now();
-            {
-                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                local_player->SetOnGround(false);
-            }
+            local_player->SetOnGround(false);
             while (true)
             {
                 // It took more than fall height * 500 ms to
@@ -926,17 +898,13 @@ namespace Botcraft
                 }
 
                 // Crouch while we are above the target
+                if (local_player->GetPosition().y - target_position.y > 0)
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    const double diff = local_player->GetPosition().y - target_position.y;
-                    if (diff > 0)
-                    {
-                        local_player->SetPlayerInputsY(-0.1);
-                    }
-                    else if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                    {
-                        break;
-                    }
+                    local_player->SetPlayerInputsY(-0.1);
+                }
+                else if (local_player->GetOnGround() || local_player->GetIsClimbing())
+                {
+                    break;
                 }
                 client.Yield();
             }
@@ -950,19 +918,14 @@ namespace Botcraft
                     return false;
                 }
 
+                if (local_player->GetPosition().y - target_position.y < 0)
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    const double diff = local_player->GetPosition().y - target_position.y;
-
-                    if (diff < 0)
-                    {
-                        local_player->SetPlayerInputsY(0.1);
-                    }
-                    // We are on top
-                    else if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                    {
-                        break;
-                    }
+                    local_player->SetPlayerInputsY(0.1);
+                }
+                // We are on top
+                else if (local_player->GetOnGround() || local_player->GetIsClimbing())
+                {
+                    break;
                 }
                 client.Yield();
             }
@@ -974,11 +937,7 @@ namespace Botcraft
             // If we need to jump to reach an higher block, or to jump over a gap
             if (motion_vector.y > 0.5 || std::abs(motion_vector.x) > 1.5 || std::abs(motion_vector.z) > 1.5)
             {
-                // Jump
-                {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    local_player->Jump();
-                }
+                local_player->Jump();
 
                 // If not a jump above a gap, wait until reaching the next Y value before moving X/Z
                 auto now = std::chrono::steady_clock::now();
@@ -990,13 +949,11 @@ namespace Botcraft
                         return false;
                     }
 
+                    if (local_player->GetY() >= target_pos.y)
                     {
-                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                        if (local_player->GetY() >= target_pos.y)
-                        {
-                            break;
-                        }
+                        break;
                     }
+
                     client.Yield();
                 }
             }
@@ -1017,7 +974,6 @@ namespace Botcraft
                 // We should be arrived
                 else if (time_count > 1000 * motion_norm_xz / speed)
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
                     const Vector3<double> diff = local_player->GetPosition() - target_position;
 
                     // We are at X/Z destination
@@ -1028,7 +984,7 @@ namespace Botcraft
                     }
 
                     // Otherwise, set X and Z inputs to reach the goal
-                    local_player->SetPlayerInputsX(target_position.x - local_player->GetX() - local_player->GetSpeedX());
+                    local_player->SetPlayerInputsTargetX(target_position.x);
                     // if we only move horizontally, directly set the target pos
                     if (target_pos.y == initial_block_pos.y && motion_norm_xz < 1.5)
                     {
@@ -1038,27 +994,24 @@ namespace Botcraft
                     {
                         local_player->SetY(local_player->GetY() + 0.001);
                     }
-                    local_player->SetPlayerInputsZ(target_position.z - local_player->GetZ() - local_player->GetSpeedZ());
+                    local_player->SetPlayerInputsTargetZ(target_position.z);
                 }
                 // Otherwise just move partially toward the goal
                 else
                 {
                     const double delta_t = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count());
                     Vector3<double> delta_v = motion_vector * delta_t / (1000.0 * motion_norm_xz) * speed;
+                    local_player->AddPlayerInputsX(delta_v.x);
+                    // if we only move horizontally, directly set the target pos
+                    if (target_pos.y == initial_block_pos.y && motion_norm_xz < 1.5)
                     {
-                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                        local_player->AddPlayerInputsX(delta_v.x);
-                        // if we only move horizontally, directly set the target pos
-                        if (target_pos.y == initial_block_pos.y && motion_norm_xz < 1.5)
-                        {
-                            local_player->SetY(target_pos.y + 0.001);
-                        }
-                        else
-                        {
-                            local_player->SetY(local_player->GetY() + 0.001);
-                        }
-                        local_player->AddPlayerInputsZ(delta_v.z);
+                        local_player->SetY(target_pos.y + 0.001);
                     }
+                    else
+                    {
+                        local_player->SetY(local_player->GetY() + 0.001);
+                    }
+                    local_player->AddPlayerInputsZ(delta_v.z);
                     previous_step = now;
                 }
                 client.Yield();
@@ -1073,18 +1026,15 @@ namespace Botcraft
                     return false;
                 }
 
+                // This is a long fall, we need to crouch to pass through the landing block without damage
+                if (motion_vector.y < -2.5)
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    // This is a long fall, we need to crouch to pass through the landing block without damage
-                    if (motion_vector.y < -2.5)
-                    {
-                        local_player->SetPlayerInputsY(-0.1);
-                    }
+                    local_player->SetPlayerInputsY(-0.1);
+                }
 
-                    if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                    {
-                        break;
-                    }
+                if (local_player->GetOnGround() || local_player->GetIsClimbing())
+                {
+                    break;
                 }
                 client.Yield();
             }
@@ -1101,61 +1051,64 @@ namespace Botcraft
                         return false;
                     }
 
+                    if (local_player->GetPosition().y - target_position.y < 0)
                     {
-                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                        const double diff = local_player->GetPosition().y - target_position.y;
-
-                        if (diff < 0)
-                        {
-                            local_player->SetPlayerInputsY(0.1);
-                        }
-                        // We are on top
-                        else
-                        {
-                            break;
-                        }
+                        local_player->SetPlayerInputsY(0.1);
+                    }
+                    // We are on top
+                    else
+                    {
+                        break;
                     }
                     client.Yield();
                 }
             }
-            // We are potentially in a climbabale block, and need to go down to reach target Y
+            // We are potentially in a climbable block, and need to go down to reach target Y
             else
             {
                 start = std::chrono::steady_clock::now();
                 previous_step = start;
+                const double climb_diff = target_position.y - local_player->GetY();
                 while (true)
                 {
-                    auto now = std::chrono::steady_clock::now();
+                    // If not climbing, wait for landing on the target block
+                    if (!local_player->GetIsClimbing())
+                    {
+                        break;
+                    }
 
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() >= std::max(1000, static_cast<int>(std::abs(motion_vector.y) * 1000)))
+                    auto now = std::chrono::steady_clock::now();
+                    long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+                    // Something went wrong
+                    if (time_count > 1000 + 1000 * std::abs(climb_diff) / climbing_speed)
                     {
                         return false;
                     }
-
+                    // We climb/go down at climbing_speed block/s
+                    // Set the input to adjust position
+                    else if (time_count > 1000 * std::abs(climb_diff) / climbing_speed)
                     {
-                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-
-                        // If not climbing, wait for landing on the target block
-                        if (!local_player->GetIsClimbing())
+                        // If the physics thread has updated the position to the target, we're good
+                        if (std::abs(local_player->GetY() - target_position.y) <= 1e-2)
                         {
                             break;
                         }
-
-                        const double diff = target_position.y - local_player->GetY();
-
-                        if (std::abs(diff) <= 0.01)
+                        // Else adjust the position to reach it on the next physics update
+                        local_player->SetPlayerInputsTargetY(target_position.y + 0.001);
+                    }
+                    // Otherwise just move partially toward the goal
+                    else
+                    {
+                        const double current_diff = target_position.y - local_player->GetY();
+                        long long int delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count();
+                        double delta_y = delta_t / 1000.0 * climbing_speed;
+                        if (current_diff < 0.0)
                         {
-                            break;
+                            delta_y *= -1.0;
                         }
-
-                        const double delta_y = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count() * 1000.0 / climbing_speed;
-                        if (local_player->GetY() > target_position.y)
-                        {
-                            local_player->AddPlayerInputsY(std::max(delta_y, diff - local_player->GetSpeedY() - local_player->GetPlayerInputsY()));
-                        }
+                        local_player->AddPlayerInputsY(delta_y);
                         previous_step = now;
                     }
-
                     client.Yield();
                 }
 
@@ -1163,12 +1116,9 @@ namespace Botcraft
                 // (no need for a timeout as we can't fall/fly forever anyway)
                 while (true)
                 {
+                    if (local_player->GetOnGround() || local_player->GetIsClimbing())
                     {
-                        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                        if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                        {
-                            break;
-                        }
+                        break;
                     }
                     client.Yield();
                 }
@@ -1208,8 +1158,6 @@ namespace Botcraft
         if (movement_speed == 0.0f)
         {
             const float base_speed = local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED;
-
-            std::scoped_lock<std::mutex> entity_manager_lock(entity_manager->GetMutex());
 
             // Get speed effect
             unsigned char speed_amplifier = 0;
@@ -1320,12 +1268,12 @@ namespace Botcraft
                 // next move
                 else
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
+                    const Vector3<double> local_player_pos = local_player->GetPosition();
                     // Get the position, we add 0.25 to Y in case we are at X.97 instead of X+1
                     current_position = Position(
-                        static_cast<int>(std::floor(local_player->GetPosition().x)),
-                        static_cast<int>(std::floor(local_player->GetPosition().y + 0.25)),
-                        static_cast<int>(std::floor(local_player->GetPosition().z))
+                        static_cast<int>(std::floor(local_player_pos.x)),
+                        static_cast<int>(std::floor(local_player_pos.y + 0.25)),
+                        static_cast<int>(std::floor(local_player_pos.z))
                     );
                 }
             }
@@ -1386,17 +1334,15 @@ namespace Botcraft
 
     Status LookAtImpl(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
     {
+        std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+        local_player->LookAt(target, set_pitch);
+
         std::shared_ptr<ProtocolCraft::ServerboundMovePlayerPacketRot> rot = std::make_shared<ProtocolCraft::ServerboundMovePlayerPacketRot>();
-        {
-            std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
-            std::lock_guard<std::mutex> lock_player(local_player->GetMutex());
-            local_player->LookAt(target, set_pitch);
-            rot->SetOnGround(local_player->GetOnGround());
-            rot->SetYRot(local_player->GetYaw());
-            rot->SetXRot(local_player->GetPitch());
-        }
-        std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
-        network_manager->Send(rot);
+        rot->SetOnGround(local_player->GetOnGround());
+        rot->SetYRot(local_player->GetYaw());
+        rot->SetXRot(local_player->GetPitch());
+
+        client.GetNetworkManager()->Send(rot);
 
         return Status::Success;
     }
