@@ -305,31 +305,23 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
     {
         if (local_player->GetOnGround() && !local_player->GetIsClimbing())
         {
-            // Jump
-            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
             local_player->Jump();
         }
         else if (local_player->GetIsClimbing())
         {
-            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
             local_player->AddPlayerInputsY(2.0 * delta_time);
         }
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::CTRL)])
     {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsY(-2.0 * delta_time);
     }
 
-    {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-        local_player->SetIsRunning(is_key_pressed[static_cast<int>(Renderer::KEY_CODE::SHIFT)]);
-    }
+    local_player->SetIsRunning(is_key_pressed[static_cast<int>(Renderer::KEY_CODE::SHIFT)]);
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::FORWARD)])
     {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsX(local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : LocalPlayer::WALKING_SPEED) * delta_time);
         local_player->AddPlayerInputsZ(local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : LocalPlayer::WALKING_SPEED) * delta_time);
 
@@ -338,7 +330,6 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::BACKWARD)])
     {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsX(- local_player->GetXZVector().x * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
         local_player->AddPlayerInputsZ(- local_player->GetXZVector().z * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
 
@@ -347,7 +338,6 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::RIGHT)])
     {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsX(local_player->GetRightVector().x * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
         local_player->AddPlayerInputsZ(local_player->GetRightVector().z * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
 
@@ -356,7 +346,6 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::LEFT)])
     {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
         local_player->AddPlayerInputsX(- local_player->GetRightVector().x * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
         local_player->AddPlayerInputsZ(- local_player->GetRightVector().z * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
 

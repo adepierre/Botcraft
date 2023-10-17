@@ -37,105 +37,99 @@ Status InitializeBlocks(BehaviourClient& client, const int radius)
     std::vector<Position> carrot_positions;
     std::vector<Position> stone_positions;
 
-    Position my_pos;
-    {
-        std::lock_guard<std::mutex> lock_localplayer(client.GetEntityManager()->GetLocalPlayer()->GetMutex());
-        my_pos = client.GetEntityManager()->GetLocalPlayer()->GetPosition();
-    }
+    const Position my_pos = client.GetEntityManager()->GetLocalPlayer()->GetPosition();
 
+    std::shared_ptr<World> world = client.GetWorld();
+    Position current_pos;
+    for (int x = -radius; x < radius + 1; ++x)
     {
-        std::shared_ptr<World> world = client.GetWorld();
-        Position current_pos;
-        for (int x = -radius; x < radius + 1; ++x)
+        current_pos.x = my_pos.x + x;
+        for (int y = std::max(-radius, world->GetMinY()); y < std::min(world->GetMinY() + world->GetHeight(), radius + 1); ++y)
         {
-            current_pos.x = my_pos.x + x;
-            for (int y = std::max(-radius, world->GetMinY()); y < std::min(world->GetMinY() + world->GetHeight(), radius + 1); ++y)
+            current_pos.y = my_pos.y + y;
+            for (int z = -radius; z < radius + 1; ++z)
             {
-                current_pos.y = my_pos.y + y;
-                for (int z = -radius; z < radius + 1; ++z)
-                {
-                    current_pos.z = my_pos.z + z;
+                current_pos.z = my_pos.z + z;
 
-                    const Blockstate* block = world->GetBlock(current_pos);
-                    if (block == nullptr)
+                const Blockstate* block = world->GetBlock(current_pos);
+                if (block == nullptr)
+                {
+                    continue;
+                }
+                const std::string& block_name = block->GetName();
+                if (block_name == "minecraft:red_bed")
+                {
+                    bed_position = current_pos;
+                    LOG_INFO("Bed found at: " << current_pos << "!");
+                    despawn_position = current_pos + Position(0, 0, 140);
+                    LOG_INFO("Despawn position found at: " << current_pos + Position(0, 0, 140) << "!");
+                }
+                else if (block_name == "minecraft:crafting_table")
+                {
+                    crafting_table_position = current_pos;
+                    buying_standing_position = current_pos + Position(0, 1, 0);
+                    LOG_INFO("Crafting table found at: " << current_pos << "!");
+                    LOG_INFO("Buying standing found at: " << current_pos + Position(0, 1, 0) << "!");
+                }
+                else if (block_name == "minecraft:cactus")
+                {
+                    cactus_position = current_pos;
+                    LOG_INFO("Cactus found at: " << current_pos << "!");
+                }
+                else if (block_name == "minecraft:yellow_concrete")
+                {
+                    cactus_standing_position = current_pos + Position(0, 1, 0);
+                    LOG_INFO("Cactus standing found at: " << current_pos + Position(0, 1, 0) << "!");
+                }
+                else if (block_name == "minecraft:red_shulker_box")
+                {
+                    output_shulker_position = current_pos;
+                    LOG_INFO("Output shulker position found at: " << current_pos << "!");
+                }
+                else if (block_name == "minecraft:white_shulker_box")
+                {
+                    bones_shulker_position = current_pos;
+                    LOG_INFO("Bones shulker position found at: " << current_pos << "!");
+                }
+                else if (block_name == "minecraft:orange_shulker_box")
+                {
+                    rotten_flesh_shulker_position = current_pos;
+                    LOG_INFO("Rotten flesh shulker position found at: " << current_pos << "!");
+                }
+                else if (block_name == "minecraft:light_gray_shulker_box")
+                {
+                    stone_shulker_position = current_pos;
+                    LOG_INFO("Stone shulker position found at: " << current_pos << "!");
+                }
+                else if (block_name == "minecraft:light_gray_concrete")
+                {
+                    stone_standing_position = current_pos + Position(0, 1, 0);
+                    LOG_INFO("Stone standing position found at: " << current_pos + Position(0, 1, 0) << "!");
+                    for (int i = 1; i < 5; ++i)
                     {
-                        continue;
+                        stone_positions.push_back(current_pos + Position(0, 2, i));
+                        LOG_INFO("Stone position found at: " << current_pos + Position(0, 2, i) << "!");
                     }
-                    const std::string& block_name = block->GetName();
-                    if (block_name == "minecraft:red_bed")
-                    {
-                        bed_position = current_pos;
-                        LOG_INFO("Bed found at: " << current_pos << "!");
-                        despawn_position = current_pos + Position(0, 0, 140);
-                        LOG_INFO("Despawn position found at: " << current_pos + Position(0, 0, 140) << "!");
-                    }
-                    else if (block_name == "minecraft:crafting_table")
-                    {
-                        crafting_table_position = current_pos;
-                        buying_standing_position = current_pos + Position(0, 1, 0);
-                        LOG_INFO("Crafting table found at: " << current_pos << "!");
-                        LOG_INFO("Buying standing found at: " << current_pos + Position(0, 1, 0) << "!");
-                    }
-                    else if (block_name == "minecraft:cactus")
-                    {
-                        cactus_position = current_pos;
-                        LOG_INFO("Cactus found at: " << current_pos << "!");
-                    }
-                    else if (block_name == "minecraft:yellow_concrete")
-                    {
-                        cactus_standing_position = current_pos + Position(0, 1, 0);
-                        LOG_INFO("Cactus standing found at: " << current_pos + Position(0, 1, 0) << "!");
-                    }
-                    else if (block_name == "minecraft:red_shulker_box")
-                    {
-                        output_shulker_position = current_pos;
-                        LOG_INFO("Output shulker position found at: " << current_pos << "!");
-                    }
-                    else if (block_name == "minecraft:white_shulker_box")
-                    {
-                        bones_shulker_position = current_pos;
-                        LOG_INFO("Bones shulker position found at: " << current_pos << "!");
-                    }
-                    else if (block_name == "minecraft:orange_shulker_box")
-                    {
-                        rotten_flesh_shulker_position = current_pos;
-                        LOG_INFO("Rotten flesh shulker position found at: " << current_pos << "!");
-                    }
-                    else if (block_name == "minecraft:light_gray_shulker_box")
-                    {
-                        stone_shulker_position = current_pos;
-                        LOG_INFO("Stone shulker position found at: " << current_pos << "!");
-                    }
-                    else if (block_name == "minecraft:light_gray_concrete")
-                    {
-                        stone_standing_position = current_pos + Position(0, 1, 0);
-                        LOG_INFO("Stone standing position found at: " << current_pos + Position(0, 1, 0) << "!");
-                        for (int i = 1; i < 5; ++i)
-                        {
-                            stone_positions.push_back(current_pos + Position(0, 2, i));
-                            LOG_INFO("Stone position found at: " << current_pos + Position(0, 2, i) << "!");
-                        }
-                    }
-                    else if (block_name == "minecraft:lever")
-                    {
-                        stone_lever_position = current_pos;
-                        LOG_INFO("Stone lever position found at: " << current_pos << "!");
-                    }
-                    else if (block_name == "minecraft:note_block")
-                    {
-                        note_block_position = current_pos;
-                        LOG_INFO("Note block position found at: " << current_pos << "!");
-                    }
-                    else if (block_name == "minecraft:potatoes")
-                    {
-                        potato_positions.push_back(current_pos);
-                        LOG_INFO("Potatoes found at: " << current_pos << "!");
-                    }
-                    else if (block_name == "minecraft:carrots")
-                    {
-                        carrot_positions.push_back(current_pos);
-                        LOG_INFO("Carrots found at: " << current_pos << "!");
-                    }
+                }
+                else if (block_name == "minecraft:lever")
+                {
+                    stone_lever_position = current_pos;
+                    LOG_INFO("Stone lever position found at: " << current_pos << "!");
+                }
+                else if (block_name == "minecraft:note_block")
+                {
+                    note_block_position = current_pos;
+                    LOG_INFO("Note block position found at: " << current_pos << "!");
+                }
+                else if (block_name == "minecraft:potatoes")
+                {
+                    potato_positions.push_back(current_pos);
+                    LOG_INFO("Potatoes found at: " << current_pos << "!");
+                }
+                else if (block_name == "minecraft:carrots")
+                {
+                    carrot_positions.push_back(current_pos);
+                    LOG_INFO("Carrots found at: " << current_pos << "!");
                 }
             }
         }
@@ -163,36 +157,36 @@ Status InitializeBlocks(BehaviourClient& client, const int radius)
     std::vector<int> toolsmith_id;
     {
         std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
-        std::lock_guard<std::mutex> lock_entity_manager(entity_manager->GetMutex());
-        for (const auto& e : entity_manager->GetEntities())
+        auto entities = entity_manager->GetEntities();
+        for (const auto& [id, entity] : *entities)
         {
-            if (e.second->GetType() == EntityType::Villager)
+            if (entity->GetType() == EntityType::Villager)
             {
-                std::shared_ptr<VillagerEntity> villager = std::static_pointer_cast<VillagerEntity>(e.second);
+                std::shared_ptr<VillagerEntity> villager = std::static_pointer_cast<VillagerEntity>(entity);
                 if (villager->GetDataVillagerData().profession == 4)
                 {
-                    cleric_id.push_back(e.first);
-                    LOG_INFO("Cleric found with id: " << e.first);
+                    cleric_id.push_back(id);
+                    LOG_INFO("Cleric found with id: " << id);
                 }
                 else if (villager->GetDataVillagerData().profession == 5)
                 {
-                    farmer_id.push_back(e.first);
-                    LOG_INFO("Farmer found with id: " << e.first);
+                    farmer_id.push_back(id);
+                    LOG_INFO("Farmer found with id: " << id);
                 }
                 else if (villager->GetDataVillagerData().profession == 7)
                 {
-                    fletcher_id.push_back(e.first);
-                    LOG_INFO("Fletcher found with id: " << e.first);
+                    fletcher_id.push_back(id);
+                    LOG_INFO("Fletcher found with id: " << id);
                 }
                 else if (villager->GetDataVillagerData().profession == 12)
                 {
-                    shepperd_id.push_back(e.first);
-                    LOG_INFO("Shepperd found with id: " << e.first);
+                    shepperd_id.push_back(id);
+                    LOG_INFO("Shepperd found with id: " << id);
                 }
                 else if (villager->GetDataVillagerData().profession == 13)
                 {
-                    toolsmith_id.push_back(e.first);
-                    LOG_INFO("Toolsmith found with id: " << e.first);
+                    toolsmith_id.push_back(id);
+                    LOG_INFO("Toolsmith found with id: " << id);
                 }
             }
         }
@@ -267,12 +261,12 @@ Status StartSpawners(BehaviourClient& client)
 Status CheckFrostWalkerMob(BehaviourClient& client)
 {
     std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
-    std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
-    for (const auto& e : entity_manager->GetEntities())
+    auto entities = entity_manager->GetEntities();
+    for (const auto& [id, entity] : *entities)
     {
-        if (e.second->IsMonster())
+        if (entity->IsMonster())
         {
-            const Slot& boots = e.second->GetEquipment(EquipmentSlot::Boots);
+            const Slot boots = entity->GetEquipment(EquipmentSlot::Boots);
             if (!boots.IsEmptySlot())
             {
                 if (boots.GetNBT().contains("Enchantments") && boots.GetNBT()["Enchantments"].is_list_of<NBT::TagCompound>())
@@ -794,20 +788,20 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
         moving_items = false;
         entity_positions.clear();
         {
-            std::lock_guard<std::mutex> entity_manager_lock(entity_manager->GetMutex());
-            for (const auto& e : entity_manager->GetEntities())
+            auto entities = entity_manager->GetEntities();
+            for (const auto& [id, entity] : *entities)
             {
-                if (e.second->GetType() == EntityType::ItemEntity)
+                if (entity->GetType() == EntityType::ItemEntity)
                 {
-                    std::shared_ptr<ItemEntity> item = std::static_pointer_cast<ItemEntity>(e.second);
+                    std::shared_ptr<ItemEntity> item = std::static_pointer_cast<ItemEntity>(entity);
 #if PROTOCOL_VERSION < 340 /* < 1.12.2 */
                     if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetBlockID()).at(item->GetDataItem().GetItemDamage())->GetName() == item_name)
 #else
                     if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetItemID())->GetName() == item_name)
 #endif
                     {
-                        entity_positions[e.first] = e.second->GetPosition();
-                        moving_items = e.second->GetSpeed().SqrNorm() > 0.0001;
+                        entity_positions[id] = entity->GetPosition();
+                        moving_items = entity->GetSpeed().SqrNorm() > 0.0001;
                         if (moving_items)
                         {
                             break;
@@ -837,7 +831,6 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
             }
 
             {
-                std::lock_guard<std::mutex> entity_manager_lock(entity_manager->GetMutex());
                 if (entity_manager->GetEntity(e.first) == nullptr)
                 {
                     break;

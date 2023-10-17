@@ -36,16 +36,12 @@ Status Init(SimpleBehaviourClient& client)
     const Position end_block = blackboard.Get<Position>("Eater.end_block");
 
     // Get initial bot position
-    Position init_pos;
     std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
-    {
-        std::lock_guard<std::mutex> lock(local_player->GetMutex());
-        init_pos = Position(
-            static_cast<int>(std::floor(local_player->GetX())),
-            static_cast<int>(std::floor(local_player->GetY())),
-            static_cast<int>(std::floor(local_player->GetZ()))
-        );
-    }
+    const Position init_pos = Position(
+        static_cast<int>(std::floor(local_player->GetX())),
+        static_cast<int>(std::floor(local_player->GetY())),
+        static_cast<int>(std::floor(local_player->GetZ()))
+    );
     blackboard.Set<Position>("Eater.init_pos", init_pos);
 
     const Position min_block(
@@ -254,11 +250,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     const Position& end_block = blackboard.Get<Position>("Eater.end_block");
     const std::pair<Position, ActionType>& action = blackboard.Get<std::pair<Position, ActionType>>("Eater.next_action");
 
-    Vector3<double> player_position;
-    {
-        std::lock_guard<std::mutex> lock(local_player->GetMutex());
-        player_position = local_player->GetPosition();
-    }
+    const Vector3<double> player_position = local_player->GetPosition();
     const Position player_block_position(
         static_cast<int>(std::floor(player_position.x)),
         static_cast<int>(std::floor(player_position.y)),
@@ -414,10 +406,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
         if (action.second == ActionType::BreakPillar)
         {
             // Manually set on ground to false as the physics thread might not have yet registered the missing block
-            {
-                std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                local_player->SetOnGround(false);
-            }
+            local_player->SetOnGround(false);
             auto start = std::chrono::steady_clock::now();
             while (true)
             {
@@ -426,12 +415,9 @@ Status ExecuteAction(SimpleBehaviourClient& client)
                     LOG_WARNING("Timeout waiting to land after mining pillar block");
                     return Status::Failure;
                 }
+                if (local_player->GetOnGround())
                 {
-                    std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-                    if (local_player->GetOnGround())
-                    {
-                        break;
-                    }
+                    break;
                 }
                 client.Yield();
             }
@@ -630,11 +616,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
         return Status::Failure;
     }
 
-    Vector3<double> init_position;
-    {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-        init_position = local_player->GetPosition();
-    }
+    Vector3<double> init_position = local_player->GetPosition();
     Position block_position(
         static_cast<int>(std::floor(init_position.x)),
         static_cast<int>(std::floor(init_position.y + 0.2)), // Add 0.2 in case we are on the top of an "almost full block" and don't want to place lava in our face :)
@@ -669,21 +651,15 @@ Status CleanInventory(SimpleBehaviourClient& client)
             LOG_WARNING("Timeout waiting for on ground trying to clean inventory");
             return Status::Failure;
         }
+        if (local_player->GetOnGround())
         {
-            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-            if (local_player->GetOnGround())
-            {
-                break;
-            }
+            break;
         }
         client.Yield();
     }
 
      // Update positions in case we moved
-    {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-        init_position = local_player->GetPosition();
-    }
+    init_position = local_player->GetPosition();
     block_position = Position(
         static_cast<int>(std::floor(init_position.x)),
         static_cast<int>(std::floor(init_position.y + 0.2)),
@@ -722,11 +698,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
         DropItemsFromContainer(client, Window::PLAYER_INVENTORY_INDEX, idx);
     }
 
-    // Jump
-    {
-        std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-        local_player->Jump();
-    }
+    local_player->Jump();
 
     // Wait to be above start block
     start = std::chrono::steady_clock::now();
@@ -738,12 +710,9 @@ Status CleanInventory(SimpleBehaviourClient& client)
             LOG_WARNING("Timeout waiting for jump above 1 trying to clean inventory");
             return Status::Failure;
         }
+        if (local_player->GetY() - init_position.y >= 1.0f)
         {
-            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-            if (local_player->GetY() - init_position.y >= 1.0f)
-            {
-                break;
-            }
+            break;
         }
         client.Yield();
     }
@@ -826,12 +795,9 @@ Status CleanInventory(SimpleBehaviourClient& client)
             LOG_WARNING("Timeout waiting for on ground trying to clean inventory");
             return Status::Failure;
         }
+        if (local_player->GetOnGround())
         {
-            std::lock_guard<std::mutex> player_lock(local_player->GetMutex());
-            if (local_player->GetOnGround())
-            {
-                break;
-            }
+            break;
         }
         client.Yield();
     }

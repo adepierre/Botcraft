@@ -463,12 +463,12 @@ Status FindNextTask(BehaviourClient& c)
             // Get the position of all other players
             std::vector<Vector3<double> > other_player_pos;
             {
-                std::lock_guard<std::mutex> entity_manager_lock(entity_manager->GetMutex());
-                for (auto it = entity_manager->GetEntities().begin(); it != entity_manager->GetEntities().end(); ++it)
+                auto entities = entity_manager->GetEntities();
+                for (const auto& [id, entity] : *entities)
                 {
-                    if (it->second->GetType() == EntityType::Player)
+                    if (entity->GetType() == EntityType::Player)
                     {
-                        other_player_pos.push_back(it->second->GetPosition());
+                        other_player_pos.push_back(entity ->GetPosition());
                     }
                 }
             }

@@ -17,36 +17,29 @@ Status HitCloseHostiles(BehaviourClient& c)
     const NotifyOnEndUseRef<std::map<int, std::chrono::steady_clock::time_point>> last_time_hit_wrapper = blackboard.GetRef("Entities.LastTimeHit", std::map<int, std::chrono::steady_clock::time_point>());
     std::map<int, std::chrono::steady_clock::time_point>& last_time_hit = last_time_hit_wrapper.ref();
 
-    Vector3<double> player_pos;
-    {
-        std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
-        player_pos = local_player->GetPosition();
-    }
+    const Vector3<double> player_pos = local_player->GetPosition();
 
     auto now = std::chrono::steady_clock::now();
     {
-        std::lock_guard<std::mutex> entities_guard(entity_manager->GetMutex());
-        for (auto& it : entity_manager->GetEntities())
+        auto entities = entity_manager->GetEntities();
+        for (const auto& [id, entity] : *entities)
         {
-            if (it.second->IsMonster() && (it.second->GetPosition()- player_pos).SqrNorm() < 16.0)
+            if (entity->IsMonster() && (entity->GetPosition()- player_pos).SqrNorm() < 16.0)
             {
-                auto time = last_time_hit.find(it.first);
+                auto time = last_time_hit.find(id);
                 if (time != last_time_hit.end() &&
                     std::chrono::duration_cast<std::chrono::milliseconds>(now - time->second).count() < 500)
                 {
                     continue;
                 }
 
-                last_time_hit[it.first] = now;
+                last_time_hit[id] = now;
 
-                {
-                    std::lock_guard<std::mutex> player_guard(local_player->GetMutex());
-                    local_player->LookAt(it.second->GetPosition());
-                }
+                local_player->LookAt(entity->GetPosition());
 
                 std::shared_ptr<ServerboundInteractPacket> msg = std::make_shared<ServerboundInteractPacket>();
                 msg->SetAction(1);
-                msg->SetEntityId(it.first);
+                msg->SetEntityId(id);
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
                 msg->SetUsingSecondaryAction(false);
 #endif
