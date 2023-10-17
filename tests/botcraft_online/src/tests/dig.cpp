@@ -34,7 +34,6 @@ TEST_CASE("dig pickaxe")
     // Wait to be on ground
     Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
         }, 5000);
 
@@ -74,7 +73,6 @@ TEST_CASE("dig pickaxe")
         MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 5000);
 
         CHECK(Botcraft::Utilities::WaitForCondition([&]() {
-            std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetMutex());
             for (const Botcraft::EntityEffect& effect : bot->GetEntityManager()->GetLocalPlayer()->GetEffects())
             {
                 if (effect.type == Botcraft::EntityEffectType::Haste)
@@ -108,7 +106,6 @@ TEST_CASE("dig underwater")
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1, 0, 1));
     Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
         }, 5000);
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
@@ -128,7 +125,6 @@ TEST_CASE("dig underwater")
         MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 5000);
 
         CHECK(Botcraft::Utilities::WaitForCondition([&]() {
-            std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetMutex());
             for (const Botcraft::EntityEffect& effect : bot->GetEntityManager()->GetLocalPlayer()->GetEffects())
             {
                 if (effect.type == Botcraft::EntityEffectType::Haste)
@@ -162,7 +158,6 @@ TEST_CASE("dig shears")
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1, 0, 1));
     Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(bot->GetEntityManager()->GetLocalPlayer()->GetMutex());
             return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
         }, 5000);
 

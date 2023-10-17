@@ -25,7 +25,6 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
     std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
     if (!Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(local_player->GetMutex());
             return local_player->GetPosition().SqrDist(pos) < 1.0;
         }, 5000))
     {

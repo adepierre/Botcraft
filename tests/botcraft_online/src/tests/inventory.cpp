@@ -83,8 +83,8 @@ TEST_CASE("drop items")
         // There is a stick entity on the floor
         CHECK(Botcraft::Utilities::WaitForCondition([&]()
             {
-                std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
-                for (const auto& [id, e] : entity_manager->GetEntities())
+                auto entities = entity_manager->GetEntities();
+                for (const auto& [id, e] : *entities)
                 {
                     // If this is an item entity and closer than 3.5 blocks
                     if (e->GetType() == Botcraft::ItemEntity::GetClassType() &&
@@ -112,8 +112,8 @@ TEST_CASE("drop items")
         // There is a stick entity on the floor
         CHECK(Botcraft::Utilities::WaitForCondition([&]()
             {
-                std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
-                for (const auto& [id, e] : entity_manager->GetEntities())
+                auto entities = entity_manager->GetEntities();
+                for (const auto& [id, e] : *entities)
                 {
                     // If this is an item entity and closer than 3.5 blocks
                     if (e->GetType() == Botcraft::ItemEntity::GetClassType() &&
@@ -324,8 +324,8 @@ TEST_CASE("trade")
     std::shared_ptr<Botcraft::Entity> entity;
     REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(entity_manager->GetMutex());
-            for (const auto& [k, v] : entity_manager->GetEntities())
+            auto entities = entity_manager->GetEntities();
+            for (const auto& [k, v] : *entities)
             {
                 if (v->GetPosition().SqrDist(pos) < 0.2 &&
                     v->GetType() == Botcraft::VillagerEntity::GetClassType())
