@@ -66,17 +66,16 @@ namespace Botcraft
         if (!c.GetCreativeMode())
         {
             std::shared_ptr<InventoryManager> inventory_manager = c.GetInventoryManager();
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
 
             // Check if we have aqua affinity
             if (is_head_in_fluid)
             {
-                const Slot& head_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HEAD_ARMOR);
+                const Slot head_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HEAD_ARMOR);
                 is_head_in_fluid = Utilities::GetEnchantmentLvl(head_armor.GetNBT(), "minecraft:aqua_affinity") == 0;
             }
 
             // Get tool properties
-            const Slot& main_hand = inventory_manager->GetHotbarSelected();
+            const Slot main_hand = inventory_manager->GetHotbarSelected();
             if (!main_hand.IsEmptySlot())
             {
                 const Item* item;

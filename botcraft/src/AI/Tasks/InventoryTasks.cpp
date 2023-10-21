@@ -174,12 +174,7 @@ namespace Botcraft
             return ClickSlotInContainer(client, container_id, -999, 0, 0);
         }
 
-        int item_count = 0;
-        {
-            std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            item_count = inventory_manager->GetCursor().GetItemCount();
-        }
+        int item_count = client.GetInventoryManager()->GetCursor().GetItemCount();
 
         // Drop the right amount of items
         while (item_count > num_to_keep)
@@ -300,41 +295,38 @@ namespace Botcraft
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
         short inventory_correct_slot_index = -1;
-        short inventory_destination_slot_index = -1;
+        short inventory_destination_slot_index = hand == Hand::Left ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
+
+        // We need to check the inventory
+        // If the currently selected item is the right one, just go for it
+        const Slot current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
+        if (!current_selected.IsEmptySlot()
+            && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item_name)
+
         {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
+            return Status::Success;
+        }
 
-            inventory_destination_slot_index = hand == Hand::Left ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
-
-            // We need to check the inventory
-            // If the currently selected item is the right one, just go for it
-            const Slot& current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
-            if (!current_selected.IsEmptySlot()
-                && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item_name)
-
+        // Otherwise we need to find a slot with the given item
+        { // slots scope
+            const auto slots = inventory_manager->GetPlayerInventory()->GetLockedSlots();
+            for (const auto& [id, slot] : *slots)
             {
-                return Status::Success;
-            }
-
-            // Otherwise we need to find a slot with the given item
-            const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
-            for (auto it = slots.begin(); it != slots.end(); ++it)
-            {
-                if (it->first >= Window::INVENTORY_STORAGE_START
-                    && it->first < Window::INVENTORY_OFFHAND_INDEX
-                    && !it->second.IsEmptySlot()
-                    && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == item_name)
+                if (id >= Window::INVENTORY_STORAGE_START
+                    && id < Window::INVENTORY_OFFHAND_INDEX
+                    && !slot.IsEmptySlot()
+                    && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == item_name)
                 {
-                    inventory_correct_slot_index = it->first;
+                    inventory_correct_slot_index = id;
                     break;
                 }
             }
+        }
 
-            // If there is no stack with the given item in the inventory
-            if (inventory_correct_slot_index == -1)
-            {
-                return Status::Failure;
-            }
+        // If there is no stack with the given item in the inventory
+        if (inventory_correct_slot_index == -1)
+        {
+            return Status::Failure;
         }
 
         return SwapItemsInContainer(client, Window::PLAYER_INVENTORY_INDEX, inventory_correct_slot_index, inventory_destination_slot_index);
@@ -467,11 +459,7 @@ namespace Botcraft
             return Status::Failure;
         }
 
-        int num_item_in_hand;
-        {
-            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-            num_item_in_hand = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()).GetItemCount();
-        }
+        const int num_item_in_hand = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()).GetItemCount();
 
         // If cheating is not allowed, adjust the placing position to the block containing the face we're placing against
         const Position placing_pos = (allow_midair_placing && midair_placing) ? pos : (pos + neighbour_offsets[static_cast<int>(face.value())]);
@@ -552,8 +540,7 @@ namespace Botcraft
             }
             if (!is_slot_ok)
             {
-                std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-                int new_num_item_in_hand = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()).GetItemCount();
+                const int new_num_item_in_hand = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected()).GetItemCount();
                 is_slot_ok = new_num_item_in_hand == num_item_in_hand - 1;
             }
 
@@ -750,7 +737,6 @@ namespace Botcraft
         short true_container_id = container_id;
         if (true_container_id < 0)
         {
-            std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
             true_container_id = inventory_manager->GetFirstOpenedWindowId();
         }
         close_container_msg->SetContainerId(static_cast<unsigned char>(true_container_id));
@@ -798,11 +784,11 @@ namespace Botcraft
 
         std::stringstream output;
         {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
             output << "Cursor --> " << inventory_manager->GetCursor().Serialize().Dump() << "\n";
-            for (const auto& s: inventory_manager->GetPlayerInventory()->GetSlots())
+            auto slots = inventory_manager->GetPlayerInventory()->GetLockedSlots();
+            for (const auto& [id, slot] : *slots)
             {
-                output << s.first << " --> " << s.second.Serialize().Dump() << "\n";
+                output << id << " --> " << slot.Serialize().Dump() << "\n";
             }
         }
         LOG(output.str(), level);
@@ -854,22 +840,14 @@ namespace Botcraft
                 return Status::Failure;
             }
 
-            {
-                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-                num_trades = inventory_manager->GetAvailableTrades().size();
-            }
+            num_trades = inventory_manager->GetAvailableTrades().size();
             client.Yield();
         } while (num_trades <= 0 || inventory_manager->GetFirstOpenedWindowId() == -1);
 
-        short container_id;
-        std::shared_ptr<Window> trading_container;
-        {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            container_id = inventory_manager->GetFirstOpenedWindowId();
-            trading_container = inventory_manager->GetWindow(container_id);
-        }
+        const short container_id = inventory_manager->GetFirstOpenedWindowId();
+        std::shared_ptr<Window> trading_container = inventory_manager->GetWindow(container_id);
 
-        if (!trading_container)
+        if (trading_container == nullptr)
         {
             LOG_WARNING("Something went wrong during trade (window closed).");
             return Status::Failure;
@@ -877,37 +855,34 @@ namespace Botcraft
 
         int trade_index = trade_id;
         bool has_trade_second_item = false;
-        {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            const std::vector<ProtocolCraft::Trade>& trades = inventory_manager->GetAvailableTrades();
+        const std::vector<ProtocolCraft::Trade> trades = inventory_manager->GetAvailableTrades();
 
-            // Find which trade we want in the list
-            if (trade_id == -1)
+        // Find which trade we want in the list
+        if (trade_id == -1)
+        {
+            for (int i = 0; i < trades.size(); ++i)
             {
-                for (int i = 0; i < trades.size(); ++i)
+                if ((buy && trades[i].GetOutputItem().GetItemID() == item_id)
+                    || (!buy && trades[i].GetInputItem1().GetItemID() == item_id))
                 {
-                    if ((buy && trades[i].GetOutputItem().GetItemID() == item_id)
-                        || (!buy && trades[i].GetInputItem1().GetItemID() == item_id))
-                    {
-                        trade_index = i;
-                        has_trade_second_item = trades[i].GetInputItem2().has_value();
-                        break;
-                    }
+                    trade_index = i;
+                    has_trade_second_item = trades[i].GetInputItem2().has_value();
+                    break;
                 }
             }
+        }
 
-            if (trade_index == -1)
-            {
-                LOG_WARNING("Failed trading (this villager does not sell/buy " << AssetsManager::getInstance().Items().at(item_id)->GetName() << ")");
-                return Status::Failure;
-            }
+        if (trade_index == -1)
+        {
+            LOG_WARNING("Failed trading (this villager does not sell/buy " << AssetsManager::getInstance().Items().at(item_id)->GetName() << ")");
+            return Status::Failure;
+        }
 
-            // Check that the trade is not locked
-            if (trades[trade_index].GetNumberOfTradesUses() >= trades[trade_index].GetMaximumNumberOfTradeUses())
-            {
-                LOG_WARNING("Failed trading (trade locked)");
-                return Status::Failure;
-            }
+        // Check that the trade is not locked
+        if (trades[trade_index].GetNumberOfTradesUses() >= trades[trade_index].GetMaximumNumberOfTradeUses())
+        {
+            LOG_WARNING("Failed trading (trade locked)");
+            return Status::Failure;
         }
 
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
@@ -929,12 +904,9 @@ namespace Botcraft
                 return Status::Failure;
             }
 
-            {
-                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-                correct_items = (buy && trading_container->GetSlot(2).GetItemID() == item_id) ||
-                    (!buy && !trading_container->GetSlot(2).IsEmptySlot()
-                        && (trading_container->GetSlot(0).GetItemID() == item_id || trading_container->GetSlot(1).GetItemID() == item_id));
-            }
+            correct_items = (buy && trading_container->GetSlot(2).GetItemID() == item_id) ||
+                (!buy && !trading_container->GetSlot(2).IsEmptySlot()
+                    && (trading_container->GetSlot(0).GetItemID() == item_id || trading_container->GetSlot(1).GetItemID() == item_id));
             client.Yield();
         } while (!correct_items);
 
@@ -942,17 +914,17 @@ namespace Botcraft
         std::vector<short> empty_slots(has_trade_second_item ? 3 : 2);
         int empty_slots_index = 0;
         {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            for (const auto& s: trading_container->GetSlots())
+            auto slots = trading_container->GetLockedSlots();
+            for (const auto& [id, slot] : *slots)
             {
-                if (s.first < trading_container->GetFirstPlayerInventorySlot())
+                if (id < trading_container->GetFirstPlayerInventorySlot())
                 {
                     continue;
                 }
 
-                if (s.second.IsEmptySlot())
+                if (slot.IsEmptySlot())
                 {
-                    empty_slots[empty_slots_index] = s.first;
+                    empty_slots[empty_slots_index] = id;
                     empty_slots_index++;
                     if (empty_slots_index == empty_slots.size())
                     {
@@ -971,13 +943,9 @@ namespace Botcraft
             LOG_WARNING("Not enough free space in inventory for trading. Input items may be lost");
         }
 
-        // Copy the input slots to see when they'll change
-        Slot input_slot_1, input_slot_2;
-        {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            input_slot_1 = trading_container->GetSlot(0);
-            input_slot_2 = trading_container->GetSlot(1);
-        }
+        // Get a copy of the original input slots to see when they'll change
+        const Slot input_slot_1 = trading_container->GetSlot(0);
+        const Slot input_slot_2 = trading_container->GetSlot(1);
 
         // Get the output in the inventory
         if (SwapItemsInContainer(client, container_id, empty_slots[0], 2) == Status::Failure)
@@ -996,13 +964,10 @@ namespace Botcraft
                 return Status::Failure;
             }
 
+            if ((input_slot_1.IsEmptySlot() || input_slot_1.GetItemCount() != trading_container->GetSlot(0).GetItemCount()) &&
+                (input_slot_2.IsEmptySlot() || input_slot_2.GetItemCount() != trading_container->GetSlot(1).GetItemCount()))
             {
-                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-                if ((input_slot_1.IsEmptySlot() || input_slot_1.GetItemCount() != trading_container->GetSlot(0).GetItemCount()) &&
-                    (input_slot_2.IsEmptySlot() || input_slot_2.GetItemCount() != trading_container->GetSlot(1).GetItemCount()))
-                {
-                    break;
-                }
+                break;
             }
             client.Yield();
         }
@@ -1019,11 +984,7 @@ namespace Botcraft
 
         // If we are here, everything is fine (or should be),
         // remove 1 to the possible trade counter on the villager
-        {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            ProtocolCraft::Trade& trade = inventory_manager->GetAvailableTrade(trade_index);
-            trade.SetNumberOfTradesUses(trade.GetNumberOfTradesUses() + 1);
-        }
+        inventory_manager->IncrementTradeUse(trade_index);
 
         return Status::Success;
     }
@@ -1169,10 +1130,7 @@ namespace Botcraft
                     LOG_WARNING("Something went wrong waiting craft opening (Timeout).");
                     return Status::Failure;
                 }
-                {
-                    std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-                    crafting_container_id = inventory_manager->GetFirstOpenedWindowId();
-                }
+                crafting_container_id = inventory_manager->GetFirstOpenedWindowId();
                 client.Yield();
             } while (crafting_container_id == -1);
         }
@@ -1181,13 +1139,9 @@ namespace Botcraft
             crafting_container_id = Window::PLAYER_INVENTORY_INDEX;
         }
 
-        std::shared_ptr<Window> crafting_container;
-        {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            crafting_container = inventory_manager->GetWindow(crafting_container_id);
-        }
+        std::shared_ptr<Window> crafting_container = inventory_manager->GetWindow(crafting_container_id);
 
-        if (!crafting_container)
+        if (crafting_container == nullptr)
         {
             LOG_WARNING("Something went wrong during craft (window closed).");
             return Status::Failure;
@@ -1202,7 +1156,6 @@ namespace Botcraft
                 // Save the output slot just before the last input is set
                 if (y == min_y && x == min_x)
                 {
-                    std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
                     output_slot_before = crafting_container->GetSlot(0);
                 }
 
@@ -1212,21 +1165,21 @@ namespace Botcraft
                 int source_quantity = -1;
                 // Search for the required item in inventory
                 {
-                    std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-                    for (const auto& s : crafting_container->GetSlots())
+                    auto slots = crafting_container->GetLockedSlots();
+                    for (const auto& [id, slot] : *slots)
                     {
-                        if (s.first < crafting_container->GetFirstPlayerInventorySlot())
+                        if (id < crafting_container->GetFirstPlayerInventorySlot())
                         {
                             continue;
                         }
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-                        if (s.second.GetBlockID() == inputs[y][x].first && s.second.GetItemDamage() == inputs[y][x].second)
+                        if (slot.GetBlockID() == inputs[y][x].first && s.second.GetItemDamage() == inputs[y][x].second)
 #else
-                        if (s.second.GetItemID() == inputs[y][x])
+                        if (slot.GetItemID() == inputs[y][x])
 #endif
                         {
-                            source_slot = s.first;
-                            source_quantity = s.second.GetItemCount();
+                            source_slot = id;
+                            source_quantity = slot.GetItemCount();
                             break;
                         }
                     }
@@ -1273,12 +1226,9 @@ namespace Botcraft
                 LOG_WARNING("Something went wrong waiting craft output update (Timeout).");
                 return Status::Failure;
             }
+            if (!crafting_container->GetSlot(0).SameItem(output_slot_before))
             {
-                std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-                if (!crafting_container->GetSlot(0).SameItem(output_slot_before))
-                {
-                    break;
-                }
+                break;
             }
             client.Yield();
         }
@@ -1293,21 +1243,21 @@ namespace Botcraft
         // Find an empty slot in inventory to place the cursor content
         int destination_slot = -999;
         {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            for (const auto& s : crafting_container->GetSlots())
+            auto slots = crafting_container->GetLockedSlots();
+            for (const auto& [id, slot] : *slots)
             {
-                if (s.first < (use_inventory_craft ? Window::INVENTORY_STORAGE_START : crafting_container->GetFirstPlayerInventorySlot()))
+                if (id < (use_inventory_craft ? Window::INVENTORY_STORAGE_START : crafting_container->GetFirstPlayerInventorySlot()))
                 {
                     continue;
                 }
 
                 // If it fits in a slot (empty or with the same item)
-                if (s.second.IsEmptySlot() ||
-                    (inventory_manager->GetCursor().GetItemID() == s.second.GetItemID() &&
-                        s.second.GetItemCount() < AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetStackSize() - 1)
+                if (slot.IsEmptySlot() ||
+                    (inventory_manager->GetCursor().GetItemID() == slot.GetItemID() &&
+                        slot.GetItemCount() < AssetsManager::getInstance().Items().at(slot.GetItemID())->GetStackSize() - 1)
                     )
                 {
-                    destination_slot = s.first;
+                    destination_slot = id;
                     break;
                 }
             }
@@ -1437,23 +1387,23 @@ namespace Botcraft
 
         int quantity_sum = 0;
         {
-            std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
-            for (const auto& s : inventory_manager->GetPlayerInventory()->GetSlots())
+            auto slots = inventory_manager->GetPlayerInventory()->GetLockedSlots();
+            for (const auto& [id, slot] : *slots)
             {
-                if (s.first < Window::INVENTORY_STORAGE_START)
+                if (id < Window::INVENTORY_STORAGE_START)
                 {
                     continue;
                 }
 
-                if (!s.second.IsEmptySlot() &&
+                if (!slot.IsEmptySlot() &&
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-                    s.second.GetBlockID() == item_id.first && s.second.GetItemDamage() == item_id.second
+                    slot.GetBlockID() == item_id.first && slot.GetItemDamage() == item_id.second
 #else
-                    s.second.GetItemID() == item_id
+                    slot.GetItemID() == item_id
 #endif
                     )
                 {
-                    quantity_sum += s.second.GetItemCount();
+                    quantity_sum += slot.GetItemCount();
                 }
 
                 if (quantity_sum >= quantity)
@@ -1508,41 +1458,38 @@ namespace Botcraft
         {
             short src_index = -1;
             short dst_index = -1;
+            for (short i = Window::INVENTORY_STORAGE_START; i < Window::INVENTORY_OFFHAND_INDEX; ++i)
             {
-                std::lock_guard<std::mutex> inventory_manager_lock(inventory_manager->GetMutex());
-                for (short i = Window::INVENTORY_STORAGE_START; i < Window::INVENTORY_OFFHAND_INDEX; ++i)
+                const Slot dst_slot = player_inventory->GetSlot(i);
+                if (dst_slot.IsEmptySlot())
                 {
-                    const Slot& dst_slot = player_inventory->GetSlot(i);
-                    if (dst_slot.IsEmptySlot())
-                    {
-                        continue;
-                    }
-                    // If this slot is not empty, and not full,
-                    // check if "upper" slot with same items that
-                    // could fit in it
-                    const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetItemID())->GetStackSize() - dst_slot.GetItemCount();
-                    if (available_space == 0)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
+                // If this slot is not empty, and not full,
+                // check if "upper" slot with same items that
+                // could fit in it
+                const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetItemID())->GetStackSize() - dst_slot.GetItemCount();
+                if (available_space == 0)
+                {
+                    continue;
+                }
 
-                    for (short j = i+1; j < Window::INVENTORY_OFFHAND_INDEX+1; ++j)
+                for (short j = i + 1; j < Window::INVENTORY_OFFHAND_INDEX + 1; ++j)
+                {
+                    const Slot src_slot = player_inventory->GetSlot(j);
+                    if (!src_slot.IsEmptySlot()
+                        && dst_slot.SameItem(src_slot)
+                        && src_slot.GetItemCount() <= available_space)
                     {
-                        const Slot& src_slot = player_inventory->GetSlot(j);
-                        if (!src_slot.IsEmptySlot()
-                            && dst_slot.SameItem(src_slot)
-                            && src_slot.GetItemCount() <= available_space)
-                        {
-                            src_index = j;
-                            break;
-                        }
-                    }
-
-                    if (src_index != -1)
-                    {
-                        dst_index = i;
+                        src_index = j;
                         break;
                     }
+                }
+
+                if (src_index != -1)
+                {
+                    dst_index = i;
+                    break;
                 }
             }
 
