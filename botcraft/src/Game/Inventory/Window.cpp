@@ -5,66 +5,80 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    const Slot Window::EMPTY_SLOT = Slot();
-
-    Window::Window(const InventoryType type_)
+    Window::Window(const InventoryType type_) : type(type_)
     {
+        std::scoped_lock<std::shared_mutex> lock(window_mutex);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         next_transaction_id = 1;
 #elif PROTOCOL_VERSION > 755 /* > 1.17 */
         state_id = 1;
 #endif
-        type = type_;
     }
 
-    const Slot& Window::GetSlot(const short index) const
+    Slot Window::GetSlot(const short index) const
     {
+        std::shared_lock<std::shared_mutex> lock(window_mutex);
         if (slots.find(index) == slots.end())
         {
-            return EMPTY_SLOT;
+            return Slot();
         }
         
         return slots.at(index);
     }
 
-    const std::map<short, Slot>& Window::GetSlots() const
+    std::map<short, Slot> Window::GetSlots() const
     {
+        std::shared_lock<std::shared_mutex> lock(window_mutex);
         return slots;
     }
 
-    const InventoryType Window::GetType() const
+    Utilities::ScopeLockedWrapper<const std::map<short, ProtocolCraft::Slot>, std::shared_mutex, std::shared_lock> Window::GetLockedSlots() const
     {
+        return Utilities::ScopeLockedWrapper<const std::map<short, ProtocolCraft::Slot>, std::shared_mutex, std::shared_lock>(slots, window_mutex);
+    }
+
+    InventoryType Window::GetType() const
+    {
+        std::shared_lock<std::shared_mutex> lock(window_mutex);
         return type;
     }
 
     void Window::SetSlot(const short index, const ProtocolCraft::Slot& slot)
     {
+        std::scoped_lock<std::shared_mutex> lock(window_mutex);
         slots[index] = slot;
     }
 
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-    const int Window::GetNextTransactionId() const
+    void Window::SetContent(const std::vector<ProtocolCraft::Slot>& slots_)
     {
-        return next_transaction_id;
+        std::scoped_lock<std::shared_mutex> lock(window_mutex);
+        for (size_t i = 0; i < slots_.size(); ++i)
+        {
+            slots[i] = slots_[i];
+        }
     }
 
-    void Window::SetNextTransactionId(const int n)
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+    int Window::GetNextTransactionId()
     {
-        next_transaction_id = n;
+        std::scoped_lock<std::shared_mutex> lock(window_mutex);
+        return next_transaction_id++;
     }
 #elif PROTOCOL_VERSION > 755 /* > 1.17 */
-    const int Window::GetStateId() const
+    int Window::GetStateId() const
     {
+        std::shared_lock<std::shared_mutex> lock(window_mutex);
         return state_id;
     }
 
     void Window::SetStateId(const int state_id_)
     {
+        std::scoped_lock<std::shared_mutex> lock(window_mutex);
         state_id = state_id_;
     }
 #endif
 
-    const short Window::GetFirstPlayerInventorySlot() const
+    short Window::GetFirstPlayerInventorySlot() const
     {
         switch (type)
         {

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <memory>
 #include <map>
-#include <mutex>
+#include <memory>
+#include <shared_mutex>
+
 #include "protocolCraft/Types/Slot.hpp"
 #include "protocolCraft/Handler.hpp"
 
@@ -35,20 +36,16 @@ namespace Botcraft
     public:
         InventoryManager();
 
-        std::mutex& GetMutex();
-
-        const std::shared_ptr<Window> GetWindow(const short window_id) const;
-        const short GetFirstOpenedWindowId() const;
-        const std::shared_ptr<Window> GetPlayerInventory() const;
-        std::shared_ptr<Window> GetWindow(const short window_id);
-        std::shared_ptr<Window> GetPlayerInventory();
-        const short GetIndexHotbarSelected() const;
-        const ProtocolCraft::Slot& GetHotbarSelected() const;
-        const ProtocolCraft::Slot& GetOffHand() const;
-        const ProtocolCraft::Slot& GetCursor() const;
+        std::shared_ptr<Window> GetWindow(const short window_id) const;
+        short GetFirstOpenedWindowId() const;
+        std::shared_ptr<Window> GetPlayerInventory() const;
+        short GetIndexHotbarSelected() const;
+        ProtocolCraft::Slot GetHotbarSelected() const;
+        ProtocolCraft::Slot GetOffHand() const;
+        ProtocolCraft::Slot GetCursor() const;
         void EraseInventory(const short window_id);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        const TransactionState GetTransactionState(const short window_id, const int transaction_id);
+        TransactionState GetTransactionState(const short window_id, const int transaction_id) const;
         void AddPendingTransaction(const InventoryTransaction& transaction);
 #endif
         /// @brief "think" about the changes made by this transaction, filling in the necessary values in the msg
@@ -60,8 +57,8 @@ namespace Botcraft
         /// @param transaction The transaction to apply
         void ApplyTransaction(const InventoryTransaction& transaction);
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-        const std::vector<ProtocolCraft::Trade>& GetAvailableTrades() const;
-        ProtocolCraft::Trade& GetAvailableTrade(const int index);
+        std::vector<ProtocolCraft::Trade> GetAvailableTrades() const;
+        void IncrementTradeUse(const int index);
 #endif
 
     private:
@@ -78,7 +75,6 @@ namespace Botcraft
 #endif
 
     private:
-
         virtual void Handle(ProtocolCraft::Message& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg) override;
@@ -92,10 +88,11 @@ namespace Botcraft
 #endif
         virtual void Handle(ProtocolCraft::ClientboundContainerClosePacket& msg) override;
 
-        void ApplyTransactionInternal(const InventoryTransaction& transaction);
+        void ApplyTransactionImpl(const InventoryTransaction& transaction);
 
     private:
-        std::mutex inventory_manager_mutex;
+        mutable std::shared_mutex inventory_manager_mutex;
+
         std::map<short, std::shared_ptr<Window> > inventories;
         short index_hotbar_selected;
         ProtocolCraft::Slot cursor;

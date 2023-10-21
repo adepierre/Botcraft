@@ -1,8 +1,12 @@
 #pragma once
 
 #include <map>
+#include <shared_mutex>
+
 #include "protocolCraft/Types/Slot.hpp"
+
 #include "botcraft/Game/Enums.hpp"
+#include "botcraft/Utilities/ScopeLockedWrapper.hpp"
 
 namespace Botcraft
 {
@@ -22,26 +26,33 @@ namespace Botcraft
         static constexpr short INVENTORY_HOTBAR_START = 36;
         static constexpr short INVENTORY_OFFHAND_INDEX = 45;
 
-        static const ProtocolCraft::Slot EMPTY_SLOT;
-
         Window(const InventoryType type_ = InventoryType::Default);
 
-        const ProtocolCraft::Slot& GetSlot(const short index) const;
-        const std::map<short, ProtocolCraft::Slot>& GetSlots() const;
-        const InventoryType GetType() const;
+        ProtocolCraft::Slot GetSlot(const short index) const;
+        std::map<short, ProtocolCraft::Slot> GetSlots() const;
+        /// @brief Get a read-only locked version of all the slots
+        /// @return Basically an object you can use as a std::map<short, ProtocolCraft::Slot>*.
+        /// **ALL UPDATE OF THIS INVENTORY WILL BE BLOCKED WHILE THIS OBJECT IS ALIVE**, make sure it goes out of scope
+        /// as soon as you don't need it. You can use GetSlots instead to get a copy without blocking future updates
+        Utilities::ScopeLockedWrapper<const std::map<short, ProtocolCraft::Slot>, std::shared_mutex, std::shared_lock> GetLockedSlots() const;
+        InventoryType GetType() const;
         void SetSlot(const short index, const ProtocolCraft::Slot& slot);
+        void SetContent(const std::vector<ProtocolCraft::Slot>& slots_);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        const int GetNextTransactionId() const;
-        void SetNextTransactionId(const int n);
+        /// @brief Return a unique transaction id and increment it for next time
+        /// @return The transaction id to use for next transaction
+        int GetNextTransactionId();
 #elif PROTOCOL_VERSION > 755 /* > 1.17 */
-        const int GetStateId() const;
+        int GetStateId() const;
         void SetStateId(const int state_id_);
 #endif
-        const short GetFirstPlayerInventorySlot() const;
+        short GetFirstPlayerInventorySlot() const;
 
     private:
+        mutable std::shared_mutex window_mutex;
+
         std::map<short, ProtocolCraft::Slot> slots;
-        InventoryType type;
+        const InventoryType type;
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         // TODO, need mutex to make this thread-safe?

@@ -9,21 +9,27 @@ namespace Botcraft
 {
     InventoryManager::InventoryManager()
     {
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         index_hotbar_selected = 0;
         cursor = Slot();
         inventories[Window::PLAYER_INVENTORY_INDEX] = std::make_shared<Window>(InventoryType::PlayerInventory);
     }
 
-    std::mutex& InventoryManager::GetMutex()
-    {
-        return inventory_manager_mutex;
-    }
 
     void InventoryManager::SetSlot(const short window_id, const short index, const Slot &slot)
     {
-        auto it = inventories.find(window_id);
+        std::shared_ptr<Window> window = nullptr;
 
-        if (it == inventories.end())
+        {
+            std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
+            auto it = inventories.find(window_id);
+            if (it != inventories.end())
+            {
+                window = it->second;
+            }
+        }
+
+        if (window == nullptr)
         {
             // In 1.17+ we don't wait for any server confirmation, so this can potentially happen very often.
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -32,12 +38,13 @@ namespace Botcraft
         }
         else
         {
-            it->second->SetSlot(index, slot);
+            window->SetSlot(index, slot);
         }
     }
 
-    std::shared_ptr<Window> InventoryManager::GetWindow(const short window_id)
+    std::shared_ptr<Window> InventoryManager::GetWindow(const short window_id) const
     {
+        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
         auto it = inventories.find(window_id);
         if (it == inventories.end())
         {
@@ -46,64 +53,51 @@ namespace Botcraft
         return it->second;
     }
     
-    std::shared_ptr<Window> InventoryManager::GetPlayerInventory()
+    std::shared_ptr<Window> InventoryManager::GetPlayerInventory() const
     {
         return GetWindow(Window::PLAYER_INVENTORY_INDEX);
     }
 
-    const short InventoryManager::GetIndexHotbarSelected() const
+    short InventoryManager::GetIndexHotbarSelected() const
     {
+        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
         return index_hotbar_selected;
     }
-    
-    const std::shared_ptr<Window> InventoryManager::GetWindow(const short window_id) const
-    {
-        auto it = inventories.find(window_id);
-        if (it == inventories.end())
-        {
-            return nullptr;
-        }
-        return it->second;
-    }
 
-    const short InventoryManager::GetFirstOpenedWindowId() const
+    short InventoryManager::GetFirstOpenedWindowId() const
     {
-        for (auto it = inventories.begin(); it != inventories.end(); ++it)
+        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
+        for (const auto& [id, ptr] : inventories)
         {
-            if (it->first != Window::PLAYER_INVENTORY_INDEX &&
-                it->second->GetSlots().size() > 0)
+            if (id != Window::PLAYER_INVENTORY_INDEX &&
+                ptr->GetSlots().size() > 0)
             {
-                return it->first;
+                return id;
             }
         }
 
         return -1;
     }
-
-    const std::shared_ptr<Window> InventoryManager::GetPlayerInventory() const
-    {
-        return GetWindow(Window::PLAYER_INVENTORY_INDEX);
-    }
     
-    const Slot& InventoryManager::GetHotbarSelected() const
+    Slot InventoryManager::GetHotbarSelected() const
     {
-        const std::shared_ptr<Window> inventory = GetPlayerInventory();
+        std::shared_ptr<Window> inventory = GetPlayerInventory();
 
-        if (!inventory)
+        if (inventory == nullptr)
         {
-            return Window::EMPTY_SLOT;
+            return Slot();
         }
 
         return inventory->GetSlot(Window::INVENTORY_HOTBAR_START + index_hotbar_selected);
     }
 
-    const ProtocolCraft::Slot& InventoryManager::GetOffHand() const
+    ProtocolCraft::Slot InventoryManager::GetOffHand() const
     {
-        const std::shared_ptr<Window> inventory = GetPlayerInventory();
+        std::shared_ptr<Window> inventory = GetPlayerInventory();
 
-        if (!inventory)
+        if (inventory == nullptr)
         {
-            return Window::EMPTY_SLOT;
+            return Slot();
         }
 
         return inventory->GetSlot(Window::INVENTORY_OFFHAND_INDEX);
@@ -111,7 +105,7 @@ namespace Botcraft
 
     void InventoryManager::EraseInventory(const short window_id)
     {
-        std::lock_guard<std::mutex> inventory_lock(inventory_manager_mutex);
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         pending_transactions.erase(window_id);
         transaction_states.erase(window_id);
@@ -132,11 +126,11 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    const TransactionState InventoryManager::GetTransactionState(const short window_id, const int transaction_id)
+    TransactionState InventoryManager::GetTransactionState(const short window_id, const int transaction_id) const
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        auto it = transaction_states.find(window_id);
+        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
 
+        auto it = transaction_states.find(window_id);
         if (it == transaction_states.end())
         {
             LOG_ERROR("Asking state of a transaction for a closed window");
@@ -144,7 +138,6 @@ namespace Botcraft
         }
 
         auto it2 = it->second.find(transaction_id);
-
         if (it2 == it->second.end())
         {
             LOG_ERROR("Asking state of an unknown transaction");
@@ -156,6 +149,8 @@ namespace Botcraft
 
     void InventoryManager::AddPendingTransaction(const InventoryTransaction& transaction)
     {
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
+
         pending_transactions[transaction.msg->GetContainerId()].insert(std::make_pair(transaction.msg->GetUid(), transaction));
         transaction_states[transaction.msg->GetContainerId()].insert(std::make_pair(transaction.msg->GetUid(), TransactionState::Waiting));
 
@@ -175,13 +170,13 @@ namespace Botcraft
 #else
     void InventoryManager::SynchronizeContainerPlayerInventory(const short window_id)
     {
+        // No lock as this is called from already scoped lock functions
         if (window_id == Window::PLAYER_INVENTORY_INDEX)
         {
             return;
         }
 
         auto it = inventories.find(window_id);
-
         if (it == inventories.end())
         {
             LOG_WARNING("Trying to synchronize inventory with a non existing container");
@@ -189,9 +184,9 @@ namespace Botcraft
         }
 
         short player_inventory_first_slot = it->second->GetFirstPlayerInventorySlot();
-        std::shared_ptr<Window> player_inventory = GetPlayerInventory();
+        std::shared_ptr<Window> player_inventory = inventories[Window::PLAYER_INVENTORY_INDEX];
         
-        for (int i = 0; i < 36; ++i)
+        for (int i = 0; i < Window::INVENTORY_HOTBAR_START; ++i)
         {
             player_inventory->SetSlot(Window::INVENTORY_STORAGE_START + i, it->second->GetSlot(player_inventory_first_slot + i));
         }
@@ -201,6 +196,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
     void InventoryManager::SetStateId(const short window_id, const int state_id)
     {
+        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
         auto it = inventories.find(window_id);
 
         if (it != inventories.end())
@@ -212,7 +208,8 @@ namespace Botcraft
 
     void InventoryManager::AddInventory(const short window_id, const InventoryType window_type)
     {
-        inventories[window_id] = std::shared_ptr<Window>(new Window(window_type));
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
+        inventories[window_id] = std::make_shared<Window>(window_type);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         pending_transactions[window_id] = std::map<short, InventoryTransaction >();
         transaction_states[window_id] = std::map<short, TransactionState>();
@@ -221,26 +218,29 @@ namespace Botcraft
 
     void InventoryManager::SetHotbarSelected(const short index)
     {
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         index_hotbar_selected = index;
     }
 
-    const Slot& InventoryManager::GetCursor() const
+    Slot InventoryManager::GetCursor() const
     {
+        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
         return cursor;
     }
 
     void InventoryManager::SetCursor(const Slot& c)
     {
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         cursor = c;
     }
 
     InventoryTransaction InventoryManager::PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction)
     {
-        // We need to lock because we access the container and the cursor
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-
         // Get the container
         std::shared_ptr<Window> window = GetWindow(transaction->GetContainerId());
+
+        // Lock because we need read access to cursor
+        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
 
         InventoryTransaction output{ transaction };
         std::map<short, Slot> changed_slots;
@@ -264,7 +264,7 @@ namespace Botcraft
                 throw std::runtime_error("Non supported transaction button created");
             }
 
-            const Slot& clicked_slot = window->GetSlot(transaction->GetSlotNum());
+            const Slot clicked_slot = window->GetSlot(transaction->GetSlotNum());
             // If cursor is not empty, we can't click if the items are not the same, 
             if (!cursor.IsEmptySlot() &&
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
@@ -288,7 +288,7 @@ namespace Botcraft
             {
                 carried_item = clicked_slot;
                 carried_item.SetItemCount(cursor.GetItemCount() + clicked_slot.GetItemCount());
-                changed_slots[0] = Window::EMPTY_SLOT;
+                changed_slots[0] = Slot();
                 for (int i = 1; i < (window->GetType() == InventoryType::Crafting ? 10 : 5); ++i)
                 {
                     Slot cloned_slot = window->GetSlot(i);
@@ -308,7 +308,7 @@ namespace Botcraft
                     {
                         case 0:
                         {
-                            carried_item = Window::EMPTY_SLOT;
+                            carried_item = Slot();
                             break;
                         }
                         case 1:
@@ -339,7 +339,7 @@ namespace Botcraft
             {
                 case 0:
                 {
-                    const Slot& clicked_slot = window->GetSlot(transaction->GetSlotNum());
+                    const Slot clicked_slot = window->GetSlot(transaction->GetSlotNum());
                     switch (transaction->GetButtonNum())
                     {
 
@@ -446,14 +446,12 @@ namespace Botcraft
         output.changed_slots = changed_slots;
         output.carried_item = carried_item;
 
-        const int transaction_id = window->GetNextTransactionId();
-        transaction->SetUid(transaction_id);
-        window->SetNextTransactionId(transaction_id + 1);
+        transaction->SetUid(window->GetNextTransactionId());
 #endif
         return output;
     }
 
-    void InventoryManager::ApplyTransactionInternal(const InventoryTransaction& transaction)
+    void InventoryManager::ApplyTransactionImpl(const InventoryTransaction& transaction)
     {
 #if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
         const std::map<short, Slot>& modified_slots = transaction.msg->GetChangeSlots();
@@ -464,7 +462,7 @@ namespace Botcraft
 #endif
 
         // Get the container
-        std::shared_ptr<Window> window = GetWindow(transaction.msg->GetContainerId());
+        std::shared_ptr<Window> window = inventories[transaction.msg->GetContainerId()];
         for (const auto& p : modified_slots)
         {
             window->SetSlot(p.first, p.second);
@@ -473,19 +471,27 @@ namespace Botcraft
 
     void InventoryManager::ApplyTransaction(const InventoryTransaction& transaction)
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        ApplyTransactionInternal(transaction);
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
+        ApplyTransactionImpl(transaction);
     }
 
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-    const std::vector<ProtocolCraft::Trade>& InventoryManager::GetAvailableTrades() const
+    std::vector<ProtocolCraft::Trade> InventoryManager::GetAvailableTrades() const
     {
+        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
         return available_trades;
     }
 
-    ProtocolCraft::Trade& InventoryManager::GetAvailableTrade(const int index)
+    void InventoryManager::IncrementTradeUse(const int index)
     {
-        return available_trades[index];
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
+        if (index < 0 || index > available_trades.size())
+        {
+            LOG_WARNING("Trying to update trade use of an invalid trade (" << index << "<" << available_trades.size() << ")");
+            return;
+        }
+        Trade& trade = available_trades[index];
+        trade.SetNumberOfTradesUses(trade.GetNumberOfTradesUses() + 1);
     }
 #endif
 
@@ -496,8 +502,6 @@ namespace Botcraft
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg)
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-
         if (msg.GetContainerId() == -1 && msg.GetSlot() == -1)
         {
             SetCursor(msg.GetItemStack());
@@ -529,12 +533,12 @@ namespace Botcraft
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg)
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
-        const size_t count = msg.GetSlotData().size();
-        for (size_t i = 0; i < count; ++i)
+        std::shared_ptr<Window> window = GetWindow(msg.GetContainerId());
+        if (window != nullptr)
         {
-            SetSlot(msg.GetContainerId(), static_cast<short>(i), msg.GetSlotData()[i]);
+            window->SetContent(msg.GetSlotData());
         }
+
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
         if (msg.GetContainerId() >= 0)
         {
@@ -545,7 +549,6 @@ namespace Botcraft
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg)
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
 #if PROTOCOL_VERSION < 452 /* < 1.14 */
         InventoryType type = InventoryType::Default;
         if (msg.GetType() == "minecraft:chest")
@@ -579,14 +582,13 @@ namespace Botcraft
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg)
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
         SetHotbarSelected(msg.GetSlot());
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     void InventoryManager::Handle(ProtocolCraft::ClientboundContainerAckPacket& msg)
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
 
         // Update the new state of the transaction
         auto it_container = transaction_states.find(msg.GetContainerId());
@@ -616,7 +618,7 @@ namespace Botcraft
 
         if (msg.GetAccepted())
         {
-            ApplyTransactionInternal(transaction->second);
+            ApplyTransactionImpl(transaction->second);
         }
 
         // Remove the transaction from the waiting state
@@ -627,7 +629,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     void InventoryManager::Handle(ProtocolCraft::ClientboundMerchantOffersPacket& msg)
     {
-        std::lock_guard<std::mutex> inventory_manager_locker(inventory_manager_mutex);
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         trading_container_id = msg.GetContainerId();
         available_trades = msg.GetOffers();
     }
