@@ -75,7 +75,6 @@ TEST_CASE("entity interact")
     MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave 1) \\[Flint and Steel\\](?: \\* 1)? to " + botname + ".*", 5000);
     Botcraft::Utilities::WaitForCondition([&]()
         {
-            std::lock_guard<std::mutex> lock(bot->GetInventoryManager()->GetMutex());
             return !bot->GetInventoryManager()->GetHotbarSelected().IsEmptySlot();
         }, 5000);
 
