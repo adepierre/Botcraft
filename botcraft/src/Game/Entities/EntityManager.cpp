@@ -52,7 +52,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg)
     {
-        std::scoped_lock<std::mutex> lock(entity_manager_mutex);
+        std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         auto it = entities.find(msg.GetEntityId());
         if (it == entities.end())
         {
