@@ -120,6 +120,7 @@ namespace Botcraft
                         //Avoid forever falling if position is in the void
                         if (!has_gravity && local_player->position.y <= world->GetMinY())
                         {
+                            local_player->has_moved |= local_player->position.y != world->GetMinY();
                             local_player->position.y = world->GetMinY();
                             local_player->speed.y = 0.0;
                             local_player->on_ground = true;
@@ -293,6 +294,7 @@ namespace Botcraft
             player_movement_inputs.y = std::max(0.0, player_movement_inputs.y);
         }
 
+        local_player->has_moved |= (player_movement_speed + player_movement_inputs) != Vector3<double>(0.0, 0.0, 0.0);
         local_player->position += player_movement_speed + player_movement_inputs;
         local_player->on_ground = has_hit_down;
         // Update climbing state
