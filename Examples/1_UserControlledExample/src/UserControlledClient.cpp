@@ -286,9 +286,11 @@ void UserControlledClient::MouseCallback(const double &xoffset, const double &yo
         pitch = -89.0f;
     }
     local_player->SetPitch(pitch);
-    local_player->SetYaw(static_cast<float>(local_player->GetYaw() + xoffset * mouse_sensitivity));
+    const float new_yaw = static_cast<float>(local_player->GetYaw() + xoffset * mouse_sensitivity);
+    local_player->SetYaw(new_yaw);
 
-    rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62f, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
+    const Vector3<double> position = local_player->GetPosition();
+    rendering_manager->SetPosOrientation(position.x, position.y + 1.62f, position.z, new_yaw, pitch);
 }
 
 void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<int>(Renderer::KEY_CODE::NUMBER_OF_KEYS)> &is_key_pressed, const double &delta_time)
@@ -354,7 +356,8 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 
     if (pos_has_changed)
     {
-        rendering_manager->SetPosOrientation(local_player->GetPosition().x, local_player->GetPosition().y + 1.62, local_player->GetPosition().z, local_player->GetYaw(), local_player->GetPitch());
+        const Vector3<double> position = local_player->GetPosition();
+        rendering_manager->SetPosOrientation(position.x, position.y + 1.62f, position.z, local_player->GetYaw(), local_player->GetPitch());
     }
 }
 #endif

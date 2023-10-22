@@ -308,26 +308,23 @@ Status ExecuteAction(SimpleBehaviourClient& client)
 
         // Set the best tool in hand
         std::string tool_name = "";
+        const std::map<short, ProtocolCraft::Slot> inventory_slots = inventory_manager->GetPlayerInventory()->GetSlots();
+        for (const auto& [i, slot] : inventory_slots)
         {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            const std::map<short, ProtocolCraft::Slot>& inventory_slots = inventory_manager->GetPlayerInventory()->GetSlots();
-            for (const auto& [i, slot] : inventory_slots)
+            if (i < Window::INVENTORY_STORAGE_START || i > Window::INVENTORY_OFFHAND_INDEX || slot.IsEmptySlot())
             {
-                if (i < Window::INVENTORY_STORAGE_START || i > Window::INVENTORY_OFFHAND_INDEX || slot.IsEmptySlot())
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
-                if (item->GetToolType() == best_tool_type)
+            const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+            if (item->GetToolType() == best_tool_type)
+            {
+                // Check the tool won't break, with a "large" margin of 5 to be safe
+                const int damage_count = Utilities::GetDamageCount(slot.GetNBT());
+                if (damage_count < item->GetMaxDurability() - 6)
                 {
-                    // Check the tool won't break, with a "large" margin of 5 to be safe
-                    const int damage_count = Utilities::GetDamageCount(slot.GetNBT());
-                    if (damage_count < item->GetMaxDurability() - 6)
-                    {
-                        tool_name = item->GetName();
-                        break;
-                    }
+                    tool_name = item->GetName();
+                    break;
                 }
             }
         }
@@ -583,19 +580,16 @@ Status PopAction(SimpleBehaviourClient& client)
 Status IsInventoryFull(SimpleBehaviourClient& client)
 {
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+    std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
+    for (const auto& [idx, slot] : player_inventory->GetSlots())
     {
-        std::lock_guard<std::mutex> lock_inventory(inventory_manager->GetMutex());
-        std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
-        for (const auto& [idx, slot] : player_inventory->GetSlots())
+        if (idx < Window::INVENTORY_STORAGE_START || idx >= Window::INVENTORY_OFFHAND_INDEX)
         {
-            if (idx < Window::INVENTORY_STORAGE_START || idx >= Window::INVENTORY_OFFHAND_INDEX)
-            {
-                continue;
-            }
-            if (slot.IsEmptySlot())
-            {
-                return Status::Failure;
-            }
+            continue;
+        }
+        if (slot.IsEmptySlot())
+        {
+            return Status::Failure;
         }
     }
     return Status::Success;
@@ -675,22 +669,19 @@ Status CleanInventory(SimpleBehaviourClient& client)
     };
     std::vector<short> slots_to_throw;
     slots_to_throw.reserve(Window::INVENTORY_OFFHAND_INDEX);
+    std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
+    for (const auto& [idx, slot] : player_inventory->GetSlots())
     {
-        std::lock_guard<std::mutex> lock_inventory(inventory_manager->GetMutex());
-        std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
-        for (const auto& [idx, slot] : player_inventory->GetSlots())
+        // Don't throw lava bucket, food, temp block or tools
+        if (idx < Window::INVENTORY_STORAGE_START ||
+            slot.IsEmptySlot() ||
+            non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.cend() ||
+            collected_items.find(slot.GetItemID()) != collected_items.cend() ||
+            AssetsManager::getInstance().GetItem(slot.GetItemID())->GetToolType() != ToolType::None)
         {
-            // Don't throw lava bucket, food, temp block or tools
-            if (idx < Window::INVENTORY_STORAGE_START ||
-                slot.IsEmptySlot() ||
-                non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.cend() ||
-                collected_items.find(slot.GetItemID()) != collected_items.cend() ||
-                AssetsManager::getInstance().GetItem(slot.GetItemID())->GetToolType() != ToolType::None)
-            {
-                continue;
-            }
-            slots_to_throw.push_back(idx);
+            continue;
         }
+        slots_to_throw.push_back(idx);
     }
 
     for (const short idx : slots_to_throw)
@@ -1057,25 +1048,23 @@ Status BaseCampDropItems(SimpleBehaviourClient& client, const bool all_items)
     };
     std::vector<short> slots_to_throw;
     slots_to_throw.reserve(Window::INVENTORY_OFFHAND_INDEX);
+
+    std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
+    for (const auto& [idx, slot] : player_inventory->GetSlots())
     {
-        std::lock_guard<std::mutex> lock_inventory(inventory_manager->GetMutex());
-        std::shared_ptr<Window> player_inventory = inventory_manager->GetPlayerInventory();
-        for (const auto& [idx, slot] : player_inventory->GetSlots())
+        // Don't throw lava bucket, food, temp block
+        if (idx < Window::INVENTORY_STORAGE_START || slot.IsEmptySlot() ||
+            (!all_items && non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.end()))
         {
-            // Don't throw lava bucket, food, temp block
-            if (idx < Window::INVENTORY_STORAGE_START || slot.IsEmptySlot() ||
-                (!all_items && non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.end()))
-            {
-                continue;
-            }
-            const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
-            // Don't throw tools with more than 10% durability
-            if (!all_items && item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot.GetNBT()) < 9 * item->GetMaxDurability() / 10)
-            {
-                continue;
-            }
-            slots_to_throw.push_back(idx);
+            continue;
         }
+        const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+        // Don't throw tools with more than 10% durability
+        if (!all_items && item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot.GetNBT()) < 9 * item->GetMaxDurability() / 10)
+        {
+            continue;
+        }
+        slots_to_throw.push_back(idx);
     }
 
     for (const short idx : slots_to_throw)
@@ -1123,17 +1112,14 @@ Status BaseCampPickItems(SimpleBehaviourClient& client)
 
         // Get the exact name of the item in this shulkerbox
         std::string item_name = "";
+        const short player_inventory_start = shulkerbox_window->GetFirstPlayerInventorySlot();
+        for (const auto& [s, slot] : shulkerbox_window->GetSlots())
         {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            const short player_inventory_start = shulkerbox_window->GetFirstPlayerInventorySlot();
-            for (const auto& [s, slot] : shulkerbox_window->GetSlots())
+            if (s >= player_inventory_start || slot.IsEmptySlot())
             {
-                if (s >= player_inventory_start || slot.IsEmptySlot())
-                {
-                    continue;
-                }
-                item_name = AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName();
+                continue;
             }
+            item_name = AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName();
         }
 
         if (item_name.empty())
@@ -1148,27 +1134,25 @@ Status BaseCampPickItems(SimpleBehaviourClient& client)
         std::vector<short> inventory_empty_slots;
         int quantity_inventory = 0;
         const short player_inventory_first_slot = shulkerbox_window->GetFirstPlayerInventorySlot();
+
+        for (const auto& [s, slot] : shulkerbox_window->GetSlots())
         {
-            std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-            for (const auto& [s, slot] : shulkerbox_window->GetSlots())
+            if (s < player_inventory_first_slot)
             {
-                if (s < player_inventory_first_slot)
+                if (!slot.IsEmptySlot())
                 {
-                    if (!slot.IsEmptySlot())
-                    {
-                        quantities_of_items.push_back({ s,slot.GetItemCount() });
-                    }
-                    continue;
+                    quantities_of_items.push_back({ s,slot.GetItemCount() });
                 }
-                if (slot.IsEmptySlot())
-                {
-                    inventory_empty_slots.push_back(s);
-                    continue;
-                }
-                if (AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName() == item_name)
-                {
-                    quantity_inventory += slot.GetItemCount();
-                }
+                continue;
+            }
+            if (slot.IsEmptySlot())
+            {
+                inventory_empty_slots.push_back(s);
+                continue;
+            }
+            if (AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName() == item_name)
+            {
+                quantity_inventory += slot.GetItemCount();
             }
         }
 
@@ -1216,21 +1200,18 @@ Status BaseCampPickItems(SimpleBehaviourClient& client)
 Botcraft::Status HasToolInInventory(Botcraft::SimpleBehaviourClient& client, const ToolType tool_type, const int min_durability)
 {
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
-    {
-        std::lock_guard<std::mutex> lock(inventory_manager->GetMutex());
-        const std::map<short, ProtocolCraft::Slot>& inventory_slots = inventory_manager->GetPlayerInventory()->GetSlots();
-        for (const auto& [i, slot] : inventory_slots)
-        {
-            if (i < Window::INVENTORY_STORAGE_START || i > Window::INVENTORY_OFFHAND_INDEX || slot.IsEmptySlot())
-            {
-                continue;
-            }
 
-            const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
-            if (item->GetToolType() == tool_type && Utilities::GetDamageCount(slot.GetNBT()) < item->GetMaxDurability() - min_durability)
-            {
-                return Status::Success;
-            }
+    for (const auto& [i, slot] : inventory_manager->GetPlayerInventory()->GetSlots())
+    {
+        if (i < Window::INVENTORY_STORAGE_START || i > Window::INVENTORY_OFFHAND_INDEX || slot.IsEmptySlot())
+        {
+            continue;
+        }
+
+        const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+        if (item->GetToolType() == tool_type && Utilities::GetDamageCount(slot.GetNBT()) < item->GetMaxDurability() - min_durability)
+        {
+            return Status::Success;
         }
     }
 

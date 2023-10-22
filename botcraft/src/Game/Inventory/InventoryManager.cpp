@@ -91,7 +91,7 @@ namespace Botcraft
         return inventory->GetSlot(Window::INVENTORY_HOTBAR_START + index_hotbar_selected);
     }
 
-    ProtocolCraft::Slot InventoryManager::GetOffHand() const
+    Slot InventoryManager::GetOffHand() const
     {
         std::shared_ptr<Window> inventory = GetPlayerInventory();
 
@@ -234,7 +234,7 @@ namespace Botcraft
         cursor = c;
     }
 
-    InventoryTransaction InventoryManager::PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction)
+    InventoryTransaction InventoryManager::PrepareTransaction(const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
     {
         // Get the container
         std::shared_ptr<Window> window = GetWindow(transaction->GetContainerId());
@@ -476,7 +476,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-    std::vector<ProtocolCraft::Trade> InventoryManager::GetAvailableTrades() const
+    std::vector<Trade> InventoryManager::GetAvailableTrades() const
     {
         std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
         return available_trades;
@@ -495,12 +495,12 @@ namespace Botcraft
     }
 #endif
 
-    void InventoryManager::Handle(ProtocolCraft::Message& msg)
+    void InventoryManager::Handle(Message& msg)
     {
 
     }
 
-    void InventoryManager::Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg)
+    void InventoryManager::Handle(ClientboundContainerSetSlotPacket& msg)
     {
         if (msg.GetContainerId() == -1 && msg.GetSlot() == -1)
         {
@@ -531,7 +531,7 @@ namespace Botcraft
         }
     }
 
-    void InventoryManager::Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg)
+    void InventoryManager::Handle(ClientboundContainerSetContentPacket& msg)
     {
         std::shared_ptr<Window> window = GetWindow(msg.GetContainerId());
         if (window != nullptr)
@@ -547,7 +547,7 @@ namespace Botcraft
 #endif
     }
 
-    void InventoryManager::Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg)
+    void InventoryManager::Handle(ClientboundOpenScreenPacket& msg)
     {
 #if PROTOCOL_VERSION < 452 /* < 1.14 */
         InventoryType type = InventoryType::Default;
@@ -580,13 +580,13 @@ namespace Botcraft
 #endif
     }
 
-    void InventoryManager::Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg)
+    void InventoryManager::Handle(ClientboundSetCarriedItemPacket& msg)
     {
         SetHotbarSelected(msg.GetSlot());
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    void InventoryManager::Handle(ProtocolCraft::ClientboundContainerAckPacket& msg)
+    void InventoryManager::Handle(ClientboundContainerAckPacket& msg)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
 
@@ -627,7 +627,7 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-    void InventoryManager::Handle(ProtocolCraft::ClientboundMerchantOffersPacket& msg)
+    void InventoryManager::Handle(ClientboundMerchantOffersPacket& msg)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         trading_container_id = msg.GetContainerId();
@@ -635,7 +635,7 @@ namespace Botcraft
     }
 #endif
 
-    void InventoryManager::Handle(ProtocolCraft::ClientboundContainerClosePacket& msg)
+    void InventoryManager::Handle(ClientboundContainerClosePacket& msg)
     {
         EraseInventory(msg.GetContainerId());
     }

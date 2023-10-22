@@ -103,33 +103,36 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
         while (true)
         {
             std::vector<short> slots_src;
+
+            container_id = inventory_manager->GetFirstOpenedWindowId();
+            if (container_id == -1)
             {
-                std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-                container_id = inventory_manager->GetFirstOpenedWindowId();
-                if (container_id == -1)
+                continue;
+            }
+
+            const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
+            if (container == nullptr)
+            {
+                continue;
+            }
+
+            const short first_player_index = container->GetFirstPlayerInventorySlot();
+            player_dst = first_player_index + 9 * 3;
+
+            const std::map<short, Slot> slots = container->GetSlots();
+
+            slots_src.reserve(slots.size());
+
+            for (const auto& [id, slot] : slots)
+            {
+                // Chest is src
+                if (id >= 0
+                    && id < first_player_index
+                    && !slot.IsEmptySlot()
+                    && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == food_name
+                    )
                 {
-                    continue;
-                }
-                const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
-
-                const short first_player_index = container->GetFirstPlayerInventorySlot();
-                player_dst = first_player_index + 9 * 3;
-
-                const std::map<short, Slot>& slots = container->GetSlots();
-
-                slots_src.reserve(slots.size());
-
-                for (auto it = slots.begin(); it != slots.end(); ++it)
-                {
-                    // Chest is src
-                    if (it->first >= 0
-                        && it->first < first_player_index
-                        && !it->second.IsEmptySlot()
-                        && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() == food_name
-                        )
-                    {
-                        slots_src.push_back(it->first);
-                    }
+                    slots_src.push_back(id);
                 }
             }
 
@@ -183,15 +186,13 @@ Status GetBlocksAvailableInInventory(BehaviourClient& c)
     std::shared_ptr<InventoryManager> inventory_manager = c.GetInventoryManager();
 
     std::set<std::string> blocks_in_inventory;
-    std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-    const std::map<short, Slot>& slots = inventory_manager->GetPlayerInventory()->GetSlots();
-    for (auto it = slots.begin(); it != slots.end(); ++it)
+    for (const auto& [idx, slot] : inventory_manager->GetPlayerInventory()->GetSlots())
     {
-        if (it->first >= Window::INVENTORY_STORAGE_START &&
-            it->first < Window::INVENTORY_OFFHAND_INDEX &&
-            !it->second.IsEmptySlot())
+        if (idx >= Window::INVENTORY_STORAGE_START &&
+            idx < Window::INVENTORY_OFFHAND_INDEX &&
+            !slot.IsEmptySlot())
         {
-            blocks_in_inventory.insert(AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName());
+            blocks_in_inventory.insert(AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName());
         }
     }
 
@@ -233,65 +234,62 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
             continue;
         }
 
-        std::vector<short> slots_src;
-        std::vector<short> slots_dst;
-        short container_id;
-        short first_player_index;
         // Find possible swaps
+        const short container_id = inventory_manager->GetFirstOpenedWindowId();
+
+        if (container_id == -1)
         {
-            std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-            container_id = inventory_manager->GetFirstOpenedWindowId();
+            continue;
+        }
 
-            if (container_id == -1)
+        const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
+        if (container == nullptr)
+        {
+            continue;
+        }
+
+        const short first_player_index = (static_cast<int>(container->GetType()) + 1) * 9;
+
+        const std::map<short, Slot> slots = container->GetSlots();
+
+        std::vector<short> slots_src;
+        slots_src.reserve(slots.size());
+        std::vector<short> slots_dst;
+        slots_dst.reserve(slots.size());
+
+        for (const auto& [idx, slot] : slots)
+        {
+            // If take, chest is src
+            if (idx >= 0
+                && idx < first_player_index
+                && take_from_chest
+                && !slot.IsEmptySlot()
+                && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() != food_name)
             {
-                continue;
+                slots_src.push_back(idx);
             }
-
-            const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
-
-            first_player_index = (static_cast<int>(container->GetType()) + 1) * 9;
-
-            const std::map<short, Slot>& slots = container->GetSlots();
-
-            slots_src.reserve(slots.size());
-            slots_dst.reserve(slots.size());
-
-            for (auto it = slots.begin(); it != slots.end(); ++it)
+            // If take, player is dst
+            else if (idx >= first_player_index
+                && take_from_chest
+                && slot.IsEmptySlot())
             {
-                // If take, chest is src
-                if (it->first >= 0
-                    && it->first < first_player_index
-                    && take_from_chest
-                    && !it->second.IsEmptySlot()
-                    && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() != food_name
-                    )
-                {
-                    slots_src.push_back(it->first);
-                }
-                // If take, player is dst
-                else if (it->first >= first_player_index
-                    && take_from_chest
-                    && it->second.IsEmptySlot())
-                {
-                    slots_dst.push_back(it->first);
-                }
-                // If !take, chest is dst
-                else if (it->first >= 0
-                    && it->first < first_player_index
-                    && !take_from_chest
-                    && it->second.IsEmptySlot())
-                {
-                    slots_dst.push_back(it->first);
-                }
-                // If !take, player is src
-                else if (it->first >= first_player_index
-                    && !take_from_chest
-                    && !it->second.IsEmptySlot()
-                    && AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName() != food_name
-                    )
-                {
-                    slots_src.push_back(it->first);
-                }
+                slots_dst.push_back(idx);
+            }
+            // If !take, chest is dst
+            else if (idx >= 0
+                && idx < first_player_index
+                && !take_from_chest
+                && slot.IsEmptySlot())
+            {
+                slots_dst.push_back(idx);
+            }
+            // If !take, player is src
+            else if (idx >= first_player_index
+                && !take_from_chest
+                && !slot.IsEmptySlot()
+                && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() != food_name)
+            {
+                slots_src.push_back(idx);
             }
         }
 
@@ -341,14 +339,11 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
                 LOG_WARNING("Something went wrong trying to get items from chest (Timeout).");
                 return Status::Failure;
             }
+            const Slot slot = inventory_manager->GetPlayerInventory()->GetSlot(checked_slot_index);
+            if ((take_from_chest && !slot.IsEmptySlot()) ||
+                (!take_from_chest && slot.IsEmptySlot()))
             {
-                std::lock_guard<std::mutex> inventory_lock(inventory_manager->GetMutex());
-                const Slot& slot = inventory_manager->GetPlayerInventory()->GetSlot(checked_slot_index);
-                if ((take_from_chest && !slot.IsEmptySlot()) ||
-                    (!take_from_chest && slot.IsEmptySlot()))
-                {
-                    break;
-                }
+                break;
             }
             c.Yield();
         }

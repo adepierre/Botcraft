@@ -314,15 +314,10 @@ Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboa
             client.Yield();
         }
 
-        short container_id;
-        std::shared_ptr<Window> container;
-        {
-            std::lock_guard<std::mutex> inventory_manager_lock(inventory_manager->GetMutex());
-            container_id = inventory_manager->GetFirstOpenedWindowId();
-            container = inventory_manager->GetWindow(container_id);
-        }
+        const short container_id = inventory_manager->GetFirstOpenedWindowId();
+        const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
 
-        if (!container)
+        if (container == nullptr)
         {
             LOG_WARNING("Container closed during chest cleaning");
             return Status::Failure;
@@ -332,25 +327,22 @@ Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboa
         std::vector<short> free_slots_inventory;
         std::vector<short> trash_inventory_slots;
         // Get slots to remove and free slots in inventory
+        for (const auto& [id, slot] : container->GetSlots())
         {
-            std::lock_guard<std::mutex> inventory_manager_lock(inventory_manager->GetMutex());
-            for (const auto& s : container->GetSlots())
-            {
-                if (s.first < container->GetFirstPlayerInventorySlot() && !s.second.IsEmptySlot() &&
+            if (id < container->GetFirstPlayerInventorySlot() && !slot.IsEmptySlot() &&
 #if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                    AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() != item_to_keep
+                AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() != item_to_keep
 #else
-                    AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() != item_to_keep
+                AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() != item_to_keep
 #endif
-                    )
-                {
-                    slots_to_remove.push_back(s.first);
-                }
-                else if (s.first >= container->GetFirstPlayerInventorySlot() &&
-                    s.second.IsEmptySlot())
-                {
-                    free_slots_inventory.push_back(s.first);
-                }
+                )
+            {
+                slots_to_remove.push_back(id);
+            }
+            else if (id >= container->GetFirstPlayerInventorySlot() &&
+                slot.IsEmptySlot())
+            {
+                free_slots_inventory.push_back(id);
             }
         }
 
@@ -425,15 +417,10 @@ Status StoreDispenser(BehaviourClient& client)
         client.Yield();
     }
 
-    short container_id;
-    std::shared_ptr<Window> container;
-    {
-        std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
-        container_id = inventory_manager->GetFirstOpenedWindowId();
-        container = inventory_manager->GetWindow(container_id);
-    }
+    const short container_id = inventory_manager->GetFirstOpenedWindowId();
+    const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
 
-    if (!container)
+    if (container == nullptr)
     {
         LOG_WARNING("Container closed during dispenser storing");
         return Status::Failure;
@@ -441,40 +428,35 @@ Status StoreDispenser(BehaviourClient& client)
 
     short dst_slot = -1;
     short src_slot = -1;
+    const auto dispenser_id = AssetsManager::getInstance().GetItemID("minecraft:dispenser");
+    for (const auto& [idx, slot] : container->GetSlots())
     {
-        std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
-        const auto dispenser_id = AssetsManager::getInstance().GetItemID("minecraft:dispenser");
-        for (const auto& s : container->GetSlots())
+        if (dst_slot == -1 && idx < container->GetFirstPlayerInventorySlot() && 
+            (slot.IsEmptySlot() || (
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
+            slot.GetBlockID() == dispenser_id.first && slot.GetItemDamage() == dispenser_id.second
+#else
+            slot.GetItemID() == dispenser_id
+#endif
+            && slot.GetItemCount() < AssetsManager::getInstance().Items().at(dispenser_id)->GetStackSize() - 1))
+            )
         {
-            if (dst_slot == -1 && s.first < container->GetFirstPlayerInventorySlot() && 
-                (s.second.IsEmptySlot() || (
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                s.second.GetBlockID() == dispenser_id.first && s.second.GetItemDamage() == dispenser_id.second
-#else
-                s.second.GetItemID() == dispenser_id
-#endif
-                && s.second.GetItemCount() < AssetsManager::getInstance().Items().at(dispenser_id)->GetStackSize() - 1)
-                )
-               )
-            {
-                dst_slot = s.first;
-            }
-            else if (src_slot == -1 && s.first >= container->GetFirstPlayerInventorySlot() &&
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                s.second.GetBlockID() == dispenser_id.first && s.second.GetItemDamage() == dispenser_id.second
-#else
-                s.second.GetItemID() == dispenser_id
-#endif
-                )
-            {
-                src_slot = s.first;
-            }
-            else if (src_slot != -1 && dst_slot != -1)
-            {
-                break;
-            }
+            dst_slot = idx;
         }
-
+        else if (src_slot == -1 && idx >= container->GetFirstPlayerInventorySlot() &&
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
+            slot.GetBlockID() == dispenser_id.first && slot.GetItemDamage() == dispenser_id.second
+#else
+            slot.GetItemID() == dispenser_id
+#endif
+            )
+        {
+            src_slot = idx;
+        }
+        else if (src_slot != -1 && dst_slot != -1)
+        {
+            break;
+        }
     }
 
     // No dispenser in inventory, nothing to do
@@ -579,15 +561,10 @@ Status MineCobblestone(BehaviourClient& client)
     }
 
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
-    short container_id;
-    std::shared_ptr<Window> shulker_container;
-    {
-        std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
-        container_id = inventory_manager->GetFirstOpenedWindowId();
-        shulker_container = inventory_manager->GetWindow(container_id);
-    }
+    const short container_id = inventory_manager->GetFirstOpenedWindowId();
+    const std::shared_ptr<Window> shulker_container = inventory_manager->GetWindow(container_id);
 
-    if (!shulker_container)
+    if (shulker_container == nullptr)
     {
         LOG_WARNING("Container closed during stone gathering");
         return Status::Failure;
@@ -606,42 +583,39 @@ Status MineCobblestone(BehaviourClient& client)
             return Status::Failure;
         }
 
+        dst_slot = -1;
+        int quantity = 0;
+        for (const auto& [idx, slot] : shulker_container->GetSlots())
         {
-            std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
-            dst_slot = -1;
-            int quantity = 0;
-            for (const auto& s: shulker_container->GetSlots())
+            if (src_slot == -1 && idx < shulker_container->GetFirstPlayerInventorySlot())
             {
-                if (src_slot == -1 && s.first < shulker_container->GetFirstPlayerInventorySlot())
-                {
 #if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                    if (!s.second.IsEmptySlot() && AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() == "minecraft:cobblestone")
+                if (!slot.IsEmptySlot() && AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() == "minecraft:cobblestone")
 #else
-                    if (!s.second.IsEmptySlot() && AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() == "minecraft:cobblestone")
+                if (!slot.IsEmptySlot() && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == "minecraft:cobblestone")
 #endif
-                    {
-                        src_slot = s.first;
-                        quantity = s.second.GetItemCount();
-                        if (dst_slot != -1)
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                if (src_slot != -1 && s.first >= shulker_container->GetFirstPlayerInventorySlot())
                 {
-                    if (s.second.IsEmptySlot() || (s.second.GetItemCount() < 64 - quantity &&
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                        AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() == "minecraft:cobblestone"
-#else
-                        AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() == "minecraft:cobblestone"
-#endif
-                        ))
+                    src_slot = idx;
+                    quantity = slot.GetItemCount();
+                    if (dst_slot != -1)
                     {
-                        dst_slot = s.first;
                         break;
                     }
+                }
+            }
+
+            if (src_slot != -1 && idx >= shulker_container->GetFirstPlayerInventorySlot())
+            {
+                if (slot.IsEmptySlot() || (slot.GetItemCount() < 64 - quantity &&
+#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
+                    AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() == "minecraft:cobblestone"
+#else
+                    AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == "minecraft:cobblestone"
+#endif
+                    ))
+                {
+                    dst_slot = idx;
+                    break;
                 }
             }
         }
@@ -683,15 +657,10 @@ Status TakeFromChest(BehaviourClient& client, const std::string& item_name, cons
 
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
-    short container_id;
-    std::shared_ptr<Window> container;
-    {
-        std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
-        container_id = inventory_manager->GetFirstOpenedWindowId();
-        container = inventory_manager->GetWindow(container_id);
-    }
+    const short container_id = inventory_manager->GetFirstOpenedWindowId();
+    const std::shared_ptr<Window> container = inventory_manager->GetWindow(container_id);
 
-    if (!container)
+    if (container == nullptr)
     {
         LOG_WARNING("Container closed during in chest item taking");
         return Status::Failure;
@@ -700,32 +669,29 @@ Status TakeFromChest(BehaviourClient& client, const std::string& item_name, cons
     std::vector<short> available_slots;
     std::vector<short> to_take_slots;
     int num_in_inventory = 0;
+    for (const auto& [idx, slot] : container->GetSlots())
     {
-        std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
-        for (const auto& s : container->GetSlots())
-        {
-            if (!s.second.IsEmptySlot() &&
+        if (!slot.IsEmptySlot() &&
 #if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() == item_name
+            AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() == item_name
 #else
-                AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() == item_name
+            AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == item_name
 #endif
-                )
+            )
+        {
+            if (idx < container->GetFirstPlayerInventorySlot())
             {
-                if (s.first < container->GetFirstPlayerInventorySlot())
-                {
-                    to_take_slots.push_back(s.first);
-                }
-                else
-                {
-                    num_in_inventory += s.second.GetItemCount();
-                }
+                to_take_slots.push_back(idx);
             }
-            else if (s.first >= container->GetFirstPlayerInventorySlot() &&
-                s.second.IsEmptySlot())
+            else
             {
-                available_slots.push_back(s.first);
+                num_in_inventory += slot.GetItemCount();
             }
+        }
+        else if (idx >= container->GetFirstPlayerInventorySlot() &&
+            slot.IsEmptySlot())
+        {
+            available_slots.push_back(idx);
         }
     }
 
@@ -738,7 +704,6 @@ Status TakeFromChest(BehaviourClient& client, const std::string& item_name, cons
             return Status::Failure;
         }
 
-        std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
         num_in_inventory += container->GetSlot(available_slots[index]).GetItemCount();
 
         index += 1;
@@ -878,20 +843,17 @@ Status DestroyItems(BehaviourClient& client, const std::string& item_name)
     const Position& cactus_pos = blackboard.Get<Position>("DispenserFarmBot.cactus_position");
 
     std::vector<short> slots_to_remove;
+    for (const auto& [idx, slot] : inventory->GetSlots())
     {
-        std::lock_guard<std::mutex> lock_inventory_manager(inventory_manager->GetMutex());
-        for (const auto& s : inventory->GetSlots())
-        {
-            if (s.first >= inventory->GetFirstPlayerInventorySlot() && !s.second.IsEmptySlot() &&
+        if (idx >= inventory->GetFirstPlayerInventorySlot() && !slot.IsEmptySlot() &&
 #if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                AssetsManager::getInstance().Items().at(s.second.GetBlockID()).at(s.second.GetItemDamage())->GetName() == item_name
+            AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() == item_name
 #else
-                AssetsManager::getInstance().Items().at(s.second.GetItemID())->GetName() == item_name
+            AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == item_name
 #endif
-                )
-            {
-                slots_to_remove.push_back(s.first);
-            }
+            )
+        {
+            slots_to_remove.push_back(idx);
         }
     }
 
