@@ -37,7 +37,7 @@ namespace Botcraft
 
         int GetDataIdTypeVariant() const;
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
-        const std::optional<int>& GetArmorType() const;
+        std::optional<int> GetArmorType() const;
 #endif
 
         void SetDataIdTypeVariant(const int data_id_type_variant);

@@ -32,7 +32,7 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const Position& GetTreasurePos() const;
+        Position GetTreasurePos() const;
         bool GetGotFish() const;
         int GetMoistnessLevel() const;
 

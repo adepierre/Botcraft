@@ -78,10 +78,10 @@ namespace Botcraft
         }
     }
 
-    const std::string& MushroomCowEntity::GetDataType() const
+    std::string MushroomCowEntity::GetDataType() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::string&>(metadata.at("data_type"));
+        return std::any_cast<std::string>(metadata.at("data_type"));
     }
 
 

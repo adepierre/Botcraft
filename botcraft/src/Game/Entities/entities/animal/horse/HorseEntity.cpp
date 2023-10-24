@@ -89,10 +89,10 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
-    const std::optional<int>& HorseEntity::GetArmorType() const
+    std::optional<int> HorseEntity::GetArmorType() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<int>&>(metadata.at("armor_type"));
+        return std::any_cast<std::optional<int>>(metadata.at("armor_type"));
     }
 #endif
 

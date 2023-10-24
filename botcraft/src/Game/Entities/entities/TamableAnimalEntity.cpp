@@ -55,10 +55,10 @@ namespace Botcraft
         return std::any_cast<char>(metadata.at("data_flags_id"));
     }
 
-    const std::optional<ProtocolCraft::UUID>& TamableAnimalEntity::GetDataOwneruuidId() const
+    std::optional<ProtocolCraft::UUID> TamableAnimalEntity::GetDataOwneruuidId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_owneruuid_id"));
+        return std::any_cast<std::optional<ProtocolCraft::UUID>>(metadata.at("data_owneruuid_id"));
     }
 
 

@@ -89,10 +89,10 @@ namespace Botcraft
         }
     }
 
-    const Position& TurtleEntity::GetHomePos() const
+    Position TurtleEntity::GetHomePos() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Position&>(metadata.at("home_pos"));
+        return std::any_cast<Position>(metadata.at("home_pos"));
     }
 
     bool TurtleEntity::GetHasEgg() const
@@ -107,10 +107,10 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("laying_egg"));
     }
 
-    const Position& TurtleEntity::GetTravelPos() const
+    Position TurtleEntity::GetTravelPos() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Position&>(metadata.at("travel_pos"));
+        return std::any_cast<Position>(metadata.at("travel_pos"));
     }
 
     bool TurtleEntity::GetGoingHome() const

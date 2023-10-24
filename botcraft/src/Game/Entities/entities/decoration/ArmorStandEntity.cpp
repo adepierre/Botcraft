@@ -97,40 +97,40 @@ namespace Botcraft
         return std::any_cast<char>(metadata.at("data_client_flags"));
     }
 
-    const Vector3<float>& ArmorStandEntity::GetDataHeadPose() const
+    Vector3<float> ArmorStandEntity::GetDataHeadPose() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Vector3<float>&>(metadata.at("data_head_pose"));
+        return std::any_cast<Vector3<float>>(metadata.at("data_head_pose"));
     }
 
-    const Vector3<float>& ArmorStandEntity::GetDataBodyPose() const
+    Vector3<float> ArmorStandEntity::GetDataBodyPose() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Vector3<float>&>(metadata.at("data_body_pose"));
+        return std::any_cast<Vector3<float>>(metadata.at("data_body_pose"));
     }
 
-    const Vector3<float>& ArmorStandEntity::GetDataLeftArmPose() const
+    Vector3<float> ArmorStandEntity::GetDataLeftArmPose() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Vector3<float>&>(metadata.at("data_left_arm_pose"));
+        return std::any_cast<Vector3<float>>(metadata.at("data_left_arm_pose"));
     }
 
-    const Vector3<float>& ArmorStandEntity::GetDataRightArmPose() const
+    Vector3<float> ArmorStandEntity::GetDataRightArmPose() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Vector3<float>&>(metadata.at("data_right_arm_pose"));
+        return std::any_cast<Vector3<float>>(metadata.at("data_right_arm_pose"));
     }
 
-    const Vector3<float>& ArmorStandEntity::GetDataLeftLegPose() const
+    Vector3<float> ArmorStandEntity::GetDataLeftLegPose() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Vector3<float>&>(metadata.at("data_left_leg_pose"));
+        return std::any_cast<Vector3<float>>(metadata.at("data_left_leg_pose"));
     }
 
-    const Vector3<float>& ArmorStandEntity::GetDataRightLegPose() const
+    Vector3<float> ArmorStandEntity::GetDataRightLegPose() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Vector3<float>&>(metadata.at("data_right_leg_pose"));
+        return std::any_cast<Vector3<float>>(metadata.at("data_right_leg_pose"));
     }
 
 

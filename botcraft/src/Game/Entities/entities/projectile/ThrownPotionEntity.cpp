@@ -78,10 +78,10 @@ namespace Botcraft
         }
     }
 
-    const ProtocolCraft::Slot& ThrownPotionEntity::GetDataItemStack() const
+    ProtocolCraft::Slot ThrownPotionEntity::GetDataItemStack() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::Slot&>(metadata.at("data_item_stack"));
+        return std::any_cast<ProtocolCraft::Slot>(metadata.at("data_item_stack"));
     }
 
 

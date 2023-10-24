@@ -42,9 +42,10 @@ namespace Botcraft
         int GetDataColor() const;
         bool GetDataWaiting() const;
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        const std::shared_ptr<ProtocolCraft::Particle>& GetDataParticle() const;
+        //TODO: pointed object won't be thread safe
+        std::shared_ptr<ProtocolCraft::Particle> GetDataParticle() const;
 #else
-        const std::optional<int>& GetDataParticle() const;
+        std::optional<int> GetDataParticle() const;
         int GetDataParticleArgument1() const;
         int GetDataParticleArgument2() const;
 #endif

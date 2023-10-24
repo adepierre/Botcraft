@@ -112,16 +112,16 @@ namespace Botcraft
         return std::any_cast<char>(metadata.at("data_player_main_hand"));
     }
 
-    const ProtocolCraft::NBT::Value& PlayerEntity::GetDataShoulderLeft() const
+    ProtocolCraft::NBT::Value PlayerEntity::GetDataShoulderLeft() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::NBT::Value&>(metadata.at("data_shoulder_left"));
+        return std::any_cast<ProtocolCraft::NBT::Value>(metadata.at("data_shoulder_left"));
     }
 
-    const ProtocolCraft::NBT::Value& PlayerEntity::GetDataShoulderRight() const
+    ProtocolCraft::NBT::Value PlayerEntity::GetDataShoulderRight() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::NBT::Value&>(metadata.at("data_shoulder_right"));
+        return std::any_cast<ProtocolCraft::NBT::Value>(metadata.at("data_shoulder_right"));
     }
 
 

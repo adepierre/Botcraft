@@ -34,8 +34,8 @@ namespace Botcraft
 
         int GetDataTypeId() const;
         char GetDataFlagsId() const;
-        const std::optional<ProtocolCraft::UUID>& GetDataTrustedId0() const;
-        const std::optional<ProtocolCraft::UUID>& GetDataTrustedId1() const;
+        std::optional<ProtocolCraft::UUID> GetDataTrustedId0() const;
+        std::optional<ProtocolCraft::UUID> GetDataTrustedId1() const;
 
         void SetDataTypeId(const int data_type_id);
         void SetDataFlagsId(const char data_flags_id);

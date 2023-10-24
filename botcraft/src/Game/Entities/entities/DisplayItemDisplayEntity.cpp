@@ -79,10 +79,10 @@ namespace Botcraft
     }
 
     
-    const ProtocolCraft::Slot& DisplayItemDisplayEntity::GetDataItemStackId() const
+    ProtocolCraft::Slot DisplayItemDisplayEntity::GetDataItemStackId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::Slot&>(metadata.at("data_item_stack_id"));
+        return std::any_cast<ProtocolCraft::Slot>(metadata.at("data_item_stack_id"));
     }
     
     char DisplayItemDisplayEntity::GetDataItemDisplayId() const

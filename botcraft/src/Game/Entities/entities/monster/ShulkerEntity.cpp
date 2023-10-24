@@ -95,10 +95,10 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    const std::optional<Position>& ShulkerEntity::GetDataAttachPosId() const
+    std::optional<Position> ShulkerEntity::GetDataAttachPosId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<Position>&>(metadata.at("data_attach_pos_id"));
+        return std::any_cast<std::optional<Position>>(metadata.at("data_attach_pos_id"));
     }
 #endif
 

@@ -31,7 +31,7 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const std::optional<Position>& GetDataBeamTarget() const;
+        std::optional<Position> GetDataBeamTarget() const;
         bool GetDataShowBottom() const;
 
         void SetDataBeamTarget(const std::optional<Position>& data_beam_target);

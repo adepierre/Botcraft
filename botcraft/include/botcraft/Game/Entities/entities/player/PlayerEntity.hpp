@@ -36,8 +36,8 @@ namespace Botcraft
         int GetDataScoreId() const;
         char GetDataPlayerModeCustomisation() const;
         char GetDataPlayerMainHand() const;
-        const ProtocolCraft::NBT::Value& GetDataShoulderLeft() const;
-        const ProtocolCraft::NBT::Value& GetDataShoulderRight() const;
+        ProtocolCraft::NBT::Value GetDataShoulderLeft() const;
+        ProtocolCraft::NBT::Value GetDataShoulderRight() const;
 
         void SetDataPlayerAbsorptionId(const float data_player_absorption_id);
         void SetDataScoreId(const int data_score_id);

@@ -73,10 +73,10 @@ namespace Botcraft
         }
     }
 
-    const Position& FallingBlockEntity::GetDataStartPos() const
+    Position FallingBlockEntity::GetDataStartPos() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Position&>(metadata.at("data_start_pos"));
+        return std::any_cast<Position>(metadata.at("data_start_pos"));
     }
 
 

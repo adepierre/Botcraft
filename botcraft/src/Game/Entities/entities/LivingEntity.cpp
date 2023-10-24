@@ -115,10 +115,10 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-    const std::optional<Position>& LivingEntity::GetSleepingPosId() const
+    std::optional<Position> LivingEntity::GetSleepingPosId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<Position>&>(metadata.at("sleeping_pos_id"));
+        return std::any_cast<std::optional<Position>>(metadata.at("sleeping_pos_id"));
     }
 #endif
 

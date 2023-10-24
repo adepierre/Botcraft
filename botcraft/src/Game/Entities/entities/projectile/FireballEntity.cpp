@@ -51,7 +51,7 @@ namespace Botcraft
         }
     }
 
-    const ProtocolCraft::Slot& FireballEntity::GetDataItemStack() const
+    ProtocolCraft::Slot FireballEntity::GetDataItemStack() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<const ProtocolCraft::Slot&>(metadata.at("data_item_stack"));

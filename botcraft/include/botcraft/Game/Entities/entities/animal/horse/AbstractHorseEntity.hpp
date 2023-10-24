@@ -28,7 +28,7 @@ namespace Botcraft
 
         char GetDataIdFlags() const;
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
-        const std::optional<ProtocolCraft::UUID>& GetDataIdOwnerUuid() const;
+        std::optional<ProtocolCraft::UUID> GetDataIdOwnerUuid() const;
 #endif
 
         void SetDataIdFlags(const char data_id_flags);

@@ -31,7 +31,7 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const Position& GetDataStartPos() const;
+        Position GetDataStartPos() const;
 
         void SetDataStartPos(const Position& data_start_pos);
 

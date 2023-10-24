@@ -44,7 +44,7 @@ namespace Botcraft
 
         char GetIdFlags() const;
 #if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
-        const std::optional<ProtocolCraft::UUID>& GetDataOwneruuidId() const;
+        std::optional<ProtocolCraft::UUID> GetDataOwneruuidId() const;
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         char GetPierceLevel() const;

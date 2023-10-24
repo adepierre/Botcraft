@@ -37,7 +37,7 @@ namespace Botcraft
         int GetDataStingerCountId() const;
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        const std::optional<Position>& GetSleepingPosId() const;
+        std::optional<Position> GetSleepingPosId() const;
 #endif
 
         void SetDataLivingEntityFlags(const char data_living_entity_flags);

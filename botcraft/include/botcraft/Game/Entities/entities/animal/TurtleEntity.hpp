@@ -32,10 +32,10 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const Position& GetHomePos() const;
+        Position GetHomePos() const;
         bool GetHasEgg() const;
         bool GetLayingEgg() const;
-        const Position& GetTravelPos() const;
+        Position GetTravelPos() const;
         bool GetGoingHome() const;
         bool GetTravelling() const;
 

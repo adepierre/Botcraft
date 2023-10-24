@@ -118,16 +118,16 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-    const std::shared_ptr<ProtocolCraft::Particle>& AreaEffectCloudEntity::GetDataParticle() const
+    std::shared_ptr<ProtocolCraft::Particle> AreaEffectCloudEntity::GetDataParticle() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::shared_ptr<ProtocolCraft::Particle>&>(metadata.at("data_particle"));
+        return std::any_cast<std::shared_ptr<ProtocolCraft::Particle>>(metadata.at("data_particle"));
     }
 #else
-    const std::optional<int>& AreaEffectCloudEntity::GetDataParticle() const
+    std::optional<int> AreaEffectCloudEntity::GetDataParticle() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<int>&>(metadata.at("data_particle"));
+        return std::any_cast<std::optional<int>>(metadata.at("data_particle"));
     }
 
     int AreaEffectCloudEntity::GetDataParticleArgument1() const

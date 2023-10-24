@@ -77,16 +77,16 @@ namespace Botcraft
         }
     }
 
-    const int FrogEntity::GetDataVariantId() const
+    int FrogEntity::GetDataVariantId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_variant_id"));
     }
 
-    const std::optional<int>& FrogEntity::GetDataTongueTargetId() const
+    std::optional<int> FrogEntity::GetDataTongueTargetId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<int>&>(metadata.at("data_tongue_target_id"));
+        return std::any_cast<std::optional<int>>(metadata.at("data_tongue_target_id"));
     }
 
 

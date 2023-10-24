@@ -62,10 +62,10 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
-    const std::optional<ProtocolCraft::UUID>& AbstractHorseEntity::GetDataIdOwnerUuid() const
+    std::optional<ProtocolCraft::UUID> AbstractHorseEntity::GetDataIdOwnerUuid() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_id_owner_uuid"));
+        return std::any_cast<std::optional<ProtocolCraft::UUID>>(metadata.at("data_id_owner_uuid"));
     }
 #endif
 

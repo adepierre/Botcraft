@@ -80,10 +80,10 @@ namespace Botcraft
         }
     }
 
-    const Position& DolphinEntity::GetTreasurePos() const
+    Position DolphinEntity::GetTreasurePos() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const Position&>(metadata.at("treasure_pos"));
+        return std::any_cast<Position>(metadata.at("treasure_pos"));
     }
 
     bool DolphinEntity::GetGotFish() const

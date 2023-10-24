@@ -36,7 +36,7 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const std::string& GetDataType() const;
+        std::string GetDataType() const;
 
         void SetDataType(const std::string& data_type);
 #endif

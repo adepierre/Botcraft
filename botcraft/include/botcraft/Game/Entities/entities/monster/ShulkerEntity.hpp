@@ -37,7 +37,7 @@ namespace Botcraft
 
         Direction GetDataAttachFaceId() const;
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        const std::optional<Position>& GetDataAttachPosId() const;
+        std::optional<Position> GetDataAttachPosId() const;
 #endif
         char GetDataPeekId() const;
         char GetDataColorId() const;

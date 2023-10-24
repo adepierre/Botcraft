@@ -88,10 +88,10 @@ namespace Botcraft
     }
 
     
-    const ProtocolCraft::Chat& DisplayTextDisplayEntity::GetDataTextId() const
+    ProtocolCraft::Chat DisplayTextDisplayEntity::GetDataTextId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::Chat&>(metadata.at("data_text_id"));
+        return std::any_cast<ProtocolCraft::Chat>(metadata.at("data_text_id"));
     }
     
     int DisplayTextDisplayEntity::GetDataLineWidthId() const

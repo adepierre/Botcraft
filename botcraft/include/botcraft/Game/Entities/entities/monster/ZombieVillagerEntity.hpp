@@ -36,7 +36,7 @@ namespace Botcraft
 
         bool GetDataConvertingId() const;
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        const VillagerData& GetDataVillagerData() const;
+        VillagerData GetDataVillagerData() const;
 #else
         int GetDataVillagerProfessionId() const;
 #endif

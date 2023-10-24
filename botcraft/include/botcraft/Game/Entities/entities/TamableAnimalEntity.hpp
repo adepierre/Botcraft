@@ -23,7 +23,7 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         char GetDataFlagsId() const;
-        const std::optional<ProtocolCraft::UUID>& GetDataOwneruuidId() const;
+        std::optional<ProtocolCraft::UUID> GetDataOwneruuidId() const;
 
         void SetDataFlagsId(const char data_flags_id);
         void SetDataOwneruuidId(const std::optional<ProtocolCraft::UUID>& data_owneruuid_id);

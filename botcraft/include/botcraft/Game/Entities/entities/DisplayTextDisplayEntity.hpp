@@ -32,7 +32,7 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const ProtocolCraft::Chat& GetDataTextId() const;
+        ProtocolCraft::Chat GetDataTextId() const;
         int GetDataLineWidthId() const;
         int GetDataBackgroundColorId() const;
         char GetDataTextOpacityId() const;

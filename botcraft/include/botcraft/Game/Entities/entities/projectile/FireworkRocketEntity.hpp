@@ -48,9 +48,9 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const ProtocolCraft::Slot& GetDataIdFireworksItem() const;
+        ProtocolCraft::Slot GetDataIdFireworksItem() const;
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        const std::optional<int>& GetDataAttachedToTarget() const;
+        std::optional<int> GetDataAttachedToTarget() const;
         bool GetDataShotAtAngle() const;
 #else
         int GetDataAttachedToTarget() const;

@@ -97,17 +97,17 @@ namespace Botcraft
         }
     }
 
-    const ProtocolCraft::Slot& FireworkRocketEntity::GetDataIdFireworksItem() const
+    ProtocolCraft::Slot FireworkRocketEntity::GetDataIdFireworksItem() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::Slot&>(metadata.at("data_id_fireworks_item"));
+        return std::any_cast<ProtocolCraft::Slot>(metadata.at("data_id_fireworks_item"));
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-    const std::optional<int>& FireworkRocketEntity::GetDataAttachedToTarget() const
+    std::optional<int> FireworkRocketEntity::GetDataAttachedToTarget() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<int>&>(metadata.at("data_attached_to_target"));
+        return std::any_cast<std::optional<int>>(metadata.at("data_attached_to_target"));
     }
 
     bool FireworkRocketEntity::GetDataShotAtAngle() const

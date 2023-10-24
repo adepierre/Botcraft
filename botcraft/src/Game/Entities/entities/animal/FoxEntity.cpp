@@ -95,16 +95,16 @@ namespace Botcraft
         return std::any_cast<char>(metadata.at("data_flags_id"));
     }
 
-    const std::optional<ProtocolCraft::UUID>& FoxEntity::GetDataTrustedId0() const
+    std::optional<ProtocolCraft::UUID> FoxEntity::GetDataTrustedId0() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_trusted_id_0"));
+        return std::any_cast<std::optional<ProtocolCraft::UUID>>(metadata.at("data_trusted_id_0"));
     }
 
-    const std::optional<ProtocolCraft::UUID>& FoxEntity::GetDataTrustedId1() const
+    std::optional<ProtocolCraft::UUID> FoxEntity::GetDataTrustedId1() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<ProtocolCraft::UUID>&>(metadata.at("data_trusted_id_1"));
+        return std::any_cast<std::optional<ProtocolCraft::UUID>>(metadata.at("data_trusted_id_1"));
     }
 
 

@@ -94,10 +94,10 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-    const VillagerData& VillagerEntity::GetDataVillagerData() const
+    VillagerData VillagerEntity::GetDataVillagerData() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const VillagerData&>(metadata.at("data_villager_data"));
+        return std::any_cast<VillagerData>(metadata.at("data_villager_data"));
     }
 
 

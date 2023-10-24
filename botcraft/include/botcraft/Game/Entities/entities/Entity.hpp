@@ -196,7 +196,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 458 /* < 1.14 */
         static std::shared_ptr<Entity> CreateObjectEntity(const ObjectEntityType type);
 #endif
-    
+
     protected:
 #if USE_GUI
         virtual void InitializeFaces();

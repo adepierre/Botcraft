@@ -32,12 +32,12 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         char GetDataClientFlags() const;
-        const Vector3<float>& GetDataHeadPose() const;
-        const Vector3<float>& GetDataBodyPose() const;
-        const Vector3<float>& GetDataLeftArmPose() const;
-        const Vector3<float>& GetDataRightArmPose() const;
-        const Vector3<float>& GetDataLeftLegPose() const;
-        const Vector3<float>& GetDataRightLegPose() const;
+        Vector3<float> GetDataHeadPose() const;
+        Vector3<float> GetDataBodyPose() const;
+        Vector3<float> GetDataLeftArmPose() const;
+        Vector3<float> GetDataRightArmPose() const;
+        Vector3<float> GetDataLeftLegPose() const;
+        Vector3<float> GetDataRightLegPose() const;
 
         void SetDataClientFlags(const char data_client_flags);
         void SetDataHeadPose(const Vector3<float>& data_head_pose);

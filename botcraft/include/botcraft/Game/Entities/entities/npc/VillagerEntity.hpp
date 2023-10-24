@@ -47,7 +47,7 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        const VillagerData& GetDataVillagerData() const;
+        VillagerData GetDataVillagerData() const;
 
         void SetDataVillagerData(const VillagerData& data_villager_data);
 #else

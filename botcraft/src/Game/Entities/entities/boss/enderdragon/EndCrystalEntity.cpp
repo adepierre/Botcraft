@@ -76,10 +76,10 @@ namespace Botcraft
         }
     }
 
-    const std::optional<Position>& EndCrystalEntity::GetDataBeamTarget() const
+    std::optional<Position> EndCrystalEntity::GetDataBeamTarget() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<Position>&>(metadata.at("data_beam_target"));
+        return std::any_cast<std::optional<Position>>(metadata.at("data_beam_target"));
     }
 
     bool EndCrystalEntity::GetDataShowBottom() const

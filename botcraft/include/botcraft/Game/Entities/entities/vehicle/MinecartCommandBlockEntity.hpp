@@ -32,8 +32,8 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const std::string& GetDataIdCommandName() const;
-        const ProtocolCraft::Chat& GetDataIdLastOutput() const;
+        std::string GetDataIdCommandName() const;
+        ProtocolCraft::Chat GetDataIdLastOutput() const;
 
         void SetDataIdCommandName(const std::string& data_id_command_name);
         void SetDataIdLastOutput(const ProtocolCraft::Chat& data_id_last_output);

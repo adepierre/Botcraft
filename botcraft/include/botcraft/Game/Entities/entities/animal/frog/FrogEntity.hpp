@@ -32,8 +32,8 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const int GetDataVariantId() const;
-        const std::optional<int>& GetDataTongueTargetId() const;
+        int GetDataVariantId() const;
+        std::optional<int> GetDataTongueTargetId() const;
 
         void SetDataVariantId(const int data_variant_id);
         void SetDataTongueTargetId(const std::optional<int>& data_tongue_target_id);

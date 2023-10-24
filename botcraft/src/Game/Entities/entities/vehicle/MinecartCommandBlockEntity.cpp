@@ -76,16 +76,16 @@ namespace Botcraft
         }
     }
 
-    const std::string& MinecartCommandBlockEntity::GetDataIdCommandName() const
+    std::string MinecartCommandBlockEntity::GetDataIdCommandName() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::string&>(metadata.at("data_id_command_name"));
+        return std::any_cast<std::string>(metadata.at("data_id_command_name"));
     }
 
-    const ProtocolCraft::Chat& MinecartCommandBlockEntity::GetDataIdLastOutput() const
+    ProtocolCraft::Chat MinecartCommandBlockEntity::GetDataIdLastOutput() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::Chat&>(metadata.at("data_id_last_output"));
+        return std::any_cast<ProtocolCraft::Chat>(metadata.at("data_id_last_output"));
     }
 
 
