@@ -99,6 +99,7 @@ namespace Botcraft
 
         // Generic properties getter
         int GetEntityID() const;
+        ProtocolCraft::UUID GetUUID() const;
         Vector3<double> GetPosition() const;
         double GetX() const;
         double GetY() const;
@@ -120,6 +121,7 @@ namespace Botcraft
 
         // Generic properties setter
         void SetEntityID(const int entity_id_);
+        void SetUUID(const ProtocolCraft::UUID& uuid_);
         virtual void SetPosition(const Vector3<double>& position_);
         virtual void SetX(const double x_);
         virtual void SetY(const double y_);
@@ -206,6 +208,7 @@ namespace Botcraft
         mutable std::shared_mutex entity_mutex;
 
         int entity_id;
+        ProtocolCraft::UUID uuid;
         Vector3<double> position;
         float yaw;
         float pitch;

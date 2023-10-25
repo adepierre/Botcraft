@@ -686,6 +686,12 @@ namespace Botcraft
         return entity_id;
     }
 
+    ProtocolCraft::UUID Entity::GetUUID() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return uuid;
+    }
+
     Vector3<double> Entity::GetPosition() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
@@ -804,6 +810,12 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         entity_id = entity_id_;
+    }
+
+    void Entity::SetUUID(const ProtocolCraft::UUID& uuid_)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        uuid = uuid_;
     }
 
     void Entity::SetPosition(const Vector3<double>& position_)

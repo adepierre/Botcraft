@@ -138,6 +138,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg)
     {
+        // no mutex deadlock as local_player->Get functions are called first then local_player->Set
         (msg.GetRelativeArguments() & 0x01) ? local_player->SetX(local_player->GetX() + msg.GetX()) : local_player->SetX(msg.GetX());
         (msg.GetRelativeArguments() & 0x02) ? local_player->SetY(local_player->GetY() + msg.GetY()) : local_player->SetY(msg.GetY());
         (msg.GetRelativeArguments() & 0x04) ? local_player->SetZ(local_player->GetZ() + msg.GetZ()) : local_player->SetZ(msg.GetZ());
@@ -159,6 +160,7 @@ namespace Botcraft
         entity->SetZ(msg.GetZ());
         entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
+        entity->SetUUID(msg.GetUUID());
 
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[msg.GetId_()] = entity;
@@ -175,6 +177,7 @@ namespace Botcraft
         entity->SetZ(msg.GetZ());
         entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
+        entity->SetUUID(msg.GetUUID());
 
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[msg.GetId_()] = entity;
@@ -236,6 +239,7 @@ namespace Botcraft
         ));
         entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
+        entity->SetUUID(msg.GetPlayerId());
     }
 #endif
 
