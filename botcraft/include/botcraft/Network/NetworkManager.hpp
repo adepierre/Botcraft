@@ -53,6 +53,9 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundHelloPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg) override;
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+        virtual void Handle(ProtocolCraft::ClientboundPingPacket& msg) override;
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         virtual void Handle(ProtocolCraft::ClientboundCustomQueryPacket& msg) override;
 #endif
@@ -69,7 +72,6 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundFinishConfigurationPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundKeepAliveConfigurationPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundPingConfigurationPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundPingPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundStartConfigurationPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundChunkBatchStartPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundChunkBatchFinishedPacket& msg) override;

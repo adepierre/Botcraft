@@ -464,6 +464,15 @@ namespace Botcraft
         Send(keep_alive_msg);
     }
 
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+    void NetworkManager::Handle(ClientboundPingPacket& msg)
+    {
+        std::shared_ptr<ServerboundPongPacket> pong_msg = std::make_shared<ServerboundPongPacket>();
+        pong_msg->SetId_(msg.GetId_());
+        Send(pong_msg);
+    }
+#endif
+
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void NetworkManager::Handle(ClientboundCustomQueryPacket& msg)
     {
@@ -566,13 +575,6 @@ namespace Botcraft
     void NetworkManager::Handle(ClientboundPingConfigurationPacket& msg)
     {
         std::shared_ptr<ServerboundPongConfigurationPacket> pong_msg = std::make_shared<ServerboundPongConfigurationPacket>();
-        pong_msg->SetId_(msg.GetId_());
-        Send(pong_msg);
-    }
-
-    void NetworkManager::Handle(ClientboundPingPacket& msg)
-    {
-        std::shared_ptr<ServerboundPongPacket> pong_msg = std::make_shared<ServerboundPongPacket>();
         pong_msg->SetId_(msg.GetId_());
         Send(pong_msg);
     }
