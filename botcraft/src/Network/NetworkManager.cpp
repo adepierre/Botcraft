@@ -21,12 +21,12 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const bool force_microfost_auth)
+    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const bool force_microsoft_auth)
     {
         com = nullptr;
 
         // Online mode with Microsoft login flow
-        if (login.empty() || force_microfost_auth)
+        if (login.empty() || force_microsoft_auth)
         {
             authentifier = std::make_shared<Authentifier>();
             if (!authentifier->AuthMicrosoft(login))
