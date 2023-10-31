@@ -105,12 +105,10 @@ namespace ProtocolCraft
                     switch (a)
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
-                    {
                         entry.game_profile.SetUUID(uuid);
                         entry.game_profile.SetName(ReadData<std::string>(iter, length));
                         entry.game_profile.SetProperties(ReadVector<GameProfileProperty>(iter, length));
                         break;
-                    }
                     case PlayerInfoUpdateAction::InitializeChat:
                         entry.chat_session = ReadOptional<RemoteChatSessionData>(iter, length);
                         break;

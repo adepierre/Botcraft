@@ -37,7 +37,7 @@ namespace ProtocolCraft
             id_ = id__;
         }
 
-        void SetUuid(const UUID& uuid_)
+        void SetUUID(const UUID& uuid_)
         {
             uuid = uuid_;
         }
@@ -105,7 +105,7 @@ namespace ProtocolCraft
             return id_;
         }
 
-        const UUID& GetEntityUuid() const
+        const UUID& GetUUID() const
         {
             return uuid;
         }

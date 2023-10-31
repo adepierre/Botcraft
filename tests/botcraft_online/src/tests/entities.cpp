@@ -112,3 +112,39 @@ TEST_CASE("entity interact")
             return entity_manager->GetEntity(creeper->GetEntityID()) == nullptr;
         }, 5000));
 }
+
+TEST_CASE("player names")
+{
+    // Setup two bots and check their names are present in the "tab list"
+    std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot();
+    std::shared_ptr<Botcraft::EntityManager> entity_manager = bot->GetEntityManager();
+    CHECK(bot->GetNetworkManager()->GetMyName() == bot->GetPlayerName(entity_manager->GetLocalPlayer()->GetUUID()));
+
+    const Botcraft::Vector3<double> bot_pos = entity_manager->GetLocalPlayer()->GetPosition();
+    std::unique_ptr<Botcraft::ManagersClient> bot2 = SetupTestBot();
+    std::shared_ptr<Botcraft::Entity> bot2_entity;
+    // Find bot2 in bot entities
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
+        {
+            for (const auto& [id, e] : *entity_manager->GetEntities())
+            {
+                if (id == bot2->GetEntityManager()->GetLocalPlayer()->GetEntityID())
+                {
+                    bot2_entity = e;
+                    return true;
+                }
+            }
+            return false;
+        }, 5000));
+    // Check bot sees bot2 with it's name
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
+        {
+            return bot->GetPlayerName(bot2_entity->GetUUID()) == bot2->GetNetworkManager()->GetMyName();
+        }, 5000));
+
+    bot2->Disconnect();
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]()
+        {
+            return bot->GetPlayerName(bot2_entity->GetUUID()) == "";
+        }, 5000));
+}

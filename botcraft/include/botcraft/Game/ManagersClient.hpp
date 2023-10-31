@@ -1,7 +1,9 @@
 #pragma once
 
-#include <thread>
 #include <atomic>
+#include <map>
+#include <shared_mutex>
+#include <thread>
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/ConnectionClient.hpp"
@@ -34,33 +36,44 @@ namespace Botcraft
 
         void SetSharedWorld(const std::shared_ptr<World> world_);
 
-        const bool GetAutoRespawn() const;
+        bool GetAutoRespawn() const;
         void SetAutoRespawn(const bool b);
 
         // Set the right transaction id, add it to the inventory manager,
         // update the next transaction id and send it to the server
         // return the id of the transaction
-        const int SendInventoryTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
+        int SendInventoryTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
 
         std::shared_ptr<World> GetWorld() const;
         std::shared_ptr<EntityManager> GetEntityManager() const;
         std::shared_ptr<InventoryManager> GetInventoryManager() const;
         std::shared_ptr<PhysicsManager> GetPhysicsManager() const;
-        const bool GetCreativeMode() const;
+        bool GetCreativeMode() const;
+        /// @brief Get the name of a connected player
+        /// @param uuid UUID of the player
+        /// @return The name, or empty string if not present
+        std::string GetPlayerName(const ProtocolCraft::UUID& uuid) const;
+
 
         /// @brief Get the current tick
         /// @return An int representing the time of day
-        const int GetDayTime() const;
+        int GetDayTime() const;
 
     protected:
-        virtual void Handle(ProtocolCraft::Message &msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket &msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket &msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundLoginPacket &msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket &msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket &msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket &msg) override;
+        virtual void Handle(ProtocolCraft::Message& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSetTimePacket& msg) override;
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoPacket& msg) override;
+#else
+        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoRemovePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoUpdatePacket& msg) override;
+#endif
 
     protected:
         std::shared_ptr<World> world;
@@ -88,5 +101,9 @@ namespace Botcraft
 
         bool allow_flying;
         bool creative_mode; // Instant break
+
+        /// @brief Names of all connected players
+        std::map<ProtocolCraft::UUID, std::string> player_names;
+        mutable std::shared_mutex player_names_mutex;
     };
 } //Botcraft

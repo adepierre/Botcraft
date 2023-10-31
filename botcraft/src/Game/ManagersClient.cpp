@@ -86,14 +86,19 @@ namespace Botcraft
             world->UnloadAllChunks(network_process_thread_id);
             world.reset();
         }
+
+        {
+            std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
+            player_names.clear();
+        }
     }
 
-    const int ManagersClient::GetDayTime() const
+    int ManagersClient::GetDayTime() const
     {
         return day_time;
     }
 
-    const int ManagersClient::SendInventoryTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction)
+    int ManagersClient::SendInventoryTransaction(const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
     {
         InventoryTransaction inventory_transaction = inventory_manager->PrepareTransaction(transaction);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -113,7 +118,7 @@ namespace Botcraft
         world = world_;
     }
 
-    const bool ManagersClient::GetAutoRespawn() const
+    bool ManagersClient::GetAutoRespawn() const
     {
         return auto_respawn;
     }
@@ -143,17 +148,32 @@ namespace Botcraft
         return physics_manager;
     }
 
-    const bool ManagersClient::GetCreativeMode() const
+    bool ManagersClient::GetCreativeMode() const
     {
         return creative_mode;
     }
 
-    void ManagersClient::Handle(Message &msg)
+    std::string ManagersClient::GetPlayerName(const UUID& uuid) const
+    {
+        std::shared_lock<std::shared_mutex> lock(player_names_mutex);
+        auto it = player_names.find(uuid);
+        if (it != player_names.end())
+        {
+            return it->second;
+        }
+        else if (uuid == entity_manager->GetLocalPlayer()->GetUUID())
+        {
+            return network_manager->GetMyName();
+        }
+        return "";
+    }
+
+    void ManagersClient::Handle(Message& msg)
     {
 
     }
 
-    void ManagersClient::Handle(ClientboundGameProfilePacket &msg)
+    void ManagersClient::Handle(ClientboundGameProfilePacket& msg)
     {
         if (!world)
         {
@@ -180,7 +200,7 @@ namespace Botcraft
         physics_manager->StartPhysics();
     }
 
-    void ManagersClient::Handle(ClientboundChangeDifficultyPacket &msg)
+    void ManagersClient::Handle(ClientboundChangeDifficultyPacket& msg)
     {
         difficulty = static_cast<Difficulty>(msg.GetDifficulty());
 #if PROTOCOL_VERSION > 463 /* > 1.13.2 */
@@ -188,7 +208,7 @@ namespace Botcraft
 #endif
     }
 
-    void ManagersClient::Handle(ClientboundLoginPacket &msg)
+    void ManagersClient::Handle(ClientboundLoginPacket& msg)
     {
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         game_mode = static_cast<GameType>(msg.GetGameType() & 0x03);
@@ -216,7 +236,7 @@ namespace Botcraft
         }
     }
 
-    void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket &msg)
+    void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket& msg)
     {
         allow_flying = msg.GetFlags() & 0x04;
         creative_mode = msg.GetFlags() & 0x08;
@@ -247,7 +267,7 @@ namespace Botcraft
         network_manager->Send(settings_msg);
     }
 
-    void ManagersClient::Handle(ClientboundRespawnPacket &msg)
+    void ManagersClient::Handle(ClientboundRespawnPacket& msg)
     {
 #if PROTOCOL_VERSION < 464 /* < 1.14 */
         difficulty = static_cast<Difficulty>(msg.GetDifficulty());
@@ -259,9 +279,85 @@ namespace Botcraft
 #endif
     }
 
-    void ManagersClient::Handle(ProtocolCraft::ClientboundSetTimePacket& msg)
+    void ManagersClient::Handle(ClientboundSetTimePacket& msg)
     {
         // abs because the server multiplies by -1 when the sun will stop
         day_time = std::abs(msg.GetDayTime()) % 24000;
     }
+
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+    void ManagersClient::Handle(ClientboundPlayerInfoPacket& msg)
+    {
+        if (msg.GetAction() == PlayerInfoAction::RemovePlayer)
+        {
+            std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
+            for (const auto& [uuid, infos] : msg.GetEntries())
+            {
+                player_names.erase(uuid);
+            }
+        }
+        else if (msg.GetAction() == PlayerInfoAction::AddPlayer)
+        {
+            std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
+            for (const auto& [uuid, infos] : msg.GetEntries())
+            {
+                if (infos.GetDisplayName().has_value())
+                {
+                    player_names[uuid] = infos.GetDisplayName().value().GetText();
+                }
+                else
+                {
+                    player_names[uuid] = infos.GetName();
+                }
+            }
+        }
+        else if (msg.GetAction() == PlayerInfoAction::UpdateDisplayName)
+        {
+            std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
+            for (const auto& [uuid, infos] : msg.GetEntries())
+            {
+                if (infos.GetDisplayName().has_value())
+                {
+                    player_names[uuid] = infos.GetDisplayName().value().GetText();
+                }
+            }
+        }
+    }
+#else
+    void ManagersClient::Handle(ClientboundPlayerInfoRemovePacket& msg)
+    {
+        std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
+        for (const auto& uuid : msg.GetProfileIds())
+        {
+            player_names.erase(uuid);
+        }
+    }
+
+    void ManagersClient::Handle(ClientboundPlayerInfoUpdatePacket& msg)
+    {
+        for (const auto& action : msg.GetActions())
+        {
+            if (action == PlayerInfoUpdateAction::AddPlayer)
+            {
+                std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
+                for (const auto& [uuid, infos] : msg.GetEntries())
+                {
+                    player_names[uuid] = infos.game_profile.GetName();
+                }
+                continue;
+            }
+            if (action == PlayerInfoUpdateAction::UpdateDisplayName)
+            {
+                std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
+                for (const auto& [uuid, infos] : msg.GetEntries())
+                {
+                    if (infos.display_name.has_value())
+                    {
+                        player_names[uuid] = infos.display_name.value().GetText();
+                    }
+                }
+            }
+        }
+    }
+#endif
 } //Botcraft
