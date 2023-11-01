@@ -6,6 +6,7 @@
 #include <memory>
 #include <optional>
 #include <shared_mutex>
+#include <mutex> // for std::scoped_lock in all entities cpp
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
