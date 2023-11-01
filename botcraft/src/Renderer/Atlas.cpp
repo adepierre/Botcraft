@@ -224,12 +224,12 @@ namespace Botcraft
             //WriteImage("atlas.png", height, width, 4, data.data(), false);
         }
 
-        const int Atlas::GetWidth() const
+        int Atlas::GetWidth() const
         {
             return width;
         }
 
-        const int Atlas::GetHeight() const
+        int Atlas::GetHeight() const
         {
             return height;
         }

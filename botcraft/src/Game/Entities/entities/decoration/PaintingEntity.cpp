@@ -78,7 +78,7 @@ namespace Botcraft
         }
     }
 
-    const int PaintingEntity::GetDataPaintingVariantId() const
+    int PaintingEntity::GetDataPaintingVariantId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_painting_variant_id"));

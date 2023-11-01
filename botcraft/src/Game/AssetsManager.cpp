@@ -157,7 +157,7 @@ namespace Botcraft
         }
     }
 
-    const ItemId AssetsManager::GetItemID(const std::string& item_name) const
+    ItemId AssetsManager::GetItemID(const std::string& item_name) const
     {
         for (const auto& p : items)
         {

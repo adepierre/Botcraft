@@ -21,7 +21,7 @@ namespace Botcraft
         void Connect(const std::string& address, const std::string& login, const bool force_microsoft_account = false);
         virtual void Disconnect();
 
-        const bool GetShouldBeClosed() const;
+        bool GetShouldBeClosed() const;
         void SetShouldBeClosed(const bool b);
 
         std::shared_ptr<NetworkManager> GetNetworkManager() const;

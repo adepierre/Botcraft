@@ -31,7 +31,7 @@ namespace Botcraft
         return cached_models[filepath];
     }
 
-    const Model Model::GetModel(const unsigned char height, const std::string& texture)
+    Model Model::GetModel(const unsigned char height, const std::string& texture)
     {
         return Model(height, texture);
     }

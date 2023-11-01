@@ -22,8 +22,8 @@ namespace Botcraft
             const glm::vec3& GetPosition() const;
             const glm::vec3& GetFront() const;
             const std::array<glm::vec4, 6>& GetFrustumPlanes() const;
-            const float GetYaw() const;
-            const float GetPitch() const;
+            float GetYaw() const;
+            float GetPitch() const;
 
             // Setter
             void SetPosition(const float x, const float y, const float z);
@@ -37,7 +37,7 @@ namespace Botcraft
             void ResetHasChangedOrientation();
 
             // Returns the distance between coordinates and the camera
-            const float GetDistance(const float x_, const float y_, const float z_) const;
+            float GetDistance(const float x_, const float y_, const float z_) const;
 
         private:
             // Compute the view matrix from camera parameters

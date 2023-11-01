@@ -35,7 +35,7 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const int GetDataPaintingVariantId() const;
+        int GetDataPaintingVariantId() const;
 
         void SetDataPaintingVariantId(const int data_painting_variant_id);
 #endif

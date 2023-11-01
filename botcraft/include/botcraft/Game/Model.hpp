@@ -45,7 +45,7 @@ namespace Botcraft
         // Base constructor
         Model();
         static const Model& GetModel(const std::string& filepath, const bool custom);
-        static const Model GetModel(const unsigned char height, const std::string& texture);
+        static Model GetModel(const unsigned char height, const std::string& texture);
 
         Model& operator+=(const Model& m);
 

@@ -33,7 +33,7 @@ namespace Botcraft
         network_manager.reset();
     }
 
-    const bool ConnectionClient::GetShouldBeClosed() const
+    bool ConnectionClient::GetShouldBeClosed() const
     {
         return should_be_closed;
     }

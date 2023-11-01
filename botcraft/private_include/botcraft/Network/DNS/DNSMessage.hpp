@@ -17,62 +17,62 @@ namespace Botcraft
             return identification;
         }
 
-        const char GetFlagQR() const
+        char GetFlagQR() const
         {
             return qr;
         }
 
-        const char GetFlagOPCode() const
+        char GetFlagOPCode() const
         {
             return opcode;
         }
 
-        const char GetFlagAA() const
+        char GetFlagAA() const
         {
             return aa;
         }
 
-        const char GetFlagTC() const
+        char GetFlagTC() const
         {
             return tc;
         }
 
-        const char GetFlagRD() const
+        char GetFlagRD() const
         {
             return rd;
         }
 
-        const char GetFlagRA() const
+        char GetFlagRA() const
         {
             return ra;
         }
 
-        const char GetFlagZ() const
+        char GetFlagZ() const
         {
             return z;
         }
 
-        const char GetFlagRCode() const
+        char GetFlagRCode() const
         {
             return rcode;
         }
 
-        const short GetNumberQuestion() const
+        short GetNumberQuestion() const
         {
             return number_question;
         }
 
-        const short GetNumberAnswer() const
+        short GetNumberAnswer() const
         {
             return number_answer;
         }
 
-        const short GetNumberAuthority() const
+        short GetNumberAuthority() const
         {
             return number_authority;
         }
 
-        const short GetNumberAdditionalRR() const
+        short GetNumberAdditionalRR() const
         {
             return number_additional_rr;
         }

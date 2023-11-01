@@ -58,23 +58,23 @@ namespace ProtocolCraft
 #endif
         
         
-        const bool GetIsGuiOpen()
+        bool GetIsGuiOpen()
         {
             return is_gui_open;
         }
         
-        const bool GetIsFilteringCraftable()
+        bool GetIsFilteringCraftable()
         {
             return is_filtering_craftable;
         }
         
 #if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-        const bool GetIsFurnaceGuiOpen()
+        bool GetIsFurnaceGuiOpen()
         {
             return is_furnace_gui_open;
         }
         
-        const bool GetIsFurnaceFilteringCraftable()
+        bool GetIsFurnaceFilteringCraftable()
         {
             return is_furnace_filtering_craftable;
         }
@@ -82,22 +82,22 @@ namespace ProtocolCraft
 
 
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
-        const bool GetIsBlastingFurnaceGuiOpen()
+        bool GetIsBlastingFurnaceGuiOpen()
         {
             return is_blasting_furnace_gui_open;
         }
         
-        const bool GetIsBlastingFurnaceFilteringCraftable()
+        bool GetIsBlastingFurnaceFilteringCraftable()
         {
             return is_blasting_furnace_filtering_craftable;
         }
         
-        const bool GetIsSmokerGuiOpen()
+        bool GetIsSmokerGuiOpen()
         {
             return is_smoker_gui_open;
         }
         
-        const bool GetIsSmokerFilteringCraftable()
+        bool GetIsSmokerFilteringCraftable()
         {
             return is_smoker_filtering_craftable;
         }

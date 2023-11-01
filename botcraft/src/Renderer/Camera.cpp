@@ -18,7 +18,7 @@ namespace Botcraft
             return view_matrix;
         }
 
-        const float Camera::GetDistance(const float x_, const float y_, const float z_) const
+        float Camera::GetDistance(const float x_, const float y_, const float z_) const
         {
             float delta_x = position.x - x_;
             float delta_y = position.y - y_;
@@ -50,12 +50,12 @@ namespace Botcraft
             return frustum;
         }
 
-        const float Camera::GetYaw() const
+        float Camera::GetYaw() const
         {
             return yaw;
         }
 
-        const float Camera::GetPitch() const
+        float Camera::GetPitch() const
         {
             return pitch;
         }

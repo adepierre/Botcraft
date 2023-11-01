@@ -41,12 +41,7 @@ namespace Botcraft
 
         const std::unordered_map<ItemId, std::unique_ptr<Item> >& Items() const;
         const Item* GetItem(const ItemId id) const;
-
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-        const std::pair<int, unsigned char> GetItemID(const std::string& item_name) const;
-#else
-        const int GetItemID(const std::string& item_name) const;
-#endif
+        ItemId GetItemID(const std::string& item_name) const;
 
 #if USE_GUI
         const Renderer::Atlas* GetAtlas() const;
