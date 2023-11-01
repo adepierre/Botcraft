@@ -15,12 +15,12 @@ namespace ProtocolCraft
 
         }
 
-        virtual void Read(ReadIterator &iter, size_t &length)
+        virtual void Read(ReadIterator& iter, size_t& length)
         {
             return ReadImpl(iter, length);
         }
 
-        virtual void Write(WriteContainer &container) const
+        virtual void Write(WriteContainer& container) const
         {
             return WriteImpl(container);
         }
@@ -31,8 +31,8 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) = 0;
-        virtual void WriteImpl(WriteContainer &container) const = 0;
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) = 0;
+        virtual void WriteImpl(WriteContainer& container) const = 0;
         virtual Json::Value SerializeImpl() const = 0;
     };
 } // ProtocolCraft

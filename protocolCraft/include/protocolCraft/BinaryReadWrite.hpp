@@ -38,11 +38,11 @@ namespace ProtocolCraft
     using VarInt = VarType<int>;
     using VarLong = VarType<long long int>;
 
-    std::string ReadRawString(ReadIterator &iter, size_t &length, const int size);
-    void WriteRawString(const std::string &s, WriteContainer &container);
+    std::string ReadRawString(ReadIterator& iter, size_t& length, const int size);
+    void WriteRawString(const std::string& s, WriteContainer& container);
 
-    std::vector<unsigned char> ReadByteArray(ReadIterator &iter, size_t &length, const size_t &desired_length);
-    void WriteByteArray(const std::vector<unsigned char> &my_array, WriteContainer &container);
+    std::vector<unsigned char> ReadByteArray(ReadIterator& iter, size_t& length, const size_t& desired_length);
+    void WriteByteArray(const std::vector<unsigned char>& my_array, WriteContainer& container);
     void WriteByteArray(const unsigned char* data, const size_t& length, WriteContainer& container);
 
     template <typename T>
@@ -61,7 +61,7 @@ namespace ProtocolCraft
         typename T,
         typename std::enable_if_t<!std::is_base_of_v<NetworkType, T>, bool> = true
     >
-    T ReadData(ReadIterator &iter, size_t &length)
+    T ReadData(ReadIterator& iter, size_t& length)
     {
         if (length < sizeof(T))
         {
@@ -163,7 +163,7 @@ namespace ProtocolCraft
     void WriteData(const std::string& value, WriteContainer& container);
 
     template<>
-    void WriteData(const VarInt& value, WriteContainer &container);
+    void WriteData(const VarInt& value, WriteContainer& container);
 
     template<>
     void WriteData(const VarLong& value, WriteContainer& container);

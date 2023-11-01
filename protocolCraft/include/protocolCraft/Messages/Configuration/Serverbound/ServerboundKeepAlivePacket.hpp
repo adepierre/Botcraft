@@ -28,12 +28,12 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             id_ = ReadData<long long int>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<long long int>(id_, container);
         }

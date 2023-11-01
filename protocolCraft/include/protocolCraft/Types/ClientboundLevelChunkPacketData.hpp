@@ -47,14 +47,14 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             heightmaps = ReadData<NBT::UnnamedValue>(iter, length);
             buffer = ReadVector<unsigned char>(iter, length);
             block_entities_data = ReadVector<BlockEntityInfo>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<NBT::UnnamedValue>(heightmaps, container);
             WriteVector<unsigned char>(buffer, container);

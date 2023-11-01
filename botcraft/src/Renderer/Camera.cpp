@@ -76,7 +76,7 @@ namespace Botcraft
             UpdateCameraViewMatrix();
         }
 
-        void Camera::SetProjection(const glm::mat4 &projection)
+        void Camera::SetProjection(const glm::mat4& projection)
         {
             projection_matrix = projection;
             ComputeFrustumPlanes();

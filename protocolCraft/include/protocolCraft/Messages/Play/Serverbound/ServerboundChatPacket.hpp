@@ -46,7 +46,7 @@ namespace ProtocolCraft
 
         }
 
-        void SetMessage(const std::string &s)
+        void SetMessage(const std::string& s)
         {
             message = s;
         }
@@ -148,7 +148,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             message = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
@@ -177,7 +177,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(message, container);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */

@@ -57,7 +57,7 @@ namespace Botcraft
             }
         }
 
-        void Chunk::AddFace(const Face &f, const std::array<unsigned int, 2>& texture_multipliers,
+        void Chunk::AddFace(const Face& f, const std::array<unsigned int, 2>& texture_multipliers,
             const float offset_x, const float offset_y, const float offset_z)
         {
             std::lock_guard<std::mutex> lock_faces(mutex_faces);

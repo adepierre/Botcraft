@@ -60,7 +60,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             origin = ReadData<NetworkPosition>(iter, length);
             destination_type = ReadData<Identifier>(iter, length);

@@ -56,7 +56,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             packed_XZ = ReadData<unsigned char>(iter, length);
             y = ReadData<short>(iter, length);

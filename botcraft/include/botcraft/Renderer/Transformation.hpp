@@ -13,7 +13,7 @@ namespace Botcraft
         class Transformation
         {
         public:
-            virtual void ApplyTransformation(IMatrix &m) const = 0;
+            virtual void ApplyTransformation(IMatrix& m) const = 0;
             virtual const std::string Print() const = 0;
         };
 
@@ -21,7 +21,7 @@ namespace Botcraft
         {
         public:
             Translation(const float x_ = 0.0f, const float y_ = 0.0f, const float z_ = 0.0f);
-            virtual void ApplyTransformation(IMatrix &m) const override;
+            virtual void ApplyTransformation(IMatrix& m) const override;
 
             const virtual std::string Print() const override;
 
@@ -34,7 +34,7 @@ namespace Botcraft
         {
         public:
             Rotation(const float axis_x_ = 0.0f, const float axis_y_ = 0.0f, const float axis_z_ = 0.0f, const float deg_angle_ = 0.0f);
-            virtual void ApplyTransformation(IMatrix &m) const override;
+            virtual void ApplyTransformation(IMatrix& m) const override;
 
             const virtual std::string Print() const override;
 
@@ -48,7 +48,7 @@ namespace Botcraft
         {
         public:
             Scale(const float axis_x_ = 1.0f, const float axis_y_ = 1.0f, const float axis_z_ = 1.0f);
-            virtual void ApplyTransformation(IMatrix &m) const override;
+            virtual void ApplyTransformation(IMatrix& m) const override;
 
             const virtual std::string Print() const override;
 

@@ -60,7 +60,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             const std::string str = ReadData<std::string>(iter, length);
             const size_t split = str.find(':');

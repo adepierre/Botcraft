@@ -17,7 +17,7 @@ namespace Botcraft
             ~TransparentChunk();
 
             void SetDisplayStatus(const BufferStatus s);
-            void Sort(const glm::vec3 &cam_pos);
+            void Sort(const glm::vec3& cam_pos);
             void Update();
 
         protected:

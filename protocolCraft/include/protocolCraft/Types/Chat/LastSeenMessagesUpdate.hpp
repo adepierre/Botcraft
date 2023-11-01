@@ -67,7 +67,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             last_seen = ReadVector<LastSeenMessagesEntry>(iter, length);
@@ -78,7 +78,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteVector<LastSeenMessagesEntry>(last_seen, container);

@@ -272,7 +272,7 @@ void UserControlledClient::CreateTestWorld()
 }
 
 #ifdef USE_GUI
-void UserControlledClient::MouseCallback(const double &xoffset, const double &yoffset)
+void UserControlledClient::MouseCallback(const double& xoffset, const double& yoffset)
 {
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
     float pitch = static_cast<float>(local_player->GetPitch() - yoffset * mouse_sensitivity);
@@ -293,7 +293,7 @@ void UserControlledClient::MouseCallback(const double &xoffset, const double &yo
     rendering_manager->SetPosOrientation(position.x, position.y + 1.62f, position.z, new_yaw, pitch);
 }
 
-void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<int>(Renderer::KEY_CODE::NUMBER_OF_KEYS)> &is_key_pressed, const double &delta_time)
+void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<int>(Renderer::KEY_CODE::NUMBER_OF_KEYS)>& is_key_pressed, const double& delta_time)
 {
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
@@ -362,7 +362,7 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 }
 #endif
 
-void UserControlledClient::Handle(ClientboundGameProfilePacket &msg)
+void UserControlledClient::Handle(ClientboundGameProfilePacket& msg)
 {
     Botcraft::ManagersClient::Handle(msg);
 

@@ -202,7 +202,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             x = ReadData<VarInt>(iter, length);
             z = ReadData<VarInt>(iter, length);
@@ -259,7 +259,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(x, container);
             WriteData<VarInt>(z, container);

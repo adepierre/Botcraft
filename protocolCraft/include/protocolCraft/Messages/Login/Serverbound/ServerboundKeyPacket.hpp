@@ -19,7 +19,7 @@ namespace ProtocolCraft
 
         }
 
-        void SetKeyBytes(const std::vector<unsigned char> &key_bytes_)
+        void SetKeyBytes(const std::vector<unsigned char>& key_bytes_)
         {
             key_bytes = key_bytes_;
         }
@@ -68,7 +68,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             key_bytes = ReadVector<unsigned char>(iter, length);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -91,7 +91,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteVector<unsigned char>(key_bytes, container);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */

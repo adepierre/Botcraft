@@ -16,7 +16,7 @@ namespace Botcraft
     }
 
 
-    void InventoryManager::SetSlot(const short window_id, const short index, const Slot &slot)
+    void InventoryManager::SetSlot(const short window_id, const short index, const Slot& slot)
     {
         std::shared_ptr<Window> window = nullptr;
 

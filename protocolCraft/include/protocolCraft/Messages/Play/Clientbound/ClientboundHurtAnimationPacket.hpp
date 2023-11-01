@@ -46,7 +46,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             id_ = ReadData<VarInt>(iter, length);
             yaw = ReadData<float>(iter, length);

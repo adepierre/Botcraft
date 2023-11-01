@@ -11,7 +11,7 @@ namespace Botcraft
         //To avoid to include glm in header
         struct IMatrix
         {
-            IMatrix(const glm::mat4 &m_ = glm::mat4(0.0f))
+            IMatrix(const glm::mat4& m_ = glm::mat4(0.0f))
             {
                 m = m_;
             }
@@ -26,7 +26,7 @@ namespace Botcraft
             z = z_;
         }
 
-        void Translation::ApplyTransformation(IMatrix &m) const
+        void Translation::ApplyTransformation(IMatrix& m) const
         {
             m.m = glm::translate(m.m, glm::vec3(x, y, z));
         }
@@ -47,7 +47,7 @@ namespace Botcraft
             deg_angle = deg_angle_;
         }
 
-        void Rotation::ApplyTransformation(IMatrix &m) const
+        void Rotation::ApplyTransformation(IMatrix& m) const
         {
             m.m = glm::rotate(m.m, glm::radians(deg_angle), glm::vec3(axis_x, axis_y, axis_z));
         }
@@ -67,7 +67,7 @@ namespace Botcraft
             axis_z = axis_z_;
         }
 
-        void Scale::ApplyTransformation(IMatrix &m) const
+        void Scale::ApplyTransformation(IMatrix& m) const
         {
             m.m = glm::scale(m.m, glm::vec3(axis_x, axis_y, axis_z));
         }

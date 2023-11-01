@@ -157,7 +157,7 @@ namespace ProtocolCraft
 
     protected:
 
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             x = ReadData<int>(iter, length);
             z = ReadData<int>(iter, length);
@@ -207,7 +207,7 @@ namespace ProtocolCraft
             );
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<int>(x, container);
             WriteData<int>(z, container);

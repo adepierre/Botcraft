@@ -25,9 +25,9 @@ namespace ProtocolCraft
         void SetArgument2(const int argument2_);
         
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override;
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
         
-        virtual void WriteImpl(WriteContainer &container) const override;
+        virtual void WriteImpl(WriteContainer& container) const override;
         
         virtual Json::Value SerializeImpl() const override;
         

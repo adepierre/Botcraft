@@ -10,7 +10,7 @@ namespace Botcraft
 {
     const unsigned long MAX_COMPRESSED_PACKET_LEN = 200 * 1024;
 
-    std::vector<unsigned char> Compress(const std::vector<unsigned char> &raw)
+    std::vector<unsigned char> Compress(const std::vector<unsigned char>& raw)
     {
         unsigned long size_to_compress = static_cast<unsigned long>(raw.size());
         unsigned long compressed_size = compressBound(size_to_compress);
@@ -32,7 +32,7 @@ namespace Botcraft
         return compressed_data;
     }
 
-    std::vector<unsigned char> Decompress(const std::vector<unsigned char> &compressed, const int start)
+    std::vector<unsigned char> Decompress(const std::vector<unsigned char>& compressed, const int start)
     {
         unsigned long size_to_decompress = static_cast<unsigned long>(compressed.size() - start);
 

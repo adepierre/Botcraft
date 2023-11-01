@@ -36,13 +36,13 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             uuid = ReadData<UUID>(iter, length);
             profile_public_key = ReadData<ProfilePublicKey>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<UUID>(uuid, container);
             WriteData<ProfilePublicKey>(profile_public_key, container);

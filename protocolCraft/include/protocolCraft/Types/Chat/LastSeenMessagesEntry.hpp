@@ -52,7 +52,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             profile_id = ReadData<UUID>(iter, length);
@@ -70,7 +70,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<UUID>(profile_id, container);

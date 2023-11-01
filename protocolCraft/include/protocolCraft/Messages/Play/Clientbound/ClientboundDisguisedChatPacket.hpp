@@ -50,7 +50,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             message = ReadData<Chat>(iter, length);
             chat_type = ReadData<ChatTypeBoundNetwork>(iter, length);

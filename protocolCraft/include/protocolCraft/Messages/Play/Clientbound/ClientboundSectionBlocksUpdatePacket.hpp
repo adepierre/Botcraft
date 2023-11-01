@@ -140,7 +140,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
             chunk_x = ReadData<int>(iter, length);
@@ -170,7 +170,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
             WriteData<int>(chunk_x, container);

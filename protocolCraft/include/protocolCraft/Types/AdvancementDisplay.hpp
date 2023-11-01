@@ -97,7 +97,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             title = ReadData<Chat>(iter, length);
             description = ReadData<Chat>(iter, length);
@@ -112,7 +112,7 @@ namespace ProtocolCraft
             y_coord = ReadData<float>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Chat>(title, container);
             WriteData<Chat>(description, container);

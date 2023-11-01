@@ -12,7 +12,7 @@ namespace Botcraft
         //To avoid including glm in public header
         struct IMatrix
         {
-            IMatrix(const glm::mat4 &m_ = glm::mat4(1.0f))
+            IMatrix(const glm::mat4& m_ = glm::mat4(1.0f))
             {
                 m = m_;
             }
@@ -166,17 +166,17 @@ namespace Botcraft
             }
         }
 
-        const std::array<float, 16> &Face::GetMatrix() const
+        const std::array<float, 16>& Face::GetMatrix() const
         {
             return model_matrix;
         }
 
-        std::array<float, 16> &Face::GetMatrix()
+        std::array<float, 16>& Face::GetMatrix()
         {
             return model_matrix;
         }
 
-        void Face::SetTextureMultipliers(const std::array<unsigned int, 2> &mult)
+        void Face::SetTextureMultipliers(const std::array<unsigned int, 2>& mult)
         {
             texture_multipliers = mult;
         }

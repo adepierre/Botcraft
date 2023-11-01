@@ -17,7 +17,7 @@ namespace ProtocolCraft
 
         }
 
-        virtual void Write(WriteContainer &container) const override
+        virtual void Write(WriteContainer& container) const override
         {
             WriteData<VarInt>(GetId(), container);
             return WriteImpl(container);

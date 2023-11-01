@@ -94,7 +94,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             container_id = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
@@ -104,7 +104,7 @@ namespace ProtocolCraft
             item_stack = ReadData<Slot>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<char>(container_id, container);
 #if PROTOCOL_VERSION > 755 /* > 1.17 */

@@ -117,7 +117,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             input_item_1 = ReadData<Slot>(iter, length);
             output_item = ReadData<Slot>(iter, length);

@@ -37,7 +37,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             previous_signature = ReadOptional<std::vector<unsigned char>>(iter, length,
                 [](ReadIterator& i, size_t& l)
@@ -48,7 +48,7 @@ namespace ProtocolCraft
             sender = ReadData<UUID>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteOptional<std::vector<unsigned char>>(previous_signature, container,
                 [](const std::vector<unsigned char>& v, WriteContainer& c)

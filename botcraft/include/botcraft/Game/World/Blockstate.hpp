@@ -74,7 +74,7 @@ namespace Botcraft
         /// @brief Create a blockstate from a given model, ignoring path in properties
         /// @param properties The properties of this blockstate
         /// @param model_ The model of this blockstate
-        Blockstate(const BlockstateProperties& properties, const Model &model_);
+        Blockstate(const BlockstateProperties& properties, const Model& model_);
 
         BlockstateId GetId() const;
         const Model& GetModel(const unsigned short index) const;
@@ -108,7 +108,7 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
         static unsigned int IdMetadataToId(const int id_, const unsigned char metadata_);
-        static void IdToIdMetadata(const unsigned int input_id, int &output_id, unsigned char &output_metadata);
+        static void IdToIdMetadata(const unsigned int input_id, int& output_id, unsigned char& output_metadata);
 #endif
         static void ClearCache();
 

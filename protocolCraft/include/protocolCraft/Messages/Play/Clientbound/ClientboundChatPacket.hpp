@@ -72,7 +72,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             message = ReadData<Chat>(iter, length);
             type = ReadData<char>(iter, length);
@@ -81,7 +81,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Chat>(message, container);
             WriteData<char>(type, container);

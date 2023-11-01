@@ -22,7 +22,7 @@ namespace Botcraft
     class Biome
     {
     public:
-        Biome(const std::string &name_, const float temperature_,
+        Biome(const std::string& name_, const float temperature_,
               const float rainfall_, const BiomeType biome_type_);
         ~Biome();
 

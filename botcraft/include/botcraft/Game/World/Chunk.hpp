@@ -59,16 +59,16 @@ namespace Botcraft
         void RemoveBlockEntityData(const Position& pos);
         ProtocolCraft::NBT::Value GetBlockEntityData(const Position& pos) const;
 
-        const Blockstate* GetBlock(const Position &pos) const;
+        const Blockstate* GetBlock(const Position& pos) const;
 
         void SetBlock(const Position& pos, const Blockstate* block);
-        void SetBlock(const Position &pos, const BlockstateId id);
+        void SetBlock(const Position& pos, const BlockstateId id);
 
-        unsigned char GetBlockLight(const Position &pos) const;
-        void SetBlockLight(const Position &pos, const unsigned char v);
+        unsigned char GetBlockLight(const Position& pos) const;
+        void SetBlockLight(const Position& pos, const unsigned char v);
 
-        unsigned char GetSkyLight(const Position &pos) const;
-        void SetSkyLight(const Position &pos, const unsigned char v);
+        unsigned char GetSkyLight(const Position& pos) const;
+        void SetSkyLight(const Position& pos, const unsigned char v);
 
         size_t GetDimensionIndex() const;
         bool GetHasSkyLight() const;

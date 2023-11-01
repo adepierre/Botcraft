@@ -47,9 +47,9 @@ namespace Botcraft
         static const Model& GetModel(const std::string& filepath, const bool custom);
         static const Model GetModel(const unsigned char height, const std::string& texture);
 
-        Model &operator+=(const Model &m);
+        Model& operator+=(const Model& m);
 
-        friend Model operator+(Model m1, const Model &m2)
+        friend Model operator+(Model m1, const Model& m2)
         {
             m1 += m2;
             return m1;
@@ -60,14 +60,14 @@ namespace Botcraft
         /// @return True if both models are the same, false otherwise
         bool IsSame(const Model& other) const;
 
-        const std::set<AABB> &GetColliders() const;
+        const std::set<AABB>& GetColliders() const;
         void SetColliders(const std::set<AABB>& colliders_);
 
         static void ClearCache();
 
 #if USE_GUI
-        const std::vector<FaceDescriptor> &GetFaces() const;
-        std::vector<FaceDescriptor> &GetFaces();
+        const std::vector<FaceDescriptor>& GetFaces() const;
+        std::vector<FaceDescriptor>& GetFaces();
 #endif
     private:
         static std::unordered_map<std::string, Model> cached_models;

@@ -36,13 +36,13 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             pos = ReadData<ChunkPos>(iter, length);
             buffer = ReadVector<unsigned char>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<ChunkPos>(pos, container);
             WriteVector<unsigned char>(buffer, container);

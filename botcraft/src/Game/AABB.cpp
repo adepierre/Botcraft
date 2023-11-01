@@ -4,7 +4,7 @@
 
 namespace Botcraft
 {
-    AABB::AABB(const Vector3<double> &center_, const Vector3<double> &half_size_)
+    AABB::AABB(const Vector3<double>& center_, const Vector3<double>& half_size_)
     {
         center = center_;
         half_size = half_size_;
@@ -35,7 +35,7 @@ namespace Botcraft
         return half_size;
     }
 
-    const bool AABB::Collide(const AABB &b) const
+    const bool AABB::Collide(const AABB& b) const
     {
         bool x = std::abs(center.x - b.center.x) <= (half_size.x + b.half_size.x);
         bool y = std::abs(center.y - b.center.y) <= (half_size.y + b.half_size.y);
@@ -45,7 +45,7 @@ namespace Botcraft
     }
 
     // Inspired by https://www.gamedev.net/articles/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
-    const double AABB::SweptCollide(const Vector3<double> &speed, const AABB &b, Vector3<double> &normal) const
+    const double AABB::SweptCollide(const Vector3<double>& speed, const AABB& b, Vector3<double>& normal) const
     {
         // Distance between the closest/furthest faces
         //of the current box and the tested box
@@ -140,7 +140,7 @@ namespace Botcraft
         return time_entry;
     }
 
-    const bool AABB::Intersect(const Vector3<double> &origin, const Vector3<double> &direction) const
+    const bool AABB::Intersect(const Vector3<double>& origin, const Vector3<double>& direction) const
     {
         double tmin = -std::numeric_limits<float>::max();
         double tmax = std::numeric_limits<float>::max();

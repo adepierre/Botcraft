@@ -75,12 +75,12 @@ namespace Botcraft
     }
 
 
-    void ConnectionClient::Handle(Message &msg)
+    void ConnectionClient::Handle(Message& msg)
     {
 
     }
 
-    void ConnectionClient::Handle(ClientboundLoginDisconnectPacket &msg)
+    void ConnectionClient::Handle(ClientboundLoginDisconnectPacket& msg)
     {
         LOG_INFO("Disconnect during login with reason: " << msg.GetReason().GetRawText());
 
@@ -88,7 +88,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    void ConnectionClient::Handle(ClientboundContainerAckPacket &msg)
+    void ConnectionClient::Handle(ClientboundContainerAckPacket& msg)
     {
         // If the transaction was not accepted, we must apologize
         // else it's processed in InventoryManager
@@ -104,7 +104,7 @@ namespace Botcraft
     }
 #endif
 
-    void ConnectionClient::Handle(ClientboundDisconnectPacket &msg)
+    void ConnectionClient::Handle(ClientboundDisconnectPacket& msg)
     {
         LOG_INFO("Disconnect during playing with reason: " << msg.GetReason().GetRawText());
         

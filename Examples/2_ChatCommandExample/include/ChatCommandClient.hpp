@@ -15,7 +15,7 @@ public:
 
 protected:
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-    virtual void Handle(ProtocolCraft::ClientboundChatPacket &msg) override;
+    virtual void Handle(ProtocolCraft::ClientboundChatPacket& msg) override;
 #else
     virtual void Handle(ProtocolCraft::ClientboundPlayerChatPacket& msg) override;
     virtual void Handle(ProtocolCraft::ClientboundSystemChatPacket& msg) override;
@@ -28,5 +28,5 @@ protected:
     // Use check_lighting to add a check on light block value (> 7)
     // (warning: ignore top slabs and upside-down stairs,
     // you should check for such blocks manually)
-    void CheckPerimeter(const Botcraft::Position &pos, const float radius, const bool check_lighting);
+    void CheckPerimeter(const Botcraft::Position& pos, const float radius, const bool check_lighting);
 };

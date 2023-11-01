@@ -36,7 +36,7 @@ namespace ProtocolCraft
 
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             type = ReadData<VarInt>(iter, length);
             if (type == 2)
@@ -45,7 +45,7 @@ namespace ProtocolCraft
             }
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(type, container);
             if (type == 2)

@@ -79,14 +79,14 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             flags = ReadData<char>(iter, length);
             flying_speed = ReadData<float>(iter, length);
             walking_speed = ReadData<float>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<char>(flags, container);
             WriteData<float>(flying_speed, container);

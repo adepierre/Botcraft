@@ -34,12 +34,12 @@ namespace ProtocolCraft
 
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             desired_chunks_per_tick = ReadData<float>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<float>(desired_chunks_per_tick, container);
         }

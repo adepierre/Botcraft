@@ -28,7 +28,7 @@ namespace Botcraft
             // Setter
             void SetPosition(const float x, const float y, const float z);
             void SetRotation(const float pitch_, const float yaw_);
-            void SetProjection(const glm::mat4 &projection);
+            void SetProjection(const glm::mat4& projection);
 
             bool GetHasChangedPosition() const;
             bool GetHasChangedOrientation() const;

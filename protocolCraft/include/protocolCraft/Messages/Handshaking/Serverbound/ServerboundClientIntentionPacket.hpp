@@ -20,7 +20,7 @@ namespace ProtocolCraft
             protocol_version = p;
         }
 
-        void SetHostName(const std::string &s)
+        void SetHostName(const std::string& s)
         {
             host_name = s;
         }
@@ -56,7 +56,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             protocol_version = ReadData<VarInt>(iter, length);
             host_name = ReadData<std::string>(iter, length);
@@ -64,7 +64,7 @@ namespace ProtocolCraft
             intention = ReadData<VarInt>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(protocol_version, container);
             WriteData<std::string>(host_name, container);

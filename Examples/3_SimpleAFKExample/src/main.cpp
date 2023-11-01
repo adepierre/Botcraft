@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 
         return 0;
     }
-    catch (std::exception &e)
+    catch (std::exception& e)
     {
         LOG_FATAL("Exception: " << e.what());
         return 1;

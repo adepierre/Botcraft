@@ -37,7 +37,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             tag_name = ReadData<Identifier>(iter, length);
             entries = ReadVector<int>(iter, length,

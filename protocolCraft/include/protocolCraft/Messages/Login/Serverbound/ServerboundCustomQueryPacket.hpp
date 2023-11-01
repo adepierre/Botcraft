@@ -37,7 +37,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             transaction_id = ReadData<VarInt>(iter, length);
             data = ReadOptional<std::vector<unsigned char>>(iter, length,
@@ -48,7 +48,7 @@ namespace ProtocolCraft
             );
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(transaction_id, container);
             WriteOptional<std::vector<unsigned char>>(data, container,

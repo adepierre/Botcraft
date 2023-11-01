@@ -90,7 +90,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
             trust_edges = ReadData<bool>(iter, length);
@@ -116,7 +116,7 @@ namespace ProtocolCraft
             );
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
             WriteData<bool>(trust_edges, container);

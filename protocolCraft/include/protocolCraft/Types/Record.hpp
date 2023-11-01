@@ -47,14 +47,14 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             horizontal_position = ReadData<unsigned char>(iter, length);
             y_coordinate = ReadData<unsigned char>(iter, length);
             block_id = ReadData<VarInt>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<unsigned char>(horizontal_position, container);
             WriteData<unsigned char>(y_coordinate, container);

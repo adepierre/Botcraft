@@ -30,14 +30,14 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             raw_text = ReadData<std::string>(iter, length);
             
             text = ParseChat(Json::Parse(raw_text));
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(raw_text, container);
         }

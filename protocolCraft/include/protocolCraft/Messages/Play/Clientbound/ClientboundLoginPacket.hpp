@@ -375,7 +375,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             player_id = ReadData<int>(iter, length);
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
@@ -444,7 +444,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<int>(player_id, container);
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */

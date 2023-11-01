@@ -66,7 +66,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             difficulty = ReadData<unsigned char>(iter, length);
 #if PROTOCOL_VERSION >= 477 /* >= 1.14 */
@@ -74,7 +74,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<unsigned char>((unsigned char)difficulty, container);
 #if PROTOCOL_VERSION >= 477 /* >= 1.14 */

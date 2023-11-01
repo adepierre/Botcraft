@@ -68,13 +68,13 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             game_time = ReadData<long long int>(iter, length);
             day_time = ReadData<long long int>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<long long int>(game_time, container);
             WriteData<long long int>(day_time, container);

@@ -45,13 +45,13 @@ namespace ProtocolCraft
 
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             query_id = ReadData<int>(iter, length);
             preview = ReadOptional<Chat>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<int>(query_id, container);
             WriteOptional<Chat>(preview, container);

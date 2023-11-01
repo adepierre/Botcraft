@@ -11,7 +11,7 @@ namespace Botcraft
 {
     namespace Renderer
     {
-        const float Distance(const Face &f, const glm::vec3 &pos)
+        const float Distance(const Face& f, const glm::vec3& pos)
         {
             const glm::vec3 center = glm::make_mat4(f.GetMatrix().data()) * glm::vec4(0.0f, -1.0f, 0.0f, 1.0f);
 
@@ -80,7 +80,7 @@ namespace Botcraft
             display_buffer_status = s;
         }
 
-        void TransparentChunk::Sort(const glm::vec3 &cam_pos)
+        void TransparentChunk::Sort(const glm::vec3& cam_pos)
         {
             if (display_buffer_status == BufferStatus::UpToDate)
             {
@@ -88,7 +88,7 @@ namespace Botcraft
             }
 
             std::lock_guard<std::mutex> lock_faces(mutex_faces);
-            std::sort(display_faces_positions.begin(), display_faces_positions.end(), [this, cam_pos](const Face &f1, const Face &f2){return Distance(f1, cam_pos) > Distance(f2, cam_pos); });
+            std::sort(display_faces_positions.begin(), display_faces_positions.end(), [this, cam_pos](const Face& f1, const Face& f2){return Distance(f1, cam_pos) > Distance(f2, cam_pos); });
 
 
             glBindBuffer(GL_ARRAY_BUFFER, data_VBO);

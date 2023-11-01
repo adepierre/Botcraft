@@ -109,7 +109,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             dimension_type = ReadData<Identifier>(iter, length);
             dimension = ReadData<Identifier>(iter, length);
@@ -122,7 +122,7 @@ namespace ProtocolCraft
             portal_cooldown = ReadData<VarInt>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Identifier>(dimension_type, container);
             WriteData<Identifier>(dimension, container);

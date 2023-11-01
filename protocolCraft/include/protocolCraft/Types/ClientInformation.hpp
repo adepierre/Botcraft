@@ -95,7 +95,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             language = ReadData<std::string>(iter, length);
             view_distance = ReadData<char>(iter, length);
@@ -107,7 +107,7 @@ namespace ProtocolCraft
             allows_listing = ReadData<bool>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(language, container);
             WriteData<char>(view_distance, container);

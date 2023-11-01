@@ -195,7 +195,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             signed_content = ReadData<Chat>(iter, length);
@@ -224,7 +224,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
             WriteData<Chat>(signed_content, container);

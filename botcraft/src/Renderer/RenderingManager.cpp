@@ -46,7 +46,7 @@ namespace Botcraft
     {
         RenderingManager::RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
             std::shared_ptr<EntityManager> entity_manager_,
-            const unsigned int &window_width, const unsigned int &window_height,
+            const unsigned int& window_width, const unsigned int& window_height,
             const unsigned int section_height_, const bool headless)
         {
             world = world_;
@@ -349,7 +349,7 @@ namespace Botcraft
             KeyboardCallback = callback;
         }
 
-        void RenderingManager::Screenshot(const std::string &path)
+        void RenderingManager::Screenshot(const std::string& path)
         {
             screenshot_path = path;
             take_screenshot = true;
@@ -446,7 +446,7 @@ namespace Botcraft
 
             behaviour_renderer->Init();
 
-            ImGuiIO &io = ImGui::GetIO();
+            ImGuiIO& io = ImGui::GetIO();
             io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
             // Style

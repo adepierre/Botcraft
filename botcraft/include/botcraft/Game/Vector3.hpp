@@ -59,12 +59,12 @@ namespace Botcraft
         T y;
         T z;
 
-        Vector3 operator+(const Vector3 &a) const
+        Vector3 operator+(const Vector3& a) const
         {
             return Vector3(a.x + x, a.y + y, a.z + z);
         }
 
-        Vector3 operator-(const Vector3 &a) const
+        Vector3 operator-(const Vector3& a) const
         {
             return Vector3(x - a.x, y - a.y, z - a.z);
         }
@@ -79,17 +79,17 @@ namespace Botcraft
             return Vector3(x / v.x, y / v.y, z / v.z);
         }
 
-        const bool operator==(const Vector3 &a) const
+        const bool operator==(const Vector3& a) const
         {
             return (x == a.x) && (y == a.y) && (z == a.z);
         }
 
-        const bool operator!=(const Vector3 &a) const
+        const bool operator!=(const Vector3& a) const
         {
             return (x != a.x) || (y != a.y) || (z != a.z);
         }
 
-        const bool operator<(const Vector3 &a) const
+        const bool operator<(const Vector3& a) const
         {
             return (x < a.x) ||
                 (x == a.x && y < a.y) ||
@@ -140,7 +140,7 @@ namespace Botcraft
             return *this;
         }
 
-        const double dot(const Vector3 &v) const
+        const double dot(const Vector3& v) const
         {
             double output = 0.0;
             output += x * v.x;
@@ -209,7 +209,7 @@ namespace Botcraft
             return x * x + y * y + z * z;
         }
 
-        friend std::ostream& operator << (std::ostream &o, const Vector3 &vec)
+        friend std::ostream& operator << (std::ostream& o, const Vector3& vec)
         {
             o << "(" << vec.x << "," << vec.y << "," << vec.z << ")";
             return o;
@@ -238,7 +238,7 @@ namespace std
     template <typename T>
     struct hash<Botcraft::Vector3<T> > 
     {
-        inline size_t operator()(const Botcraft::Vector3<T> &v) const
+        inline size_t operator()(const Botcraft::Vector3<T>& v) const
         {
             std::hash<T> hasher;
             size_t value = hasher(v.x);

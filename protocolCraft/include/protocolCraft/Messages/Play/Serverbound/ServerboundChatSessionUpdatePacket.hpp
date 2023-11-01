@@ -38,12 +38,12 @@ namespace ProtocolCraft
 
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             chat_session = ReadData<RemoteChatSessionData>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<RemoteChatSessionData>(chat_session, container);
         }

@@ -72,7 +72,7 @@ namespace ProtocolCraft
             return all_good;
         }
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             pos = ReadData<NetworkPosition>(iter, length);
             state = ReadData<VarInt>(iter, length);
@@ -80,7 +80,7 @@ namespace ProtocolCraft
             all_good = ReadData<bool>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<NetworkPosition>(pos, container);
             WriteData<VarInt>(state, container);

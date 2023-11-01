@@ -56,7 +56,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             uuid = ReadData<UUID>(iter, length);
             name = ReadData<std::string>(iter, length);

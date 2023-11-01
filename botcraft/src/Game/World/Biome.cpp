@@ -12,7 +12,7 @@ namespace Botcraft
 
     const int sea_level = 62;
 
-    Biome::Biome(const std::string &name_, const float temperature_,
+    Biome::Biome(const std::string& name_, const float temperature_,
                  const float rainfall_, const BiomeType biome_type_)
     {
         name = name_;

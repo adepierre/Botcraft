@@ -41,7 +41,7 @@ ChatCommandClient::~ChatCommandClient()
 }
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-void ChatCommandClient::Handle(ClientboundChatPacket &msg)
+void ChatCommandClient::Handle(ClientboundChatPacket& msg)
 {
     ManagersClient::Handle(msg);
     
@@ -108,11 +108,11 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                 speed = std::stof(splitted_msg[5]);
             }
         }
-        catch (const std::invalid_argument &)
+        catch (const std::invalid_argument&)
         {
             return;
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
             return;
         }
@@ -296,7 +296,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
     }
 }
 
-void ChatCommandClient::CheckPerimeter(const Position &pos, const float radius, const bool check_lighting)
+void ChatCommandClient::CheckPerimeter(const Position& pos, const float radius, const bool check_lighting)
 {
     std::vector<Position> found_positions;
 

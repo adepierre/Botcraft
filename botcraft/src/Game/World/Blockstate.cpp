@@ -17,7 +17,7 @@ namespace Botcraft
 {
     // Utilities functions
 
-    Model ModelModificationFromJson(const Model &model, const Json::Value &json)
+    Model ModelModificationFromJson(const Model& model, const Json::Value& json)
     {
         Model output = model;
 
@@ -43,7 +43,7 @@ namespace Botcraft
 
         if (rotation_x != 0)
         {
-            const std::set<AABB> &colliders = output.GetColliders();
+            const std::set<AABB>& colliders = output.GetColliders();
             std::set<AABB> new_colliders;
             for (const auto& collider : colliders)
             {
@@ -81,7 +81,7 @@ namespace Botcraft
 
         if (rotation_y != 0)
         {
-            const std::set<AABB> &colliders = output.GetColliders();
+            const std::set<AABB>& colliders = output.GetColliders();
             std::set<AABB> new_colliders;
             for (const auto& collider : colliders)
             {
@@ -122,7 +122,7 @@ namespace Botcraft
 
         if (rotation_x != 0)
         {
-            std::vector<FaceDescriptor> &faces = output.GetFaces();
+            std::vector<FaceDescriptor>& faces = output.GetFaces();
 
             std::vector<Orientation> rotated_orientations = { Orientation::Top, Orientation::North, Orientation::Bottom, Orientation::South };
 
@@ -153,7 +153,7 @@ namespace Botcraft
 
         if (rotation_y != 0)
         {
-            std::vector<FaceDescriptor> &faces = output.GetFaces();
+            std::vector<FaceDescriptor>& faces = output.GetFaces();
 
             std::vector<Orientation> rotated_orientations = { Orientation::South, Orientation::West, Orientation::North, Orientation::East };
 
@@ -212,7 +212,7 @@ namespace Botcraft
         return output;
     }
 
-    const bool CheckCondition(const std::string &name, const std::string &value, const std::vector<std::string> &variables)
+    const bool CheckCondition(const std::string& name, const std::string& value, const std::vector<std::string>& variables)
     {
         const std::vector<std::string> possible_values = Utilities::SplitString(value, '|');
 
@@ -534,7 +534,7 @@ namespace Botcraft
         LoadWeightedModels(weighted_models);
     }
 
-    Blockstate::Blockstate(const BlockstateProperties& properties, const Model &model_)
+    Blockstate::Blockstate(const BlockstateProperties& properties, const Model& model_)
     {
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
         blockstate_id = { properties.id, properties.metadata };
@@ -731,7 +731,7 @@ namespace Botcraft
         return id_ << 4 | metadata_;
     }
 
-    void Blockstate::IdToIdMetadata(const unsigned int input_id, int &output_id, unsigned char &output_metadata)
+    void Blockstate::IdToIdMetadata(const unsigned int input_id, int& output_id, unsigned char& output_metadata)
     {
         output_id = input_id >> 4;
         output_metadata = input_id & 0x0F;

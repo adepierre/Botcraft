@@ -88,7 +88,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             pos = ReadData<NetworkPosition>(iter, length);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
@@ -99,7 +99,7 @@ namespace ProtocolCraft
             tag = ReadData<NBT::UnnamedValue>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<NetworkPosition>(pos, container);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */

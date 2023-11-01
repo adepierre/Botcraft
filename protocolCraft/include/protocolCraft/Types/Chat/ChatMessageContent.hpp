@@ -37,13 +37,13 @@ namespace ProtocolCraft
 
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             plain = ReadData<std::string>(iter, length);
             decorated = ReadOptional<Chat>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(plain, container);
             WriteOptional<Chat>(decorated, container);

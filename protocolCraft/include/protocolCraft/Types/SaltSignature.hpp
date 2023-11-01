@@ -37,13 +37,13 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             salt = ReadData<long long int>(iter, length);
             signature = ReadVector<unsigned char>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<long long int>(salt, container);
             WriteVector<unsigned char>(signature, container);

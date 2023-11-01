@@ -60,7 +60,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             server_ID = ReadData<std::string>(iter, length);
             public_key = ReadVector<unsigned char>(iter, length);
@@ -71,7 +71,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(server_ID, container);
             WriteVector<unsigned char>(public_key, container);

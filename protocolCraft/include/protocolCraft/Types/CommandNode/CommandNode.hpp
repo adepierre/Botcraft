@@ -104,7 +104,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             flags = ReadData<char>(iter, length);
             children = ReadVector<int>(iter, length,

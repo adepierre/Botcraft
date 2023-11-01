@@ -63,7 +63,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION > 709 /* > 1.15.2 */
             key = ReadData<Identifier>(iter, length);
@@ -74,7 +74,7 @@ namespace ProtocolCraft
             modifiers = ReadVector<EntityModifierData>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION > 709 /* > 1.15.2 */
             WriteData<Identifier>(key, container);

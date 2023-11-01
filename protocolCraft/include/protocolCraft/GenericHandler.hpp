@@ -17,15 +17,15 @@ namespace ProtocolCraft
         using Base = GenericHandler<TCommon, std::tuple<TRest...> >;
     public:
         using Base::Handle; // Don't hide all Handle() functions from base classes
-        virtual void Handle(TFirst &msg)
+        virtual void Handle(TFirst& msg)
         {
             this->Handle(static_cast<TCommon&>(msg));
         }
-        virtual void Handle(TSecond &msg)
+        virtual void Handle(TSecond& msg)
         {
             this->Handle(static_cast<TCommon&>(msg));
         }
-        virtual void Handle(TThird &msg)
+        virtual void Handle(TThird& msg)
         {
             this->Handle(static_cast<TCommon&>(msg));
         }
@@ -36,11 +36,11 @@ namespace ProtocolCraft
     {
     public:
         virtual ~GenericHandler() {}
-        virtual void Handle(TFirst &msg)
+        virtual void Handle(TFirst& msg)
         {
             this->Handle(static_cast<TCommon&>(msg));
         }
-        virtual void Handle(TSecond &msg)
+        virtual void Handle(TSecond& msg)
         {
             this->Handle(static_cast<TCommon&>(msg));
         }
@@ -55,7 +55,7 @@ namespace ProtocolCraft
     {
     public:
         virtual ~GenericHandler() {}
-        virtual void Handle(TFirst &msg)
+        virtual void Handle(TFirst& msg)
         {
             this->Handle(static_cast<TCommon&>(msg));
         }

@@ -137,7 +137,7 @@ namespace ProtocolCraft
             }
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(static_cast<int>(action), container);
             switch (action)

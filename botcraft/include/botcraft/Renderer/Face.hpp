@@ -18,9 +18,9 @@ namespace Botcraft
         {
         public:
             Face();
-            Face(const FaceTransformation &transformations, const Orientation orientation);
+            Face(const FaceTransformation& transformations, const Orientation orientation);
 
-            bool operator ==(const Face &other) const
+            bool operator ==(const Face& other) const
             {
                 //Texture doesn't matter
                 for (int i = 0; i < 16; ++i)
@@ -37,9 +37,9 @@ namespace Botcraft
             Transparency GetTransparencyData() const;
             void SetDisplayBackface(const bool display_backface);
 
-            const std::array<float, 16> &GetMatrix() const;
-            std::array<float, 16> &GetMatrix();
-            void SetTextureMultipliers(const std::array<unsigned int, 2> &mult);
+            const std::array<float, 16>& GetMatrix() const;
+            std::array<float, 16>& GetMatrix();
+            void SetTextureMultipliers(const std::array<unsigned int, 2>& mult);
             const std::array<float, 4>& GetTextureCoords(const bool overlay) const;
             void SetTextureCoords(const std::array<float, 4>& coords, const bool overlay);
 
@@ -71,9 +71,9 @@ namespace std
     template<>
     struct hash<Botcraft::Renderer::Face>
     {
-        inline size_t operator()(const Botcraft::Renderer::Face &f) const
+        inline size_t operator()(const Botcraft::Renderer::Face& f) const
         {
-            const std::array<float, 16> &matrix = f.GetMatrix();
+            const std::array<float, 16>& matrix = f.GetMatrix();
             std::hash<float> hasher;
             size_t value = hasher(matrix[0]);
 

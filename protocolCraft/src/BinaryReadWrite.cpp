@@ -4,7 +4,7 @@
 
 namespace ProtocolCraft
 {
-    std::string ReadRawString(ReadIterator &iter, size_t &length, const int size)
+    std::string ReadRawString(ReadIterator& iter, size_t& length, const int size)
     {
         if (length < size)
         {
@@ -21,12 +21,12 @@ namespace ProtocolCraft
         }
     }
 
-    void WriteRawString(const std::string &s, WriteContainer &container)
+    void WriteRawString(const std::string& s, WriteContainer& container)
     {
         container.insert(container.end(), s.begin(), s.end());
     }
 
-    std::vector<unsigned char> ReadByteArray(ReadIterator &iter, size_t &length, const size_t &desired_length)
+    std::vector<unsigned char> ReadByteArray(ReadIterator& iter, size_t& length, const size_t& desired_length)
     {
         if (length < desired_length)
         {
@@ -44,7 +44,7 @@ namespace ProtocolCraft
         }
     }
 
-    void WriteByteArray(const std::vector<unsigned char> &my_array, WriteContainer &container)
+    void WriteByteArray(const std::vector<unsigned char>& my_array, WriteContainer& container)
     {
         container.insert(container.end(), my_array.begin(), my_array.end());
     }

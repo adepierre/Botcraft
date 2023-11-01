@@ -58,7 +58,7 @@ namespace Botcraft
             }
         }
 
-        void Entity::UpdateFaces(const std::vector<Face> &faces_)
+        void Entity::UpdateFaces(const std::vector<Face>& faces_)
         {
             std::lock_guard<std::mutex> lock_faces(mutex_faces);
             if (buffer_status != BufferStatus::Created)

@@ -53,7 +53,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
             message_signature_id = ReadData<VarInt>(iter, length) - 1;

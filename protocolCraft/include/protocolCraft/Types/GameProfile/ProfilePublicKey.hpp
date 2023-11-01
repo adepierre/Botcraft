@@ -55,7 +55,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             timestamp = ReadData<long long int>(iter, length);
             key = ReadVector<unsigned char>(iter, length);

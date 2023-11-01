@@ -65,14 +65,14 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             container_id = ReadData<char>(iter, length);
             uid = ReadData<short>(iter, length);
             accepted = ReadData<bool>(iter, length);
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<char>(container_id, container);
             WriteData<short>(uid, container);

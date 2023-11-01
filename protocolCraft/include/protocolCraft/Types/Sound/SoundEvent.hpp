@@ -47,7 +47,7 @@ namespace ProtocolCraft
         }
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             sound_id = ReadData<VarInt>(iter, length);
             if (sound_id == 0)

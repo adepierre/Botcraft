@@ -17,7 +17,7 @@
 
 namespace Botcraft
 {
-    TCP_Com::TCP_Com(const std::string &address,
+    TCP_Com::TCP_Com(const std::string& address,
         std::function<void(const std::vector<unsigned char>&)> callback)
         : socket(io_service)
     {
@@ -172,7 +172,7 @@ namespace Botcraft
         }
     }
 
-    void TCP_Com::do_write(const std::vector<unsigned char> &msg)
+    void TCP_Com::do_write(const std::vector<unsigned char>& msg)
     {
         mutex_output.lock();
         bool write_in_progress = !output_msg.empty();

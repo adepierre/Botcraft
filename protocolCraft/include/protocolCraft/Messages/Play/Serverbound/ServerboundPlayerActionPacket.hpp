@@ -93,7 +93,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             action = ReadData<VarInt>(iter, length);
             pos = ReadData<NetworkPosition>(iter, length);
@@ -103,7 +103,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(action, container);
             WriteData<NetworkPosition>(pos, container);

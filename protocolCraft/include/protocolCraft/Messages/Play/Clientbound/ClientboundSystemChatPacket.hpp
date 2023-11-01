@@ -68,7 +68,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             content = ReadData<Chat>(iter, length);
 #if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
@@ -78,7 +78,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Chat>(content, container);
 #if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */

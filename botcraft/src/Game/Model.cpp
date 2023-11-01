@@ -36,7 +36,7 @@ namespace Botcraft
         return Model(height, texture);
     }
 
-    Model::Model(const std::string &filepath, const bool custom)
+    Model::Model(const std::string& filepath, const bool custom)
     {
         std::string full_filepath;
         
@@ -496,7 +496,7 @@ namespace Botcraft
 #endif
     }
 
-    Model::Model(const unsigned char height, const std::string &texture)
+    Model::Model(const unsigned char height, const std::string& texture)
     {
         colliders = std::set<AABB>({ AABB(Vector3<double>(0.5, (height + 1.0) / 2.0 / 16.0, 0.5), Vector3<double>(0.5, (height + 1.0) / 2.0 / 16.0, 0.5)) });
 
@@ -561,7 +561,7 @@ namespace Botcraft
 #endif
     }
 
-    Model &Model::operator+=(const Model &m)
+    Model& Model::operator+=(const Model& m)
     {
         this->colliders.insert(m.colliders.begin(), m.colliders.end());
 #if USE_GUI
@@ -598,12 +598,12 @@ namespace Botcraft
     }
 
 #if USE_GUI
-    const std::vector<FaceDescriptor> &Model::GetFaces() const
+    const std::vector<FaceDescriptor>& Model::GetFaces() const
     {
         return faces;
     }
 
-    std::vector<FaceDescriptor> &Model::GetFaces()
+    std::vector<FaceDescriptor>& Model::GetFaces()
     {
         return faces;
     }

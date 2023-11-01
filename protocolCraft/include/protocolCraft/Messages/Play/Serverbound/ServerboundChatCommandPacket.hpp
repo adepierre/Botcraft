@@ -107,7 +107,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             command = ReadData<std::string>(iter, length);
             timestamp = ReadData<long long int>(iter, length);
@@ -131,7 +131,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(command, container);
             WriteData<long long int>(timestamp, container);

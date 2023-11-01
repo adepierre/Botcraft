@@ -75,7 +75,7 @@ namespace ProtocolCraft
 #endif
 
     protected:
-        virtual void ReadImpl(ReadIterator &iter, size_t &length) override
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             parent_id = ReadOptional<Identifier>(iter, length);
             display_data = ReadOptional<AdvancementDisplay>(iter, length);
@@ -93,7 +93,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        virtual void WriteImpl(WriteContainer &container) const override
+        virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteOptional<Identifier>(parent_id, container);
             WriteOptional<AdvancementDisplay>(display_data, container);

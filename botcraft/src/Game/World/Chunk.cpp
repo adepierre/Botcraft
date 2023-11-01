@@ -504,7 +504,7 @@ namespace Botcraft
         return it->second;
     }
 
-    const Blockstate* Chunk::GetBlock(const Position &pos) const
+    const Blockstate* Chunk::GetBlock(const Position& pos) const
     {
         if (!IsInsideChunk(pos, false))
         {
@@ -579,7 +579,7 @@ namespace Botcraft
 #endif
     }
 
-    unsigned char Chunk::GetBlockLight(const Position &pos) const
+    unsigned char Chunk::GetBlockLight(const Position& pos) const
     {
         if (!IsInsideChunk(pos, true))
         {
@@ -595,7 +595,7 @@ namespace Botcraft
         return (sections[section_y]->block_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] >> (4 * (pos.x % 2))) & 0x0F;
     }
 
-    void Chunk::SetBlockLight(const Position &pos, const unsigned char v)
+    void Chunk::SetBlockLight(const Position& pos, const unsigned char v)
     {
         if (!IsInsideChunk(pos, true))
         {
@@ -625,7 +625,7 @@ namespace Botcraft
 //#endif
     }
 
-    unsigned char Chunk::GetSkyLight(const Position &pos) const
+    unsigned char Chunk::GetSkyLight(const Position& pos) const
     {
         if (!has_sky_light || !IsInsideChunk(pos, true))
         {
@@ -641,7 +641,7 @@ namespace Botcraft
         return (sections[section_y]->sky_light[Section::CoordsToLightIndex(pos.x, (pos.y - min_y) % SECTION_HEIGHT, pos.z)] >> (4 * (pos.x % 2))) & 0x0F;
     }
 
-    void Chunk::SetSkyLight(const Position &pos, const unsigned char v)
+    void Chunk::SetSkyLight(const Position& pos, const unsigned char v)
     {
         if (!has_sky_light || !IsInsideChunk(pos, true))
         {
