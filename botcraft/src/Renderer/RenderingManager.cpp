@@ -131,56 +131,55 @@ namespace Botcraft
 
                 InternalProcessInput(window);
 
-#ifdef USE_IMGUI
-                ImGui_ImplOpenGL3_NewFrame();
-                ImGui_ImplGlfw_NewFrame();
-                ImGui::NewFrame();
-
-                {
-                    ImGui::SetNextWindowPos(ImVec2(0, 0));
-                    ImGui::SetNextWindowSize(ImVec2(290, 70));
-                    ImGui::Begin("Position", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-                    ImGui::Text("%f, %f, %f", world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y - 1.62f, world_renderer->GetCamera()->GetPosition().z);
-                    ImGui::Text("Yaw: %f  ||  ", world_renderer->GetCamera()->GetYaw());
-                    ImGui::SameLine();
-                    ImGui::Text("Pitch: %f", world_renderer->GetCamera()->GetPitch());
-                    ImGui::End();
-                }
-                {
-                    ImGui::SetNextWindowPos(ImVec2(0, 75));
-                    ImGui::SetNextWindowSize(ImVec2(290, 70));
-                    ImGui::Begin("Targeted cube", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-                    Position raycasted_pos;
-                    Position raycasted_normal;
-                    const Blockstate* raycasted_blockstate =
-                        world->Raycast(Vector3<double>(world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y, world_renderer->GetCamera()->GetPosition().z),
-                            Vector3<double>(world_renderer->GetCamera()->GetFront().x, world_renderer->GetCamera()->GetFront().y, world_renderer->GetCamera()->GetFront().z),
-                            6.0f, raycasted_pos, raycasted_normal);
-                    if (raycasted_blockstate)
-                    {
-                        ImGui::Text("Watching block at %i, %i, %i", raycasted_pos.x, raycasted_pos.y, raycasted_pos.z);
-                        ImGui::Text("Block: %s", raycasted_blockstate->GetName().c_str());
-                    }
-                    else
-                    {
-                        ImGui::Text("Watching block at");
-                        ImGui::Text("Block: ");
-                    }
-                    ImGui::End();
-                }
-#endif
-                const float current_day_time = day_time;
-                std::vector<float> current_color(3);
-                for (int i = 0; i < 3; ++i)
-                {
-                    current_color[i] = 2.0f * ((0.5f - std::abs(current_day_time - 0.5f)) * color_day[i] + (0.5f - std::min(std::abs(1.0f - current_day_time), current_day_time)) * color_night[i]);
-                }
-                glClearColor(current_color[0], current_color[1], current_color[2], 1.0f);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
                 if (current_window_height > 0 && current_window_width > 0)
                 {
+#ifdef USE_IMGUI
+                    ImGui_ImplOpenGL3_NewFrame();
+                    ImGui_ImplGlfw_NewFrame();
+                    ImGui::NewFrame();
+
+                    {
+                        ImGui::SetNextWindowPos(ImVec2(0, 0));
+                        ImGui::SetNextWindowSize(ImVec2(290, 70));
+                        ImGui::Begin("Position", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+                        ImGui::Text("%f, %f, %f", world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y - 1.62f, world_renderer->GetCamera()->GetPosition().z);
+                        ImGui::Text("Yaw: %f  ||  ", world_renderer->GetCamera()->GetYaw());
+                        ImGui::SameLine();
+                        ImGui::Text("Pitch: %f", world_renderer->GetCamera()->GetPitch());
+                        ImGui::End();
+                    }
+                    {
+                        ImGui::SetNextWindowPos(ImVec2(0, 75));
+                        ImGui::SetNextWindowSize(ImVec2(290, 70));
+                        ImGui::Begin("Targeted cube", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+                        Position raycasted_pos;
+                        Position raycasted_normal;
+                        const Blockstate* raycasted_blockstate =
+                            world->Raycast(Vector3<double>(world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y, world_renderer->GetCamera()->GetPosition().z),
+                                Vector3<double>(world_renderer->GetCamera()->GetFront().x, world_renderer->GetCamera()->GetFront().y, world_renderer->GetCamera()->GetFront().z),
+                                6.0f, raycasted_pos, raycasted_normal);
+                        if (raycasted_blockstate)
+                        {
+                            ImGui::Text("Watching block at %i, %i, %i", raycasted_pos.x, raycasted_pos.y, raycasted_pos.z);
+                            ImGui::Text("Block: %s", raycasted_blockstate->GetName().c_str());
+                        }
+                        else
+                        {
+                            ImGui::Text("Watching block at");
+                            ImGui::Text("Block: ");
+                        }
+                        ImGui::End();
+                    }
+#endif
+                    const float current_day_time = day_time;
+                    std::vector<float> current_color(3);
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        current_color[i] = 2.0f * ((0.5f - std::abs(current_day_time - 0.5f)) * color_day[i] + (0.5f - std::min(std::abs(1.0f - current_day_time), current_day_time)) * color_night[i]);
+                    }
+                    glClearColor(current_color[0], current_color[1], current_color[2], 1.0f);
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
                     //Change view matrix
                     world_renderer->UpdateViewMatrix();
 
