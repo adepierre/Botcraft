@@ -62,12 +62,12 @@ namespace Botcraft
     {
 #if USE_GUI
         std::shared_lock<std::shared_mutex> lock(world_mutex);
-        Chunk* chunk = GetChunk(x, z);
-        if (chunk == nullptr)
+        auto it = terrain.find({ x,z });
+        if (it == terrain.end())
         {
             return true;
         }
-        return chunk->GetModifiedSinceLastRender();
+        return it->second.GetModifiedSinceLastRender();
 #else
         return false;
 #endif
@@ -77,13 +77,13 @@ namespace Botcraft
     {
 #if USE_GUI
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        Chunk* chunk = GetChunk(x, z);
-        if (chunk == nullptr)
+        auto it = terrain.find({ x,z });
+        if (it == terrain.end())
         {
             return std::optional<Chunk>();
         }
-        chunk->SetModifiedSinceLastRender(false);
-        return std::optional<Chunk>(*chunk);
+        it->second.SetModifiedSinceLastRender(false);
+        return std::optional<Chunk>(it->second);
 #else
         return std::optional<Chunk>();
 #endif
@@ -170,10 +170,10 @@ namespace Botcraft
     const Biome* World::GetBiome(const Position& pos) const
     {
         std::shared_lock<std::shared_mutex> lock(world_mutex);
-        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
-        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
-
-        auto it = terrain.find({ chunk_x, chunk_z });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
+        });
         if (it == terrain.end())
         {
             return nullptr;
@@ -195,7 +195,7 @@ namespace Botcraft
         auto it = terrain.find({
             static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
             static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
-            });
+        });
 
         if (it != terrain.end() && it->second.GetHasSkyLight())
         {
@@ -224,10 +224,10 @@ namespace Botcraft
     unsigned char World::GetSkyLight(const Position& pos) const
     {
         std::shared_lock<std::shared_mutex> lock(world_mutex);
-        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
-        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
-
-        auto it = terrain.find({ chunk_x, chunk_z });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
+        });
         if (it == terrain.end())
         {
             return 0;
@@ -241,10 +241,10 @@ namespace Botcraft
     unsigned char World::GetBlockLight(const Position& pos) const
     {
         std::shared_lock<std::shared_mutex> lock(world_mutex);
-        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
-        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
-
-        auto it = terrain.find({ chunk_x, chunk_z });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
+        });
         if (it == terrain.end())
         {
             return 0;
@@ -258,12 +258,11 @@ namespace Botcraft
     void World::SetBlockEntityData(const Position& pos, const ProtocolCraft::NBT::Value& data)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-
-        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
-        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
-
-        auto it = terrain.find({ chunk_x, chunk_z });
-        if (it != terrain.end())
+        auto it = terrain.find({
+            static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
+        });
+        if (it == terrain.end())
         {
             return;
         }
@@ -287,11 +286,10 @@ namespace Botcraft
     ProtocolCraft::NBT::Value World::GetBlockEntityData(const Position& pos) const
     {
         std::shared_lock<std::shared_mutex> lock(world_mutex);
-
-        const int chunk_x = static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH)));
-        const int chunk_z = static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)));
-
-        auto it = terrain.find({ chunk_x, chunk_z });
+        auto it = terrain.find({
+            static_cast<int>(std::floor(pos.x / static_cast<double>(CHUNK_WIDTH))),
+            static_cast<int>(std::floor(pos.z / static_cast<double>(CHUNK_WIDTH)))
+        });
 
         if (it == terrain.end())
         {
@@ -649,7 +647,7 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-        if (GetChunk(msg.GetX(), msg.GetZ()) == nullptr)
+        if (terrain.find({ msg.GetX(), msg.GetZ() }) == terrain.end())
         {
             delayed_light_updates[{msg.GetX(), msg.GetZ()}] = msg;
             return;
@@ -997,15 +995,15 @@ namespace Botcraft
     void World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data)
 #endif
     {
-        Chunk* chunk = GetChunk(x, z);
-        if (chunk != nullptr)
+        auto it = terrain.find({ x,z });
+        if (it != terrain.end())
         {
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
-            chunk->LoadChunkData(data, primary_bit_mask, ground_up_continuous);
+            it->second.LoadChunkData(data, primary_bit_mask, ground_up_continuous);
 #elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
-            chunk->LoadChunkData(data, primary_bit_mask);
+            it->second.LoadChunkData(data, primary_bit_mask);
 #else
-            chunk->LoadChunkData(data);
+            it->second.LoadChunkData(data);
 #endif
 #if USE_GUI
             UpdateChunk(x, z);
@@ -1019,20 +1017,20 @@ namespace Botcraft
     void World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities)
 #endif
     {
-        Chunk* chunk = GetChunk(x, z);
-        if (chunk != nullptr)
+        auto it = terrain.find({ x,z });
+        if (it != terrain.end())
         {
-            chunk->LoadChunkBlockEntitiesData(block_entities);
+            it->second.LoadChunkBlockEntitiesData(block_entities);
         }
     }
 
 #if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
     void World::LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes)
     {
-        Chunk* chunk = GetChunk(x, z);
-        if (chunk != nullptr)
+        auto it = terrain.find({ x,z });
+        if (it != terrain.end())
         {
-            chunk->SetBiomes(biomes);
+            it->second.SetBiomes(biomes);
         }
     }
 #endif
@@ -1050,9 +1048,9 @@ namespace Botcraft
         const std::vector<std::vector<char>>& data, const bool sky)
 #endif
     {
-        Chunk* chunk = GetChunk(x, z);
+        auto it = terrain.find({ x, z });
 
-        if (chunk == nullptr)
+        if (it == terrain.end())
         {
             LOG_WARNING("Trying to update lights in an unloaded chunk: (" << x << "," << z << ")");
             return;
@@ -1092,13 +1090,13 @@ namespace Botcraft
 
                                 if (sky)
                                 {
-                                    chunk->SetSkyLight(pos1, two_light_values & 0x0F);
-                                    chunk->SetSkyLight(pos2, (two_light_values >> 4) & 0x0F);
+                                    it->second.SetSkyLight(pos1, two_light_values & 0x0F);
+                                    it->second.SetSkyLight(pos2, (two_light_values >> 4) & 0x0F);
                                 }
                                 else
                                 {
-                                    chunk->SetBlockLight(pos1, two_light_values & 0x0F);
-                                    chunk->SetBlockLight(pos2, (two_light_values >> 4) & 0x0F);
+                                    it->second.SetBlockLight(pos1, two_light_values & 0x0F);
+                                    it->second.SetBlockLight(pos2, (two_light_values >> 4) & 0x0F);
                                 }
                             }
                         }
@@ -1128,13 +1126,13 @@ namespace Botcraft
                                 pos2.x = block_x + 1;
                                 if (sky)
                                 {
-                                    chunk->SetSkyLight(pos1, 0);
-                                    chunk->SetSkyLight(pos2, 0);
+                                    it->second.SetSkyLight(pos1, 0);
+                                    it->second.SetSkyLight(pos2, 0);
                                 }
                                 else
                                 {
-                                    chunk->SetBlockLight(pos1, 0);
-                                    chunk->SetBlockLight(pos2, 0);
+                                    it->second.SetBlockLight(pos1, 0);
+                                    it->second.SetBlockLight(pos2, 0);
                                 }
                             }
                         }
