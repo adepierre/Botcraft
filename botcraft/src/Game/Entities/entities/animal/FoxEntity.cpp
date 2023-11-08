@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/FoxEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, FoxEntity::metadata_count> FoxEntity::metadata_names{ {

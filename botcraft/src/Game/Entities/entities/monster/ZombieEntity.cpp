@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/ZombieEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, ZombieEntity::metadata_count> ZombieEntity::metadata_names{ {

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/SpellcasterIllagerEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, SpellcasterIllagerEntity::metadata_count> SpellcasterIllagerEntity::metadata_names{ {

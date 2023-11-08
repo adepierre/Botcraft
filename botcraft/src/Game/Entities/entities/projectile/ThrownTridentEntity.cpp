@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/projectile/ThrownTridentEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, ThrownTridentEntity::metadata_count> ThrownTridentEntity::metadata_names{ {

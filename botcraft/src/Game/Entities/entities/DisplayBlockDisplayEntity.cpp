@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/DisplayBlockDisplayEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, DisplayBlockDisplayEntity::metadata_count> DisplayBlockDisplayEntity::metadata_names{ {

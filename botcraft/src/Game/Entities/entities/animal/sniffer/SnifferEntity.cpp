@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/animal/sniffer/SnifferEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, SnifferEntity::metadata_count> SnifferEntity::metadata_names{ {

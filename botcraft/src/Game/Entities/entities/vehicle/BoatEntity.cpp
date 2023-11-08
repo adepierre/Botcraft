@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, BoatEntity::metadata_count> BoatEntity::metadata_names{ {

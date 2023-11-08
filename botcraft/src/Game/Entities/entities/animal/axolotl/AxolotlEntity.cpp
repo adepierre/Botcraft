@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
 #include "botcraft/Game/Entities/entities/animal/axolotl/AxolotlEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, AxolotlEntity::metadata_count> AxolotlEntity::metadata_names{ {

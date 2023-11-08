@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 
+#include <mutex>
+
 #define PI 3.14159265359
 
 namespace Botcraft

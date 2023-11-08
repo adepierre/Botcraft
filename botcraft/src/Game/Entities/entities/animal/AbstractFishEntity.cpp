@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/AbstractFishEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, AbstractFishEntity::metadata_count> AbstractFishEntity::metadata_names{ {

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/horse/LlamaEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, LlamaEntity::metadata_count> LlamaEntity::metadata_names{ {

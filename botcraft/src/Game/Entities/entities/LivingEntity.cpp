@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/LivingEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, LivingEntity::metadata_count> LivingEntity::metadata_names{ {

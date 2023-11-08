@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/CreeperEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, CreeperEntity::metadata_count> CreeperEntity::metadata_names{ {

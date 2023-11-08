@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/monster/PillagerEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, PillagerEntity::metadata_count> PillagerEntity::metadata_names{ {

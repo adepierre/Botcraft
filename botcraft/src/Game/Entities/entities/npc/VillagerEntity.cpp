@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/npc/VillagerEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, VillagerEntity::metadata_count> VillagerEntity::metadata_names{ {

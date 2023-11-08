@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/SkeletonEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
 #if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */

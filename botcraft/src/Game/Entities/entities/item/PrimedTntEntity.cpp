@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/item/PrimedTntEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, PrimedTntEntity::metadata_count> PrimedTntEntity::metadata_names{ {

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/projectile/ThrownPotionEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
 #if PROTOCOL_VERSION < 579 /* < 1.16 */

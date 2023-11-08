@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/ParrotEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, ParrotEntity::metadata_count> ParrotEntity::metadata_names{ {

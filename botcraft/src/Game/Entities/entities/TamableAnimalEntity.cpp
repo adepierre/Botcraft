@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/TamableAnimalEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, TamableAnimalEntity::metadata_count> TamableAnimalEntity::metadata_names{ {

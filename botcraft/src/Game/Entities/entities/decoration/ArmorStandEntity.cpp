@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, ArmorStandEntity::metadata_count> ArmorStandEntity::metadata_names{ {

@@ -216,6 +216,8 @@
 #include "botcraft/Game/Entities/entities/player/PlayerEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/FishingHookEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, Entity::metadata_count> Entity::metadata_names{ {

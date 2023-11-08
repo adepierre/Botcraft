@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/boss/enderdragon/EndCrystalEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, EndCrystalEntity::metadata_count> EndCrystalEntity::metadata_names{ {

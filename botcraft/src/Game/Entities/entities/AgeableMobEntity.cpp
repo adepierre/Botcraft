@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/AgeableMobEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, AgeableMobEntity::metadata_count> AgeableMobEntity::metadata_names{ {

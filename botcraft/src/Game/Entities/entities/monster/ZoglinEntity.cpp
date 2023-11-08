@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/ZoglinEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, ZoglinEntity::metadata_count> ZoglinEntity::metadata_names{ {

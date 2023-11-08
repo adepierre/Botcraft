@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, WitherBossEntity::metadata_count> WitherBossEntity::metadata_names{ {

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, ArrowEntity::metadata_count> ArrowEntity::metadata_names{ {

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/SnowGolemEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, SnowGolemEntity::metadata_count> SnowGolemEntity::metadata_names{ {

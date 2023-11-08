@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "botcraft/Game/Entities/entities/monster/piglin/AbstractPiglinEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, AbstractPiglinEntity::metadata_count> AbstractPiglinEntity::metadata_names{ {

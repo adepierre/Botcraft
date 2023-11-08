@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/vehicle/MinecartCommandBlockEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, MinecartCommandBlockEntity::metadata_count> MinecartCommandBlockEntity::metadata_names{ {

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/AbstractIllagerEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
 #if PROTOCOL_VERSION < 405 /* < 1.14 */

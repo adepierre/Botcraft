@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/SlimeEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, SlimeEntity::metadata_count> SlimeEntity::metadata_names{ {

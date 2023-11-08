@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/WitchEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, WitchEntity::metadata_count> WitchEntity::metadata_names{ {

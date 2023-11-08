@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/GuardianEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, GuardianEntity::metadata_count> GuardianEntity::metadata_names{ {

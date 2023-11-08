@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/PandaEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, PandaEntity::metadata_count> PandaEntity::metadata_names{ {

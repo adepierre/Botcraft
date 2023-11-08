@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, WardenEntity::metadata_count> WardenEntity::metadata_names{ {

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/WolfEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, WolfEntity::metadata_count> WolfEntity::metadata_names{ {

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/ambient/BatEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, BatEntity::metadata_count> BatEntity::metadata_names{ {

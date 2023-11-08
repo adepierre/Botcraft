@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/boss/enderdragon/EnderDragonEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, EnderDragonEntity::metadata_count> EnderDragonEntity::metadata_names{ {

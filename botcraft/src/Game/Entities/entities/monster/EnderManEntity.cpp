@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/EnderManEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, EnderManEntity::metadata_count> EnderManEntity::metadata_names{ {

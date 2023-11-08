@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/PolarBearEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, PolarBearEntity::metadata_count> PolarBearEntity::metadata_names{ {

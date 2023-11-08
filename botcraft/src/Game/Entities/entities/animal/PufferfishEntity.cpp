@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/PufferfishEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, PufferfishEntity::metadata_count> PufferfishEntity::metadata_names{ {

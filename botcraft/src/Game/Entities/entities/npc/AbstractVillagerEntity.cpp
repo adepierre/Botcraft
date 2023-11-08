@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 477 /* > 1.14 */
 #include "botcraft/Game/Entities/entities/npc/AbstractVillagerEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, AbstractVillagerEntity::metadata_count> AbstractVillagerEntity::metadata_names{ {

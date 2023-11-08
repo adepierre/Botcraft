@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/raid/RaiderEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, RaiderEntity::metadata_count> RaiderEntity::metadata_names{ {

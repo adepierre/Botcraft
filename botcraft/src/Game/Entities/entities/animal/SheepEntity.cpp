@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/SheepEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, SheepEntity::metadata_count> SheepEntity::metadata_names{ {

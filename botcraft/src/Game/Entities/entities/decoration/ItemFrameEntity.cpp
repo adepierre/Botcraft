@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/decoration/ItemFrameEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, ItemFrameEntity::metadata_count> ItemFrameEntity::metadata_names{ {

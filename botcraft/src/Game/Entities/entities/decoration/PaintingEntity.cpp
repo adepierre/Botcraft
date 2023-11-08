@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/decoration/PaintingEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */

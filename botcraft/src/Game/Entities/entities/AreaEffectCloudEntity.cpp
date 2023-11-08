@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, AreaEffectCloudEntity::metadata_count> AreaEffectCloudEntity::metadata_names{ {

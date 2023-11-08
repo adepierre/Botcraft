@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/PigEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, PigEntity::metadata_count> PigEntity::metadata_names{ {

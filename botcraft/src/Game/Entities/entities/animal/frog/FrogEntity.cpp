@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/frog/FrogEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, FrogEntity::metadata_count> FrogEntity::metadata_names{ {

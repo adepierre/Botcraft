@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/MushroomCowEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */

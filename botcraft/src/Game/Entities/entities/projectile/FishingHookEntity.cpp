@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/projectile/FishingHookEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, FishingHookEntity::metadata_count> FishingHookEntity::metadata_names{ {

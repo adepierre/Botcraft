@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/SpiderEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, SpiderEntity::metadata_count> SpiderEntity::metadata_names{ {

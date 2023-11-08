@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/CatEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, CatEntity::metadata_count> CatEntity::metadata_names{ {

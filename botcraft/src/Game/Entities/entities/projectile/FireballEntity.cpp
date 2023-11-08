@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/projectile/FireballEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */

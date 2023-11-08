@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/player/PlayerEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, PlayerEntity::metadata_count> PlayerEntity::metadata_names{ {

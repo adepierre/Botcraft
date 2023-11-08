@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/GhastEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, GhastEntity::metadata_count> GhastEntity::metadata_names{ {

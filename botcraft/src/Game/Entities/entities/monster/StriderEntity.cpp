@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/StriderEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, StriderEntity::metadata_count> StriderEntity::metadata_names{ {

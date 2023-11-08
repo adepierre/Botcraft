@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, FireworkRocketEntity::metadata_count> FireworkRocketEntity::metadata_names{ {

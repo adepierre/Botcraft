@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/vehicle/MinecartFurnaceEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, MinecartFurnaceEntity::metadata_count> MinecartFurnaceEntity::metadata_names{ {

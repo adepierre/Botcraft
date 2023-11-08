@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/projectile/WitherSkullEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, WitherSkullEntity::metadata_count> WitherSkullEntity::metadata_names{ {

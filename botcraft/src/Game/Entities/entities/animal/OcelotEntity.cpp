@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/animal/OcelotEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, OcelotEntity::metadata_count> OcelotEntity::metadata_names{ {

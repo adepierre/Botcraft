@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/BlazeEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, BlazeEntity::metadata_count> BlazeEntity::metadata_names{ {

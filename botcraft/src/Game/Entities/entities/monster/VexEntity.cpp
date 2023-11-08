@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/VexEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, VexEntity::metadata_count> VexEntity::metadata_names{ {

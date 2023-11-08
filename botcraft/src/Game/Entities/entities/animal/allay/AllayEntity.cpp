@@ -1,6 +1,8 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
 #if PROTOCOL_VERSION > 759 /* > 1.19 */

@@ -1,5 +1,7 @@
 #include "botcraft/Game/Entities/entities/monster/ShulkerEntity.hpp"
 
+#include <mutex>
+
 namespace Botcraft
 {
     const std::array<std::string, ShulkerEntity::metadata_count> ShulkerEntity::metadata_names{ {
