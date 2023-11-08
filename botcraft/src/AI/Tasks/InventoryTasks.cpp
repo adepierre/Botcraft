@@ -1173,7 +1173,7 @@ namespace Botcraft
                             continue;
                         }
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-                        if (slot.GetBlockID() == inputs[y][x].first && s.second.GetItemDamage() == inputs[y][x].second)
+                        if (slot.GetBlockID() == inputs[y][x].first && slot.GetItemDamage() == inputs[y][x].second)
 #else
                         if (slot.GetItemID() == inputs[y][x])
 #endif
