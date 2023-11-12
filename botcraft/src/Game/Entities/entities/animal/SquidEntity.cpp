@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Squid;
     }
 
-    double SquidEntity::GetWidth() const
-    {
-        return 0.8;
-    }
-
-    double SquidEntity::GetHeight() const
-    {
-        return 0.8;
-    }
-
 
     std::string SquidEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType SquidEntity::GetClassType()
     {
         return EntityType::Squid;
+    }
+
+
+    double SquidEntity::GetWidthImpl() const
+    {
+        return 0.8;
+    }
+
+    double SquidEntity::GetHeightImpl() const
+    {
+        return 0.8;
     }
 
 }

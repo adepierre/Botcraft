@@ -41,16 +41,6 @@ namespace Botcraft
         return EntityType::Piglin;
     }
 
-    double PiglinEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double PiglinEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string PiglinEntity::GetClassName()
     {
@@ -149,6 +139,16 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_is_dancing"] = data_is_dancing;
+    }
+
+    double PiglinEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double PiglinEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

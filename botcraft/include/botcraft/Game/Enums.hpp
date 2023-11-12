@@ -160,7 +160,16 @@ namespace Botcraft
         SpinAttack,
         Crouching,
         LongJumping,
-        Dying
+        Dying,
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+        Croaking,
+        UsingTongue,
+        Sitting,
+        Roaring,
+        Sniffing,
+        Emerging,
+        Digging,
+#endif
     };
 
     enum class EquipmentSlot

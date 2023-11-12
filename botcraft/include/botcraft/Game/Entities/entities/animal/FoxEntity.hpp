@@ -19,8 +19,6 @@ namespace Botcraft
         // Object related stuff
         virtual std::string GetName() const override;
         virtual EntityType GetType() const override;
-        virtual double GetWidth() const override;
-        virtual double GetHeight() const override;
 
         // Static stuff, for easier comparison
         static std::string GetClassName();
@@ -41,6 +39,10 @@ namespace Botcraft
         void SetDataFlagsId(const char data_flags_id);
         void SetDataTrustedId0(const std::optional<ProtocolCraft::UUID>& data_trusted_id_0);
         void SetDataTrustedId1(const std::optional<ProtocolCraft::UUID>& data_trusted_id_1);
+
+    protected:
+        virtual double GetWidthImpl() const override;
+        virtual double GetHeightImpl() const override;
 
     };
 }

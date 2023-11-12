@@ -37,16 +37,6 @@ namespace Botcraft
         return EntityType::Camel;
     }
 
-    double CamelEntity::GetWidth() const
-    {
-        return 1.7;
-    }
-
-    double CamelEntity::GetHeight() const
-    {
-        return 2.375;
-    }
-
 
     std::string CamelEntity::GetClassName()
     {
@@ -106,6 +96,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["last_pose_change_tick"] = last_pose_change_tick;
+    }
+
+
+    double CamelEntity::GetWidthImpl() const
+    {
+        return 1.7;
+    }
+
+    double CamelEntity::GetHeightImpl() const
+    {
+        return 2.375;
     }
 
 }

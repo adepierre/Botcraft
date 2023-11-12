@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::ExperienceOrb;
     }
 
-    double ExperienceOrbEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double ExperienceOrbEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string ExperienceOrbEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType ExperienceOrbEntity::GetClassType()
     {
         return EntityType::ExperienceOrb;
+    }
+
+
+    double ExperienceOrbEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double ExperienceOrbEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }

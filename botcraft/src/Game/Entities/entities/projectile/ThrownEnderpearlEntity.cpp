@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::ThrownEnderpearl;
     }
 
-    double ThrownEnderpearlEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double ThrownEnderpearlEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string ThrownEnderpearlEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType ThrownEnderpearlEntity::GetClassType()
     {
         return EntityType::ThrownEnderpearl;
+    }
+
+
+    double ThrownEnderpearlEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double ThrownEnderpearlEntity::GetHeightImpl() const
+    {
+        return 0.25;
     }
 
 }

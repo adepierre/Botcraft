@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Silverfish;
     }
 
-    double SilverfishEntity::GetWidth() const
-    {
-        return 0.4;
-    }
-
-    double SilverfishEntity::GetHeight() const
-    {
-        return 0.3;
-    }
-
 
     std::string SilverfishEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType SilverfishEntity::GetClassType()
     {
         return EntityType::Silverfish;
+    }
+
+
+    double SilverfishEntity::GetWidthImpl() const
+    {
+        return 0.4;
+    }
+
+    double SilverfishEntity::GetHeightImpl() const
+    {
+        return 0.3;
     }
 
 }

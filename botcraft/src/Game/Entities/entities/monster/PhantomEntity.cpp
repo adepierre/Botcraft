@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::Phantom;
     }
 
-    double PhantomEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double PhantomEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string PhantomEntity::GetClassName()
     {
@@ -87,6 +77,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["id_size"] = id_size;
+    }
+
+
+    double PhantomEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double PhantomEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }

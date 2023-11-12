@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Ghast;
     }
 
-    double GhastEntity::GetWidth() const
-    {
-        return 4.0;
-    }
-
-    double GhastEntity::GetHeight() const
-    {
-        return 4.0;
-    }
-
 
     std::string GhastEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_is_charging"] = data_is_charging;
+    }
+
+
+    double GhastEntity::GetWidthImpl() const
+    {
+        return 4.0;
+    }
+
+    double GhastEntity::GetHeightImpl() const
+    {
+        return 4.0;
     }
 
 }

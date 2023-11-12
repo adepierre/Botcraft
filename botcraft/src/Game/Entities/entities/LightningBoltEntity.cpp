@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::LightningBolt;
     }
 
-    double LightningBoltEntity::GetWidth() const
-    {
-        return 0.0;
-    }
-
-    double LightningBoltEntity::GetHeight() const
-    {
-        return 0.0;
-    }
-
 
     std::string LightningBoltEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType LightningBoltEntity::GetClassType()
     {
         return EntityType::LightningBolt;
+    }
+
+
+    double LightningBoltEntity::GetWidthImpl() const
+    {
+        return 0.0;
+    }
+
+    double LightningBoltEntity::GetHeightImpl() const
+    {
+        return 0.0;
     }
 
 }

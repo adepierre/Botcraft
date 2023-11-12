@@ -35,16 +35,6 @@ namespace Botcraft
         return EntityType::Dolphin;
     }
 
-    double DolphinEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double DolphinEntity::GetHeight() const
-    {
-        return 0.6;
-    }
-
 
     std::string DolphinEntity::GetClassName()
     {
@@ -117,6 +107,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["moistness_level"] = moistness_level;
+    }
+
+
+    double DolphinEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double DolphinEntity::GetHeightImpl() const
+    {
+        return 0.6;
     }
 
 }

@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Vindicator;
     }
 
-    double VindicatorEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double VindicatorEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string VindicatorEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType VindicatorEntity::GetClassType()
     {
         return EntityType::Vindicator;
+    }
+
+
+    double VindicatorEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double VindicatorEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

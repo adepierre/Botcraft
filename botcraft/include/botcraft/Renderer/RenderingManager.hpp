@@ -120,6 +120,7 @@ namespace Botcraft
             virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg) override;
+            virtual void Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg) override;
 #if PROTOCOL_VERSION == 755 /* 1.17 */
             virtual void Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg) override;
 #else

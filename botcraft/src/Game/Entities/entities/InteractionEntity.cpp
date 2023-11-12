@@ -35,16 +35,6 @@ namespace Botcraft
         return EntityType::Interaction;
     }
 
-    double InteractionEntity::GetWidth() const
-    {
-        return 0.0;
-    }
-
-    double InteractionEntity::GetHeight() const
-    {
-        return 0.0;
-    }
-
 
     std::string InteractionEntity::GetClassName()
     {
@@ -120,7 +110,17 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_response_id"] = data_response_id;
     }
-    
+
+
+    double InteractionEntity::GetWidthImpl() const
+    {
+        return 0.0;
+    }
+
+    double InteractionEntity::GetHeightImpl() const
+    {
+        return 0.0;
+    }
 
 }
 #endif

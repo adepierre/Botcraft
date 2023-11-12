@@ -41,16 +41,6 @@ namespace Botcraft
         return EntityType::Panda;
     }
 
-    double PandaEntity::GetWidth() const
-    {
-        return 1.3;
-    }
-
-    double PandaEntity::GetHeight() const
-    {
-        return 1.25;
-    }
-
 
     std::string PandaEntity::GetClassName()
     {
@@ -162,6 +152,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_flags"] = data_id_flags;
+    }
+
+
+    double PandaEntity::GetWidthImpl() const
+    {
+        return 1.3;
+    }
+
+    double PandaEntity::GetHeightImpl() const
+    {
+        return 1.25;
     }
 
 }

@@ -18,8 +18,6 @@ namespace Botcraft
         // Object related stuff
         virtual std::string GetName() const override;
         virtual EntityType GetType() const override;
-        virtual double GetWidth() const override;
-        virtual double GetHeight() const override;
 
         // Static stuff, for easier comparison
         static std::string GetClassName();
@@ -46,6 +44,10 @@ namespace Botcraft
         void SetDataRightArmPose(const Vector3<float>& data_right_arm_pose);
         void SetDataLeftLegPose(const Vector3<float>& data_left_leg_pose);
         void SetDataRightLegPose(const Vector3<float>& data_right_leg_pose);
+
+    protected:
+        virtual double GetWidthImpl() const override;
+        virtual double GetHeightImpl() const override;
 
     };
 }

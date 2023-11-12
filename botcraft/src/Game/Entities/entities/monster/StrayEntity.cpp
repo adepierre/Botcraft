@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Stray;
     }
 
-    double StrayEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double StrayEntity::GetHeight() const
-    {
-        return 1.99;
-    }
-
 
     std::string StrayEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType StrayEntity::GetClassType()
     {
         return EntityType::Stray;
+    }
+
+
+    double StrayEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double StrayEntity::GetHeightImpl() const
+    {
+        return 1.99;
     }
 
 }

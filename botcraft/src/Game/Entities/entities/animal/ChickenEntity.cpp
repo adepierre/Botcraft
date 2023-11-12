@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Chicken;
     }
 
-    double ChickenEntity::GetWidth() const
-    {
-        return 0.4;
-    }
-
-    double ChickenEntity::GetHeight() const
-    {
-        return 0.7;
-    }
-
 
     std::string ChickenEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType ChickenEntity::GetClassType()
     {
         return EntityType::Chicken;
+    }
+
+
+    double ChickenEntity::GetWidthImpl() const
+    {
+        return 0.4;
+    }
+
+    double ChickenEntity::GetHeightImpl() const
+    {
+        return 0.7;
     }
 
 }

@@ -18,8 +18,6 @@ namespace Botcraft
         // Object related stuff
         virtual std::string GetName() const override;
         virtual EntityType GetType() const override;
-        virtual double GetWidth() const override;
-        virtual double GetHeight() const override;
 
         // Static stuff, for easier comparison
         static std::string GetClassName();
@@ -38,6 +36,10 @@ namespace Botcraft
         void SetDataSwellDir(const int data_swell_dir);
         void SetDataIsPowered(const bool data_is_powered);
         void SetDataIsIgnited(const bool data_is_ignited);
+
+    protected:
+        virtual double GetWidthImpl() const override;
+        virtual double GetHeightImpl() const override;
 
     };
 }

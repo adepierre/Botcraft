@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Sheep;
     }
 
-    double SheepEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double SheepEntity::GetHeight() const
-    {
-        return 1.3;
-    }
-
 
     std::string SheepEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_wool_id"] = data_wool_id;
+    }
+
+
+    double SheepEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double SheepEntity::GetHeightImpl() const
+    {
+        return 1.3;
     }
 
 }

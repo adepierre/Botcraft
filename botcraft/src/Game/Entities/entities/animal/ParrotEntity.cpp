@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Parrot;
     }
 
-    double ParrotEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double ParrotEntity::GetHeight() const
-    {
-        return 0.9;
-    }
-
 
     std::string ParrotEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_variant_id"] = data_variant_id;
+    }
+
+
+    double ParrotEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double ParrotEntity::GetHeightImpl() const
+    {
+        return 0.9;
     }
 
 }

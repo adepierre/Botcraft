@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Snowball;
     }
 
-    double SnowballEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double SnowballEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string SnowballEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType SnowballEntity::GetClassType()
     {
         return EntityType::Snowball;
+    }
+
+
+    double SnowballEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double SnowballEntity::GetHeightImpl() const
+    {
+        return 0.25;
     }
 
 }

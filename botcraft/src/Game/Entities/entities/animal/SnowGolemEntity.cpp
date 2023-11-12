@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::SnowGolem;
     }
 
-    double SnowGolemEntity::GetWidth() const
-    {
-        return 0.7;
-    }
-
-    double SnowGolemEntity::GetHeight() const
-    {
-        return 1.9;
-    }
-
 
     std::string SnowGolemEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_pumpkin_id"] = data_pumpkin_id;
+    }
+
+
+    double SnowGolemEntity::GetWidthImpl() const
+    {
+        return 0.7;
+    }
+
+    double SnowGolemEntity::GetHeightImpl() const
+    {
+        return 1.9;
     }
 
 }

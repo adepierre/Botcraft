@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::Pufferfish;
     }
 
-    double PufferfishEntity::GetWidth() const
-    {
-        return 0.7;
-    }
-
-    double PufferfishEntity::GetHeight() const
-    {
-        return 0.7;
-    }
-
 
     std::string PufferfishEntity::GetClassName()
     {
@@ -87,6 +77,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["puff_state"] = puff_state;
+    }
+
+
+    double PufferfishEntity::GetWidthImpl() const
+    {
+        return 0.7;
+    }
+
+    double PufferfishEntity::GetHeightImpl() const
+    {
+        return 0.7;
     }
 
 }

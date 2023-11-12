@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::Tadpole;
     }
 
-    double TadpoleEntity::GetWidth() const
-    {
-        return 0.4;
-    }
-
-    double TadpoleEntity::GetHeight() const
-    {
-        return 0.3;
-    }
-
 
     std::string TadpoleEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType TadpoleEntity::GetClassType()
     {
         return EntityType::Tadpole;
+    }
+
+
+    double TadpoleEntity::GetWidthImpl() const
+    {
+        return 0.4;
+    }
+
+    double TadpoleEntity::GetHeightImpl() const
+    {
+        return 0.3;
     }
 
 }

@@ -36,16 +36,6 @@ namespace Botcraft
         return EntityType::Horse;
     }
 
-    double HorseEntity::GetWidth() const
-    {
-        return 1.3964844;
-    }
-
-    double HorseEntity::GetHeight() const
-    {
-        return 1.6;
-    }
-
 
     std::string HorseEntity::GetClassName()
     {
@@ -112,5 +102,16 @@ namespace Botcraft
         metadata["armor_type"] = armor_type;
     }
 #endif
+
+
+    double HorseEntity::GetWidthImpl() const
+    {
+        return 1.3964844;
+    }
+
+    double HorseEntity::GetHeightImpl() const
+    {
+        return 1.6;
+    }
 
 }

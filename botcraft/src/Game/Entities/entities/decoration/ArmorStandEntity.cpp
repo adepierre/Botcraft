@@ -42,16 +42,6 @@ namespace Botcraft
         return EntityType::ArmorStand;
     }
 
-    double ArmorStandEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double ArmorStandEntity::GetHeight() const
-    {
-        return 1.975;
-    }
-
 
     std::string ArmorStandEntity::GetClassName()
     {
@@ -176,6 +166,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_right_leg_pose"] = data_right_leg_pose;
+    }
+
+
+    double ArmorStandEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double ArmorStandEntity::GetHeightImpl() const
+    {
+        return 1.975;
     }
 
 }

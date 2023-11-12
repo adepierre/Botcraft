@@ -33,16 +33,6 @@ namespace Botcraft
         return EntityType::Bee;
     }
 
-    double BeeEntity::GetWidth() const
-    {
-        return 0.7;
-    }
-
-    double BeeEntity::GetHeight() const
-    {
-        return 0.6;
-    }
-
 
     std::string BeeEntity::GetClassName()
     {
@@ -102,6 +92,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_remaining_anger_time"] = data_remaining_anger_time;
+    }
+
+
+    double BeeEntity::GetWidthImpl() const
+    {
+        return 0.7;
+    }
+
+    double BeeEntity::GetHeightImpl() const
+    {
+        return 0.6;
     }
 
 }

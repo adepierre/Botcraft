@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::ChestBoat;
     }
 
-    double ChestBoatEntity::GetWidth() const
-    {
-        return 1.375;
-    }
-
-    double ChestBoatEntity::GetHeight() const
-    {
-        return 0.5625;
-    }
-
 
     std::string ChestBoatEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType ChestBoatEntity::GetClassType()
     {
         return EntityType::ChestBoat;
+    }
+
+
+    double ChestBoatEntity::GetWidthImpl() const
+    {
+        return 1.375;
+    }
+
+    double ChestBoatEntity::GetHeightImpl() const
+    {
+        return 0.5625;
     }
 
 }

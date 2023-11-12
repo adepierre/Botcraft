@@ -33,16 +33,6 @@ namespace Botcraft
         return EntityType::Sniffer;
     }
 
-    double SnifferEntity::GetWidth() const
-    {
-        return 1.9;
-    }
-
-    double SnifferEntity::GetHeight() const
-    {
-        return 1.75;
-    }
-
 
     std::string SnifferEntity::GetClassName()
     {
@@ -105,7 +95,17 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_drop_seed_at_tick"] = data_drop_seed_at_tick;
     }
-    
+
+
+    double SnifferEntity::GetWidthImpl() const
+    {
+        return 1.9;
+    }
+
+    double SnifferEntity::GetHeightImpl() const
+    {
+        return 1.75;
+    }
 
 }
 #endif

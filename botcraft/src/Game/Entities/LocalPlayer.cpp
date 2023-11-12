@@ -330,7 +330,7 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         Vector3<double> direction = (pos - position);
         // We want to set the orientation from the eyes, not the feet
-        direction.y -= 1.62;
+        direction.y -= GetEyeHeightImpl();
         direction.Normalize();
         const float new_pitch = static_cast<float>(-std::asin(direction.y) * 180.0 / PI);
         float new_yaw = static_cast<float>(-std::atan2(direction.x, direction.z) * 180.0 / PI);

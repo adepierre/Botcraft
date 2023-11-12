@@ -34,16 +34,6 @@ namespace Botcraft
         return EntityType::Painting;
     }
 
-    double PaintingEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double PaintingEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string PaintingEntity::GetClassName()
     {
@@ -93,4 +83,16 @@ namespace Botcraft
         metadata["data_painting_variant_id"] = data_painting_variant_id;
     }
 #endif
+
+
+    double PaintingEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double PaintingEntity::GetHeightImpl() const
+    {
+        return 0.5;
+    }
+
 }

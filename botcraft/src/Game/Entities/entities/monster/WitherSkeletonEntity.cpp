@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::WitherSkeleton;
     }
 
-    double WitherSkeletonEntity::GetWidth() const
-    {
-        return 0.7;
-    }
-
-    double WitherSkeletonEntity::GetHeight() const
-    {
-        return 2.4;
-    }
-
 
     std::string WitherSkeletonEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType WitherSkeletonEntity::GetClassType()
     {
         return EntityType::WitherSkeleton;
+    }
+
+
+    double WitherSkeletonEntity::GetWidthImpl() const
+    {
+        return 0.7;
+    }
+
+    double WitherSkeletonEntity::GetHeightImpl() const
+    {
+        return 2.4;
     }
 
 }

@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Spider;
     }
 
-    double SpiderEntity::GetWidth() const
-    {
-        return 1.4;
-    }
-
-    double SpiderEntity::GetHeight() const
-    {
-        return 0.9;
-    }
-
 
     std::string SpiderEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_flags_id"] = data_flags_id;
+    }
+
+
+    double SpiderEntity::GetWidthImpl() const
+    {
+        return 1.4;
+    }
+
+    double SpiderEntity::GetHeightImpl() const
+    {
+        return 0.9;
     }
 
 }

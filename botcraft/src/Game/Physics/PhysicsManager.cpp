@@ -132,7 +132,13 @@ namespace Botcraft
 #if USE_GUI
                     if (rendering_manager && has_moved)
                     {
-                        rendering_manager->SetPosOrientation(local_player->position.x, local_player->position.y + 1.62, local_player->position.z, local_player->yaw, local_player->pitch);
+                        rendering_manager->SetPosOrientation(
+                            local_player->position.x,
+                            local_player->position.y + local_player->GetEyeHeightImpl(),
+                            local_player->position.z,
+                            local_player->yaw,
+                            local_player->pitch
+                        );
                     }
 #endif
                     if (has_moved || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_send).count() >= 1000)
@@ -173,10 +179,7 @@ namespace Botcraft
         // Copy player inputs
         Vector3<double> player_movement_inputs = local_player->player_inputs;
 
-        const AABB player_collider = AABB(
-            Vector3<double>(local_player->position.x, local_player->position.y + local_player->GetHeight() / 2, local_player->position.z),
-            Vector3<double>(local_player->GetWidth() / 2, local_player->GetHeight() / 2, local_player->GetWidth() / 2)
-        );
+        const AABB player_collider = local_player->GetColliderImpl();
 
         // If gravity applies, you can't decide to go up with player inputs
         // (jump is applied to speed not inputs)

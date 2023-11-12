@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::FallingBlockEntity;
     }
 
-    double FallingBlockEntity::GetWidth() const
-    {
-        return 0.98;
-    }
-
-    double FallingBlockEntity::GetHeight() const
-    {
-        return 0.98;
-    }
-
 
     std::string FallingBlockEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_start_pos"] = data_start_pos;
+    }
+
+
+    double FallingBlockEntity::GetWidthImpl() const
+    {
+        return 0.98;
+    }
+
+    double FallingBlockEntity::GetHeightImpl() const
+    {
+        return 0.98;
     }
 
 }

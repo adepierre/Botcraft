@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Arrow;
     }
 
-    double ArrowEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double ArrowEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string ArrowEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["id_effect_color"] = id_effect_color;
+    }
+
+
+    double ArrowEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double ArrowEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }

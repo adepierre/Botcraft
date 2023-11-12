@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::IronGolem;
     }
 
-    double IronGolemEntity::GetWidth() const
-    {
-        return 1.4;
-    }
-
-    double IronGolemEntity::GetHeight() const
-    {
-        return 2.7;
-    }
-
 
     std::string IronGolemEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_flags_id"] = data_flags_id;
+    }
+
+
+    double IronGolemEntity::GetWidthImpl() const
+    {
+        return 1.4;
+    }
+
+    double IronGolemEntity::GetHeightImpl() const
+    {
+        return 2.7;
     }
 
 }

@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::DisplayBlockDisplay;
     }
 
-    double DisplayBlockDisplayEntity::GetWidth() const
-    {
-        return 0.0;
-    }
-
-    double DisplayBlockDisplayEntity::GetHeight() const
-    {
-        return 0.0;
-    }
-
 
     std::string DisplayBlockDisplayEntity::GetClassName()
     {
@@ -90,5 +80,16 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_block_state_id"] = data_block_state_id;
     }
+
+    double DisplayBlockDisplayEntity::GetWidthImpl() const
+    {
+        return 0.0;
+    }
+
+    double DisplayBlockDisplayEntity::GetHeightImpl() const
+    {
+        return 0.0;
+    }
+
 }
 #endif

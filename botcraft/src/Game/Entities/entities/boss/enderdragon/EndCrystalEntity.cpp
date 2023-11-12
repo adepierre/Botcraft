@@ -32,16 +32,6 @@ namespace Botcraft
         return EntityType::EndCrystal;
     }
 
-    double EndCrystalEntity::GetWidth() const
-    {
-        return 2.0;
-    }
-
-    double EndCrystalEntity::GetHeight() const
-    {
-        return 2.0;
-    }
-
 
     std::string EndCrystalEntity::GetClassName()
     {
@@ -101,6 +91,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_show_bottom"] = data_show_bottom;
+    }
+
+
+    double EndCrystalEntity::GetWidthImpl() const
+    {
+        return 2.0;
+    }
+
+    double EndCrystalEntity::GetHeightImpl() const
+    {
+        return 2.0;
     }
 
 }

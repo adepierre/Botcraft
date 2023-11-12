@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::ThrownExperienceBottle;
     }
 
-    double ThrownExperienceBottleEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double ThrownExperienceBottleEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string ThrownExperienceBottleEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType ThrownExperienceBottleEntity::GetClassType()
     {
         return EntityType::ThrownExperienceBottle;
+    }
+
+
+    double ThrownExperienceBottleEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double ThrownExperienceBottleEntity::GetHeightImpl() const
+    {
+        return 0.25;
     }
 
 }

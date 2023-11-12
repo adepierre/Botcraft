@@ -37,16 +37,6 @@ namespace Botcraft
         return EntityType::ThrownTrident;
     }
 
-    double ThrownTridentEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double ThrownTridentEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string ThrownTridentEntity::GetClassName()
     {
@@ -113,6 +103,17 @@ namespace Botcraft
         metadata["id_foil"] = id_foil;
     }
 #endif
+
+
+    double ThrownTridentEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double ThrownTridentEntity::GetHeightImpl() const
+    {
+        return 0.5;
+    }
 
 }
 #endif

@@ -50,16 +50,6 @@ namespace Botcraft
         return EntityType::AreaEffectCloud;
     }
 
-    double AreaEffectCloudEntity::GetWidth() const
-    {
-        return GetDataRadius() * 2.0;
-    }
-
-    double AreaEffectCloudEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string AreaEffectCloudEntity::GetClassName()
     {
@@ -97,14 +87,21 @@ namespace Botcraft
         else if (index - hierarchy_metadata_count < metadata_count)
         {
             std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
+            const std::string& metadata_name = metadata_names[index - hierarchy_metadata_count];
+            metadata[metadata_name] = value;
+#if USE_GUI
+            if (metadata_name == "data_radius")
+            {
+                OnSizeUpdated();
+            }
+#endif
         }
     }
 
     float AreaEffectCloudEntity::GetDataRadius() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_radius"));
+        return GetDataRadiusImpl();
     }
 
     int AreaEffectCloudEntity::GetDataColor() const
@@ -151,12 +148,7 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_radius"] = data_radius;
 #if USE_GUI
-        are_rendered_faces_up_to_date = false;
-        for (size_t i = 0; i < faces.size(); ++i)
-        {
-            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_x = data_radius;
-            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_z = data_radius;
-        }
+        OnSizeUpdated();
 #endif
     }
 
@@ -198,4 +190,19 @@ namespace Botcraft
     }
 #endif
 
+
+    float AreaEffectCloudEntity::GetDataRadiusImpl() const
+    {
+        return std::any_cast<float>(metadata.at("data_radius"));
+    }
+
+    double AreaEffectCloudEntity::GetWidthImpl() const
+    {
+        return std::any_cast<float>(metadata.at("data_radius")) * 2.0;
+    }
+
+    double AreaEffectCloudEntity::GetHeightImpl() const
+    {
+        return 0.5;
+    }
 }

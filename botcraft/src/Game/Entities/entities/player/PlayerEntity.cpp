@@ -40,14 +40,10 @@ namespace Botcraft
         return EntityType::Player;
     }
 
-    double PlayerEntity::GetWidth() const
+    double PlayerEntity::GetEyeHeight() const
     {
-        return 0.6;
-    }
-
-    double PlayerEntity::GetHeight() const
-    {
-        return 1.8;
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetEyeHeightImpl();
     }
 
 
@@ -166,6 +162,64 @@ namespace Botcraft
     bool PlayerEntity::IsRemotePlayer() const
     {
         return true;
+    }
+
+
+    double PlayerEntity::GetHeightImpl() const
+    {
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        switch (GetDataPoseImpl())
+        {
+        case Pose::Crouching:
+            return 1.5;
+        case Pose::Sleeping:
+        case Pose::Dying:
+            return 0.2;
+        case Pose::FallFlying:
+        case Pose::Swimming:
+        case Pose::SpinAttack:
+            return 0.6;
+        default:
+            return 1.8;
+        }
+#else
+        return 1.8;
+#endif
+    }
+
+    double PlayerEntity::GetEyeHeightImpl() const
+    {
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        switch (GetDataPoseImpl())
+        {
+        case Pose::Swimming:
+        case Pose::FallFlying:
+        case Pose::SpinAttack:
+            return 0.4;
+        case Pose::Crouching:
+            return 1.27;
+        default:
+            return 1.62;
+        }
+#else
+        return 1.62;
+#endif
+    }
+
+    double PlayerEntity::GetWidthImpl() const
+    {
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        switch (GetDataPoseImpl())
+        {
+        case Pose::Sleeping:
+        case Pose::Dying:
+            return 0.2;
+        default:
+            return 0.6;
+        }
+#else
+        return 0.6;
+#endif
     }
 
 }

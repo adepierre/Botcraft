@@ -34,16 +34,6 @@ namespace Botcraft
         return EntityType::MushroomCow;
     }
 
-    double MushroomCowEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double MushroomCowEntity::GetHeight() const
-    {
-        return 1.4;
-    }
-
 
     std::string MushroomCowEntity::GetClassName()
     {
@@ -93,5 +83,16 @@ namespace Botcraft
         metadata["data_type"] = data_type;
     }
 #endif
+
+
+    double MushroomCowEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double MushroomCowEntity::GetHeightImpl() const
+    {
+        return 1.4;
+    }
 
 }

@@ -56,8 +56,8 @@ namespace Botcraft
         virtual std::string GetName() const = 0;
         virtual EntityType GetType() const = 0;
         AABB GetCollider() const;
-        virtual double GetWidth() const;
-        virtual double GetHeight() const;
+        double GetWidth() const;
+        double GetHeight() const;
 
         // Metadata stuff
         void LoadMetadataFromRawArray(const std::vector<unsigned char>& data);
@@ -202,7 +202,14 @@ namespace Botcraft
     protected:
 #if USE_GUI
         virtual void InitializeFaces();
+        void OnSizeUpdated();
 #endif
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        Pose GetDataPoseImpl() const;
+#endif
+        AABB GetColliderImpl() const;
+        virtual double GetWidthImpl() const;
+        virtual double GetHeightImpl() const;
 
     protected:
         mutable std::shared_mutex entity_mutex;

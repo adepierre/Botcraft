@@ -44,16 +44,6 @@ namespace Botcraft
         return EntityType::Zombie;
     }
 
-    double ZombieEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double ZombieEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string ZombieEntity::GetClassName()
     {
@@ -152,5 +142,16 @@ namespace Botcraft
         metadata["data_drowned_conversion_id"] = data_drowned_conversion_id;
     }
 #endif
+
+
+    double ZombieEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double ZombieEntity::GetHeightImpl() const
+    {
+        return 1.95;
+    }
 
 }

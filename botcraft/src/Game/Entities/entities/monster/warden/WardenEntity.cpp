@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::Warden;
     }
 
-    double WardenEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double WardenEntity::GetHeight() const
-    {
-        return 2.9;
-    }
-
 
     std::string WardenEntity::GetClassName()
     {
@@ -87,6 +77,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["client_anger_level"] = client_anger_level;
+    }
+
+
+    double WardenEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double WardenEntity::GetHeightImpl() const
+    {
+        return 2.9;
     }
 
 }

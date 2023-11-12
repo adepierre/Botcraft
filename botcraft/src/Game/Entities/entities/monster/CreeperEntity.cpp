@@ -34,16 +34,6 @@ namespace Botcraft
         return EntityType::Creeper;
     }
 
-    double CreeperEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double CreeperEntity::GetHeight() const
-    {
-        return 1.7;
-    }
-
 
     std::string CreeperEntity::GetClassName()
     {
@@ -116,6 +106,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_is_ignited"] = data_is_ignited;
+    }
+
+
+    double CreeperEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double CreeperEntity::GetHeightImpl() const
+    {
+        return 1.7;
     }
 
 }

@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::TropicalFish;
     }
 
-    double TropicalFishEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double TropicalFishEntity::GetHeight() const
-    {
-        return 0.4;
-    }
-
 
     std::string TropicalFishEntity::GetClassName()
     {
@@ -87,6 +77,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_type_variant"] = data_id_type_variant;
+    }
+
+
+    double TropicalFishEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double TropicalFishEntity::GetHeightImpl() const
+    {
+        return 0.4;
     }
 
 }

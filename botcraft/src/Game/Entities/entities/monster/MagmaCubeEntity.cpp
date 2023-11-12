@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::MagmaCube;
     }
 
-    double MagmaCubeEntity::GetWidth() const
-    {
-        return 2.04;
-    }
-
-    double MagmaCubeEntity::GetHeight() const
-    {
-        return 2.04;
-    }
-
 
     std::string MagmaCubeEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType MagmaCubeEntity::GetClassType()
     {
         return EntityType::MagmaCube;
+    }
+
+
+    double MagmaCubeEntity::GetWidthImpl() const
+    {
+        return 0.255 * 2.04 * GetIdSizeImpl();
+    }
+
+    double MagmaCubeEntity::GetHeightImpl() const
+    {
+        return 0.255 * 2.04 * GetIdSizeImpl();
     }
 
 }

@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::ThrownEgg;
     }
 
-    double ThrownEggEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double ThrownEggEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string ThrownEggEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType ThrownEggEntity::GetClassType()
     {
         return EntityType::ThrownEgg;
+    }
+
+
+    double ThrownEggEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double ThrownEggEntity::GetHeightImpl() const
+    {
+        return 0.25;
     }
 
 }

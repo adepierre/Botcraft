@@ -284,17 +284,19 @@ namespace Botcraft
     AABB Entity::GetCollider() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return AABB(Vector3<double>(position.x, position.y + GetHeight() / 2, position.z), Vector3<double>(GetWidth() / 2, GetHeight() / 2, GetWidth() / 2));
+        return GetColliderImpl();
     }
 
     double Entity::GetWidth() const
     {
-        return -1.0;
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetWidthImpl();
     }
 
     double Entity::GetHeight() const
     {
-        return -1.0;
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetHeightImpl();
     }
 
 
@@ -556,7 +558,14 @@ namespace Botcraft
     {
         assert(index >= 0 && index < metadata_count);
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata[metadata_names[index]] = value;
+        const std::string& metadata_name = metadata_names[index];
+        metadata[metadata_name] = value;
+#if USE_GUI && PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        if (metadata_name == "data_pose")
+        {
+            OnSizeUpdated();
+        }
+#endif
     }
 
 
@@ -608,7 +617,7 @@ namespace Botcraft
     Pose Entity::GetDataPose() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<Pose>(metadata.at("data_pose"));
+        return GetDataPoseImpl();
     }
 #endif
 
@@ -670,6 +679,9 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_pose"] = data_pose;
+#if USE_GUI
+        OnSizeUpdated();
+#endif
     }
 #endif
 
@@ -1641,6 +1653,8 @@ namespace Botcraft
         // Generate default faces
         face_descriptors = std::vector<FaceDescriptor>(6);
         faces = std::vector<Renderer::Face>(6);
+        const double half_height = GetHeightImpl() / 2.0;
+        const double half_width = GetWidthImpl() / 2.0;
         for (int i = 0; i < 6; ++i)
         {
             face_descriptors[i].orientation = static_cast<Orientation>(i);
@@ -1650,12 +1664,12 @@ namespace Botcraft
 
             // Base entity scale
             face_descriptors[i].transformations.scales.push_back(std::make_shared<Renderer::Scale>(
-                static_cast<float>(GetWidth()) / 2.0f,
-                static_cast<float>(GetHeight()) / 2.0f,
-                static_cast<float>(GetWidth()) / 2.0f)
-            );
+                static_cast<float>(half_width),
+                static_cast<float>(half_height),
+                static_cast<float>(half_width)
+            ));
             // Base translation
-            face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(0.0f, static_cast<float>(GetHeight()) / 2.0f, 0.0f));
+            face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(0.0f, static_cast<float>(half_height), 0.0f));
             // Entity pos translation
             face_descriptors[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(
                 static_cast<float>(position.x),
@@ -1678,13 +1692,13 @@ namespace Botcraft
             std::array<Renderer::Transparency, 2> transparencies = { Renderer::Transparency::Opaque, Renderer::Transparency::Opaque };
             std::array<Renderer::Animation, 2> animated = { Renderer::Animation::Static, Renderer::Animation::Static };
 
-            for (int i = 0; i < std::min(2, static_cast<int>(face_descriptors[i].texture_names.size())); ++i)
+            for (int j = 0; j < std::min(2, static_cast<int>(face_descriptors[i].texture_names.size())); ++j)
             {
-                const Renderer::TextureData& texture_data = atlas->GetData(face_descriptors[i].texture_names[i]);
-                std::tie(texture_pos[2 * i + 0], texture_pos[2 * i + 1]) = texture_data.position;
-                std::tie(texture_size[2 * i + 0], texture_size[2 * i + 1]) = texture_data.size;
-                transparencies[i] = texture_data.transparency;
-                animated[i] = texture_data.animation;
+                const Renderer::TextureData& texture_data = atlas->GetData(face_descriptors[i].texture_names[j]);
+                std::tie(texture_pos[2 * j + 0], texture_pos[2 * j + 1]) = texture_data.position;
+                std::tie(texture_size[2 * j + 0], texture_size[2 * j + 1]) = texture_data.size;
+                transparencies[j] = texture_data.transparency;
+                animated[j] = texture_data.animation;
             }
 
             // Main texture coords in the atlas
@@ -1712,5 +1726,43 @@ namespace Botcraft
         }
         are_rendered_faces_up_to_date = false;
     }
+
+    void Entity::OnSizeUpdated()
+    {
+        are_rendered_faces_up_to_date = false;
+        const double half_width = GetWidthImpl() / 2.0;
+        const double half_height = GetHeightImpl() / 2.0;
+        for (size_t i = 0; i < faces.size(); ++i)
+        {
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_x = static_cast<float>(half_width);
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_y = static_cast<float>(half_height);
+            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_z = static_cast<float>(half_width);
+            std::static_pointer_cast<Renderer::Translation>(face_descriptors[i].transformations.translations.front())->y = static_cast<float>(half_height);
+        }
+    }
 #endif
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+    Pose Entity::GetDataPoseImpl() const
+    {
+        return std::any_cast<Pose>(metadata.at("data_pose"));
+    }
+#endif
+
+    AABB Entity::GetColliderImpl() const
+    {
+        const double half_width = GetWidthImpl() / 2.0;
+        const double half_height = GetHeightImpl() / 2.0;
+        return AABB(Vector3<double>(position.x, position.y + half_height, position.z), Vector3<double>(half_width, half_height, half_width));
+    }
+
+    double Entity::GetWidthImpl() const
+    {
+        return -1.0;
+    }
+
+    double Entity::GetHeightImpl() const
+    {
+        return -1.0;
+    }
 }

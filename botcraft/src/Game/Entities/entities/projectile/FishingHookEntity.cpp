@@ -36,16 +36,6 @@ namespace Botcraft
         return EntityType::FishingHook;
     }
 
-    double FishingHookEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double FishingHookEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string FishingHookEntity::GetClassName()
     {
@@ -119,5 +109,16 @@ namespace Botcraft
         metadata["data_biting"] = data_biting;
     }
 #endif
+
+
+    double FishingHookEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double FishingHookEntity::GetHeightImpl() const
+    {
+        return 0.25;
+    }
 
 }

@@ -33,16 +33,6 @@ namespace Botcraft
         return EntityType::Frog;
     }
 
-    double FrogEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double FrogEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string FrogEntity::GetClassName()
     {
@@ -102,6 +92,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_tongue_target_id"] = data_tongue_target_id;
+    }
+
+
+    double FrogEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double FrogEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }

@@ -46,16 +46,6 @@ namespace Botcraft
         return EntityType::Boat;
     }
 
-    double BoatEntity::GetWidth() const
-    {
-        return 1.375;
-    }
-
-    double BoatEntity::GetHeight() const
-    {
-        return 0.5625;
-    }
-
 
     std::string BoatEntity::GetClassName()
     {
@@ -187,5 +177,16 @@ namespace Botcraft
         metadata["data_id_bubble_time"] = data_id_bubble_time;
     }
 #endif
+
+
+    double BoatEntity::GetWidthImpl() const
+    {
+        return 1.375;
+    }
+
+    double BoatEntity::GetHeightImpl() const
+    {
+        return 0.5625;
+    }
 
 }

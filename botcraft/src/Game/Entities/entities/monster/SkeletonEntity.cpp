@@ -34,16 +34,6 @@ namespace Botcraft
         return EntityType::Skeleton;
     }
 
-    double SkeletonEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double SkeletonEntity::GetHeight() const
-    {
-        return 1.99;
-    }
-
 
     std::string SkeletonEntity::GetClassName()
     {
@@ -93,5 +83,16 @@ namespace Botcraft
         metadata["data_stray_conversion_id"] = data_stray_conversion_id;
     }
 #endif
+
+
+    double SkeletonEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double SkeletonEntity::GetHeightImpl() const
+    {
+        return 1.99;
+    }
 
 }

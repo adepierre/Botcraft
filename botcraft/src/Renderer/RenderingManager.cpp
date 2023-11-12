@@ -29,6 +29,7 @@
 #include "botcraft/Game/World/Chunk.hpp"
 
 #include "botcraft/Game/Entities/EntityManager.hpp"
+#include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/Entities/entities/Entity.hpp"
 
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
@@ -772,6 +773,16 @@ namespace Botcraft
         void RenderingManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg)
         {
             AddEntityToUpdate(msg.GetEntityId());
+        }
+
+        void RenderingManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg)
+        {
+            std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+            if (local_player != nullptr && local_player->GetEntityID() == msg.GetId_())
+            {
+                return;
+            }
+            AddEntityToUpdate(msg.GetId_());
         }
 
 #if PROTOCOL_VERSION == 755 /* 1.17 */

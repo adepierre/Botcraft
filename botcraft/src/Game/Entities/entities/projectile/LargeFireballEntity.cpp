@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::LargeFireball;
     }
 
-    double LargeFireballEntity::GetWidth() const
-    {
-        return 1.0;
-    }
-
-    double LargeFireballEntity::GetHeight() const
-    {
-        return 1.0;
-    }
-
 
     std::string LargeFireballEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType LargeFireballEntity::GetClassType()
     {
         return EntityType::LargeFireball;
+    }
+
+
+    double LargeFireballEntity::GetWidthImpl() const
+    {
+        return 1.0;
+    }
+
+    double LargeFireballEntity::GetHeightImpl() const
+    {
+        return 1.0;
     }
 
 }

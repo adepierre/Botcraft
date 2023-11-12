@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::ZombifiedPiglin;
     }
 
-    double ZombifiedPiglinEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double ZombifiedPiglinEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string ZombifiedPiglinEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType ZombifiedPiglinEntity::GetClassType()
     {
         return EntityType::ZombifiedPiglin;
+    }
+
+
+    double ZombifiedPiglinEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double ZombifiedPiglinEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

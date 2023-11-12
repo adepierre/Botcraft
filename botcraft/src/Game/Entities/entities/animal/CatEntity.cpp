@@ -37,16 +37,6 @@ namespace Botcraft
         return EntityType::Cat;
     }
 
-    double CatEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double CatEntity::GetHeight() const
-    {
-        return 0.7;
-    }
-
 
     std::string CatEntity::GetClassName()
     {
@@ -132,6 +122,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_collar_color"] = data_collar_color;
+    }
+
+
+    double CatEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double CatEntity::GetHeightImpl() const
+    {
+        return 0.7;
     }
 
 }

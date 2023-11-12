@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::MinecartHopper;
     }
 
-    double MinecartHopperEntity::GetWidth() const
-    {
-        return 0.98;
-    }
-
-    double MinecartHopperEntity::GetHeight() const
-    {
-        return 0.7;
-    }
-
 
     std::string MinecartHopperEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType MinecartHopperEntity::GetClassType()
     {
         return EntityType::MinecartHopper;
+    }
+
+
+    double MinecartHopperEntity::GetWidthImpl() const
+    {
+        return 0.98;
+    }
+
+    double MinecartHopperEntity::GetHeightImpl() const
+    {
+        return 0.7;
     }
 
 }

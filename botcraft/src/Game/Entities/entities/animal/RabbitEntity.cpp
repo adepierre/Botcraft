@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Rabbit;
     }
 
-    double RabbitEntity::GetWidth() const
-    {
-        return 0.4;
-    }
-
-    double RabbitEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string RabbitEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_type_id"] = data_type_id;
+    }
+
+
+    double RabbitEntity::GetWidthImpl() const
+    {
+        return 0.4;
+    }
+
+    double RabbitEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }

@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::PigZombie;
     }
 
-    double PigZombieEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double PigZombieEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string PigZombieEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType PigZombieEntity::GetClassType()
     {
         return EntityType::PigZombie;
+    }
+
+
+    double PigZombieEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double PigZombieEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

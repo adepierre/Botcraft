@@ -34,16 +34,6 @@ namespace Botcraft
         return EntityType::EyeOfEnder;
     }
 
-    double EyeOfEnderEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double EyeOfEnderEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string EyeOfEnderEntity::GetClassName()
     {
@@ -93,5 +83,16 @@ namespace Botcraft
         metadata["data_item_stack"] = data_item_stack;
     }
 #endif
+
+
+    double EyeOfEnderEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double EyeOfEnderEntity::GetHeightImpl() const
+    {
+        return 0.25;
+    }
 
 }

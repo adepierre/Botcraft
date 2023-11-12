@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::TraderLlama;
     }
 
-    double TraderLlamaEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double TraderLlamaEntity::GetHeight() const
-    {
-        return 1.87;
-    }
-
 
     std::string TraderLlamaEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType TraderLlamaEntity::GetClassType()
     {
         return EntityType::TraderLlama;
+    }
+
+
+    double TraderLlamaEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double TraderLlamaEntity::GetHeightImpl() const
+    {
+        return 1.87;
     }
 
 }

@@ -44,16 +44,6 @@ namespace Botcraft
         return EntityType::Wolf;
     }
 
-    double WolfEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double WolfEntity::GetHeight() const
-    {
-        return 0.85;
-    }
-
 
     std::string WolfEntity::GetClassName()
     {
@@ -152,5 +142,16 @@ namespace Botcraft
         metadata["data_remaining_anger_time"] = data_remaining_anger_time;
     }
 #endif
+
+
+    double WolfEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double WolfEntity::GetHeightImpl() const
+    {
+        return 0.85;
+    }
 
 }

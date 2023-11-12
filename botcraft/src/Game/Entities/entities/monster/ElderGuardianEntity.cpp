@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::ElderGuardian;
     }
 
-    double ElderGuardianEntity::GetWidth() const
-    {
-        return 1.9975;
-    }
-
-    double ElderGuardianEntity::GetHeight() const
-    {
-        return 1.9975;
-    }
-
 
     std::string ElderGuardianEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType ElderGuardianEntity::GetClassType()
     {
         return EntityType::ElderGuardian;
+    }
+
+
+    double ElderGuardianEntity::GetWidthImpl() const
+    {
+        return 1.9975;
+    }
+
+    double ElderGuardianEntity::GetHeightImpl() const
+    {
+        return 1.9975;
     }
 
 }

@@ -34,16 +34,6 @@ namespace Botcraft
         return EntityType::ThrownPotion;
     }
 
-    double ThrownPotionEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double ThrownPotionEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string ThrownPotionEntity::GetClassName()
     {
@@ -93,5 +83,16 @@ namespace Botcraft
         metadata["data_item_stack"] = data_item_stack;
     }
 #endif
+
+
+    double ThrownPotionEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double ThrownPotionEntity::GetHeightImpl() const
+    {
+        return 0.25;
+    }
 
 }

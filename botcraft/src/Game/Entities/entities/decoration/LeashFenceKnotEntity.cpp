@@ -23,20 +23,6 @@ namespace Botcraft
         return EntityType::LeashFenceKnotEntity;
     }
 
-    double LeashFenceKnotEntity::GetWidth() const
-    {
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
-        return 0.375;
-#else
-        return 0.5;
-#endif
-    }
-
-    double LeashFenceKnotEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string LeashFenceKnotEntity::GetClassName()
     {
@@ -46,6 +32,21 @@ namespace Botcraft
     EntityType LeashFenceKnotEntity::GetClassType()
     {
         return EntityType::LeashFenceKnotEntity;
+    }
+
+
+    double LeashFenceKnotEntity::GetWidthImpl() const
+    {
+#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+        return 0.375;
+#else
+        return 0.5;
+#endif
+    }
+
+    double LeashFenceKnotEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }

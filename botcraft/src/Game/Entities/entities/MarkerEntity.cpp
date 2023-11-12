@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::Marker;
     }
 
-    double MarkerEntity::GetWidth() const
-    {
-        return 0.0;
-    }
-
-    double MarkerEntity::GetHeight() const
-    {
-        return 0.0;
-    }
-
 
     std::string MarkerEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType MarkerEntity::GetClassType()
     {
         return EntityType::Marker;
+    }
+
+
+    double MarkerEntity::GetWidthImpl() const
+    {
+        return 0.0;
+    }
+
+    double MarkerEntity::GetHeightImpl() const
+    {
+        return 0.0;
     }
 
 }

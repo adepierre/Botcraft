@@ -19,8 +19,8 @@ namespace Botcraft
         // Object related stuff
         virtual std::string GetName() const override;
         virtual EntityType GetType() const override;
-        virtual double GetWidth() const override;
-        virtual double GetHeight() const override;
+
+        double GetEyeHeight() const;
 
         // Static stuff, for easier comparison
         static std::string GetClassName();
@@ -47,6 +47,11 @@ namespace Botcraft
         void SetDataShoulderRight(const ProtocolCraft::NBT::Value& data_shoulder_right);
 
         virtual bool IsRemotePlayer() const override;
+
+    protected:
+        double GetEyeHeightImpl() const;
+        virtual double GetWidthImpl() const override;
+        virtual double GetHeightImpl() const override;
 
     };
 }

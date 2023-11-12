@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::SkeletonHorse;
     }
 
-    double SkeletonHorseEntity::GetWidth() const
-    {
-        return 1.3964844;
-    }
-
-    double SkeletonHorseEntity::GetHeight() const
-    {
-        return 1.6;
-    }
-
 
     std::string SkeletonHorseEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType SkeletonHorseEntity::GetClassType()
     {
         return EntityType::SkeletonHorse;
+    }
+
+
+    double SkeletonHorseEntity::GetWidthImpl() const
+    {
+        return 1.3964844;
+    }
+
+    double SkeletonHorseEntity::GetHeightImpl() const
+    {
+        return 1.6;
     }
 
 }

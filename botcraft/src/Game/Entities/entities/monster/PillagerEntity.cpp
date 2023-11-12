@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::Pillager;
     }
 
-    double PillagerEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double PillagerEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string PillagerEntity::GetClassName()
     {
@@ -87,6 +77,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["is_charging_crossbow"] = is_charging_crossbow;
+    }
+
+
+    double PillagerEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double PillagerEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Cow;
     }
 
-    double CowEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double CowEntity::GetHeight() const
-    {
-        return 1.4;
-    }
-
 
     std::string CowEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType CowEntity::GetClassType()
     {
         return EntityType::Cow;
+    }
+
+
+    double CowEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double CowEntity::GetHeightImpl() const
+    {
+        return 1.4;
     }
 
 }

@@ -38,16 +38,6 @@ namespace Botcraft
         return EntityType::EnderMan;
     }
 
-    double EnderManEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double EnderManEntity::GetHeight() const
-    {
-        return 2.9;
-    }
-
 
     std::string EnderManEntity::GetClassName()
     {
@@ -127,5 +117,16 @@ namespace Botcraft
         metadata["data_stared_at"] = data_stared_at;
     }
 #endif
+
+
+    double EnderManEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double EnderManEntity::GetHeightImpl() const
+    {
+        return 2.9;
+    }
 
 }

@@ -783,7 +783,7 @@ namespace Botcraft
             static_cast<int>(std::floor(initial_position.z))
         );
         const Vector3<double> target_position(target_pos.x + 0.5, target_pos.y, target_pos.z + 0.5);
-        local_player->LookAt(target_position + Vector3<double>(0.0, 1.62, 0.0), true);
+        local_player->LookAt(target_position + Vector3<double>(0.0, local_player->GetEyeHeight(), 0.0), true);
         const Vector3<double> motion_vector = target_position - initial_position;
 
         // If need to jump to catch climbable at head level

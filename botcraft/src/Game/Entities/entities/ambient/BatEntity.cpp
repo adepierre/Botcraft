@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Bat;
     }
 
-    double BatEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double BatEntity::GetHeight() const
-    {
-        return 0.9;
-    }
-
 
     std::string BatEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_flags"] = data_id_flags;
+    }
+
+
+    double BatEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double BatEntity::GetHeightImpl() const
+    {
+        return 0.9;
     }
 
 }

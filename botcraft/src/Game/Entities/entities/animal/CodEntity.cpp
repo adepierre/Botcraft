@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::Cod;
     }
 
-    double CodEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double CodEntity::GetHeight() const
-    {
-        return 0.3;
-    }
-
 
     std::string CodEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType CodEntity::GetClassType()
     {
         return EntityType::Cod;
+    }
+
+
+    double CodEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double CodEntity::GetHeightImpl() const
+    {
+        return 0.3;
     }
 
 }

@@ -22,13 +22,15 @@ namespace Botcraft
         return EntityType::None;
     }
 
-    double UnknownEntity::GetWidth() const
+
+    double UnknownEntity::GetWidthImpl() const
     {
         return 1.0;
     }
 
-    double UnknownEntity::GetHeight() const
+    double UnknownEntity::GetHeightImpl() const
     {
         return 1.0;
     }
+
 }

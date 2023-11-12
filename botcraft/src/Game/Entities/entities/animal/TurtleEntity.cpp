@@ -41,16 +41,6 @@ namespace Botcraft
         return EntityType::Turtle;
     }
 
-    double TurtleEntity::GetWidth() const
-    {
-        return 1.2;
-    }
-
-    double TurtleEntity::GetHeight() const
-    {
-        return 0.4;
-    }
-
 
     std::string TurtleEntity::GetClassName()
     {
@@ -162,6 +152,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["travelling"] = travelling;
+    }
+
+
+    double TurtleEntity::GetWidthImpl() const
+    {
+        return 1.2;
+    }
+
+    double TurtleEntity::GetHeightImpl() const
+    {
+        return 0.4;
     }
 
 }

@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::GlowSquid;
     }
 
-    double GlowSquidEntity::GetWidth() const
-    {
-        return 0.8;
-    }
-
-    double GlowSquidEntity::GetHeight() const
-    {
-        return 0.8;
-    }
-
 
     std::string GlowSquidEntity::GetClassName()
     {
@@ -87,6 +77,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_dark_ticks_remaining"] = data_dark_ticks_remaining;
+    }
+
+
+    double GlowSquidEntity::GetWidthImpl() const
+    {
+        return 0.8;
+    }
+
+    double GlowSquidEntity::GetHeightImpl() const
+    {
+        return 0.8;
     }
 
 }

@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::Drowned;
     }
 
-    double DrownedEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double DrownedEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string DrownedEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType DrownedEntity::GetClassType()
     {
         return EntityType::Drowned;
+    }
+
+
+    double DrownedEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double DrownedEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

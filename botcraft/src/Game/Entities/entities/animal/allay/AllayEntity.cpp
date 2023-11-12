@@ -36,16 +36,6 @@ namespace Botcraft
         return EntityType::Allay;
     }
 
-    double AllayEntity::GetWidth() const
-    {
-        return 0.35;
-    }
-
-    double AllayEntity::GetHeight() const
-    {
-        return 0.6;
-    }
-
 
     std::string AllayEntity::GetClassName()
     {
@@ -108,6 +98,17 @@ namespace Botcraft
         metadata["data_can_duplicate"] = data_can_duplicate;
     }
 #endif
+
+
+    double AllayEntity::GetWidthImpl() const
+    {
+        return 0.35;
+    }
+
+    double AllayEntity::GetHeightImpl() const
+    {
+        return 0.6;
+    }
 
 }
 #endif

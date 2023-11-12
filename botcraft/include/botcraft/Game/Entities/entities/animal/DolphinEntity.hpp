@@ -19,8 +19,6 @@ namespace Botcraft
         // Object related stuff
         virtual std::string GetName() const override;
         virtual EntityType GetType() const override;
-        virtual double GetWidth() const override;
-        virtual double GetHeight() const override;
 
         // Static stuff, for easier comparison
         static std::string GetClassName();
@@ -39,6 +37,10 @@ namespace Botcraft
         void SetTreasurePos(const Position& treasure_pos);
         void SetGotFish(const bool got_fish);
         void SetMoistnessLevel(const int moistness_level);
+
+    protected:
+        virtual double GetWidthImpl() const override;
+        virtual double GetHeightImpl() const override;
 
     };
 }

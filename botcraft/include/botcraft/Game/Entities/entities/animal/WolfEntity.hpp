@@ -24,8 +24,6 @@ namespace Botcraft
         // Object related stuff
         virtual std::string GetName() const override;
         virtual EntityType GetType() const override;
-        virtual double GetWidth() const override;
-        virtual double GetHeight() const override;
 
         // Static stuff, for easier comparison
         static std::string GetClassName();
@@ -55,6 +53,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         void SetDataRemainingAngerTime(const int data_remaining_anger_time);
 #endif
+
+    protected:
+        virtual double GetWidthImpl() const override;
+        virtual double GetHeightImpl() const override;
 
     };
 }

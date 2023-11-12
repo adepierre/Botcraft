@@ -30,20 +30,6 @@ namespace Botcraft
         return EntityType::PolarBear;
     }
 
-    double PolarBearEntity::GetWidth() const
-    {
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        return 1.4;
-#else
-        return 1.3;
-#endif
-    }
-
-    double PolarBearEntity::GetHeight() const
-    {
-        return 1.4;
-    }
-
 
     std::string PolarBearEntity::GetClassName()
     {
@@ -90,6 +76,21 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_standing_id"] = data_standing_id;
+    }
+
+
+    double PolarBearEntity::GetWidthImpl() const
+    {
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        return 1.4;
+#else
+        return 1.3;
+#endif
+    }
+
+    double PolarBearEntity::GetHeightImpl() const
+    {
+        return 1.4;
     }
 
 }

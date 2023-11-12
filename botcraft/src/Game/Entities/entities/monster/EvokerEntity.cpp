@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Evoker;
     }
 
-    double EvokerEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double EvokerEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string EvokerEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType EvokerEntity::GetClassType()
     {
         return EntityType::Evoker;
+    }
+
+
+    double EvokerEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double EvokerEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

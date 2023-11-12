@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::ShulkerBullet;
     }
 
-    double ShulkerBulletEntity::GetWidth() const
-    {
-        return 0.3125;
-    }
-
-    double ShulkerBulletEntity::GetHeight() const
-    {
-        return 0.3125;
-    }
-
 
     std::string ShulkerBulletEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType ShulkerBulletEntity::GetClassType()
     {
         return EntityType::ShulkerBullet;
+    }
+
+
+    double ShulkerBulletEntity::GetWidthImpl() const
+    {
+        return 0.3125;
+    }
+
+    double ShulkerBulletEntity::GetHeightImpl() const
+    {
+        return 0.3125;
     }
 
 }

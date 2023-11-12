@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::Zoglin;
     }
 
-    double ZoglinEntity::GetWidth() const
-    {
-        return 1.3964844;
-    }
-
-    double ZoglinEntity::GetHeight() const
-    {
-        return 1.4;
-    }
-
 
     std::string ZoglinEntity::GetClassName()
     {
@@ -87,6 +77,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_baby_id"] = data_baby_id;
+    }
+
+
+    double ZoglinEntity::GetWidthImpl() const
+    {
+        return 1.3964844;
+    }
+
+    double ZoglinEntity::GetHeightImpl() const
+    {
+        return 1.4;
     }
 
 }

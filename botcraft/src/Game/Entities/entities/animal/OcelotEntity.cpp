@@ -38,16 +38,6 @@ namespace Botcraft
         return EntityType::Ocelot;
     }
 
-    double OcelotEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double OcelotEntity::GetHeight() const
-    {
-        return 0.7;
-    }
-
 
     std::string OcelotEntity::GetClassName()
     {
@@ -114,5 +104,16 @@ namespace Botcraft
         metadata["data_type_id"] = data_type_id;
     }
 #endif
+
+
+    double OcelotEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double OcelotEntity::GetHeightImpl() const
+    {
+        return 0.7;
+    }
 
 }

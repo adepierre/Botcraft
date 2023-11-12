@@ -31,16 +31,6 @@ namespace Botcraft
         return EntityType::Hoglin;
     }
 
-    double HoglinEntity::GetWidth() const
-    {
-        return 1.3964844;
-    }
-
-    double HoglinEntity::GetHeight() const
-    {
-        return 1.4;
-    }
-
 
     std::string HoglinEntity::GetClassName()
     {
@@ -87,6 +77,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_immune_to_zombification"] = data_immune_to_zombification;
+    }
+
+
+    double HoglinEntity::GetWidthImpl() const
+    {
+        return 1.3964844;
+    }
+
+    double HoglinEntity::GetHeightImpl() const
+    {
+        return 1.4;
     }
 
 }

@@ -38,16 +38,6 @@ namespace Botcraft
         return EntityType::Villager;
     }
 
-    double VillagerEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double VillagerEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string VillagerEntity::GetClassName()
     {
@@ -122,4 +112,16 @@ namespace Botcraft
         metadata["data_villager_profession_id"] = data_villager_profession_id;
     }
 #endif
+
+
+    double VillagerEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double VillagerEntity::GetHeightImpl() const
+    {
+        return 1.95;
+    }
+
 }

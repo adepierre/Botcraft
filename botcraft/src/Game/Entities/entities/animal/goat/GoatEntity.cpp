@@ -39,16 +39,6 @@ namespace Botcraft
         return EntityType::Goat;
     }
 
-    double GoatEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double GoatEntity::GetHeight() const
-    {
-        return 1.3;
-    }
-
 
     std::string GoatEntity::GetClassName()
     {
@@ -128,6 +118,17 @@ namespace Botcraft
         metadata["data_has_right_horn"] = data_has_right_horn;
     }
 #endif
+
+
+    double GoatEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double GoatEntity::GetHeightImpl() const
+    {
+        return 1.3;
+    }
 
 }
 #endif

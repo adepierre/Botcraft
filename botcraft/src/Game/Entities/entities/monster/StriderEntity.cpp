@@ -35,16 +35,6 @@ namespace Botcraft
         return EntityType::Strider;
     }
 
-    double StriderEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double StriderEntity::GetHeight() const
-    {
-        return 1.7;
-    }
-
 
     std::string StriderEntity::GetClassName()
     {
@@ -117,6 +107,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_saddle_id"] = data_saddle_id;
+    }
+
+
+    double StriderEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double StriderEntity::GetHeightImpl() const
+    {
+        return 1.7;
     }
 
 }

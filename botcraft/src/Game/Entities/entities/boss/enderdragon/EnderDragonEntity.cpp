@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::EnderDragon;
     }
 
-    double EnderDragonEntity::GetWidth() const
-    {
-        return 16.0;
-    }
-
-    double EnderDragonEntity::GetHeight() const
-    {
-        return 8.0;
-    }
-
 
     std::string EnderDragonEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_phase"] = data_phase;
+    }
+
+
+    double EnderDragonEntity::GetWidthImpl() const
+    {
+        return 16.0;
+    }
+
+    double EnderDragonEntity::GetHeightImpl() const
+    {
+        return 8.0;
     }
 
 }

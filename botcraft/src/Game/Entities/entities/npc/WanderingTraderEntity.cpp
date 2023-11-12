@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::WanderingTrader;
     }
 
-    double WanderingTraderEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double WanderingTraderEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string WanderingTraderEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType WanderingTraderEntity::GetClassType()
     {
         return EntityType::WanderingTrader;
+    }
+
+
+    double WanderingTraderEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double WanderingTraderEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

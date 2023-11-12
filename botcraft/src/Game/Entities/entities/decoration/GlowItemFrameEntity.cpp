@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::GlowItemFrame;
     }
 
-    double GlowItemFrameEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double GlowItemFrameEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string GlowItemFrameEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType GlowItemFrameEntity::GetClassType()
     {
         return EntityType::GlowItemFrame;
+    }
+
+
+    double GlowItemFrameEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double GlowItemFrameEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }

@@ -34,16 +34,6 @@ namespace Botcraft
         return EntityType::Llama;
     }
 
-    double LlamaEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double LlamaEntity::GetHeight() const
-    {
-        return 1.87;
-    }
-
 
     std::string LlamaEntity::GetClassName()
     {
@@ -116,6 +106,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_variant_id"] = data_variant_id;
+    }
+
+
+    double LlamaEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double LlamaEntity::GetHeightImpl() const
+    {
+        return 1.87;
     }
 
 }

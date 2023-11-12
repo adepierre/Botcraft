@@ -32,16 +32,6 @@ namespace Botcraft
         return EntityType::MinecartCommandBlock;
     }
 
-    double MinecartCommandBlockEntity::GetWidth() const
-    {
-        return 0.98;
-    }
-
-    double MinecartCommandBlockEntity::GetHeight() const
-    {
-        return 0.7;
-    }
-
 
     std::string MinecartCommandBlockEntity::GetClassName()
     {
@@ -101,6 +91,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_last_output"] = data_id_last_output;
+    }
+
+
+    double MinecartCommandBlockEntity::GetWidthImpl() const
+    {
+        return 0.98;
+    }
+
+    double MinecartCommandBlockEntity::GetHeightImpl() const
+    {
+        return 0.7;
     }
 
 }

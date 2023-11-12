@@ -23,20 +23,6 @@ namespace Botcraft
         return EntityType::Donkey;
     }
 
-    double DonkeyEntity::GetWidth() const
-    {
-        return 1.3964844;
-    }
-
-    double DonkeyEntity::GetHeight() const
-    {
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        return 1.5;
-#else
-        return 1.6;
-#endif
-    }
-
 
     std::string DonkeyEntity::GetClassName()
     {
@@ -46,6 +32,21 @@ namespace Botcraft
     EntityType DonkeyEntity::GetClassType()
     {
         return EntityType::Donkey;
+    }
+
+
+    double DonkeyEntity::GetWidthImpl() const
+    {
+        return 1.3964844;
+    }
+
+    double DonkeyEntity::GetHeightImpl() const
+    {
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        return 1.5;
+#else
+        return 1.6;
+#endif
     }
 
 }

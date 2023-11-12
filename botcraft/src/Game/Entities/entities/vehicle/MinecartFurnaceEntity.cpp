@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::MinecartFurnace;
     }
 
-    double MinecartFurnaceEntity::GetWidth() const
-    {
-        return 0.98;
-    }
-
-    double MinecartFurnaceEntity::GetHeight() const
-    {
-        return 0.7;
-    }
-
 
     std::string MinecartFurnaceEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_fuel"] = data_id_fuel;
+    }
+
+
+    double MinecartFurnaceEntity::GetWidthImpl() const
+    {
+        return 0.98;
+    }
+
+    double MinecartFurnaceEntity::GetHeightImpl() const
+    {
+        return 0.7;
     }
 
 }

@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Illusioner;
     }
 
-    double IllusionerEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double IllusionerEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string IllusionerEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType IllusionerEntity::GetClassType()
     {
         return EntityType::Illusioner;
+    }
+
+
+    double IllusionerEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double IllusionerEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

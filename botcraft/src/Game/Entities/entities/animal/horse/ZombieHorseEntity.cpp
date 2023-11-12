@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::ZombieHorse;
     }
 
-    double ZombieHorseEntity::GetWidth() const
-    {
-        return 1.3964844;
-    }
-
-    double ZombieHorseEntity::GetHeight() const
-    {
-        return 1.6;
-    }
-
 
     std::string ZombieHorseEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType ZombieHorseEntity::GetClassType()
     {
         return EntityType::ZombieHorse;
+    }
+
+
+    double ZombieHorseEntity::GetWidthImpl() const
+    {
+        return 1.3964844;
+    }
+
+    double ZombieHorseEntity::GetHeightImpl() const
+    {
+        return 1.6;
     }
 
 }

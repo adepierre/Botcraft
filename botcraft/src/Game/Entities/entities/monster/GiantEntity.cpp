@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Giant;
     }
 
-    double GiantEntity::GetWidth() const
-    {
-        return 3.6;
-    }
-
-    double GiantEntity::GetHeight() const
-    {
-        return 12.0;
-    }
-
 
     std::string GiantEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType GiantEntity::GetClassType()
     {
         return EntityType::Giant;
+    }
+
+
+    double GiantEntity::GetWidthImpl() const
+    {
+        return 3.6;
+    }
+
+    double GiantEntity::GetHeightImpl() const
+    {
+        return 12.0;
     }
 
 }

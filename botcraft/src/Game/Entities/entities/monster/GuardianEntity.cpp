@@ -32,16 +32,6 @@ namespace Botcraft
         return EntityType::Guardian;
     }
 
-    double GuardianEntity::GetWidth() const
-    {
-        return 0.85;
-    }
-
-    double GuardianEntity::GetHeight() const
-    {
-        return 0.85;
-    }
-
 
     std::string GuardianEntity::GetClassName()
     {
@@ -101,6 +91,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_attack_target"] = data_id_attack_target;
+    }
+
+
+    double GuardianEntity::GetWidthImpl() const
+    {
+        return 0.85;
+    }
+
+    double GuardianEntity::GetHeightImpl() const
+    {
+        return 0.85;
     }
 
 }

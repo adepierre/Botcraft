@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::LlamaSpit;
     }
 
-    double LlamaSpitEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double LlamaSpitEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string LlamaSpitEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType LlamaSpitEntity::GetClassType()
     {
         return EntityType::LlamaSpit;
+    }
+
+
+    double LlamaSpitEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double LlamaSpitEntity::GetHeightImpl() const
+    {
+        return 0.25;
     }
 
 }

@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::PiglinBrute;
     }
 
-    double PiglinBruteEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double PiglinBruteEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string PiglinBruteEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType PiglinBruteEntity::GetClassType()
     {
         return EntityType::PiglinBrute;
+    }
+
+
+    double PiglinBruteEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double PiglinBruteEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

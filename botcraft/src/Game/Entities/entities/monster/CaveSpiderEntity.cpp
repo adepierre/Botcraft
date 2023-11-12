@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::CaveSpider;
     }
 
-    double CaveSpiderEntity::GetWidth() const
-    {
-        return 0.7;
-    }
-
-    double CaveSpiderEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string CaveSpiderEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType CaveSpiderEntity::GetClassType()
     {
         return EntityType::CaveSpider;
+    }
+
+
+    double CaveSpiderEntity::GetWidthImpl() const
+    {
+        return 0.7;
+    }
+
+    double CaveSpiderEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }

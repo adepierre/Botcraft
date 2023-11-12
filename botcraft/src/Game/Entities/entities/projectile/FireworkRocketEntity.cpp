@@ -40,16 +40,6 @@ namespace Botcraft
         return EntityType::FireworkRocketEntity;
     }
 
-    double FireworkRocketEntity::GetWidth() const
-    {
-        return 0.25;
-    }
-
-    double FireworkRocketEntity::GetHeight() const
-    {
-        return 0.25;
-    }
-
 
     std::string FireworkRocketEntity::GetClassName()
     {
@@ -151,5 +141,16 @@ namespace Botcraft
         metadata["data_attached_to_target"] = data_attached_to_target;
     }
 #endif
+
+
+    double FireworkRocketEntity::GetWidthImpl() const
+    {
+        return 0.25;
+    }
+
+    double FireworkRocketEntity::GetHeightImpl() const
+    {
+        return 0.25;
+    }
 
 }

@@ -40,16 +40,6 @@ namespace Botcraft
         return EntityType::ZombieVillager;
     }
 
-    double ZombieVillagerEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double ZombieVillagerEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string ZombieVillagerEntity::GetClassName()
     {
@@ -130,5 +120,16 @@ namespace Botcraft
         metadata["data_villager_profession_id"] = data_villager_profession_id;
     }
 #endif
+
+
+    double ZombieVillagerEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double ZombieVillagerEntity::GetHeightImpl() const
+    {
+        return 1.95;
+    }
 
 }

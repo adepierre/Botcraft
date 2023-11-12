@@ -35,16 +35,6 @@ namespace Botcraft
         return EntityType::Axolotl;
     }
 
-    double AxolotlEntity::GetWidth() const
-    {
-        return 0.75;
-    }
-
-    double AxolotlEntity::GetHeight() const
-    {
-        return 0.42;
-    }
-
 
     std::string AxolotlEntity::GetClassName()
     {
@@ -117,6 +107,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["from_bucket"] = from_bucket;
+    }
+
+
+    double AxolotlEntity::GetWidthImpl() const
+    {
+        return 0.75;
+    }
+
+    double AxolotlEntity::GetHeightImpl() const
+    {
+        return 0.42;
     }
 
 }

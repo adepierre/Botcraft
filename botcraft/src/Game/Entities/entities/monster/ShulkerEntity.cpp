@@ -40,16 +40,6 @@ namespace Botcraft
         return EntityType::Shulker;
     }
 
-    double ShulkerEntity::GetWidth() const
-    {
-        return 1.0;
-    }
-
-    double ShulkerEntity::GetHeight() const
-    {
-        return 1.0;
-    }
-
 
     std::string ShulkerEntity::GetClassName()
     {
@@ -141,6 +131,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_color_id"] = data_color_id;
+    }
+
+
+    double ShulkerEntity::GetWidthImpl() const
+    {
+        return 1.0;
+    }
+
+    double ShulkerEntity::GetHeightImpl() const
+    {
+        return 1.0;
     }
 
 }

@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::DragonFireball;
     }
 
-    double DragonFireballEntity::GetWidth() const
-    {
-        return 1.0;
-    }
-
-    double DragonFireballEntity::GetHeight() const
-    {
-        return 1.0;
-    }
-
 
     std::string DragonFireballEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType DragonFireballEntity::GetClassType()
     {
         return EntityType::DragonFireball;
+    }
+
+
+    double DragonFireballEntity::GetWidthImpl() const
+    {
+        return 1.0;
+    }
+
+    double DragonFireballEntity::GetHeightImpl() const
+    {
+        return 1.0;
     }
 
 }

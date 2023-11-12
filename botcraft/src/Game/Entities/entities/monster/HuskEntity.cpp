@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Husk;
     }
 
-    double HuskEntity::GetWidth() const
-    {
-        return 0.6;
-    }
-
-    double HuskEntity::GetHeight() const
-    {
-        return 1.95;
-    }
-
 
     std::string HuskEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType HuskEntity::GetClassType()
     {
         return EntityType::Husk;
+    }
+
+
+    double HuskEntity::GetWidthImpl() const
+    {
+        return 0.6;
+    }
+
+    double HuskEntity::GetHeightImpl() const
+    {
+        return 1.95;
     }
 
 }

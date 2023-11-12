@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Slime;
     }
 
-    double SlimeEntity::GetWidth() const
-    {
-        return 0.255 * 2.04 * GetIdSize();
-    }
-
-    double SlimeEntity::GetHeight() const
-    {
-        return 0.255 * 2.04 * GetIdSize();
-    }
-
 
     std::string SlimeEntity::GetClassName()
     {
@@ -71,14 +61,21 @@ namespace Botcraft
         else if (index - hierarchy_metadata_count < metadata_count)
         {
             std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
+            const std::string& metadata_name = metadata_names[index - hierarchy_metadata_count];
+            metadata[metadata_name] = value;
+#if USE_GUI
+            if (metadata_name == "id_size")
+            {
+                OnSizeUpdated();
+            }
+#endif
         }
     }
 
     int SlimeEntity::GetIdSize() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("id_size"));
+        return GetIdSizeImpl();
     }
 
 
@@ -87,14 +84,23 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["id_size"] = id_size;
 #if USE_GUI
-        are_rendered_faces_up_to_date = false;
-        for (size_t i = 0; i < faces.size(); ++i)
-        {
-            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_x = static_cast<float>(GetWidth() / 2.0);
-            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_y = static_cast<float>(GetHeight() / 2.0);
-            std::static_pointer_cast<Renderer::Scale>(face_descriptors[i].transformations.scales.back())->axis_z = static_cast<float>(GetWidth() / 2.0);
-        }
+        OnSizeUpdated();
 #endif
+    }
+
+    int SlimeEntity::GetIdSizeImpl() const
+    {
+        return std::any_cast<int>(metadata.at("id_size"));
+    }
+
+    double SlimeEntity::GetWidthImpl() const
+    {
+        return 0.255 * 2.04 * GetIdSizeImpl();
+    }
+
+    double SlimeEntity::GetHeightImpl() const
+    {
+        return 0.255 * 2.04 * GetIdSizeImpl();
     }
 
 }

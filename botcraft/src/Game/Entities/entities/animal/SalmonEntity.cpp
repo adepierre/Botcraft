@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::Salmon;
     }
 
-    double SalmonEntity::GetWidth() const
-    {
-        return 0.7;
-    }
-
-    double SalmonEntity::GetHeight() const
-    {
-        return 0.4;
-    }
-
 
     std::string SalmonEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType SalmonEntity::GetClassType()
     {
         return EntityType::Salmon;
+    }
+
+
+    double SalmonEntity::GetWidthImpl() const
+    {
+        return 0.7;
+    }
+
+    double SalmonEntity::GetHeightImpl() const
+    {
+        return 0.4;
     }
 
 }

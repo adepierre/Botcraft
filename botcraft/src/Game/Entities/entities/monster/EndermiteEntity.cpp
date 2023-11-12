@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::Endermite;
     }
 
-    double EndermiteEntity::GetWidth() const
-    {
-        return 0.4;
-    }
-
-    double EndermiteEntity::GetHeight() const
-    {
-        return 0.3;
-    }
-
 
     std::string EndermiteEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType EndermiteEntity::GetClassType()
     {
         return EntityType::Endermite;
+    }
+
+
+    double EndermiteEntity::GetWidthImpl() const
+    {
+        return 0.4;
+    }
+
+    double EndermiteEntity::GetHeightImpl() const
+    {
+        return 0.3;
     }
 
 }

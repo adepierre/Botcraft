@@ -24,16 +24,6 @@ namespace Botcraft
         return EntityType::Ravager;
     }
 
-    double RavagerEntity::GetWidth() const
-    {
-        return 1.95;
-    }
-
-    double RavagerEntity::GetHeight() const
-    {
-        return 2.2;
-    }
-
 
     std::string RavagerEntity::GetClassName()
     {
@@ -43,6 +33,17 @@ namespace Botcraft
     EntityType RavagerEntity::GetClassType()
     {
         return EntityType::Ravager;
+    }
+
+
+    double RavagerEntity::GetWidthImpl() const
+    {
+        return 1.95;
+    }
+
+    double RavagerEntity::GetHeightImpl() const
+    {
+        return 2.2;
     }
 
 }

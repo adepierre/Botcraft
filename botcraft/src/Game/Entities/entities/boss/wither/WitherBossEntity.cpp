@@ -36,16 +36,6 @@ namespace Botcraft
         return EntityType::WitherBoss;
     }
 
-    double WitherBossEntity::GetWidth() const
-    {
-        return 0.9;
-    }
-
-    double WitherBossEntity::GetHeight() const
-    {
-        return 3.5;
-    }
-
 
     std::string WitherBossEntity::GetClassName()
     {
@@ -131,6 +121,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_inv"] = data_id_inv;
+    }
+
+
+    double WitherBossEntity::GetWidthImpl() const
+    {
+        return 0.9;
+    }
+
+    double WitherBossEntity::GetHeightImpl() const
+    {
+        return 3.5;
     }
 
 }

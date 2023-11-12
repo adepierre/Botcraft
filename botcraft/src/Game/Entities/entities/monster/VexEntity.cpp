@@ -30,16 +30,6 @@ namespace Botcraft
         return EntityType::Vex;
     }
 
-    double VexEntity::GetWidth() const
-    {
-        return 0.4;
-    }
-
-    double VexEntity::GetHeight() const
-    {
-        return 0.8;
-    }
-
 
     std::string VexEntity::GetClassName()
     {
@@ -86,6 +76,17 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_flags_id"] = data_flags_id;
+    }
+
+
+    double VexEntity::GetWidthImpl() const
+    {
+        return 0.4;
+    }
+
+    double VexEntity::GetHeightImpl() const
+    {
+        return 0.8;
     }
 
 }

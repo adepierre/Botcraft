@@ -23,16 +23,6 @@ namespace Botcraft
         return EntityType::SpectralArrow;
     }
 
-    double SpectralArrowEntity::GetWidth() const
-    {
-        return 0.5;
-    }
-
-    double SpectralArrowEntity::GetHeight() const
-    {
-        return 0.5;
-    }
-
 
     std::string SpectralArrowEntity::GetClassName()
     {
@@ -42,6 +32,17 @@ namespace Botcraft
     EntityType SpectralArrowEntity::GetClassType()
     {
         return EntityType::SpectralArrow;
+    }
+
+
+    double SpectralArrowEntity::GetWidthImpl() const
+    {
+        return 0.5;
+    }
+
+    double SpectralArrowEntity::GetHeightImpl() const
+    {
+        return 0.5;
     }
 
 }
