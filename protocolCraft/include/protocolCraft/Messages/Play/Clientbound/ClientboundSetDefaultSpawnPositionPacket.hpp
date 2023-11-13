@@ -53,7 +53,7 @@ namespace ProtocolCraft
             location = location_;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void SetAngle(const float angle_)
         {
             angle = angle_;
@@ -66,7 +66,7 @@ namespace ProtocolCraft
             return location;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         float GetAngle() const
         {
             return angle;
@@ -78,7 +78,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             location = ReadData<NetworkPosition>(iter, length);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             angle = ReadData<float>(iter, length);
 #endif
         }
@@ -86,7 +86,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
            WriteData<NetworkPosition>(location, container);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
            WriteData<float>(angle, container);
 #endif
         }
@@ -96,7 +96,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["location"] = location;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             output["angle"] = angle;
 #endif
 
@@ -105,7 +105,7 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition location;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         float angle = 0.0f;
 #endif
 

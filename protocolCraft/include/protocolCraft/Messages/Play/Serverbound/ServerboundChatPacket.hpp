@@ -3,7 +3,7 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include <string>
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
 #include "protocolCraft/Types/SaltSignature.hpp"
 #else
 #include "protocolCraft/Types/Chat/LastSeenMessagesUpdate.hpp"
@@ -57,7 +57,7 @@ namespace ProtocolCraft
             timestamp = timestamp_;
         }
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         void SetSaltSignature(const SaltSignature& salt_signature_)
         {
             salt_signature = salt_signature_;
@@ -109,7 +109,7 @@ namespace ProtocolCraft
             return timestamp;
         }
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         const SaltSignature& GetSaltSignature() const
         {
             return salt_signature;
@@ -153,7 +153,7 @@ namespace ProtocolCraft
             message = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             timestamp = ReadData<long long int>(iter, length);
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             salt_signature = ReadData<SaltSignature>(iter, length);
 #else
             salt = ReadData<long long int>(iter, length);
@@ -182,7 +182,7 @@ namespace ProtocolCraft
             WriteData<std::string>(message, container);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteData<long long int>(timestamp, container);
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             WriteData<SaltSignature>(salt_signature, container);
 #else
             WriteData<long long int>(salt, container);
@@ -214,7 +214,7 @@ namespace ProtocolCraft
             output["message"] = message;
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             output["timestamp"] = timestamp;
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             output["salt_signature"] = salt_signature;
 #else
             output["salt"] = salt;
@@ -242,7 +242,7 @@ namespace ProtocolCraft
         std::string message;
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         long long int timestamp = 0;
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         SaltSignature salt_signature;
 #else
         long long int salt = 0;

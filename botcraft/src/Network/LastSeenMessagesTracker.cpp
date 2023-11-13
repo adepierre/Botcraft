@@ -6,7 +6,7 @@ namespace Botcraft
 {
     LastSeenMessagesTracker::LastSeenMessagesTracker()
     {
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         tail = 0;
         offset = 0;
 #endif

@@ -40,7 +40,7 @@ namespace Botcraft
 
     int World::GetHeight() const
     {
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         return 256;
 #else
         std::shared_lock<std::shared_mutex> lock(world_mutex);
@@ -50,7 +50,7 @@ namespace Botcraft
 
     int World::GetMinY() const
     {
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         return 0;
 #else
         std::shared_lock<std::shared_mutex> lock(world_mutex);
@@ -587,7 +587,7 @@ namespace Botcraft
 #endif
     }
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
     void World::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
     {
 
@@ -646,7 +646,7 @@ namespace Botcraft
     void World::Handle(ProtocolCraft::ClientboundLightUpdatePacket& msg)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         if (terrain.find({ msg.GetX(), msg.GetZ() }) == terrain.end())
         {
             delayed_light_updates[{msg.GetX(), msg.GetZ()}] = msg;
@@ -717,7 +717,7 @@ namespace Botcraft
         auto it = terrain.find({ x,z });
         if (it == terrain.end())
         {
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
             auto inserted = terrain.insert({ {x, z}, Chunk(dim_index, has_sky_light) });
 #else
             auto inserted = terrain.insert({ { x, z }, Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim_index, has_sky_light)});
@@ -732,7 +732,7 @@ namespace Botcraft
                 LOG_WARNING("Changing dimension with a shared world is not supported and can lead to wrong world data");
             }
             UnloadChunkImpl(x, z, loader_id);
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
             it->second = Chunk(dim_index, has_sky_light);
 #else
             it->second = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim_index, has_sky_light);
@@ -820,14 +820,14 @@ namespace Botcraft
 #endif
     {
         current_dimension = dimension;
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
         delayed_light_updates.clear();
 #endif
     }
 
     int World::GetHeightImpl() const
     {
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         return 256;
 #else
         return dimension_height.at(current_dimension);
@@ -836,7 +836,7 @@ namespace Botcraft
 
     int World::GetMinYImpl() const
     {
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         return 0;
 #else
         return dimension_min_y.at(current_dimension);
@@ -988,7 +988,7 @@ namespace Botcraft
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
     void World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
         const int primary_bit_mask)
-#elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#elif PROTOCOL_VERSION < 757 /* < 1.18 */
     void World::LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
         const std::vector<unsigned long long int>& primary_bit_mask)
 #else
@@ -1000,7 +1000,7 @@ namespace Botcraft
         {
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
             it->second.LoadChunkData(data, primary_bit_mask, ground_up_continuous);
-#elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#elif PROTOCOL_VERSION < 757 /* < 1.18 */
             it->second.LoadChunkData(data, primary_bit_mask);
 #else
             it->second.LoadChunkData(data);
@@ -1011,7 +1011,7 @@ namespace Botcraft
         }
     }
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
     void World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT::Value>& block_entities)
 #else
     void World::LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities)
@@ -1024,7 +1024,7 @@ namespace Botcraft
         }
     }
 
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
     void World::LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes)
     {
         auto it = terrain.find({ x,z });

@@ -8,7 +8,7 @@ namespace Botcraft
     class AllayEntity : public PathfinderMobEntity
     {
     protected:
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         static constexpr int metadata_count = 0;
 #else
         static constexpr int metadata_count = 2;

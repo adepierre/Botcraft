@@ -6,10 +6,10 @@ namespace ProtocolCraft
     const std::vector<std::string> NoDataTypedParticle::names = {
         "ambient_entity_effect",
         "angry_villager",
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         "barrier",
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
         "light",
 #endif
         "block",
@@ -31,7 +31,7 @@ namespace ProtocolCraft
         "falling_water",
 #endif
         "dust",
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         "dust_color_transition",
 #endif
         "effect",
@@ -49,7 +49,7 @@ namespace ProtocolCraft
         "firework",
         "fishing",
         "flame",
-#if PROTOCOL_VERSION > 761 /* > 1.19.3 */ && PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */ && PROTOCOL_VERSION < 763 /* < 1.20 */
         "dripping_cherry_leaves",
         "falling_cherry_leaves",
         "landing_cherry_leaves",
@@ -76,7 +76,7 @@ namespace ProtocolCraft
         "heart",
         "instant_effect",
         "item",
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         "vibration",
 #endif
         "item_slime",
@@ -114,7 +114,7 @@ namespace ProtocolCraft
         "landing_honey",
         "falling_nectar",
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         "falling_spore_blossom",
 #endif
 #if PROTOCOL_VERSION > 734 /* > 1.15.2 */
@@ -122,7 +122,7 @@ namespace ProtocolCraft
         "crimson_spore",
         "warped_spore",
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         "spore_blossom_air",
 #endif
 #if PROTOCOL_VERSION > 734 /* > 1.15.2 */
@@ -132,7 +132,7 @@ namespace ProtocolCraft
         "reverse_portal",
         "white_ash",
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         "small_flame",
         "snowflake",
         "dripping_dripstone_lava",

@@ -76,7 +76,7 @@ namespace ProtocolCraft
             section_pos = section_pos_;
         }
 
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         void SetSuppressLightUpdates(const bool suppress_light_updates_)
         {
             suppress_light_updates = suppress_light_updates_;
@@ -121,7 +121,7 @@ namespace ProtocolCraft
             return section_pos;
         }
 
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         bool GetSuppressLightUpdates() const
         {
             return suppress_light_updates;
@@ -155,7 +155,7 @@ namespace ProtocolCraft
             }
 #else
             section_pos = ReadData<long long int>(iter, length);
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
             suppress_light_updates = ReadData<bool>(iter, length);
 #endif
             const int data_size = ReadData<VarInt>(iter, length);
@@ -182,7 +182,7 @@ namespace ProtocolCraft
             }
 #else
             WriteData<long long int>(section_pos, container);
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
             WriteData<bool>(suppress_light_updates, container);
 #endif
             WriteData<VarInt>(static_cast<int>(positions.size()), container);
@@ -209,7 +209,7 @@ namespace ProtocolCraft
             output["records"] = records;
 #else
             output["section_pos"] = section_pos;
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
             output["suppress_light_updates"] = suppress_light_updates;
 #endif
             output["positions"] = positions;
@@ -227,7 +227,7 @@ namespace ProtocolCraft
         std::vector<Record> records;
 #else
         long long int section_pos = 0;
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         bool suppress_light_updates = false;
 #endif
         std::vector<short> positions;

@@ -57,7 +57,7 @@ namespace ProtocolCraft
             z = z_;
         }
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         void SetSkyYMask(const int sky_Y_mask_)
         {
@@ -134,7 +134,7 @@ namespace ProtocolCraft
             return z;
         }
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         int GetSkyYMask() const
         {
@@ -206,7 +206,7 @@ namespace ProtocolCraft
         {
             x = ReadData<VarInt>(iter, length);
             z = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
             trust_edges = ReadData<bool>(iter, length);
 #endif
@@ -263,7 +263,7 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(x, container);
             WriteData<VarInt>(z, container);
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
             WriteData<bool>(trust_edges, container);
 #endif
@@ -317,7 +317,7 @@ namespace ProtocolCraft
 
             output["x"] = x;
             output["z"] = z;
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
             output["trust_edges"] = trust_edges;
 #endif
@@ -337,7 +337,7 @@ namespace ProtocolCraft
     private:
         int x = 0;
         int z = 0;
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         int sky_Y_mask = 0;
         int block_Y_mask = 0;

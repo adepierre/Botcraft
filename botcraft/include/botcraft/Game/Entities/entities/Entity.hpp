@@ -38,7 +38,7 @@ namespace Botcraft
     class Entity
     {
     protected:
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         static constexpr int metadata_count = 8;
 #elif PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 7;
@@ -76,7 +76,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         Pose GetDataPose() const;
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         int GetDataTicksFrozen() const;
 #endif
 
@@ -93,7 +93,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         void SetDataPose(const Pose data_pose);
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void SetDataTicksFrozen(const int data_ticks_frozen);
 #endif
 
@@ -366,7 +366,7 @@ namespace Botcraft
         ZombifiedPiglin = 121,
         Player = 122,
         FishingHook = 123,
-#elif PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#elif PROTOCOL_VERSION > 760 /* > 1.19.2 */
         Allay = 0,
         AreaEffectCloud = 1,
         ArmorStand = 2,
@@ -605,7 +605,7 @@ namespace Botcraft
         ZombifiedPiglin = 115,
         Player = 116,
         FishingHook = 117,
-#elif PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#elif PROTOCOL_VERSION > 754 /* > 1.16.5 */
         AreaEffectCloud = 0,
         ArmorStand = 1,
         Arrow = 2,

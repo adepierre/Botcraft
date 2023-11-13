@@ -713,7 +713,7 @@ namespace Botcraft
 #endif
         }
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
 #else
         void RenderingManager::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)

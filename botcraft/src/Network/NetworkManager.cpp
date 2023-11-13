@@ -216,7 +216,7 @@ namespace Botcraft
             }
             chat_message->SetTimestamp(timestamp);
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             SaltSignature salt_signature;
             salt_signature.SetSalt(salt);
             salt_signature.SetSignature(signature);
@@ -257,7 +257,7 @@ namespace Botcraft
             last_seen_update = chat_context.GetLastSeenMessagesUpdate();
         }
         chat_command->SetLastSeenMessages(last_seen_update);
-#elif PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#elif PROTOCOL_VERSION > 760 /* > 1.19.2 */
         const auto [signatures, updates] = chat_context.GetLastSeenMessagesUpdate();
         chat_command->SetLastSeenMessages(updates);
 #endif
@@ -464,7 +464,7 @@ namespace Botcraft
         Send(keep_alive_msg);
     }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     void NetworkManager::Handle(ClientboundPingPacket& msg)
     {
         std::shared_ptr<ServerboundPongPacket> pong_msg = std::make_shared<ServerboundPongPacket>();
@@ -528,7 +528,7 @@ namespace Botcraft
 #endif
 #endif
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     void NetworkManager::Handle(ClientboundLoginPacket& msg)
     {
         if (authentifier)

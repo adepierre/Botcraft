@@ -78,7 +78,7 @@ namespace ProtocolCraft
             main_hand = main_hand_;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void SetTextFilteringEnabled(const bool text_filtering_enabled_)
         {
             text_filtering_enabled = text_filtering_enabled_;
@@ -129,7 +129,7 @@ namespace ProtocolCraft
             return main_hand;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         bool GetTextFilteringEnabled() const
         {
             return text_filtering_enabled;
@@ -158,7 +158,7 @@ namespace ProtocolCraft
             chat_colors = ReadData<bool>(iter, length);
             model_customisation = ReadData<unsigned char>(iter, length);
             main_hand = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             text_filtering_enabled = ReadData<bool>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
@@ -178,7 +178,7 @@ namespace ProtocolCraft
             WriteData<bool>(chat_colors, container);
             WriteData<unsigned char>(model_customisation, container);
             WriteData<VarInt>(main_hand, container);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             WriteData<bool>(text_filtering_enabled, container);
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
@@ -200,7 +200,7 @@ namespace ProtocolCraft
             output["chat_colors"] = chat_colors;
             output["model_customisation"] = model_customisation;
             output["main_hand"] = main_hand;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             output["text_filtering_enabled"] = text_filtering_enabled;
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
@@ -221,7 +221,7 @@ namespace ProtocolCraft
         bool chat_colors = false;
         unsigned char model_customisation = 0;
         int main_hand = 0;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         bool text_filtering_enabled = false;
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */

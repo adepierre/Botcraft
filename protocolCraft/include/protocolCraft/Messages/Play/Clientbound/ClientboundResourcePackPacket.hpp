@@ -1,7 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
 
@@ -61,7 +61,7 @@ namespace ProtocolCraft
             hash = hash_;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void SetRequired(const bool required_)
         {
             required = required_;
@@ -84,7 +84,7 @@ namespace ProtocolCraft
             return hash;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         bool GetRequired() const
         {
             return required;
@@ -101,7 +101,7 @@ namespace ProtocolCraft
         {
             url = ReadData<std::string>(iter, length);
             hash = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             required = ReadData<bool>(iter, length);
             prompt = ReadOptional<Chat>(iter, length);
 #endif
@@ -111,7 +111,7 @@ namespace ProtocolCraft
         {
             WriteData<std::string>(url, container);
             WriteData<std::string>(hash, container);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             WriteData<bool>(required, container);
             WriteOptional<Chat>(prompt, container);
 #endif
@@ -123,7 +123,7 @@ namespace ProtocolCraft
 
             output["url"] = url;
             output["hash"] = hash;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             output["required"] = required;
             if (prompt.has_value())
             {
@@ -137,7 +137,7 @@ namespace ProtocolCraft
     private:
         std::string url;
         std::string hash;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         bool required = false;
         std::optional<Chat> prompt;
 #endif

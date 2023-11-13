@@ -30,7 +30,7 @@ namespace ProtocolCraft
             group = group_;
         }
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         void SetCookingBookCategory(const int cooking_book_category_)
         {
             cooking_book_category = cooking_book_category_;
@@ -70,7 +70,7 @@ namespace ProtocolCraft
             return group;
         }
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         int GetCookingBookCategory() const
         {
             return cooking_book_category;
@@ -101,7 +101,7 @@ namespace ProtocolCraft
             width = ReadData<VarInt>(iter, length);
             height = ReadData<VarInt>(iter, length);
             group = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             cooking_book_category = ReadData<VarInt>(iter, length);
 #endif
             ingredients = std::vector<Ingredient>(width * height);
@@ -120,7 +120,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(width, container);
             WriteData<VarInt>(height, container);
             WriteData<std::string>(group, container);
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             WriteData<VarInt>(cooking_book_category, container);
 #endif
             for (int i = 0; i < width * height; ++i)
@@ -140,7 +140,7 @@ namespace ProtocolCraft
             output["width"] = width;
             output["height"] = height;
             output["group"] = group;
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             output["cooking_book_category"] = cooking_book_category;
 #endif
             output["ingredients"] = ingredients;
@@ -156,7 +156,7 @@ namespace ProtocolCraft
         int width = 0;
         int height = 0;
         std::string group;
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         int cooking_book_category = 0;
 #endif
         std::vector<Ingredient> ingredients;

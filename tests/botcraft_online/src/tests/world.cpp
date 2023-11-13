@@ -6,7 +6,7 @@
 
 #include <botcraft/Game/AssetsManager.hpp>
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include <sstream>
 #endif
 
@@ -100,7 +100,7 @@ TEST_CASE("biomes")
         REQUIRE(biome != nullptr);
         CHECK(biome->GetName() == "plains");
     }
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     SECTION("changed biome")
     {
         const Botcraft::Position start_pos = TestManager::GetInstance().GetCurrentOffset();
@@ -133,7 +133,7 @@ TEST_CASE("biomes")
 #endif
 }
 
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
 TEST_CASE("block entity")
 #else
 TEST_CASE("block entity 1_20")
@@ -153,7 +153,7 @@ TEST_CASE("block entity 1_20")
 
     for (size_t i = 0; i < expected_lines.size(); ++i)
     {
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         const std::string& line = nbt["Text" + std::to_string(i+1)].get<std::string>();
         const ProtocolCraft::Json::Value content = ProtocolCraft::Json::Parse(line);
         CHECK(content["text"].get_string() == expected_lines[i]);

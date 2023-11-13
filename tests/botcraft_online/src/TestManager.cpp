@@ -296,7 +296,7 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
         text_color = "gold";
         break;
     }
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
     std::map<std::string, std::string> lines;
 #else
     std::vector<std::string> lines;
@@ -332,7 +332,7 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
                 << "\"color\"" << ":" << "\"" << text_color << "\"";
         }
         line << "}";
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         lines.insert({ "Text" + std::to_string(i + 1), line.str() });
 #else
         lines.push_back(line.str());
@@ -384,7 +384,7 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 #else
         block_rotation,
 #endif
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         lines
 #else
         {

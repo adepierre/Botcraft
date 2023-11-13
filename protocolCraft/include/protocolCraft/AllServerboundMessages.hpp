@@ -106,7 +106,7 @@
 #if PROTOCOL_VERSION > 711 /* > 1.15.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundJigsawGeneratePacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPongPacket.hpp"
 #endif
@@ -119,7 +119,7 @@
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatAckPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundChatSessionUpdatePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
@@ -243,7 +243,7 @@ namespace ProtocolCraft
 #endif
         ServerboundUseItemPacket,
         ServerboundMoveVehiclePacket,
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         ServerboundMovePlayerPacketStatusOnly,
         ServerboundPongPacket,
 #endif
@@ -256,7 +256,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
         ServerboundChatAckPacket,
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         ServerboundChatSessionUpdatePacket,
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */

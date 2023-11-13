@@ -435,7 +435,7 @@ namespace Botcraft
             }
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         transaction->SetCarriedItem(carried_item);
         transaction->SetChangedSlots(changed_slots);
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
@@ -453,7 +453,7 @@ namespace Botcraft
 
     void InventoryManager::ApplyTransactionImpl(const InventoryTransaction& transaction)
     {
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         const std::map<short, Slot>& modified_slots = transaction.msg->GetChangeSlots();
         cursor = transaction.msg->GetCarriedItem();
 #else

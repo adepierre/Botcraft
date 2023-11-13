@@ -71,7 +71,7 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void SetDecorations(const std::optional<std::vector<MapDecoration>>& decorations_)
         {
             decorations = decorations_;
@@ -133,7 +133,7 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         const std::optional<std::vector<MapDecoration>>& GetDecorations() const
         {
             return decorations;
@@ -182,7 +182,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
             locked = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             decorations = ReadOptional<std::vector<MapDecoration>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
@@ -213,7 +213,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
             WriteData<bool>(locked, container);
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             WriteOptional<std::vector<MapDecoration>>(decorations, container,
                 [](const std::vector<MapDecoration>& v, WriteContainer& c)
                 {
@@ -247,7 +247,7 @@ namespace ProtocolCraft
             output["locked"] = locked;
 #endif
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             if (decorations.has_value())
             {
                 output["decorations"] = decorations.value();
@@ -276,7 +276,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         bool locked = false;
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         std::optional<std::vector<MapDecoration>> decorations;
 #else
         std::vector<MapDecoration> decorations;

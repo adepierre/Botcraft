@@ -2,7 +2,7 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Slot.hpp"
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include <map>
 #endif
 
@@ -75,7 +75,7 @@ namespace ProtocolCraft
             click_type = click_type_;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void SetChangedSlots(const std::map<short, Slot>& changed_slots_)
         {
             changed_slots = changed_slots_;
@@ -128,7 +128,7 @@ namespace ProtocolCraft
             return click_type;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         const std::map<short, Slot>& GetChangeSlots() const
         {
             return changed_slots;
@@ -168,7 +168,7 @@ namespace ProtocolCraft
             uid = ReadData<short>(iter, length);
 #endif
             click_type = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             changed_slots = ReadMap<short, Slot>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -190,7 +190,7 @@ namespace ProtocolCraft
             WriteData<short>(uid, container);
 #endif
             WriteData<VarInt>(click_type, container);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             WriteMap<short, Slot>(changed_slots, container);
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -214,7 +214,7 @@ namespace ProtocolCraft
             output["uid"] = uid;
 #endif
             output["click_type"] = click_type;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 
             output["changed_slots"] = Json::Object();
             for (const auto& p : changed_slots)
@@ -246,7 +246,7 @@ namespace ProtocolCraft
 #else
         Slot carried_item;
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         std::map<short, Slot> changed_slots;
 #endif
         int click_type = 0;

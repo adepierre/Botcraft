@@ -1,5 +1,5 @@
 #pragma once
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Identifier.hpp"

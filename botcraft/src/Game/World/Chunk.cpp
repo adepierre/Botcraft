@@ -16,7 +16,7 @@ namespace Botcraft
         GlobalPalette
     };
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
     Chunk::Chunk(const size_t dim_index, const bool has_sky_light_)
 #else
     Chunk::Chunk(const int min_y_, const unsigned int height_, const size_t dim_index, const bool has_sky_light_)
@@ -101,7 +101,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
     void Chunk::LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous)
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -437,7 +437,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
     void Chunk::LoadChunkBlockEntitiesData(const std::vector<NBT::Value>& block_entities)
 #else
     void Chunk::LoadChunkBlockEntitiesData(const std::vector<BlockEntityInfo>& block_entities)
@@ -448,7 +448,7 @@ namespace Botcraft
 
         for (int i = 0; i < block_entities.size(); ++i)
         {
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
             if (block_entities[i].HasData())
             {
                 if (block_entities[i].contains("x") &&

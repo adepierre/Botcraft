@@ -105,7 +105,7 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundUseItemOnPacket>;
     template class BaseMessage<ServerboundPlayerActionPacket>;
     template class BaseMessage<ServerboundMovePlayerPacketRot>;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     template class BaseMessage<ServerboundMovePlayerPacketStatusOnly>;
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -135,7 +135,7 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundTeleportToEntityPacket>;
     template class BaseMessage<ServerboundPaddleBoatPacket>;
     template class BaseMessage<ServerboundPlayerInputPacket>;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     template class BaseMessage<ServerboundPongPacket>;
 #endif
     template class BaseMessage<ServerboundCommandSuggestionPacket>;
@@ -162,7 +162,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
     template class BaseMessage<ServerboundChatAckPacket>;
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     template class BaseMessage<ServerboundChatSessionUpdatePacket>;
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
@@ -223,7 +223,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 450 /* > 1.13.2 */
     template class BaseMessage<ClientboundOpenBookPacket>;
 #endif
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
     template class BaseMessage<ClientboundLevelChunkPacket>;
 #endif
     template class BaseMessage<ClientboundLoginPacket>;
@@ -324,7 +324,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     template class BaseMessage<ClientboundSetBorderPacket>;
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
     template class BaseMessage<ClientboundAddVibrationSignalPacket>;
 #endif
@@ -367,7 +367,7 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundPlayerChatHeaderPacket>;
 #endif
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     template class BaseMessage<ClientboundDisguisedChatPacket>;
     template class BaseMessage<ClientboundPlayerInfoRemovePacket>;
     template class BaseMessage<ClientboundPlayerInfoUpdatePacket>;

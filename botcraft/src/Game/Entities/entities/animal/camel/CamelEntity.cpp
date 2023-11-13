@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include "botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp"
 
 #include <mutex>

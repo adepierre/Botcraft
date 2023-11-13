@@ -7,7 +7,7 @@ namespace Botcraft
     class ShulkerEntity : public AbstractGolemEntity
     {
     protected:
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         static constexpr int metadata_count = 3;
 #else
         static constexpr int metadata_count = 4;

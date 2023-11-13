@@ -48,7 +48,7 @@ namespace ProtocolCraft
             pos = pos_;
         }
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         void SetType(const unsigned char type_)
         {
             type = type_;
@@ -70,7 +70,7 @@ namespace ProtocolCraft
             return pos;
         }
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         unsigned char GetType() const
         {
             return type;
@@ -91,7 +91,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             pos = ReadData<NetworkPosition>(iter, length);
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
             type = ReadData<unsigned char>(iter, length);
 #else
             type = ReadData<VarInt>(iter, length);
@@ -102,7 +102,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<NetworkPosition>(pos, container);
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
             WriteData<unsigned char>(type, container);
 #else
             WriteData<VarInt>(type, container);
@@ -123,7 +123,7 @@ namespace ProtocolCraft
 
     private:
         NetworkPosition pos;
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         unsigned char type = 0;
 #else
         int type = 0;

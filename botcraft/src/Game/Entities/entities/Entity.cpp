@@ -23,7 +23,7 @@
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp"
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/animal/axolotl/AxolotlEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/ambient/BatEntity.hpp"
@@ -38,7 +38,7 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/CatEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include "botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/CaveSpiderEntity.hpp"
@@ -81,7 +81,7 @@
 #endif
 #include "botcraft/Game/Entities/entities/monster/GhastEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/GiantEntity.hpp"
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/decoration/GlowItemFrameEntity.hpp"
 #include "botcraft/Game/Entities/entities/GlowSquidEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/goat/GoatEntity.hpp"
@@ -105,7 +105,7 @@
 #include "botcraft/Game/Entities/entities/animal/horse/LlamaEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/LlamaSpitEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/MagmaCubeEntity.hpp"
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/MarkerEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/vehicle/MinecartEntity.hpp"
@@ -230,7 +230,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "data_pose",
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         "data_ticks_frozen",
 #endif
     } };
@@ -270,7 +270,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataPose(Pose::Standing);
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         SetDataTicksFrozen(0);
 #endif
     }
@@ -325,7 +325,7 @@ namespace Botcraft
             {
                 Char = 0,
                 Int,
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
                 Long,
 #endif
                 Float,
@@ -375,7 +375,7 @@ namespace Botcraft
             case EntityMetadataTypes::Int:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             case EntityMetadataTypes::Long:
                 value = static_cast<long long int>(ProtocolCraft::ReadData<ProtocolCraft::VarLong>(iter, length));
                 break;
@@ -621,7 +621,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     int Entity::GetDataTicksFrozen() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
@@ -685,7 +685,7 @@ namespace Botcraft
     }
 #endif
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     void Entity::SetDataTicksFrozen(const int data_ticks_frozen)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
@@ -1052,7 +1052,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["data_pose"] = static_cast<int>(GetDataPose());
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         output["metadata"]["data_ticks_frozen"] = GetDataTicksFrozen();
 #endif
 
@@ -1263,7 +1263,7 @@ namespace Botcraft
             return std::make_shared<ArmorStandEntity>();
         case EntityType::Arrow:
             return std::make_shared<ArrowEntity>();
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         case EntityType::Axolotl:
             return std::make_shared<AxolotlEntity>();
 #endif
@@ -1285,7 +1285,7 @@ namespace Botcraft
         case EntityType::Cat:
             return std::make_shared<CatEntity>();
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         case EntityType::Camel:
             return std::make_shared<CamelEntity>();
 #endif
@@ -1355,7 +1355,7 @@ namespace Botcraft
             return std::make_shared<GhastEntity>();
         case EntityType::Giant:
             return std::make_shared<GiantEntity>();
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         case EntityType::GlowItemFrame:
             return std::make_shared<GlowItemFrameEntity>();
         case EntityType::GlowSquid:
@@ -1395,7 +1395,7 @@ namespace Botcraft
             return std::make_shared<LlamaSpitEntity>();
         case EntityType::MagmaCube:
             return std::make_shared<MagmaCubeEntity>();
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         case EntityType::Marker:
             return std::make_shared<MarkerEntity>();
 #endif

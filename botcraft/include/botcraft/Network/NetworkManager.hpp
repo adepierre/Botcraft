@@ -12,7 +12,7 @@
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
 #include "botcraft/Network/LastSeenMessagesTracker.hpp"
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include <atomic>
 #endif
 
@@ -53,7 +53,7 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundHelloPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg) override;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         virtual void Handle(ProtocolCraft::ClientboundPingPacket& msg) override;
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
@@ -65,7 +65,7 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& msg) override;
 #endif
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
@@ -98,7 +98,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
         LastSeenMessagesTracker chat_context;
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         ProtocolCraft::UUID chat_session_uuid{};
         std::atomic<int> message_sent_index;
 #endif

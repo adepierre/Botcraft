@@ -42,7 +42,7 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundDisconnectPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundForgetLevelChunkPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundKeepAlivePacket.hpp"
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundLevelChunkPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundLoginPacket.hpp"
@@ -178,7 +178,7 @@
 #if PROTOCOL_VERSION > 440 /* > 1.13.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSoundEntityPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddVibrationSignalPacket.hpp"
 #endif
@@ -221,7 +221,7 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerChatHeaderPacket.hpp"
 #endif
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundDisguisedChatPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoRemovePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerInfoUpdatePacket.hpp"
@@ -325,7 +325,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 450 /* > 1.13.2 */
         ClientboundOpenBookPacket,
 #endif
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         ClientboundLevelChunkPacket,
 #endif
         ClientboundLoginPacket,
@@ -425,7 +425,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         ClientboundSetBorderPacket,
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         ClientboundAddVibrationSignalPacket,
 #endif
@@ -468,7 +468,7 @@ namespace ProtocolCraft
         ClientboundPlayerChatHeaderPacket,
 #endif
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         ClientboundDisguisedChatPacket,
         ClientboundPlayerInfoRemovePacket,
         ClientboundPlayerInfoUpdatePacket,

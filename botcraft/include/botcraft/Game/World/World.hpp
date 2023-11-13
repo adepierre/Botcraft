@@ -227,7 +227,7 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg) override;
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         virtual void Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg) override;
 #else
         virtual void Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg) override;
@@ -294,20 +294,20 @@ namespace Botcraft
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
         void LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const int primary_bit_mask);
-#elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#elif PROTOCOL_VERSION < 757 /* < 1.18 */
         void LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data,
             const std::vector<unsigned long long int>& primary_bit_mask);
 #else
         void LoadDataInChunk(const int x, const int z, const std::vector<unsigned char>& data);
 #endif
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         void LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::NBT::Value>& block_entities);
 #else
         void LoadBlockEntityDataInChunk(const int x, const int z, const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities);
 #endif
 
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
         void LoadBiomesInChunk(const int x, const int z, const std::vector<int>& biomes);
 #endif
 
@@ -315,7 +315,7 @@ namespace Botcraft
         void UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
 #elif PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */
         void UpdateChunkLight(const int x, const int z, const std::string& dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
-#elif PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#elif PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void UpdateChunkLight(const int x, const int z, const std::string& dim,
             const std::vector<unsigned long long int>& light_mask, const std::vector<unsigned long long int>& empty_light_mask,
             const std::vector<std::vector<char> >& data, const bool sky);
@@ -331,7 +331,7 @@ namespace Botcraft
         std::unordered_map<std::pair<int, int>, Chunk> terrain;
         mutable std::shared_mutex world_mutex;
 
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
         std::unordered_map<std::pair<int, int>, ProtocolCraft::ClientboundLightUpdatePacket> delayed_light_updates;
 #endif
 

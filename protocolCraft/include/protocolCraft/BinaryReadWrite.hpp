@@ -10,7 +10,7 @@
 #include <optional>
 #include <functional>
 #include <map>
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include <bitset>
 #endif
 
@@ -322,7 +322,7 @@ namespace ProtocolCraft
     }
 
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     template<size_t N>
     std::bitset<N> ReadBitset(ReadIterator& iter, size_t& length)
     {

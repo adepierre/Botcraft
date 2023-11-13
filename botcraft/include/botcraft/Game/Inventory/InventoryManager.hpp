@@ -67,7 +67,7 @@ namespace Botcraft
 
         void AddInventory(const short window_id, const InventoryType window_type);
         void SetSlot(const short window_id, const short index, const ProtocolCraft::Slot& slot);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void SynchronizeContainerPlayerInventory(const short window_id);
 #endif
 #if PROTOCOL_VERSION > 755 /* > 1.17 */

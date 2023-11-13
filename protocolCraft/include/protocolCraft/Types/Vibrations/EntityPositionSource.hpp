@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/Types/Vibrations/PositionSource.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 

@@ -3,7 +3,7 @@
 #if PROTOCOL_VERSION > 348 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/BlockEntityTag.hpp"
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include <map>
 #include "protocolCraft/Types/Identifier.hpp"
 #endif

@@ -59,16 +59,16 @@ namespace ProtocolCraft
         EntitySummon,
 #endif
         Dimension,
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         Gamemode,
 #endif
         Time,
         ResourceOrTag,
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         ResourceOrTagKey,
 #endif
         Resource,
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         ResourceKey,
 #endif
         TemplateMirror,

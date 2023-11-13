@@ -12,10 +12,10 @@ namespace ProtocolCraft
         None = -1,
         AmbientEntityEffect,
         AngryVillager,
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         Barrier,
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
         Light,
 #endif
         Block,
@@ -37,7 +37,7 @@ namespace ProtocolCraft
         FallingWater,
 #endif
         Dust,
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         DustColorTransition,
 #endif
         Effect,
@@ -55,7 +55,7 @@ namespace ProtocolCraft
         Firework,
         Fishing,
         Flame,
-#if PROTOCOL_VERSION > 761 /* > 1.19.3 */ && PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */ && PROTOCOL_VERSION < 763 /* < 1.20 */
         DrippingCherryLeaves,
         FallingCherryLeaves,
         LandingCherryLeaves,
@@ -82,7 +82,7 @@ namespace ProtocolCraft
         Heart,
         InstantEffect,
         Item,
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         Vibration,
 #endif
         ItemSlime,
@@ -120,7 +120,7 @@ namespace ProtocolCraft
         LandingHoney,
         FallingNectar,
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         FallingSporeBlossom,
 #endif
 #if PROTOCOL_VERSION > 734 /* > 1.15.2 */
@@ -128,7 +128,7 @@ namespace ProtocolCraft
         CrimsonSpore,
         WarpedSpore,
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         SporeBlossomAir,
 #endif
 #if PROTOCOL_VERSION > 734 /* > 1.15.2 */
@@ -138,7 +138,7 @@ namespace ProtocolCraft
         ReversePortal,
         WhiteAsh,
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         SmallFlame,
         Snowflake,
         DrippingDripstoneLava,

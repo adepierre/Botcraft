@@ -37,7 +37,7 @@ namespace ProtocolCraft
             content = signed_content_;
         }
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         void SetTypeId(const int type_id_)
         {
             type_id = type_id_;
@@ -55,7 +55,7 @@ namespace ProtocolCraft
             return content;
         }
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         int GetTypeId() const
         {
             return type_id;
@@ -71,7 +71,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             content = ReadData<Chat>(iter, length);
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             type_id = ReadData<VarInt>(iter, length);
 #else
             overlay = ReadData<bool>(iter, length);
@@ -81,7 +81,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Chat>(content, container);
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             WriteData<VarInt>(type_id, container);
 #else
             WriteData<bool>(overlay, container);
@@ -93,7 +93,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["content"] = content;
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             output["type_id"] = type_id;
 #else
             output["overlay"] = overlay;
@@ -105,7 +105,7 @@ namespace ProtocolCraft
 
     private:
         Chat content;
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         int type_id = 0;
 #else
         bool overlay = false;

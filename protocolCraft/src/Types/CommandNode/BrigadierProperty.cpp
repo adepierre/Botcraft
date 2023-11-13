@@ -104,7 +104,7 @@ namespace ProtocolCraft
 #endif
         case BrigadierPropertyType::ResourceOrTag:
         case BrigadierPropertyType::Resource:
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         case BrigadierPropertyType::ResourceOrTagKey:
         case BrigadierPropertyType::ResourceKey:
 #endif
@@ -148,7 +148,7 @@ namespace ProtocolCraft
         case BrigadierPropertyType::IntRange:
         case BrigadierPropertyType::FloatRange:
         case BrigadierPropertyType::Dimension:
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         case BrigadierPropertyType::Gamemode:
 #endif
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */

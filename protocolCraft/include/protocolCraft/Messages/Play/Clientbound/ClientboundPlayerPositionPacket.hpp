@@ -83,7 +83,7 @@ namespace ProtocolCraft
             id_ = id__;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
         void SetDismountVehicle(const bool dismount_vehicle_)
         {
             dismount_vehicle = dismount_vehicle_;
@@ -126,7 +126,7 @@ namespace ProtocolCraft
             return id_;
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
         bool GetDismountVehicle() const
         {
             return dismount_vehicle;
@@ -143,7 +143,7 @@ namespace ProtocolCraft
             xRot = ReadData<float>(iter, length);
             relative_arguments = ReadData<char>(iter, length);
             id_ = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
             dismount_vehicle = ReadData<bool>(iter, length);
 #endif
         }
@@ -157,7 +157,7 @@ namespace ProtocolCraft
             WriteData<float>(xRot, container);
             WriteData<char>(relative_arguments, container);
             WriteData<VarInt>(id_, container);
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
             WriteData<bool>(dismount_vehicle, container);
 #endif
         }
@@ -173,7 +173,7 @@ namespace ProtocolCraft
             output["xRot"] = xRot;
             output["relative_arguments"] = relative_arguments;
             output["id_"] = id_;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
             output["dismount_vehicle"] = dismount_vehicle;
 #endif
 
@@ -188,7 +188,7 @@ namespace ProtocolCraft
         float xRot = 0.0f;
         char relative_arguments = 0;
         int id_ = 0;
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
         bool dismount_vehicle = false;
 #endif
     };

@@ -24,7 +24,7 @@ namespace Botcraft
     class Chunk
     {
     public:
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         Chunk(const size_t dim_index, const bool has_sky_light_);
 #else
         Chunk(const int min_y_, const unsigned int height_, const size_t dim_index, const bool has_sky_light_);
@@ -45,12 +45,12 @@ namespace Botcraft
         void LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask, const bool ground_up_continuous);
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
         void LoadChunkData(const std::vector<unsigned char>& data, const int primary_bit_mask);
-#elif PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#elif PROTOCOL_VERSION < 757 /* < 1.18 */
         void LoadChunkData(const std::vector<unsigned char>& data, const std::vector<unsigned long long int>& primary_bit_mask);
 #else
         void LoadChunkData(const std::vector<unsigned char>& data);
 #endif
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::NBT::Value>& block_entities);
 #else
         void LoadChunkBlockEntitiesData(const std::vector<ProtocolCraft::BlockEntityInfo>& block_entities);
@@ -113,7 +113,7 @@ namespace Botcraft
         size_t dimension_index;
         bool has_sky_light;
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
         static constexpr int min_y = 0;
         static constexpr int height = 256;
 #else

@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
@@ -39,7 +39,7 @@ namespace ProtocolCraft
             player_id = player_id_;
         }
 
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         void SetKillerId(const int killer_id_)
         {
             killer_id = killer_id_;
@@ -58,7 +58,7 @@ namespace ProtocolCraft
             return player_id;
         }
 
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         int GetKillerId() const
         {
             return killer_id;
@@ -75,7 +75,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             player_id = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
             killer_id = ReadData<int>(iter, length);
 #endif
             message = ReadData<Chat>(iter, length);
@@ -84,7 +84,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(player_id, container);
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
             WriteData<int>(killer_id, container);
 #endif
             WriteData<Chat>(message, container);
@@ -95,7 +95,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["player_id"] = player_id;
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
             output["killer_id"] = killer_id;
 #endif
             output["message"] = message;
@@ -105,7 +105,7 @@ namespace ProtocolCraft
 
     private:
         int player_id = 0;
-#if PROTOCOL_VERSION < 763 /* < 1.20/.1 */
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
         int killer_id = 0;
 #endif
         Chat message;

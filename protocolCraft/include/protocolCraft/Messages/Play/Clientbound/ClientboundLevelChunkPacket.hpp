@@ -1,6 +1,6 @@
 #pragma once
 
-#if PROTOCOL_VERSION < 757 /* < 1.18/.1 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
 

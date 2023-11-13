@@ -5,7 +5,7 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
 #include "protocolCraft/Types/SaltSignature.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #include "protocolCraft/Types/Chat/ChatSender.hpp"
@@ -46,7 +46,7 @@ namespace ProtocolCraft
 
         }
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         void SetSignedContent(const Chat& signed_content_)
         {
             signed_content = signed_content_;
@@ -197,7 +197,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             signed_content = ReadData<Chat>(iter, length);
             unsigned_content = ReadOptional<Chat>(iter, length);
             type_id = ReadData<VarInt>(iter, length);
@@ -226,7 +226,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             WriteData<Chat>(signed_content, container);
             WriteOptional<Chat>(unsigned_content, container);
             WriteData<VarInt>(type_id, container);
@@ -257,7 +257,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             output["signed_content"] = signed_content;
             if (unsigned_content.has_value())
             {
@@ -292,7 +292,7 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION < 760 /* < 1.19.1/2 */
+#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         Chat signed_content;
         std::optional<Chat> unsigned_content;
         int type_id = 0;

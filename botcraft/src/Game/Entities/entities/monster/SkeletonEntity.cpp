@@ -4,7 +4,7 @@
 
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     const std::array<std::string, SkeletonEntity::metadata_count> SkeletonEntity::metadata_names{ {
         "data_stray_conversion_id",
     } };
@@ -12,7 +12,7 @@ namespace Botcraft
 
     SkeletonEntity::SkeletonEntity()
     {
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         // Initialize all metadata with default values
         SetDataStrayConversionId(false);
 #endif
@@ -46,7 +46,7 @@ namespace Botcraft
     }
 
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.4/5 */
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     ProtocolCraft::Json::Value SkeletonEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = AbstractSkeletonEntity::Serialize();

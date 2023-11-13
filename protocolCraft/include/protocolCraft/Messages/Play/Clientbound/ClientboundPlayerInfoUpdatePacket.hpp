@@ -1,5 +1,5 @@
 #pragma once
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 
 #include <string>
 #include <map>

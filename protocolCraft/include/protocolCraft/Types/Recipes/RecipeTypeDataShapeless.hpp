@@ -20,7 +20,7 @@ namespace ProtocolCraft
             group = group_;
         }
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         void SetCookingBookCategory(const int cooking_book_category_)
         {
             cooking_book_category = cooking_book_category_;
@@ -43,7 +43,7 @@ namespace ProtocolCraft
             return group;
         }
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         int GetCookingBookCategory() const
         {
             return cooking_book_category;
@@ -65,7 +65,7 @@ namespace ProtocolCraft
         {
 
             group = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             cooking_book_category = ReadData<VarInt>(iter, length);
 #endif
             ingredients = ReadVector<Ingredient>(iter, length);
@@ -75,7 +75,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(group, container);
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             WriteData<VarInt>(cooking_book_category, container);
 #endif
             WriteVector<Ingredient>(ingredients, container);
@@ -87,7 +87,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["group"] = group;
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             output["cooking_book_category"] = cooking_book_category;
 #endif
             output["ingredients"] = ingredients;
@@ -98,7 +98,7 @@ namespace ProtocolCraft
 
     private:
         std::string group;
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         int cooking_book_category = 0;
 #endif
         std::vector<Ingredient> ingredients;

@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 760 /* > 1.19.1/2 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #pragma once
 
 #include <vector>
