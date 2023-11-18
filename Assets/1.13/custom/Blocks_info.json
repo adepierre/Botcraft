@@ -1921,7 +1921,8 @@
         "tools": [
             "any",
             "pickaxe"
-        ]
+        ],
+        "friction": 0.98
     },
     {
         "hardness": 0.2,
@@ -3798,7 +3799,8 @@
         "transparent": true,
         "tools": [
             "any"
-        ]
+        ],
+        "friction": 0.8
     },
     {
         "hardness": -2,
@@ -4116,7 +4118,8 @@
         "tools": [
             "any",
             "pickaxe"
-        ]
+        ],
+        "friction": 0.98
     },
     {
         "hardness": 0,
@@ -5067,7 +5070,8 @@
         "tools": [
             "any",
             "pickaxe"
-        ]
+        ],
+        "friction": 0.98
     },
     {
         "hardness": 0.5,
@@ -6229,7 +6233,8 @@
         "transparent": false,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "friction": 0.989
     },
     {
         "hardness": 3,

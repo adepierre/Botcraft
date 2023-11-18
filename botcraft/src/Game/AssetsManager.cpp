@@ -302,6 +302,11 @@ namespace Botcraft
                 blockstate_properties[name].hardness = info["hardness"].get_number<float>();
             }
 
+            if (info.contains("friction") && info["friction"].is_number())
+            {
+                blockstate_properties[name].friction = info["friction"].get_number<float>();
+            }
+
             if (!info.contains("render") || !info["render"].is_string())
             {
                 rendering[name] = "block";
@@ -468,6 +473,7 @@ namespace Botcraft
                 false,          //custom
                 false,          //hazardous
                 -2.0f,          //hardness
+                0.6f,           //friction
                 TintType::None, //tint_type
                 "default",      //name
             }
@@ -484,6 +490,7 @@ namespace Botcraft
                 false,          //custom
                 false,          //hazardous
                 -2.0f,          //hardness
+                0.6f ,          //friction
                 TintType::None, //tint_type
                 "default",      //name
             }

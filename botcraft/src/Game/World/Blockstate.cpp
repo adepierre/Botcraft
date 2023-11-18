@@ -259,6 +259,7 @@ namespace Botcraft
         climbable = properties.climbable;
         hazardous = properties.hazardous;
         hardness = properties.hardness;
+        friction = properties.friction;
         tint_type = properties.tint_type;
         m_name = GetUniqueStringPtr(properties.name);
         any_tool_harvest = properties.any_tool_harvest;
@@ -648,6 +649,11 @@ namespace Botcraft
     float Blockstate::GetHardness() const
     {
         return hardness;
+    }
+
+    float Blockstate::GetFriction() const
+    {
+        return friction;
     }
 
     TintType Blockstate::GetTintType() const

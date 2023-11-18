@@ -56,6 +56,8 @@ namespace Botcraft
         bool hazardous = false;
         /// @brief Digging hardness
         float hardness = -2.0f;
+        /// @brief Slipperiness coefficient
+        float friction = 0.6f;
         TintType tint_type = TintType::None;
         std::string name = "";
         std::string path = "";
@@ -91,6 +93,7 @@ namespace Botcraft
         bool IsHazardous() const;
         bool IsWaterlogged() const;
         float GetHardness() const;
+        float GetFriction() const;
         TintType GetTintType() const;
 
         /// @brief Compute the amount of time (in s) required to mine this block
@@ -144,6 +147,7 @@ namespace Botcraft
         bool climbable;
         bool hazardous;
         float hardness;
+        float friction;
         TintType tint_type;
         const std::string* m_name;
 

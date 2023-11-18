@@ -871,7 +871,8 @@
         "tools": [
             "any",
             "pickaxe"
-        ]
+        ],
+        "friction": 0.98
     },
     {
         "name": "minecraft:snow",
@@ -1768,7 +1769,8 @@
         "hardness": 0,
         "tools": [
             "any"
-        ]
+        ],
+        "friction": 0.8
     },
     {
         "name": "minecraft:barrier",
@@ -1856,7 +1858,8 @@
         "tools": [
             "any",
             "pickaxe"
-        ]
+        ],
+        "friction": 0.98
     },
     {
         "name": "minecraft:double_plant",
@@ -2253,7 +2256,8 @@
         "tools": [
             "any",
             "pickaxe"
-        ]
+        ],
+        "friction": 0.98
     },
     {
         "name": "minecraft:magma",
