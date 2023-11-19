@@ -1147,11 +1147,6 @@ namespace Botcraft
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
         std::shared_ptr<World> world = client.GetWorld();
         std::shared_ptr<PhysicsManager> physics_manager = client.GetPhysicsManager();
-        // Enable gravity in case we are in creative mode
-        const bool has_gravity = physics_manager->GetHasGravity();
-        physics_manager->SetHasGravity(true);
-        // Reset gravity when returning
-        Utilities::OnEndScope reset_gravity([physics_manager, has_gravity]() { if (physics_manager != nullptr) physics_manager->SetHasGravity(has_gravity); });
 
         // Get real movement speed
         float movement_speed = speed;

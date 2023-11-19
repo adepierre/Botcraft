@@ -255,4 +255,17 @@ namespace Botcraft
         Darkness,
 #endif
     };
+
+    enum class PlayerCommandAction
+    {
+        PressShiftKey,
+        ReleaseShifKey,
+        StopSleeping,
+        StartSprinting,
+        StopSprinting,
+        StartRidingJump,
+        StopRidingJump,
+        OpenInventory,
+        StartFallFlying
+    };
 } // Botcraft

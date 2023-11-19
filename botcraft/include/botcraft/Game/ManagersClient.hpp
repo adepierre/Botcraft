@@ -99,7 +99,6 @@ namespace Botcraft
         bool is_hardcore;
         std::atomic<int> day_time;
 
-        bool allow_flying;
         bool creative_mode; // Instant break
 
         /// @brief Names of all connected players

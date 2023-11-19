@@ -1,5 +1,6 @@
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 
+#include <limits>
 #include <mutex>
 
 #define PI 3.14159265359
@@ -10,9 +11,9 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
 
-        position = Vector3<double>(0.0, 1000.0, 0.0);
-        frontVector = Vector3<double>(0.0, 0.0, 1.0);
-        rightVector = Vector3<double>(1.0, 0.0, 0.0);
+        position = Vector3<double>(0.0, std::numeric_limits<double>::quiet_NaN(), 0.0);
+        front_vector = Vector3<double>(0.0, 0.0, 1.0);
+        right_vector = Vector3<double>(1.0, 0.0, 0.0);
 
         flying_speed = 1.0f;
         walking_speed = 1.0f;
@@ -24,8 +25,6 @@ namespace Botcraft
         health = 0.0f;
         food = 20;
         food_saturation = 5.0f;
-
-        has_moved = true;
     }
 
     LocalPlayer::~LocalPlayer()
@@ -37,19 +36,19 @@ namespace Botcraft
     Vector3<double> LocalPlayer::GetFrontVector() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return frontVector;
+        return front_vector;
     }
 
     Vector3<double> LocalPlayer::GetXZVector() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return xzVector;
+        return xz_vector;
     }
 
     Vector3<double> LocalPlayer::GetRightVector() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return rightVector;
+        return right_vector;
     }
 
     Vector3<double> LocalPlayer::GetPlayerInputs() const
@@ -131,12 +130,6 @@ namespace Botcraft
         return food_saturation;
     }
 
-    bool LocalPlayer::GetHasMoved() const
-    {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return has_moved;
-    }
-
 
     void LocalPlayer::SetFlyingSpeed(const float flying_speed_)
     {
@@ -192,38 +185,28 @@ namespace Botcraft
         food_saturation = food_saturation_;
     }
 
-    void LocalPlayer::SetHasMoved(const bool has_moved_)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        has_moved = has_moved_;
-    }
-
 
     void LocalPlayer::SetPosition(const Vector3<double>& pos)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        has_moved |= position != pos;
         position = pos;
     }
 
     void LocalPlayer::SetX(const double x)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        has_moved |= position.x != x;
         position.x = x;
     }
 
     void LocalPlayer::SetY(const double y)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        has_moved |= position.y != y;
         position.y = y;
     }
 
     void LocalPlayer::SetZ(const double z)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        has_moved |= position.z != z;
         position.z = z;
     }
 
@@ -232,7 +215,6 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         if (yaw != yaw_)
         {
-            has_moved = true;
             yaw = yaw_;
             UpdateVectors();
         }
@@ -243,7 +225,6 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         if (pitch != pitch_)
         {
-            has_moved = true;
             pitch = pitch_;
             UpdateVectors();
         }
@@ -346,7 +327,6 @@ namespace Botcraft
                 pitch = new_pitch;
             }
             yaw = new_yaw;
-            has_moved = true;
             UpdateVectors();
         }
     }
@@ -365,16 +345,19 @@ namespace Botcraft
     {
         const double rad_yaw = yaw * PI / 180.0;
         const double rad_pitch = pitch * PI / 180.0;
-        frontVector = Vector3<double>(-sin(rad_yaw) * cos(rad_pitch), -sin(rad_pitch), cos(rad_yaw) * cos(rad_pitch));
+        const double cos_pitch = cos(rad_pitch);
+        front_vector = Vector3<double>(-sin(rad_yaw) * cos_pitch, -sin(rad_pitch), cos(rad_yaw) * cos_pitch);
 
-        frontVector.Normalize();
+        // Vector is already normalized as front_vector² = (cos²(rad_yaw) + sin²(rad_yaw)) * cos²(rad_pitch) + sin²(rad_pitch) = 1
+        // front_vector.Normalize();
 
-        xzVector = frontVector;
-        xzVector.y = 0.0;
-        xzVector.Normalize();
+        xz_vector = front_vector;
+        xz_vector.y = 0.0;
+        // xzVector.Norm() = sqrt((cos²(rad_yaw) + sin²(rad_yaw)) * cos²(rad_pitch)) = sqrt(cos²(rad_pitch)) = cos(rad_pitch)
+        // xzVector.Normalize();
+        xz_vector = xz_vector / cos_pitch;
 
-        //Right = crossproduct(front, (0, 1.0, 0))
-        const double norm = sqrt(frontVector.x * frontVector.x + frontVector.z * frontVector.z);
-        rightVector = Vector3<double>(-frontVector.z / norm, 0.0, frontVector.x / norm);
+        //Right = crossproduct(front, (0, 1.0, 0)).Normalize()
+        right_vector = Vector3<double>(-front_vector.z / cos_pitch, 0.0, front_vector.x / cos_pitch);
     }
 } //Botcraft

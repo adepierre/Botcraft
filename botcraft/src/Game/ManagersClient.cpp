@@ -32,6 +32,7 @@ namespace Botcraft
         world = nullptr;
         inventory_manager = nullptr;
         entity_manager = nullptr;
+        physics_manager = nullptr;
 
 #if USE_GUI
         use_renderer = use_renderer_;
@@ -175,6 +176,7 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundGameProfilePacket& msg)
     {
+        // Create all handlers
         if (!world)
         {
             world = std::make_shared<World>(false);
@@ -182,21 +184,27 @@ namespace Botcraft
 
         inventory_manager = std::make_shared<InventoryManager>();
         entity_manager = std::make_shared<EntityManager>();
-
-        network_manager->AddHandler(world.get());
-        network_manager->AddHandler(inventory_manager.get());
-        network_manager->AddHandler(entity_manager.get());
-
 #if USE_GUI
         if (use_renderer)
         {
             rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
+        }
+        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager->GetLocalPlayer(), network_manager, world);
+#else
+        physics_manager = std::make_shared<PhysicsManager>(inventory_manager, entity_manager->GetLocalPlayer(), network_manager, world);
+#endif
+        // Subscribe them to the network manager
+        network_manager->AddHandler(world.get());
+        network_manager->AddHandler(inventory_manager.get());
+        network_manager->AddHandler(entity_manager.get());
+        network_manager->AddHandler(physics_manager.get());
+#if USE_GUI
+        if (use_renderer)
+        {
             network_manager->AddHandler(rendering_manager.get());
         }
-        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, entity_manager, world, network_manager);
-#else
-        physics_manager = std::make_shared<PhysicsManager>(entity_manager, world, network_manager);
 #endif
+        // Start physics
         physics_manager->StartPhysics();
     }
 
@@ -213,7 +221,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         game_mode = static_cast<GameType>(msg.GetGameType() & 0x03);
 #else
-        game_mode = static_cast<GameType>(msg.GetCommonPlayerSpanwInfo().GetGameType());
+        game_mode = static_cast<GameType>(msg.GetCommonPlayerSpawnInfo().GetGameType());
 #endif
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         is_hardcore = msg.GetHardcore();
@@ -238,12 +246,7 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket& msg)
     {
-        allow_flying = msg.GetFlags() & 0x04;
         creative_mode = msg.GetFlags() & 0x08;
-        if (physics_manager)
-        {
-            physics_manager->SetHasGravity(!allow_flying);
-        }
 
         std::shared_ptr<ServerboundClientInformationPacket> settings_msg = std::make_shared<ServerboundClientInformationPacket>();
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */

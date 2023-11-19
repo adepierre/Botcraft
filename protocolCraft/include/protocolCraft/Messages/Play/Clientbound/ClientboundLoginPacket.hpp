@@ -368,7 +368,7 @@ namespace ProtocolCraft
             return do_limited_crafting;
         }
 
-        const CommonPlayerSpawnInfo& GetCommonPlayerSpanwInfo() const
+        const CommonPlayerSpawnInfo& GetCommonPlayerSpawnInfo() const
         {
             return common_player_spawn_info;
         }

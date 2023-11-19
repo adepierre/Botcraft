@@ -36,7 +36,6 @@ namespace Botcraft
         float GetHealth() const;
         int GetFood() const;
         float GetFoodSaturation() const;
-        bool GetHasMoved() const;
 
         void SetFlyingSpeed(const float flying_speed_);
         void SetWalkingSpeed(const float walking_speed_);
@@ -47,7 +46,6 @@ namespace Botcraft
         void SetHealth(const float health_);
         void SetFood(const int food_);
         void SetFoodSaturation(const float food_saturation_);
-        void SetHasMoved(const bool has_moved_);
 
         virtual void SetPosition(const Vector3<double>& pos) override;
         virtual void SetX(const double x) override;
@@ -90,9 +88,9 @@ namespace Botcraft
         void UpdateVectors();
 
     private:
-        Vector3<double> frontVector;
-        Vector3<double> xzVector;
-        Vector3<double> rightVector;
+        Vector3<double> front_vector;
+        Vector3<double> xz_vector;
+        Vector3<double> right_vector;
 
         Vector3<double> player_inputs;
 
@@ -106,7 +104,5 @@ namespace Botcraft
         float health;
         int food;
         float food_saturation;
-
-        bool has_moved;
     };
 } // Botcraft
