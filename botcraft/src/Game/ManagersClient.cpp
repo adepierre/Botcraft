@@ -275,13 +275,13 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         game_mode = static_cast<GameType>(msg.GetPlayerGameType());
 #else
-        game_mode = static_cast<GameType>(msg.GetCommonPlayerSpanwInfo().GetGameType());
+        game_mode = static_cast<GameType>(msg.GetCommonPlayerSpawnInfo().GetGameType());
 #endif
     }
 
     void ManagersClient::Handle(ClientboundSetTimePacket& msg)
     {
-        // abs because the server multiplies by -1 when the sun will stop
+        // abs because the server multiplies by -1 to indicate fixed daytime
         day_time = std::abs(msg.GetDayTime()) % 24000;
     }
 

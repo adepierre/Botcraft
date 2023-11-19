@@ -512,7 +512,7 @@ namespace Botcraft
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
         SetCurrentDimensionImpl(msg.GetDimension().GetFull());
 #else
-        SetCurrentDimensionImpl(msg.GetCommonPlayerSpanwInfo().GetDimension().GetFull());
+        SetCurrentDimensionImpl(msg.GetCommonPlayerSpawnInfo().GetDimension().GetFull());
 #endif
 
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
