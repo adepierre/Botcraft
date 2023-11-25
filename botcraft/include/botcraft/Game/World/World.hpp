@@ -221,6 +221,12 @@ namespace Botcraft
         int GetNextWorldInteractionSequenceId();
 #endif
 
+        /// @brief Check if an AABB collides in the world
+        /// @param aabb AABB to check against the world
+        /// @param fluid_collide if true, will count fluids as collision
+        /// @return True if collision false otherwise
+        bool IsFree(const AABB& aabb, const bool fluid_collide) const;
+
     protected:
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
