@@ -157,6 +157,18 @@ namespace Botcraft
         }
     }
 
+    const Item* AssetsManager::GetItem(const std::string& item_name) const
+    {
+        for (const auto& p : items)
+        {
+            if (p.second->GetName() == item_name)
+            {
+                return p.second.get();
+            }
+        }
+        return nullptr;
+    }
+
     ItemId AssetsManager::GetItemID(const std::string& item_name) const
     {
         for (const auto& p : items)
