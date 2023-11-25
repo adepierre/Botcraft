@@ -41,6 +41,7 @@ namespace Botcraft
 
         const std::unordered_map<ItemId, std::unique_ptr<Item> >& Items() const;
         const Item* GetItem(const ItemId id) const;
+        const Item* GetItem(const std::string& item_name) const;
         ItemId GetItemID(const std::string& item_name) const;
 
 #if USE_GUI
