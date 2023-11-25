@@ -477,6 +477,59 @@ namespace Botcraft
     }
 #endif
 
+    bool World::IsFree(const AABB& aabb, const bool fluid_collide) const
+    {
+        std::shared_lock<std::shared_mutex> lock(world_mutex);
+
+        const Vector3<double> min_aabb = aabb.GetMin();
+        const Vector3<double> max_aabb = aabb.GetMax();
+
+        Position cube_pos;
+        for (int x = static_cast<int>(std::floor(min_aabb.x)); x < static_cast<int>(std::ceil(max_aabb.x)); ++x)
+        {
+            cube_pos.x = x;
+            for (int y = static_cast<int>(std::floor(min_aabb.y)); y < static_cast<int>(std::ceil(max_aabb.y)); ++y)
+            {
+                cube_pos.y = y;
+                for (int z = static_cast<int>(std::floor(min_aabb.z)); z < static_cast<int>(std::ceil(max_aabb.z)); ++z)
+                {
+                    cube_pos.z = z;
+
+                    const Blockstate* block = GetBlockImpl(cube_pos);
+
+                    if (block == nullptr)
+                    {
+                        continue;
+                    }
+
+                    if (block->IsFluid())
+                    {
+                        if (!fluid_collide)
+                        {
+                            continue;
+                        }
+                    }
+                    else if (!block->IsSolid())
+                    {
+                        continue;
+                    }
+
+                    const std::set<AABB>& block_colliders = block->GetModel(block->GetModelId(cube_pos)).GetColliders();
+
+                    for (const auto& collider : block_colliders)
+                    {
+                        if (aabb.Collide(collider + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z)))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     void World::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
