@@ -46,6 +46,9 @@ namespace Botcraft
         void SetDataHasRightHorn(const bool data_has_right_horn);
 #endif
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

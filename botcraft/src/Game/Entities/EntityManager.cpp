@@ -380,7 +380,43 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundUpdateAttributesPacket& msg)
     {
-        // TODO
+        std::shared_ptr<Entity> entity = nullptr;
+
+        {
+            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
+            auto it = entities.find(msg.GetEntityId());
+            if (it != entities.end())
+            {
+                entity = it->second;
+            }
+        }
+
+        if (entity == nullptr)
+        {
+            LOG_WARNING("Trying to set attributes of an unexisting entity");
+        }
+        else if (!entity->IsLivingEntity())
+        {
+            LOG_WARNING("Trying to set attributes of a non LivingEntity");
+        }
+        else
+        {
+            std::shared_ptr<LivingEntity> living_entity = std::dynamic_pointer_cast<LivingEntity>(entity);
+            for (const auto& a : msg.GetAttributes())
+            {
+#if PROTOCOL_VERSION > 709 /* > 1.15.2 */
+                const EntityAttribute::Type type = EntityAttribute::StringToType(a.GetKey().GetFull());
+#else
+                const EntityAttribute::Type type = EntityAttribute::StringToType(a.GetKey());
+#endif
+                EntityAttribute attribute(type, a.GetValue());
+                for (const auto& m : a.GetModifiers())
+                {
+                    attribute.SetModifier(m.GetUuid(), EntityAttribute::Modifier{ m.GetAmount(), static_cast<EntityAttribute::Modifier::Operation>(m.GetOperation()) });
+                }
+                living_entity->AddAttribute(attribute);
+            }
+        }
     }
 
     void EntityManager::Handle(ProtocolCraft::ClientboundUpdateMobEffectPacket& msg)

@@ -39,6 +39,9 @@ namespace Botcraft
         void SetDataTargetC(const int data_target_c);
         void SetDataIdInv(const int data_id_inv);
 
+        // Attribute stuff
+        double GetAttributeFlyingSpeedValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

@@ -22,6 +22,12 @@ namespace Botcraft
         SetDataPlayerMainHand(1);
         SetDataShoulderLeft(ProtocolCraft::NBT::Value());
         SetDataShoulderRight(ProtocolCraft::NBT::Value());
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 1.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.1) });
+        attributes.insert({ EntityAttribute::Type::AttackSpeed, EntityAttribute(EntityAttribute::Type::AttackSpeed, 4.0) });
+        attributes.insert({ EntityAttribute::Type::Luck, EntityAttribute(EntityAttribute::Type::Luck, 0.0) });
     }
 
     PlayerEntity::~PlayerEntity()
@@ -68,6 +74,10 @@ namespace Botcraft
         output["metadata"]["data_player_main_hand"] = GetDataPlayerMainHand();
         output["metadata"]["data_shoulder_left"] = GetDataShoulderLeft().Serialize();
         output["metadata"]["data_shoulder_right"] = GetDataShoulderRight().Serialize();
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["generic.attack_speed"] = GetAttributeAttackSpeedValue();
+        output["attributes"]["generic.luck"] = GetAttributeLuckValue();
 
         return output;
     }
@@ -186,6 +196,26 @@ namespace Botcraft
         return 1.8;
 #endif
     }
+
+
+    double PlayerEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
+    }
+
+    double PlayerEntity::GetAttributeAttackSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackSpeed).GetValue();
+    }
+
+    double PlayerEntity::GetAttributeLuckValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::Luck).GetValue();
+    }
+
 
     double PlayerEntity::GetEyeHeightImpl() const
     {

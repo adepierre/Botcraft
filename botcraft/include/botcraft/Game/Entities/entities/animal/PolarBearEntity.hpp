@@ -33,6 +33,9 @@ namespace Botcraft
 
         void SetDataStandingId(const bool data_standing_id);
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

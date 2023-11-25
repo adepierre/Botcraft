@@ -54,6 +54,9 @@ namespace Botcraft
         void SetDataRemainingAngerTime(const int data_remaining_anger_time);
 #endif
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

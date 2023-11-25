@@ -26,6 +26,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         SetDataRemainingAngerTime(0);
 #endif
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 8.0) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
     }
 
     WolfEntity::~WolfEntity()
@@ -68,6 +73,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         output["metadata"]["data_remaining_anger_time"] = GetDataRemainingAngerTime();
 #endif
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }
@@ -142,6 +149,13 @@ namespace Botcraft
         metadata["data_remaining_anger_time"] = data_remaining_anger_time;
     }
 #endif
+
+
+    double WolfEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
+    }
 
 
     double WolfEntity::GetWidthImpl() const

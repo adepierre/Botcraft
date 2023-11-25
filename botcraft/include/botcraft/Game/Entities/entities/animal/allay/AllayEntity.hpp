@@ -41,6 +41,10 @@ namespace Botcraft
         void SetDataCanDuplicate(const bool data_can_duplicate);
 #endif
 
+        // Attribute stuff
+        double GetAttributeFlyingSpeedValue() const;
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

@@ -15,6 +15,13 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataFlagsId(0);
         SetDataRemainingAngerTime(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
+        attributes.insert({ EntityAttribute::Type::FlyingSpeed, EntityAttribute(EntityAttribute::Type::FlyingSpeed, 0.6) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 48.0) });
     }
 
     BeeEntity::~BeeEntity()
@@ -51,6 +58,10 @@ namespace Botcraft
 
         output["metadata"]["data_flags_id"] = GetDataFlagsId();
         output["metadata"]["data_remaining_anger_time"] = GetDataRemainingAngerTime();
+
+        output["attributes"]["generic.flying_speed"] = GetAttributeFlyingSpeedValue();
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+
 
         return output;
     }
@@ -92,6 +103,19 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_remaining_anger_time"] = data_remaining_anger_time;
+    }
+
+
+    double BeeEntity::GetAttributeFlyingSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::FlyingSpeed).GetValue();
+    }
+
+    double BeeEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
     }
 
 

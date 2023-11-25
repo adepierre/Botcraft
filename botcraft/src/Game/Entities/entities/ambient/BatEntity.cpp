@@ -12,6 +12,9 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataIdFlags(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 6.0) });
     }
 
     BatEntity::~BatEntity()

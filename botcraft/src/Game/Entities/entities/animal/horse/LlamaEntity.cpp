@@ -16,6 +16,9 @@ namespace Botcraft
         SetDataStrengthId(0);
         SetDataSwagId(-1);
         SetDataVariantId(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 40.0) });
     }
 
     LlamaEntity::~LlamaEntity()

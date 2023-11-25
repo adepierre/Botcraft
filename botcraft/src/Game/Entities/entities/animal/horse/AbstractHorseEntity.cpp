@@ -18,6 +18,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         SetDataIdOwnerUuid(std::optional<ProtocolCraft::UUID>());
 #endif
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::HorseJumpStrength, EntityAttribute(EntityAttribute::Type::HorseJumpStrength, 0.7) });
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 53.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.225) });
     }
 
     AbstractHorseEntity::~AbstractHorseEntity()
@@ -39,6 +44,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         output["metadata"]["data_id_owner_uuid"] = GetDataIdOwnerUuid() ? ProtocolCraft::Json::Value(GetDataIdOwnerUuid().value()) : ProtocolCraft::Json::Value();
 #endif
+
+        output["attributes"]["horse.jump_strength"] = GetAttributeJumpStrengthValue();
+
 
         return output;
     }
@@ -85,5 +93,12 @@ namespace Botcraft
         metadata["data_id_owner_uuid"] = data_id_owner_uuid;
     }
 #endif
+
+
+    double AbstractHorseEntity::GetAttributeJumpStrengthValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::HorseJumpStrength).GetValue();
+    }
 
 }

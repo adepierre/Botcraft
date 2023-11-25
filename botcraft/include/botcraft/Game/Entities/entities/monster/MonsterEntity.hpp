@@ -14,6 +14,11 @@ namespace Botcraft
         MonsterEntity();
         virtual ~MonsterEntity();
 
+        virtual ProtocolCraft::Json::Value Serialize() const override;
+
         virtual bool IsMonster() const override;
+
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
     };
 }

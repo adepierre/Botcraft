@@ -12,6 +12,10 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataMobFlagsId(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 16.0) });
+        attributes.insert({ EntityAttribute::Type::AttackKnockback, EntityAttribute(EntityAttribute::Type::AttackKnockback, 0.0) });
     }
 
     MobEntity::~MobEntity()
@@ -30,6 +34,9 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = LivingEntity::Serialize();
 
         output["metadata"]["data_mob_flags_id"] = GetDataMobFlagsId();
+
+        output["attributes"]["generic.follow_range"] = GetAttributeFollowRangeValue();
+        output["attributes"]["generic.attack_knockback"] = GetAttributeAttackKnockbackValue();
 
         return output;
     }
@@ -61,4 +68,16 @@ namespace Botcraft
         metadata["data_mob_flags_id"] = data_mob_flags_id;
     }
 
+
+    double MobEntity::GetAttributeFollowRangeValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::FollowRange).GetValue();
+    }
+
+    double MobEntity::GetAttributeAttackKnockbackValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackKnockback).GetValue();
+    }
 }

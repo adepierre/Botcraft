@@ -60,6 +60,12 @@ namespace Botcraft
         void SetDataIsChargingCrossbow(const bool data_is_charging_crossbow);
         void SetDataIsDancing(const bool data_is_dancing);
 
+        // Attribute stuff
+
+        // 766bfa64-11f3-11ea-8d71-362b9e155667
+        static constexpr std::array<unsigned char, 16> speed_modifier_baby_uuid = { 0x76, 0x6B, 0xFA, 0x64, 0x11, 0xF3, 0x11, 0xEA, 0x8D, 0x71, 0x36, 0x2B, 0x9E, 0x15, 0x56, 0x67 };
+
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

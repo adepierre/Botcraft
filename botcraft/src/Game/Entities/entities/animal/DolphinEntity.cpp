@@ -17,6 +17,11 @@ namespace Botcraft
         SetTreasurePos(Position(0, 0, 0));
         SetGotFish(false);
         SetMoistnessLevel(2400);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 1.2) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 3.0) });
     }
 
     DolphinEntity::~DolphinEntity()
@@ -54,6 +59,9 @@ namespace Botcraft
         output["metadata"]["treasure_pos"] = GetTreasurePos().Serialize();
         output["metadata"]["got_fish"] = GetGotFish();
         output["metadata"]["moistness_level"] = GetMoistnessLevel();
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+
 
         return output;
     }
@@ -107,6 +115,13 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["moistness_level"] = moistness_level;
+    }
+
+
+    double DolphinEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
     }
 
 

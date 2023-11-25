@@ -12,6 +12,11 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataVariantId(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 6.0) });
+        attributes.insert({ EntityAttribute::Type::FlyingSpeed, EntityAttribute(EntityAttribute::Type::FlyingSpeed, 0.4) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.2) });
     }
 
     ParrotEntity::~ParrotEntity()
@@ -48,6 +53,8 @@ namespace Botcraft
 
         output["metadata"]["data_variant_id"] = GetDataVariantId();
 
+        output["attributes"]["generic.flying_speed"] = GetAttributeFlyingSpeedValue();
+
         return output;
     }
 
@@ -76,6 +83,13 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_variant_id"] = data_variant_id;
+    }
+
+
+    double ParrotEntity::GetAttributeFlyingSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::FlyingSpeed).GetValue();
     }
 
 

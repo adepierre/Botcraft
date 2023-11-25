@@ -4,7 +4,10 @@ namespace Botcraft
 {
     ElderGuardianEntity::ElderGuardianEntity()
     {
-
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 8.0) });
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 80.0) });
     }
 
     ElderGuardianEntity::~ElderGuardianEntity()

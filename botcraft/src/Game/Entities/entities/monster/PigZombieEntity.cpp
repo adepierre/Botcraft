@@ -5,7 +5,10 @@ namespace Botcraft
 {
     PigZombieEntity::PigZombieEntity()
     {
-
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::ZombieSpawnReinforcementsChance, EntityAttribute(EntityAttribute::Type::ZombieSpawnReinforcementsChance, 0.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.23) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 5.0) });
     }
 
     PigZombieEntity::~PigZombieEntity()

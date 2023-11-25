@@ -38,6 +38,9 @@ namespace Botcraft
         void SetGotFish(const bool got_fish);
         void SetMoistnessLevel(const int moistness_level);
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

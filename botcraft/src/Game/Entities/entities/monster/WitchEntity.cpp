@@ -12,6 +12,10 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataUsingItem(false);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 26.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.25) });
     }
 
     WitchEntity::~WitchEntity()

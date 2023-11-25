@@ -35,6 +35,7 @@ namespace Botcraft
 
     protected:
         int GetIdSizeImpl() const;
+        void SizeChanged(const int new_size);
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;
 

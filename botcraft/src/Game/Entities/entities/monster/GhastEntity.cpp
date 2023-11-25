@@ -12,6 +12,10 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataIsCharging(false);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 100.0) });
     }
 
     GhastEntity::~GhastEntity()

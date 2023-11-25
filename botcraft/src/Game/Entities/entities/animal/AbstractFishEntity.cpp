@@ -12,6 +12,9 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetFromBucket(false);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 3.0) });
     }
 
     AbstractFishEntity::~AbstractFishEntity()

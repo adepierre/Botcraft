@@ -33,6 +33,9 @@ namespace Botcraft
 
         void SetDataVariantId(const int data_variant_id);
 
+        // Attribute stuff
+        double GetAttributeFlyingSpeedValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

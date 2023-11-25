@@ -19,6 +19,12 @@ namespace Botcraft
         SetDataFlagsId(0);
         SetDataTrustedId0(std::optional<ProtocolCraft::UUID>());
         SetDataTrustedId1(std::optional<ProtocolCraft::UUID>());
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 32.0) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
     }
 
     FoxEntity::~FoxEntity()
@@ -57,6 +63,8 @@ namespace Botcraft
         output["metadata"]["data_flags_id"] = GetDataFlagsId();
         output["metadata"]["data_trusted_id_0"] = GetDataTrustedId0() ? ProtocolCraft::Json::Value(GetDataTrustedId0().value()) : ProtocolCraft::Json::Value();
         output["metadata"]["data_trusted_id_1"] = GetDataTrustedId1() ? ProtocolCraft::Json::Value(GetDataTrustedId1().value()) : ProtocolCraft::Json::Value();
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }
@@ -122,6 +130,13 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_trusted_id_1"] = data_trusted_id_1;
+    }
+
+
+    double FoxEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
     }
 
 

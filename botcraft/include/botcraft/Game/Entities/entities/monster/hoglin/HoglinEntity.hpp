@@ -34,6 +34,9 @@ namespace Botcraft
 
         void SetDataImmuneToZombification(const bool data_immune_to_zombification);
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

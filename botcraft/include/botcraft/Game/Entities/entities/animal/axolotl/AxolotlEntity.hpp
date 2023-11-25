@@ -38,6 +38,9 @@ namespace Botcraft
         void SetDataPlayingDead(const bool data_playing_dead);
         void SetFromBucket(const bool from_bucket);
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

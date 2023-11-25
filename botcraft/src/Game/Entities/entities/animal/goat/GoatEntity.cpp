@@ -21,6 +21,11 @@ namespace Botcraft
         SetDataHasLeftHorn(true);
         SetDataHasRightHorn(true);
 #endif
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.2) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
     }
 
     GoatEntity::~GoatEntity()
@@ -60,6 +65,9 @@ namespace Botcraft
         output["metadata"]["data_has_left_horn"] = GetDataHasLeftHorn();
         output["metadata"]["data_has_right_horn"] = GetDataHasRightHorn();
 #endif
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+
 
         return output;
     }
@@ -118,6 +126,13 @@ namespace Botcraft
         metadata["data_has_right_horn"] = data_has_right_horn;
     }
 #endif
+
+
+    double GoatEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
+    }
 
 
     double GoatEntity::GetWidthImpl() const

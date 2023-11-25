@@ -36,5 +36,8 @@ namespace Botcraft
         void SetDataIdOwnerUuid(const std::optional<ProtocolCraft::UUID>& data_id_owner_uuid);
 #endif
 
+        // Attribute stuff
+        double GetAttributeJumpStrengthValue() const;
+
     };
 }
