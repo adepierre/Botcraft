@@ -4,7 +4,8 @@ namespace Botcraft
 {
     CaveSpiderEntity::CaveSpiderEntity()
     {
-
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 12.0) });
     }
 
     CaveSpiderEntity::~CaveSpiderEntity()

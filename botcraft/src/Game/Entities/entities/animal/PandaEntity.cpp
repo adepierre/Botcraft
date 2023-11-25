@@ -23,6 +23,10 @@ namespace Botcraft
         SetMainGeneId(0);
         SetHiddenGeneId(0);
         SetDataIdFlags(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.15) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 6.0) });
     }
 
     PandaEntity::~PandaEntity()
@@ -63,6 +67,8 @@ namespace Botcraft
         output["metadata"]["main_gene_id"] = GetMainGeneId();
         output["metadata"]["hidden_gene_id"] = GetHiddenGeneId();
         output["metadata"]["data_id_flags"] = GetDataIdFlags();
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }
@@ -152,6 +158,13 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_flags"] = data_id_flags;
+    }
+
+
+    double PandaEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
     }
 
 

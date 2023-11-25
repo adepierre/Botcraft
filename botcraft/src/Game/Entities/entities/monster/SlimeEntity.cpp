@@ -1,4 +1,5 @@
 #include "botcraft/Game/Entities/entities/monster/SlimeEntity.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include <mutex>
 
@@ -63,12 +64,13 @@ namespace Botcraft
             std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             const std::string& metadata_name = metadata_names[index - hierarchy_metadata_count];
             metadata[metadata_name] = value;
-#if USE_GUI
             if (metadata_name == "id_size")
             {
+                SizeChanged(std::any_cast<int>(value));
+#if USE_GUI
                 OnSizeUpdated();
-            }
 #endif
+            }
         }
     }
 
@@ -83,6 +85,7 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["id_size"] = id_size;
+        SizeChanged(id_size);
 #if USE_GUI
         OnSizeUpdated();
 #endif
@@ -91,6 +94,39 @@ namespace Botcraft
     int SlimeEntity::GetIdSizeImpl() const
     {
         return std::any_cast<int>(metadata.at("id_size"));
+    }
+
+    void SlimeEntity::SizeChanged(const int new_size)
+    {
+        auto it = attributes.find(EntityAttribute::Type::MaxHealth);
+        if (it != attributes.end())
+        {
+            it->second.SetBaseValue(static_cast<double>(new_size) * new_size);
+        }
+        else
+        {
+            LOG_WARNING("Trying to set attribute base value for " << EntityAttribute::Type::MaxHealth << " for a " << GetName() << " but it doesn't have this attribute");
+        }
+
+        it = attributes.find(EntityAttribute::Type::MovementSpeed);
+        if (it != attributes.end())
+        {
+            it->second.SetBaseValue(0.2 + 0.1 * new_size);
+        }
+        else
+        {
+            LOG_WARNING("Trying to set attribute base value for " << EntityAttribute::Type::MovementSpeed << " for a " << GetName() << " but it doesn't have this attribute");
+        }
+
+        it = attributes.find(EntityAttribute::Type::AttackDamage);
+        if (it != attributes.end())
+        {
+            it->second.SetBaseValue(static_cast<double>(new_size));
+        }
+        else
+        {
+            LOG_WARNING("Trying to set attribute base value for " << EntityAttribute::Type::AttackDamage << " for a slime but it doesn't have this attribute");
+        }
     }
 
     double SlimeEntity::GetWidthImpl() const

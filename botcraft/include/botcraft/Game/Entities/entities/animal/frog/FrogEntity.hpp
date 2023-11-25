@@ -36,6 +36,9 @@ namespace Botcraft
         void SetDataVariantId(const int data_variant_id);
         void SetDataTongueTargetId(const std::optional<int>& data_tongue_target_id);
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

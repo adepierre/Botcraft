@@ -53,6 +53,13 @@ namespace Botcraft
         void SetDataDrownedConversionId(const bool data_drowned_conversion_id);
 #endif
 
+        // Attribute stuff
+        double GetAttributeSpawnReinforcementsChanceValue() const;
+
+        // b9766b59-9566-4402-bc1f-2ee2a276d836
+        static constexpr std::array<unsigned char, 16> speed_modifier_baby_uuid = { 0xB9, 0x76, 0x6B, 0x59, 0x95, 0x66, 0x44, 0x2, 0xBC, 0x1F, 0x2E, 0xE2, 0xA2, 0x76, 0xD8, 0x36 };
+
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

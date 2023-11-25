@@ -15,6 +15,10 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataState(0);
         SetDataDropSeedAtTick(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.1) });
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 14.0) });
     }
 
     SnifferEntity::~SnifferEntity()

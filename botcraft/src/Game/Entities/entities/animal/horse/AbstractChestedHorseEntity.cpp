@@ -12,6 +12,10 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataIdChest(false);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.175) });
+        attributes.insert({ EntityAttribute::Type::HorseJumpStrength, EntityAttribute(EntityAttribute::Type::HorseJumpStrength, 0.5) });
     }
 
     AbstractChestedHorseEntity::~AbstractChestedHorseEntity()

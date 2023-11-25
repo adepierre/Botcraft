@@ -22,6 +22,9 @@ namespace Botcraft
 #endif
         SetDataPeekId(0);
         SetDataColorId(16);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 30.0) });
     }
 
     ShulkerEntity::~ShulkerEntity()

@@ -19,6 +19,11 @@ namespace Botcraft
         SetIsLying(false);
         SetRelaxStateOne(false);
         SetDataCollarColor(14);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 3.0) });
     }
 
     CatEntity::~CatEntity()
@@ -57,6 +62,9 @@ namespace Botcraft
         output["metadata"]["is_lying"] = GetIsLying();
         output["metadata"]["relax_state_one"] = GetRelaxStateOne();
         output["metadata"]["data_collar_color"] = GetDataCollarColor();
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+
 
         return output;
     }
@@ -122,6 +130,13 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_collar_color"] = data_collar_color;
+    }
+
+
+    double CatEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
     }
 
 

@@ -36,6 +36,10 @@ namespace Botcraft
         void SetDataFlagsId(const char data_flags_id);
         void SetDataRemainingAngerTime(const int data_remaining_anger_time);
 
+        // Attribute stuff
+        double GetAttributeFlyingSpeedValue() const;
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

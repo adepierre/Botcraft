@@ -17,6 +17,10 @@ namespace Botcraft
         SetDataBoostTime(0);
         SetDataSuffocating(false);
         SetDataSaddleId(false);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.175) });
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 16.0) });
     }
 
     StriderEntity::~StriderEntity()

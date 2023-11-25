@@ -47,6 +47,9 @@ namespace Botcraft
         void SetDataTypeId(const int data_type_id);
 #endif
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

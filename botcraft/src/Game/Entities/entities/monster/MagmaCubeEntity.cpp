@@ -4,7 +4,8 @@ namespace Botcraft
 {
     MagmaCubeEntity::MagmaCubeEntity()
     {
-
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.2) });
     }
 
     MagmaCubeEntity::~MagmaCubeEntity()

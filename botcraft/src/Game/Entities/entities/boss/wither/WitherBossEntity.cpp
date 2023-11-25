@@ -18,6 +18,13 @@ namespace Botcraft
         SetDataTargetB(0);
         SetDataTargetC(0);
         SetDataIdInv(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 300.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.6) });
+        attributes.insert({ EntityAttribute::Type::FlyingSpeed, EntityAttribute(EntityAttribute::Type::FlyingSpeed, 0.6) });
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 40.0) });
+        attributes.insert({ EntityAttribute::Type::Armor, EntityAttribute(EntityAttribute::Type::Armor, 4.0) });
     }
 
     WitherBossEntity::~WitherBossEntity()
@@ -56,6 +63,8 @@ namespace Botcraft
         output["metadata"]["data_target_b"] = GetDataTargetB();
         output["metadata"]["data_target_c"] = GetDataTargetC();
         output["metadata"]["data_id_inv"] = GetDataIdInv();
+
+        output["attributes"]["generic.flying_speed"] = GetAttributeFlyingSpeedValue();
 
         return output;
     }
@@ -121,6 +130,13 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_inv"] = data_id_inv;
+    }
+
+
+    double WitherBossEntity::GetAttributeFlyingSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::FlyingSpeed).GetValue();
     }
 
 

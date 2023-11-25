@@ -20,6 +20,10 @@ namespace Botcraft
 #else
         SetDataVillagerProfessionId(0);
 #endif
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.5) });
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 48.0) });
     }
 
     VillagerEntity::~VillagerEntity()

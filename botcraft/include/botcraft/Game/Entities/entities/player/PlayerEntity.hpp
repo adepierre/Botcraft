@@ -48,6 +48,11 @@ namespace Botcraft
 
         virtual bool IsRemotePlayer() const override;
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+        double GetAttributeAttackSpeedValue() const;
+        double GetAttributeLuckValue() const;
+
     protected:
         double GetEyeHeightImpl() const;
         virtual double GetWidthImpl() const override;

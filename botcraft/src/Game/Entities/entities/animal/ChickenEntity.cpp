@@ -4,7 +4,9 @@ namespace Botcraft
 {
     ChickenEntity::ChickenEntity()
     {
-
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 4.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.25) });
     }
 
     ChickenEntity::~ChickenEntity()

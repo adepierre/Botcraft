@@ -12,6 +12,10 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataFlagsId(0);
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 14.0) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 4.0) });
     }
 
     VexEntity::~VexEntity()

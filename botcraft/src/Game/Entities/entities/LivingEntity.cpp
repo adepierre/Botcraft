@@ -1,4 +1,5 @@
 #include "botcraft/Game/Entities/entities/LivingEntity.hpp"
+#include "botcraft/Utilities/Logger.hpp"
 
 #include <mutex>
 
@@ -32,6 +33,14 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetSleepingPosId(std::optional<Position>());
 #endif
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 20.0) });
+        attributes.insert({ EntityAttribute::Type::KnockbackResistance, EntityAttribute(EntityAttribute::Type::KnockbackResistance, 0.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.7) });
+        attributes.insert({ EntityAttribute::Type::Armor, EntityAttribute(EntityAttribute::Type::Armor, 0.0) });
+        attributes.insert({ EntityAttribute::Type::ArmorToughness, EntityAttribute(EntityAttribute::Type::ArmorToughness, 0.0) });
+        attributes.insert({ EntityAttribute::Type::MaxAbsorption, EntityAttribute(EntityAttribute::Type::MaxAbsorption, 0.0) });
     }
 
     LivingEntity::~LivingEntity()
@@ -60,6 +69,15 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["sleeping_pos_id"] = GetSleepingPosId() ? GetSleepingPosId().value().Serialize() : ProtocolCraft::Json::Value();
 #endif
+
+        output["attributes"] = ProtocolCraft::Json::Value();
+
+        output["attributes"]["generic.max_health"] = GetAttributeMaxHealthValue();
+        output["attributes"]["generic.knockback_resistance"] = GetAttributeKnockbackResistanceValue();
+        output["attributes"]["generic.movement_speed"] = GetAttributeMovementSpeedValue();
+        output["attributes"]["generic.armor"] = GetAttributeArmorValue();
+        output["attributes"]["generic.armor_toughness"] = GetAttributeArmorToughnessValue();
+        output["attributes"]["generic.max_absorption"] = GetAttributeMaxAbsorptionValue();
 
         return output;
     }
@@ -170,5 +188,119 @@ namespace Botcraft
         metadata["sleeping_pos_id"] = sleeping_pos_id;
     }
 #endif
+
+    std::optional<EntityAttribute> LivingEntity::GetAttribute(const EntityAttribute::Type type) const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+
+        auto it = attributes.find(type);
+        if (it == attributes.end())
+        {
+            return std::optional<EntityAttribute>();
+        }
+        return it->second;
+    }
+
+    void LivingEntity::SetAttributeBaseValue(const EntityAttribute::Type type, const double value)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+
+        auto it = attributes.find(type);
+        if (it == attributes.end())
+        {
+            LOG_WARNING("Trying to set attribute base value for " << type << " for a " << GetName() << " but it doesn't have this attribute");
+            return;
+        }
+        it->second.SetBaseValue(value);
+    }
+
+    void LivingEntity::RemoveAttributeModifier(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+
+        auto it = attributes.find(type);
+        if (it == attributes.end())
+        {
+            return;
+        }
+        it->second.RemoveModifier(uuid);
+    }
+
+    void LivingEntity::SetAttributeModifier(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+
+        auto it = attributes.find(type);
+        if (it == attributes.end())
+        {
+            LOG_WARNING("Trying to set attribute modifier for " << type << " for a " << GetName() << " but it doesn't have this attribute");
+            return;
+        }
+        it->second.RemoveModifier(uuid);
+    }
+
+    void LivingEntity::ClearModifiers(const EntityAttribute::Type type)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+
+        auto it = attributes.find(type);
+        if (it == attributes.end())
+        {
+            return;
+        }
+        it->second.ClearModifiers();
+    }
+
+    void LivingEntity::AddAttribute(const EntityAttribute& attribute)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+
+        auto it = attributes.find(attribute.GetType());
+        if (it == attributes.end())
+        {
+            LOG_WARNING("Trying to add an attribute " << attribute.GetType() << " to a " << GetName() << " but it was not present");
+        }
+        else
+        {
+            attributes.erase(it);
+        }
+        attributes.insert({ attribute.GetType(), attribute });
+    }
+
+    double LivingEntity::GetAttributeMaxHealthValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::MaxHealth).GetValue();
+    }
+
+    double LivingEntity::GetAttributeKnockbackResistanceValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::KnockbackResistance).GetValue();
+    }
+
+    double LivingEntity::GetAttributeMovementSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::MovementSpeed).GetValue();
+    }
+
+    double LivingEntity::GetAttributeArmorValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::Armor).GetValue();
+    }
+
+    double LivingEntity::GetAttributeArmorToughnessValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::ArmorToughness).GetValue();
+    }
+
+    double LivingEntity::GetAttributeMaxAbsorptionValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::MaxAbsorption).GetValue();
+    }
 
 }

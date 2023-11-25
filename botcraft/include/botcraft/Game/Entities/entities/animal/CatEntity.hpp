@@ -40,6 +40,9 @@ namespace Botcraft
         void SetRelaxStateOne(const bool relax_state_one);
         void SetDataCollarColor(const int data_collar_color);
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

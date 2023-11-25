@@ -15,6 +15,11 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataVariantId(0);
         SetDataTongueTargetId(std::optional<int>());
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 1.0) });
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 10.0) });
     }
 
     FrogEntity::~FrogEntity()
@@ -51,6 +56,9 @@ namespace Botcraft
 
         output["metadata"]["data_variant_id"] = GetDataVariantId();
         output["metadata"]["data_tongue_target_id"] = GetDataTongueTargetId() ? ProtocolCraft::Json::Value(GetDataTongueTargetId().value()) : ProtocolCraft::Json::Value();
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+
 
         return output;
     }
@@ -92,6 +100,13 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_tongue_target_id"] = data_tongue_target_id;
+    }
+
+
+    double FrogEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
     }
 
 

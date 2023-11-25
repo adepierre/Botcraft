@@ -20,6 +20,11 @@ namespace Botcraft
 #else
         SetDataTypeId(0);
 #endif
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 3.0) });
     }
 
     OcelotEntity::~OcelotEntity()
@@ -59,6 +64,8 @@ namespace Botcraft
 #else
         output["metadata"]["data_type_id"] = GetDataTypeId();
 #endif
+
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }
@@ -104,6 +111,13 @@ namespace Botcraft
         metadata["data_type_id"] = data_type_id;
     }
 #endif
+
+
+    double OcelotEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
+    }
 
 
     double OcelotEntity::GetWidthImpl() const

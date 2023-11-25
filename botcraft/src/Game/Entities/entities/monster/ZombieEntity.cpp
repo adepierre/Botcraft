@@ -26,6 +26,13 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         SetDataDrownedConversionId(false);
 #endif
+
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 35.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.23) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 3.0) });
+        attributes.insert({ EntityAttribute::Type::Armor, EntityAttribute(EntityAttribute::Type::Armor, 2.0) });
+        attributes.insert({ EntityAttribute::Type::ZombieSpawnReinforcementsChance, EntityAttribute(EntityAttribute::Type::ZombieSpawnReinforcementsChance, 0.0) });
     }
 
     ZombieEntity::~ZombieEntity()
@@ -68,6 +75,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         output["metadata"]["data_drowned_conversion_id"] = GetDataDrownedConversionId();
 #endif
+
+        output["attributes"]["zombie.spawn_reinforcements"] = GetAttributeSpawnReinforcementsChanceValue();
 
         return output;
     }
@@ -142,6 +151,13 @@ namespace Botcraft
         metadata["data_drowned_conversion_id"] = data_drowned_conversion_id;
     }
 #endif
+
+
+    double ZombieEntity::GetAttributeSpawnReinforcementsChanceValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::ZombieSpawnReinforcementsChance).GetValue();
+    }
 
 
     double ZombieEntity::GetWidthImpl() const

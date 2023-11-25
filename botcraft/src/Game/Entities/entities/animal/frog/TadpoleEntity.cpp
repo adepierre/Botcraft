@@ -5,7 +5,9 @@ namespace Botcraft
 {
     TadpoleEntity::TadpoleEntity()
     {
-
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 1.0) });
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 6.0) });
     }
 
     TadpoleEntity::~TadpoleEntity()

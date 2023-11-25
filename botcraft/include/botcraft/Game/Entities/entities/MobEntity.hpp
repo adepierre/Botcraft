@@ -26,5 +26,9 @@ namespace Botcraft
 
         void SetDataMobFlagsId(const char data_mob_flags_id);
 
+        // Attribute stuff
+        double GetAttributeFollowRangeValue() const;
+        double GetAttributeAttackKnockbackValue() const;
+
     };
 }

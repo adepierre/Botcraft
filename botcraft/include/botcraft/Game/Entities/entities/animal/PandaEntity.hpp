@@ -44,6 +44,9 @@ namespace Botcraft
         void SetHiddenGeneId(const char hidden_gene_id);
         void SetDataIdFlags(const char data_id_flags);
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

@@ -4,7 +4,8 @@ namespace Botcraft
 {
     SquidEntity::SquidEntity()
     {
-
+        // Initialize all attributes with default values
+        attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
     }
 
     SquidEntity::~SquidEntity()

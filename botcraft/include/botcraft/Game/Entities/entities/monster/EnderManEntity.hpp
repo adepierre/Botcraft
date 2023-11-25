@@ -45,6 +45,11 @@ namespace Botcraft
         void SetDataStaredAt(const bool data_stared_at);
 #endif
 
+        // Attribute stuff
+        // 020e0dfb-87ae-4653-9556-831010e291a0
+        static constexpr std::array<unsigned char, 16> speed_modifier_attacking_uuid = { 0x2, 0xE, 0xD, 0xFB, 0x87, 0xAE, 0x46, 0x53, 0x95, 0x56, 0x83, 0x10, 0x10, 0xE2, 0x91, 0xA0 };
+
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

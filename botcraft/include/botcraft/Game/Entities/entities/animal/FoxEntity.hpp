@@ -40,6 +40,9 @@ namespace Botcraft
         void SetDataTrustedId0(const std::optional<ProtocolCraft::UUID>& data_trusted_id_0);
         void SetDataTrustedId1(const std::optional<ProtocolCraft::UUID>& data_trusted_id_1);
 
+        // Attribute stuff
+        double GetAttributeAttackDamageValue() const;
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

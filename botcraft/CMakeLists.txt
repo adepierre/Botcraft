@@ -29,6 +29,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/World/Chunk.hpp
     include/botcraft/Game/World/World.hpp
 
+    include/botcraft/Game/Entities/EntityAttribute.hpp
     include/botcraft/Game/Entities/EntityManager.hpp
     include/botcraft/Game/Entities/GlobalPos.hpp
     include/botcraft/Game/Entities/LocalPlayer.hpp
@@ -260,6 +261,7 @@ set(botcraft_SRC
     src/Game/Inventory/InventoryManager.cpp
     src/Game/Inventory/Item.cpp
 
+    src/Game/Entities/EntityAttribute.cpp
     src/Game/Entities/EntityManager.cpp
     src/Game/Entities/LocalPlayer.cpp
     src/Game/Entities/entities/UnknownEntity.cpp
