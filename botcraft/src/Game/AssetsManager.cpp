@@ -309,6 +309,16 @@ namespace Botcraft
                 blockstate_properties[name].solid = info["solid"].get<bool>();
             }
 
+            if (info.contains("water") && info["water"].is_bool())
+            {
+                blockstate_properties[name].water = info["water"].get<bool>();
+            }
+
+            if (info.contains("lava") && info["lava"].is_bool())
+            {
+                blockstate_properties[name].lava = info["lava"].get<bool>();
+            }
+
             if (info.contains("hardness") && info["hardness"].is_number())
             {
                 blockstate_properties[name].hardness = info["hardness"].get_number<float>();
@@ -477,10 +487,16 @@ namespace Botcraft
             BlockstateProperties{
                 -1,             //id
                 0,              //metadata
+#else
+        blockstates[-1] = std::make_unique<Blockstate>(
+            BlockstateProperties{
+                -1,             //id
+#endif
                 false,          //air
                 false,          //transparent
                 true,           //solid
-                false,          //fluid
+                false,          //lava
+                false,          //water
                 false,          //climbable
                 false,          //custom
                 false,          //hazardous
@@ -490,24 +506,6 @@ namespace Botcraft
                 "default",      //name
             }
         );
-#else
-        blockstates[-1] = std::make_unique<Blockstate>(
-            BlockstateProperties{
-                -1,             //id
-                false,          //air
-                false,          //transparent
-                true,           //solid
-                false,          //fluid
-                false,          //climbable
-                false,          //custom
-                false,          //hazardous
-                -2.0f,          //hardness
-                0.6f ,          //friction
-                TintType::None, //tint_type
-                "default",      //name
-            }
-        );
-#endif
 
         const std::string file_path = ASSETS_PATH + std::string("/custom/Blocks.json");
 
@@ -556,9 +554,11 @@ namespace Botcraft
 
             const std::string& render = rendering[blockstate_name];
 
+            const bool fluid_falling = props.metadata & 0b1000;
+            const int fluid_level = 1 + (props.metadata & 0b111);
+
             if (render == "none")
             {
-                props.fluid = false;
                 props.tint_type = TintType::None;
                 props.custom = false;
                 props.path = "none";
@@ -607,13 +607,11 @@ namespace Botcraft
                     {
                         if (render == "fluid")
                         {
-                            props.fluid = true;
                             props.custom = false;
-                            blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props, Model::GetModel(15 - props.metadata, textures[blockstate_name]));
+                            blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props, Model::GetModel(fluid_falling ? 1.0 : (1.0 - fluid_level / 9.0), textures[blockstate_name]));
                         }
                         else
                         {
-                            props.fluid = false;
                             props.custom = render == "other";
                             blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props);
                         }
@@ -623,14 +621,12 @@ namespace Botcraft
                         // We want to be sure that blockstates[id][0] exists    
                         if (render == "fluid")
                         {
-                            props.fluid = true;
                             blockstates[props.id];
-                            blockstates[props.id][0] = std::make_unique<Blockstate>(props, Model::GetModel(15 - props.metadata, textures[blockstate_name]));
-                            blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props, Model::GetModel(15 - props.metadata, textures[blockstate_name]));
+                            blockstates[props.id][0] = std::make_unique<Blockstate>(props, Model::GetModel(fluid_falling ? 1.0 : (1.0 - fluid_level / 9.0), textures[blockstate_name]));
+                            blockstates[props.id][props.metadata] = std::make_unique<Blockstate>(props, Model::GetModel(fluid_falling ? 1.0 : (1.0 - fluid_level / 9.0), textures[blockstate_name]));
                         }
                         else
                         {
-                            props.fluid = false;
                             props.custom = render == "other";
                             blockstates[props.id];
                             blockstates[props.id][0] = std::make_unique<Blockstate>(props);
@@ -682,6 +678,7 @@ namespace Botcraft
 
                 // Read the properties (if any)
                 int fluid_level = 0;
+                bool fluid_falling = false;
                 if (blockstate.contains("properties") && blockstate["properties"].is_object())
                 {
                     for (const auto& [key, val]: blockstate["properties"].get_object())
@@ -690,13 +687,14 @@ namespace Botcraft
                         if (render == "fluid" && key == "level")
                         {
                             fluid_level = std::stoi(val.get_string());
+                            fluid_falling = fluid_level & 0b1000;
+                            fluid_level = 1 + (fluid_level & 0b111);
                         }
                     }
                 }
 
                 if (render == "none")
                 {
-                    props.fluid = false;
                     props.tint_type = TintType::None;
                     props.custom = false;
                     props.path = "none";
@@ -710,14 +708,12 @@ namespace Botcraft
                     }
                     else
                     {
-                        props.fluid = true;
                         props.tint_type = tint_types[blockstate_name];
-                        blockstates[props.id] = std::make_unique<Blockstate>(props, Model::GetModel(15 - fluid_level, textures[blockstate_name]));
+                        blockstates[props.id] = std::make_unique<Blockstate>(props, Model::GetModel(fluid_falling ? 1.0 : (1.0 - fluid_level / 9.0), textures[blockstate_name]));
                     }
                 }
                 else if (render == "block" || render == "other")
                 {
-                    props.fluid = false;
                     props.custom = render == "other";
                     props.tint_type = tint_types[blockstate_name];
                     props.path = blockstate_name.substr(10);
