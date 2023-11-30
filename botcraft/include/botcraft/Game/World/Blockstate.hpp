@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bitset>
 #include <deque>
 #include <map>
 #include <string>
@@ -46,8 +47,10 @@ namespace Botcraft
         bool transparent = false;
         /// @brief True if can't go through it
         bool solid = false;
-        /// @brief True for water and lava
-        bool fluid = false;
+        /// @brief True for lava
+        bool lava = false;
+        /// @brief True for water
+        bool water = false;
         /// @brief True if can be used as a ladder
         bool climbable = false;
         /// @brief True if the model is a custom one (chests/banners etc...)
@@ -89,12 +92,20 @@ namespace Botcraft
         bool IsSolid() const;
         bool IsTransparent() const;
         bool IsFluid() const;
+        bool IsFluidOrWaterlogged() const;
+        bool IsLava() const;
+        bool IsWater() const;
+        bool IsWaterlogged() const;
+        bool IsWaterOrWaterlogged() const;
         bool IsClimbable() const;
         bool IsHazardous() const;
-        bool IsWaterlogged() const;
+        bool IsHoney() const;
         float GetHardness() const;
         float GetFriction() const;
         TintType GetTintType() const;
+        /// @brief Get fluid height for this block. Does not take into account neighbouring blocks
+        /// @return Height of fluid in this block, between 0 and 1
+        float GetFluidHeight() const;
 
         /// @brief Compute the amount of time (in s) required to mine this block
         /// @param tool_type The tool used to mine
@@ -140,12 +151,27 @@ namespace Botcraft
     private:
         BlockstateId blockstate_id;
 
-        bool air;
-        bool transparent;
-        bool solid;
-        bool fluid;
-        bool climbable;
-        bool hazardous;
+
+        enum class BlockstateFlags : size_t
+        {
+            Air = 0,
+            Solid,
+            Transparent,
+            Lava,
+            Water,
+            WaterLogged,
+            FluidFalling,
+            FluidLevelBit_0,
+            FluidLevelBit_1,
+            FluidLevelBit_2,
+            Climbable,
+            Hazardous,
+            AnyToolHarvest,
+            Honey,
+            NUM_FLAGS
+        };
+
+        std::bitset<static_cast<size_t>(BlockstateFlags::NUM_FLAGS)> flags;
         float hardness;
         float friction;
         TintType tint_type;
@@ -155,7 +181,6 @@ namespace Botcraft
         std::vector<int> models_weights;
         int weights_sum;
 
-        bool any_tool_harvest;
         std::vector<BestTool> best_tools;
 
         std::map<const std::string*, const std::string*, string_ptr_compare> variables; // map is smaller in RAM than unordered_map

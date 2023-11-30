@@ -86,7 +86,8 @@
         "texture": "blocks/water_flow",
         "tintType": "water",
         "hardness": 100,
-        "climbable": true
+        "climbable": true,
+        "water": true
     },
     {
         "name": "minecraft:water",
@@ -96,7 +97,8 @@
         "texture": "blocks/water_still",
         "tintType": "water",
         "hardness": 100,
-        "climbable": true
+        "climbable": true,
+        "water": true
     },
     {
         "name": "minecraft:flowing_lava",
@@ -106,7 +108,8 @@
         "texture": "blocks/lava_flow",
         "hardness": 100,
         "hazardous": true,
-        "climbable": true
+        "climbable": true,
+        "lava": true
     },
     {
         "name": "minecraft:lava",
@@ -116,7 +119,8 @@
         "texture": "blocks/lava_still",
         "hardness": 100,
         "hazardous": true,
-        "climbable": true
+        "climbable": true,
+        "lava": true
     },
     {
         "name": "minecraft:sand",

@@ -273,7 +273,8 @@
         "texture": "block/water_still",
         "tintType": "water",
         "transparent": true,
-        "climbable": true
+        "climbable": true,
+        "water": true
     },
     {
         "hardness": 100,
@@ -283,7 +284,8 @@
         "texture": "block/lava_still",
         "transparent": true,
         "hazardous": true,
-        "climbable": true
+        "climbable": true,
+        "lava": true
     },
     {
         "hardness": 0.5,
@@ -1090,7 +1092,8 @@
         "transparent": true,
         "tools": [
             "any"
-        ]
+        ],
+        "water": true
     },
     {
         "hardness": 0,
@@ -1100,7 +1103,8 @@
         "transparent": true,
         "tools": [
             "any"
-        ]
+        ],
+        "water": true
     },
     {
         "hardness": 1.5,
@@ -5823,7 +5827,8 @@
         "transparent": true,
         "tools": [
             "any"
-        ]
+        ],
+        "water": true
     },
     {
         "hardness": 0,
@@ -5833,7 +5838,8 @@
         "transparent": true,
         "tools": [
             "any"
-        ]
+        ],
+        "water": true
     },
     {
         "hardness": 0.5,
@@ -6321,7 +6327,8 @@
         "tintType": "water",
         "solid": false,
         "transparent": true,
-        "climbable": true
+        "climbable": true,
+        "water": true
     },
     {
         "hardness": -2,
