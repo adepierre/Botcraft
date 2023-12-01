@@ -57,6 +57,12 @@ namespace Botcraft
         bool custom = false;
         /// @brief True if block can hurt when walking in/on it
         bool hazardous = false;
+        /// @brief True if block has the fence tag
+        bool fence = false;
+        /// @brief True if block has the fence_gate tag
+        bool fence_gate = false;
+        /// @brief True if block has the wall tag
+        bool wall = false;
         /// @brief Digging hardness
         float hardness = -2.0f;
         /// @brief Slipperiness coefficient
@@ -100,6 +106,8 @@ namespace Botcraft
         bool IsClimbable() const;
         bool IsHazardous() const;
         bool IsHoney() const;
+        bool IsScaffolding() const;
+        bool IsWallHeight() const;
         float GetHardness() const;
         float GetFriction() const;
         TintType GetTintType() const;
@@ -168,6 +176,8 @@ namespace Botcraft
             Hazardous,
             AnyToolHarvest,
             Honey,
+            Scaffolding,
+            WallHeight,
             NUM_FLAGS
         };
 

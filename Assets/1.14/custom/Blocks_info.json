@@ -2129,7 +2129,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "hardness": 1,
@@ -2688,7 +2689,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "hardness": 2,
@@ -2750,7 +2752,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "fence": true
     },
     {
         "hardness": 2,
@@ -2981,7 +2984,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 2,
@@ -2991,7 +2995,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 0,
@@ -4995,7 +5000,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "hardness": 2,
@@ -5006,7 +5012,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "hardness": 2,
@@ -5017,7 +5024,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "hardness": 2,
@@ -5028,7 +5036,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "hardness": 2,
@@ -5039,7 +5048,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "hardness": 2,
@@ -5050,7 +5060,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "hardness": 2,
@@ -5061,7 +5072,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "hardness": 2,
@@ -5072,7 +5084,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "hardness": 2,
@@ -5083,7 +5096,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "hardness": 2,
@@ -5094,7 +5108,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "hardness": 3,
@@ -6843,7 +6858,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 1.5,
@@ -6853,7 +6869,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 0.8,
@@ -6863,7 +6880,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 1.5,
@@ -6873,7 +6891,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 1.5,
@@ -6883,7 +6902,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 1.5,
@@ -6893,7 +6913,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 2,
@@ -6903,7 +6924,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 1.5,
@@ -6913,7 +6935,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 2,
@@ -6923,7 +6946,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 0.8,
@@ -6933,7 +6957,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 3,
@@ -6943,7 +6968,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 1.5,
@@ -6953,7 +6979,8 @@
         "transparent": true,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "hardness": 0,

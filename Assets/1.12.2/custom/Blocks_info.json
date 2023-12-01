@@ -939,7 +939,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "name": "minecraft:pumpkin",
@@ -1172,7 +1173,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "name": "minecraft:brick_stairs",
@@ -1234,7 +1236,8 @@
         "hardness": 2,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "fence": true
     },
     {
         "name": "minecraft:nether_brick_stairs",
@@ -1497,7 +1500,8 @@
         "hardness": 2,
         "tools": [
             "pickaxe"
-        ]
+        ],
+        "wall": true
     },
     {
         "name": "minecraft:flower_pot",
@@ -1961,7 +1965,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "name": "minecraft:birch_fence_gate",
@@ -1972,7 +1977,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "name": "minecraft:jungle_fence_gate",
@@ -1983,7 +1989,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "name": "minecraft:dark_oak_fence_gate",
@@ -1994,7 +2001,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "name": "minecraft:acacia_fence_gate",
@@ -2005,7 +2013,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence_gate": true
     },
     {
         "name": "minecraft:spruce_fence",
@@ -2016,7 +2025,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "name": "minecraft:birch_fence",
@@ -2027,7 +2037,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "name": "minecraft:jungle_fence",
@@ -2038,7 +2049,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "name": "minecraft:dark_oak_fence",
@@ -2049,7 +2061,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "name": "minecraft:acacia_fence",
@@ -2060,7 +2073,8 @@
         "tools": [
             "any",
             "axe"
-        ]
+        ],
+        "fence": true
     },
     {
         "name": "minecraft:spruce_door",

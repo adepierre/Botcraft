@@ -269,6 +269,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         flags[static_cast<size_t>(BlockstateFlags::Honey)] = properties.name == "minecraft:honey_block";
 #endif
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        flags[static_cast<size_t>(BlockstateFlags::Scaffolding)] = properties.name == "minecraft:scaffolding";
+#endif
+        flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall || properties.fence || properties.fence_gate;
+
         hardness = properties.hardness;
         friction = properties.friction;
         tint_type = properties.tint_type;
@@ -294,6 +299,10 @@ namespace Botcraft
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = (level >> 1) & 0x01;
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = (level >> 2) & 0x01;
                 level_found = true;
+            }
+            if (properties.fence_gate && splitted[0] == "open" && splitted[1] == "true")
+            {
+                flags[static_cast<size_t>(BlockstateFlags::Solid)] = false;
             }
         }
         // This means it's a special "full water" block (like kelp or sea_grass)
@@ -591,7 +600,13 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         flags[static_cast<size_t>(BlockstateFlags::Honey)] = properties.name == "minecraft:honey_block";
 #endif
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        flags[static_cast<size_t>(BlockstateFlags::Scaffolding)] = properties.name == "minecraft:scaffolding";
+#endif
+        flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall || properties.fence || properties.fence_gate;
+
         hardness = properties.hardness;
+        friction = properties.friction;
         tint_type = properties.tint_type;
         m_name = GetUniqueStringPtr(properties.name);
         best_tools = properties.best_tools;
@@ -614,6 +629,10 @@ namespace Botcraft
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = (level >> 1) & 0x01;
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = (level >> 2) & 0x01;
                 level_found = true;
+            }
+            if (properties.fence_gate && splitted[0] == "open" && splitted[1] == "true")
+            {
+                flags[static_cast<size_t>(BlockstateFlags::Solid)] = false;
             }
         }
         // This means it's a special "full water" block (like kelp or sea_grass)
@@ -731,6 +750,20 @@ namespace Botcraft
 #else
         return flags[static_cast<size_t>(BlockstateFlags::Honey)];
 #endif
+    }
+
+    bool Blockstate::IsScaffolding() const
+    {
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        return false;
+#else
+        return flags[static_cast<size_t>(BlockstateFlags::Scaffolding)];
+#endif
+    }
+
+    bool Blockstate::IsWallHeight() const
+    {
+        return flags[static_cast<size_t>(BlockstateFlags::WallHeight)];
     }
 
     float Blockstate::GetHardness() const
