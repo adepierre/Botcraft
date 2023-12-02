@@ -46,7 +46,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - Signed chat system for 1.19+ versions
 - Physics and collisions
 - World data
-- Full entity support (type, data and metadata)
+- Full entity support (type, data, metadata and attributes)
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system ([wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
 - Extremely resource efficient (CPU/RAM) bots (<5 Mb for AFK bots, <100 Mb for headless working bots)
@@ -54,11 +54,11 @@ Main features are listed below. To see the evolution of the project, check the [
 - Custom framework to easily test the bot behaviours on a vanilla server ([wiki page](https://github.com/adepierre/Botcraft/wiki/Test-framework) for details)
 
 Available bot behaviours includes:
-- Path finding (including ladder/scaffolding climbing, see [wiki page](https://github.com/adepierre/Botcraft/wiki/Pathfinding))
+- Pathfinding (including ladder/scaffolding climbing, see [wiki page](https://github.com/adepierre/Botcraft/wiki/Pathfinding))
 - Block breaking (including with correct tool/haste effects)
 - Inventory managing (including interactions with chest/anvil/brewing stand...)
 - Block placing (vanilla or mid-air)
-- Entity interactions (attack, ride...)
+- Entity interactions (attack...)
 - Item use (fishing rods, food eating...)
 - Block interaction (button, lever, bed...)
 - Villager trading (only for versions 1.14+)
@@ -127,13 +127,13 @@ mkdir build
 cd build
 cmake -DBOTCRAFT_GAME_VERSION=latest -DCMAKE_BUILD_TYPE=Release -DBOTCRAFT_BUILD_EXAMPLES=ON -DBOTCRAFT_BUILD_TESTS=ON -DBOTCRAFT_BUILD_TESTS_ONLINE=ON -DBOTCRAFT_COMPRESSION=ON -DBOTCRAFT_ENCRYPTION=ON -DBOTCRAFT_USE_OPENGL_GUI=OFF ..
 cmake --build . --config Release
-# Run all tests
+# Run all tests (optional)
 ctest -C Release
-# Build doc
+# Build doc (optional)
 cmake --build . --target doc_doxygen
 ```
 
-At this point, you should have all the examples compiled and ready to run, the tests performed and the documentation generated. Please note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual. For a detailed Windows building tutorial, see this [wiki](https://github.com/adepierre/Botcraft/wiki/Detailed-installation-guide) page.
+At this point, you should have all the examples compiled and ready to run, the tests performed and the documentation generated. Please note that you don't have to clone recursively or download and install the dependencies manually, cmake will automatically take care of these steps based on your build configuration and what is already installed on your machine. On Windows with Visual, you can also use cmake-gui and then compile the .sln directly from Visual. For a detailed Windows building tutorial, see this [wiki](https://github.com/adepierre/Botcraft/wiki/Detailed-from-source-installation-guide) page.
 
 You can check [this discussion](https://github.com/adepierre/Botcraft/discussions/45#discussioncomment-1142555) for an example of how to use botcraft with your own code. In case you need help, you can try to ask on the [community discord server](https://discord.gg/wECVsTbjA9).
 
