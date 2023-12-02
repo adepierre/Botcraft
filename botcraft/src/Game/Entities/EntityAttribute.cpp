@@ -345,7 +345,7 @@ namespace Botcraft
             current_value = std::min(2.0, std::max(0.0, current_value));
             break;
         default:
-            current_value = current_value;
+            // No need to change the value
             break;
         }
 

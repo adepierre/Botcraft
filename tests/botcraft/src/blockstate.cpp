@@ -28,7 +28,7 @@ TEST_CASE("Testing mining time calculation")
     {
         blockstate_properties.hardness = 100.0f;
         blockstate_properties.any_tool_harvest = false;
-        blockstate_properties.fluid = true;
+        blockstate_properties.water = true;
         blockstate_properties.best_tools = {
 
         };

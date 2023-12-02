@@ -69,7 +69,9 @@ namespace Botcraft
         double GetAttributeMovementSpeedValue() const;
         double GetAttributeArmorValue() const;
         double GetAttributeArmorToughnessValue() const;
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         double GetAttributeMaxAbsorptionValue() const;
+#endif
 
         // 87f46a96-686f-4796-b035-22e16ee9e038
         static constexpr std::array<unsigned char, 16> speed_modifier_soul_speed_uuid = { 0x87, 0xF4, 0x6A, 0x96, 0x68, 0x6F, 0x47, 0x96, 0xB0, 0x35, 0x22, 0xE1, 0x6E, 0xE9, 0xE0, 0x38 };

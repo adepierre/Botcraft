@@ -257,8 +257,8 @@ namespace Botcraft
         flags[static_cast<size_t>(BlockstateFlags::Transparent)] = properties.transparent;
         flags[static_cast<size_t>(BlockstateFlags::Lava)] = properties.lava;
         flags[static_cast<size_t>(BlockstateFlags::Water)] = properties.water;
-        // Waterlogged, WaterFalling and FluidLevelBit_N will be set to correct value when loading variables
-        flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = false;
+        // Waterlogged, WaterFalling and FluidLevelBit_N will also be set when loading variables
+        flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = properties.waterlogged;
         flags[static_cast<size_t>(BlockstateFlags::FluidFalling)] = false;
         flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = false;
         flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = false;
@@ -280,8 +280,6 @@ namespace Botcraft
         m_name = GetUniqueStringPtr(properties.name);
         best_tools = properties.best_tools;
 
-        bool waterlogged_found = false;
-        bool level_found = false;
         for (int i = 0; i < properties.variables.size(); ++i)
         {
             std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
@@ -289,7 +287,6 @@ namespace Botcraft
             if (splitted[0] == "waterlogged" && splitted[1] == "true")
             {
                 flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = true;
-                waterlogged_found = true;
             }
             if (IsFluid() && splitted[0] == "level")
             {
@@ -298,18 +295,11 @@ namespace Botcraft
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = (level >> 0) & 0x01;
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = (level >> 1) & 0x01;
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = (level >> 2) & 0x01;
-                level_found = true;
             }
             if (properties.fence_gate && splitted[0] == "open" && splitted[1] == "true")
             {
                 flags[static_cast<size_t>(BlockstateFlags::Solid)] = false;
             }
-        }
-        // This means it's a special "full water" block (like kelp or sea_grass)
-        if (IsWater() && !waterlogged_found && !level_found && properties.name != "minecraft:bubble_column")
-        {
-            flags[static_cast<size_t>(BlockstateFlags::Water)] = false;
-            flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = true;
         }
 
         weights_sum = 0;
@@ -589,7 +579,7 @@ namespace Botcraft
         flags[static_cast<size_t>(BlockstateFlags::Lava)] = properties.lava;
         flags[static_cast<size_t>(BlockstateFlags::Water)] = properties.water;
         // Waterlogged, WaterFalling and FluidLevelBit_N will be set to correct value when loading variables
-        flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = false;
+        flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = properties.waterlogged;
         flags[static_cast<size_t>(BlockstateFlags::FluidFalling)] = false;
         flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = false;
         flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = false;
@@ -610,8 +600,6 @@ namespace Botcraft
         tint_type = properties.tint_type;
         m_name = GetUniqueStringPtr(properties.name);
         best_tools = properties.best_tools;
-        bool waterlogged_found = false;
-        bool level_found = false;
         for (int i = 0; i < properties.variables.size(); ++i)
         {
             std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
@@ -619,7 +607,6 @@ namespace Botcraft
             if (splitted[0] == "waterlogged" && splitted[1] == "true")
             {
                 flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = true;
-                waterlogged_found = true;
             }
             if (IsFluid() && splitted[0] == "level")
             {
@@ -628,18 +615,11 @@ namespace Botcraft
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = (level >> 0) & 0x01;
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = (level >> 1) & 0x01;
                 flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = (level >> 2) & 0x01;
-                level_found = true;
             }
             if (properties.fence_gate && splitted[0] == "open" && splitted[1] == "true")
             {
                 flags[static_cast<size_t>(BlockstateFlags::Solid)] = false;
             }
-        }
-        // This means it's a special "full water" block (like kelp or sea_grass)
-        if (IsWater() && !waterlogged_found && !level_found && properties.name != "minecraft:bubble_column")
-        {
-            flags[static_cast<size_t>(BlockstateFlags::Water)] = false;
-            flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = true;
         }
 
         LoadWeightedModels({ {model_, 1} });

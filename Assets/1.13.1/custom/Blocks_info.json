@@ -1093,7 +1093,7 @@
         "tools": [
             "any"
         ],
-        "water": true
+        "waterlogged": true
     },
     {
         "hardness": 0,
@@ -1104,7 +1104,7 @@
         "tools": [
             "any"
         ],
-        "water": true
+        "waterlogged": true
     },
     {
         "hardness": 1.5,
@@ -5843,7 +5843,7 @@
         "tools": [
             "any"
         ],
-        "water": true
+        "waterlogged": true
     },
     {
         "hardness": 0,
@@ -5854,7 +5854,7 @@
         "tools": [
             "any"
         ],
-        "water": true
+        "waterlogged": true
     },
     {
         "hardness": 0.5,

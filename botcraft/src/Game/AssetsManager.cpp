@@ -314,9 +314,29 @@ namespace Botcraft
                 blockstate_properties[name].water = info["water"].get<bool>();
             }
 
+            if (info.contains("waterlogged") && info["waterlogged"].is_bool())
+            {
+                blockstate_properties[name].waterlogged = info["waterlogged"].get<bool>();
+            }
+
             if (info.contains("lava") && info["lava"].is_bool())
             {
                 blockstate_properties[name].lava = info["lava"].get<bool>();
+            }
+ 
+            if (info.contains("fence") && info["fence"].is_bool())
+            {
+                blockstate_properties[name].fence = info["fence"].get<bool>();
+            }
+
+            if (info.contains("fence_gate") && info["fence_gate"].is_bool())
+            {
+                blockstate_properties[name].fence_gate = info["fence_gate"].get<bool>();
+            }
+
+            if (info.contains("wall") && info["wall"].is_bool())
+            {
+                blockstate_properties[name].wall = info["wall"].get<bool>();
             }
 
             if (info.contains("hardness") && info["hardness"].is_number())
@@ -497,9 +517,13 @@ namespace Botcraft
                 true,           //solid
                 false,          //lava
                 false,          //water
+                false,          //waterlogged
                 false,          //climbable
                 false,          //custom
                 false,          //hazardous
+                false,          //fence
+                false,          //fence_gate
+                false,          //wall
                 -2.0f,          //hardness
                 0.6f,           //friction
                 TintType::None, //tint_type
