@@ -2068,10 +2068,7 @@
         "name": "minecraft:cake",
         "render": "block",
         "solid": true,
-        "transparent": true,
-        "tools": [
-            "any"
-        ]
+        "transparent": true
     },
     {
         "hardness": 0,

@@ -2288,10 +2288,7 @@
         "name": "minecraft:cake",
         "render": "block",
         "solid": true,
-        "transparent": true,
-        "tools": [
-            "any"
-        ]
+        "transparent": true
     },
     {
         "hardness": 0,
@@ -9629,10 +9626,7 @@
         "name": "minecraft:frogspawn",
         "render": "block",
         "solid": false,
-        "transparent": true,
-        "tools": [
-            "any"
-        ]
+        "transparent": true
     },
     {
         "hardness": 0.5,
@@ -9928,10 +9922,7 @@
         "name": "minecraft:reinforced_deepslate",
         "render": "block",
         "solid": true,
-        "transparent": false,
-        "tools": [
-            "any"
-        ]
+        "transparent": false
     },
     {
         "hardness": 0.2,
