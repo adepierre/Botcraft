@@ -127,6 +127,9 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundConfigurationAcknowledgedPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundPingRequestPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerSlotStateChangedPacket.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -263,6 +266,9 @@ namespace ProtocolCraft
         ServerboundChunkBatchReceivedPacket,
         ServerboundConfigurationAcknowledgedPacket,
         ServerboundPingRequestPacket,
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        ServerboundContainerSlotStateChangedPacket,
 #endif
         ServerboundKeepAlivePacket
     >;

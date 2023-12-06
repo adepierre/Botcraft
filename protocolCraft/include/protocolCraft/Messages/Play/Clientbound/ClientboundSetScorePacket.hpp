@@ -1,6 +1,9 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#include "protocolCraft/Types/Chat/Chat.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -39,6 +42,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x5B;
 #elif PROTOCOL_VERSION == 764 /* 1.20.2 */
         static constexpr int packet_id = 0x5D;
+#elif PROTOCOL_VERSION == 765 /* 1.20.3 */
+        static constexpr int packet_id = 0x5F;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -65,10 +70,22 @@ namespace ProtocolCraft
             score = score_;
         }
 
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         void SetMethod(const SetScoreMethod method_)
         {
             method = method_;
         }
+#else
+        void SetDisplay(const std::optional<Chat>& display_)
+        {
+            display = display_;
+        }
+
+        void SetNumberFormat(const std::optional<NumberFormat>& number_format_)
+        {
+            number_format = number_format_;
+        }
+#endif
 
 
         const std::string& GetOwner() const
@@ -86,33 +103,59 @@ namespace ProtocolCraft
             return score;
         }
 
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         SetScoreMethod GetMethod() const
         {
             return method;
         }
+#else
+        const std::optional<Chat>& GetDisplay() const
+        {
+            return display;
+        }
+
+        const std::optional<NumberFormat>& GetNumberFormat() const
+        {
+            return number_format;
+        }
+#endif
 
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             owner = ReadData<std::string>(iter, length);
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
             method = static_cast<SetScoreMethod>(ReadData<char>(iter, length));
             objective_name = ReadData<std::string>(iter, length);
             if (method != SetScoreMethod::Remove)
             {
                 score = ReadData<VarInt>(iter, length);
             }
+#else
+            objective_name = ReadData<std::string>(iter, length);
+            score = ReadData<VarInt>(iter, length);
+            display = ReadOptional<Chat>(iter, length);
+            number_format = ReadOptional<NumberFormat>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(owner, container);
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
             WriteData<char>(static_cast<char>(method), container);
             WriteData<std::string>(objective_name, container);
             if (method != SetScoreMethod::Remove)
             {
                 WriteData<VarInt>(score, container);
             }
+#else
+            WriteData<std::string>(objective_name, container);
+            WriteData<VarInt>(score, container);
+            WriteOptional<Chat>(display, container);
+            WriteOptional<NumberFormat>(number_format, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -120,12 +163,24 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["owner"] = owner;
-            output["method"] = method;
             output["objective_name"] = objective_name;
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
+            output["method"] = method;
             if (method != SetScoreMethod::Remove)
             {
                 output["score"] = score;
             }
+#else
+            output["score"] = score;
+            if (display.has_value())
+            {
+                output["display"] = display.value();
+            }
+            if (number_format.has_value())
+            {
+                output["number_format"] = number_format.value();
+            }
+#endif
 
             return output;
         }
@@ -134,7 +189,12 @@ namespace ProtocolCraft
         std::string owner;
         std::string objective_name;
         int score = 0;
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         SetScoreMethod method;
+#else
+        std::optional<Chat> display;
+        std::optional<NumberFormat> number_format;
+#endif
 
     };
 } //ProtocolCraft

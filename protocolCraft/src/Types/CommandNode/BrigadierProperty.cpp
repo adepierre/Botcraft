@@ -121,6 +121,9 @@ namespace ProtocolCraft
         case BrigadierPropertyType::ItemPredicate:
         case BrigadierPropertyType::Color:
         case BrigadierPropertyType::Component:
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        case BrigadierPropertyType::Style:
+#endif
         case BrigadierPropertyType::Message:
         case BrigadierPropertyType::NbtCompoundTag:
         case BrigadierPropertyType::NbtTag:

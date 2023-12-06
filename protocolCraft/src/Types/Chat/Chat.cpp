@@ -2,6 +2,7 @@
 
 namespace ProtocolCraft
 {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     std::string Chat::ParseChat(const Json::Value& raw_json)
     {
         if (raw_json.is_object())
@@ -72,4 +73,15 @@ namespace ProtocolCraft
 
         return "";
     }
+#else
+    std::string Chat::ParseChat(const NBT::Tag& raw)
+    {
+        if (raw.is<NBT::TagString>())
+        {
+            return raw.get<NBT::TagString>();
+        }
+        // TODO
+        return "";
+    }
+#endif
 }

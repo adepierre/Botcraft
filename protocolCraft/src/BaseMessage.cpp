@@ -59,7 +59,13 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundKeepAliveConfigurationPacket>;
     template class BaseMessage<ClientboundPingConfigurationPacket>;
     template class BaseMessage<ClientboundRegistryDataPacket>;
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     template class BaseMessage<ClientboundResourcePackConfigurationPacket>;
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+    template class BaseMessage<ClientboundResourcePackPopConfigurationPacket>;
+    template class BaseMessage<ClientboundResourcePackPushConfigurationPacket>;
+#endif
     template class BaseMessage<ClientboundUpdateEnabledFeaturesPacket>;
     template class BaseMessage<ClientboundUpdateTagsConfigurationPacket>;
 #endif
@@ -170,6 +176,9 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundConfigurationAcknowledgedPacket>;
     template class BaseMessage<ServerboundPingRequestPacket>;
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+    template class BaseMessage<ServerboundContainerSlotStateChangedPacket>;
+#endif
 
     // Play clientbound
     template class BaseMessage<ClientboundUpdateAdvancementsPacket>;
@@ -269,7 +278,9 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundTabListPacket>;
     template class BaseMessage<ClientboundCustomPayloadPacket>;
     template class BaseMessage<ClientboundRemoveMobEffectPacket>;
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     template class BaseMessage<ClientboundResourcePackPacket>;
+#endif
     template class BaseMessage<ClientboundSetObjectivePacket>;
     template class BaseMessage<ClientboundSelectAdvancementsTabPacket>;
     template class BaseMessage<ClientboundSetExperiencePacket>;
@@ -386,5 +397,12 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundChunkBatchStartPacket>;
     template class BaseMessage<ClientboundPongResponsePacket>;
     template class BaseMessage<ClientboundStartConfigurationPacket>;
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+    template class BaseMessage<ClientboundResetScorePacket>;
+    template class BaseMessage<ClientboundResourcePackPopPacket>;
+    template class BaseMessage<ClientboundResourcePackPushPacket>;
+    template class BaseMessage<ClientboundTickingStatePacket>;
+    template class BaseMessage<ClientboundTickingStepPacket>;
 #endif
 }

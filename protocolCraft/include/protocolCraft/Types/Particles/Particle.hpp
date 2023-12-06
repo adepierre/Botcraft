@@ -48,6 +48,10 @@ namespace ProtocolCraft
         EntityEffect,
         ExplosionEmitter,
         Explosion,
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        Gust,
+        GustEmitter,
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SonicBoom,
 #endif
@@ -95,6 +99,9 @@ namespace ProtocolCraft
         Portal,
         Rain,
         Smoke,
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        WhiteSmoke,
+#endif
 #if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         Sneeze,
 #endif
@@ -157,6 +164,11 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         EggCrack,
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        DustPlume,
+        GustDust,
+        TrialSpawnerDetection,
 #endif
     };
 #else

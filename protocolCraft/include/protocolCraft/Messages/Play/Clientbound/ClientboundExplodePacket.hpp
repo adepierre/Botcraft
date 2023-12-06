@@ -2,6 +2,12 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#include "protocolCraft/Types/Particles/Particle.hpp"
+#include "protocolCraft/Types/Sound/SoundEvent.hpp"
+
+#include <memory>
+#endif
 
 namespace ProtocolCraft
 {
@@ -36,7 +42,7 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x1A;
 #elif PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */
         static constexpr int packet_id = 0x1D;
-#elif PROTOCOL_VERSION == 764 /* 1.20.2 */
+#elif PROTOCOL_VERSION == 764 /* 1.20.2 */ || PROTOCOL_VERSION == 765 /* 1.20.3 */
         static constexpr int packet_id = 0x1E;
 #else
 #error "Protocol version not implemented"
@@ -106,6 +112,29 @@ namespace ProtocolCraft
             knockback_z = knockback_z_;
         }
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        void SetSmallExplosionParticles(const std::shared_ptr<Particle>& small_explosion_particles_)
+        {
+            small_explosion_particles = small_explosion_particles_;
+        }
+
+        void SetLargeExplosionParticles(const std::shared_ptr<Particle>& large_explosion_particles_)
+        {
+            large_explosion_particles = large_explosion_particles_;
+        }
+
+        void SetBlockInteraction(const int block_interaction_)
+        {
+            block_interaction = block_interaction_;
+        }
+
+        void SetExplosionSound(const SoundEvent& explosion_sound_)
+        {
+            explosion_sound = explosion_sound_;
+        }
+#endif
+
+
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         float GetX() const
         {
@@ -164,6 +193,28 @@ namespace ProtocolCraft
             return knockback_z;
         }
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        const std::shared_ptr<Particle>& GetSmallExplosionParticles() const
+        {
+            return small_explosion_particles;
+        }
+
+        const std::shared_ptr<Particle>& GetLargeExplosionParticles() const
+        {
+            return large_explosion_particles;
+        }
+
+        int GetBlockInteraction() const
+        {
+            return block_interaction;
+        }
+
+        const SoundEvent& GetExplosionSound() const
+        {
+            return explosion_sound;
+        }
+#endif
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -208,6 +259,16 @@ namespace ProtocolCraft
             knockback_x = ReadData<float>(iter, length);
             knockback_y = ReadData<float>(iter, length);
             knockback_z = ReadData<float>(iter, length);
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            block_interaction = ReadData<VarInt>(iter, length);
+            const int small_explosion_particles_type = ReadData<VarInt>(iter, length);
+            small_explosion_particles = Particle::CreateParticle(static_cast<ParticleType>(small_explosion_particles_type));
+            small_explosion_particles->Read(iter, length);
+            const int large_explosion_particles_type = ReadData<VarInt>(iter, length);
+            large_explosion_particles = Particle::CreateParticle(static_cast<ParticleType>(large_explosion_particles_type));
+            large_explosion_particles->Read(iter, length);
+            explosion_sound = ReadData<SoundEvent>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -244,6 +305,14 @@ namespace ProtocolCraft
             WriteData<float>(knockback_x, container);
             WriteData<float>(knockback_y, container);
             WriteData<float>(knockback_z, container);
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            WriteData<VarInt>(block_interaction, container);
+            WriteData<VarInt>(static_cast<int>(small_explosion_particles->GetType()), container);
+            small_explosion_particles->Write(container);
+            WriteData<VarInt>(static_cast<int>(large_explosion_particles->GetType()), container);
+            large_explosion_particles->Write(container);
+            WriteData<SoundEvent>(explosion_sound, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -258,6 +327,12 @@ namespace ProtocolCraft
             output["knockback_x"] = knockback_x;
             output["knockback_y"] = knockback_y;
             output["knockback_z"] = knockback_z;
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            output["block_interaction"] = block_interaction;
+            output["small_explosion_particles"] = small_explosion_particles->Serialize();
+            output["large_explosion_particles"] = large_explosion_particles->Serialize();
+            output["explosion_sound"] = explosion_sound;
+#endif
 
             return output;
         }
@@ -277,6 +352,12 @@ namespace ProtocolCraft
         float knockback_x = 0.0f;
         float knockback_y = 0.0f;
         float knockback_z = 0.0f;
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        std::shared_ptr<Particle> small_explosion_particles;
+        std::shared_ptr<Particle> large_explosion_particles;
+        int block_interaction;
+        SoundEvent explosion_sound;
+#endif
 
     };
 } //ProtocolCraft

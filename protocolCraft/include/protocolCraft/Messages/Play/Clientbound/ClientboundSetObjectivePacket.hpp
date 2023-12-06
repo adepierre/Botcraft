@@ -5,6 +5,9 @@
 #if PROTOCOL_VERSION > 389 /* > 1.12.2 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#include "protocolCraft/Types/Chat/NumberFormat.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -37,6 +40,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x58;
 #elif PROTOCOL_VERSION == 764 /* 1.20.2 */
         static constexpr int packet_id = 0x5A;
+#elif PROTOCOL_VERSION == 765 /* 1.20.3 */
+        static constexpr int packet_id = 0x5C;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -76,6 +81,13 @@ namespace ProtocolCraft
             method = method_;
         }
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        void SetNumberFormat(const NumberFormat& number_format_)
+        {
+            number_format = number_format_;
+        }
+#endif
+
 
         const std::string& GetObjectiveName() const
         {
@@ -105,6 +117,13 @@ namespace ProtocolCraft
             return method;
         }
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        const NumberFormat& GetNumberFormat() const
+        {
+            return number_format;
+        }
+#endif
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -122,6 +141,9 @@ namespace ProtocolCraft
                 render_type = ReadData<std::string>(iter, length);
 #else
                 render_type = ReadData<VarInt>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+                number_format = ReadData<NumberFormat>(iter, length);
 #endif
             }
         }
@@ -142,6 +164,9 @@ namespace ProtocolCraft
 #else
                 WriteData<VarInt>(render_type, container);
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+                WriteData<NumberFormat>(number_format, container);
+#endif
             }
         }
 
@@ -155,6 +180,9 @@ namespace ProtocolCraft
             {
                 output["display_name"] = display_name;
                 output["render_type"] = render_type;
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+                output["number_format"] = number_format;
+#endif
             }
 
             return output;
@@ -173,5 +201,8 @@ namespace ProtocolCraft
         int render_type = 0;
 #endif
         char method = 0;
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        NumberFormat number_format;
+#endif
     };
 } //ProtocolCraft

@@ -29,6 +29,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x2C;
 #elif PROTOCOL_VERSION == 764 /* 1.20.2 */
         static constexpr int packet_id = 0x2F;
+#elif PROTOCOL_VERSION == 765 /* 1.20.3 */
+        static constexpr int packet_id = 0x30;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -84,6 +86,20 @@ namespace ProtocolCraft
         }
 #endif
 
+
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        void SetSelectionPriority(const int selection_priority_)
+        {
+            selection_priority = selection_priority_;
+        }
+
+        void SetPlacementPriority(const int placement_priority_)
+        {
+            placement_priority = placement_priority_;
+        }
+#endif
+
+
         const NetworkPosition& GetPos() const
         {
             return pos;
@@ -128,6 +144,18 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        int GetSelectionPriority() const
+        {
+            return selection_priority;
+        }
+
+        int GetPlacementPriority() const
+        {
+            return placement_priority;
+        }
+#endif
+
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -145,6 +173,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 708 /* > 1.15.2 */
             joint = ReadData<std::string>(iter, length);
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            selection_priority = ReadData<VarInt>(iter, length);
+            placement_priority = ReadData<VarInt>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -161,6 +193,10 @@ namespace ProtocolCraft
             WriteData<std::string>(final_state, container);
 #if PROTOCOL_VERSION > 708 /* > 1.15.2 */
             WriteData<std::string>(joint, container);
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            WriteData<VarInt>(selection_priority, container);
+            WriteData<VarInt>(placement_priority, container);
 #endif
         }
 
@@ -181,6 +217,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 708 /* > 1.15.2 */
             output["joint"] = joint;
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            output["selection_priority"] = selection_priority;
+            output["placement_priority"] = placement_priority;
+#endif
 
             return output;
         }
@@ -198,6 +238,10 @@ namespace ProtocolCraft
         std::string final_state;
 #if PROTOCOL_VERSION > 708 /* > 1.15.2 */
         std::string joint;
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        int selection_priority;
+        int placement_priority;
 #endif
 
     };

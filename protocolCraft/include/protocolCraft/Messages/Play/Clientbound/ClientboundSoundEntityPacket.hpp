@@ -36,6 +36,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x61;
 #elif PROTOCOL_VERSION == 764 /* 1.20.2 */
         static constexpr int packet_id = 0x63;
+#elif PROTOCOL_VERSION == 765 /* 1.20.3 */
+        static constexpr int packet_id = 0x65;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -53,6 +55,11 @@ namespace ProtocolCraft
             sound = sound_;
         }
 #else
+        void SetSoundId(const int sound_id_)
+        {
+            sound_id = sound_id_;
+        }
+
         void SetSound(const SoundEvent& sound_)
         {
             sound = sound_;
@@ -93,6 +100,11 @@ namespace ProtocolCraft
             return sound;
         }
 #else
+        int GetSoundId() const
+        {
+            return sound_id;
+        }
+
         const SoundEvent& GetSound() const
         {
             return sound;
@@ -133,7 +145,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             sound = ReadData<VarInt>(iter, length);
 #else
-            sound = ReadData<SoundEvent>(iter, length);
+            sound_id = ReadData<VarInt>(iter, length);
+            if (sound_id == 0)
+            {
+                sound = ReadData<SoundEvent>(iter, length);
+            }
+            else
+            {
+                sound_id -= 1;
+            }
 #endif
             source = ReadData<VarInt>(iter, length);
             id_ = ReadData<VarInt>(iter, length);
@@ -149,7 +169,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<VarInt>(sound, container);
 #else
-            WriteData<SoundEvent>(sound, container);
+            if (sound.GetLocation().GetFull().empty())
+            {
+                WriteData<VarInt>(sound_id + 1, container);
+            }
+            else
+            {
+                WriteData<VarInt>(0, container);
+                WriteData<SoundEvent>(sound, container);
+            }
 #endif
             WriteData<VarInt>(source, container);
             WriteData<VarInt>(id_, container);
@@ -164,7 +192,18 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["sound"] = sound;
+#else
+            if (sound.GetLocation().GetFull().empty())
+            {
+                output["sound"] = sound;
+            }
+            else
+            {
+                output["sound_id"] = sound_id;
+            }
+#endif
             output["source"] = source;
             output["id_"] = id_;
             output["volume"] = volume;
@@ -180,6 +219,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         int sound = 0;
 #else
+        int sound_id = 0;
         SoundEvent sound;
 #endif
         int source = 0;
