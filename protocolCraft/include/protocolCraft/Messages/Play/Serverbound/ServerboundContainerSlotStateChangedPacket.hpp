@@ -9,7 +9,7 @@ namespace ProtocolCraft
     class ServerboundContainerSlotStateChangedPacket : public BaseMessage<ServerboundContainerSlotStateChangedPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 765 /* 1.20.3 */
+#if   PROTOCOL_VERSION == 765 /* 1.20.3/4 */
         static constexpr int packet_id = 0x0F;
 #else
 #error "Protocol version not implemented"
