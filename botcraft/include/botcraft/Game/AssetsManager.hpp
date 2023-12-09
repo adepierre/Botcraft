@@ -30,6 +30,10 @@ namespace Botcraft
         const std::unordered_map<int, std::unique_ptr<Blockstate> >& Blockstates() const;
 #endif
         const Blockstate* GetBlockstate(const BlockstateId id) const;
+        /// @brief Get the first blockstate found with a given name
+        /// @param name Name of the blockstate
+        /// @return A blockstate matching the given name, or default block if not found
+        const Blockstate* GetBlockstate(const std::string& name) const;
         
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
         const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& Biomes() const;

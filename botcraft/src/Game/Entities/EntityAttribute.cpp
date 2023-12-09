@@ -352,5 +352,5 @@ namespace Botcraft
         up_to_date = true;
     }
 
-    DEFINE_ENUM_STRINGIFYER_RANGE(EntityAttribute::Type, EntityAttribute::Type::Unknown, EntityAttribute::Type::HorseJumpStrength);
+    DEFINE_ENUM_STRINGIFYER_RANGE(EntityAttribute::Type, EntityAttribute::Type::Unknown, EntityAttribute::Type::NUM_ENTITY_ATTRIBUTES);
 }

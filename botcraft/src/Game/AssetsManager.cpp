@@ -103,7 +103,30 @@ namespace Botcraft
             return blockstates.at(-1).get();
         }
 #endif
-        return nullptr;
+    }
+
+    const Blockstate* AssetsManager::GetBlockstate(const std::string& name) const
+    {
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        for (const auto& [id, m] : blockstates)
+        {
+            const Blockstate* block = m.at(0).get();
+            if (block->GetName() == name)
+            {
+                return block;
+            }
+        }
+        return blockstates.at(-1).at(0).get();
+#else
+        for (const auto& block : flattened_blockstates)
+        {
+            if (block->GetName() == name)
+            {
+                return block;
+            }
+        }
+        return blockstates.at(-1).get();
+#endif
     }
 
 #if PROTOCOL_VERSION < 358 /* < 1.13 */

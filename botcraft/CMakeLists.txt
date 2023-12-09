@@ -45,6 +45,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/BeeEntity.hpp
     include/botcraft/Game/Entities/entities/monster/BlazeEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/breeze/BreezeEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp
     include/botcraft/Game/Entities/entities/animal/CatEntity.hpp
     include/botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp
@@ -150,6 +151,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/monster/VindicatorEntity.hpp
     include/botcraft/Game/Entities/entities/npc/WanderingTraderEntity.hpp
     include/botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/WindChargeEntity.hpp
     include/botcraft/Game/Entities/entities/monster/WitchEntity.hpp
     include/botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp
     include/botcraft/Game/Entities/entities/monster/WitherSkeletonEntity.hpp
@@ -181,6 +183,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/AbstractGolemEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/HangingEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/FireballEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/VehicleEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/AbstractMinecartEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/AbstractMinecartContainerEntity.hpp
     include/botcraft/Game/Entities/entities/animal/ShoulderRidingEntity.hpp
@@ -275,6 +278,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/BeeEntity.cpp
     src/Game/Entities/entities/monster/BlazeEntity.cpp
     src/Game/Entities/entities/vehicle/BoatEntity.cpp
+    src/Game/Entities/entities/monster/breeze/BreezeEntity.cpp
     src/Game/Entities/entities/vehicle/ChestBoatEntity.cpp
     src/Game/Entities/entities/animal/CatEntity.cpp
     src/Game/Entities/entities/animal/camel/CamelEntity.cpp
@@ -379,6 +383,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/npc/VillagerEntity.cpp
     src/Game/Entities/entities/monster/VindicatorEntity.cpp
     src/Game/Entities/entities/npc/WanderingTraderEntity.cpp
+    src/Game/Entities/entities/projectile/WindChargeEntity.cpp
     src/Game/Entities/entities/monster/warden/WardenEntity.cpp
     src/Game/Entities/entities/monster/WitchEntity.cpp
     src/Game/Entities/entities/boss/wither/WitherBossEntity.cpp
@@ -413,6 +418,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/projectile/FireballEntity.cpp
     src/Game/Entities/entities/vehicle/AbstractMinecartEntity.cpp
     src/Game/Entities/entities/vehicle/AbstractMinecartContainerEntity.cpp
+    src/Game/Entities/entities/vehicle/VehicleEntity.cpp
     src/Game/Entities/entities/animal/ShoulderRidingEntity.cpp
     src/Game/Entities/entities/monster/piglin/AbstractPiglinEntity.cpp
     src/Game/Entities/entities/monster/AbstractIllagerEntity.cpp

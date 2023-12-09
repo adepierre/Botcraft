@@ -82,7 +82,11 @@ namespace Botcraft
 
     void ConnectionClient::Handle(ClientboundLoginDisconnectPacket& msg)
     {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         LOG_INFO("Disconnect during login with reason: " << msg.GetReason().GetRawText());
+#else
+        LOG_INFO("Disconnect during login with reason: " << msg.GetReason());
+#endif
 
         should_be_closed = true;
     }
@@ -106,7 +110,11 @@ namespace Botcraft
 
     void ConnectionClient::Handle(ClientboundDisconnectPacket& msg)
     {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         LOG_INFO("Disconnect during playing with reason: " << msg.GetReason().GetRawText());
+#else
+        LOG_INFO("Disconnect during playing with reason: " << msg.GetReason().Serialize().Dump());
+#endif
         
         should_be_closed = true;
     }
@@ -124,7 +132,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     void ConnectionClient::Handle(ClientboundDisconnectConfigurationPacket& msg)
     {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         LOG_INFO("Disconnect during configuration with reason: " << msg.GetReason().GetRawText());
+#else
+        LOG_INFO("Disconnect during configuration with reason: " << msg.GetReason().Serialize().Dump());
+#endif
 
         should_be_closed = true;
     }

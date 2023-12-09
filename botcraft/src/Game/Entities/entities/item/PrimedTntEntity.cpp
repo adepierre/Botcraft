@@ -1,4 +1,5 @@
 #include "botcraft/Game/Entities/entities/item/PrimedTntEntity.hpp"
+#include "botcraft/Game/AssetsManager.hpp"
 
 #include <mutex>
 
@@ -6,12 +7,18 @@ namespace Botcraft
 {
     const std::array<std::string, PrimedTntEntity::metadata_count> PrimedTntEntity::metadata_names{ {
         "data_fuse_id",
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        "data_block_state_id",
+#endif
     } };
 
     PrimedTntEntity::PrimedTntEntity()
     {
         // Initialize all metadata with default values
         SetDataFuseId(80);
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        SetDataBlockStateId(AssetsManager::getInstance().GetBlockstate("minecraft:tnt")->GetId());
+#endif
     }
 
     PrimedTntEntity::~PrimedTntEntity()
@@ -47,6 +54,9 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_fuse_id"] = GetDataFuseId();
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        output["metadata"]["data_block_state_id"] = GetDataBlockStateId();
+#endif
 
         return output;
     }
@@ -71,12 +81,28 @@ namespace Botcraft
         return std::any_cast<int>(metadata.at("data_fuse_id"));
     }
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+    int PrimedTntEntity::GetDataBlockStateId() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<int>(metadata.at("data_block_state_id"));
+    }
+#endif
+
 
     void PrimedTntEntity::SetDataFuseId(const int data_fuse_id)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_fuse_id"] = data_fuse_id;
     }
+
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+    void PrimedTntEntity::SetDataBlockStateId(const int data_block_state_id)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        metadata["data_block_state_id"] = data_block_state_id;
+    }
+#endif
 
 
     double PrimedTntEntity::GetWidthImpl() const

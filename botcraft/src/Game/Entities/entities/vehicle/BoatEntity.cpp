@@ -5,9 +5,11 @@
 namespace Botcraft
 {
     const std::array<std::string, BoatEntity::metadata_count> BoatEntity::metadata_names{ {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         "data_id_hurt",
         "data_id_hurtdir",
         "data_id_damage",
+#endif
         "data_id_type",
         "data_id_paddle_left",
         "data_id_paddle_right",
@@ -19,9 +21,11 @@ namespace Botcraft
     BoatEntity::BoatEntity()
     {
         // Initialize all metadata with default values
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         SetDataIdHurt(0);
         SetDataIdHurtdir(1);
         SetDataIdDamage(0.0f);
+#endif
         SetDataIdType(0);
         SetDataIdPaddleLeft(false);
         SetDataIdPaddleRight(false);
@@ -60,11 +64,17 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value BoatEntity::Serialize() const
     {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         ProtocolCraft::Json::Value output = Entity::Serialize();
+#else
+        ProtocolCraft::Json::Value output = VehicleEntity::Serialize();
+#endif
 
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         output["metadata"]["data_id_hurt"] = GetDataIdHurt();
         output["metadata"]["data_id_hurtdir"] = GetDataIdHurtdir();
         output["metadata"]["data_id_damage"] = GetDataIdDamage();
+#endif
         output["metadata"]["data_id_type"] = GetDataIdType();
         output["metadata"]["data_id_paddle_left"] = GetDataIdPaddleLeft();
         output["metadata"]["data_id_paddle_right"] = GetDataIdPaddleRight();
@@ -80,7 +90,11 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
             Entity::SetMetadataValue(index, value);
+#else
+            VehicleEntity::SetMetadataValue(index, value);
+#endif
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
@@ -89,6 +103,7 @@ namespace Botcraft
         }
     }
 
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     int BoatEntity::GetDataIdHurt() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
@@ -106,6 +121,7 @@ namespace Botcraft
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<float>(metadata.at("data_id_damage"));
     }
+#endif
 
     int BoatEntity::GetDataIdType() const
     {
@@ -134,6 +150,7 @@ namespace Botcraft
 #endif
 
 
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     void BoatEntity::SetDataIdHurt(const int data_id_hurt)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
@@ -151,6 +168,7 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_damage"] = data_id_damage;
     }
+#endif
 
     void BoatEntity::SetDataIdType(const int data_id_type)
     {

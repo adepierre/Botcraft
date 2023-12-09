@@ -153,7 +153,7 @@ namespace Botcraft
 #else
         std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
 #endif
-        
+
         entity->SetEntityID(msg.GetId_());
         entity->SetX(msg.GetX());
         entity->SetY(msg.GetY());
