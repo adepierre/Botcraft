@@ -74,14 +74,31 @@ namespace ProtocolCraft
         return "";
     }
 #else
-    std::string Chat::ParseChat(const NBT::Tag& raw)
+    std::string Chat::ParseChat(const NBT::TagCompound& raw)
     {
-        if (raw.is<NBT::TagString>())
+        std::string output = "";
+
+        if (raw.contains("text") && raw["text"].is<NBT::TagString>())
         {
-            return raw.get<NBT::TagString>();
+            output += raw["text"].get<NBT::TagString>();
         }
-        // TODO
-        return "";
+        else if (raw.size() == 1 && raw.contains("") && raw[""].is<NBT::TagString>())
+        {
+            output += raw[""].get<NBT::TagString>();
+        }
+        else
+        {
+            // TODO: do we need to process other types of items to get parsed text?
+        }
+
+        // Add extra
+        if (raw.contains("extra") && raw["extra"].is_list_of<NBT::TagCompound>())
+        {
+            for (const auto& t : raw["extra"].as_list_of<NBT::TagCompound>())
+            output += ParseChat(t);
+        }
+
+        return output;
     }
 #endif
 }

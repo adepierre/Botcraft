@@ -49,7 +49,14 @@ namespace ProtocolCraft
             text = ParseChat(Json::Parse(raw_text));
 #else
             NBT::Tag::ReadUnnamedImpl(iter, length);
-            text = ParseChat(*this);
+            if (is<NBT::TagCompound>())
+            {
+                text = ParseChat(get<NBT::TagCompound>());
+            }
+            else if (is<NBT::TagString>())
+            {
+                text = get<NBT::TagString>();
+            }
 #endif
 
         }
@@ -62,12 +69,6 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        std::string ParseChat(const Json::Value& raw_json);
-#else
-        std::string ParseChat(const NBT::Tag& raw);
-#endif
-
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
@@ -77,6 +78,14 @@ namespace ProtocolCraft
             return output;
         }
 #endif
+
+    private:
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
+        std::string ParseChat(const Json::Value& raw_json);
+#else
+        std::string ParseChat(const NBT::TagCompound& raw);
+#endif
+
 
     private:
         std::string text;
