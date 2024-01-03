@@ -20,6 +20,12 @@ namespace Botcraft
         virtual std::string GetName() const override;
         virtual EntityType GetType() const override;
 
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        using Entity::GetCollider; // Required as otherwise GetCollider(Pose) would be found and stop the search for a GetCollider match
+        AABB GetCollider(const Pose pose) const;
+        double GetHeight(const Pose pose) const;
+        double GetWidth(const Pose pose) const;
+#endif
         double GetEyeHeight() const;
 
         // Static stuff, for easier comparison
@@ -57,6 +63,10 @@ namespace Botcraft
         double GetEyeHeightImpl() const;
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        using Entity::GetColliderImpl; // Required as otherwise GetColliderImpl(Pose) would be found and stop the search for a GetColliderImpl match
+        AABB GetColliderImpl(const Pose pose) const;
+#endif
 
     };
 }

@@ -39,7 +39,7 @@ namespace Botcraft
             {
                 Add = 0,
                 MultiplyBase = 1,
-                Multiply = 2
+                MultiplyTotal = 2
             };
 
             double amount = 0.0;

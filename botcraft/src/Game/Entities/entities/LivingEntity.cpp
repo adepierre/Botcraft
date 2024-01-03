@@ -217,26 +217,13 @@ namespace Botcraft
     void LivingEntity::RemoveAttributeModifier(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-
-        auto it = attributes.find(type);
-        if (it == attributes.end())
-        {
-            return;
-        }
-        it->second.RemoveModifier(uuid);
+        RemoveAttributeModifierImpl(type, uuid);
     }
 
     void LivingEntity::SetAttributeModifier(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-
-        auto it = attributes.find(type);
-        if (it == attributes.end())
-        {
-            LOG_WARNING("Trying to set attribute modifier for " << type << " for a " << GetName() << " but it doesn't have this attribute");
-            return;
-        }
-        it->second.RemoveModifier(uuid);
+        SetAttributeModifierImpl(type, uuid, modifier);
     }
 
     void LivingEntity::ClearModifiers(const EntityAttribute::Type type)
@@ -282,7 +269,7 @@ namespace Botcraft
     double LivingEntity::GetAttributeMovementSpeedValue() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return attributes.at(EntityAttribute::Type::MovementSpeed).GetValue();
+        return GetAttributeMovementSpeedValueImpl();
     }
 
     double LivingEntity::GetAttributeArmorValue() const
@@ -303,4 +290,29 @@ namespace Botcraft
         return attributes.at(EntityAttribute::Type::MaxAbsorption).GetValue();
     }
 
+    double LivingEntity::GetAttributeMovementSpeedValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::MovementSpeed).GetValue();
+    }
+
+    void LivingEntity::RemoveAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid)
+    {
+        auto it = attributes.find(type);
+        if (it == attributes.end())
+        {
+            return;
+        }
+        it->second.RemoveModifier(uuid);
+    }
+
+    void LivingEntity::SetAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier)
+    {
+        auto it = attributes.find(type);
+        if (it == attributes.end())
+        {
+            LOG_WARNING("Trying to set attribute modifier for " << type << " for a " << GetName() << " but it doesn't have this attribute");
+            return;
+        }
+        it->second.SetModifier(uuid, modifier);
+    }
 }

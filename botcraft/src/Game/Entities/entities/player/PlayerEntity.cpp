@@ -46,6 +46,42 @@ namespace Botcraft
         return EntityType::Player;
     }
 
+    AABB PlayerEntity::GetCollider(const Pose pose) const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetColliderImpl(pose);
+    }
+
+    double PlayerEntity::GetHeight(const Pose pose) const
+    {
+        switch (pose)
+        {
+        case Pose::Crouching:
+            return 1.5;
+        case Pose::Sleeping:
+        case Pose::Dying:
+            return 0.2;
+        case Pose::FallFlying:
+        case Pose::Swimming:
+        case Pose::SpinAttack:
+            return 0.6;
+        default:
+            return 1.8;
+        }
+    }
+
+    double PlayerEntity::GetWidth(const Pose pose) const
+    {
+        switch (pose)
+        {
+        case Pose::Sleeping:
+        case Pose::Dying:
+            return 0.2;
+        default:
+            return 0.6;
+        }
+    }
+
     double PlayerEntity::GetEyeHeight() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
@@ -175,29 +211,6 @@ namespace Botcraft
     }
 
 
-    double PlayerEntity::GetHeightImpl() const
-    {
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        switch (GetDataPoseImpl())
-        {
-        case Pose::Crouching:
-            return 1.5;
-        case Pose::Sleeping:
-        case Pose::Dying:
-            return 0.2;
-        case Pose::FallFlying:
-        case Pose::Swimming:
-        case Pose::SpinAttack:
-            return 0.6;
-        default:
-            return 1.8;
-        }
-#else
-        return 1.8;
-#endif
-    }
-
-
     double PlayerEntity::GetAttributeAttackDamageValue() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
@@ -239,17 +252,28 @@ namespace Botcraft
     double PlayerEntity::GetWidthImpl() const
     {
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        switch (GetDataPoseImpl())
-        {
-        case Pose::Sleeping:
-        case Pose::Dying:
-            return 0.2;
-        default:
-            return 0.6;
-        }
+        return GetWidth(GetDataPoseImpl());
 #else
         return 0.6;
 #endif
     }
+
+    double PlayerEntity::GetHeightImpl() const
+    {
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        return GetHeight(GetDataPoseImpl());
+#else
+        return 1.8;
+#endif
+    }
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+    AABB PlayerEntity::GetColliderImpl(const Pose pose) const
+    {
+        const double half_width = GetWidth(pose) / 2.0;
+        const double half_height = GetHeight(pose) / 2.0;
+        return AABB(Vector3<double>(position.x, position.y + half_height, position.z), Vector3<double>(half_width, half_height, half_width));
+    }
+#endif
 
 }

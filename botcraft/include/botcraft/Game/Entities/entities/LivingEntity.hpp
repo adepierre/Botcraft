@@ -78,6 +78,10 @@ namespace Botcraft
         // 662a6b8d-da3e-4c1c-8813-96ea6097278d
         static constexpr std::array<unsigned char, 16> speed_modifier_sprinting_uuid = { 0x66, 0x2A, 0x6B, 0x8D, 0xDA, 0x3E, 0x4C, 0x1C, 0x88, 0x13, 0x96, 0xEA, 0x60, 0x97, 0x27, 0x8D };
 
+    protected:
+        double GetAttributeMovementSpeedValueImpl() const;
+        void RemoveAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid);
+        void SetAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier);
 
     protected:
         std::map<EntityAttribute::Type, EntityAttribute> attributes;

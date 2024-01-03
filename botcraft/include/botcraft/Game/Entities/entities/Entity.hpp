@@ -35,6 +35,18 @@ namespace Botcraft
         std::chrono::steady_clock::time_point end;
     };
 
+    enum class EntitySharedFlagsId : char
+    {
+        OnFire = 0,
+        ShiftKeyDown = 1,
+        // 2 is unused? Maybe in previous versions
+        Sprinting = 3,
+        Swimming = 4,
+        Invisible = 5,
+        Glowing = 6,
+        FallFlying = 7
+    };
+
     class Entity
     {
     protected:
@@ -64,6 +76,7 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value);
 
         char GetDataSharedFlagsId() const;
+        bool GetDataSharedFlagsId(const EntitySharedFlagsId id) const;
         int GetDataAirSupplyId() const;
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         std::optional<ProtocolCraft::Chat> GetDataCustomName() const;
@@ -81,6 +94,7 @@ namespace Botcraft
 #endif
 
         void SetDataSharedFlagsId(const char data_shared_flags_id);
+        void SetDataSharedFlagsId(const EntitySharedFlagsId id, const bool b);
         void SetDataAirSupplyId(const int data_air_supply_id);
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         void SetDataCustomName(const std::optional<ProtocolCraft::Chat>& data_custom_name);
@@ -204,8 +218,13 @@ namespace Botcraft
         virtual void InitializeFaces();
         void OnSizeUpdated();
 #endif
+        char GetDataSharedFlagsIdImpl() const;
+        bool GetDataSharedFlagsIdImpl(const EntitySharedFlagsId id) const;
+        void SetDataSharedFlagsIdImpl(const char data_shared_flags_id);
+        void SetDataSharedFlagsIdImpl(const EntitySharedFlagsId id, const bool b);
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         Pose GetDataPoseImpl() const;
+        void SetDataPoseImpl(const Pose data_pose);
 #endif
         AABB GetColliderImpl() const;
         virtual double GetWidthImpl() const;

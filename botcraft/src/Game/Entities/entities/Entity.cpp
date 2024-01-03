@@ -572,7 +572,13 @@ namespace Botcraft
     char Entity::GetDataSharedFlagsId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_shared_flags_id"));
+        return GetDataSharedFlagsIdImpl();
+    }
+
+    bool Entity::GetDataSharedFlagsId(const EntitySharedFlagsId id) const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetDataSharedFlagsIdImpl(id);
     }
 
     int Entity::GetDataAirSupplyId() const
@@ -633,7 +639,13 @@ namespace Botcraft
     void Entity::SetDataSharedFlagsId(const char data_shared_flags_id)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_shared_flags_id"] = data_shared_flags_id;
+        SetDataSharedFlagsIdImpl(data_shared_flags_id);
+    }
+
+    void Entity::SetDataSharedFlagsId(const EntitySharedFlagsId id, const bool b)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        SetDataSharedFlagsIdImpl(id, b);
     }
 
     void Entity::SetDataAirSupplyId(const int data_air_supply_id)
@@ -678,10 +690,7 @@ namespace Botcraft
     void Entity::SetDataPose(const Pose data_pose)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_pose"] = data_pose;
-#if USE_GUI
-        OnSizeUpdated();
-#endif
+        SetDataPoseImpl(data_pose);
     }
 #endif
 
@@ -1742,10 +1751,44 @@ namespace Botcraft
     }
 #endif
 
+    char Entity::GetDataSharedFlagsIdImpl() const
+    {
+        return std::any_cast<char>(metadata.at("data_shared_flags_id"));
+    }
+
+    bool Entity::GetDataSharedFlagsIdImpl(const EntitySharedFlagsId id) const
+    {
+        return (GetDataSharedFlagsIdImpl() >> static_cast<char>(id)) & 0x01;
+    }
+
+    void Entity::SetDataSharedFlagsIdImpl(const char data_shared_flags_id)
+    {
+        metadata["data_shared_flags_id"] = data_shared_flags_id;
+    }
+
+    void Entity::SetDataSharedFlagsIdImpl(const EntitySharedFlagsId id, const bool b)
+    {
+        char current_value = GetDataSharedFlagsIdImpl();
+        // Set the bit to 0
+        const char mask = 0x01 << static_cast<char>(id);
+        current_value &= ~mask;
+        // Set the bit to b
+        current_value |= b << static_cast<char>(id);
+        SetDataSharedFlagsIdImpl(current_value);
+    }
+
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     Pose Entity::GetDataPoseImpl() const
     {
         return std::any_cast<Pose>(metadata.at("data_pose"));
+    }
+
+    void Entity::SetDataPoseImpl(const Pose data_pose)
+    {
+        metadata["data_pose"] = data_pose;
+#if USE_GUI
+        OnSizeUpdated();
+#endif
     }
 #endif
 
