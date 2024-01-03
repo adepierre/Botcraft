@@ -31,7 +31,7 @@ namespace Botcraft
         return cached_models[filepath];
     }
 
-    Model Model::GetModel(const unsigned char height, const std::string& texture)
+    Model Model::GetModel(const double height, const std::string& texture)
     {
         return Model(height, texture);
     }
@@ -496,9 +496,9 @@ namespace Botcraft
 #endif
     }
 
-    Model::Model(const unsigned char height, const std::string& texture)
+    Model::Model(const double height, const std::string& texture)
     {
-        colliders = std::set<AABB>({ AABB(Vector3<double>(0.5, (height + 1.0) / 2.0 / 16.0, 0.5), Vector3<double>(0.5, (height + 1.0) / 2.0 / 16.0, 0.5)) });
+        colliders = std::set<AABB>({ AABB(Vector3<double>(0.5, 0.5 * height, 0.5), Vector3<double>(0.5, 0.5 * height, 0.5)) });
 
 #if USE_GUI
         ambient_occlusion = false;
@@ -510,8 +510,8 @@ namespace Botcraft
             faces[i].cullface_direction = (Orientation)i;
             faces[i].use_tintindexes = { false };
 
-            faces[i].transformations.scales.push_back(Renderer::ScalePtr(new Renderer::Scale(0.5f, (height + 1.0f) / 32.0f, 0.5f)));
-            faces[i].transformations.translations.push_back(Renderer::TransformationPtr(new Renderer::Translation(0.0f, ((height + 1) / 2.0f - 8) / 16.0f, 0.0f)));
+            faces[i].transformations.scales.push_back(std::make_shared<Renderer::Scale>(0.5f, 0.5f * static_cast<float>(height), 0.5f));
+            faces[i].transformations.translations.push_back(std::make_shared<Renderer::Translation>(0.0f, 0.5f * static_cast<float>(height) - 0.5f, 0.0f));
 
             faces[i].transformations.rotation = 0;
 
@@ -531,25 +531,25 @@ namespace Botcraft
                 break;
             case Orientation::East:
                 faces[i].transformations.offset_x1 = 0.0f;
-                faces[i].transformations.offset_y1 = 16.0f - height - 1.0f;
+                faces[i].transformations.offset_y1 = 16.0f * (1.0f - static_cast<float>(height));
                 faces[i].transformations.offset_x2 = 16.0f;
                 faces[i].transformations.offset_y2 = 16.0f;
                 break;
             case Orientation::West:
                 faces[i].transformations.offset_x1 = 0.0f;
-                faces[i].transformations.offset_y1 = 16.0f - height - 1.0f;
+                faces[i].transformations.offset_y1 = 16.0f * (1.0f - static_cast<float>(height));
                 faces[i].transformations.offset_x2 = 16.0f;
                 faces[i].transformations.offset_y2 = 16.0f;
                 break;
             case Orientation::South:
                 faces[i].transformations.offset_x1 = 0.0f;
-                faces[i].transformations.offset_y1 = 16.0f - height - 1.0f;
+                faces[i].transformations.offset_y1 = 16.0f * (1.0f - static_cast<float>(height));
                 faces[i].transformations.offset_x2 = 16.0f;
                 faces[i].transformations.offset_y2 = 16.0f;
                 break;
             case Orientation::North:
                 faces[i].transformations.offset_x1 = 0.0f;
-                faces[i].transformations.offset_y1 = 16.0f - height - 1.0f;
+                faces[i].transformations.offset_y1 = 16.0f * (1.0f - static_cast<float>(height));
                 faces[i].transformations.offset_x2 = 16.0f;
                 faces[i].transformations.offset_y2 = 16.0f;
                 break;

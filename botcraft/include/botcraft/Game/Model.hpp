@@ -40,12 +40,12 @@ namespace Botcraft
         // Constructor from a json file
         Model(const std::string& filepath, const bool custom);
         // Fluid constructor
-        Model(const unsigned char height, const std::string& texture);
+        Model(const double height, const std::string& texture);
     public:
         // Base constructor
         Model();
         static const Model& GetModel(const std::string& filepath, const bool custom);
-        static Model GetModel(const unsigned char height, const std::string& texture);
+        static Model GetModel(const double height, const std::string& texture);
 
         Model& operator+=(const Model& m);
 
