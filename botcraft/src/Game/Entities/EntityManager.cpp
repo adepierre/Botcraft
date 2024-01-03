@@ -9,7 +9,7 @@ namespace Botcraft
 {
     EntityManager::EntityManager()
     {
-        local_player = std::make_shared<LocalPlayer>();
+        local_player = nullptr;
     }
 
     std::shared_ptr<LocalPlayer> EntityManager::GetLocalPlayer()
@@ -45,6 +45,11 @@ namespace Botcraft
     {
         local_player = std::make_shared<LocalPlayer>();
         local_player->SetEntityID(msg.GetPlayerId());
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+        local_player->SetGameMode(static_cast<GameType>(msg.GetGameType() & 0x03));
+#else
+        local_player->SetGameMode(static_cast<GameType>(msg.GetCommonPlayerSpawnInfo().GetGameType()));
+#endif
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[msg.GetPlayerId()] = local_player;
     }
@@ -275,11 +280,10 @@ namespace Botcraft
             entity->SetOnGround(msg.GetOnGround());
         }
     }
-    
+
     void EntityManager::Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg)
     {
-        local_player->SetIsInvulnerable(msg.GetFlags() & 0x01);
-        local_player->SetIsFlying(msg.GetFlags() & 0x02);
+        local_player->SetAbilitiesFlags(msg.GetFlags());
         local_player->SetFlyingSpeed(msg.GetFlyingSpeed());
         local_player->SetWalkingSpeed(msg.GetWalkingSpeed());
     }
@@ -300,6 +304,15 @@ namespace Botcraft
         }
     }
 #endif
+
+    void EntityManager::Handle(ProtocolCraft::ClientboundRespawnPacket& msg)
+    {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+        local_player->SetGameMode(static_cast<GameType>(msg.GetPlayerGameType()));
+#else
+        local_player->SetGameMode(static_cast<GameType>(msg.GetCommonPlayerSpanwInfo().GetGameType()));
+#endif
+    }
 
     void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg)
     {

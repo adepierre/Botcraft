@@ -15,16 +15,41 @@ namespace Botcraft
         front_vector = Vector3<double>(0.0, 0.0, 1.0);
         right_vector = Vector3<double>(1.0, 0.0, 0.0);
 
-        flying_speed = 1.0f;
-        walking_speed = 1.0f;
-        is_flying = false;
-        is_running = false;
-        is_climbing = false;
+        inputs = PlayerInputs();
+        dirty_inputs = false;
 
-        is_invulnerable = false;
+        game_mode = GameType::None;
+
+        invulnerable = false;
+        flying = false;
+        may_fly = false;
+        instabuild = false;
+        may_build = true;
+        UpdateAbilitiesFlagsImpl();
+        flying_speed = 0.05f;
+        walking_speed = 0.1f;
+
         health = 0.0f;
         food = 20;
         food_saturation = 5.0f;
+
+        in_water = false;
+        in_lava = false;
+        under_water = false;
+        crouching = false;
+        horizontal_collision = false;
+        on_climbable = false;
+        stuck_speed_multiplier = Vector3<double>(0.0, 0.0, 0.0);
+
+        previous_sprinting = false;
+        previous_shift_key_down = false;
+        previous_position = Vector3<double>(0.0, 0.0, 0.0);
+        previous_yaw = 0.0f;
+        previous_pitch = 0.0f;
+        previous_on_ground = false;
+        previous_jump = false;
+        previous_sneak = false;
+        previous_forward = 0.0;
     }
 
     LocalPlayer::~LocalPlayer()
@@ -51,30 +76,48 @@ namespace Botcraft
         return right_vector;
     }
 
-    Vector3<double> LocalPlayer::GetPlayerInputs() const
+
+    GameType LocalPlayer::GetGameMode() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return player_inputs;
+        return game_mode;
     }
 
-    double LocalPlayer::GetPlayerInputsX() const
+    char LocalPlayer::GetAbilitiesFlags() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return player_inputs.x;
+        return abilities_flags;
     }
 
-    double LocalPlayer::GetPlayerInputsY() const
+    bool LocalPlayer::GetInvulnerable() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return player_inputs.y;
+        return invulnerable;
     }
 
-    double LocalPlayer::GetPlayerInputsZ() const
+    bool LocalPlayer::GetFlying() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return player_inputs.z;
+        return flying;
     }
 
+    bool LocalPlayer::GetMayFly() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return may_fly;
+    }
+
+    bool LocalPlayer::GetInstabuild() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return instabuild;
+    }
+
+    bool LocalPlayer::GetMayBuild() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return may_build;
+    }
 
     float LocalPlayer::GetFlyingSpeed() const
     {
@@ -86,30 +129,6 @@ namespace Botcraft
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return walking_speed;
-    }
-
-    bool LocalPlayer::GetIsFlying() const
-    {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return is_flying;
-    }
-
-    bool LocalPlayer::GetIsRunning() const
-    {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return is_running;
-    }
-
-    bool LocalPlayer::GetIsClimbing() const
-    {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return is_climbing;
-    }
-
-    bool LocalPlayer::GetIsInvulnerable() const
-    {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return is_invulnerable;
     }
 
     float LocalPlayer::GetHealth() const
@@ -130,6 +149,24 @@ namespace Botcraft
         return food_saturation;
     }
 
+    bool LocalPlayer::GetDirtyInputs() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return dirty_inputs;
+    }
+
+
+    void LocalPlayer::SetGameMode(const GameType game_mode_)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        game_mode = game_mode_;
+    }
+
+    void LocalPlayer::SetAbilitiesFlags(const char abilities_flags_)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        SetAbilitiesFlagsImpl(abilities_flags_);
+    }
 
     void LocalPlayer::SetFlyingSpeed(const float flying_speed_)
     {
@@ -141,30 +178,6 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         walking_speed = walking_speed_;
-    }
-
-    void LocalPlayer::SetIsFlying(const bool b)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        is_flying = b;
-    }
-
-    void LocalPlayer::SetIsRunning(const bool b)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        is_running = b;
-    }
-
-    void LocalPlayer::SetIsClimbing(const bool b)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        is_climbing = b;
-    }
-
-    void LocalPlayer::SetIsInvulnerable(const bool b)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        is_invulnerable = b;
     }
 
     void LocalPlayer::SetHealth(const float health_)
@@ -230,70 +243,60 @@ namespace Botcraft
         }
     }
 
-    void LocalPlayer::SetPlayerInputs(const Vector3<double>& p)
+    void LocalPlayer::SetInputsForward(const double d)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs = p;
+        inputs.forward_axis = d;
+        dirty_inputs = true;
     }
 
-    void LocalPlayer::SetPlayerInputsX(const double x)
+    void LocalPlayer::AddInputsForward(const double d)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.x = x;
+        inputs.forward_axis += d;
+        dirty_inputs = true;
     }
 
-    void LocalPlayer::SetPlayerInputsY(const double y)
+    void LocalPlayer::SetInputsLeft(const double d)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.y = y;
+        inputs.left_axis = d;
+        dirty_inputs = true;
     }
 
-    void LocalPlayer::SetPlayerInputsZ(const double z)
+    void LocalPlayer::AddInputsLeft(const double d)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.z = z;
+        inputs.left_axis += d;
+        dirty_inputs = true;
     }
 
-    void LocalPlayer::SetPlayerInputsTargetX(const double x)
+    void LocalPlayer::SetInputsJump(const bool b)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.x = x - position.x - speed.x;
+        inputs.jump = b;
+        dirty_inputs = true;
     }
 
-    void LocalPlayer::SetPlayerInputsTargetY(const double y)
+    void LocalPlayer::SetInputsSneak(const bool b)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.y = y - position.y - speed.y;
+        inputs.sneak = b;
+        dirty_inputs = true;
     }
 
-    void LocalPlayer::SetPlayerInputsTargetZ(const double z)
+    void LocalPlayer::SetInputsSprint(const bool b)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.z = z - position.z - speed.z;
+        inputs.sprint = b;
+        dirty_inputs = true;
     }
 
-    void LocalPlayer::AddPlayerInputs(const Vector3<double>& p)
+    void LocalPlayer::SetInputs(const PlayerInputs& inputs_)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs += p;
-    }
-
-    void LocalPlayer::AddPlayerInputsX(const double x)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.x += x;
-    }
-
-    void LocalPlayer::AddPlayerInputsY(const double y)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.y += y;
-    }
-
-    void LocalPlayer::AddPlayerInputsZ(const double z)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        player_inputs.z += z;
+        inputs = inputs_;
+        dirty_inputs = true;
     }
 
     bool LocalPlayer::IsLocalPlayer() const
@@ -359,5 +362,35 @@ namespace Botcraft
 
         //Right = crossproduct(front, (0, 1.0, 0)).Normalize()
         right_vector = Vector3<double>(-front_vector.z / cos_pitch, 0.0, front_vector.x / cos_pitch);
+    }
+
+    void LocalPlayer::ResetInputs()
+    {
+        inputs.forward_axis = 0.0;
+        inputs.left_axis = 0.0;
+        inputs.jump = false;
+        inputs.sneak = false;
+        inputs.sprint = false;
+        dirty_inputs = false;
+    }
+
+    void LocalPlayer::SetAbilitiesFlagsImpl(const char abilities_flags_)
+    {
+        abilities_flags = abilities_flags_;
+        invulnerable = abilities_flags & 0x01;
+        flying = abilities_flags & 0x02;
+        may_fly = abilities_flags & 0x04;
+        instabuild = abilities_flags & 0x08;
+        may_build = abilities_flags & 0x10;
+    }
+
+    void LocalPlayer::UpdateAbilitiesFlagsImpl()
+    {
+        abilities_flags =
+            (invulnerable << 0) |
+            (flying << 1) |
+            (may_fly << 2) |
+            (instabuild << 3) |
+            (may_build << 4);
     }
 } //Botcraft

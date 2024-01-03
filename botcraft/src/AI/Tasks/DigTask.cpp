@@ -55,7 +55,7 @@ namespace Botcraft
 
         // Not breakable
         if (blockstate->IsFluid() ||
-            (blockstate->GetHardness() < 0.0f && !c.GetCreativeMode()))
+            (blockstate->GetHardness() < 0.0f && !local_player->GetInstabuild()))
         {
             return Status::Failure;
         }
@@ -63,7 +63,7 @@ namespace Botcraft
         ToolType current_tool_type = ToolType::None;
         ToolMaterial current_tool_material = ToolMaterial::None;
         unsigned char current_tool_efficiency = 0;
-        if (!c.GetCreativeMode())
+        if (!local_player->GetInstabuild())
         {
             std::shared_ptr<InventoryManager> inventory_manager = c.GetInventoryManager();
 
@@ -95,7 +95,7 @@ namespace Botcraft
 
         unsigned char haste_amplifier = 0;
         unsigned char mining_fatigue_amplifier = 0;
-        if (!c.GetCreativeMode())
+        if (!local_player->GetInstabuild())
         {
             for (const auto& effect : local_player->GetEffects())
             {
@@ -112,7 +112,7 @@ namespace Botcraft
             }
         }
 
-        const float expected_mining_time_s = c.GetCreativeMode() ? 0.0f : blockstate->GetMiningTimeSeconds(current_tool_type, current_tool_material, current_tool_efficiency, haste_amplifier, mining_fatigue_amplifier, is_on_ground, is_head_in_fluid);
+        const float expected_mining_time_s = local_player->GetInstabuild() ? 0.0f : blockstate->GetMiningTimeSeconds(current_tool_type, current_tool_material, current_tool_efficiency, haste_amplifier, mining_fatigue_amplifier, is_on_ground, is_head_in_fluid);
         if (expected_mining_time_s > 60.0f)
         {
             LOG_INFO("Starting an expected " << expected_mining_time_s << " seconds long mining at " << pos << ".A little help?");
@@ -144,7 +144,7 @@ namespace Botcraft
         }
 
         auto start = std::chrono::steady_clock::now();
-        bool finished_sent = c.GetCreativeMode(); // In creative mode we don't need to send a finish digging packet
+        bool finished_sent = local_player->GetInstabuild(); // In creative mode we don't need to send a finish digging packet
         while (true)
         {
             auto now = std::chrono::steady_clock::now();

@@ -48,7 +48,7 @@ namespace Botcraft
         std::shared_ptr<EntityManager> GetEntityManager() const;
         std::shared_ptr<InventoryManager> GetInventoryManager() const;
         std::shared_ptr<PhysicsManager> GetPhysicsManager() const;
-        bool GetCreativeMode() const;
+
         /// @brief Get the name of a connected player
         /// @param uuid UUID of the player
         /// @return The name, or empty string if not present
@@ -90,16 +90,12 @@ namespace Botcraft
 
         bool auto_respawn;
 
-        GameType game_mode;
-
         Difficulty difficulty;
 #if PROTOCOL_VERSION > 463 /* > 1.13.2 */
         bool difficulty_locked;
 #endif
         bool is_hardcore;
         std::atomic<int> day_time;
-
-        bool creative_mode; // Instant break
 
         /// @brief Names of all connected players
         std::map<ProtocolCraft::UUID, std::string> player_names;

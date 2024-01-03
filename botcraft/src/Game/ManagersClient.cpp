@@ -22,7 +22,6 @@ namespace Botcraft
 {
     ManagersClient::ManagersClient(const bool use_renderer_)
     {
-        game_mode = GameType::None;
         difficulty = Difficulty::None;
         is_hardcore = false;
 #if PROTOCOL_VERSION > 463 /* > 1.13.2 */
@@ -64,7 +63,6 @@ namespace Botcraft
 
         ConnectionClient::Disconnect();
 
-        game_mode = GameType::None;
         difficulty = Difficulty::None;
 #if PROTOCOL_VERSION > 463 /* > 1.13.2 */
         difficulty_locked = true;
@@ -149,11 +147,6 @@ namespace Botcraft
         return physics_manager;
     }
 
-    bool ManagersClient::GetCreativeMode() const
-    {
-        return creative_mode;
-    }
-
     std::string ManagersClient::GetPlayerName(const UUID& uuid) const
     {
         std::shared_lock<std::shared_mutex> lock(player_names_mutex);
@@ -184,25 +177,19 @@ namespace Botcraft
 
         inventory_manager = std::make_shared<InventoryManager>();
         entity_manager = std::make_shared<EntityManager>();
-#if USE_GUI
-        if (use_renderer)
-        {
-            rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
-        }
-        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager->GetLocalPlayer(), network_manager, world);
-#else
-        physics_manager = std::make_shared<PhysicsManager>(inventory_manager, entity_manager->GetLocalPlayer(), network_manager, world);
-#endif
         // Subscribe them to the network manager
         network_manager->AddHandler(world.get());
         network_manager->AddHandler(inventory_manager.get());
         network_manager->AddHandler(entity_manager.get());
-        network_manager->AddHandler(physics_manager.get());
 #if USE_GUI
         if (use_renderer)
         {
+            rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
             network_manager->AddHandler(rendering_manager.get());
         }
+        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager, network_manager, world);
+#else
+        physics_manager = std::make_shared<PhysicsManager>(inventory_manager, entity_manager, network_manager, world);
 #endif
         // Start physics
         physics_manager->StartPhysics();
@@ -218,11 +205,6 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundLoginPacket& msg)
     {
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        game_mode = static_cast<GameType>(msg.GetGameType() & 0x03);
-#else
-        game_mode = static_cast<GameType>(msg.GetCommonPlayerSpawnInfo().GetGameType());
-#endif
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         is_hardcore = msg.GetHardcore();
 #else
@@ -246,8 +228,6 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket& msg)
     {
-        creative_mode = msg.GetFlags() & 0x08;
-
         std::shared_ptr<ServerboundClientInformationPacket> settings_msg = std::make_shared<ServerboundClientInformationPacket>();
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         settings_msg->SetLanguage("fr_FR");
@@ -274,11 +254,6 @@ namespace Botcraft
     {
 #if PROTOCOL_VERSION < 464 /* < 1.14 */
         difficulty = static_cast<Difficulty>(msg.GetDifficulty());
-#endif
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        game_mode = static_cast<GameType>(msg.GetPlayerGameType());
-#else
-        game_mode = static_cast<GameType>(msg.GetCommonPlayerSpanwInfo().GetGameType());
 #endif
     }
 
