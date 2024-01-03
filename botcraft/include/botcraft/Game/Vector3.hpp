@@ -124,6 +124,14 @@ namespace Botcraft
             return *this;
         }
 
+        Vector3& operator+= (const T v)
+        {
+            x += v;
+            y += v;
+            z += v;
+            return *this;
+        }
+
         Vector3& operator-= (const Vector3& v)
         {
             x -= v.x;
@@ -132,11 +140,43 @@ namespace Botcraft
             return *this;
         }
 
+        Vector3& operator-= (const T v)
+        {
+            x -= v;
+            y -= v;
+            z -= v;
+            return *this;
+        }
+
         Vector3& operator*= (const Vector3& v)
         {
             x *= v.x;
             y *= v.y;
             z *= v.z;
+            return *this;
+        }
+
+        Vector3& operator*= (const T v)
+        {
+            x *= v;
+            y *= v;
+            z *= v;
+            return *this;
+        }
+
+        Vector3& operator/= (const Vector3& v)
+        {
+            x /= v.x;
+            y /= v.y;
+            z /= v.z;
+            return *this;
+        }
+
+        Vector3& operator/= (const T v)
+        {
+            x /= v;
+            y /= v;
+            z /= v;
             return *this;
         }
 
@@ -154,6 +194,15 @@ namespace Botcraft
             return (x - v.x) * (x - v.x)
                  + (y - v.y) * (y - v.y)
                  + (z - v.z) * (z - v.z);
+        }
+
+        Vector3 Abs() const
+        {
+            return Vector3(
+                std::abs(x),
+                std::abs(y),
+                std::abs(z)
+            );
         }
 
         T& operator[] (const int i)
