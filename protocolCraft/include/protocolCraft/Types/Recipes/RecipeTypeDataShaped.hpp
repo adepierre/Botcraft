@@ -1,8 +1,8 @@
 #pragma once
 
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
-#include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
+#include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
 #include "protocolCraft/Types/Slot.hpp"
 
 namespace ProtocolCraft
@@ -97,12 +97,17 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
             width = ReadData<VarInt>(iter, length);
             height = ReadData<VarInt>(iter, length);
+#endif
             group = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             cooking_book_category = ReadData<VarInt>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            width = ReadData<VarInt>(iter, length);
+            height = ReadData<VarInt>(iter, length);
 #endif
             ingredients = std::vector<Ingredient>(width * height);
             for (int i = 0; i < width * height; ++i)
@@ -117,11 +122,17 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
             WriteData<VarInt>(width, container);
             WriteData<VarInt>(height, container);
+#endif
             WriteData<std::string>(group, container);
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             WriteData<VarInt>(cooking_book_category, container);
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            WriteData<VarInt>(width, container);
+            WriteData<VarInt>(height, container);
 #endif
             for (int i = 0; i < width * height; ++i)
             {

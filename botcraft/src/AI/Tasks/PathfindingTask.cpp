@@ -106,7 +106,7 @@ namespace Botcraft
         std::shared_ptr<World> world = client.GetWorld();
         const Blockstate* block = world->GetBlock(end);
         end_is_inside_solid = block != nullptr && block->IsSolid();
-        const bool takes_damage = !client.GetCreativeMode();
+        const bool takes_damage = !client.GetEntityManager()->GetLocalPlayer()->GetInvulnerable();
 
         while (!nodes_to_explore.empty())
         {

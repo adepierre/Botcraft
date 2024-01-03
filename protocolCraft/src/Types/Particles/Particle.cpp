@@ -102,6 +102,10 @@ namespace ProtocolCraft
         case ParticleType::EntityEffect:
         case ParticleType::ExplosionEmitter:
         case ParticleType::Explosion:
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        case ParticleType::Gust:
+        case ParticleType::GustEmitter:
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case ParticleType::SonicBoom:
 #endif
@@ -143,6 +147,9 @@ namespace ProtocolCraft
         case ParticleType::Portal:
         case ParticleType::Rain:
         case ParticleType::Smoke:
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        case ParticleType::WhiteSmoke:
+#endif
 #if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         case ParticleType::Sneeze:
 #endif
@@ -202,6 +209,11 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         case ParticleType::EggCrack:
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        case ParticleType::DustPlume:
+        case ParticleType::GustDust:
+        case ParticleType::TrialSpawnerDetection:
 #endif
             return std::make_shared<NoDataTypedParticle>(type);
         default:

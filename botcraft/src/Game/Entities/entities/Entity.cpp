@@ -32,6 +32,9 @@
 #endif
 #include "botcraft/Game/Entities/entities/monster/BlazeEntity.hpp"
 #include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#include "botcraft/Game/Entities/entities/monster/breeze/BreezeEntity.hpp"
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp"
 #endif
@@ -198,6 +201,9 @@
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#include "botcraft/Game/Entities/entities/projectile/WindChargeEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/WitchEntity.hpp"
 #include "botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp"
@@ -1110,6 +1116,13 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+    bool Entity::IsVehicle() const
+    {
+        return false;
+    }
+#endif
+
     bool Entity::IsTamableAnimal() const
     {
         return false;
@@ -1286,6 +1299,10 @@ namespace Botcraft
             return std::make_shared<BlazeEntity>();
         case EntityType::Boat:
             return std::make_shared<BoatEntity>();
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        case EntityType::Breeze:
+            return std::make_shared<BreezeEntity>();
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::ChestBoat:
             return std::make_shared<ChestBoatEntity>();
@@ -1545,6 +1562,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::Warden:
             return std::make_shared<WardenEntity>();
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        case EntityType::WindCharge:
+            return std::make_shared<WindChargeEntity>();
 #endif
         case EntityType::Witch:
             return std::make_shared<WitchEntity>();

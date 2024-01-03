@@ -51,6 +51,8 @@ namespace Botcraft
         bool lava = false;
         /// @brief True for water
         bool water = false;
+        /// @brief True for blocks that are always waterlogged (kelp, seagrass...)
+        bool waterlogged = false;
         /// @brief True if can be used as a ladder
         bool climbable = false;
         /// @brief True if the model is a custom one (chests/banners etc...)

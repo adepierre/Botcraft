@@ -31,6 +31,9 @@ namespace ProtocolCraft
         ItemPredicate,
         Color,
         Component,
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        Style,
+#endif
         Message,
         NbtCompoundTag,
         NbtTag,

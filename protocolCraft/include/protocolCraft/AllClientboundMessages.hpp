@@ -28,6 +28,10 @@
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateTagsPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPopConfigurationPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPushConfigurationPacket.hpp"
+#endif
 
 // Play clientbound
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundBlockUpdatePacket.hpp"
@@ -119,7 +123,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntitiesPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveMobEffectPacket.hpp"
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundResourcePackPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRotateHeadPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSelectAdvancementsTabPacket.hpp"
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -241,6 +247,13 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPongResponsePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundStartConfigurationPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundResetScorePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundResourcePackPopPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundResourcePackPushPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundTickingStatePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundTickingStepPacket.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -267,7 +280,13 @@ namespace ProtocolCraft
         ClientboundKeepAliveConfigurationPacket,
         ClientboundPingConfigurationPacket,
         ClientboundRegistryDataPacket,
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         ClientboundResourcePackConfigurationPacket,
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        ClientboundResourcePackPopConfigurationPacket,
+        ClientboundResourcePackPushConfigurationPacket,
+#endif
         ClientboundUpdateEnabledFeaturesPacket,
         ClientboundUpdateTagsConfigurationPacket
     >;
@@ -371,7 +390,9 @@ namespace ProtocolCraft
         ClientboundTabListPacket,
         ClientboundCustomPayloadPacket,
         ClientboundRemoveMobEffectPacket,
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         ClientboundResourcePackPacket,
+#endif
         ClientboundSetObjectivePacket,
         ClientboundSelectAdvancementsTabPacket,
         ClientboundSetExperiencePacket,
@@ -487,6 +508,13 @@ namespace ProtocolCraft
         ClientboundChunkBatchStartPacket,
         ClientboundPongResponsePacket,
         ClientboundStartConfigurationPacket,
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        ClientboundResetScorePacket,
+        ClientboundResourcePackPopPacket,
+        ClientboundResourcePackPushPacket,
+        ClientboundTickingStatePacket,
+        ClientboundTickingStepPacket,
 #endif
         ClientboundSetCarriedItemPacket
     >;

@@ -158,7 +158,7 @@ namespace Botcraft
 #else
         std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
 #endif
-        
+
         entity->SetEntityID(msg.GetId_());
         entity->SetX(msg.GetX());
         entity->SetY(msg.GetY());
@@ -310,7 +310,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         local_player->SetGameMode(static_cast<GameType>(msg.GetPlayerGameType()));
 #else
-        local_player->SetGameMode(static_cast<GameType>(msg.GetCommonPlayerSpanwInfo().GetGameType()));
+        local_player->SetGameMode(static_cast<GameType>(msg.GetCommonPlayerSpawnInfo().GetGameType()));
 #endif
     }
 

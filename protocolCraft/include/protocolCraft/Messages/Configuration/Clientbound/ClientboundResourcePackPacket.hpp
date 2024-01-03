@@ -1,7 +1,8 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */ && PROTOCOL_VERSION < 765 /* < 1.20.3 */
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Types/Chat/Chat.hpp"
 
 namespace ProtocolCraft
 {

@@ -1007,10 +1007,7 @@
         "transparent": true,
         "solid": true,
         "render": "block",
-        "hardness": 0.5,
-        "tools": [
-            "any"
-        ]
+        "hardness": 0.5
     },
     {
         "name": "minecraft:unpowered_repeater",

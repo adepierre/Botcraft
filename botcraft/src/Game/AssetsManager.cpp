@@ -103,7 +103,30 @@ namespace Botcraft
             return blockstates.at(-1).get();
         }
 #endif
-        return nullptr;
+    }
+
+    const Blockstate* AssetsManager::GetBlockstate(const std::string& name) const
+    {
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        for (const auto& [id, m] : blockstates)
+        {
+            const Blockstate* block = m.at(0).get();
+            if (block->GetName() == name)
+            {
+                return block;
+            }
+        }
+        return blockstates.at(-1).at(0).get();
+#else
+        for (const auto& block : flattened_blockstates)
+        {
+            if (block->GetName() == name)
+            {
+                return block;
+            }
+        }
+        return blockstates.at(-1).get();
+#endif
     }
 
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
@@ -314,11 +337,16 @@ namespace Botcraft
                 blockstate_properties[name].water = info["water"].get<bool>();
             }
 
+            if (info.contains("waterlogged") && info["waterlogged"].is_bool())
+            {
+                blockstate_properties[name].waterlogged = info["waterlogged"].get<bool>();
+            }
+
             if (info.contains("lava") && info["lava"].is_bool())
             {
                 blockstate_properties[name].lava = info["lava"].get<bool>();
             }
-
+ 
             if (info.contains("fence") && info["fence"].is_bool())
             {
                 blockstate_properties[name].fence = info["fence"].get<bool>();
@@ -512,6 +540,7 @@ namespace Botcraft
                 true,           //solid
                 false,          //lava
                 false,          //water
+                false,          //waterlogged
                 false,          //climbable
                 false,          //custom
                 false,          //hazardous

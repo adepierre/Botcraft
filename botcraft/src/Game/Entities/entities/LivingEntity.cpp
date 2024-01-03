@@ -40,7 +40,9 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.7) });
         attributes.insert({ EntityAttribute::Type::Armor, EntityAttribute(EntityAttribute::Type::Armor, 0.0) });
         attributes.insert({ EntityAttribute::Type::ArmorToughness, EntityAttribute(EntityAttribute::Type::ArmorToughness, 0.0) });
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         attributes.insert({ EntityAttribute::Type::MaxAbsorption, EntityAttribute(EntityAttribute::Type::MaxAbsorption, 0.0) });
+#endif
     }
 
     LivingEntity::~LivingEntity()
@@ -77,7 +79,9 @@ namespace Botcraft
         output["attributes"]["generic.movement_speed"] = GetAttributeMovementSpeedValue();
         output["attributes"]["generic.armor"] = GetAttributeArmorValue();
         output["attributes"]["generic.armor_toughness"] = GetAttributeArmorToughnessValue();
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         output["attributes"]["generic.max_absorption"] = GetAttributeMaxAbsorptionValue();
+#endif
 
         return output;
     }
@@ -284,11 +288,13 @@ namespace Botcraft
         return attributes.at(EntityAttribute::Type::ArmorToughness).GetValue();
     }
 
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     double LivingEntity::GetAttributeMaxAbsorptionValue() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return attributes.at(EntityAttribute::Type::MaxAbsorption).GetValue();
     }
+#endif
 
     double LivingEntity::GetAttributeMovementSpeedValueImpl() const
     {

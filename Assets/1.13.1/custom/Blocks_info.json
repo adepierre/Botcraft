@@ -1093,7 +1093,7 @@
         "tools": [
             "any"
         ],
-        "water": true
+        "waterlogged": true
     },
     {
         "hardness": 0,
@@ -1104,7 +1104,7 @@
         "tools": [
             "any"
         ],
-        "water": true
+        "waterlogged": true
     },
     {
         "hardness": 1.5,
@@ -2068,10 +2068,7 @@
         "name": "minecraft:cake",
         "render": "block",
         "solid": true,
-        "transparent": true,
-        "tools": [
-            "any"
-        ]
+        "transparent": true
     },
     {
         "hardness": 0,
@@ -5843,7 +5840,7 @@
         "tools": [
             "any"
         ],
-        "water": true
+        "waterlogged": true
     },
     {
         "hardness": 0,
@@ -5854,7 +5851,7 @@
         "tools": [
             "any"
         ],
-        "water": true
+        "waterlogged": true
     },
     {
         "hardness": 0.5,

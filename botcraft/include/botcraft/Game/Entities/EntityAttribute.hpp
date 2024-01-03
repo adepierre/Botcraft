@@ -13,24 +13,25 @@ namespace Botcraft
         enum class Type : char
         {
             Unknown = -1,
-            MaxHealth,
-            FollowRange,
-            KnockbackResistance,
-            MovementSpeed,
-            FlyingSpeed,
+            Armor,
+            ArmorToughness,
             AttackDamage,
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
             AttackKnockback,
 #endif
             AttackSpeed,
-            Armor,
-            ArmorToughness,
+            FlyingSpeed,
+            FollowRange,
+            HorseJumpStrength,
+            KnockbackResistance,
             Luck,
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
             MaxAbsorption,
 #endif
+            MaxHealth,
+            MovementSpeed,
             ZombieSpawnReinforcementsChance,
-            HorseJumpStrength,
+            NUM_ENTITY_ATTRIBUTES
         };
 
         struct Modifier

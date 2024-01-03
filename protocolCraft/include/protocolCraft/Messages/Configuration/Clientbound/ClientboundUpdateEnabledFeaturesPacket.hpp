@@ -11,7 +11,11 @@ namespace ProtocolCraft
     class ClientboundUpdateEnabledFeaturesPacket : public BaseMessage<ClientboundUpdateEnabledFeaturesPacket>
     {
     public:
+#if   PROTOCOL_VERSION < 765 /* < 1.20.3 */
         static constexpr int packet_id = 0x07;
+#else
+        static constexpr int packet_id = 0x08;
+#endif
 
         static constexpr std::string_view packet_name = "Update Enabled Features";
 

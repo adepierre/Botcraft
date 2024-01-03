@@ -2,6 +2,7 @@
 
 namespace ProtocolCraft
 {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     std::string Chat::ParseChat(const Json::Value& raw_json)
     {
         if (raw_json.is_object())
@@ -72,4 +73,32 @@ namespace ProtocolCraft
 
         return "";
     }
+#else
+    std::string Chat::ParseChat(const NBT::TagCompound& raw)
+    {
+        std::string output = "";
+
+        if (raw.contains("text") && raw["text"].is<NBT::TagString>())
+        {
+            output += raw["text"].get<NBT::TagString>();
+        }
+        else if (raw.size() == 1 && raw.contains("") && raw[""].is<NBT::TagString>())
+        {
+            output += raw[""].get<NBT::TagString>();
+        }
+        else
+        {
+            // TODO: do we need to process other types of items to get parsed text?
+        }
+
+        // Add extra
+        if (raw.contains("extra") && raw["extra"].is_list_of<NBT::TagCompound>())
+        {
+            for (const auto& t : raw["extra"].as_list_of<NBT::TagCompound>())
+            output += ParseChat(t);
+        }
+
+        return output;
+    }
+#endif
 }

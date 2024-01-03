@@ -42,6 +42,10 @@ namespace ProtocolCraft
         "entity_effect",
         "explosion_emitter",
         "explosion",
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        "gust",
+        "gust_emitter",
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         "sonic_boom",
 #endif
@@ -89,6 +93,9 @@ namespace ProtocolCraft
         "portal",
         "rain",
         "smoke",
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        "white_smoke",
+#endif
 #if PROTOCOL_VERSION > 476 /* > 1.13.2 */
         "sneeze",
 #endif
@@ -151,6 +158,11 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         "egg_crack",
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        "dust_plume",
+        "gust_dust",
+        "trial_spawner_detection",
 #endif
     };
 #else

@@ -132,6 +132,9 @@ namespace Botcraft
         Generic9x5,
         Generic9x6,
         Generic3x3,
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        Crafter3x3,
+#endif
         Anvil,
         Beacon,
         BlastFurnace,

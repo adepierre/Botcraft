@@ -160,10 +160,16 @@ TEST_CASE("block entity 1_20")
 #else
         const std::string& front_line = nbt["front_text"]["messages"].as_list_of<std::string>()[i];
         const std::string& back_line = nbt["back_text"]["messages"].as_list_of<std::string>()[i];
+
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         const ProtocolCraft::Json::Value front_content = ProtocolCraft::Json::Parse(front_line);
         const ProtocolCraft::Json::Value back_content = ProtocolCraft::Json::Parse(back_line);
         CHECK(front_content["text"].get_string() == expected_lines[i]);
         CHECK(back_content["text"].get_string() == expected_lines_back[i]);
+#else
+        CHECK(front_line == "\"" + expected_lines[i] + "\"");
+        CHECK(back_line == "\"" + expected_lines_back[i] + "\"");
+#endif
 #endif
     }
 }

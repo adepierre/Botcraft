@@ -110,6 +110,9 @@ namespace Botcraft
         case InventoryType::Default:
         case InventoryType::PlayerInventory:
         case InventoryType::Generic3x3:
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        case InventoryType::Crafter3x3:
+#endif
             return 9;
         case InventoryType::Crafting:
             return 10;
