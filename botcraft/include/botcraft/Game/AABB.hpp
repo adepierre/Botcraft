@@ -24,6 +24,9 @@ namespace Botcraft
 
         bool Intersect(const Vector3<double>& origin, const Vector3<double>& direction) const;
 
+        void Inflate(const double d);
+        void Translate(const Vector3<double>& t);
+
         bool operator<(const AABB& other) const;
         bool operator==(const AABB& other) const;
 
