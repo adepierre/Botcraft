@@ -8,6 +8,7 @@
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/World/Blockstate.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
+#include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Utilities/ScopeLockedWrapper.hpp"
 
 #include "protocolCraft/Handler.hpp"
@@ -57,6 +58,10 @@ namespace Botcraft
         /// @brief Get min_y of the current dimension
         /// @return 0 for versions prior to 1.18, current dimension min_y otherwise
         int GetMinY() const;
+
+        /// @brief Check if current dimension is Ultrawarm
+        /// @return True if ultrawarm, false otherwise
+        bool IsInUltraWarmDimension() const;
 
         /// @brief Check if a chunk modification flag is set. Thread-safe
         /// @param x Chunk X coordinate
@@ -110,6 +115,17 @@ namespace Botcraft
         /// @param pos Positions of the blocks
         /// @return A vector of const pointer to the blockstate at each position, nullptr if not loaded
         std::vector<const Blockstate*> GetBlocks(const std::vector<Position>& pos) const;
+
+        /// @brief Get all colliders that could collide with a given AABB. Thread-safe
+        /// @param aabb AABB of the blocks to search for
+        /// @param movement Optional movement vector that will be added to the AABB
+        /// @return A vector of solid colliders
+        std::vector<AABB> GetColliders(const AABB& aabb, const Vector3<double>& movement = Vector3<double>(0.0)) const;
+
+        /// @brief Get the flow of fluid at a given position
+        /// @param pos Block position
+        /// @return A Vector3 of fluid flow
+        Vector3<double> GetFlow(const Position& pos);
 
         /// @brief Get a read-only locked version of all the loaded chunks
         /// @return Basically an object you can use as a std::unordered_map<std::pair<int, int>, Chunk>*.
@@ -203,6 +219,12 @@ namespace Botcraft
         /// @param dimension Dimension to set min_y for
         /// @param min_y Min block of dimension
         void SetDimensionMinY(const std::string& dimension, const int min_y);
+#endif
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+        /// @brief Set ultrawarm bool for given dimension. Thread-safe
+        /// @param dimension Dimension to set ultrawarm for
+        /// @param ultrawarm Whether the dimension is ultrawam (no water, lava flows faster etc...)
+        void SetDimensionUltrawarm(const std::string& dimension, const bool ultrawarm);
 #endif
 
         /// @brief Perform a raycast in the voxel world and return position, normal and blockstate which are hit. Thread-safe
@@ -361,6 +383,9 @@ namespace Botcraft
         std::unordered_map<std::string, unsigned int> dimension_height;
         /// @brief Height of the lowest block in a given dimension
         std::unordered_map<std::string, int> dimension_min_y;
+#endif
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+        std::unordered_map<std::string, bool> dimension_ultrawarm;
 #endif
     };
 } // Botcraft

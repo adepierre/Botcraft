@@ -58,6 +58,16 @@ namespace Botcraft
 #endif
     }
 
+    bool World::IsInUltraWarmDimension() const
+    {
+        std::shared_lock<std::shared_mutex> lock(world_mutex);
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+        return current_dimension == Dimension::Nether;
+#else
+        return dimension_ultrawarm.at(current_dimension);
+#endif
+    }
+
     bool World::HasChunkBeenModified(const int x, const int z)
     {
 #if USE_GUI
@@ -144,6 +154,114 @@ namespace Botcraft
         }
 
         return output;
+    }
+
+    std::vector<AABB> World::GetColliders(const AABB& aabb, const Vector3<double>& movement) const
+    {
+        const AABB movement_extended_aabb(aabb.GetCenter() + movement * 0.5, aabb.GetHalfSize() + movement.Abs() * 0.5);
+        const Vector3<double> min_aabb = movement_extended_aabb.GetMin();
+        const Vector3<double> max_aabb = movement_extended_aabb.GetMax();
+        std::vector<AABB> output;
+        output.reserve(32);
+        Position current_pos;
+        std::shared_lock<std::shared_mutex> lock(world_mutex);
+        for (int y = static_cast<int>(std::floor(min_aabb.y)) - 1; y <= static_cast<int>(std::floor(max_aabb.y)); ++y)
+        {
+            current_pos.y = y;
+            for (int z = static_cast<int>(std::floor(min_aabb.z)); z <= static_cast<int>(std::floor(max_aabb.z)); ++z)
+            {
+                current_pos.z = z;
+                for (int x = static_cast<int>(std::floor(min_aabb.x)); x <= static_cast<int>(std::floor(max_aabb.x)); ++x)
+                {
+                    current_pos.x = x;
+                    const Blockstate* block = GetBlockImpl(current_pos);
+                    if (block == nullptr || !block->IsSolid())
+                    {
+                        continue;
+                    }
+                    const std::set<AABB>& colliders = block->GetModel(block->GetModelId(current_pos)).GetColliders();
+                    for (const auto& collider : colliders)
+                    {
+                        output.push_back(collider + current_pos);
+                    }
+                }
+            }
+        }
+        return output;
+    }
+
+    Vector3<double> World::GetFlow(const Position& pos)
+    {
+        std::shared_lock<std::shared_mutex> lock(world_mutex);
+        Vector3<double> flow(0.0);
+        std::vector<Position> horizontal_neighbours = {
+            Position(0, 0, -1), Position(1, 0, 0),
+            Position(0, 0, 1), Position(-1, 0, 0)
+        };
+        const Blockstate* block = GetBlockImpl(pos);
+        if (block == nullptr || !block->IsFluidOrWaterlogged())
+        {
+            return flow;
+        }
+
+        const float current_fluid_height = block->GetFluidHeight();
+        for (const Position& neighbour_pos : horizontal_neighbours)
+        {
+            const Blockstate* neighbour = GetBlockImpl(pos + neighbour_pos);
+            if (neighbour == nullptr || (neighbour->IsFluidOrWaterlogged() && neighbour->IsWaterOrWaterlogged() != block->IsWaterOrWaterlogged()))
+            {
+                continue;
+            }
+            const float neighbour_fluid_height = neighbour->GetFluidHeight();
+            if (neighbour_fluid_height == 0.0f)
+            {
+                if (!neighbour->IsSolid())
+                {
+                    const Blockstate* block_below_neighbour = GetBlockImpl(pos + neighbour_pos + Position(0, -1, 0));
+                    if (block_below_neighbour != nullptr &&
+                        (!block_below_neighbour->IsFluidOrWaterlogged() || block_below_neighbour->IsWaterOrWaterlogged() == block->IsWaterOrWaterlogged()))
+                    {
+                        const float block_below_neighbour_fluid_height = block_below_neighbour->GetFluidHeight();
+                        if (block_below_neighbour_fluid_height > 0.0f)
+                        {
+                            flow.x += (current_fluid_height - block_below_neighbour_fluid_height + 0.8888889f) * neighbour_pos.x;
+                            flow.z += (current_fluid_height - block_below_neighbour_fluid_height + 0.8888889f) * neighbour_pos.z;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                flow.x += (current_fluid_height - neighbour_fluid_height) * neighbour_pos.x;
+                flow.z += (current_fluid_height - neighbour_fluid_height) * neighbour_pos.z;
+            }
+        }
+
+        if (block->IsFluidFalling())
+        {
+            for (const Position& neighbour_pos : horizontal_neighbours)
+            {
+                const Blockstate* neighbour = GetBlockImpl(pos + neighbour_pos);
+                if (neighbour == nullptr)
+                {
+                    continue;
+                }
+                const Blockstate* above_neighbour = GetBlockImpl(pos + neighbour_pos + Position(0, 1, 0));
+                if (above_neighbour == nullptr)
+                {
+                    continue;
+                }
+                if (neighbour->IsSolid() && above_neighbour->IsSolid())
+                {
+                    flow.Normalize();
+                    flow.y -= 6.0;
+                    break;
+                }
+            }
+        }
+
+        flow.Normalize();
+        return flow;
     }
 
     Utilities::ScopeLockedWrapper<const std::unordered_map<std::pair<int, int>, Chunk>, std::shared_mutex, std::shared_lock> World::GetChunks() const
@@ -349,6 +467,14 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+    void World::SetDimensionUltrawarm(const std::string& dimension, const bool ultrawarm)
+    {
+        std::scoped_lock<std::shared_mutex> lock(world_mutex);
+        dimension_ultrawarm[dimension] = ultrawarm;
+    }
+#endif
+
     const Blockstate* World::Raycast(const Vector3<double>& origin, const Vector3<double>& direction, const float max_radius, Position& out_pos, Position& out_normal)
     {
         // Inspired from https://gist.github.com/dogfuntom/cc881c8fc86ad43d55d8
@@ -485,15 +611,15 @@ namespace Botcraft
         const Vector3<double> max_aabb = aabb.GetMax();
 
         Position cube_pos;
-        for (int x = static_cast<int>(std::floor(min_aabb.x)); x < static_cast<int>(std::ceil(max_aabb.x)); ++x)
+        for (int y = static_cast<int>(std::floor(min_aabb.y)) - 1; y < static_cast<int>(std::floor(max_aabb.y)); ++y)
         {
-            cube_pos.x = x;
-            for (int y = static_cast<int>(std::floor(min_aabb.y)); y < static_cast<int>(std::ceil(max_aabb.y)); ++y)
+            cube_pos.y = y;
+            for (int z = static_cast<int>(std::floor(min_aabb.z)); z < static_cast<int>(std::floor(max_aabb.z)); ++z)
             {
-                cube_pos.y = y;
-                for (int z = static_cast<int>(std::floor(min_aabb.z)); z < static_cast<int>(std::ceil(max_aabb.z)); ++z)
+                cube_pos.z = z;
+                for (int x = static_cast<int>(std::floor(min_aabb.x)); x < static_cast<int>(std::floor(max_aabb.x)); ++x)
                 {
-                    cube_pos.z = z;
+                    cube_pos.x = x;
 
                     const Blockstate* block = GetBlockImpl(cube_pos);
 
@@ -540,16 +666,21 @@ namespace Botcraft
 #else
         SetCurrentDimensionImpl(msg.GetCommonPlayerSpawnInfo().GetDimension().GetFull());
 #endif
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
+        dimension_ultrawarm[current_dimension] = static_cast<bool>(msg.GetDimensionType()["ultrawarm"].get<char>());
+#endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         dimension_height[current_dimension] = msg.GetDimensionType()["height"].get<int>();
         dimension_min_y[current_dimension] = msg.GetDimensionType()["min_y"].get<int>();
+        dimension_ultrawarm[current_dimension] = static_cast<bool>(msg.GetDimensionType()["ultrawarm"].get<char>());
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
         for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
             dimension_height[dim_name] = static_cast<unsigned int>(d["element"]["height"].get<int>());
             dimension_min_y[dim_name] = d["element"]["min_y"].get<int>();
+            dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
         }
 #endif
 #endif
@@ -568,9 +699,12 @@ namespace Botcraft
         SetCurrentDimensionImpl(msg.GetCommonPlayerSpanwInfo().GetDimension().GetFull());
 #endif
 
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
+#if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
+        dimension_ultrawarm[current_dimension] = static_cast<bool>(msg.GetDimensionType()["ultrawarm"].get<char>());
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         dimension_height[current_dimension] = msg.GetDimensionType()["height"].get<int>();
         dimension_min_y[current_dimension] = msg.GetDimensionType()["min_y"].get<int>();
+#endif
 #endif
     }
 
@@ -751,6 +885,7 @@ namespace Botcraft
             const std::string& dim_name = d["name"].get<std::string>();
             dimension_height[dim_name] = static_cast<unsigned int>(d["element"]["height"].get<int>());
             dimension_min_y[dim_name] = d["element"]["min_y"].get<int>();
+            dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
         }
     }
 #endif
