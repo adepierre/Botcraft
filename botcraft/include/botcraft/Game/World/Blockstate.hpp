@@ -100,13 +100,23 @@ namespace Botcraft
         bool IsFluid() const;
         bool IsFluidOrWaterlogged() const;
         bool IsLava() const;
+        bool IsFluidFalling() const;
         bool IsWater() const;
         bool IsWaterlogged() const;
         bool IsWaterOrWaterlogged() const;
         bool IsClimbable() const;
         bool IsHazardous() const;
+        bool IsSlime() const;
+        bool IsBed() const;
+        bool IsSoulSand() const;
         bool IsHoney() const;
         bool IsScaffolding() const;
+        bool IsWeb() const;
+        bool IsBubbleColumn() const;
+        bool IsUpBubbleColumn() const;
+        bool IsDownBubbleColumn() const;
+        bool IsBerryBush() const;
+        bool IsPowderSnow() const;
         bool IsWallHeight() const;
         float GetHardness() const;
         float GetFriction() const;
@@ -175,8 +185,16 @@ namespace Botcraft
             Climbable,
             Hazardous,
             AnyToolHarvest,
+            Slime,
+            Bed,
+            SoulSand,
             Honey,
             Scaffolding,
+            Web,
+            UpBubbleColumn,
+            DownBubbleColumn,
+            BerryBush,
+            PowderSnow,
             WallHeight,
             NUM_FLAGS
         };

@@ -266,11 +266,37 @@ namespace Botcraft
         flags[static_cast<size_t>(BlockstateFlags::Climbable)] = properties.climbable;
         flags[static_cast<size_t>(BlockstateFlags::Hazardous)] = properties.hazardous;
         flags[static_cast<size_t>(BlockstateFlags::AnyToolHarvest)] = properties.any_tool_harvest;
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.name == "minecraft:slime";
+#else
+        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.name == "minecraft:slime_block";
+#endif
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        flags[static_cast<size_t>(BlockstateFlags::Bed)] = properties.name == "minecraft:bed";
+#else
+        flags[static_cast<size_t>(BlockstateFlags::Bed)] = Utilities::EndsWith(properties.name, "_bed");
+#endif
+        flags[static_cast<size_t>(BlockstateFlags::SoulSand)] = properties.name == "minecraft:soul_sand";
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         flags[static_cast<size_t>(BlockstateFlags::Honey)] = properties.name == "minecraft:honey_block";
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         flags[static_cast<size_t>(BlockstateFlags::Scaffolding)] = properties.name == "minecraft:scaffolding";
+#endif
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        flags[static_cast<size_t>(BlockstateFlags::Web)] = properties.name == "minecraft:web";
+#else
+        flags[static_cast<size_t>(BlockstateFlags::Web)] = properties.name == "minecraft:cobweb";
+#endif
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+        flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = properties.name == "minecraft:bubble_column";
+        flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = properties.name == "minecraft:bubble_column";
+#endif
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        flags[static_cast<size_t>(BlockstateFlags::BerryBush)] = properties.name == "minecraft:sweet_berry_bush";
+#endif
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+        flags[static_cast<size_t>(BlockstateFlags::PowderSnow)] = properties.name == "minecraft:powder_snow";
 #endif
         flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall || properties.fence || properties.fence_gate;
 
@@ -303,6 +329,14 @@ namespace Botcraft
             if (properties.fence_gate && splitted[0] == "open" && splitted[1] == "true")
             {
                 flags[static_cast<size_t>(BlockstateFlags::Solid)] = false;
+            }
+            if (IsDownBubbleColumn() && splitted[0] == "drag" && splitted[1] == "false")
+            {
+                flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = false;
+            }
+            if (IsUpBubbleColumn() && splitted[0] == "drag" && splitted[1] == "true")
+            {
+                flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = false;
             }
         }
         // This means it's a special "full water" block (like kelp or sea_grass)
@@ -597,11 +631,37 @@ namespace Botcraft
         flags[static_cast<size_t>(BlockstateFlags::Climbable)] = properties.climbable;
         flags[static_cast<size_t>(BlockstateFlags::Hazardous)] = properties.hazardous;
         flags[static_cast<size_t>(BlockstateFlags::AnyToolHarvest)] = properties.any_tool_harvest;
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.name == "minecraft:slime";
+#else
+        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.name == "minecraft:slime_block";
+#endif
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        flags[static_cast<size_t>(BlockstateFlags::Bed)] = properties.name == "minecraft:bed";
+#else
+        flags[static_cast<size_t>(BlockstateFlags::Bed)] = Utilities::EndsWith(properties.name, "_bed");
+#endif
+        flags[static_cast<size_t>(BlockstateFlags::SoulSand)] = properties.name == "minecraft:soul_sand";
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         flags[static_cast<size_t>(BlockstateFlags::Honey)] = properties.name == "minecraft:honey_block";
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         flags[static_cast<size_t>(BlockstateFlags::Scaffolding)] = properties.name == "minecraft:scaffolding";
+#endif
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        flags[static_cast<size_t>(BlockstateFlags::Web)] = properties.name == "minecraft:web";
+#else
+        flags[static_cast<size_t>(BlockstateFlags::Web)] = properties.name == "minecraft:cobweb";
+#endif
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+        flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = properties.name == "minecraft:bubble_column";
+        flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = properties.name == "minecraft:bubble_column";
+#endif
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        flags[static_cast<size_t>(BlockstateFlags::BerryBush)] = properties.name == "minecraft:sweet_berry_bush";
+#endif
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+        flags[static_cast<size_t>(BlockstateFlags::PowderSnow)] = properties.name == "minecraft:powder_snow";
 #endif
         flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall || properties.fence || properties.fence_gate;
 
@@ -633,6 +693,14 @@ namespace Botcraft
             if (properties.fence_gate && splitted[0] == "open" && splitted[1] == "true")
             {
                 flags[static_cast<size_t>(BlockstateFlags::Solid)] = false;
+            }
+            if (IsDownBubbleColumn() && splitted[0] == "drag" && splitted[1] == "false")
+            {
+                flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = false;
+            }
+            if (IsUpBubbleColumn() && splitted[0] == "drag" && splitted[1] == "true")
+            {
+                flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = false;
             }
         }
         // This means it's a special "full water" block (like kelp or sea_grass)
@@ -713,6 +781,11 @@ namespace Botcraft
         return flags[static_cast<size_t>(BlockstateFlags::Lava)];
     }
 
+    bool Blockstate::IsFluidFalling() const
+    {
+        return flags[static_cast<size_t>(BlockstateFlags::FluidFalling)];
+    }
+
     bool Blockstate::IsWater() const
     {
         return flags[static_cast<size_t>(BlockstateFlags::Water)];
@@ -743,6 +816,21 @@ namespace Botcraft
         return flags[static_cast<size_t>(BlockstateFlags::Hazardous)];
     }
 
+    bool Blockstate::IsSlime() const
+    {
+        return flags[static_cast<size_t>(BlockstateFlags::Slime)];
+    }
+
+    bool Blockstate::IsBed() const
+    {
+        return flags[static_cast<size_t>(BlockstateFlags::Bed)];
+    }
+
+    bool Blockstate::IsSoulSand() const
+    {
+        return flags[static_cast<size_t>(BlockstateFlags::SoulSand)];
+    }
+
     bool Blockstate::IsHoney() const
     {
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
@@ -758,6 +846,54 @@ namespace Botcraft
         return false;
 #else
         return flags[static_cast<size_t>(BlockstateFlags::Scaffolding)];
+#endif
+    }
+
+    bool Blockstate::IsBubbleColumn() const
+    {
+        return IsDownBubbleColumn() || IsUpBubbleColumn();
+    }
+
+    bool Blockstate::IsUpBubbleColumn() const
+    {
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        // No bubble column before 1.13
+        return false;
+#else
+        return flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)];
+#endif
+    }
+
+    bool Blockstate::IsDownBubbleColumn() const
+    {
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        // No bubble column before 1.13
+        return false;
+#else
+        return flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)];
+#endif
+    }
+
+    bool Blockstate::IsWeb() const
+    {
+        return flags[static_cast<size_t>(BlockstateFlags::Web)];
+    }
+
+    bool Blockstate::IsBerryBush() const
+    {
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        return false;
+#else
+        return flags[static_cast<size_t>(BlockstateFlags::BerryBush)];
+#endif
+    }
+
+    bool Blockstate::IsPowderSnow() const
+    {
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        return false;
+#else
+        return flags[static_cast<size_t>(BlockstateFlags::PowderSnow)];
 #endif
     }
 
