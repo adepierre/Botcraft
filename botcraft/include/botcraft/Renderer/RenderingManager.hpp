@@ -21,6 +21,7 @@ namespace Botcraft
     class World;
     class InventoryManager;
     class EntityManager;
+    class LocalPlayer;
     class BaseNode;
 
     namespace Renderer
@@ -152,6 +153,7 @@ namespace Botcraft
             std::shared_ptr<World> world;
             std::shared_ptr<InventoryManager> inventory_manager;
             std::shared_ptr<EntityManager> entity_manager;
+            std::shared_ptr<LocalPlayer> local_player;
 
             std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)> is_key_pressed;
 

@@ -53,6 +53,7 @@ namespace Botcraft
             world = world_;
             inventory_manager = inventory_manager_;
             entity_manager = entity_manager_;
+            local_player = nullptr;
 
             for (int i = 0; i < is_key_pressed.size(); ++i)
             {
@@ -140,13 +141,18 @@ namespace Botcraft
                     ImGui::NewFrame();
 
                     {
+                        if (local_player == nullptr)
+                        {
+                            local_player = entity_manager->GetLocalPlayer();
+                        }
                         ImGui::SetNextWindowPos(ImVec2(0, 0));
                         ImGui::SetNextWindowSize(ImVec2(290, 70));
+                        const Vector3<double> position = local_player == nullptr ? Vector3<double>(0.0) : local_player->GetPosition();
                         ImGui::Begin("Position", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-                        ImGui::Text("%f, %f, %f", world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y - 1.62f, world_renderer->GetCamera()->GetPosition().z);
-                        ImGui::Text("Yaw: %f  ||  ", world_renderer->GetCamera()->GetYaw());
+                        ImGui::Text("%f, %f, %f", position.x, position.y, position.z);
+                        ImGui::Text("Yaw: %f  ||  ", local_player == nullptr ? 0.0 : local_player->GetYaw());
                         ImGui::SameLine();
-                        ImGui::Text("Pitch: %f", world_renderer->GetCamera()->GetPitch());
+                        ImGui::Text("Pitch: %f", local_player == nullptr ? 0.0 : local_player->GetPitch());
                         ImGui::End();
                     }
                     {
