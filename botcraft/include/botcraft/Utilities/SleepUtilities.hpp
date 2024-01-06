@@ -3,6 +3,11 @@
 #include <chrono>
 #include <functional>
 
+namespace Botcraft
+{
+    class BehaviourClient;
+}
+
 namespace Botcraft::Utilities
 {
     void SleepUntil(const std::chrono::steady_clock::time_point& end);
@@ -14,4 +19,6 @@ namespace Botcraft::Utilities
     }
 
     bool WaitForCondition(const std::function<bool()>& condition, const long long int timeout_ms = 0);
+
+    bool YieldForCondition(const std::function<bool()>& condition, BehaviourClient& client, const long long int timeout_ms = 0);
 }

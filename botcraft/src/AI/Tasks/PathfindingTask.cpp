@@ -6,10 +6,12 @@
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
-#include "botcraft/Game/Physics/PhysicsManager.hpp"
 
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/MiscUtilities.hpp"
+#include "botcraft/Utilities/SleepUtilities.hpp"
+
+#define PI 3.14159265359
 
 namespace Botcraft
 {
@@ -48,7 +50,7 @@ namespace Botcraft
             return BlockPathfindingState::Hazardous;
         }
 
-        if (block->IsFluid())
+        if (block->IsFluidOrWaterlogged() && !block->IsSolid())
         {
             return BlockPathfindingState::Climbable | BlockPathfindingState::Fluid;
         }
@@ -314,7 +316,7 @@ namespace Botcraft
                         break;
                     }
 
-                    if (block != nullptr && block->IsClimbable())
+                    if (GetBlockGoThroughState(block, takes_damage) & BlockPathfindingState::Climbable)
                     {
                         const float new_cost = cost[current_node.pos] + std::abs(y);
                         const Position new_pos = current_node.pos + Position(0, y + 1, 0);
@@ -573,7 +575,7 @@ namespace Botcraft
                             break;
                         }
 
-                        if (block != nullptr && block->IsClimbable())
+                        if (GetBlockGoThroughState(block, takes_damage) & BlockPathfindingState::Climbable)
                         {
                             const float new_cost = cost[current_node.pos] + std::abs(y) + 1.5f;
                             const Position new_pos = next_location + Position(0, y + 1, 0);
@@ -773,406 +775,361 @@ namespace Botcraft
         return std::vector<Position>(output_deque.begin(), output_deque.end());
     }
 
-    bool Move(BehaviourClient& client, std::shared_ptr<LocalPlayer>& local_player, const Position& target_pos, const float speed, const float climbing_speed)
+    // a75f87e0-0583-435b-847a-cf0c18ede2d1
+    static constexpr std::array<unsigned char, 16> botcraft_pathfinding_speed_uuid = {
+        0xA7, 0x5F, 0x87, 0xE0,
+        0x05, 0x83,
+        0x43, 0x5B,
+        0x84, 0x7A,
+        0xCF, 0x0C, 0x18, 0xED, 0xE2, 0xD1
+    };
+
+    bool Move(BehaviourClient& client, std::shared_ptr<LocalPlayer>& local_player, const Position& target_pos, const float speed_factor, const bool sprint)
     {
-        const bool is_climbing = local_player->GetIsClimbing();;
-        const Vector3<double> initial_position = local_player->GetPosition();
-        const Position initial_block_pos(
-            static_cast<int>(std::floor(initial_position.x)),
-            static_cast<int>(std::floor(initial_position.y + 0.25)),
-            static_cast<int>(std::floor(initial_position.z))
-        );
         const Vector3<double> target_position(target_pos.x + 0.5, target_pos.y, target_pos.z + 0.5);
-        local_player->LookAt(target_position + Vector3<double>(0.0, local_player->GetEyeHeight(), 0.0), true);
-        const Vector3<double> motion_vector = target_position - initial_position;
+        const Vector3<double> look_at_target = target_position + Vector3<double>(0.0, local_player->GetEyeHeight(), 0.0);
+        const Vector3<double> motion_vector = target_position - local_player->GetPosition();
+        const double half_player_width = 0.5 * local_player->GetWidth();
+        const Vector3<double> horizontal_target_position(target_position.x, 0.0, target_position.z);
 
-        // If need to jump to catch climbable at head level
-        if (std::abs(motion_vector.x) < 0.5
-            && std::abs(motion_vector.z) < 0.5
-            && motion_vector.y > 0.5
-            && !is_climbing
-            )
+        std::shared_ptr<World> world = client.GetWorld();
+
+        if (speed_factor != 1.0f)
         {
-            local_player->Jump();
-
-            auto now = std::chrono::steady_clock::now();
-            while (true)
-            {
-                // Something went wrong during jumping
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - now).count() >= 2000)
-                {
-                    return false;
-                }
-                if (local_player->GetY() - initial_position.y >= 1.0f
-                    || local_player->GetIsClimbing())
-                {
-                    break;
-                }
-                client.Yield();
-            }
-
-            // We are in the climbable block we want to reach,
-            // now adjust Y position to target
-            local_player->SetPlayerInputsTargetY(target_position.y + 0.001);
-
-            // Wait for physics thread to update position
-            now = std::chrono::steady_clock::now();
-            while (true)
-            {
-                // Something went wrong
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - now).count() >= 1000)
-                {
-                    return false;
-                }
-                if (std::abs(local_player->GetY() - target_position.y) <= 1e-2)
-                {
-                    break;
-                }
-                client.Yield();
-            }
+            local_player->SetAttributeModifier(
+                EntityAttribute::Type::MovementSpeed,
+                botcraft_pathfinding_speed_uuid,
+                EntityAttribute::Modifier{
+                    speed_factor - 1.0f, // -1 as MultiplyTotal will multiply by (1.0 + x)
+                    EntityAttribute::Modifier::Operation::MultiplyTotal
+                });
         }
-        // If we need to climb/go down
-        else if (std::abs(motion_vector.x) < 0.5 &&
-            std::abs(motion_vector.z) < 0.5 &&
-            std::abs(motion_vector.y) > 0.5)
-        {
-            // Get the real movement that has to be done
-            // (without the optional free fall after)
-            Vector3<double> player_movement = motion_vector;
+        Utilities::OnEndScope botcraft_speed_modifier_remover([&]() {
+            local_player->RemoveAttributeModifier(EntityAttribute::Type::MovementSpeed, botcraft_pathfinding_speed_uuid);
+        });
 
-            if (player_movement.y < -2.05)
-            {
-                player_movement.y = -2.0;
-            }
+        local_player->LookAt(look_at_target, true);
 
-            auto start = std::chrono::steady_clock::now();
-            auto previous_step = start;
-            while (true)
-            {
-                auto now = std::chrono::steady_clock::now();
-                long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-                // Something went wrong
-                if (time_count > 1000 + 1000 * std::abs(player_movement.y) / climbing_speed)
-                {
-                    return false;
-                }
-                // We climb/go down at climbing_speed block/s
-                // Set the input to adjust position
-                else if (time_count > 1000 * std::abs(player_movement.y) / climbing_speed)
-                {
-                    // If the physics thread has updated the position to the target, we're good
-                    if (std::abs(local_player->GetY() - (initial_position.y + player_movement.y)) <= 1e-2)
-                    {
-                        break;
-                    }
-                    // Else adjust the position to reach it on the next physics update
-                    local_player->SetPlayerInputsTargetY(initial_position.y + player_movement.y + 0.001);
-                }
-                // Otherwise just move partially toward the goal
-                else
-                {
-                    long long int delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count();
-                    const double delta_y = player_movement.y * delta_t / 1000.0 * climbing_speed;
-                    local_player->AddPlayerInputsY(delta_y);
-                    previous_step = now;
-                }
-                client.Yield();
-            }
-
-            if (motion_vector.y > -2.05)
-            {
-                return true;
-            }
-
-            // If we are here, it means we need to
-            // free fall into a climbable block
-            start = std::chrono::steady_clock::now();
-            local_player->SetOnGround(false);
-            while (true)
-            {
-                // It took more than fall height * 500 ms to
-                // get to the bottom, there is probably an issue
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= std::abs(motion_vector.y) * 500)
-                {
-                    return false;
-                }
-
-                // Crouch while we are above the target
-                if (local_player->GetPosition().y - target_position.y > 0)
-                {
-                    local_player->SetPlayerInputsY(-0.1);
-                }
-                else if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                {
-                    break;
-                }
-                client.Yield();
-            }
-
-            start = std::chrono::steady_clock::now();
-            // Now we are inside the climbable block, we need to get back on top of it
-            while (true)
-            {
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 1000)
-                {
-                    return false;
-                }
-
-                if (local_player->GetPosition().y - target_position.y < 0)
-                {
-                    local_player->SetPlayerInputsY(0.1);
-                }
-                // We are on top
-                else if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                {
-                    break;
-                }
-                client.Yield();
-            }
-        }
         // Move horizontally (with a jump if necessary)
-        else if ((std::abs(motion_vector.x) > 0.5 && std::abs(motion_vector.x) < 2.5)
-            || (std::abs(motion_vector.z) > 0.5 && std::abs(motion_vector.z) < 2.5))
+        if (std::abs(motion_vector.x) > 0.5 || std::abs(motion_vector.z) > 0.5)
         {
-            // If we need to jump to reach an higher block, or to jump over a gap
+            // If we need to jump
             if (motion_vector.y > 0.5 || std::abs(motion_vector.x) > 1.5 || std::abs(motion_vector.z) > 1.5)
             {
-                local_player->Jump();
-
                 // If not a jump above a gap, wait until reaching the next Y value before moving X/Z
-                auto now = std::chrono::steady_clock::now();
-                while (std::abs(motion_vector.x) < 1.5 && std::abs(motion_vector.z) < 1.5)
+                if (std::abs(motion_vector.x) < 1.5 && std::abs(motion_vector.z) < 1.5)
                 {
-                    // Something went wrong during jumping
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - now).count() >= 2000)
+                    local_player->SetInputsJump(true);
+
+                    if (!Utilities::YieldForCondition([&]() -> bool
+                        {
+                            return local_player->GetY() >= target_pos.y;
+                        }, client, 2000))
                     {
                         return false;
                     }
-
-                    if (local_player->GetY() >= target_pos.y)
-                    {
-                        break;
-                    }
-
-                    client.Yield();
                 }
-            }
-
-            auto start = std::chrono::steady_clock::now();
-            auto previous_step = start;
-            const double motion_norm_xz = std::abs(motion_vector.x) + std::abs(motion_vector.z);
-            // Move forward to the right X/Z location
-            while (true)
-            {
-                auto now = std::chrono::steady_clock::now();
-                long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-                // If we are way over the time we have to travel one block, something went wrong
-                if (time_count > 1000 * motion_norm_xz / speed + 500)
-                {
-                    return false;
-                }
-                // We should be arrived
-                else if (time_count > 1000 * motion_norm_xz / speed)
-                {
-                    const Vector3<double> diff = local_player->GetPosition() - target_position;
-
-                    // We are at X/Z destination
-                    if (std::abs(diff.x) + std::abs(diff.z) < 1e-2)
-                    {
-                        local_player->SetOnGround(false);
-                        break;
-                    }
-
-                    // Otherwise, set X and Z inputs to reach the goal
-                    local_player->SetPlayerInputsTargetX(target_position.x);
-                    // if we only move horizontally, directly set the target pos
-                    if (target_pos.y == initial_block_pos.y && motion_norm_xz < 1.5)
-                    {
-                        local_player->SetY(target_pos.y + 0.001);
-                    }
-                    else
-                    {
-                        local_player->SetY(local_player->GetY() + 0.001);
-                    }
-                    local_player->SetPlayerInputsTargetZ(target_position.z);
-                }
-                // Otherwise just move partially toward the goal
+                // It's a long jump above a gap
                 else
                 {
-                    const double delta_t = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count());
-                    Vector3<double> delta_v = motion_vector * delta_t / (1000.0 * motion_norm_xz) * speed;
-                    local_player->AddPlayerInputsX(delta_v.x);
-                    // if we only move horizontally, directly set the target pos
-                    if (target_pos.y == initial_block_pos.y && motion_norm_xz < 1.5)
-                    {
-                        local_player->SetY(target_pos.y + 0.001);
-                    }
-                    else
-                    {
-                        local_player->SetY(local_player->GetY() + 0.001);
-                    }
-                    local_player->AddPlayerInputsZ(delta_v.z);
-                    previous_step = now;
-                }
-                client.Yield();
-            }
+                    const Vector3<double> current_block_center_xz(
+                        std::floor(local_player->GetX()) + 0.5,
+                        0.0,
+                        std::floor(local_player->GetZ()) + 0.5
+                    );
+                    // Start to move forward to have speed before jumping
+                    if (!Utilities::YieldForCondition([&]() -> bool
+                        {
+                            if (local_player->GetDirtyInputs())
+                            {
+                                return false;
+                            }
 
-            start = std::chrono::steady_clock::now();
-            // Wait until not falling anymore
-            while (true)
+                            // We need to add the forward input even for the tick we do the jump
+                            local_player->LookAt(look_at_target, false);
+                            local_player->SetInputsForward(1.0);
+                            local_player->SetInputsSprint(sprint);
+
+                            if (Vector3<double>(local_player->GetX(), 0.0, local_player->GetZ()).SqrDist(current_block_center_xz) > half_player_width * half_player_width)
+                            {
+                                // Then jump
+                                local_player->SetInputsJump(true);
+                                return true;
+                            }
+
+                            return false;
+                        }, client, 1000))
+                    {
+                        return false;
+                    }
+                }
+            }
+            // Move forward to the right X/Z location
+            if (!Utilities::YieldForCondition([&]() -> bool
+                {
+                    if (local_player->GetDirtyInputs())
+                    {
+                        return false;
+                    }
+
+                    const Vector3<double> current_pos = local_player->GetPosition();
+                    if (Vector3<double>(current_pos.x, 0.0, current_pos.z).SqrDist(horizontal_target_position) < (0.5 - half_player_width) * (0.5 - half_player_width))
+                    {
+                        return true;
+                    }
+
+                    local_player->LookAt(look_at_target, false);
+                    const Vector3<double> speed = local_player->GetSpeed();
+                    double forward = 1.0;
+                    // If we need to fall, stop accelerating to prevent "overshooting" and potentially
+                    // hit some block on the bottom or on the side of the dropshoot
+                    if (motion_vector.y < -0.5 &&
+                        static_cast<int>(std::floor(current_pos.x)) == target_pos.x &&
+                        static_cast<int>(std::floor(current_pos.z)) == target_pos.z)
+                    {
+                        if (std::max(std::abs(speed.x), std::abs(speed.z)) > 0.12) // 0.12 because I needed a value so why not
+                        {
+                            forward = -1.0;
+                        }
+                        else if (std::max(std::abs(speed.x), std::abs(speed.z)) > 0.06)
+                        {
+                            forward = 0.0;
+                        }
+                    }
+                    local_player->SetInputsForward(forward);
+                    local_player->SetInputsSprint(sprint && (forward == 1.0));
+
+                    return false;
+                }, client, (std::abs(motion_vector.x) + std::abs(motion_vector.z) + (motion_vector.y < -0.5)) * 1000))
             {
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= std::max(1000, static_cast<int>(std::abs(motion_vector.y) * 500)))
+                return false;
+            }
+        }
+
+        // If we need to go down, let the gravity do it's job, unless we are in a scaffholding or water,
+        // in which case we need to press sneak to go down. If free falling in air, press sneak to catch
+        // climbable at the bottom, preventing fall damage
+        if (local_player->GetY() > target_position.y && !Utilities::YieldForCondition([&]() -> bool
+            {
+                // Previous inputs have not been processed by physics thread yet
+                if (local_player->GetDirtyInputs())
                 {
                     return false;
                 }
 
-                // This is a long fall, we need to crouch to pass through the landing block without damage
-                if (motion_vector.y < -2.5)
+                if (static_cast<int>(std::floor(local_player->GetY())) <= target_pos.y &&
+                    (local_player->GetOnGround() || local_player->IsClimbing() || local_player->IsInFluid()))
                 {
-                    local_player->SetPlayerInputsY(-0.1);
+                    return true;
                 }
 
-                if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                {
-                    break;
-                }
-                client.Yield();
-            }
+                const Vector3<double> current_pos = local_player->GetPosition();
+                const Blockstate* feet_block = world->GetBlock(Position(
+                    static_cast<int>(std::floor(current_pos.x)),
+                    static_cast<int>(std::floor(current_pos.y)),
+                    static_cast<int>(std::floor(current_pos.z))
+                ));
+                local_player->SetInputsSneak(feet_block != nullptr &&
+                    (feet_block->IsFluidOrWaterlogged() || feet_block->IsScaffolding() || (feet_block->IsAir() && motion_vector.y < -2.5)));
 
-            // This is a long fall
-            if (motion_vector.y < -2.5)
-            {
-                // Now we are inside the climbable block, we need to get back on top of it
-                start = std::chrono::steady_clock::now();
-                while (true)
+                // If we drifted too much, adjust toward target X/Z position
+                if (Vector3<double>(current_pos.x, 0.0, current_pos.z).SqrDist(horizontal_target_position) > (0.5 - half_player_width) * (0.5 - half_player_width))
                 {
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 1000)
-                    {
-                        return false;
-                    }
-
-                    if (local_player->GetPosition().y - target_position.y < 0)
-                    {
-                        local_player->SetPlayerInputsY(0.1);
-                    }
-                    // We are on top
-                    else
-                    {
-                        break;
-                    }
-                    client.Yield();
-                }
-            }
-            // We are potentially in a climbable block, and need to go down to reach target Y
-            else
-            {
-                start = std::chrono::steady_clock::now();
-                previous_step = start;
-                const double climb_diff = target_position.y - local_player->GetY();
-                while (true)
-                {
-                    // If not climbing, wait for landing on the target block
-                    if (!local_player->GetIsClimbing())
-                    {
-                        break;
-                    }
-
-                    auto now = std::chrono::steady_clock::now();
-                    long long int time_count = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-                    // Something went wrong
-                    if (time_count > 1000 + 1000 * std::abs(climb_diff) / climbing_speed)
-                    {
-                        return false;
-                    }
-                    // We climb/go down at climbing_speed block/s
-                    // Set the input to adjust position
-                    else if (time_count > 1000 * std::abs(climb_diff) / climbing_speed)
-                    {
-                        // If the physics thread has updated the position to the target, we're good
-                        if (std::abs(local_player->GetY() - target_position.y) <= 1e-2)
-                        {
-                            break;
-                        }
-                        // Else adjust the position to reach it on the next physics update
-                        local_player->SetPlayerInputsTargetY(target_position.y + 0.001);
-                    }
-                    // Otherwise just move partially toward the goal
-                    else
-                    {
-                        const double current_diff = target_position.y - local_player->GetY();
-                        long long int delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(now - previous_step).count();
-                        double delta_y = delta_t / 1000.0 * climbing_speed;
-                        if (current_diff < 0.0)
-                        {
-                            delta_y *= -1.0;
-                        }
-                        local_player->AddPlayerInputsY(delta_y);
-                        previous_step = now;
-                    }
-                    client.Yield();
+                    local_player->LookAt(look_at_target, false);
+                    local_player->SetInputsForward(1.0);
                 }
 
-                // Make sure we are not falling anymore
-                // (no need for a timeout as we can't fall/fly forever anyway)
-                while (true)
-                {
-                    if (local_player->GetOnGround() || local_player->GetIsClimbing())
-                    {
-                        break;
-                    }
-                    client.Yield();
-                }
-            }
-        }
-        else
+                return false;
+            }, client, 1000 + 1000 * std::abs(motion_vector.y)))
         {
-            LOG_ERROR("I don't know how to go from " << initial_position << " to " << target_position);
+            return false;
         }
 
-        return true;
+        // We need to go up (either from ground or in a climbable/water)
+        if (local_player->GetY() < target_position.y && !Utilities::YieldForCondition([&]() -> bool
+            {
+                // Previous inputs have not been processed by physics thread yet
+                if (local_player->GetDirtyInputs())
+                {
+                    return false;
+                }
+
+                const Vector3<double> current_pos = local_player->GetPosition();
+                if (static_cast<int>(std::floor(current_pos.y)) >= target_pos.y)
+                {
+                    return true;
+                }
+
+                local_player->SetInputsJump(true);
+
+                // If we drifted too much, adjust toward target X/Z position
+                if (Vector3<double>(current_pos.x, 0.0, current_pos.z).SqrDist(horizontal_target_position) > (0.5 - half_player_width) * (0.5 - half_player_width))
+                {
+                    local_player->LookAt(look_at_target, false);
+                    local_player->SetInputsForward(1.0);
+                }
+
+                return false;
+            }, client, 1000 + 1000 * std::abs(motion_vector.y)))
+        {
+            return false;
+        }
+
+        // We are in the target block, make sure we are not a bit too high
+        return Utilities::YieldForCondition([&]() -> bool
+            {
+                if (local_player->GetDirtyInputs())
+                {
+                    return false;
+                }
+
+                // One physics tick climbing down is 0.15 at most, so this should never get too low in theory
+                if (local_player->GetY() >= target_position.y && local_player->GetY() - target_position.y < 0.2)
+                {
+                    return true;
+                }
+
+                const Vector3<double> current_pos = local_player->GetPosition();
+                const Blockstate* feet_block = world->GetBlock(Position(
+                    static_cast<int>(std::floor(current_pos.x)),
+                    static_cast<int>(std::floor(current_pos.y)),
+                    static_cast<int>(std::floor(current_pos.z))
+                ));
+                local_player->SetInputsSneak(feet_block != nullptr &&
+                    (feet_block->IsFluidOrWaterlogged() || feet_block->IsScaffolding() || (feet_block->IsAir() && motion_vector.y < -2.5)));
+
+                // If we drifted too much, adjust toward target X/Z position
+                if (Vector3<double>(current_pos.x, 0.0, current_pos.z).SqrDist(horizontal_target_position) > (0.5 - half_player_width) * (0.5 - half_player_width))
+                {
+                    local_player->LookAt(look_at_target, false);
+                    local_player->SetInputsForward(1.0);
+                }
+
+                return false;
+            }, client, 1000);
     }
 
+    // Try to cancel speed while going toward the center of the block
+    void AdjustPosSpeed(BehaviourClient& client)
+    {
+        std::shared_ptr<LocalPlayer> player = client.GetEntityManager()->GetLocalPlayer();
+        const Vector3<double> pos = player->GetPosition();
+        const Vector3<double> target(
+            std::floor(pos.x) + 0.5,
+            std::floor(pos.y),
+            std::floor(pos.z) + 0.5
+        );
 
-    Status GoToImpl(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const float speed, const bool allow_jump)
+        Utilities::YieldForCondition([&]() -> bool
+            {
+                if (player->GetDirtyInputs())
+                {
+                    return false;
+                }
+
+                const Vector3<double> pos = player->GetPosition();
+                const Vector3<double> speed = player->GetSpeed();
+                if (std::abs(pos.x - target.x) < 0.2 &&
+                    std::abs(pos.z - target.z) < 0.2 &&
+                    std::abs(speed.x) < 0.05 &&
+                    std::abs(speed.z) < 0.05)
+                {
+                    return true;
+                }
+
+                const float yaw_rad = player->GetYaw() * PI / 180.0;
+                const double cos_yaw = std::cos(yaw_rad);
+                const double sin_yaw = std::sin(yaw_rad);
+
+                // Project on forward/left axis
+                const double delta_forward = (target.z - pos.z) * cos_yaw - (target.x - pos.x) * sin_yaw;
+                const double delta_left = (target.x - pos.x) * cos_yaw + (target.z - pos.z) * sin_yaw;
+                const double speed_forward = speed.z * cos_yaw - speed.x * sin_yaw;
+                const double speed_left = speed.x * cos_yaw + speed.z * sin_yaw;
+
+                // If going too fast, reduce speed
+                if (std::abs(speed_forward) > 0.1)
+                {
+                    player->SetInputsForward(speed_forward > 0.0 ? -1.0 : 1.0);
+                }
+                // Opposite signs or going toward the same direction but slowly
+                else if (delta_forward * speed_forward < 0.0 || std::abs(speed_forward) < 0.02)
+                {
+                    player->SetInputsForward(delta_forward > 0.0 ? 1.0 : -1.0);
+                }
+                else
+                {
+                    player->SetInputsForward(0.0);
+                }
+
+                // Same thing on left axis
+                if (std::abs(speed_left) > 0.1)
+                {
+                    player->SetInputsLeft(speed_left > 0.0 ? -1.0 : 1.0);
+                }
+                else if (delta_left * speed_left < 0.0 || std::abs(speed_left) < 0.02)
+                {
+                    player->SetInputsLeft(delta_left > 0.0 ? 1.0 : -1.0);
+                }
+                else
+                {
+                    player->SetInputsLeft(0.0);
+                }
+
+                return false;
+            }, client, 1000);
+    }
+
+    Status GoToImpl(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump, const bool sprint, float speed_factor)
     {
         if (min_end_dist > dist_tolerance)
         {
-            LOG_WARNING("min_end_dist should be <= dist_tolerance if you want pathfinding to work as expected");
+            LOG_WARNING("GoTo.min_end_dist should be <= dist_tolerance if you want pathfinding to work as expected");
         }
         if (min_end_dist_xz > dist_tolerance)
         {
-            LOG_WARNING("min_end_dist_xz should be <= dist_tolerance if you want pathfinding to work as expected");
+            LOG_WARNING("GoTo.min_end_dist_xz should be <= dist_tolerance if you want pathfinding to work as expected");
         }
-        std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
-        std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
-        std::shared_ptr<World> world = client.GetWorld();
-        std::shared_ptr<PhysicsManager> physics_manager = client.GetPhysicsManager();
-
-        // Get real movement speed
-        float movement_speed = speed;
-        if (movement_speed == 0.0f)
+        if (speed_factor <= 0.0f)
         {
-            const float base_speed = local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED;
+            LOG_WARNING("GoTo.speed_factor should be >0 or the bot won't move. Setting it to default value of 1.0");
+            speed_factor = 1.0f;
+        }
+        std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
 
-            // Get speed effect
-            unsigned char speed_amplifier = 0;
-            for (const EntityEffect& effect : local_player->GetEffects())
-            {
-                if (effect.type == EntityEffectType::Speed && effect.end > std::chrono::steady_clock::now())
+        // Don't bother with pathfinding in spectator mode, directly go to the goal
+        if (local_player->GetGameMode() == GameType::Spectator)
+        {
+            const Vector3<double> target(0.5 + goal.x, 0.5 + goal.y, 0.5 + goal.z);
+            const double square_half_width = local_player->GetWidth() * local_player->GetWidth() / 4.0;
+            const double dist = std::sqrt((target - local_player->GetPosition()).SqrNorm());
+            if (Utilities::YieldForCondition([&]() -> bool
                 {
-                    speed_amplifier = effect.amplifier + 1; // amplifier is 0 for "Effect I"
-                    continue;
-                }
+                    if (!local_player->GetDirtyInputs())
+                    {
+                        local_player->LookAt(target, true);
+                        local_player->SetInputsForward(1.0);
+                    }
+
+                    return local_player->GetPosition().SqrDist(target) < square_half_width;
+                }, client, dist * 1000))
+            {
+                AdjustPosSpeed(client);
+                return Status::Success;
             }
-            movement_speed = base_speed * (1.0f + 0.2f * speed_amplifier);
+            else
+            {
+                return Status::Failure;
+            }
         }
 
+        std::shared_ptr<World> world = client.GetWorld();
         Position current_position;
         do
         {
             // Wait until we are on the ground or climbing
             const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-            while (!local_player->GetOnGround() && !local_player->GetIsClimbing())
+            while (!local_player->GetOnGround() && !local_player->IsClimbing() && !local_player->IsInFluid())
             {
                 if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 2000)
                 {
@@ -1211,6 +1168,7 @@ namespace Botcraft
             {
                 if (dist_tolerance && current_diff <= dist_tolerance && current_diff >= min_end_dist && current_diff_xz >= min_end_dist_xz)
                 {
+                    AdjustPosSpeed(client);
                     return Status::Success;
                 }
                 path = FindPath(client, current_position, goal, dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump);
@@ -1225,11 +1183,20 @@ namespace Botcraft
                 }
                 else if (!dist_tolerance)
                 {
+                    AdjustPosSpeed(client);
                     return Status::Success;
                 }
                 else
                 {
-                    return current_diff <= dist_tolerance ? Status::Success : Status::Failure;
+                    if (current_diff <= dist_tolerance)
+                    {
+                        AdjustPosSpeed(client);
+                        return Status::Success;
+                    }
+                    else
+                    {
+                        return Status::Failure;
+                    }
                 }
             }
             // To avoid going back and forth two positions that are at the same distance of an unreachable goal
@@ -1251,11 +1218,10 @@ namespace Botcraft
                 {
                     break;
                 }
-                const bool succeeded = Move(client, local_player, path[i], movement_speed, 0.5f * movement_speed);
 
                 // If something went wrong, break and
                 // replan the whole path to the goal
-                if (!succeeded)
+                if (!Move(client, local_player, path[i], speed_factor, sprint))
                 {
                     break;
                 }
@@ -1274,18 +1240,20 @@ namespace Botcraft
             }
         } while (current_position != goal);
 
+        AdjustPosSpeed(client);
         return Status::Success;
     }
 
-    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const float speed, const bool allow_jump)
+    Status GoTo(BehaviourClient& client, const Position& goal, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump, const bool sprint, const float speed_factor)
     {
         constexpr std::array variable_names = {
             "GoTo.goal",
             "GoTo.dist_tolerance",
             "GoTo.min_end_dist",
             "GoTo.min_end_dist_xz",
-            "GoTo.speed",
-            "GoTo.allow_jump"
+            "GoTo.allow_jump",
+            "GoTo.sprint",
+            "GoTo.speed_factor"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1294,10 +1262,11 @@ namespace Botcraft
         blackboard.Set<int>(variable_names[1], dist_tolerance);
         blackboard.Set<int>(variable_names[2], min_end_dist);
         blackboard.Set<int>(variable_names[3], min_end_dist_xz);
-        blackboard.Set<float>(variable_names[4], speed);
-        blackboard.Set<bool>(variable_names[5], allow_jump);
+        blackboard.Set<bool>(variable_names[4], allow_jump);
+        blackboard.Set<bool>(variable_names[5], sprint);
+        blackboard.Set<float>(variable_names[6], speed_factor);
 
-        return GoToImpl(client, goal, dist_tolerance, min_end_dist, min_end_dist_xz, speed, allow_jump);
+        return GoToImpl(client, goal, dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump, sprint, speed_factor);
     }
 
     Status GoToBlackboard(BehaviourClient& client)
@@ -1307,8 +1276,9 @@ namespace Botcraft
             "GoTo.dist_tolerance",
             "GoTo.min_end_dist",
             "GoTo.min_end_dist_xz",
-            "GoTo.speed",
-            "GoTo.allow_jump"
+            "GoTo.allow_jump",
+            "GoTo.sprint",
+            "GoTo.speed_factor"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1320,10 +1290,11 @@ namespace Botcraft
         const int dist_tolerance = blackboard.Get(variable_names[1], 0);
         const int min_end_dist = blackboard.Get(variable_names[2], 0);
         const int min_end_dist_xz = blackboard.Get(variable_names[3], 0);
-        const float speed = blackboard.Get(variable_names[4], 0.0f);
-        const bool allow_jump = blackboard.Get(variable_names[5], true);
+        const bool allow_jump = blackboard.Get(variable_names[4], true);
+        const bool sprint = blackboard.Get(variable_names[5], true);
+        const float speed_factor = blackboard.Get(variable_names[6], 1.0f);
 
-        return GoToImpl(client, goal, dist_tolerance, min_end_dist, min_end_dist_xz, speed, allow_jump);
+        return GoToImpl(client, goal, dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump, sprint, speed_factor);
     }
 
 
@@ -1373,44 +1344,5 @@ namespace Botcraft
         const bool set_pitch = blackboard.Get(variable_names[1], true);
 
         return LookAtImpl(client, target, set_pitch);
-    }
-
-
-    Status StartSprinting(BehaviourClient& client)
-    {
-        if (client.GetEntityManager()->GetLocalPlayer()->GetIsRunning())
-        {
-            return Status::Success;
-        }
-
-        client.GetEntityManager()->GetLocalPlayer()->SetIsRunning(true);
-
-        std::shared_ptr<ProtocolCraft::ServerboundPlayerCommandPacket> player_command = std::make_shared<ProtocolCraft::ServerboundPlayerCommandPacket>();
-        player_command->SetAction(3); // 3 is start sprinting
-        player_command->SetId_(client.GetEntityManager()->GetLocalPlayer()->GetEntityID());
-        player_command->SetData(0);
-
-        client.GetNetworkManager()->Send(player_command);
-
-        return Status::Success;
-    }
-
-    Status StopSprinting(BehaviourClient& client)
-    {
-        if (!client.GetEntityManager()->GetLocalPlayer()->GetIsRunning())
-        {
-            return Status::Success;
-        }
-
-        client.GetEntityManager()->GetLocalPlayer()->SetIsRunning(false);
-
-        std::shared_ptr<ProtocolCraft::ServerboundPlayerCommandPacket> player_command = std::make_shared<ProtocolCraft::ServerboundPlayerCommandPacket>();
-        player_command->SetAction(4); // 4 is stop sprinting
-        player_command->SetId_(client.GetEntityManager()->GetLocalPlayer()->GetEntityID());
-        player_command->SetData(0);
-
-        client.GetNetworkManager()->Send(player_command);
-
-        return Status::Success;
     }
 }
