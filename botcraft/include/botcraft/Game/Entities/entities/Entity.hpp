@@ -13,7 +13,8 @@
 #include "protocolCraft/Types/Slot.hpp"
 #include "protocolCraft/Utilities/Json.hpp"
 
-#include "botcraft/Game/AABB.hpp"
+#include "botcraft/Game/Physics/AABB.hpp"
+
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/Vector3.hpp"
 

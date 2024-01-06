@@ -17,11 +17,6 @@ namespace Botcraft
         //Return whether or not these two AABB collides
         bool Collide(const AABB& b) const;
 
-        //Return the fraction (between 0 and 1) of the speed
-        //that can be performed without collision with the given
-        //AABB
-        double SweptCollide(const Vector3<double>& speed, const AABB& b, Vector3<double>& normal) const;
-
         bool Intersect(const Vector3<double>& origin, const Vector3<double>& direction) const;
 
         void Inflate(const double d);

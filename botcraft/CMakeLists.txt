@@ -16,7 +16,6 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/AI/Tasks/InventoryTasks.hpp
     include/botcraft/AI/Tasks/PathfindingTask.hpp
 
-    include/botcraft/Game/AABB.hpp
     include/botcraft/Game/AssetsManager.hpp
     include/botcraft/Game/ManagersClient.hpp
     include/botcraft/Game/ConnectionClient.hpp
@@ -203,6 +202,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Inventory/InventoryManager.hpp
     include/botcraft/Game/Inventory/Item.hpp
 
+    include/botcraft/Game/Physics/AABB.hpp
     include/botcraft/Game/Physics/PhysicsManager.hpp
 
     include/botcraft/Network/NetworkManager.hpp
@@ -247,7 +247,6 @@ set(botcraft_SRC
     src/AI/Tasks/InventoryTasks.cpp
     src/AI/Tasks/PathfindingTask.cpp
 
-    src/Game/AABB.cpp
     src/Game/AssetsManager.cpp
     src/Game/ConnectionClient.cpp
     src/Game/Enums.cpp
@@ -432,6 +431,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/monster/PatrollingMonsterEntity.cpp
     src/Game/Entities/entities/projectile/ThrowableProjectileEntity.cpp
 
+    src/Game/Physics/AABB.cpp
     src/Game/Physics/PhysicsManager.cpp
 
     src/Network/AESEncrypter.cpp

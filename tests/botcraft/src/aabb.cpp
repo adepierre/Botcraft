@@ -2,7 +2,7 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-#include <botcraft/Game/AABB.hpp>
+#include <botcraft/Game/Physics/AABB.hpp>
 
 using namespace Botcraft;
 

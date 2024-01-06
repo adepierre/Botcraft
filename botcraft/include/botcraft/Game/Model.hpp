@@ -5,7 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "botcraft/Game/AABB.hpp"
+#include "botcraft/Game/Physics/AABB.hpp"
+
 #if USE_GUI
 #include <map>
 
