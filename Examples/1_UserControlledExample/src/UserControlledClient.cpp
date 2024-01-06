@@ -1,5 +1,6 @@
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Version.hpp"
+#include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/entities/Entity.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
@@ -33,9 +34,9 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
         network_manager = std::make_shared<NetworkManager>(ConnectionState::Play);
         world = std::make_shared<World>(false);
         entity_manager = std::make_shared<EntityManager>();
+        inventory_manager = std::make_shared<InventoryManager>();
 
         should_be_closed = false;
-        creative_mode = true;
 
 #ifdef USE_GUI
         if (use_renderer)
@@ -46,9 +47,9 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
             rendering_manager->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
             rendering_manager->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
         }
-        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, entity_manager, world, network_manager);
+        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager, network_manager, world);
 #else
-        physics_manager = std::make_shared<PhysicsManager>(entity_manager, world, network_manager);
+        physics_manager = std::make_shared<PhysicsManager>(inventory_manager, entity_manager, network_manager, world);
 #endif
 
         // Launch the thread for the position
@@ -286,18 +287,22 @@ void UserControlledClient::MouseCallback(const double& xoffset, const double& yo
         pitch = -89.0f;
     }
     local_player->SetPitch(pitch);
-    const float new_yaw = static_cast<float>(local_player->GetYaw() + xoffset * mouse_sensitivity);
-    local_player->SetYaw(new_yaw);
-
-    const Vector3<double> position = local_player->GetPosition();
-    rendering_manager->SetPosOrientation(position.x, position.y + 1.62f, position.z, new_yaw, pitch);
+    float yaw = static_cast<float>(local_player->GetYaw() + xoffset * mouse_sensitivity);
+    while (yaw > 360.0f)
+    {
+        yaw -= 360.0f;
+    }
+    while (yaw < 0.0f)
+    {
+        yaw += 360.0f;
+    }
+    local_player->SetYaw(yaw);
 }
 
 void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<int>(Renderer::KEY_CODE::NUMBER_OF_KEYS)>& is_key_pressed, const double& delta_time)
 {
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
 
-    bool pos_has_changed = false;
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::ESC)])
     {
         should_be_closed = true;
@@ -305,59 +310,37 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::SPACE)])
     {
-        if (local_player->GetOnGround() && !local_player->GetIsClimbing())
-        {
-            local_player->Jump();
-        }
-        else if (local_player->GetIsClimbing())
-        {
-            local_player->AddPlayerInputsY(2.0 * delta_time);
-        }
+        local_player->SetInputsJump(true);
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::CTRL)])
     {
-        local_player->AddPlayerInputsY(-2.0 * delta_time);
+        local_player->SetInputsSneak(true);
     }
 
-    local_player->SetIsRunning(is_key_pressed[static_cast<int>(Renderer::KEY_CODE::SHIFT)]);
+    if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::SHIFT)])
+    {
+        local_player->SetInputsSprint(true);
+    }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::FORWARD)])
     {
-        local_player->AddPlayerInputsX(local_player->GetXZVector().x * (local_player->GetIsRunning() ? 5.612 : LocalPlayer::WALKING_SPEED) * delta_time);
-        local_player->AddPlayerInputsZ(local_player->GetXZVector().z * (local_player->GetIsRunning() ? 5.612 : LocalPlayer::WALKING_SPEED) * delta_time);
-
-        pos_has_changed = true;
+        local_player->SetInputsForward(1.0);
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::BACKWARD)])
     {
-        local_player->AddPlayerInputsX(- local_player->GetXZVector().x * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
-        local_player->AddPlayerInputsZ(- local_player->GetXZVector().z * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
-
-        pos_has_changed = true;
+        local_player->SetInputsForward(-1.0);
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::RIGHT)])
     {
-        local_player->AddPlayerInputsX(local_player->GetRightVector().x * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
-        local_player->AddPlayerInputsZ(local_player->GetRightVector().z * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
-
-        pos_has_changed = true;
+        local_player->SetInputsLeft(-1.0);
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::LEFT)])
     {
-        local_player->AddPlayerInputsX(- local_player->GetRightVector().x * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
-        local_player->AddPlayerInputsZ(- local_player->GetRightVector().z * (local_player->GetIsRunning() ? LocalPlayer::SPRINTING_SPEED : LocalPlayer::WALKING_SPEED) * delta_time);
-
-        pos_has_changed = true;
-    }
-
-    if (pos_has_changed)
-    {
-        const Vector3<double> position = local_player->GetPosition();
-        rendering_manager->SetPosOrientation(position.x, position.y + 1.62f, position.z, local_player->GetYaw(), local_player->GetPitch());
+        local_player->SetInputsLeft(1.0);
     }
 }
 #endif

@@ -20,7 +20,7 @@ ChatCommandClient::ChatCommandClient(const bool use_renderer_) : TemplatedBehavi
 {
     std::cout << "Known commands:\n";
     std::cout << "    Pathfinding to position:\n";
-    std::cout << "        name goto x y z (speed)\n";
+    std::cout << "        name goto x y z (speed_multiplier=1.0)\n";
     std::cout << "    Stop what you're doing:\n";
     std::cout << "        name stop\n";
     std::cout << "    Check perimeter for spawnable blocks and save spawnable positions to file:\n";
@@ -95,17 +95,17 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
     {
         if (splitted_msg.size() < 5)
         {
-            SendChatMessage("Usage: [BotName] [goto] [x] [y] [z] [speed]");
+            SendChatMessage("Usage: [BotName] [goto] [x] [y] [z] [speed_multiplier]");
             return;
         }
         Position target_position;
-        float speed = 0.0f;
+        float speed_multiplier = 1.0f;
         try
         {
             target_position = Position(std::stoi(splitted_msg[2]), std::stoi(splitted_msg[3]), std::stoi(splitted_msg[4]));
             if (splitted_msg.size() > 5)
             {
-                speed = std::stof(splitted_msg[5]);
+                speed_multiplier = std::stof(splitted_msg[5]);
             }
         }
         catch (const std::invalid_argument&)
@@ -127,10 +127,10 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
                     // they're only here to show the different
                     // possibilities to create a leaf. Note that
                     // only the lambda solution can use default
-                    // parameters for the last bool value
-                    .leaf("go to lambda", [=](ChatCommandClient& c) { return GoTo(c, target_position, 0, 0, 0, speed); })
-                    .leaf("go to function", GoTo, target_position, 0, 0, 0, speed, true)
-                    .leaf("go to std::bind", std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, 0, speed, true))
+                    // parameters values
+                    .leaf("go to lambda", [=](ChatCommandClient& c) { return GoTo(c, target_position, 0, 0, 0, true, false, speed_multiplier); })
+                    .leaf("go to function", GoTo, target_position, 0, 0, 0, true, false, speed_multiplier)
+                    .leaf("go to std::bind", std::bind(GoTo, std::placeholders::_1, target_position, 0, 0, 0, true, false, speed_multiplier))
                     // If goto fails, say something in chat
                     .leaf(Say, "Pathfinding failed :(")
                 .end()
@@ -271,7 +271,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
                 .succeeder().sequence()
-                    .leaf("go next to block", GoTo, pos, 4, 0, 1, 0.0f, true)
+                    .leaf("go next to block", GoTo, pos, 4, 0, 1, true, false, 1.0f)
                     // Set interaction position in the blackboard
                     .leaf(SetBlackboardData<Position>, "InteractWithBlock.pos", pos)
                     .selector()

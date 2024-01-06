@@ -258,15 +258,6 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     );
     const double squared_dist_to_action = local_player->GetPosition().SqrDist(action.first);
 
-    // Stop sprinting when exiting this function (in case we don't sprint, it's a no-op)
-    Utilities::OnEndScope stop_sprinting([&]() { StopSprinting(client); });
-
-    // Start sprinting if we need to move more than 10 blocks
-    if (squared_dist_to_action > 10.0 * 10.0)
-    {
-        StartSprinting(client);
-    }
-
     // Get this position blockstate
     const Blockstate* blockstate = world->GetBlock(action.first);
 
@@ -689,7 +680,7 @@ Status CleanInventory(SimpleBehaviourClient& client)
         DropItemsFromContainer(client, Window::PLAYER_INVENTORY_INDEX, idx);
     }
 
-    local_player->Jump();
+    local_player->SetInputsJump(true);
 
     // Wait to be above start block
     start = std::chrono::steady_clock::now();
@@ -1028,14 +1019,11 @@ Status BaseCampDropItems(SimpleBehaviourClient& client, const bool all_items)
 
     const Position& drop_position = blackboard.Get<Position>("Eater.drop_position");
 
-    StartSprinting(client);
     if (GoTo(client, drop_position + Position(0, 1, 0)) == Status::Failure)
     {
-        StopSprinting(client);
         LOG_WARNING("Error trying to GoTo drop item position " << drop_position + Position(0, 1, 0));
         return Status::Failure;
     }
-    StopSprinting(client);
 
     LookAt(client, Vector3<double>(0.5, 0, 0.5) + drop_position, true);
 

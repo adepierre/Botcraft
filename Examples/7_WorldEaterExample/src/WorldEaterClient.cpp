@@ -68,7 +68,7 @@ void WorldEaterClient::ProcessChatMsg(const std::string& msg)
 
     SetBehaviourTree(Builder<SimpleBehaviourClient>("Completion Tree")
         .sequence()
-            .leaf("Go to out pos", GoTo, out_position + Position(0, 1, 0), 0, 0, 0, 0.0f, true)
+            .leaf("Go to out pos", GoTo, out_position + Position(0, 1, 0), 0, 0, 0, true, true, 1.0f)
             .leaf("Notify", Say, network_manager->GetMyName() + " out")
             .leaf("Set should be closed", [](SimpleBehaviourClient& c) { c.SetShouldBeClosed(true); return Status::Success; })
             .leaf("Set null tree", [](SimpleBehaviourClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
