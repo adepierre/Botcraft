@@ -273,7 +273,6 @@
         "texture": "block/water_still",
         "tintType": "water",
         "transparent": true,
-        "climbable": true,
         "water": true
     },
     {
@@ -284,7 +283,6 @@
         "texture": "block/lava_still",
         "transparent": true,
         "hazardous": true,
-        "climbable": true,
         "lava": true
     },
     {
@@ -6289,7 +6287,6 @@
         "tintType": "water",
         "solid": false,
         "transparent": true,
-        "climbable": true,
         "water": true
     },
     {

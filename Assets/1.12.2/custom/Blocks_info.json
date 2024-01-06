@@ -86,7 +86,6 @@
         "texture": "blocks/water_flow",
         "tintType": "water",
         "hardness": 100,
-        "climbable": true,
         "water": true
     },
     {
@@ -97,7 +96,6 @@
         "texture": "blocks/water_still",
         "tintType": "water",
         "hardness": 100,
-        "climbable": true,
         "water": true
     },
     {
@@ -108,7 +106,6 @@
         "texture": "blocks/lava_flow",
         "hardness": 100,
         "hazardous": true,
-        "climbable": true,
         "lava": true
     },
     {
@@ -119,7 +116,6 @@
         "texture": "blocks/lava_still",
         "hardness": 100,
         "hazardous": true,
-        "climbable": true,
         "lava": true
     },
     {
