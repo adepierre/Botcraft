@@ -66,6 +66,7 @@ namespace Botcraft
         void Collisions(Vector3<double>& movement, AABB& aabb) const;
 
         bool IsSwimmingAndNotFlying() const;
+        bool IsInClimbable() const;
         void MovePlayer() const;
         void ApplyMovement() const;
 

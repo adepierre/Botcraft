@@ -29,8 +29,8 @@ namespace Botcraft
 
     void EntityAttribute::RemoveModifier(const std::array<unsigned char, 16>& uuid)
     {
-        modifiers.erase(uuid);
-        up_to_date = false;
+        // If no element is removed, value is still up to date
+        up_to_date = modifiers.erase(uuid) > 0;
     }
 
     void EntityAttribute::SetModifier(const std::array<unsigned char, 16>& uuid, const Modifier& modifier)

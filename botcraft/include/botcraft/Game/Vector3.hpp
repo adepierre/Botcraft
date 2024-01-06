@@ -79,17 +79,17 @@ namespace Botcraft
             return Vector3(x / v.x, y / v.y, z / v.z);
         }
 
-        const bool operator==(const Vector3& a) const
+        bool operator==(const Vector3& a) const
         {
             return (x == a.x) && (y == a.y) && (z == a.z);
         }
 
-        const bool operator!=(const Vector3& a) const
+        bool operator!=(const Vector3& a) const
         {
             return (x != a.x) || (y != a.y) || (z != a.z);
         }
 
-        const bool operator<(const Vector3& a) const
+        bool operator<(const Vector3& a) const
         {
             return (x < a.x) ||
                 (x == a.x && y < a.y) ||
@@ -180,7 +180,7 @@ namespace Botcraft
             return *this;
         }
 
-        const double dot(const Vector3& v) const
+        double dot(const Vector3& v) const
         {
             double output = 0.0;
             output += x * v.x;
@@ -189,7 +189,7 @@ namespace Botcraft
             return output;
         }
 
-        const double SqrDist(const Vector3& v) const
+        double SqrDist(const Vector3& v) const
         {
             return (x - v.x) * (x - v.x)
                  + (y - v.y) * (y - v.y)
@@ -253,7 +253,7 @@ namespace Botcraft
             z /= norm;
         }
 
-        const double SqrNorm() const
+        double SqrNorm() const
         {
             return x * x + y * y + z * z;
         }
@@ -264,12 +264,12 @@ namespace Botcraft
             return o;
         }
 
-        const ProtocolCraft::Json::Value Serialize() const
+        ProtocolCraft::Json::Value Serialize() const
         {
             return ProtocolCraft::Json::Value({ x, y, z });
         }
 
-        const ProtocolCraft::NetworkPosition ToNetworkPosition() const
+        ProtocolCraft::NetworkPosition ToNetworkPosition() const
         {
             ProtocolCraft::NetworkPosition output;
             output.SetX(x);

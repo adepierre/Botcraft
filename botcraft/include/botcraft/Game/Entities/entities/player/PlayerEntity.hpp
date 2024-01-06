@@ -23,7 +23,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         using Entity::GetCollider; // Required as otherwise GetCollider(Pose) would be found and stop the search for a GetCollider match
         AABB GetCollider(const Pose pose) const;
+        using Entity::GetHeight; // Required as otherwise GetHeight(Pose) would be found and stop the search for a GetHeight match
         double GetHeight(const Pose pose) const;
+        using Entity::GetWidth; // Required as otherwise GetWidth(Pose) would be found and stop the search for a GetWidth match
         double GetWidth(const Pose pose) const;
 #endif
         double GetEyeHeight() const;

@@ -41,6 +41,10 @@ namespace Botcraft
         int GetFood() const;
         float GetFoodSaturation() const;
         bool GetDirtyInputs() const;
+        bool IsClimbing() const;
+        bool IsInWater() const;
+        bool IsInLava() const;
+        bool IsInFluid() const;
 
         void SetGameMode(const GameType game_mode_);
         void SetAbilitiesFlags(const char abilities_flags_);
@@ -74,7 +78,6 @@ namespace Botcraft
         virtual bool IsRemotePlayer() const override;
 
         void LookAt(const Vector3<double>& pos, const bool set_pitch = false);
-        void Jump();
 
     private:
         void UpdateVectors();

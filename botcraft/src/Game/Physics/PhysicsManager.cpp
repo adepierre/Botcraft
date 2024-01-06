@@ -207,6 +207,10 @@ namespace Botcraft
                             player->SetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying, false);
                         }
 
+                        // Minecraft code doesn't store on_climbable and check everytime it's needed instead,
+                        // but it's more convenient for pathfinding to have it stored
+                        player->on_climbable = IsInClimbable();
+
                         // TODO: pushed by other entities
 
                     } // LivingEntity::aiStep
@@ -222,7 +226,7 @@ namespace Botcraft
                 player->position.x = std::clamp(player->position.x, -2.9999999E7, 2.9999999E7);
                 player->position.z = std::clamp(player->position.z, -2.9999999E7, 2.9999999E7);
 
-                // UpdatePlayerPose();
+                // TODO: UpdatePlayerPose() ?
             } // Player::tick
 
             SendPosition();
@@ -507,7 +511,7 @@ namespace Botcraft
                 player->SetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying, true);
                 std::shared_ptr<ServerboundPlayerCommandPacket> player_command_msg = std::make_shared<ServerboundPlayerCommandPacket>();
                 player_command_msg->SetAction(static_cast<int>(PlayerCommandAction::StartFallFlying));
-                player_command_msg->SetId_(player->GetEntityID());
+                player_command_msg->SetId_(player->entity_id);
                 network_manager->Send(player_command_msg);
             }
         }
@@ -603,7 +607,7 @@ namespace Botcraft
         {
             std::shared_ptr<ServerboundPlayerCommandPacket> player_command_msg = std::make_shared<ServerboundPlayerCommandPacket>();
             player_command_msg->SetAction(static_cast<int>(sprinting ? PlayerCommandAction::StartSprinting : PlayerCommandAction::StopSprinting));
-            player_command_msg->SetId_(player->GetEntityID());
+            player_command_msg->SetId_(player->entity_id);
             network_manager->Send(player_command_msg);
             player->previous_sprinting = sprinting;
         }
@@ -613,7 +617,7 @@ namespace Botcraft
         {
             std::shared_ptr<ServerboundPlayerCommandPacket> player_command_msg = std::make_shared<ServerboundPlayerCommandPacket>();
             player_command_msg->SetAction(static_cast<int>(shift_key_down ? PlayerCommandAction::PressShiftKey : PlayerCommandAction::ReleaseShifKey));
-            player_command_msg->SetId_(player->GetEntityID());
+            player_command_msg->SetId_(player->entity_id);
             network_manager->Send(player_command_msg);
             player->previous_shift_key_down = shift_key_down;
         }
@@ -676,7 +680,7 @@ namespace Botcraft
         {
             rendering_manager->SetPosOrientation(
                 player->position.x,
-                player->position.y + player->GetEyeHeight(),
+                player->position.y + player->GetEyeHeightImpl(),
                 player->position.z,
                 player->yaw,
                 player->pitch
@@ -689,6 +693,10 @@ namespace Botcraft
     {
         const std::vector<AABB> colliders = world->GetColliders(aabb, movement);
         // TODO: add world borders to colliders?
+        if (colliders.size() == 0)
+        {
+            return;
+        }
         Vector3<double> min_aabb = aabb.GetMin();
         Vector3<double> max_aabb = aabb.GetMax();
         // Collisions on Y axis
@@ -704,11 +712,11 @@ namespace Botcraft
             if (max_aabb.x > min_collider.x && min_aabb.x < max_collider.x &&
                 max_aabb.z > min_collider.z && min_aabb.z < max_collider.z)
             {
-                if (movement.y > 0.0 && max_aabb.y <= min_collider.y)
+                if (movement.y > 0.0 && max_aabb.y - 1e-7 <= min_collider.y)
                 {
                     movement.y = std::min(min_collider.y - max_aabb.y, movement.y);
                 }
-                else if (movement.y < 0.0 && min_aabb.y >= max_collider.y)
+                else if (movement.y < 0.0 && min_aabb.y + 1e-7 >= max_collider.y)
                 {
                     movement.y = std::max(max_collider.y - min_aabb.y, movement.y);
                 }
@@ -734,11 +742,11 @@ namespace Botcraft
                 if (max_aabb.y > min_collider.y && min_aabb.y < max_collider.y &&
                     max_aabb.z > min_collider.z && min_aabb.z < max_collider.z)
                 {
-                    if (movement.x > 0.0 && max_aabb.x <= min_collider.x)
+                    if (movement.x > 0.0 && max_aabb.x - 1e-7 <= min_collider.x)
                     {
                         movement.x = std::min(min_collider.x - max_aabb.x, movement.x);
                     }
-                    else if (movement.x < 0.0 && min_aabb.x >= max_collider.x)
+                    else if (movement.x < 0.0 && min_aabb.x + 1e-7 >= max_collider.x)
                     {
                         movement.x = std::max(max_collider.x - min_aabb.x, movement.x);
                     }
@@ -762,11 +770,11 @@ namespace Botcraft
             if (max_aabb.x > min_collider.x && min_aabb.x < max_collider.x &&
                 max_aabb.y > min_collider.y && min_aabb.y < max_collider.y)
             {
-                if (movement.z > 0.0 && max_aabb.z <= min_collider.z)
+                if (movement.z > 0.0 && max_aabb.z - 1e-7 <= min_collider.z)
                 {
                     movement.z = std::min(min_collider.z - max_aabb.z, movement.z);
                 }
-                else if (movement.z < 0.0 && min_aabb.z >= max_collider.z)
+                else if (movement.z < 0.0 && min_aabb.z + 1e-7 >= max_collider.z)
                 {
                     movement.z = std::max(max_collider.z - min_aabb.z, movement.z);
                 }
@@ -792,11 +800,11 @@ namespace Botcraft
                 if (max_aabb.y > min_collider.y && min_aabb.y < max_collider.y &&
                     max_aabb.z > min_collider.z && min_aabb.z < max_collider.z)
                 {
-                    if (movement.x > 0.0 && max_aabb.x <= min_collider.x)
+                    if (movement.x > 0.0 && max_aabb.x - 1e-7 <= min_collider.x)
                     {
                         movement.x = std::min(min_collider.x - max_aabb.x, movement.x);
                     }
-                    else if (movement.x < 0.0 && min_aabb.x >= max_collider.x)
+                    else if (movement.x < 0.0 && min_aabb.x + 1e-7 >= max_collider.x)
                     {
                         movement.x = std::max(max_collider.x - min_aabb.x, movement.x);
                     }
@@ -811,6 +819,24 @@ namespace Botcraft
         return !player->flying &&
             player->game_mode != GameType::Spectator &&
             player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Swimming);
+    }
+
+    bool PhysicsManager::IsInClimbable() const
+    {
+        if (player->game_mode == GameType::Spectator)
+        {
+            return false;
+        }
+
+        const Blockstate* feet_block = world->GetBlock(Position(
+            static_cast<int>(std::floor(player->position.x)),
+            static_cast<int>(std::floor(player->position.y)),
+            static_cast<int>(std::floor(player->position.z))
+        ));
+
+        // TODO: if trapdoor AND below block is a ladder with the same facing property
+        // as the trapdoor then the trapdoor is a climbable block too
+        return feet_block != nullptr && feet_block->IsClimbable();
     }
 
     void PhysicsManager::MovePlayer() const
@@ -958,20 +984,21 @@ namespace Botcraft
 
             ApplyInputs(player->on_ground ? (player->GetAttributeMovementSpeedValueImpl() * (0.21600002 / (friction * friction * friction))) : 0.02);
             if (player->on_climbable)
-            {
+            { // LivingEntity::handleOnClimbable
                 player->speed.x = std::clamp(player->speed.x, -0.15, 0.15);
                 player->speed.y = std::max(player->speed.y, -0.15);
-                // Remove negative Y speed if feet are inside a scaffolding block
+                // Remove negative Y speed if feet are inside a scaffolding block and not pressing
+                // sneak, or if not a scaffolding block and pressing sneak
                 const Blockstate* feet_block = world->GetBlock(Position(
                     static_cast<int>(std::floor(player->position.x)),
                     static_cast<int>(std::floor(player->position.y)),
                     static_cast<int>(std::floor(player->position.z))
                 ));
-                if (feet_block != nullptr && feet_block->IsScaffolding())
+                if (feet_block != nullptr && feet_block->IsScaffolding() != player->inputs.sneak)
                 {
                     player->speed.y = 0.0;
                 }
-                player->speed.z = std::clamp(player->speed.x, -0.15, 0.15);
+                player->speed.z = std::clamp(player->speed.z, -0.15, 0.15);
             }
             ApplyMovement();
             // If colliding and in climbable, go up

@@ -611,13 +611,13 @@ namespace Botcraft
         const Vector3<double> max_aabb = aabb.GetMax();
 
         Position cube_pos;
-        for (int y = static_cast<int>(std::floor(min_aabb.y)) - 1; y < static_cast<int>(std::floor(max_aabb.y)); ++y)
+        for (int y = static_cast<int>(std::floor(min_aabb.y)) - 1; y <= static_cast<int>(std::floor(max_aabb.y)); ++y)
         {
             cube_pos.y = y;
-            for (int z = static_cast<int>(std::floor(min_aabb.z)); z < static_cast<int>(std::floor(max_aabb.z)); ++z)
+            for (int z = static_cast<int>(std::floor(min_aabb.z)); z <= static_cast<int>(std::floor(max_aabb.z)); ++z)
             {
                 cube_pos.z = z;
-                for (int x = static_cast<int>(std::floor(min_aabb.x)); x < static_cast<int>(std::floor(max_aabb.x)); ++x)
+                for (int x = static_cast<int>(std::floor(min_aabb.x)); x <= static_cast<int>(std::floor(max_aabb.x)); ++x)
                 {
                     cube_pos.x = x;
                     const Blockstate* block = GetBlockImpl(cube_pos);

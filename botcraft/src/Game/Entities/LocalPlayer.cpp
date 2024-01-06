@@ -155,6 +155,30 @@ namespace Botcraft
         return dirty_inputs;
     }
 
+    bool LocalPlayer::IsClimbing() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return on_climbable;
+    }
+
+    bool LocalPlayer::IsInWater() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return in_water;
+    }
+
+    bool LocalPlayer::IsInLava() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return in_lava;
+    }
+
+    bool LocalPlayer::IsInFluid() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return in_lava || in_water;
+    }
+
 
     void LocalPlayer::SetGameMode(const GameType game_mode_)
     {
@@ -246,28 +270,28 @@ namespace Botcraft
     void LocalPlayer::SetInputsForward(const double d)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        inputs.forward_axis = d;
+        inputs.forward_axis = std::clamp(d, -1.0, 1.0);
         dirty_inputs = true;
     }
 
     void LocalPlayer::AddInputsForward(const double d)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        inputs.forward_axis += d;
+        inputs.forward_axis = std::clamp(inputs.forward_axis + d, -1.0, 1.0);
         dirty_inputs = true;
     }
 
     void LocalPlayer::SetInputsLeft(const double d)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        inputs.left_axis = d;
+        inputs.left_axis = std::clamp(d, -1.0, 1.0);
         dirty_inputs = true;
     }
 
     void LocalPlayer::AddInputsLeft(const double d)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        inputs.left_axis += d;
+        inputs.left_axis = std::clamp(inputs.left_axis + d, -1.0, 1.0);
         dirty_inputs = true;
     }
 
@@ -332,16 +356,6 @@ namespace Botcraft
             yaw = new_yaw;
             UpdateVectors();
         }
-    }
-
-    void LocalPlayer::Jump()
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        if (!on_ground)
-        {
-            return;
-        }
-        speed.y = 0.42;
     }
 
     void LocalPlayer::UpdateVectors()
