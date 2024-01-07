@@ -140,7 +140,7 @@ TEST_CASE("fall pathfinding")
     }
 }
 
-TEST_CASE("full pathfinding", "[!mayfail]") // Creative pathfinding is not yet well-supported
+TEST_CASE("full pathfinding")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot;
     SECTION("survival")

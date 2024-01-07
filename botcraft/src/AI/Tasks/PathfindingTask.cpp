@@ -931,6 +931,7 @@ namespace Botcraft
                 ));
                 local_player->SetInputsSneak(feet_block != nullptr &&
                     (feet_block->IsFluidOrWaterlogged() || feet_block->IsScaffolding() || (feet_block->IsAir() && motion_vector.y < -2.5)));
+                local_player->SetInputsJump(local_player->GetFlying()); // Stop flying
 
                 // If we drifted too much, adjust toward target X/Z position
                 if (Vector3<double>(current_pos.x, 0.0, current_pos.z).SqrDist(horizontal_target_position) > (0.5 - half_player_width) * (0.5 - half_player_width))
@@ -997,6 +998,7 @@ namespace Botcraft
                 ));
                 local_player->SetInputsSneak(feet_block != nullptr &&
                     (feet_block->IsFluidOrWaterlogged() || feet_block->IsScaffolding() || (feet_block->IsAir() && motion_vector.y < -2.5)));
+                local_player->SetInputsJump(local_player->GetFlying()); // Stop flying
 
                 // If we drifted too much, adjust toward target X/Z position
                 if (Vector3<double>(current_pos.x, 0.0, current_pos.z).SqrDist(horizontal_target_position) > (0.5 - half_player_width) * (0.5 - half_player_width))

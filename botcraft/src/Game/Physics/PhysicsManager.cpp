@@ -478,7 +478,7 @@ namespace Botcraft
                 OnUpdateAbilities();
             }
             // If double jump in creative, swap flying mode
-            else if (!player->previous_jump && player->inputs.jump && !IsSwimmingAndNotFlying())
+            else if (player->previous_jump && player->inputs.jump && !IsSwimmingAndNotFlying())
             {
                 player->flying = !player->flying;
                 fly_changed = true;
