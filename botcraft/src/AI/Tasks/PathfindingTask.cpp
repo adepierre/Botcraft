@@ -108,7 +108,7 @@ namespace Botcraft
         std::shared_ptr<World> world = client.GetWorld();
         const Blockstate* block = world->GetBlock(end);
         end_is_inside_solid = block != nullptr && block->IsSolid();
-        const bool takes_damage = !client.GetEntityManager()->GetLocalPlayer()->GetInvulnerable();
+        const bool takes_damage = !client.GetLocalPlayer()->GetInvulnerable();
 
         while (!nodes_to_explore.empty())
         {
@@ -1012,7 +1012,7 @@ namespace Botcraft
     // Try to cancel speed while going toward the center of the block
     void AdjustPosSpeed(BehaviourClient& client)
     {
-        std::shared_ptr<LocalPlayer> player = client.GetEntityManager()->GetLocalPlayer();
+        std::shared_ptr<LocalPlayer> player = client.GetLocalPlayer();
         const Vector3<double> pos = player->GetPosition();
         const Vector3<double> target(
             std::floor(pos.x) + 0.5,
@@ -1095,7 +1095,7 @@ namespace Botcraft
             LOG_WARNING("GoTo.speed_factor should be >0 or the bot won't move. Setting it to default value of 1.0");
             speed_factor = 1.0f;
         }
-        std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+        std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
 
         // Don't bother with pathfinding in spectator mode, directly go to the goal
         if (local_player->GetGameMode() == GameType::Spectator)
@@ -1300,7 +1300,7 @@ namespace Botcraft
 
     Status LookAtImpl(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
     {
-        std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+        std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
         local_player->LookAt(target, set_pitch);
 
         std::shared_ptr<ProtocolCraft::ServerboundMovePlayerPacketRot> rot = std::make_shared<ProtocolCraft::ServerboundMovePlayerPacketRot>();

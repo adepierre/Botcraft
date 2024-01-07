@@ -15,7 +15,7 @@
 TEST_CASE("gravity")
 {
     std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot(Botcraft::Vector3<double>(1.0, 2.0, 1.0));
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
 
     CHECK(Botcraft::Utilities::WaitForCondition([&]()
         {
@@ -44,7 +44,7 @@ TEST_CASE("collisions")
         {"west facing east", -90.0f, -1.0, 0.0, Botcraft::Vector3<double>(-1.0, 0.0, 0.0)},
     };
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     // Wait the bot to be on ground
     Botcraft::Utilities::WaitForCondition([&]()
         {

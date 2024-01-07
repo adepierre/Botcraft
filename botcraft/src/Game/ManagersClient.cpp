@@ -137,6 +137,11 @@ namespace Botcraft
         return entity_manager;
     }
 
+    std::shared_ptr<LocalPlayer> ManagersClient::GetLocalPlayer() const
+    {
+        return entity_manager == nullptr ? nullptr : entity_manager->GetLocalPlayer();
+    }
+
     std::shared_ptr<InventoryManager> ManagersClient::GetInventoryManager() const
     {
         return inventory_manager;

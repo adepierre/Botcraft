@@ -59,7 +59,7 @@ namespace Botcraft
 
     Status InteractWithBlockImpl(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face, const bool animation)
     {
-        std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+        std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
 
         // Compute the distance from the hand? Might be from somewhere else
         const Vector3<double> player_hand_pos = local_player->GetPosition() + Vector3<double>(0.0, 1.0, 0.0);
@@ -240,7 +240,7 @@ namespace Botcraft
 
     Status IsHungryImpl(BehaviourClient& client, const int threshold)
     {
-        return client.GetEntityManager()->GetLocalPlayer()->GetFood() < threshold ? Status::Success : Status::Failure;
+        return client.GetLocalPlayer()->GetFood() < threshold ? Status::Success : Status::Failure;
     }
 
     Status IsHungry(BehaviourClient& client, const int threshold)
@@ -319,6 +319,6 @@ namespace Botcraft
 
     Status IsAlive(BehaviourClient& client)
     {
-        return client.GetEntityManager()->GetLocalPlayer()->GetHealth() > 0.0f ? Status::Success : Status::Failure;
+        return client.GetLocalPlayer()->GetHealth() > 0.0f ? Status::Success : Status::Failure;
     }
 }

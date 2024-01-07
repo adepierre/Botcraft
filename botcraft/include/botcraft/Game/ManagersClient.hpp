@@ -13,6 +13,7 @@ namespace Botcraft
     class World;
     class InventoryManager;
     class EntityManager;
+    class LocalPlayer;
     class PhysicsManager;
 
 #if USE_GUI
@@ -46,6 +47,7 @@ namespace Botcraft
 
         std::shared_ptr<World> GetWorld() const;
         std::shared_ptr<EntityManager> GetEntityManager() const;
+        std::shared_ptr<LocalPlayer> GetLocalPlayer() const;
         std::shared_ptr<InventoryManager> GetInventoryManager() const;
         std::shared_ptr<PhysicsManager> GetPhysicsManager() const;
 

@@ -25,7 +25,7 @@ Status GetAllChestsAround(BehaviourClient& c)
 {
     std::vector<Position> chests_pos;
 
-    std::shared_ptr<LocalPlayer> local_player = c.GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<LocalPlayer> local_player = c.GetLocalPlayer();
     std::shared_ptr<World> world = c.GetWorld();
 
     const Position player_position(

@@ -34,7 +34,7 @@ TEST_CASE("dig pickaxe")
     // Wait to be on ground
     Botcraft::Utilities::WaitForCondition([&]()
         {
-            return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
+            return bot->GetLocalPlayer()->GetOnGround();
         }, 5000);
 
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
@@ -73,7 +73,7 @@ TEST_CASE("dig pickaxe")
         MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 5000);
 
         CHECK(Botcraft::Utilities::WaitForCondition([&]() {
-            for (const Botcraft::EntityEffect& effect : bot->GetEntityManager()->GetLocalPlayer()->GetEffects())
+            for (const Botcraft::EntityEffect& effect : bot->GetLocalPlayer()->GetEffects())
             {
                 if (effect.type == Botcraft::EntityEffectType::Haste)
                 {
@@ -106,7 +106,7 @@ TEST_CASE("dig underwater")
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1, 0, 1));
     Botcraft::Utilities::WaitForCondition([&]()
         {
-            return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
+            return bot->GetLocalPlayer()->GetOnGround();
         }, 5000);
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
@@ -125,7 +125,7 @@ TEST_CASE("dig underwater")
         MinecraftServer::GetInstance().WaitLine(".*?: (?:Applied effect Haste|Given Haste \\(ID [0-9]+\\)(?: \\* [0-9]+)?) to " + botname + ".*", 5000);
 
         CHECK(Botcraft::Utilities::WaitForCondition([&]() {
-            for (const Botcraft::EntityEffect& effect : bot->GetEntityManager()->GetLocalPlayer()->GetEffects())
+            for (const Botcraft::EntityEffect& effect : bot->GetLocalPlayer()->GetEffects())
             {
                 if (effect.type == Botcraft::EntityEffectType::Haste)
                 {
@@ -158,7 +158,7 @@ TEST_CASE("dig shears")
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1, 0, 1));
     Botcraft::Utilities::WaitForCondition([&]()
         {
-            return bot->GetEntityManager()->GetLocalPlayer()->GetOnGround();
+            return bot->GetLocalPlayer()->GetOnGround();
         }, 5000);
 
     const Botcraft::Position dirt = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(0, 0, 2);

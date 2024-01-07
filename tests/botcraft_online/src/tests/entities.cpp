@@ -128,7 +128,7 @@ TEST_CASE("player names")
         {
             for (const auto& [id, e] : *entity_manager->GetEntities())
             {
-                if (id == bot2->GetEntityManager()->GetLocalPlayer()->GetEntityID())
+                if (id == bot2->GetLocalPlayer()->GetEntityID())
                 {
                     bot2_entity = e;
                     return true;

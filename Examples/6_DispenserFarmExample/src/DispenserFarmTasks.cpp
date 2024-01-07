@@ -37,7 +37,7 @@ Status InitializeBlocks(BehaviourClient& client, const int radius)
     std::vector<Position> carrot_positions;
     std::vector<Position> stone_positions;
 
-    const Position my_pos = client.GetEntityManager()->GetLocalPlayer()->GetPosition();
+    const Position my_pos = client.GetLocalPlayer()->GetPosition();
 
     std::shared_ptr<World> world = client.GetWorld();
     Position current_pos;

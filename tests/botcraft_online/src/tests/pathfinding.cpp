@@ -25,7 +25,7 @@ TEST_CASE("simple pathfinding")
         {"west", Botcraft::Position(-2, 0, 0)},
     };
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
     for (size_t i = 0; i < directions.size(); ++i)
@@ -49,7 +49,7 @@ TEST_CASE("jump pathfinding")
         {"west", Botcraft::Position(-1, 1, 0)},
     };
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
     for (size_t i = 0; i < directions.size(); ++i)
@@ -73,7 +73,7 @@ TEST_CASE("gap pathfinding")
         {"west", Botcraft::Position(-2, 0, 0)},
     };
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
     for (size_t i = 0; i < directions.size(); ++i)
@@ -102,7 +102,7 @@ TEST_CASE("climb pathfinding")
         {
             std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(2.5, 5.01, 2.5) - directions[i].second);
 
-            std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+            std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
             const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
             REQUIRE(Botcraft::Utilities::WaitForCondition([&]() -> bool
@@ -127,7 +127,7 @@ TEST_CASE("fall pathfinding")
         {"west", Botcraft::Position(-2, -4, 0)},
     };
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
     for (size_t i = 0; i < directions.size(); ++i)
@@ -154,7 +154,7 @@ TEST_CASE("full pathfinding", "[!mayfail]") // Creative pathfinding is not yet w
 
     const Botcraft::Position delta(2, 3, 24);
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
     bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, false, 1.0f);
@@ -167,7 +167,7 @@ TEST_CASE("hazardous pathfinding")
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1.0, 1.01, 0.0));
     const Botcraft::Position delta(0, 4, 2);
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
     bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, false, 1.0f);
@@ -182,7 +182,7 @@ TEST_CASE("water walking pathfinding")
     const Botcraft::Position delta(0, 0, 6);
     const Botcraft::Position string_control_check_delta(0, 2, 3);
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     std::shared_ptr<Botcraft::World> world = bot->GetWorld();
 
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
@@ -202,7 +202,7 @@ TEST_CASE("ladder walking pathfinding")
     const Botcraft::Position delta(0, 0, 6);
     const Botcraft::Position string_control_check_delta(0, 2, 3);
 
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     std::shared_ptr<Botcraft::World> world = bot->GetWorld();
 
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
@@ -218,7 +218,7 @@ TEST_CASE("ladder walking pathfinding")
 TEST_CASE("speed pathfinding")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(0.0, 1.01, 0.0));
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
     bool sprint = false;

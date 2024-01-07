@@ -22,7 +22,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
     TestManager::GetInstance().Teleport(botname, pos);
 
     // Wait for bot to register teleportation
-    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     if (!Botcraft::Utilities::WaitForCondition([&]()
         {
             return local_player->GetPosition().SqrDist(pos) < 1.0;

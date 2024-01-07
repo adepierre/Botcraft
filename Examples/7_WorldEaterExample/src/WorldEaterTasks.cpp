@@ -36,7 +36,7 @@ Status Init(SimpleBehaviourClient& client)
     const Position end_block = blackboard.Get<Position>("Eater.end_block");
 
     // Get initial bot position
-    std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
     const Position init_pos = Position(
         static_cast<int>(std::floor(local_player->GetX())),
         static_cast<int>(std::floor(local_player->GetY())),
@@ -244,7 +244,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
     Blackboard& blackboard = client.GetBlackboard();
     std::shared_ptr<World> world = client.GetWorld();
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
-    std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
     const std::unordered_set<std::string>& spared_blocks = blackboard.Get<std::unordered_set<std::string>>("Eater.spared_blocks");
     const Position& start_block = blackboard.Get<Position>("Eater.start_block");
     const Position& end_block = blackboard.Get<Position>("Eater.end_block");
@@ -588,7 +588,7 @@ Status IsInventoryFull(SimpleBehaviourClient& client)
 
 Status CleanInventory(SimpleBehaviourClient& client)
 {
-    std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
     std::shared_ptr<World> world = client.GetWorld();
     std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
@@ -1011,7 +1011,7 @@ Status PlanLayerBlocks(SimpleBehaviourClient& client)
 
 Status BaseCampDropItems(SimpleBehaviourClient& client, const bool all_items)
 {
-    std::shared_ptr<LocalPlayer> local_player = client.GetEntityManager()->GetLocalPlayer();
+    std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
     std::shared_ptr<World> world = client.GetWorld();
     std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
     std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();

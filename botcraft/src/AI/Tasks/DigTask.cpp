@@ -20,7 +20,7 @@ namespace Botcraft
 {
     Status DigImpl(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face)
     {
-        std::shared_ptr<LocalPlayer> local_player = c.GetEntityManager()->GetLocalPlayer();
+        std::shared_ptr<LocalPlayer> local_player = c.GetLocalPlayer();
         // Get hand (?) pos to check the distance to the center of the target block
         // (unsure about the 1.0 distance, might be from the eyes or somewhere else)
         const Vector3<double> hand_pos = local_player->GetPosition() + Vector3<double>(0.0, 1.0, 0.0);
