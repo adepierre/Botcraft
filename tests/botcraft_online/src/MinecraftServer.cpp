@@ -210,7 +210,7 @@ void MinecraftServer::InternalThreadRead()
     std::array<char, 256> buffer;
     std::string line = "";
     unsigned int bytes_read = 0;
-    while (bytes_read = subprocess_read_stdout(subprocess.get(), buffer.data(), sizeof(buffer)))
+    while ((bytes_read = subprocess_read_stdout(subprocess.get(), buffer.data(), sizeof(buffer))))
     {
         line += std::string(buffer.data(), bytes_read);
         // Remove windows \r stuff if any

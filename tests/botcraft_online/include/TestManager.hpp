@@ -227,10 +227,10 @@ class TestManagerListener : public Catch::EventListenerBase
 
     void testRunStarting(Catch::TestRunInfo const& test_run_info) override;
     void testCaseStarting(Catch::TestCaseInfo const& test_info) override;
-    void testCasePartialStarting(Catch::TestCaseInfo const& test_info, uint64_t part_number);
+    void testCasePartialStarting(Catch::TestCaseInfo const& test_info, uint64_t part_number) override;
     void sectionStarting(Catch::SectionInfo const& section_info) override;
     void assertionEnded(Catch::AssertionStats const& assertion_stats) override;
-    void testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number);
+    void testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number) override;
     void testCaseEnded(Catch::TestCaseStats const& test_case_stats) override;
     void testRunEnded(Catch::TestRunStats const& test_run_info) override;
 };
