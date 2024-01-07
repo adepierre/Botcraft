@@ -314,6 +314,18 @@ namespace Botcraft
 #endif
     }
 
+    void EntityManager::Handle(ProtocolCraft::ClientboundGameEventPacket& msg)
+    {
+        switch (msg.GetType())
+        {
+        case 3: // CHANGE_GAME_MODE
+            local_player->SetGameMode(static_cast<GameType>(msg.GetParam()));
+            break;
+        default:
+            break;
+        }
+    }
+
     void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg)
     {
         std::shared_ptr<Entity> entity = nullptr;

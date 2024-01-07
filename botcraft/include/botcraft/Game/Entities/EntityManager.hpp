@@ -58,6 +58,7 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg) override;
 #endif
         virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundGameEventPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSetEntityMotionPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundSetEquipmentPacket& msg) override;
