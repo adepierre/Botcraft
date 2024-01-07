@@ -459,6 +459,19 @@ void TestManager::MakeSureLoaded(const Botcraft::Position& pos) const
             return true;
         }, 15000))
     {
+        LOG_ERROR("Timeout waiting " << chunk_loader_name << " to load surroundings from " << chunk_loader->GetLocalPlayer()->GetPosition());
+        for (size_t i = 0; i < wait_loaded.size(); ++i)
+        {
+            const Botcraft::Position pos(wait_loaded[i].first, pos.y, wait_loaded[i].second);
+            LOG_ERROR(pos << " is" << (world->IsLoaded(pos) ? "" : " not") << " loaded");
+        }
+        std::stringstream loaded;
+        loaded << "\n";
+        for (const auto& c : *world->GetChunks())
+        {
+            loaded << c.first.first << "\t" << c.first.second << ";";
+        }
+        LOG_ERROR("Loaded chunks: " << loaded.str());
         throw std::runtime_error("Timeout waiting " + chunk_loader_name + " to load surroundings");
     }
 }
