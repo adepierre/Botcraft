@@ -111,15 +111,11 @@ namespace Botcraft
             // This is neither the most efficient way nor the simplest one.
             // But hopefully it will be easier to compare to original code
             // and update when changed on Minecraft side.
-            if (!world->IsLoaded(Position(
+            if (world->IsLoaded(Position(
                 static_cast<int>(std::floor(player->position.x)),
                 static_cast<int>(std::floor(player->position.y)),
                 static_cast<int>(std::floor(player->position.z))
             )))
-            {
-                return;
-            }
-
             { // Player::tick
                 if (player->game_mode == GameType::Spectator)
                 {
