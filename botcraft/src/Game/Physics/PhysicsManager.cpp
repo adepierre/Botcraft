@@ -378,13 +378,21 @@ namespace Botcraft
 
     void PhysicsManager::InputsToCrouch() const
     {
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         player->crouching =
             !IsSwimmingAndNotFlying() &&
             world->IsFree(player->GetColliderImpl(Pose::Crouching), false) &&
             (player->previous_sneak || !world->IsFree(player->GetColliderImpl(Pose::Standing), false));
+#else
+        player->crouching = !IsSwimmingAndNotFlying() && player->previous_sneak;
+#endif
 
         // If crouch, slow down player inputs
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         if (player->crouching || (player->GetDataPoseImpl() == Pose::Swimming && !player->in_water))
+#else
+        if (player->crouching)
+#endif
         {
             float sneak_coefficient = 0.3f;
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */

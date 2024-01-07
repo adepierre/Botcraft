@@ -46,6 +46,7 @@ namespace Botcraft
         return EntityType::Player;
     }
 
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     AABB PlayerEntity::GetCollider(const Pose pose) const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
@@ -81,6 +82,7 @@ namespace Botcraft
             return 0.6;
         }
     }
+#endif
 
     double PlayerEntity::GetEyeHeight() const
     {
