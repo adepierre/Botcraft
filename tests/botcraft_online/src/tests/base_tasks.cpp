@@ -40,6 +40,13 @@ TEST_CASE("interact")
     const Botcraft::Position lever = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 1, 1);
     const Botcraft::Position lamp = lever - Botcraft::Position(0, 1, 0);
 
+    // Wait for at least one tick because otherwise for some versions the server sometimes
+    // does not register the new position (? not sure about what happens here)
+    Botcraft::Utilities::WaitForCondition([]() -> bool
+        {
+            return false;
+        }, 100);
+
     bot->SyncAction(Botcraft::InteractWithBlock, lever, Botcraft::PlayerDiggingFace::Up, true);
 
     std::shared_ptr<Botcraft::World> world = bot->GetWorld();
