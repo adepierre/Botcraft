@@ -6,8 +6,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <unordered_set>
-
 #ifdef USE_IMGUI
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -165,10 +163,40 @@ namespace Botcraft
                             world->Raycast(Vector3<double>(world_renderer->GetCamera()->GetPosition().x, world_renderer->GetCamera()->GetPosition().y, world_renderer->GetCamera()->GetPosition().z),
                                 Vector3<double>(world_renderer->GetCamera()->GetFront().x, world_renderer->GetCamera()->GetFront().y, world_renderer->GetCamera()->GetFront().z),
                                 6.0f, raycasted_pos, raycasted_normal);
-                        if (raycasted_blockstate)
+                        if (raycasted_blockstate != nullptr)
                         {
                             ImGui::Text("Watching block at %i, %i, %i", raycasted_pos.x, raycasted_pos.y, raycasted_pos.z);
                             ImGui::Text("Block: %s", raycasted_blockstate->GetName().c_str());
+                            if (ImGui::IsItemHovered(ImGuiHoveredFlags_::ImGuiHoveredFlags_AllowWhenDisabled))
+                            {
+                                ImGui::BeginTooltip();
+
+                                ImGui::Text("Air: "); ImGui::SameLine(); raycasted_blockstate->IsAir() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Solid: "); ImGui::SameLine(); raycasted_blockstate->IsSolid() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Transparent: "); ImGui::SameLine(); raycasted_blockstate->IsTransparent() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Lava: "); ImGui::SameLine(); raycasted_blockstate->IsLava() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Water: "); ImGui::SameLine(); raycasted_blockstate->IsWater() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Waterlogged: "); ImGui::SameLine(); raycasted_blockstate->IsWaterlogged() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Fluid Falling: "); ImGui::SameLine(); raycasted_blockstate->IsFluidFalling() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Climbable: "); ImGui::SameLine(); raycasted_blockstate->IsClimbable() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Hazardous: "); ImGui::SameLine(); raycasted_blockstate->IsHazardous() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Slime: "); ImGui::SameLine(); raycasted_blockstate->IsSlime() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Bed: "); ImGui::SameLine(); raycasted_blockstate->IsBed() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Soul Sand: "); ImGui::SameLine(); raycasted_blockstate->IsSoulSand() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Honey: "); ImGui::SameLine(); raycasted_blockstate->IsHoney() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Scaffolding: "); ImGui::SameLine(); raycasted_blockstate->IsScaffolding() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Cobweb: "); ImGui::SameLine(); raycasted_blockstate->IsCobweb() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("UpBubbleColumn: "); ImGui::SameLine(); raycasted_blockstate->IsUpBubbleColumn() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("DownBubbleColumn: "); ImGui::SameLine(); raycasted_blockstate->IsDownBubbleColumn() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Berry Bush: "); ImGui::SameLine(); raycasted_blockstate->IsBerryBush() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Powder Snow: "); ImGui::SameLine(); raycasted_blockstate->IsPowderSnow() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Wall Height: "); ImGui::SameLine(); raycasted_blockstate->IsWallHeight() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
+                                ImGui::Text("Fluid Height: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetFluidHeight()).data());
+                                ImGui::Text("Hardness: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetHardness()).data());
+                                ImGui::Text("Friction: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetFriction()).data());
+
+                                ImGui::EndTooltip();
+                            }
                         }
                         else
                         {

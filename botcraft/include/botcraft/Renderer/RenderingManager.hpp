@@ -9,7 +9,6 @@
 #include <condition_variable>
 #include <any>
 
-#include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/Vector3.hpp"
 
 #include "protocolCraft/Handler.hpp"
