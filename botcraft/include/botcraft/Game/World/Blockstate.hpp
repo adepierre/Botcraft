@@ -8,8 +8,8 @@
 
 #include "protocolCraft/Utilities/Json.hpp"
 
-#include "botcraft/Game/Model.hpp"
 #include "botcraft/Game/Enums.hpp"
+#include "botcraft/Game/Model.hpp"
 
 namespace Botcraft
 {
@@ -43,37 +43,54 @@ namespace Botcraft
 #endif
         /// @brief True if the block is air (air, cave_air, void and structure_void are counted as air)
         bool air = false;
-        /// @brief True if not a full 1x1x1 block OR at least one face texture has transparency
-        bool transparent = false;
         /// @brief True if can't go through it
         bool solid = false;
+        /// @brief True if not a full 1x1x1 block OR at least one face texture has transparency
+        bool transparent = false;
         /// @brief True for lava
         bool lava = false;
         /// @brief True for water
         bool water = false;
         /// @brief True for blocks that are always waterlogged (kelp, seagrass...)
-        bool waterlogged = false;
+        ProtocolCraft::Json::Value waterlogged = false;
         /// @brief True if can be used as a ladder
         bool climbable = false;
-        /// @brief True if the model is a custom one (chests/banners etc...)
-        bool custom = false;
         /// @brief True if block can hurt when walking in/on it
         bool hazardous = false;
-        /// @brief True if block has the fence tag
-        bool fence = false;
-        /// @brief True if block has the fence_gate tag
-        bool fence_gate = false;
-        /// @brief True if block has the wall tag
-        bool wall = false;
+        /// @brief True if this block drops item when broken with no tool
+        bool any_tool_harvest = false;
+        /// @brief True if this block is slime
+        bool slime = false;
+        /// @brief True if this block has the BEDS tag
+        bool bed = false;
+        /// @brief True if this block is soul_sand
+        bool soul_sand = false;
+        /// @brief True if this block is honey
+        bool honey = false;
+        /// @brief True if this block is scaffolding
+        bool scaffolding = false;
+        /// @brief True if this block is cobweb
+        bool cobweb = false;
+        /// @brief True if this block is a bubble column going up
+        ProtocolCraft::Json::Value up_bubble_column = false;
+        /// @brief True if this block is a bubble column going down
+        ProtocolCraft::Json::Value down_bubble_column = false;
+        /// @brief True if this block is sweet_berry_bush
+        bool berry_bush = false;
+        /// @brief True if this block is powder_snow
+        bool powder_snow = false;
+        /// @brief True if block has the WALLS/FENCES/FENCE_GATES tag
+        bool wall_height = false;
         /// @brief Digging hardness
         float hardness = -2.0f;
         /// @brief Slipperiness coefficient
         float friction = 0.6f;
+        /// @brief True if the model is a custom one (chests/banners etc...)
+        bool custom = false;
         TintType tint_type = TintType::None;
         std::string name = "";
         std::string path = "";
         std::vector<std::string> variables = std::vector<std::string>(0);
-        bool any_tool_harvest = false;
         std::vector<BestTool> best_tools = std::vector<BestTool>(0);
     };
 
@@ -113,7 +130,7 @@ namespace Botcraft
         bool IsSoulSand() const;
         bool IsHoney() const;
         bool IsScaffolding() const;
-        bool IsWeb() const;
+        bool IsCobweb() const;
         bool IsBubbleColumn() const;
         bool IsUpBubbleColumn() const;
         bool IsDownBubbleColumn() const;
@@ -151,7 +168,9 @@ namespace Botcraft
 #endif
 
     private:
+        void LoadProperties(const BlockstateProperties& properties);
         void LoadWeightedModels(const std::deque<std::pair<Model, int>>& models_to_load);
+        bool GetBoolFromCondition(const ProtocolCraft::Json::Value& condition) const;
 
         // std::set does not invalidate pointers when growing
         static std::set<std::string> unique_strings;
@@ -192,7 +211,7 @@ namespace Botcraft
             SoulSand,
             Honey,
             Scaffolding,
-            Web,
+            Cobweb,
             UpBubbleColumn,
             DownBubbleColumn,
             BerryBush,

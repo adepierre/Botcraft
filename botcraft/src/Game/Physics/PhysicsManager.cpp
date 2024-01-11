@@ -1201,7 +1201,7 @@ namespace Botcraft
                     {
                         continue;
                     }
-                    else if (block->IsWeb())
+                    else if (block->IsCobweb())
                     {
                         player->stuck_speed_multiplier = Vector3<double>(0.25, 0.05, 0.25);
                     }

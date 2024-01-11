@@ -1,6 +1,5 @@
-#include <sstream>
-#include <fstream>
 #include <deque>
+#include <fstream>
 #include <set>
 
 #include "botcraft/Game/World/Blockstate.hpp"
@@ -212,7 +211,7 @@ namespace Botcraft
         return output;
     }
 
-    const bool CheckCondition(const std::string& name, const std::string& value, const std::vector<std::string>& variables)
+    bool CheckCondition(const std::string& name, const std::string& value, const std::vector<std::string>& variables)
     {
         const std::vector<std::string> possible_values = Utilities::SplitString(value, '|');
 
@@ -247,94 +246,7 @@ namespace Botcraft
 
     Blockstate::Blockstate(const BlockstateProperties& properties)
     {
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-        blockstate_id = { properties.id, properties.metadata };
-#else
-        blockstate_id = properties.id;
-#endif
-        flags[static_cast<size_t>(BlockstateFlags::Air)] = properties.air;
-        flags[static_cast<size_t>(BlockstateFlags::Solid)] = properties.solid;
-        flags[static_cast<size_t>(BlockstateFlags::Transparent)] = properties.transparent;
-        flags[static_cast<size_t>(BlockstateFlags::Lava)] = properties.lava;
-        flags[static_cast<size_t>(BlockstateFlags::Water)] = properties.water;
-        flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = properties.waterlogged;
-        // FluidFalling and FluidLevelBit_N will also be set when loading variables
-        flags[static_cast<size_t>(BlockstateFlags::FluidFalling)] = false;
-        flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = false;
-        flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = false;
-        flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = false;
-        flags[static_cast<size_t>(BlockstateFlags::Climbable)] = properties.climbable;
-        flags[static_cast<size_t>(BlockstateFlags::Hazardous)] = properties.hazardous;
-        flags[static_cast<size_t>(BlockstateFlags::AnyToolHarvest)] = properties.any_tool_harvest;
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.name == "minecraft:slime";
-#else
-        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.name == "minecraft:slime_block";
-#endif
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        flags[static_cast<size_t>(BlockstateFlags::Bed)] = properties.name == "minecraft:bed";
-#else
-        flags[static_cast<size_t>(BlockstateFlags::Bed)] = Utilities::EndsWith(properties.name, "_bed");
-#endif
-        flags[static_cast<size_t>(BlockstateFlags::SoulSand)] = properties.name == "minecraft:soul_sand";
-#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
-        flags[static_cast<size_t>(BlockstateFlags::Honey)] = properties.name == "minecraft:honey_block";
-#endif
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        flags[static_cast<size_t>(BlockstateFlags::Scaffolding)] = properties.name == "minecraft:scaffolding";
-#endif
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        flags[static_cast<size_t>(BlockstateFlags::Web)] = properties.name == "minecraft:web";
-#else
-        flags[static_cast<size_t>(BlockstateFlags::Web)] = properties.name == "minecraft:cobweb";
-#endif
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = properties.name == "minecraft:bubble_column";
-        flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = properties.name == "minecraft:bubble_column";
-#endif
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        flags[static_cast<size_t>(BlockstateFlags::BerryBush)] = properties.name == "minecraft:sweet_berry_bush";
-#endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        flags[static_cast<size_t>(BlockstateFlags::PowderSnow)] = properties.name == "minecraft:powder_snow";
-#endif
-        flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall || properties.fence || properties.fence_gate;
-
-        hardness = properties.hardness;
-        friction = properties.friction;
-        tint_type = properties.tint_type;
-        m_name = GetUniqueStringPtr(properties.name);
-        best_tools = properties.best_tools;
-
-        for (int i = 0; i < properties.variables.size(); ++i)
-        {
-            std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
-            variables[GetUniqueStringPtr(splitted[0])] = GetUniqueStringPtr(splitted[1]);
-            if (splitted[0] == "waterlogged" && splitted[1] == "true")
-            {
-                flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = true;
-            }
-            if (IsFluid() && splitted[0] == "level")
-            {
-                const int level = std::stoi(splitted[1]);
-                flags[static_cast<size_t>(BlockstateFlags::FluidFalling)] = (level >> 3) & 0x01;
-                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = (level >> 0) & 0x01;
-                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = (level >> 1) & 0x01;
-                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = (level >> 2) & 0x01;
-            }
-            if (properties.fence_gate && splitted[0] == "open" && splitted[1] == "true")
-            {
-                flags[static_cast<size_t>(BlockstateFlags::Solid)] = false;
-            }
-            if (IsDownBubbleColumn() && splitted[0] == "drag" && splitted[1] == "false")
-            {
-                flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = false;
-            }
-            if (IsUpBubbleColumn() && splitted[0] == "drag" && splitted[1] == "true")
-            {
-                flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = false;
-            }
-        }
+        LoadProperties(properties);
 
         weights_sum = 0;
 
@@ -602,94 +514,7 @@ namespace Botcraft
 
     Blockstate::Blockstate(const BlockstateProperties& properties, const Model& model_)
     {
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-        blockstate_id = { properties.id, properties.metadata };
-#else
-        blockstate_id = properties.id;
-#endif
-        flags[static_cast<size_t>(BlockstateFlags::Air)] = properties.air;
-        flags[static_cast<size_t>(BlockstateFlags::Solid)] = properties.solid;
-        flags[static_cast<size_t>(BlockstateFlags::Transparent)] = properties.transparent;
-        flags[static_cast<size_t>(BlockstateFlags::Lava)] = properties.lava;
-        flags[static_cast<size_t>(BlockstateFlags::Water)] = properties.water;
-        flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = properties.waterlogged;
-        // FluidFalling and FluidLevelBit_N will be set to correct value when loading variables
-        flags[static_cast<size_t>(BlockstateFlags::FluidFalling)] = false;
-        flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = false;
-        flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = false;
-        flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = false;
-        flags[static_cast<size_t>(BlockstateFlags::Climbable)] = properties.climbable;
-        flags[static_cast<size_t>(BlockstateFlags::Hazardous)] = properties.hazardous;
-        flags[static_cast<size_t>(BlockstateFlags::AnyToolHarvest)] = properties.any_tool_harvest;
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.name == "minecraft:slime";
-#else
-        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.name == "minecraft:slime_block";
-#endif
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        flags[static_cast<size_t>(BlockstateFlags::Bed)] = properties.name == "minecraft:bed";
-#else
-        flags[static_cast<size_t>(BlockstateFlags::Bed)] = Utilities::EndsWith(properties.name, "_bed");
-#endif
-        flags[static_cast<size_t>(BlockstateFlags::SoulSand)] = properties.name == "minecraft:soul_sand";
-#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
-        flags[static_cast<size_t>(BlockstateFlags::Honey)] = properties.name == "minecraft:honey_block";
-#endif
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        flags[static_cast<size_t>(BlockstateFlags::Scaffolding)] = properties.name == "minecraft:scaffolding";
-#endif
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        flags[static_cast<size_t>(BlockstateFlags::Web)] = properties.name == "minecraft:web";
-#else
-        flags[static_cast<size_t>(BlockstateFlags::Web)] = properties.name == "minecraft:cobweb";
-#endif
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = properties.name == "minecraft:bubble_column";
-        flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = properties.name == "minecraft:bubble_column";
-#endif
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        flags[static_cast<size_t>(BlockstateFlags::BerryBush)] = properties.name == "minecraft:sweet_berry_bush";
-#endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        flags[static_cast<size_t>(BlockstateFlags::PowderSnow)] = properties.name == "minecraft:powder_snow";
-#endif
-        flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall || properties.fence || properties.fence_gate;
-
-        hardness = properties.hardness;
-        friction = properties.friction;
-        tint_type = properties.tint_type;
-        m_name = GetUniqueStringPtr(properties.name);
-        best_tools = properties.best_tools;
-
-        for (int i = 0; i < properties.variables.size(); ++i)
-        {
-            std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
-            variables[GetUniqueStringPtr(splitted[0])] = GetUniqueStringPtr(splitted[1]);
-            if (splitted[0] == "waterlogged" && splitted[1] == "true")
-            {
-                flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = true;
-            }
-            if (IsFluid() && splitted[0] == "level")
-            {
-                const int level = std::stoi(splitted[1]);
-                flags[static_cast<size_t>(BlockstateFlags::FluidFalling)] = (level >> 3) & 0x01;
-                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = (level >> 0) & 0x01;
-                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = (level >> 1) & 0x01;
-                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = (level >> 2) & 0x01;
-            }
-            if (properties.fence_gate && splitted[0] == "open" && splitted[1] == "true")
-            {
-                flags[static_cast<size_t>(BlockstateFlags::Solid)] = false;
-            }
-            if (IsDownBubbleColumn() && splitted[0] == "drag" && splitted[1] == "false")
-            {
-                flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = false;
-            }
-            if (IsUpBubbleColumn() && splitted[0] == "drag" && splitted[1] == "true")
-            {
-                flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = false;
-            }
-        }
+        LoadProperties(properties);
 
         LoadWeightedModels({ {model_, 1} });
     }
@@ -855,9 +680,9 @@ namespace Botcraft
 #endif
     }
 
-    bool Blockstate::IsWeb() const
+    bool Blockstate::IsCobweb() const
     {
-        return flags[static_cast<size_t>(BlockstateFlags::Web)];
+        return flags[static_cast<size_t>(BlockstateFlags::Cobweb)];
     }
 
     bool Blockstate::IsBerryBush() const
@@ -1051,7 +876,7 @@ namespace Botcraft
                     coords[3] = (texture_pos[3] + coords[3] / 16.0f * height_normalizer) / atlas->GetHeight();
                     f.face.SetTextureCoords(coords, true);
                 }
-            
+
                 f.face.SetTransparencyData(transparencies[0]);
             }
         }
@@ -1061,6 +886,58 @@ namespace Botcraft
     size_t Blockstate::GetNumModels() const
     {
         return models_indices.size();
+    }
+
+    void Blockstate::LoadProperties(const BlockstateProperties& properties)
+    {
+        m_name = GetUniqueStringPtr(properties.name);
+        hardness = properties.hardness;
+        friction = properties.friction;
+        tint_type = properties.tint_type;
+        best_tools = properties.best_tools;
+
+        for (int i = 0; i < properties.variables.size(); ++i)
+        {
+            std::vector<std::string> splitted = Utilities::SplitString(properties.variables[i], '=');
+            variables[GetUniqueStringPtr(splitted[0])] = GetUniqueStringPtr(splitted[1]);
+
+            // Special case for fluids
+            if ((properties.lava || properties.water) && splitted[0] == "level")
+            {
+                const int level = std::stoi(splitted[1]);
+                flags[static_cast<size_t>(BlockstateFlags::FluidFalling)] = (level >> 3) & 0x01;
+                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_0)] = (level >> 0) & 0x01;
+                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_1)] = (level >> 1) & 0x01;
+                flags[static_cast<size_t>(BlockstateFlags::FluidLevelBit_2)] = (level >> 2) & 0x01;
+            }
+        }
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        blockstate_id = { properties.id, properties.metadata };
+#else
+        blockstate_id = properties.id;
+#endif
+
+        flags[static_cast<size_t>(BlockstateFlags::Air)] = properties.air;
+        flags[static_cast<size_t>(BlockstateFlags::Solid)] = properties.solid;
+        flags[static_cast<size_t>(BlockstateFlags::Transparent)] = properties.transparent;
+        flags[static_cast<size_t>(BlockstateFlags::Lava)] = properties.lava;
+        flags[static_cast<size_t>(BlockstateFlags::Water)] = properties.water;
+        flags[static_cast<size_t>(BlockstateFlags::WaterLogged)] = GetBoolFromCondition(properties.waterlogged);
+        // FluidFalling and FluidLevelBit_N are already set when loading variables
+        flags[static_cast<size_t>(BlockstateFlags::Climbable)] = properties.climbable;
+        flags[static_cast<size_t>(BlockstateFlags::Hazardous)] = properties.hazardous;
+        flags[static_cast<size_t>(BlockstateFlags::AnyToolHarvest)] = properties.any_tool_harvest;
+        flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.slime;
+        flags[static_cast<size_t>(BlockstateFlags::Bed)] = properties.bed;
+        flags[static_cast<size_t>(BlockstateFlags::SoulSand)] = properties.soul_sand;
+        flags[static_cast<size_t>(BlockstateFlags::Honey)] = properties.honey;
+        flags[static_cast<size_t>(BlockstateFlags::Scaffolding)] = properties.scaffolding;
+        flags[static_cast<size_t>(BlockstateFlags::Cobweb)] = properties.cobweb;
+        flags[static_cast<size_t>(BlockstateFlags::DownBubbleColumn)] = GetBoolFromCondition(properties.down_bubble_column);
+        flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = GetBoolFromCondition(properties.up_bubble_column);
+        flags[static_cast<size_t>(BlockstateFlags::BerryBush)] = properties.berry_bush;
+        flags[static_cast<size_t>(BlockstateFlags::PowderSnow)] = properties.powder_snow;
+        flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall_height;
     }
 
     void Blockstate::LoadWeightedModels(const std::deque<std::pair<Model, int>>& models_to_load)
@@ -1096,6 +973,29 @@ namespace Botcraft
 
         models_indices.shrink_to_fit();
         models_weights.shrink_to_fit();
+    }
+
+    bool Blockstate::GetBoolFromCondition(const Json::Value& condition) const
+    {
+        if (condition.is_bool())
+        {
+            return condition.get<bool>();
+        }
+        else if (condition.is_string())
+        {
+            const std::vector<std::string> splitted = Utilities::SplitString(condition.get_string(), '=');
+            const std::string& variable = splitted[0];
+            const std::string& value = splitted[1];
+            for (const auto [k, v] : variables)
+            {
+                if (*k == variable)
+                {
+                    return *v == value;
+                }
+            }
+            return false;
+        }
+        throw std::runtime_error("Unknown JSON type in GetBoolFromCondition for block " + GetName());
     }
 
     const std::string* Blockstate::GetUniqueStringPtr(const std::string& s)

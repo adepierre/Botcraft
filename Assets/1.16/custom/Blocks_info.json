@@ -2157,7 +2157,7 @@
             "any",
             "axe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 1,
@@ -2775,7 +2775,7 @@
             "any",
             "axe"
         ],
-        "fence_gate": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -2838,7 +2838,7 @@
         "tools": [
             "pickaxe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -3070,7 +3070,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -3081,7 +3081,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 0,
@@ -5087,7 +5087,7 @@
             "any",
             "axe"
         ],
-        "fence_gate": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5099,7 +5099,7 @@
             "any",
             "axe"
         ],
-        "fence_gate": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5111,7 +5111,7 @@
             "any",
             "axe"
         ],
-        "fence_gate": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5123,7 +5123,7 @@
             "any",
             "axe"
         ],
-        "fence_gate": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5135,7 +5135,7 @@
             "any",
             "axe"
         ],
-        "fence_gate": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5147,7 +5147,7 @@
             "any",
             "axe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5159,7 +5159,7 @@
             "any",
             "axe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5171,7 +5171,7 @@
             "any",
             "axe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5183,7 +5183,7 @@
             "any",
             "axe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -5195,7 +5195,7 @@
             "any",
             "axe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 3,
@@ -6665,7 +6665,9 @@
         "tintType": "water",
         "solid": false,
         "transparent": true,
-        "water": true
+        "water": true,
+        "up_bubble_column": "drag=false",
+        "down_bubble_column": "drag=true"
     },
     {
         "hardness": 1.5,
@@ -6946,7 +6948,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 1.5,
@@ -6957,7 +6959,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 0.8,
@@ -6968,7 +6970,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 1.5,
@@ -6979,7 +6981,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 1.5,
@@ -6990,7 +6992,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 1.5,
@@ -7001,7 +7003,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -7012,7 +7014,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 1.5,
@@ -7023,7 +7025,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -7034,7 +7036,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 0.8,
@@ -7045,7 +7047,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 3,
@@ -7056,7 +7058,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 1.5,
@@ -7067,7 +7069,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 0,
@@ -7551,7 +7553,7 @@
             "any",
             "axe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -7563,7 +7565,7 @@
             "any",
             "axe"
         ],
-        "fence": true
+        "wall_height": true
     },
     {
         "hardness": 3,
@@ -7597,7 +7599,7 @@
             "any",
             "axe"
         ],
-        "fence_gate": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -7609,7 +7611,7 @@
             "any",
             "axe"
         ],
-        "fence_gate": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -7930,7 +7932,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 2,
@@ -8011,7 +8013,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 1.5,
@@ -8072,7 +8074,7 @@
         "tools": [
             "pickaxe"
         ],
-        "wall": true
+        "wall_height": true
     },
     {
         "hardness": 2,

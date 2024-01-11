@@ -6,6 +6,7 @@
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/Biome.hpp"
 #include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/StringUtilities.hpp"
 
 #if USE_GUI
 #include "botcraft/Renderer/Atlas.hpp"
@@ -317,49 +318,96 @@ namespace Botcraft
                 blockstate_properties[name].name = name;
             }
 
+            BlockstateProperties& current_block_properties = blockstate_properties[name];
+
             if (info.contains("air") && info["air"].is_bool())
             {
-                blockstate_properties[name].air = info["air"].get<bool>();
-            }
-
-            if (info.contains("transparent") && info["transparent"].is_bool())
-            {
-                blockstate_properties[name].transparent = info["transparent"].get<bool>();
+                current_block_properties.air = info["air"].get<bool>();
             }
 
             if (info.contains("solid") && info["solid"].is_bool())
             {
-                blockstate_properties[name].solid = info["solid"].get<bool>();
+                current_block_properties.solid = info["solid"].get<bool>();
             }
 
-            if (info.contains("water") && info["water"].is_bool())
+            if (info.contains("transparent") && info["transparent"].is_bool())
             {
-                blockstate_properties[name].water = info["water"].get<bool>();
-            }
-
-            if (info.contains("waterlogged") && info["waterlogged"].is_bool())
-            {
-                blockstate_properties[name].waterlogged = info["waterlogged"].get<bool>();
+                current_block_properties.transparent = info["transparent"].get<bool>();
             }
 
             if (info.contains("lava") && info["lava"].is_bool())
             {
-                blockstate_properties[name].lava = info["lava"].get<bool>();
-            }
- 
-            if (info.contains("fence") && info["fence"].is_bool())
-            {
-                blockstate_properties[name].fence = info["fence"].get<bool>();
+                current_block_properties.lava = info["lava"].get<bool>();
             }
 
-            if (info.contains("fence_gate") && info["fence_gate"].is_bool())
+            if (info.contains("water") && info["water"].is_bool())
             {
-                blockstate_properties[name].fence_gate = info["fence_gate"].get<bool>();
+                current_block_properties.water = info["water"].get<bool>();
             }
 
-            if (info.contains("wall") && info["wall"].is_bool())
+            if (info.contains("waterlogged") && info["waterlogged"].is_bool())
             {
-                blockstate_properties[name].wall = info["wall"].get<bool>();
+                current_block_properties.waterlogged = info["waterlogged"].get<bool>();
+            }
+            else
+            {
+                current_block_properties.waterlogged = "waterlogged=true";
+            }
+
+            if (info.contains("climbable") && info["climbable"].is_bool())
+            {
+                current_block_properties.climbable = info["climbable"].get<bool>();
+            }
+
+            if (info.contains("hazardous") && info["hazardous"].is_bool())
+            {
+                current_block_properties.hazardous = info["hazardous"].get<bool>();
+            }
+
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+            current_block_properties.slime = name == "minecraft:slime";
+#else
+            current_block_properties.slime = name == "minecraft:slime_block";
+#endif
+
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+            current_block_properties.bed = name == "minecraft:bed";
+#else
+            current_block_properties.bed = Utilities::EndsWith(name, "_bed");
+#endif
+
+            current_block_properties.soul_sand = name == "minecraft:soul_sand";
+
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
+            current_block_properties.honey = name == "minecraft:honey_block";
+#endif
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+            current_block_properties.scaffolding = name == "minecraft:scaffolding";
+#endif
+
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+            current_block_properties.cobweb = name == "minecraft:web";
+#else
+            current_block_properties.cobweb = name == "minecraft:cobweb";
+#endif
+
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+            current_block_properties.up_bubble_column = info.contains("up_bubble_column") ? info["up_bubble_column"] : false;
+            current_block_properties.down_bubble_column = info.contains("down_bubble_column") ? info["down_bubble_column"] : false;
+#endif
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+            current_block_properties.berry_bush = name == "minecraft:sweet_berry_bush";
+#endif
+
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+            current_block_properties.powder_snow = name == "minecraft:powder_snow";
+#endif
+
+            if (info.contains("wall_height") && info["wall_height"].is_bool())
+            {
+                blockstate_properties[name].wall_height = info["wall_height"].get<bool>();
             }
 
             if (info.contains("hardness") && info["hardness"].is_number())
@@ -379,16 +427,6 @@ namespace Botcraft
             else
             {
                 rendering[name] = info["render"].get_string();
-            }
-
-            if (info.contains("climbable") && info["climbable"].is_bool())
-            {
-                blockstate_properties[name].climbable = info["climbable"].get<bool>();
-            }
-
-            if (info.contains("hazardous") && info["hazardous"].is_bool())
-            {
-                blockstate_properties[name].hazardous = info["hazardous"].get<bool>();
             }
 
             // Get breaking tools info
@@ -536,19 +574,28 @@ namespace Botcraft
                 -1,             //id
 #endif
                 false,          //air
-                false,          //transparent
                 true,           //solid
+                false,          //transparent
                 false,          //lava
                 false,          //water
                 false,          //waterlogged
                 false,          //climbable
-                false,          //custom
                 false,          //hazardous
-                false,          //fence
-                false,          //fence_gate
-                false,          //wall
+                false,          //any_tool_harvest
+                false,          //slime
+                false,          //bed
+                false,          //soul_sand
+                false,          //honey
+                false,          //scaffolding
+                false,          //cobweb
+                false,          //up_bubble_column
+                false,          //down_bubble_column
+                false,          //berry_bush
+                false,          //powder_snow
+                false,          //wall_height
                 -2.0f,          //hardness
                 0.6f,           //friction
+                false,          //custom
                 TintType::None, //tint_type
                 "default",      //name
             }
