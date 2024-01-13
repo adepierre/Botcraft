@@ -325,10 +325,7 @@ namespace Botcraft
                 current_block_properties.air = info["air"].get<bool>();
             }
 
-            if (info.contains("solid") && info["solid"].is_bool())
-            {
-                current_block_properties.solid = info["solid"].get<bool>();
-            }
+            current_block_properties.solid = info.contains("solid") ? info["solid"] : false;
 
             if (info.contains("transparent") && info["transparent"].is_bool())
             {

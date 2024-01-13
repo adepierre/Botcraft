@@ -2077,7 +2077,7 @@
         "hardness": 0.1,
         "name": "minecraft:snow",
         "render": "block",
-        "solid": true,
+        "solid": "layers!=1",
         "transparent": true,
         "tools": [
             "shovel"
@@ -2769,7 +2769,7 @@
         "hardness": 2,
         "name": "minecraft:oak_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -5081,7 +5081,7 @@
         "hardness": 2,
         "name": "minecraft:spruce_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -5093,7 +5093,7 @@
         "hardness": 2,
         "name": "minecraft:birch_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -5105,7 +5105,7 @@
         "hardness": 2,
         "name": "minecraft:jungle_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -5117,7 +5117,7 @@
         "hardness": 2,
         "name": "minecraft:acacia_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -5129,7 +5129,7 @@
         "hardness": 2,
         "name": "minecraft:dark_oak_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -7582,7 +7582,7 @@
         "hardness": 2,
         "name": "minecraft:crimson_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -7594,7 +7594,7 @@
         "hardness": 2,
         "name": "minecraft:warped_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -9287,7 +9287,7 @@
         "hardness": 0.1,
         "name": "minecraft:big_dripleaf",
         "render": "block",
-        "solid": false,
+        "solid": "tilt!=full",
         "transparent": true,
         "tools": [
             "any",
@@ -9665,7 +9665,7 @@
         "hardness": 2,
         "name": "minecraft:mangrove_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -10070,7 +10070,7 @@
         "hardness": 2,
         "name": "minecraft:bamboo_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -10657,7 +10657,7 @@
         "hardness": 2,
         "name": "minecraft:cherry_fence_gate",
         "render": "block",
-        "solid": true,
+        "solid": "open=false",
         "transparent": true,
         "tools": [
             "any",
@@ -10733,7 +10733,7 @@
         "hardness": 0,
         "name": "minecraft:pitcher_crop",
         "render": "block",
-        "solid": true,
+        "solid": "half=lower",
         "transparent": true,
         "tools": [
             "any"

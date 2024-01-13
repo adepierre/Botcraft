@@ -918,7 +918,7 @@ namespace Botcraft
 #endif
 
         flags[static_cast<size_t>(BlockstateFlags::Air)] = properties.air;
-        flags[static_cast<size_t>(BlockstateFlags::Solid)] = properties.solid;
+        flags[static_cast<size_t>(BlockstateFlags::Solid)] = GetBoolFromCondition(properties.solid);
         flags[static_cast<size_t>(BlockstateFlags::Transparent)] = properties.transparent;
         flags[static_cast<size_t>(BlockstateFlags::Lava)] = properties.lava;
         flags[static_cast<size_t>(BlockstateFlags::Water)] = properties.water;
@@ -983,14 +983,16 @@ namespace Botcraft
         }
         else if (condition.is_string())
         {
-            const std::vector<std::string> splitted = Utilities::SplitString(condition.get_string(), '=');
+            const std::string& condition_str = condition.get_string();
+            const bool is_negative = Utilities::Contains(condition_str, "!=");
+            const std::vector<std::string> splitted = is_negative ? Utilities::SplitString(condition_str, "!=") : Utilities::SplitString(condition_str, '=');
             const std::string& variable = splitted[0];
             const std::string& value = splitted[1];
             for (const auto [k, v] : variables)
             {
                 if (*k == variable)
                 {
-                    return *v == value;
+                    return is_negative ? *v != value : *v == value;
                 }
             }
             return false;

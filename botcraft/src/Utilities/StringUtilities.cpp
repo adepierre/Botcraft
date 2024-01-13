@@ -24,6 +24,11 @@ namespace Botcraft::Utilities
         return std::equal(toMatch.rbegin(), toMatch.rend(), mainStr.rbegin());
     }
 
+    bool Contains(const std::string& mainStr, const std::string& toFind)
+    {
+        return mainStr.find(toFind) != std::string::npos;
+    }
+
     std::vector<std::string> SplitString(const std::string& s, const char delimiter)
     {
         std::vector<std::string> tokens;
@@ -33,6 +38,24 @@ namespace Botcraft::Utilities
         {
             tokens.push_back(token);
         }
+        return tokens;
+    }
+
+    std::vector<std::string> SplitString(const std::string& s, const std::string& delimiter)
+    {
+        const size_t delimiter_size = delimiter.size();
+        size_t start = 0;
+        size_t end = 0;
+        std::vector<std::string> tokens;
+
+        while ((end = s.find(delimiter, start)) != std::string::npos)
+        {
+            tokens.push_back(s.substr(start, end - start));
+            start = end + delimiter_size;
+        }
+
+        tokens.push_back(s.substr(start));
+
         return tokens;
     }
 

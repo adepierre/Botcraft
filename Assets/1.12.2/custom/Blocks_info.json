@@ -855,7 +855,7 @@
     {
         "name": "minecraft:snow_layer",
         "transparent": true,
-        "solid": true,
+        "solid": "layers!=1",
         "render": "block",
         "hardness": 0.1,
         "tools": [
@@ -1160,7 +1160,7 @@
     {
         "name": "minecraft:fence_gate",
         "transparent": true,
-        "solid": true,
+        "solid": "open=false",
         "render": "block",
         "hardness": 2,
         "tools": [
@@ -1952,7 +1952,7 @@
     {
         "name": "minecraft:spruce_fence_gate",
         "transparent": true,
-        "solid": true,
+        "solid": "open=false",
         "render": "block",
         "hardness": 2,
         "tools": [
@@ -1964,7 +1964,7 @@
     {
         "name": "minecraft:birch_fence_gate",
         "transparent": true,
-        "solid": true,
+        "solid": "open=false",
         "render": "block",
         "hardness": 2,
         "tools": [
@@ -1976,7 +1976,7 @@
     {
         "name": "minecraft:jungle_fence_gate",
         "transparent": true,
-        "solid": true,
+        "solid": "open=false",
         "render": "block",
         "hardness": 2,
         "tools": [
@@ -1988,7 +1988,7 @@
     {
         "name": "minecraft:dark_oak_fence_gate",
         "transparent": true,
-        "solid": true,
+        "solid": "open=false",
         "render": "block",
         "hardness": 2,
         "tools": [
@@ -2000,7 +2000,7 @@
     {
         "name": "minecraft:acacia_fence_gate",
         "transparent": true,
-        "solid": true,
+        "solid": "open=false",
         "render": "block",
         "hardness": 2,
         "tools": [

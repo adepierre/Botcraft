@@ -44,7 +44,7 @@ namespace Botcraft
         /// @brief True if the block is air (air, cave_air, void and structure_void are counted as air)
         bool air = false;
         /// @brief True if can't go through it
-        bool solid = false;
+        ProtocolCraft::Json::Value solid = false;
         /// @brief True if not a full 1x1x1 block OR at least one face texture has transparency
         bool transparent = false;
         /// @brief True for lava
