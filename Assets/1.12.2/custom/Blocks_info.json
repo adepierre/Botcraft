@@ -1477,7 +1477,7 @@
     },
     {
         "name": "minecraft:beacon",
-        "transparent": false,
+        "transparent": true,
         "solid": true,
         "render": "block",
         "hardness": 3,

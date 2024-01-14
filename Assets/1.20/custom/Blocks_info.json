@@ -3056,7 +3056,7 @@
         "name": "minecraft:beacon",
         "render": "block",
         "solid": true,
-        "transparent": false,
+        "transparent": true,
         "tools": [
             "any"
         ]
