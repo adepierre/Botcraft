@@ -311,7 +311,7 @@ namespace Botcraft
                 {
                     block = world->GetBlock(current_node.pos + Position(0, y, 0));
 
-                    if (block != nullptr && block->IsSolid())
+                    if (block != nullptr && block->IsSolid() && !block->IsClimbable())
                     {
                         break;
                     }
@@ -570,7 +570,7 @@ namespace Botcraft
                     {
                         block = world->GetBlock(next_location + Position(0, y, 0));
 
-                        if (block != nullptr && block->IsSolid())
+                        if (block != nullptr && block->IsSolid() && !block->IsClimbable())
                         {
                             break;
                         }

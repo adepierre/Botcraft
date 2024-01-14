@@ -92,6 +92,7 @@ namespace Botcraft
         std::string path = "";
         std::vector<std::string> variables = std::vector<std::string>(0);
         std::vector<BestTool> best_tools = std::vector<BestTool>(0);
+        ProtocolCraft::Json::Value colliders = ProtocolCraft::Json::Value();
     };
 
     class Blockstate
@@ -171,6 +172,10 @@ namespace Botcraft
         void LoadProperties(const BlockstateProperties& properties);
         void LoadWeightedModels(const std::deque<std::pair<Model, int>>& models_to_load);
         bool GetBoolFromCondition(const ProtocolCraft::Json::Value& condition) const;
+        /// @brief Check if a given string condition match this blockstate variables
+        /// @param condition String to check, example: "layers=1"
+        /// @return True if variables values match, false otherwise
+        bool MatchCondition(const std::string& condition) const;
 
         // std::set does not invalidate pointers when growing
         static std::set<std::string> unique_strings;

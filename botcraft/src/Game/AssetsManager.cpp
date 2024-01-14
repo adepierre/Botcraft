@@ -302,8 +302,20 @@ namespace Botcraft
             return;
         }
 
+        if (!json.contains("colliders"))
+        {
+            LOG_ERROR("Error reading info block file at " << info_file_path << " (no colliders found)");
+            return;
+        }
+        const Json::Value& colliders = json["colliders"];
+
+        if (!json.contains("blocks"))
+        {
+            LOG_ERROR("Error reading info block file at " << info_file_path << " (no blocks found)");
+            return;
+        }
         //Load all the info
-        for (auto& info : json.get_array())
+        for (const auto& info : json["blocks"].get_array())
         {
             std::string name = "";
 
@@ -415,6 +427,11 @@ namespace Botcraft
             if (info.contains("friction") && info["friction"].is_number())
             {
                 blockstate_properties[name].friction = info["friction"].get_number<float>();
+            }
+
+            if (info.contains("colliders") && info["colliders"].is_number() && info["colliders"].get<int>() < colliders.size())
+            {
+                blockstate_properties[name].colliders = colliders[info["colliders"].get<int>()];
             }
 
             if (!info.contains("render") || !info["render"].is_string())

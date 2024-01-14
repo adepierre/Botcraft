@@ -510,22 +510,57 @@ namespace Botcraft
             }
         }
 
-        // If this is a wall, we need to fix collider height to 1.5
-        if (IsWallHeight())
+        // If this block has colliders different from rendered model
+        if (!properties.colliders.is_null())
         {
-            for (auto& [m, i] : weighted_models)
+            std::set<AABB> colliders;
+            if (properties.colliders.is_array())
             {
-                const std::set<AABB>& colliders = m.GetColliders();
-                std::set<AABB> wall_colliders;
-                for (const auto& c : colliders)
+                for (const auto& c : properties.colliders.get_array())
                 {
-                    Vector3<double> new_center = c.GetCenter();
-                    new_center.y = 0.75;
-                    Vector3<double> new_half_size = c.GetHalfSize();
-                    new_half_size.y = 0.75;
-                    wall_colliders.insert(AABB(new_center, new_half_size));
+                    Vector3<double> from(
+                        c["from"][0].get_number(),
+                        c["from"][1].get_number(),
+                        c["from"][2].get_number()
+                    );
+                    Vector3<double> to(
+                        c["to"][0].get_number(),
+                        c["to"][1].get_number(),
+                        c["to"][2].get_number()
+                    );
+                    colliders.insert(AABB((from + to) / 2.0 / 16.0, (to - from) / 2.0 / 16.0));
                 }
-                m.SetColliders(wall_colliders);
+            }
+            else if (properties.colliders.is_object())
+            {
+                for (const auto& [k, v] : properties.colliders.get_object())
+                {
+                    if (MatchCondition(k))
+                    {
+                        for (const auto& c : v.get_array())
+                        {
+                            Vector3<double> from(
+                                c["from"][0].get_number(),
+                                c["from"][1].get_number(),
+                                c["from"][2].get_number()
+                            );
+                            Vector3<double> to(
+                                c["to"][0].get_number(),
+                                c["to"][1].get_number(),
+                                c["to"][2].get_number()
+                            );
+                            colliders.insert(AABB((from + to) / 2.0 / 16.0, (to - from) / 2.0 / 16.0));
+                        }
+                        break;
+                    }
+                }
+            }
+            if (!colliders.empty())
+            {
+                for (auto& [m, i] : weighted_models)
+                {
+                    m.SetColliders(colliders);
+                }
             }
         }
 
@@ -1003,21 +1038,35 @@ namespace Botcraft
         }
         else if (condition.is_string())
         {
-            const std::string& condition_str = condition.get_string();
-            const bool is_negative = Utilities::Contains(condition_str, "!=");
-            const std::vector<std::string> splitted = is_negative ? Utilities::SplitString(condition_str, "!=") : Utilities::SplitString(condition_str, '=');
+            return MatchCondition(condition.get_string());
+        }
+        throw std::runtime_error("Unknown JSON type in GetBoolFromCondition for block " + GetName());
+    }
+
+    bool Blockstate::MatchCondition(const std::string& condition) const
+    {
+        const std::vector<std::string> and_conditions = Utilities::SplitString(condition, ',');
+        for (const std::string& c : and_conditions)
+        {
+            bool current_result = false;
+            const bool is_negative = Utilities::Contains(c, "!=");
+            const std::vector<std::string> splitted = is_negative ? Utilities::SplitString(c, "!=") : Utilities::SplitString(c, '=');
             const std::string& variable = splitted[0];
             const std::string& value = splitted[1];
             for (const auto [k, v] : variables)
             {
                 if (*k == variable)
                 {
-                    return is_negative ? *v != value : *v == value;
+                    current_result = is_negative ? *v != value : *v == value;
+                    break;
                 }
             }
-            return false;
+            if (!current_result)
+            {
+                return false;
+            }
         }
-        throw std::runtime_error("Unknown JSON type in GetBoolFromCondition for block " + GetName());
+        return true;
     }
 
     const std::string* Blockstate::GetUniqueStringPtr(const std::string& s)
