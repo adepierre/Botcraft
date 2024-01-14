@@ -509,6 +509,26 @@ namespace Botcraft
                 }
             }
         }
+
+        // If this is a wall, we need to fix collider height to 1.5
+        if (IsWallHeight())
+        {
+            for (auto& [m, i] : weighted_models)
+            {
+                const std::set<AABB>& colliders = m.GetColliders();
+                std::set<AABB> wall_colliders;
+                for (const auto& c : colliders)
+                {
+                    Vector3<double> new_center = c.GetCenter();
+                    new_center.y = 0.75;
+                    Vector3<double> new_half_size = c.GetHalfSize();
+                    new_half_size.y = 0.75;
+                    wall_colliders.insert(AABB(new_center, new_half_size));
+                }
+                m.SetColliders(wall_colliders);
+            }
+        }
+
         LoadWeightedModels(weighted_models);
     }
 
