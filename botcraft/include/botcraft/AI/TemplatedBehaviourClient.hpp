@@ -141,7 +141,7 @@ namespace Botcraft
 
         /// @brief Set a tree to execute the given action once and block until done.
         /// This will change the current tree. BehaviourStep should **NOT** be called
-        /// by another thread simultaneously. It means you shloud **NOT** call
+        /// by another thread simultaneously. It means you should **NOT** call
         /// RunBehaviourUntilClosed when using this sync version.
         /// @param ...args Parameters passed to create tree leaf
         template<typename... Args>
