@@ -143,10 +143,33 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg)
     {
-        // no mutex deadlock as local_player->Get functions are called first then local_player->Set
-        (msg.GetRelativeArguments() & 0x01) ? local_player->SetX(local_player->GetX() + msg.GetX()) : local_player->SetX(msg.GetX());
-        (msg.GetRelativeArguments() & 0x02) ? local_player->SetY(local_player->GetY() + msg.GetY()) : local_player->SetY(msg.GetY());
-        (msg.GetRelativeArguments() & 0x04) ? local_player->SetZ(local_player->GetZ() + msg.GetZ()) : local_player->SetZ(msg.GetZ());
+        if (msg.GetRelativeArguments() & 0x01)
+        {
+            local_player->SetX(local_player->GetX() + msg.GetX());
+        }
+        else
+        {
+            local_player->SetX(msg.GetX());
+            local_player->SetSpeedX(0.0);
+        }
+        if (msg.GetRelativeArguments() & 0x02)
+        {
+            local_player->SetY(local_player->GetY() + msg.GetY());
+        }
+        else
+        {
+            local_player->SetY(msg.GetY());
+            local_player->SetSpeedY(0.0);
+        }
+        if (msg.GetRelativeArguments() & 0x04)
+        {
+            local_player->SetZ(local_player->GetZ() + msg.GetZ());
+        }
+        else
+        {
+            local_player->SetZ(msg.GetZ());
+            local_player->SetSpeedZ(0.0);
+        }
         (msg.GetRelativeArguments() & 0x08) ? local_player->SetYaw(local_player->GetYaw() + msg.GetYRot()) : local_player->SetYaw(msg.GetYRot());
         (msg.GetRelativeArguments() & 0x10) ? local_player->SetPitch(local_player->GetPitch() + msg.GetXRot()) : local_player->SetPitch(msg.GetXRot());
     }
