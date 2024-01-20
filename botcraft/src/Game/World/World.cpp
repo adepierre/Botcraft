@@ -179,11 +179,9 @@ namespace Botcraft
                     {
                         continue;
                     }
-                    const std::set<AABB>& colliders = block->GetModel(block->GetModelId(current_pos)).GetColliders();
-                    for (const auto& collider : colliders)
-                    {
-                        output.push_back(collider + current_pos);
-                    }
+
+                    const std::set<AABB> colliders = block->GetCollidersAtPos(current_pos);
+                    output.insert(output.end(), colliders.begin(), colliders.end());
                 }
             }
         }
@@ -542,11 +540,9 @@ namespace Botcraft
 
             if (block != nullptr && !block->IsAir())
             {
-                const auto& colliders = block->GetModel(block->GetModelId(out_pos)).GetColliders();
-                for (const auto& collider : colliders)
+                for (const auto& collider : block->GetCollidersAtPos(out_pos))
                 {
-                    const AABB current_cube = collider + out_pos;
-                    if (current_cube.Intersect(origin, direction))
+                    if (collider.Intersect(origin, direction))
                     {
                         return block;
                     }
@@ -639,11 +635,9 @@ namespace Botcraft
                         continue;
                     }
 
-                    const std::set<AABB>& block_colliders = block->GetModel(block->GetModelId(cube_pos)).GetColliders();
-
-                    for (const auto& collider : block_colliders)
+                    for (const auto& collider : block->GetCollidersAtPos(cube_pos))
                     {
-                        if (aabb.Collide(collider + Vector3<double>(cube_pos.x, cube_pos.y, cube_pos.z)))
+                        if (aabb.Collide(collider))
                         {
                             return false;
                         }

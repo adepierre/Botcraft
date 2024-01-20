@@ -7915,7 +7915,8 @@
                     "multiplier": 30
                 }
             ],
-            "colliders": 19
+            "colliders": 19,
+            "horizontal_offset": 0.25
         },
         {
             "hardness": 0,

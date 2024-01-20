@@ -8063,7 +8063,8 @@
                     "multiplier": 30
                 }
             ],
-            "colliders": 19
+            "colliders": 19,
+            "horizontal_offset": 0.25
         },
         {
             "hardness": 0,
@@ -10699,7 +10700,8 @@
             "tools": [
                 "pickaxe"
             ],
-            "colliders": 30
+            "colliders": 30,
+            "horizontal_offset": 0.125
         },
         {
             "hardness": 1.5,

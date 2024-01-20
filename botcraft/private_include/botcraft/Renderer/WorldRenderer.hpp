@@ -66,7 +66,7 @@ namespace Botcraft
             // Add a face to the rendering data
             // It will not be rendered until the next frame with
             // blocks_faces_should_be_updated set to true
-            void AddFace(const int x_, const int y_, const int z_, const Face& face_,
+            void AddFace(const Position& block_pos, const Vector3<double>& offset, const Face& face_,
                 const std::vector<std::string>& texture_identifiers_,
                 const std::vector<unsigned int>& texture_multipliers_);
 

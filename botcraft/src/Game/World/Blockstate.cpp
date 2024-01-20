@@ -611,6 +611,42 @@ namespace Botcraft
         return *variables.at(&variable);
     }
 
+    Vector3<double> Blockstate::GetHorizontalOffsetAtPos(const Position& pos) const
+    {
+        const double max_horizontal_offset =
+            0.125f * flags[static_cast<size_t>(BlockstateFlags::HorizontalOffset0_125)] +
+            0.25f * flags[static_cast<size_t>(BlockstateFlags::HorizontalOffset0_25)];
+        if (max_horizontal_offset == 0.0)
+        {
+            return Vector3<double>(pos.x, pos.y, pos.z);
+        }
+
+        // We need to offset the colliders based on position-based pseudo randomness
+        long long int pos_seed = static_cast<long long int>(pos.x * 3129871) ^ static_cast<long long int>(pos.z) * 116129781LL ^ 0LL;
+        pos_seed = pos_seed * pos_seed * 42317861LL + pos_seed * 11LL;
+        pos_seed = pos_seed >> 16;
+        return Vector3<double>(
+            std::clamp((static_cast<double>(static_cast<float>(pos_seed & 0xFLL) / 15.0f) - 0.5) * 0.5, -max_horizontal_offset, max_horizontal_offset) + pos.x,
+            0.0 + pos.y,
+            std::clamp((static_cast<double>(static_cast<float>(pos_seed >> 8 & 0xFLL) / 15.0f) - 0.5) * 0.5, -max_horizontal_offset, max_horizontal_offset) + pos.z
+        );
+    }
+
+    std::set<AABB> Blockstate::GetCollidersAtPos(const Position& pos) const
+    {
+        std::set<AABB> output;
+
+        const Model& model = GetModel(GetModelId(pos));
+
+        const std::set<AABB>& colliders = model.GetColliders();
+        const Vector3<double> offset = GetHorizontalOffsetAtPos(pos);
+        for (const auto& c : colliders)
+        {
+            output.insert(c + offset);
+        }
+        return output;
+    }
+
     bool Blockstate::IsAir() const
     {
         return flags[static_cast<size_t>(BlockstateFlags::Air)];
@@ -993,6 +1029,8 @@ namespace Botcraft
         flags[static_cast<size_t>(BlockstateFlags::BerryBush)] = properties.berry_bush;
         flags[static_cast<size_t>(BlockstateFlags::PowderSnow)] = properties.powder_snow;
         flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall_height;
+        flags[static_cast<size_t>(BlockstateFlags::HorizontalOffset0_25)] = std::abs(properties.horizontal_offset - 0.25f) < 0.01f;
+        flags[static_cast<size_t>(BlockstateFlags::HorizontalOffset0_125)] = std::abs(properties.horizontal_offset - 0.125f) < 0.01f;
     }
 
     void Blockstate::LoadWeightedModels(const std::deque<std::pair<Model, int>>& models_to_load)

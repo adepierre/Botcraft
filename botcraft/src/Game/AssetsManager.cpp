@@ -419,6 +419,11 @@ namespace Botcraft
                 blockstate_properties[name].wall_height = info["wall_height"].get<bool>();
             }
 
+            if (info.contains("horizontal_offset") && info["horizontal_offset"].is_number())
+            {
+                blockstate_properties[name].horizontal_offset = info["horizontal_offset"].get_number<float>();
+            }
+
             if (info.contains("hardness") && info["hardness"].is_number())
             {
                 blockstate_properties[name].hardness = info["hardness"].get_number<float>();
@@ -607,6 +612,7 @@ namespace Botcraft
                 false,          //berry_bush
                 false,          //powder_snow
                 false,          //wall_height
+                0.0f,           //horizontal_offset
                 -2.0f,          //hardness
                 0.6f,           //friction
                 false,          //custom

@@ -245,7 +245,13 @@ namespace Botcraft
                         }
 
                         //Add all faces of the current state
-                        const std::vector<FaceDescriptor>& current_faces = this_block->GetModel(this_block->GetModelId(pos)).GetFaces();
+                        const Position block_pos(
+                            pos.x + CHUNK_WIDTH * x_,
+                            pos.y,
+                            pos.z + CHUNK_WIDTH * z_
+                        );
+                        const std::vector<FaceDescriptor>& current_faces = this_block->GetModel(this_block->GetModelId(block_pos)).GetFaces();
+                        const Vector3<double> offset = this_block->GetHorizontalOffsetAtPos(block_pos);
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
                         const Biome* current_biome = chunk->GetBiome(x, z);
 #else
@@ -263,7 +269,7 @@ namespace Botcraft
                                     neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)]->GetName() != this_block->GetName())
                                 )
                             {
-                                AddFace(pos.x + CHUNK_WIDTH * x_, pos.y, pos.z + CHUNK_WIDTH * z_,
+                                AddFace(block_pos, offset,
                                     current_faces[i].face, current_faces[i].texture_names,
                                     GetColorModifier(pos.y, current_biome, this_block, current_faces[i].use_tintindexes));
                             }
@@ -511,7 +517,7 @@ namespace Botcraft
             }
         }
 
-        void WorldRenderer::AddFace(const int x_, const int y_, const int z_, const Face& face_, const std::vector<std::string>& texture_identifiers_, const std::vector<unsigned int>& texture_multipliers_)
+        void WorldRenderer::AddFace(const Position& block_pos, const Vector3<double>& offset, const Face& face_, const std::vector<std::string>& texture_identifiers_, const std::vector<unsigned int>& texture_multipliers_)
         {
             std::array<unsigned int, 2> texture_multipliers = { 0xFFFFFFFF, 0xFFFFFFFF };
             for (int i = 0; i < std::min(2, static_cast<int>(texture_multipliers_.size())); ++i)
@@ -520,9 +526,9 @@ namespace Botcraft
             }
 
             const Position chunk_position(
-                static_cast<int>(floor(x_ / static_cast<double>(CHUNK_WIDTH))), 
-                static_cast<int>(floor(y_ / static_cast<double>(section_height))), 
-                static_cast<int>(floor(z_ / static_cast<double>(CHUNK_WIDTH)))
+                static_cast<int>(floor(block_pos.x / static_cast<double>(CHUNK_WIDTH))),
+                static_cast<int>(floor(block_pos.y / static_cast<double>(section_height))),
+                static_cast<int>(floor(block_pos.z / static_cast<double>(CHUNK_WIDTH)))
             );
 
             if (face_.GetTransparencyData() == Transparency::Partial)
@@ -535,7 +541,7 @@ namespace Botcraft
                 }
                 //Add 0.5 because the origin of the block is at the center
                 //but the coordinates start from the block corner
-                transparent_chunks[chunk_position]->AddFace(face_, texture_multipliers, x_ + 0.5f, y_ + 0.5f, z_ + 0.5f);
+                transparent_chunks[chunk_position]->AddFace(face_, texture_multipliers, offset.x + 0.5f, offset.y + 0.5f, offset.z + 0.5f);
             }
             else
             {
@@ -545,7 +551,7 @@ namespace Botcraft
                 {
                     chunks[chunk_position] = std::make_shared<Chunk>();
                 }
-                chunks[chunk_position]->AddFace(face_, texture_multipliers, x_ + 0.5f, y_ + 0.5f, z_ + 0.5f);
+                chunks[chunk_position]->AddFace(face_, texture_multipliers, offset.x + 0.5f, offset.y + 0.5f, offset.z + 0.5f);
             }
         }
 

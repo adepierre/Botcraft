@@ -81,6 +81,8 @@ namespace Botcraft
         bool powder_snow = false;
         /// @brief True if block has the WALLS/FENCES/FENCE_GATES tag
         bool wall_height = false;
+        /// @brief Max horizontal offset value of the colliders (for bamboo and pointed dripstone)
+        float horizontal_offset = 0.0f;
         /// @brief Digging hardness
         float hardness = -2.0f;
         /// @brief Slipperiness coefficient
@@ -113,6 +115,8 @@ namespace Botcraft
         size_t GetNumModels() const;
         const std::string& GetName() const;
         const std::string& GetVariableValue(const std::string& variable) const;
+        Vector3<double> GetHorizontalOffsetAtPos(const Position& pos) const;
+        std::set<AABB> GetCollidersAtPos(const Position& pos) const;
 
         bool IsAir() const;
         bool IsSolid() const;
@@ -222,6 +226,8 @@ namespace Botcraft
             BerryBush,
             PowderSnow,
             WallHeight,
+            HorizontalOffset0_25,
+            HorizontalOffset0_125,
             NUM_FLAGS
         };
 
