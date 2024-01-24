@@ -56,7 +56,7 @@ public:
     /// @param description Description of the book (minecraft tooltip)
     void CreateBook(const Botcraft::Position& pos, const std::vector<std::string>& pages, const std::string& facing = "north", const std::string& title = "", const std::string& author = "", const std::vector<std::string>& description = {});
 
-    void Teleport(const std::string& name, const Botcraft::Vector3<double>& pos) const;
+    void Teleport(const std::string& name, const Botcraft::Vector3<double>& pos, const float yaw = 0.0f, const float pitch = 0.0f) const;
 
     template<class ClientType = Botcraft::ManagersClient,
         std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>

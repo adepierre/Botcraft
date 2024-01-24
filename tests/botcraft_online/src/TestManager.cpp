@@ -223,7 +223,7 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
 #endif
 }
 
-void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<double>& pos) const
+void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<double>& pos, const float yaw, const float pitch) const
 {
     std::stringstream command;
     command
@@ -231,7 +231,9 @@ void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<doub
         << name << " "
         << pos.x << " "
         << pos.y << " "
-        << pos.z;
+        << pos.z << " "
+        << yaw << " "
+        << pitch;
     MinecraftServer::GetInstance().SendLine(command.str());
     MinecraftServer::GetInstance().WaitLine(".*?Teleported " + name + " to.*", 5000);
 }
