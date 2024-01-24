@@ -114,6 +114,26 @@ TEST_CASE("dig underwater")
     const Botcraft::Position stone = dirt + Botcraft::Position(1, 0, 0);
     const Botcraft::Position iron = stone + Botcraft::Position(1, 0, 0);
 
+    SECTION("aqua affinity")
+    {
+        GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        // TODO: Send correct command for 1.12.2 version
+#elif PROTOCOL_VERSION < 755 /* < 1.17 */
+        // TODO: Send correct command for 1.12.2 < versions < 1.17
+#else
+        MinecraftServer::GetInstance().SendLine("item replace entity " + botname + " armor.head with minecraft:diamond_helmet{Enchantments:[{id:aqua_affinity,lvl:1}]} 1");
+#endif
+        CHECK(Botcraft::Utilities::WaitForCondition([&]() -> bool
+            {
+                return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_HEAD_ARMOR).IsEmptySlot();
+            }, 5000));
+
+        TestDig(bot, dirt, 0.75);
+        TestDig(bot, stone, 0.3);
+        TestDig(bot, iron, 0.95);
+    }
+
     SECTION("haste")
     {
         // Haste 2 is given using amplifier 1

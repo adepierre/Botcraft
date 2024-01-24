@@ -24,14 +24,21 @@ namespace Botcraft::Utilities
             if (!enchantment_tag.contains("id") ||
                 !enchantment_tag.contains("lvl") ||
                 !enchantment_tag["id"].is<NBT::TagString>() ||
-                !enchantment_tag["lvl"].is<NBT::TagShort>())
+                (!enchantment_tag["lvl"].is<NBT::TagShort>() && !enchantment_tag["lvl"].is<NBT::TagInt>()))
             {
                 continue;
             }
 
             if (enchantment_tag["id"].get<NBT::TagString>() == enchantment_name)
             {
-                return enchantment_tag["lvl"].get<NBT::TagShort>();
+                if (enchantment_tag["lvl"].is<NBT::TagShort>())
+                {
+                    return enchantment_tag["lvl"].get<NBT::TagShort>();
+                }
+                else if (enchantment_tag["lvl"].is<NBT::TagInt>())
+                {
+                    return enchantment_tag["lvl"].get<NBT::TagInt>();
+                }
             }
         }
 
