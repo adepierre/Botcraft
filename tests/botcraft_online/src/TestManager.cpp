@@ -240,7 +240,13 @@ void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<doub
 
 Botcraft::Position TestManager::GetStructureSize(const std::string& filename) const
 {
-    const std::string no_space_filename = ReplaceCharacters(filename, { {' ', "_"} });
+    std::string no_space_filename = ReplaceCharacters(filename, { {' ', "_"} });
+    // If there is a # in the file name, only use what's before (useful to have multiple tests sharing the same structure file)
+    size_t split_index = no_space_filename.find('#');
+    if (split_index != std::string::npos)
+    {
+        no_space_filename = no_space_filename.substr(0, split_index);
+    }
     const std::filesystem::path filepath = MinecraftServer::GetInstance().GetStructurePath() / (no_space_filename + ".nbt");
 
     if (!std::filesystem::exists(filepath))
@@ -401,7 +407,13 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
 
 void TestManager::LoadStructure(const std::string& filename, const Botcraft::Position& pos, const Botcraft::Position& load_offset) const
 {
-    const std::string no_space_filename = ReplaceCharacters(filename, { {' ', "_"} });
+    std::string no_space_filename = ReplaceCharacters(filename, { {' ', "_"} });
+    // If there is a # in the file name, only use what's before (useful to have multiple tests sharing the same structure file)
+    size_t split_index = no_space_filename.find('#');
+    if (split_index != std::string::npos)
+    {
+        no_space_filename = no_space_filename.substr(0, split_index);
+    }
     const std::string& loaded = std::filesystem::exists(MinecraftServer::GetInstance().GetStructurePath() / (no_space_filename + ".nbt")) ?
         no_space_filename :
         "_default";
