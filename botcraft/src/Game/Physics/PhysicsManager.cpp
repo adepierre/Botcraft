@@ -263,8 +263,7 @@ namespace Botcraft
 
     void PhysicsManager::FluidPhysics(const bool water)
     { // Entity::updateFluidHeightAndDoFluidPushing
-        AABB aabb = player->GetColliderImpl();
-        aabb.Inflate(-0.001);
+        const AABB aabb = player->GetColliderImpl().Inflate(-0.001);
 
         if (water)
         {
@@ -377,8 +376,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         player->crouching =
             !IsSwimmingAndNotFlying() &&
-            world->IsFree(player->GetColliderImpl(Pose::Crouching), false) &&
-            (player->previous_sneak || !world->IsFree(player->GetColliderImpl(Pose::Standing), false));
+            world->IsFree(player->GetColliderImpl(Pose::Crouching).Inflate(-1e-7), false) &&
+            (player->previous_sneak || !world->IsFree(player->GetColliderImpl(Pose::Standing).Inflate(-1e-7), false));
 #else
         player->crouching = !IsSwimmingAndNotFlying() && player->previous_sneak;
 #endif
@@ -394,7 +393,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             // Get SneakSpeed bonus from pants
             const Slot leggings_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_LEGS_ARMOR);
-            sneak_coefficient += Utilities::GetEnchantmentLvl(leggings_armor.GetNBT(), "minecraft:swift_sneak") * 0.15f;
+            sneak_coefficient += Utilities::GetEnchantmentLvl(leggings_armor.GetNBT(), "swift_sneak") * 0.15f;
             sneak_coefficient = std::min(std::max(0.0f, sneak_coefficient), 1.0f);
 #endif
             player->inputs.forward_axis *= sneak_coefficient;
@@ -867,7 +866,7 @@ namespace Botcraft
             double inputs_strength = 0.02;
 
             const Slot boots_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
-            double depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "minecraft:depth_strider"), static_cast<short>(3));
+            double depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "depth_strider"), static_cast<short>(3));
             if (!player->on_ground)
             {
                 depth_strider_mult *= 0.5;
@@ -915,7 +914,7 @@ namespace Botcraft
 
             // Jump out of water
             if (player->horizontal_collision &&
-                world->IsFree(player->GetColliderImpl() + player->speed + Vector3<double>(0.0, 0.6 - player->position.y + init_y, 0.0), true))
+                world->IsFree(player->GetColliderImpl().Inflate(-1e-7) + player->speed + Vector3<double>(0.0, 0.6 - player->position.y + init_y, 0.0), true))
             {
                 player->speed.y = 0.3;
             }
@@ -930,7 +929,7 @@ namespace Botcraft
             player->speed.y -= drag / 4.0;
             // Jump out of lava
             if (player->horizontal_collision &&
-                world->IsFree(player->GetColliderImpl() + player->speed + Vector3<double>(0.0, 0.6 - player->position.y + init_y, 0.0), true))
+                world->IsFree(player->GetColliderImpl().Inflate(-1e-7) + player->speed + Vector3<double>(0.0, 0.6 - player->position.y + init_y, 0.0), true))
             {
                 player->speed.y = 0.3;
             }
@@ -1059,17 +1058,17 @@ namespace Botcraft
         { // Player::maybeBackOffFromEdge
             const double step = 0.05;
 
-            while (movement.x != 0.0 && world->IsFree(player_aabb + Vector3<double>(movement.x, -0.6, 0.0), false))
+            while (movement.x != 0.0 && world->IsFree((player_aabb + Vector3<double>(movement.x, -0.6, 0.0)).Inflate(-1e-7), false))
             {
                 movement.x = (movement.x < step && movement.x >= -step) ? 0.0 : (movement.x > 0.0 ? (movement.x - step) : (movement.x + step));
             }
 
-            while (movement.z != 0.0 && world->IsFree(player_aabb + Vector3<double>(0.0, -0.6, movement.z), false))
+            while (movement.z != 0.0 && world->IsFree((player_aabb + Vector3<double>(0.0, -0.6, movement.z)).Inflate(-1e-7), false))
             {
                 movement.z = (movement.z < step && movement.z >= -step) ? 0.0 : (movement.z > 0.0 ? (movement.z - step) : (movement.z + step));
             }
 
-            while (movement.x != 0.0 && movement.z != 0.0 && world->IsFree(player_aabb + Vector3<double>(movement.x, -0.6, movement.z), false))
+            while (movement.x != 0.0 && movement.z != 0.0 && world->IsFree((player_aabb + Vector3<double>(movement.x, -0.6, movement.z)).Inflate(-1e-7), false))
             {
                 movement.x = (movement.x < step && movement.x >= -step) ? 0.0 : (movement.x > 0.0 ? (movement.x - step) : (movement.x + step));
                 movement.z = (movement.z < step && movement.z >= -step) ? 0.0 : (movement.z > 0.0 ? (movement.z - step) : (movement.z + step));
@@ -1138,9 +1137,9 @@ namespace Botcraft
 
         short soul_speed_lvl = 0;
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-        // Get SoulSpeed bonus from pants
+        // Get SoulSpeed bonus from boots
         const Slot boots_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
-        soul_speed_lvl = Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "minecraft:soul_speed");
+        soul_speed_lvl = Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "soul_speed");
 #endif
         float block_speed_factor = 1.0f;
         const Blockstate* feet_block = world->GetBlock(Position(
@@ -1182,8 +1181,7 @@ namespace Botcraft
 
     void PhysicsManager::CheckInsideBlocks() const
     {
-        AABB aabb = player->GetColliderImpl();
-        aabb.Inflate(-1.0e-7);
+        const AABB aabb = player->GetColliderImpl().Inflate(-1.0e-7);
         const Vector3<double> min_aabb = aabb.GetMin();
         const Vector3<double> max_aabb = aabb.GetMax();
         Position block_pos;

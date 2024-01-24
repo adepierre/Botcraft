@@ -67,14 +67,16 @@ namespace Botcraft
         return tmin <= tmax;
     }
 
-    void AABB::Inflate(const double d)
+    AABB& AABB::Inflate(const double d)
     {
         half_size += d;
+        return *this;
     }
 
-    void AABB::Translate(const Vector3<double>& t)
+    AABB& AABB::Translate(const Vector3<double>& t)
     {
         center += t;
+        return *this;
     }
 
     bool AABB::operator<(const AABB& other) const
