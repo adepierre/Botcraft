@@ -71,7 +71,11 @@ namespace Botcraft
             if (is_head_in_fluid)
             {
                 const Slot head_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HEAD_ARMOR);
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+                is_head_in_fluid = Utilities::GetEnchantmentLvl(head_armor.GetNBT(), EnchantmentID::AquaAffinity) == 0;
+#else
                 is_head_in_fluid = Utilities::GetEnchantmentLvl(head_armor.GetNBT(), "aqua_affinity") == 0;
+#endif
             }
 
             // Get tool properties
@@ -89,7 +93,11 @@ namespace Botcraft
                     current_tool_type = item->GetToolType();
                     current_tool_material = item->GetToolMaterial();
                 }
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+                current_tool_efficiency = static_cast<unsigned char>(Utilities::GetEnchantmentLvl(main_hand.GetNBT(), EnchantmentID::Efficiency));
+#else
                 current_tool_efficiency = static_cast<unsigned char>(Utilities::GetEnchantmentLvl(main_hand.GetNBT(), "efficiency"));
+#endif
             }
         }
 

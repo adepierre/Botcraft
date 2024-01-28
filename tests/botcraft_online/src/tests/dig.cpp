@@ -118,9 +118,9 @@ TEST_CASE("dig underwater")
     {
         GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        // TODO: Send correct command for 1.12.2 version
+        MinecraftServer::GetInstance().SendLine("replaceitem entity " + botname + " slot.armor.head minecraft:diamond_helmet 1 0 {ench:[{id:" + std::to_string(static_cast<int>(Botcraft::EnchantmentID::AquaAffinity)) + ",lvl:1}]}");
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
-        // TODO: Send correct command for 1.12.2 < versions < 1.17
+        MinecraftServer::GetInstance().SendLine("replaceitem entity " + botname + " armor.head minecraft:diamond_helmet{Enchantments:[{id:aqua_affinity,lvl:1}]} 1");
 #else
         MinecraftServer::GetInstance().SendLine("item replace entity " + botname + " armor.head with minecraft:diamond_helmet{Enchantments:[{id:aqua_affinity,lvl:1}]} 1");
 #endif

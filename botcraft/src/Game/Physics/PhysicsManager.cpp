@@ -866,7 +866,11 @@ namespace Botcraft
             double inputs_strength = 0.02;
 
             const Slot boots_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+            double depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), EnchantmentID::DepthStrider), static_cast<short>(3));
+#else
             double depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "depth_strider"), static_cast<short>(3));
+#endif
             if (!player->on_ground)
             {
                 depth_strider_mult *= 0.5;

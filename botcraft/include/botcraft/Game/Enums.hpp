@@ -55,6 +55,38 @@ namespace Botcraft
         Spectator
     };
 
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+    enum class EnchantmentID
+    {
+        Protection = 0,
+        FireProtection = 1,
+        FeatherFalling = 2,
+        BlastProtection = 3,
+        ProjectileProtection = 4,
+        Respiration = 5,
+        AquaAffinity = 6,
+        Thorns = 7,
+        DepthStrider = 8,
+        FrostWalker = 9,
+        Sharpness = 16,
+        Smite = 17,
+        BaneOfArthropods = 18,
+        Knockback = 19,
+        FireAspect = 20,
+        Looting = 21,
+        Efficiency = 32,
+        SilkTourch = 33,
+        Unbreaking = 33,
+        Fortune = 35,
+        Power = 48,
+        Punch = 49,
+        Flame = 50,
+        Infinity = 51,
+        LuckOfTheSea = 61,
+        Lure = 62,
+        Mending = 70,
+    };
+#endif
     enum class Hand
     {
         Right = 0,
