@@ -28,6 +28,8 @@ namespace Botcraft
 
         Window(const InventoryType type_ = InventoryType::Default);
 
+        void Init();
+
         ProtocolCraft::Slot GetSlot(const short index) const;
         std::map<short, ProtocolCraft::Slot> GetSlots() const;
         /// @brief Get a read-only locked version of all the slots

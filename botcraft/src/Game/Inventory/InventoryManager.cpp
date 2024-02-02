@@ -114,7 +114,16 @@ namespace Botcraft
         // when a container is closed, as the server does not send info
         SynchronizeContainerPlayerInventory(window_id);
 #endif
-        inventories.erase(window_id);
+        // Some non-vanilla server sends a CloseContainer packet on death
+        // Player inventory should not be removed from the map
+        if (window_id == Window::PLAYER_INVENTORY_INDEX)
+        {
+            inventories[Window::PLAYER_INVENTORY_INDEX]->Init();
+        }
+        else
+        {
+            inventories.erase(window_id);
+        }
 
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         if (window_id == trading_container_id)

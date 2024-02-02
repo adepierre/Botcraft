@@ -7,7 +7,13 @@ namespace Botcraft
 {
     Window::Window(const InventoryType type_) : type(type_)
     {
+        Init();
+    }
+
+    void Window::Init()
+    {
         std::scoped_lock<std::shared_mutex> lock(window_mutex);
+        slots.clear();
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         next_transaction_id = 1;
 #elif PROTOCOL_VERSION > 755 /* > 1.17 */
