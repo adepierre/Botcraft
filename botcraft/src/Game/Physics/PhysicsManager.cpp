@@ -5,6 +5,7 @@
 #include "botcraft/Utilities/NBTUtilities.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
+#include "botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Item.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
@@ -104,7 +105,28 @@ namespace Botcraft
 
     void PhysicsManager::PhysicsTick()
     {
-        // TODO: add firework rocket speed if present
+        // Check for rocket boosting if currently in elytra flying mode
+        if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying))
+        {
+            for (const auto& e : *entity_manager->GetEntities())
+            {
+                if (e.second->GetType() != EntityType::FireworkRocketEntity)
+                {
+                    continue;
+                }
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+                const int attached_id = reinterpret_cast<const FireworkRocketEntity*>(e.second.get())->GetDataAttachedToTarget().value_or(0);
+#else
+                const int attached_id = reinterpret_cast<const FireworkRocketEntity*>(e.second.get())->GetDataAttachedToTarget();
+#endif
+                if (attached_id == player->entity_id)
+                {
+                    player->speed += player->front_vector * 0.1 + (player->front_vector * 1.5 - player->speed) * 0.5;
+                }
+            }
+        }
+
         { // LocalPlayer::tick
             // The idea here is to follow the tick flow from LocalPlayer::tick
             // in Minecraft code
@@ -513,7 +535,7 @@ namespace Botcraft
         // Start elytra flying
         if (player->inputs.jump &&
             !fly_changed &&
-            player->previous_jump &&
+            !player->previous_jump &&
             !player->flying &&
             !player->on_climbable &&
             !player->on_ground &&
