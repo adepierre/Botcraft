@@ -732,8 +732,8 @@ namespace Botcraft
             }
             const Vector3<double> min_collider = collider.GetMin();
             const Vector3<double> max_collider = collider.GetMax();
-            if (max_aabb.x > min_collider.x && min_aabb.x < max_collider.x &&
-                max_aabb.z > min_collider.z && min_aabb.z < max_collider.z)
+            if (max_aabb.x - 1e-7 > min_collider.x && min_aabb.x + 1e-7 < max_collider.x &&
+                max_aabb.z - 1e-7 > min_collider.z && min_aabb.z + 1e-7 < max_collider.z)
             {
                 if (movement.y > 0.0 && max_aabb.y - 1e-7 <= min_collider.y)
                 {
@@ -762,8 +762,8 @@ namespace Botcraft
                 }
                 const Vector3<double> min_collider = collider.GetMin();
                 const Vector3<double> max_collider = collider.GetMax();
-                if (max_aabb.y > min_collider.y && min_aabb.y < max_collider.y &&
-                    max_aabb.z > min_collider.z && min_aabb.z < max_collider.z)
+                if (max_aabb.y - 1e-7 > min_collider.y && min_aabb.y + 1e-7 < max_collider.y &&
+                    max_aabb.z - 1e-7 > min_collider.z && min_aabb.z + 1e-7 < max_collider.z)
                 {
                     if (movement.x > 0.0 && max_aabb.x - 1e-7 <= min_collider.x)
                     {
@@ -790,8 +790,8 @@ namespace Botcraft
             }
             const Vector3<double> min_collider = collider.GetMin();
             const Vector3<double> max_collider = collider.GetMax();
-            if (max_aabb.x > min_collider.x && min_aabb.x < max_collider.x &&
-                max_aabb.y > min_collider.y && min_aabb.y < max_collider.y)
+            if (max_aabb.x - 1e-7 > min_collider.x && min_aabb.x + 1e-7 < max_collider.x &&
+                max_aabb.y - 1e-7 > min_collider.y && min_aabb.y + 1e-7 < max_collider.y)
             {
                 if (movement.z > 0.0 && max_aabb.z - 1e-7 <= min_collider.z)
                 {
@@ -820,8 +820,8 @@ namespace Botcraft
                 }
                 const Vector3<double> min_collider = collider.GetMin();
                 const Vector3<double> max_collider = collider.GetMax();
-                if (max_aabb.y > min_collider.y && min_aabb.y < max_collider.y &&
-                    max_aabb.z > min_collider.z && min_aabb.z < max_collider.z)
+                if (max_aabb.y - 1e-7 > min_collider.y && min_aabb.y + 1e-7 < max_collider.y &&
+                    max_aabb.z - 1e-7 > min_collider.z && min_aabb.z + 1e-7 < max_collider.z)
                 {
                     if (movement.x > 0.0 && max_aabb.x - 1e-7 <= min_collider.x)
                     {
