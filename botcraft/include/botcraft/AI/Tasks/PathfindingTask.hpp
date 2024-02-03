@@ -47,4 +47,14 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Always return Success
     Status LookAtBlackboard(BehaviourClient& client);
+
+    /// @brief Make the current player fly (as in creative/spectator mode, NOT WITH ELYTRA)
+    /// @param client The client performing the action
+    /// @return Success if the player is now flying, failure otherwise
+    Status StartFlying(BehaviourClient& client);
+
+    /// @brief Make the current player not fly (as in creative/spectator mode, NOT WITH ELYTRA)
+    /// @param client The client performing the action
+    /// @return Success if the player is now not flying anymore, failure otherwise
+    Status StopFlying(BehaviourClient& client);
 } // namespace Botcraft

@@ -1125,6 +1125,11 @@ namespace Botcraft
             }
         }
 
+        if (StopFlying(client) == Status::Failure)
+        {
+            return Status::Failure;
+        }
+
         std::shared_ptr<World> world = client.GetWorld();
         Position current_position;
         do
@@ -1346,5 +1351,82 @@ namespace Botcraft
         const bool set_pitch = blackboard.Get(variable_names[1], true);
 
         return LookAtImpl(client, target, set_pitch);
+    }
+
+    Status StartFlying(BehaviourClient& client)
+    {
+        std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
+        if (!local_player->GetMayFly())
+        {
+            return Status::Failure;
+        }
+
+        if (local_player->GetFlying())
+        {
+            return Status::Success;
+        }
+
+        local_player->SetInputsJump(true);
+        if (!Utilities::YieldForCondition([&]() -> bool
+            {
+                return !local_player->GetDirtyInputs();
+            }, client, 150))
+        {
+            return Status::Failure;
+        }
+        local_player->SetInputsJump(false);
+        if (!Utilities::YieldForCondition([&]() -> bool
+            {
+                return !local_player->GetDirtyInputs();
+            }, client, 150))
+        {
+            return Status::Failure;
+        }
+        local_player->SetInputsJump(true);
+        if (!Utilities::YieldForCondition([&]() -> bool
+            {
+                return !local_player->GetDirtyInputs();
+            }, client, 150))
+        {
+            return Status::Failure;
+        }
+
+        return local_player->GetFlying() ? Status::Success : Status::Failure;
+    }
+
+    Status StopFlying(BehaviourClient& client)
+    {
+        std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
+        if (!local_player->GetFlying())
+        {
+            return Status::Success;
+        }
+
+        local_player->SetInputsJump(true);
+        if (!Utilities::YieldForCondition([&]() -> bool
+            {
+                return !local_player->GetDirtyInputs();
+            }, client, 150))
+        {
+            return Status::Failure;
+        }
+        local_player->SetInputsJump(false);
+        if (!Utilities::YieldForCondition([&]() -> bool
+            {
+                return !local_player->GetDirtyInputs();
+            }, client, 150))
+        {
+            return Status::Failure;
+        }
+        local_player->SetInputsJump(true);
+        if (!Utilities::YieldForCondition([&]() -> bool
+            {
+                return !local_player->GetDirtyInputs();
+            }, client, 150))
+        {
+            return Status::Failure;
+        }
+
+        return local_player->GetFlying() ? Status::Failure : Status::Success;
     }
 }
