@@ -40,6 +40,8 @@ namespace Botcraft
         horizontal_collision = false;
         on_climbable = false;
         stuck_speed_multiplier = Vector3<double>(0.0, 0.0, 0.0);
+        jump_delay = 0;
+        fly_jump_trigger_time = 0;
 
         previous_sprinting = false;
         previous_shift_key_down = false;

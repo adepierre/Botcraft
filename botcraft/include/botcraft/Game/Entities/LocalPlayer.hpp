@@ -119,6 +119,8 @@ namespace Botcraft
         bool horizontal_collision;
         bool on_climbable;
         Vector3<double> stuck_speed_multiplier;
+        int jump_delay;
+        int fly_jump_trigger_time;
 
         bool previous_sprinting;
         bool previous_shift_key_down;

@@ -151,12 +151,19 @@ namespace Botcraft
                         player->speed.y += (-1 * player->inputs.sneak + player->inputs.jump) * player->flying_speed * 3.0;
                     }
 
+                    { // Player::aiStep
+                        player->fly_jump_trigger_time = std::max(0, player->fly_jump_trigger_time - 1);
+                    }
+
                     // Update previous values
                     player->previous_forward = player->inputs.forward_axis;
                     player->previous_jump = player->inputs.jump;
                     player->previous_sneak = player->inputs.sneak;
 
                     { // LivingEntity::aiStep
+                        // Decrease jump delay if > 0
+                        player->jump_delay = std::max(0, player->jump_delay - 1);
+
                         if (std::abs(player->speed.x) < 0.003)
                         {
                             player->speed.x = 0.0;
@@ -477,11 +484,19 @@ namespace Botcraft
                 OnUpdateAbilities();
             }
             // If double jump in creative, swap flying mode
-            else if (player->previous_jump && player->inputs.jump && !IsSwimmingAndNotFlying())
+            else if (!player->previous_jump && player->inputs.jump)
             {
-                player->flying = !player->flying;
-                fly_changed = true;
-                OnUpdateAbilities();
+                if (player->fly_jump_trigger_time == 0)
+                {
+                    player->fly_jump_trigger_time = 7;
+                }
+                else if (!IsSwimmingAndNotFlying())
+                {
+                    player->flying = !player->flying;
+                    fly_changed = true;
+                    OnUpdateAbilities();
+                    player->fly_jump_trigger_time = 0;
+                }
             }
         }
 
@@ -531,7 +546,7 @@ namespace Botcraft
                 player->speed.y += 0.04;
             }
             // Jump from ground
-            else if (player->on_ground)
+            else if (player->on_ground && player->jump_delay == 0)
             {
                 // Get jump boost
                 double jump_boost = 0.0;
@@ -576,7 +591,12 @@ namespace Botcraft
                     player->speed.x -= std::sin(yaw_rad) * 0.2;
                     player->speed.z += std::cos(yaw_rad) * 0.2;
                 }
+                player->jump_delay = 10;
             }
+        }
+        else
+        {
+            player->jump_delay = 0;
         }
     }
 
