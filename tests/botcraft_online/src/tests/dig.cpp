@@ -11,6 +11,12 @@
 
 void TestDig(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const Botcraft::Position& pos, const double time_s)
 {
+    // Wait to be on ground
+    Botcraft::Utilities::WaitForCondition([&]()
+        {
+            return bot->GetLocalPlayer()->GetOnGround();
+        }, 5000);
+
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
     bot->SyncAction(Botcraft::Dig, pos, true, Botcraft::PlayerDiggingFace::North);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -31,12 +37,6 @@ void TestDig(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const Botcra
 TEST_CASE("dig pickaxe")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1,0,1));
-    // Wait to be on ground
-    Botcraft::Utilities::WaitForCondition([&]()
-        {
-            return bot->GetLocalPlayer()->GetOnGround();
-        }, 5000);
-
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
     const Botcraft::Position chest = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(0, 0, 2);
@@ -104,10 +104,6 @@ TEST_CASE("dig pickaxe")
 TEST_CASE("dig underwater")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1, 0, 1));
-    Botcraft::Utilities::WaitForCondition([&]()
-        {
-            return bot->GetLocalPlayer()->GetOnGround();
-        }, 5000);
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
     const Botcraft::Position dirt = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(0, 0, 2);
@@ -176,11 +172,6 @@ TEST_CASE("dig underwater")
 TEST_CASE("dig shears")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1, 0, 1));
-    Botcraft::Utilities::WaitForCondition([&]()
-        {
-            return bot->GetLocalPlayer()->GetOnGround();
-        }, 5000);
-
     const Botcraft::Position dirt = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(0, 0, 2);
     const Botcraft::Position leaves = dirt + Botcraft::Position(1, 0, 0);
     const Botcraft::Position cobweb = leaves + Botcraft::Position(1, 0, 0);
