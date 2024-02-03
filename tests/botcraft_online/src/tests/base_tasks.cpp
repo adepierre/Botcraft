@@ -14,7 +14,7 @@ TEST_CASE("say")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
 
-    bot->SyncAction(Botcraft::Say, "Hello, world!");
+    bot->SyncAction(5000, Botcraft::Say, "Hello, world!");
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
     REQUIRE_NOTHROW(MinecraftServer::GetInstance().WaitLine(".*: (?:\\[Not Secure\\] )?[[<]" + botname + "[>\\]] Hello, world!.*", 5000));
@@ -47,7 +47,7 @@ TEST_CASE("interact")
             return false;
         }, 100);
 
-    bot->SyncAction(Botcraft::InteractWithBlock, lever, Botcraft::PlayerDiggingFace::Up, true);
+    bot->SyncAction(5000, Botcraft::InteractWithBlock, lever, Botcraft::PlayerDiggingFace::Up, true);
 
     std::shared_ptr<Botcraft::World> world = bot->GetWorld();
 

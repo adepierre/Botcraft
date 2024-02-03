@@ -32,7 +32,7 @@ TEST_CASE("simple pathfinding")
     {
         SECTION(directions[i].first)
         {
-            bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, false, false, 1.0f);
+            bot->SyncAction(5000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, false, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -56,7 +56,7 @@ TEST_CASE("jump pathfinding")
     {
         SECTION(directions[i].first)
         {
-            bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
+            bot->SyncAction(5000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -80,7 +80,7 @@ TEST_CASE("gap pathfinding")
     {
         SECTION(directions[i].first)
         {
-            bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
+            bot->SyncAction(5000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -110,7 +110,7 @@ TEST_CASE("climb pathfinding")
                     return local_player->GetOnGround();
                 }, 2000));
 
-            bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
+            bot->SyncAction(10000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -134,7 +134,7 @@ TEST_CASE("fall pathfinding")
     {
         SECTION(directions[i].first)
         {
-            bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
+            bot->SyncAction(10000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -157,7 +157,7 @@ TEST_CASE("full pathfinding")
     std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
-    bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, false, 1.0f);
+    bot->SyncAction(120000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, false, 1.0f);
     CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
     CHECK_THAT(local_player->GetHealth(), Catch::Matchers::WithinAbs(20.0, 0.01));
 }
@@ -170,7 +170,7 @@ TEST_CASE("hazardous pathfinding")
     std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
-    bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, false, 1.0f);
+    bot->SyncAction(60000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, false, 1.0f);
 
     CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
     CHECK_THAT(local_player->GetHealth(), Catch::Matchers::WithinAbs(20.0, 0.01));
@@ -189,7 +189,7 @@ TEST_CASE("water walking pathfinding")
 
     Botcraft::Position init_position_int = Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z));
 
-    bot->SyncAction(Botcraft::GoTo, init_position_int + delta, 0, 0, 0, true, false, 1.0f);
+    bot->SyncAction(60000, Botcraft::GoTo, init_position_int + delta, 0, 0, 0, true, false, 1.0f);
     CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
     const Botcraft::Blockstate* should_not_be_air = world->GetBlock(init_position_int + string_control_check_delta);
     REQUIRE_FALSE(should_not_be_air == nullptr);
@@ -208,7 +208,7 @@ TEST_CASE("ladder walking pathfinding")
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
     const Botcraft::Position init_position_int = Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z));
 
-    bot->SyncAction(Botcraft::GoTo, init_position_int + delta, 0, 0, 0, true, false, 1.0f);
+    bot->SyncAction(60000, Botcraft::GoTo, init_position_int + delta, 0, 0, 0, true, false, 1.0f);
     CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
     const Botcraft::Blockstate* should_not_be_air = world->GetBlock(init_position_int + string_control_check_delta);
     REQUIRE_FALSE(should_not_be_air == nullptr);
@@ -316,7 +316,7 @@ TEST_CASE("speed pathfinding")
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
     const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-    bot->SyncAction(Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, sprint, botcraft_speed_factor);
+    bot->SyncAction(10000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, sprint, botcraft_speed_factor);
     CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
     const float time_taken = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() / 1000.0f;
     CHECK_THAT(time_taken, Catch::Matchers::WithinAbs(expected_time_s, 0.2));

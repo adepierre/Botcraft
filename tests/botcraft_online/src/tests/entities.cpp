@@ -97,7 +97,7 @@ TEST_CASE("entity interact")
     REQUIRE(entity != nullptr);
     CHECK(entity->GetName() == "creeper");
 
-    bot->SyncAction(Botcraft::InteractEntity, entity->GetEntityID(), Botcraft::Hand::Main, true);
+    bot->SyncAction(5000, Botcraft::InteractEntity, entity->GetEntityID(), Botcraft::Hand::Main, true);
 
     // Wait for the creeper to be ignited
     std::shared_ptr<Botcraft::CreeperEntity> creeper = std::dynamic_pointer_cast<Botcraft::CreeperEntity>(entity);

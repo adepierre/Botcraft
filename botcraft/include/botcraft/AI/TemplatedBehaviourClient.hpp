@@ -143,9 +143,10 @@ namespace Botcraft
         /// This will change the current tree. BehaviourStep should **NOT** be called
         /// by another thread simultaneously. It means you should **NOT** call
         /// RunBehaviourUntilClosed when using this sync version.
+        /// @param timeout_ms Max running time of the function in ms, ignored if 0
         /// @param ...args Parameters passed to create tree leaf
         template<typename... Args>
-        void SyncAction(Args&&... args)
+        void SyncAction(const int timeout_ms, Args&&... args)
         {
             // Make sure the behaviour thread is running
             if (!behaviour_thread.joinable())
@@ -156,8 +157,8 @@ namespace Botcraft
             // Set the tree
             SetBehaviourTree(Builder<TDerived>()
                 .sequence()
-                    .succeeder().leaf(args...)
-                    .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
+                .succeeder().leaf(std::forward<Args>(args)...)
+                .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
                 .end());
 
             // Perform one step to get out of the Yield lock and swap tree
@@ -174,15 +175,42 @@ namespace Botcraft
             }
 
             // Run until tree is ticked once and reset to nullptr
-            while(tree != nullptr && !should_be_closed)
+            const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+            while (tree != nullptr && !should_be_closed)
             {
-                std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-                std::chrono::steady_clock::time_point end = start + std::chrono::milliseconds(10);
+                std::chrono::steady_clock::time_point iter_start = std::chrono::steady_clock::now();
+                std::chrono::steady_clock::time_point iter_end = iter_start + std::chrono::milliseconds(10);
+
+                // Timeout, reset tree and get out
+                if (timeout_ms > 0 && std::chrono::duration_cast<std::chrono::milliseconds>(iter_start - start).count() > timeout_ms)
+                {
+                    LOG_WARNING("Timeout when doing SyncAction");
+                    SetBehaviourTree(nullptr);
+                    BehaviourStep();
+                    Utilities::WaitForCondition([&]()
+                        {
+                            return tree == nullptr;
+                        }, 500);
+                    break;
+                }
 
                 BehaviourStep();
 
-                Utilities::SleepUntil(end);
+                Utilities::SleepUntil(iter_end);
             }
+        }
+
+
+        /// @brief Set a tree to execute the given action once and block until done.
+        /// This will change the current tree. BehaviourStep should **NOT** be called
+        /// by another thread simultaneously. It means you should **NOT** call
+        /// RunBehaviourUntilClosed when using this sync version. This version has no
+        /// timeout and will run until the tree ends.
+        /// @param ...args Parameters passed to create tree leaf
+        template<typename... Args>
+        void SyncAction(Args&&... args)
+        {
+            return SyncAction(0, std::forward<Args>(args)...);
         }
 
         void OnTreeChanged(const BaseNode* root)
