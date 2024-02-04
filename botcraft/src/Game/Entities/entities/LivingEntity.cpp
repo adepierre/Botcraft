@@ -103,7 +103,7 @@ namespace Botcraft
     char LivingEntity::GetDataLivingEntityFlags() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_living_entity_flags"));
+        return GetDataLivingEntityFlagsImpl();
     }
 
     float LivingEntity::GetDataHealthId() const
@@ -142,7 +142,7 @@ namespace Botcraft
     std::optional<Position> LivingEntity::GetSleepingPosId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<Position>>(metadata.at("sleeping_pos_id"));
+        return GetSleepingPosIdImpl();
     }
 #endif
 
@@ -321,4 +321,16 @@ namespace Botcraft
         }
         it->second.SetModifier(uuid, modifier);
     }
+
+    char LivingEntity::GetDataLivingEntityFlagsImpl() const
+    {
+        return std::any_cast<char>(metadata.at("data_living_entity_flags"));
+    }
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+    std::optional<Position> LivingEntity::GetSleepingPosIdImpl() const
+    {
+        return std::any_cast<std::optional<Position>>(metadata.at("sleeping_pos_id"));
+    }
+#endif
 }

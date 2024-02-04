@@ -251,7 +251,49 @@ namespace Botcraft
                 player->position.x = std::clamp(player->position.x, -2.9999999E7, 2.9999999E7);
                 player->position.z = std::clamp(player->position.z, -2.9999999E7, 2.9999999E7);
 
-                // TODO: UpdatePlayerPose() ?
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+                if (world->IsFree(player->GetColliderImpl(Pose::Swimming).Inflate(-1e-7), false))
+                { // Player::UpdatePlayerPose
+                    Pose current_pose;
+                    if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying))
+                    {
+                        current_pose = Pose::FallFlying;
+                    }
+                    else if (player->GetSleepingPosIdImpl())
+                    {
+                        current_pose = Pose::Sleeping;
+                    }
+                    else if (IsSwimmingAndNotFlying())
+                    {
+                        current_pose = Pose::Swimming;
+                    }
+                    else if (player->GetDataLivingEntityFlagsImpl() & 0x04)
+                    {
+                        current_pose = Pose::SpinAttack;
+                    }
+                    else if (player->inputs.sneak && !player->flying)
+                    {
+                        current_pose = Pose::Crouching;
+                    }
+                    else
+                    {
+                        current_pose = Pose::Standing;
+                    }
+
+                    if (player->game_mode == GameType::Spectator || world->IsFree(player->GetColliderImpl(current_pose).Inflate(-1e-7), false))
+                    {
+                        player->SetDataPoseImpl(current_pose);
+                    }
+                    else if (world->IsFree(player->GetColliderImpl(Pose::Crouching).Inflate(-1e-7), false))
+                    {
+                        player->SetDataPoseImpl(Pose::Crouching);
+                    }
+                    else
+                    {
+                        player->SetDataPoseImpl(Pose::Swimming);
+                    }
+                }
+#endif
             } // Player::tick
 
             SendPosition();

@@ -84,6 +84,10 @@ namespace Botcraft
         double GetAttributeMovementSpeedValueImpl() const;
         void RemoveAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid);
         void SetAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier);
+        char GetDataLivingEntityFlagsImpl() const;
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        std::optional<Position> GetSleepingPosIdImpl() const;
+#endif
 
     protected:
         std::map<EntityAttribute::Type, EntityAttribute> attributes;
