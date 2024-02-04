@@ -776,130 +776,70 @@ namespace Botcraft
 #endif
     }
 
-    void PhysicsManager::Collisions(Vector3<double>& movement, AABB& aabb) const
+    Vector3<double> PhysicsManager::CollideBoundingBox(const AABB& aabb, const Vector3<double>& movement) const
     {
         const std::vector<AABB> colliders = world->GetColliders(aabb, movement);
         // TODO: add world borders to colliders?
         if (colliders.size() == 0)
         {
-            return;
-        }
-        Vector3<double> min_aabb = aabb.GetMin();
-        Vector3<double> max_aabb = aabb.GetMax();
-        // Collisions on Y axis
-        for (const AABB& collider : colliders)
-        {
-            if (std::abs(movement.y) < 1.0e-7)
-            {
-                movement.y = 0.0;
-                break;
-            }
-            const Vector3<double> min_collider = collider.GetMin();
-            const Vector3<double> max_collider = collider.GetMax();
-            if (max_aabb.x - 1e-7 > min_collider.x && min_aabb.x + 1e-7 < max_collider.x &&
-                max_aabb.z - 1e-7 > min_collider.z && min_aabb.z + 1e-7 < max_collider.z)
-            {
-                if (movement.y > 0.0 && max_aabb.y - 1e-7 <= min_collider.y)
-                {
-                    movement.y = std::min(min_collider.y - max_aabb.y, movement.y);
-                }
-                else if (movement.y < 0.0 && min_aabb.y + 1e-7 >= max_collider.y)
-                {
-                    movement.y = std::max(max_collider.y - min_aabb.y, movement.y);
-                }
-            }
-        }
-        aabb.Translate(Vector3<double>(0.0, movement.y, 0.0));
-        min_aabb = aabb.GetMin();
-        max_aabb = aabb.GetMax();
-
-        const bool x_before_z = std::abs(movement.x) > std::abs(movement.z);
-        // Collision on X axis before Z
-        if (x_before_z)
-        {
-            // Collisions on X axis
-            for (const AABB& collider : colliders)
-            {
-                if (std::abs(movement.x) < 1.0e-7)
-                {
-                    movement.x = 0.0;
-                    break;
-                }
-                const Vector3<double> min_collider = collider.GetMin();
-                const Vector3<double> max_collider = collider.GetMax();
-                if (max_aabb.y - 1e-7 > min_collider.y && min_aabb.y + 1e-7 < max_collider.y &&
-                    max_aabb.z - 1e-7 > min_collider.z && min_aabb.z + 1e-7 < max_collider.z)
-                {
-                    if (movement.x > 0.0 && max_aabb.x - 1e-7 <= min_collider.x)
-                    {
-                        movement.x = std::min(min_collider.x - max_aabb.x, movement.x);
-                    }
-                    else if (movement.x < 0.0 && min_aabb.x + 1e-7 >= max_collider.x)
-                    {
-                        movement.x = std::max(max_collider.x - min_aabb.x, movement.x);
-                    }
-                }
-            }
-            aabb.Translate(Vector3<double>(movement.x, 0.0, 0.0));
-            min_aabb = aabb.GetMin();
-            max_aabb = aabb.GetMax();
+            return movement;
         }
 
-        // Collisions on Z axis
-        for (const AABB& collider : colliders)
-        {
-            if (std::abs(movement.z) < 1.0e-7)
-            {
-                movement.z = 0.0;
-                break;
-            }
-            const Vector3<double> min_collider = collider.GetMin();
-            const Vector3<double> max_collider = collider.GetMax();
-            if (max_aabb.x - 1e-7 > min_collider.x && min_aabb.x + 1e-7 < max_collider.x &&
-                max_aabb.y - 1e-7 > min_collider.y && min_aabb.y + 1e-7 < max_collider.y)
-            {
-                if (movement.z > 0.0 && max_aabb.z - 1e-7 <= min_collider.z)
-                {
-                    movement.z = std::min(min_collider.z - max_aabb.z, movement.z);
-                }
-                else if (movement.z < 0.0 && min_aabb.z + 1e-7 >= max_collider.z)
-                {
-                    movement.z = std::max(max_collider.z - min_aabb.z, movement.z);
-                }
-            }
-        }
-        aabb.Translate(Vector3<double>(0.0, 0.0, movement.z));
+        Vector3<double> collided_movement = movement;
 
+        AABB moved_aabb = aabb;
+        // Collision on Y axis
+        CollideOneAxis(moved_aabb, collided_movement, 1, colliders);
+
+        // Collision on X before Z
+        if (std::abs(collided_movement.x) > std::abs(collided_movement.z))
+        {
+            CollideOneAxis(moved_aabb, collided_movement, 0, colliders);
+            CollideOneAxis(moved_aabb, collided_movement, 2, colliders);
+        }
         // Collision on X after Z
-        if (!x_before_z)
+        else
         {
-            min_aabb = aabb.GetMin();
-            max_aabb = aabb.GetMax();
-            // Collisions on X axis
-            for (const AABB& collider : colliders)
+            CollideOneAxis(moved_aabb, collided_movement, 2, colliders);
+            CollideOneAxis(moved_aabb, collided_movement, 0, colliders);
+        }
+
+        return collided_movement;
+    }
+
+    void PhysicsManager::CollideOneAxis(AABB& aabb, Vector3<double>& movement, const unsigned int axis, const std::vector<AABB>& colliders) const
+    {
+        const Vector3<double> min_aabb = aabb.GetMin();
+        const Vector3<double> max_aabb = aabb.GetMax();
+        const int this_axis = axis % 3;
+        const int axis_1 = (axis + 1) % 3;
+        const int axis_2 = (axis + 2) % 3;
+
+        for (const AABB& collider : colliders)
+        {
+            if (std::abs(movement[this_axis]) < 1.0e-7)
             {
-                if (std::abs(movement.x) < 1.0e-7)
+                movement[this_axis] = 0.0;
+                break;
+            }
+            const Vector3<double> min_collider = collider.GetMin();
+            const Vector3<double> max_collider = collider.GetMax();
+            if (max_aabb[axis_1] - 1e-7 > min_collider[axis_1] && min_aabb[axis_1] + 1e-7 < max_collider[axis_1] &&
+                max_aabb[axis_2] - 1e-7 > min_collider[axis_2] && min_aabb[axis_2] + 1e-7 < max_collider[axis_2])
+            {
+                if (movement[this_axis] > 0.0 && max_aabb[this_axis] - 1e-7 <= min_collider[this_axis])
                 {
-                    movement.x = 0.0;
-                    break;
+                    movement[this_axis] = std::min(min_collider[this_axis] - max_aabb[this_axis], movement[this_axis]);
                 }
-                const Vector3<double> min_collider = collider.GetMin();
-                const Vector3<double> max_collider = collider.GetMax();
-                if (max_aabb.y - 1e-7 > min_collider.y && min_aabb.y + 1e-7 < max_collider.y &&
-                    max_aabb.z - 1e-7 > min_collider.z && min_aabb.z + 1e-7 < max_collider.z)
+                else if (movement[this_axis] < 0.0 && min_aabb[this_axis] + 1e-7 >= max_collider[this_axis])
                 {
-                    if (movement.x > 0.0 && max_aabb.x - 1e-7 <= min_collider.x)
-                    {
-                        movement.x = std::min(min_collider.x - max_aabb.x, movement.x);
-                    }
-                    else if (movement.x < 0.0 && min_aabb.x + 1e-7 >= max_collider.x)
-                    {
-                        movement.x = std::max(max_collider.x - min_aabb.x, movement.x);
-                    }
+                    movement[this_axis] = std::max(max_collider[this_axis] - min_aabb[this_axis], movement[this_axis]);
                 }
             }
-            aabb.Translate(Vector3<double>(movement.x, 0.0, 0.0));
         }
+        Vector3<double> translation(0.0, 0.0, 0.0);
+        translation[this_axis] = movement[this_axis];
+        aabb.Translate(translation);
     }
 
     bool PhysicsManager::IsSwimmingAndNotFlying() const
@@ -1142,7 +1082,7 @@ namespace Botcraft
             player->speed *= 0.0;
         }
 
-        AABB player_aabb = player->GetColliderImpl();
+        const AABB player_aabb = player->GetColliderImpl();
         if (!player->flying && movement.y <= 0.0 && player->inputs.sneak && player->on_ground)
         { // Player::maybeBackOffFromEdge
             const double step = 0.05;
@@ -1168,9 +1108,34 @@ namespace Botcraft
         { // Entity::collide
             if (movement.SqrNorm() != 0.0)
             {
-                Collisions(movement, player_aabb);
+                movement = CollideBoundingBox(player_aabb, movement);
             }
-            // TODO: Step up if block height delta is < 0.6
+
+            // Step up if block height delta is < 0.6
+            // If already on ground (or collided with the ground while moving down) and horizontal collision
+            if ((player->on_ground || (movement.y != movement_before_collisions.y && movement_before_collisions.y < 0.0)) &&
+                (movement.x != movement_before_collisions.x || movement.z != movement_before_collisions.z))
+            {
+                Vector3<double> movement_with_step_up = CollideBoundingBox(player_aabb, Vector3<double>(movement_before_collisions.x, 0.6, movement_before_collisions.z));
+                const Vector3<double> horizontal_movement(
+                    movement_before_collisions.x,
+                    0.0,
+                    movement_before_collisions.z
+                );
+                const Vector3<double> movement_step_up_only = CollideBoundingBox(AABB(player_aabb.GetCenter() + horizontal_movement * 0.5, player_aabb.GetHalfSize() + horizontal_movement.Abs() * 0.5), Vector3<double>(0.0, 0.6, 0.0));
+                if (movement_step_up_only.y < 0.6)
+                {
+                    const Vector3<double> check = CollideBoundingBox(player_aabb + movement_step_up_only, horizontal_movement) + movement_step_up_only;
+                    if (check.x * check.x + check.z * check.z > movement_with_step_up.x * movement_with_step_up.x + movement_with_step_up.z * movement_with_step_up.z)
+                    {
+                        movement_with_step_up = check;
+                    }
+                }
+                if (movement_with_step_up.x * movement_with_step_up.x + movement_with_step_up.z * movement_with_step_up.z > movement.x * movement.x + movement.z * movement.z)
+                {
+                    movement = movement_with_step_up + CollideBoundingBox(player_aabb + movement_with_step_up, Vector3<double>(0.0, -movement_with_step_up.y + movement_before_collisions.y, 0.0));
+                }
+            }
         }
 
         if (movement.SqrNorm() > 1.0e-7)

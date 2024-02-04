@@ -2,10 +2,10 @@
 
 #include <atomic>
 #include <memory>
-#include <mutex>
 #include <thread>
 
 #include "botcraft/Game/Vector3.hpp"
+#include "botcraft/Game/Physics/AABB.hpp"
 
 namespace Botcraft
 {
@@ -60,10 +60,13 @@ namespace Botcraft
         /// @brief Send position/rotation/on_ground to server
         void SendPosition();
 
-        /// @brief Check collisions between an AABB and a list of colliders
-        /// @param movement Movement vector to apply to AABB, will be changed based on collisions
-        /// @param aabb AABB to move, will be translated based on movement and colliders
-        void Collisions(Vector3<double>& movement, AABB& aabb) const;
+        /// @brief Check collisions of an AABB with a given movement
+        /// @param aabb AABB to move
+        /// @param movement Movement vector to apply to AABB
+        /// @return New movement vector after collisions
+        Vector3<double> CollideBoundingBox(const AABB& aabb, const Vector3<double>& movement) const;
+
+        void CollideOneAxis(AABB& aabb, Vector3<double>& movement, const unsigned int axis, const std::vector<AABB>& colliders) const;
 
         bool IsSwimmingAndNotFlying() const;
         bool IsInClimbable() const;
