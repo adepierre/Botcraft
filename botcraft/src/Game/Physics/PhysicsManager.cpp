@@ -813,8 +813,9 @@ namespace Botcraft
         min_aabb = aabb.GetMin();
         max_aabb = aabb.GetMax();
 
+        const bool x_before_z = std::abs(movement.x) > std::abs(movement.z);
         // Collision on X axis before Z
-        if (std::abs(movement.x) > std::abs(movement.z))
+        if (x_before_z)
         {
             // Collisions on X axis
             for (const AABB& collider : colliders)
@@ -870,7 +871,7 @@ namespace Botcraft
         aabb.Translate(Vector3<double>(0.0, 0.0, movement.z));
 
         // Collision on X after Z
-        if (std::abs(movement.x) <= std::abs(movement.z))
+        if (!x_before_z)
         {
             min_aabb = aabb.GetMin();
             max_aabb = aabb.GetMax();
