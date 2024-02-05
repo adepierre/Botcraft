@@ -85,6 +85,12 @@ namespace Botcraft
         void SetAbilitiesFlagsImpl(const char abilities_flags_);
         void UpdateAbilitiesFlagsImpl();
 
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
+    protected:
+        virtual double GetEyeHeightImpl() const override;
+        virtual double GetHeightImpl() const override;
+#endif
+
     private:
         Vector3<double> front_vector;
         Vector3<double> xz_vector;

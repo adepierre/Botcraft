@@ -62,7 +62,7 @@ namespace Botcraft
         double GetAttributeLuckValue() const;
 
     protected:
-        double GetEyeHeightImpl() const;
+        virtual double GetEyeHeightImpl() const;
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */

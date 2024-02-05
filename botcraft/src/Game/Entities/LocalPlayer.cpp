@@ -409,4 +409,17 @@ namespace Botcraft
             (instabuild << 3) |
             (may_build << 4);
     }
+
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
+    double LocalPlayer::GetEyeHeightImpl() const
+    {
+        return crouching ? 1.5575 : 1.62;
+    }
+
+    double LocalPlayer::GetHeightImpl() const
+    {
+        return crouching ? 1.65 : 1.8;
+    }
+#endif
+
 } //Botcraft
