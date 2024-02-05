@@ -632,11 +632,7 @@ namespace Botcraft
                 ));
                 if (feet_block == nullptr || !feet_block->IsHoney())
                 {
-                    const Blockstate* below_block = world->GetBlock(Position(
-                        static_cast<int>(std::floor(player->position.x)),
-                        static_cast<int>(std::floor(player->position.y - 0.5)),
-                        static_cast<int>(std::floor(player->position.z))
-                    ));
+                    const Blockstate* below_block = world->GetBlock(GetBlockBelowAffectingMovement());
                     if (below_block != nullptr && below_block->IsHoney())
                     {
                         block_jump_factor = 0.4f;
@@ -1006,11 +1002,7 @@ namespace Botcraft
         // Move generic case
         else
         {
-            const Blockstate* below_block = world->GetBlock(Position(
-                static_cast<int>(std::floor(player->position.x)),
-                static_cast<int>(std::floor(player->position.y - 0.5)),
-                static_cast<int>(std::floor(player->position.z))
-            ));
+            const Blockstate* below_block = world->GetBlock(GetBlockBelowAffectingMovement());
             const float friction = below_block == nullptr ? 0.6f : below_block->GetFriction();
             const float inertia = player->on_ground ? friction * 0.91f : 0.91f;
 
@@ -1147,7 +1139,35 @@ namespace Botcraft
         const bool collision_z = movement_before_collisions.z != movement.z;
         player->horizontal_collision = collision_x || collision_z;
         // TODO: add minor horizontal collision check
-        player->on_ground = movement_before_collisions.y < 0.0 && collision_y;
+        { // Entity::setOngroundWithKnownMovement
+            player->on_ground = movement_before_collisions.y < 0.0 && collision_y;
+
+            if (player->on_ground)
+            {
+                const double half_width = 0.5 * player->GetWidthImpl();
+                const AABB feet_slice_aabb(
+                    Vector3<double>(
+                        player->position.x,
+                        player->position.y - 0.5e-6,
+                        player->position.z),
+                    Vector3<double>(half_width, 0.5e-6, half_width));
+                std::optional<Position> supporting_block_pos = world->GetSupportingBlockPos(feet_slice_aabb);
+                if (supporting_block_pos.has_value() || player->on_ground_without_supporting_block)
+                {
+                    player->supporting_block_pos = supporting_block_pos;
+                }
+                else
+                {
+                    player->supporting_block_pos = world->GetSupportingBlockPos(feet_slice_aabb + Vector3<double>(-movement.x, 0.0, -movement.z));
+                }
+                player->on_ground_without_supporting_block = !player->supporting_block_pos.has_value();
+            }
+            else
+            {
+                player->on_ground_without_supporting_block = false;
+                player->supporting_block_pos = std::optional<Position>();
+            }
+        }
 
         // Update speeds
         if (collision_x)
@@ -1207,11 +1227,7 @@ namespace Botcraft
         }
         if (block_speed_factor == 1.0f)
         {
-            const Blockstate* below_block = world->GetBlock(Position(
-                static_cast<int>(std::floor(player->position.x)),
-                static_cast<int>(std::floor(player->position.y - 0.5)),
-                static_cast<int>(std::floor(player->position.z))
-            ));
+            const Blockstate* below_block = world->GetBlock(GetBlockBelowAffectingMovement());
             if (below_block != nullptr && (below_block->IsHoney() || (below_block->IsSoulSand() && soul_speed_lvl == 0)))
             {
                 block_speed_factor = 0.4f;
@@ -1303,6 +1319,22 @@ namespace Botcraft
                 }
             }
         }
+    }
+
+    Position PhysicsManager::GetBlockBelowAffectingMovement() const
+    {
+        if (player->supporting_block_pos.has_value())
+        {
+            Position output = player->supporting_block_pos.value();
+            output.y = static_cast<int>(std::floor(player->position.y) - 0.500001);
+            return output;
+        }
+
+        return Position(
+            static_cast<int>(std::floor(player->position.x)),
+            static_cast<int>(std::floor(player->position.y - 0.500001)),
+            static_cast<int>(std::floor(player->position.z))
+        );
     }
 
 } //Botcraft

@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <memory>
+#include <optional>
 #include <shared_mutex>
 #include <unordered_map>
 
@@ -248,6 +249,11 @@ namespace Botcraft
         /// @param fluid_collide if true, will count fluids as collision
         /// @return True if collision false otherwise
         bool IsFree(const AABB& aabb, const bool fluid_collide) const;
+
+        /// @brief Get the block position supporting an aabb
+        /// @param aabb The entity AABB
+        /// @return The block position the AABB is on, or empty if no block is found
+        std::optional<Position> GetSupportingBlockPos(const AABB& aabb) const;
 
     protected:
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;

@@ -42,6 +42,8 @@ namespace Botcraft
         stuck_speed_multiplier = Vector3<double>(0.0, 0.0, 0.0);
         jump_delay = 0;
         fly_jump_trigger_time = 0;
+        supporting_block_pos = std::optional<Position>();
+        on_ground_without_supporting_block = false;
 
         previous_sprinting = false;
         previous_shift_key_down = false;

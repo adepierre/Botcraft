@@ -75,6 +75,7 @@ namespace Botcraft
 
         void OnUpdateAbilities() const;
         void CheckInsideBlocks() const;
+        Position GetBlockBelowAffectingMovement() const;
 
     private:
 #if USE_GUI

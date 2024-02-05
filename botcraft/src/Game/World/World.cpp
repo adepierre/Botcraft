@@ -649,6 +649,51 @@ namespace Botcraft
         return true;
     }
 
+    std::optional<Position> World::GetSupportingBlockPos(const AABB& aabb) const
+    {
+        std::shared_lock<std::shared_mutex> lock(world_mutex);
+
+        const Vector3<double> min_aabb = aabb.GetMin();
+        const Vector3<double> max_aabb = aabb.GetMax();
+
+        Position cube_pos;
+        std::optional<Position> output = std::optional<Position>();
+        double min_distance = std::numeric_limits<double>::max();
+        for (int y = static_cast<int>(std::floor(min_aabb.y)) - 1; y <= static_cast<int>(std::floor(max_aabb.y)); ++y)
+        {
+            cube_pos.y = y;
+            for (int z = static_cast<int>(std::floor(min_aabb.z)); z <= static_cast<int>(std::floor(max_aabb.z)); ++z)
+            {
+                cube_pos.z = z;
+                for (int x = static_cast<int>(std::floor(min_aabb.x)); x <= static_cast<int>(std::floor(max_aabb.x)); ++x)
+                {
+                    cube_pos.x = x;
+                    const Blockstate* block = GetBlockImpl(cube_pos);
+
+                    if (block == nullptr || !block->IsSolid())
+                    {
+                        continue;
+                    }
+
+                    for (const auto& collider : block->GetCollidersAtPos(cube_pos))
+                    {
+                        if (aabb.Collide(collider))
+                        {
+                            const double distance = aabb.GetCenter().SqrDist(collider.GetCenter());
+                            if (distance < min_distance)
+                            {
+                                min_distance = distance;
+                                output = cube_pos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return output;
+    }
+
     void World::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);

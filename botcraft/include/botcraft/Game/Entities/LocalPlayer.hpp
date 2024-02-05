@@ -2,6 +2,8 @@
 
 #include "botcraft/Game/Entities/entities/player/PlayerEntity.hpp"
 
+#include <optional>
+
 namespace Botcraft 
 {
     struct PlayerInputs
@@ -127,6 +129,8 @@ namespace Botcraft
         Vector3<double> stuck_speed_multiplier;
         int jump_delay;
         int fly_jump_trigger_time;
+        std::optional<Position> supporting_block_pos;
+        bool on_ground_without_supporting_block;
 
         bool previous_sprinting;
         bool previous_shift_key_down;
