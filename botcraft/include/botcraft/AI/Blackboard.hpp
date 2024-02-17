@@ -1,10 +1,10 @@
 #pragma once
 
-#include <map>
-#include <unordered_map>
 #include <any>
-#include <string>
 #include <functional>
+#include <map>
+#include <stdexcept>
+#include <string>
 
 namespace Botcraft
 {
@@ -57,7 +57,14 @@ namespace Botcraft
         template<class T>
         const T& Get(const std::string& key)
         {
-            return std::any_cast<T&>(blackboard.at(key));
+            try
+            {
+                return std::any_cast<T&>(blackboard.at(key));
+            }
+            catch (const std::out_of_range& e)
+            {
+                throw std::out_of_range("invalid blackboard key: " + key);
+            }
         }
         
         /// @brief Get the map value at key, casting it to T.
@@ -94,7 +101,14 @@ namespace Botcraft
         template<class T>
         NotifyOnEndUseRef<T> GetRef(const std::string& key)
         {
-            return NotifyOnEndUseRef(std::any_cast<T&>(blackboard.at(key)), [this, key]() { NotifyKeyChanged(key, blackboard.at(key)); });
+            try
+            {
+                return NotifyOnEndUseRef(std::any_cast<T&>(blackboard.at(key)), [this, key]() { NotifyKeyChanged(key, blackboard.at(key)); });
+            }
+            catch (const std::out_of_range& e)
+            {
+                throw std::out_of_range("invalid blackboard key: " + key);
+            }
         }
 
         /// @brief Get a ref to the map value at key, casting it to T&.
