@@ -9730,7 +9730,7 @@
             "hardness": -2,
             "name": "minecraft:light",
             "render": "other",
-            "solid": true,
+            "solid": false,
             "transparent": true
         },
         {
