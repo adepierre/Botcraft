@@ -704,11 +704,15 @@ namespace Botcraft
 #else
         SetCurrentDimensionImpl(msg.GetCommonPlayerSpawnInfo().GetDimension().GetFull());
 #endif
-#if PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
-        dimension_ultrawarm[current_dimension] = static_cast<bool>(msg.GetDimensionType()["ultrawarm"].get<char>());
-#endif
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
+
+#if PROTOCOL_VERSION > 718 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
+        for (const auto& d : msg.GetRegistryHolder()["dimension"].as_list_of<ProtocolCraft::NBT::TagCompound>())
+        {
+            const std::string& dim_name = d["name"].get<std::string>();
+            dimension_ultrawarm[dim_name] = static_cast<bool>(d["ultrawarm"].get<char>());
+        }
+#elif PROTOCOL_VERSION < 759 /* < 1.19 */
         dimension_height[current_dimension] = msg.GetDimensionType()["height"].get<int>();
         dimension_min_y[current_dimension] = msg.GetDimensionType()["min_y"].get<int>();
         dimension_ultrawarm[current_dimension] = static_cast<bool>(msg.GetDimensionType()["ultrawarm"].get<char>());
