@@ -712,10 +712,6 @@ namespace Botcraft
             const std::string& dim_name = d["name"].get<std::string>();
             dimension_ultrawarm[dim_name] = static_cast<bool>(d["ultrawarm"].get<char>());
         }
-#elif PROTOCOL_VERSION < 759 /* < 1.19 */
-        dimension_height[current_dimension] = msg.GetDimensionType()["height"].get<int>();
-        dimension_min_y[current_dimension] = msg.GetDimensionType()["min_y"].get<int>();
-        dimension_ultrawarm[current_dimension] = static_cast<bool>(msg.GetDimensionType()["ultrawarm"].get<char>());
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
         for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
