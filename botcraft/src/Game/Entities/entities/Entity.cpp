@@ -474,9 +474,12 @@ namespace Botcraft
                 break;
 #endif
             case EntityMetadataTypes::NBT:
-                value = ProtocolCraft::NBT::Value();
-                std::any_cast<ProtocolCraft::NBT::Value&>(value).Read(iter, length);
+            {
+                ProtocolCraft::NBT::UnnamedValue unnamed_value;
+                unnamed_value.Read(iter, length);
+                value = ProtocolCraft::NBT::Value(unnamed_value);
                 break;
+            }
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
             case EntityMetadataTypes::Particle:
                 value = ProtocolCraft::Particle::CreateParticle(static_cast<ProtocolCraft::ParticleType>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length))));
