@@ -15,53 +15,61 @@
 
 namespace Botcraft
 {
-    enum class BlockPathfindingState: char
+    class PathfindingBlockstate
     {
-        Empty = 0,
-        /// @brief Can walk on, can't go through
-        Solid = 1 << 0,
-        /// @brief Take damage if walk through/on
-        Hazardous = 1 << 1,
-        /// @brief Can climb up/down
-        Climbable = 1 << 2,
-        /// @brief Can climb but can't walk on
-        Fluid = 1 << 3
+    public:
+        PathfindingBlockstate(const Blockstate* block = nullptr, const bool take_damage = true) : block(block)
+        {
+            if (block == nullptr)
+            {
+                empty = true;
+                return;
+            }
+
+            if (take_damage && block->IsHazardous())
+            {
+                hazardous = true;
+                return;
+            }
+
+            if (block->IsFluidOrWaterlogged() && !block->IsSolid())
+            {
+                climbable = true;
+                fluid = true;
+                return;
+            }
+
+            if (block->IsClimbable())
+            {
+                climbable = true;
+                return;
+            }
+
+            if (block->IsSolid())
+            {
+                solid = true;
+            }
+            else
+            {
+                empty = true;
+            }
+        }
+
+        const Blockstate* GetBlockstate() const { return block; }
+        bool IsEmpty() const { return empty; }
+        bool IsSolid() const { return solid; }
+        bool IsHazardous() const { return hazardous; }
+        bool IsClimbable() const { return climbable; }
+        bool IsFluid() const { return fluid; }
+
+    private:
+        const Blockstate* block;
+        bool empty = false;
+        bool solid = false;
+        bool hazardous = false;
+        bool climbable = false;
+        bool fluid = false;
     };
-
-    BlockPathfindingState operator|(const BlockPathfindingState a, const BlockPathfindingState b)
-    {
-        return static_cast<BlockPathfindingState>(static_cast<char>(a) | static_cast<char>(b));
-    }
-
-    bool operator&(const BlockPathfindingState a, const BlockPathfindingState b)
-    {
-        return (static_cast<char>(a) & static_cast<char>(b)) > 0;
-    }
-
-    BlockPathfindingState GetBlockGoThroughState(const Blockstate* block, const bool take_damage)
-    {
-        if (block == nullptr)
-        {
-            return BlockPathfindingState::Empty;
-        }
-
-        if (take_damage && block->IsHazardous())
-        {
-            return BlockPathfindingState::Hazardous;
-        }
-
-        if (block->IsFluidOrWaterlogged() && !block->IsSolid())
-        {
-            return BlockPathfindingState::Climbable | BlockPathfindingState::Fluid;
-        }
-
-        if (block->IsClimbable())
-        {
-            return BlockPathfindingState::Climbable;
-        }
-
-        return block->IsSolid() ? BlockPathfindingState::Solid : BlockPathfindingState::Empty;
-    }
 
     std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump)
     {
@@ -131,10 +139,7 @@ namespace Botcraft
             }
 
             // Get the state around the player in the given location
-            std::array<BlockPathfindingState, 6> vertical_surroundings = {
-                BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
-                BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid
-            };
+            std::array<PathfindingBlockstate, 6> vertical_surroundings;
 
             // Assuming the player is standing on 3 (feeet on 2 and head on 1)
             // 0
@@ -144,25 +149,25 @@ namespace Botcraft
             // 4
             // 5
             const Blockstate* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
-            vertical_surroundings[0] = GetBlockGoThroughState(block, takes_damage);
+            vertical_surroundings[0] = PathfindingBlockstate(block, takes_damage);
             block = world->GetBlock(current_node.pos + Position(0, 1, 0));
-            vertical_surroundings[1] = GetBlockGoThroughState(block, takes_damage);
+            vertical_surroundings[1] = PathfindingBlockstate(block, takes_damage);
             // Our feet block (should be climbable or empty)
             block = world->GetBlock(current_node.pos);
-            vertical_surroundings[2] = GetBlockGoThroughState(block, takes_damage);
+            vertical_surroundings[2] = PathfindingBlockstate(block, takes_damage);
 
             // if 3 is solid or hazardous, no down pathfinding is possible,
             // so we can skip a few checks
             block = world->GetBlock(current_node.pos + Position(0, -1, 0));
-            vertical_surroundings[3] = GetBlockGoThroughState(block, takes_damage);
+            vertical_surroundings[3] = PathfindingBlockstate(block, takes_damage);
 
             // If we can move down, we need 4 and 5
-            if (vertical_surroundings[3] != BlockPathfindingState::Solid && vertical_surroundings[3] != BlockPathfindingState::Hazardous)
+            if (!vertical_surroundings[3].IsSolid() && !vertical_surroundings[3].IsHazardous())
             {
                 block = world->GetBlock(current_node.pos + Position(0, -2, 0));
-                vertical_surroundings[4] = GetBlockGoThroughState(block, takes_damage);
+                vertical_surroundings[4] = PathfindingBlockstate(block, takes_damage);
                 block = world->GetBlock(current_node.pos + Position(0, -3, 0));
-                vertical_surroundings[5] = GetBlockGoThroughState(block, takes_damage);
+                vertical_surroundings[5] = PathfindingBlockstate(block, takes_damage);
             }
 
 
@@ -173,11 +178,11 @@ namespace Botcraft
             // ?
             // ?
             // ?
-            if (vertical_surroundings[2] & BlockPathfindingState::Climbable
-                && vertical_surroundings[1] != BlockPathfindingState::Solid
-                && vertical_surroundings[1] != BlockPathfindingState::Hazardous
-                && vertical_surroundings[0] != BlockPathfindingState::Solid
-                && vertical_surroundings[0] != BlockPathfindingState::Hazardous
+            if (vertical_surroundings[2].IsClimbable()
+                && !vertical_surroundings[1].IsSolid()
+                && !vertical_surroundings[1].IsHazardous()
+                && !vertical_surroundings[0].IsSolid()
+                && !vertical_surroundings[0].IsHazardous()
                 )
             {
                 const float new_cost = cost[current_node.pos] + 1.0f;
@@ -199,11 +204,11 @@ namespace Botcraft
             // o
             // ?
             // ?
-            if (vertical_surroundings[3] == BlockPathfindingState::Solid
-                && vertical_surroundings[2] == BlockPathfindingState::Empty
-                && vertical_surroundings[1] & BlockPathfindingState::Climbable
-                && vertical_surroundings[0] != BlockPathfindingState::Solid
-                && vertical_surroundings[0] != BlockPathfindingState::Hazardous
+            if (vertical_surroundings[3].IsSolid()
+                && vertical_surroundings[2].IsEmpty()
+                && vertical_surroundings[1].IsClimbable()
+                && !vertical_surroundings[0].IsSolid()
+                && !vertical_surroundings[0].IsHazardous()
                 )
             {
                 const float new_cost = cost[current_node.pos] + 1.5f;
@@ -225,7 +230,7 @@ namespace Botcraft
             // -
             // ?
             // ?
-            if (vertical_surroundings[3] & BlockPathfindingState::Climbable)
+            if (vertical_surroundings[3].IsClimbable())
             {
                 const float new_cost = cost[current_node.pos] + 1.0f;
                 const Position new_pos = current_node.pos + Position(0, -1, 0);
@@ -246,10 +251,10 @@ namespace Botcraft
             // -
             //  
             // o
-            if (vertical_surroundings[3] & BlockPathfindingState::Climbable
-                && vertical_surroundings[4] == BlockPathfindingState::Empty
-                && vertical_surroundings[5] != BlockPathfindingState::Empty
-                && vertical_surroundings[5] != BlockPathfindingState::Hazardous
+            if (vertical_surroundings[3].IsClimbable()
+                && vertical_surroundings[4].IsEmpty()
+                && !vertical_surroundings[5].IsEmpty()
+                && !vertical_surroundings[5].IsHazardous()
                 )
             {
                 const float new_cost = cost[current_node.pos] + 2.0f;
@@ -273,11 +278,11 @@ namespace Botcraft
             //  
             //  
             // o
-            if (vertical_surroundings[2] & BlockPathfindingState::Climbable
-                && vertical_surroundings[3] == BlockPathfindingState::Empty
-                && vertical_surroundings[4] == BlockPathfindingState::Empty
-                && vertical_surroundings[5] != BlockPathfindingState::Empty
-                && vertical_surroundings[5] != BlockPathfindingState::Hazardous
+            if (vertical_surroundings[2].IsClimbable()
+                && vertical_surroundings[3].IsEmpty()
+                && vertical_surroundings[4].IsEmpty()
+                && !vertical_surroundings[5].IsEmpty()
+                && !vertical_surroundings[5].IsHazardous()
                 )
             {
                 const float new_cost = cost[current_node.pos] + 2.0f;
@@ -302,9 +307,9 @@ namespace Botcraft
             //  
             // Special case here, we can drop down
             // if there is a climbable at the bottom
-            if (vertical_surroundings[3] & BlockPathfindingState::Climbable
-                && vertical_surroundings[4] == BlockPathfindingState::Empty
-                && vertical_surroundings[5] == BlockPathfindingState::Empty
+            if (vertical_surroundings[3].IsClimbable()
+                && vertical_surroundings[4].IsEmpty()
+                && vertical_surroundings[5].IsEmpty()
                 )
             {
                 for (int y = -4; current_node.pos.y + y >= world->GetMinY(); --y)
@@ -316,7 +321,7 @@ namespace Botcraft
                         break;
                     }
 
-                    if (GetBlockGoThroughState(block, takes_damage) & BlockPathfindingState::Climbable)
+                    if (PathfindingBlockstate(block, takes_damage).IsClimbable())
                     {
                         const float new_cost = cost[current_node.pos] + std::abs(y);
                         const Position new_pos = current_node.pos + Position(0, y + 1, 0);
@@ -344,12 +349,7 @@ namespace Botcraft
                 const Position next_next_location = next_location + neighbour_offsets[i];
 
                 // Get the state around the player in the given direction
-                std::array<BlockPathfindingState, 12> horizontal_surroundings = {
-                    BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
-                    BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
-                    BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid,
-                    BlockPathfindingState::Solid, BlockPathfindingState::Solid, BlockPathfindingState::Solid
-                };
+                std::array<PathfindingBlockstate, 12> horizontal_surroundings;
 
                 // Assuming the player is standing on v3 (feeet on v2 and head on v1)
                 // v0   0   6 --> ?  ?  ?
@@ -362,40 +362,40 @@ namespace Botcraft
                 // if 1 is solid, no horizontal pathfinding is possible,
                 // so we can skip a lot of checks
                 block = world->GetBlock(next_location + Position(0, 1, 0));
-                horizontal_surroundings[1] = GetBlockGoThroughState(block, takes_damage);
-                const bool horizontal_movement = horizontal_surroundings[1] != BlockPathfindingState::Solid && horizontal_surroundings[1] != BlockPathfindingState::Hazardous;
+                horizontal_surroundings[1] = PathfindingBlockstate(block, takes_damage);
+                const bool horizontal_movement = !horizontal_surroundings[1].IsSolid() && !horizontal_surroundings[1].IsHazardous();
 
                 // If we can move horizontally, we need the full column
                 if (horizontal_movement)
                 {
                     block = world->GetBlock(next_location + Position(0, 2, 0));
-                    horizontal_surroundings[0] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[0] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_location);
-                    horizontal_surroundings[2] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[2] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_location + Position(0, -1, 0));
-                    horizontal_surroundings[3] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[3] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_location + Position(0, -2, 0));
-                    horizontal_surroundings[4] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[4] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_location + Position(0, -3, 0));
-                    horizontal_surroundings[5] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[5] = PathfindingBlockstate(block, takes_damage);
                 }
 
                 // You can't make large jumps if your feet are in a climbable block
                 // If we can jump, then we need the third column
-                if (allow_jump && !(vertical_surroundings[2] & BlockPathfindingState::Climbable))
+                if (allow_jump && !vertical_surroundings[2].IsClimbable())
                 {
                     block = world->GetBlock(next_next_location + Position(0, 2, 0));
-                    horizontal_surroundings[6] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[6] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_next_location + Position(0, 1, 0));
-                    horizontal_surroundings[7] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[7] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_next_location);
-                    horizontal_surroundings[8] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[8] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_next_location + Position(0, -1, 0));
-                    horizontal_surroundings[9] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[9] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_next_location + Position(0, -2, 0));
-                    horizontal_surroundings[10] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[10] = PathfindingBlockstate(block, takes_damage);
                     block = world->GetBlock(next_next_location + Position(0, -3, 0));
-                    horizontal_surroundings[11] = GetBlockGoThroughState(block, takes_damage);
+                    horizontal_surroundings[11] = PathfindingBlockstate(block, takes_damage);
                 }
 
                 // Now that we know the surroundings, we can check all
@@ -409,16 +409,16 @@ namespace Botcraft
                 //--- o  ?
                 //    ?  ?
                 //    ?  ?
-                if (horizontal_surroundings[1] != BlockPathfindingState::Solid
-                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[2] != BlockPathfindingState::Solid
-                    && horizontal_surroundings[2] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[3] != BlockPathfindingState::Empty
-                    && horizontal_surroundings[3] != BlockPathfindingState::Hazardous
-                    && (!(horizontal_surroundings[3] & BlockPathfindingState::Fluid)  // We can't go from above a fluid to above
-                        || !(vertical_surroundings[3] & BlockPathfindingState::Fluid) // another one to avoid "walking on water"
-                        || horizontal_surroundings[2] & BlockPathfindingState::Fluid  // except if one or both "leg level" blocks
-                        || vertical_surroundings[2] & BlockPathfindingState::Fluid)   // are also fluids
+                if (!horizontal_surroundings[1].IsSolid()
+                    && !horizontal_surroundings[1].IsHazardous()
+                    && !horizontal_surroundings[2].IsSolid()
+                    && !horizontal_surroundings[2].IsHazardous()
+                    && !horizontal_surroundings[3].IsEmpty()
+                    && !horizontal_surroundings[3].IsHazardous()
+                    && (!horizontal_surroundings[3].IsFluid()   // We can't go from above a fluid to above
+                        || !vertical_surroundings[3].IsFluid()  // another one to avoid "walking on water"
+                        || horizontal_surroundings[2].IsFluid() // except if one or both "leg level" blocks
+                        || vertical_surroundings[2].IsFluid())  // are also fluids
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 1.0f;
@@ -440,14 +440,14 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (vertical_surroundings[0] != BlockPathfindingState::Solid
-                    && vertical_surroundings[0] != BlockPathfindingState::Hazardous
-                    && vertical_surroundings[1] == BlockPathfindingState::Empty
-                    && vertical_surroundings[2] == BlockPathfindingState::Empty
-                    && vertical_surroundings[3] == BlockPathfindingState::Solid
-                    && horizontal_surroundings[0] != BlockPathfindingState::Solid
-                    && horizontal_surroundings[0] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[1] & BlockPathfindingState::Climbable
+                if (!vertical_surroundings[0].IsSolid()
+                    && !vertical_surroundings[0].IsHazardous()
+                    && vertical_surroundings[1].IsEmpty()
+                    && vertical_surroundings[2].IsEmpty()
+                    && vertical_surroundings[3].IsSolid()
+                    && !horizontal_surroundings[0].IsSolid()
+                    && !horizontal_surroundings[0].IsHazardous()
+                    && horizontal_surroundings[1].IsClimbable()
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -469,17 +469,17 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (vertical_surroundings[0] != BlockPathfindingState::Solid
-                    && vertical_surroundings[0] != BlockPathfindingState::Hazardous
-                    && vertical_surroundings[1] == BlockPathfindingState::Empty
-                    && vertical_surroundings[2] == BlockPathfindingState::Empty
-                    && vertical_surroundings[3] == BlockPathfindingState::Solid
-                    && horizontal_surroundings[0] != BlockPathfindingState::Solid
-                    && horizontal_surroundings[0] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[1] != BlockPathfindingState::Solid
-                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[2] != BlockPathfindingState::Empty
-                    && horizontal_surroundings[2] != BlockPathfindingState::Hazardous
+                if (!vertical_surroundings[0].IsSolid()
+                    && !vertical_surroundings[0].IsHazardous()
+                    && vertical_surroundings[1].IsEmpty()
+                    && vertical_surroundings[2].IsEmpty()
+                    && vertical_surroundings[3].IsSolid()
+                    && !horizontal_surroundings[0].IsSolid()
+                    && !horizontal_surroundings[0].IsHazardous()
+                    && !horizontal_surroundings[1].IsSolid()
+                    && !horizontal_surroundings[1].IsHazardous()
+                    && !horizontal_surroundings[2].IsEmpty()
+                    && !horizontal_surroundings[2].IsHazardous()
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -501,12 +501,12 @@ namespace Botcraft
                 //---    ?
                 //    o  ?
                 //    ?  ?
-                if (horizontal_surroundings[1] != BlockPathfindingState::Solid
-                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[2] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[3] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[4] != BlockPathfindingState::Empty
-                    && horizontal_surroundings[4] != BlockPathfindingState::Hazardous
+                if (!horizontal_surroundings[1].IsSolid()
+                    && !horizontal_surroundings[1].IsHazardous()
+                    && horizontal_surroundings[2].IsEmpty()
+                    && horizontal_surroundings[3].IsEmpty()
+                    && !horizontal_surroundings[4].IsEmpty()
+                    && !horizontal_surroundings[4].IsHazardous()
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -528,13 +528,13 @@ namespace Botcraft
                 //---    ?
                 //       ?
                 //    o  ?
-                if (horizontal_surroundings[1] != BlockPathfindingState::Solid
-                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[2] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[3] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[4] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[5] != BlockPathfindingState::Empty
-                    && horizontal_surroundings[5] != BlockPathfindingState::Hazardous
+                if (!horizontal_surroundings[1].IsSolid()
+                    && !horizontal_surroundings[1].IsHazardous()
+                    && horizontal_surroundings[2].IsEmpty()
+                    && horizontal_surroundings[3].IsEmpty()
+                    && horizontal_surroundings[4].IsEmpty()
+                    && !horizontal_surroundings[5].IsEmpty()
+                    && !horizontal_surroundings[5].IsHazardous()
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 3.5f;
@@ -558,12 +558,12 @@ namespace Botcraft
                 //       ?
                 // Special case here, we can drop down
                 // if there is a climbable at the bottom
-                if (horizontal_surroundings[1] != BlockPathfindingState::Solid
-                    && horizontal_surroundings[1] != BlockPathfindingState::Hazardous
-                    && horizontal_surroundings[2] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[3] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[4] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[5] == BlockPathfindingState::Empty
+                if (!horizontal_surroundings[1].IsSolid()
+                    && !horizontal_surroundings[1].IsHazardous()
+                    && horizontal_surroundings[2].IsEmpty()
+                    && horizontal_surroundings[3].IsEmpty()
+                    && horizontal_surroundings[4].IsEmpty()
+                    && horizontal_surroundings[5].IsEmpty()
                     )
                 {
                     for (int y = -4; next_location.y + y >= world->GetMinY(); --y)
@@ -575,7 +575,7 @@ namespace Botcraft
                             break;
                         }
 
-                        if (GetBlockGoThroughState(block, takes_damage) & BlockPathfindingState::Climbable)
+                        if (PathfindingBlockstate(block, takes_damage).IsClimbable())
                         {
                             const float new_cost = cost[current_node.pos] + std::abs(y) + 1.5f;
                             const Position new_pos = next_location + Position(0, y + 1, 0);
@@ -597,19 +597,19 @@ namespace Botcraft
                 // If we can't make jumps, don't bother explore the rest
                 // of the cases
                 if (!allow_jump
-                    || vertical_surroundings[0] == BlockPathfindingState::Solid       // Block above
-                    || vertical_surroundings[0] == BlockPathfindingState::Hazardous   // Block above
-                    || vertical_surroundings[1] != BlockPathfindingState::Empty       // Block above
-                    || vertical_surroundings[2] != BlockPathfindingState::Empty       // Feet inside climbable
-                    || vertical_surroundings[3] & BlockPathfindingState::Fluid        // "Walking" on fluid
-                    || vertical_surroundings[3] == BlockPathfindingState::Empty       // Feet on nothing (inside climbable)
-                    || horizontal_surroundings[0] == BlockPathfindingState::Solid     // Block above next column
-                    || horizontal_surroundings[0] == BlockPathfindingState::Hazardous // Hazard above next column
-                    || horizontal_surroundings[1] != BlockPathfindingState::Empty     // Non empty block in next column, can't jump through it
-                    || horizontal_surroundings[2] != BlockPathfindingState::Empty     // Non empty block in next column, can't jump through it
-                    || horizontal_surroundings[6] == BlockPathfindingState::Solid     // Block above nextnext column
-                    || horizontal_surroundings[6] == BlockPathfindingState::Hazardous // Hazard above nextnext column
-                    || horizontal_surroundings[7] != BlockPathfindingState::Empty     // Non empty block in nextnext column, can't jump through it
+                    || vertical_surroundings[0].IsSolid()       // Block above
+                    || vertical_surroundings[0].IsHazardous()   // Block above
+                    || !vertical_surroundings[1].IsEmpty()      // Block above
+                    || !vertical_surroundings[2].IsEmpty()      // Feet inside climbable
+                    || vertical_surroundings[3].IsFluid()       // "Walking" on fluid
+                    || vertical_surroundings[3].IsEmpty()       // Feet on nothing (inside climbable)
+                    || horizontal_surroundings[0].IsSolid()     // Block above next column
+                    || horizontal_surroundings[0].IsHazardous() // Hazard above next column
+                    || !horizontal_surroundings[1].IsEmpty()    // Non empty block in next column, can't jump through it
+                    || !horizontal_surroundings[2].IsEmpty()    // Non empty block in next column, can't jump through it
+                    || horizontal_surroundings[6].IsSolid()     // Block above nextnext column
+                    || horizontal_surroundings[6].IsHazardous() // Hazard above nextnext column
+                    || !horizontal_surroundings[7].IsEmpty()    // Non empty block in nextnext column, can't jump through it
                     )
                 {
                     continue;
@@ -622,8 +622,8 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (horizontal_surroundings[8] != BlockPathfindingState::Empty
-                    && horizontal_surroundings[8] != BlockPathfindingState::Hazardous
+                if (!horizontal_surroundings[8].IsEmpty()
+                    && !horizontal_surroundings[8].IsHazardous()
                     )
                 {
                     // 4 > 3.5 as if horizontal_surroundings[3] is solid we prefer to walk then jump instead of big jump
@@ -647,9 +647,9 @@ namespace Botcraft
                 //--- ?  o
                 //    ?  ?
                 //    ?  ?
-                if (horizontal_surroundings[8] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[9] != BlockPathfindingState::Empty
-                    && horizontal_surroundings[9] != BlockPathfindingState::Hazardous
+                if (horizontal_surroundings[8].IsEmpty()
+                    && !horizontal_surroundings[9].IsEmpty()
+                    && !horizontal_surroundings[9].IsHazardous()
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -670,10 +670,10 @@ namespace Botcraft
                 //--- ?   
                 //    ?  o
                 //    ?  ?
-                if (horizontal_surroundings[8] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[9] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[10] != BlockPathfindingState::Empty
-                    && horizontal_surroundings[10] != BlockPathfindingState::Hazardous
+                if (horizontal_surroundings[8].IsEmpty()
+                    && horizontal_surroundings[9].IsEmpty()
+                    && !horizontal_surroundings[10].IsEmpty()
+                    && !horizontal_surroundings[10].IsHazardous()
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 4.5f;
@@ -695,11 +695,11 @@ namespace Botcraft
                 //--- ?   
                 //    ?   
                 //    ?  o
-                if (horizontal_surroundings[8] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[9] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[10] == BlockPathfindingState::Empty
-                    && horizontal_surroundings[11] != BlockPathfindingState::Empty
-                    && horizontal_surroundings[11] != BlockPathfindingState::Hazardous
+                if (horizontal_surroundings[8].IsEmpty()
+                    && horizontal_surroundings[9].IsEmpty()
+                    && horizontal_surroundings[10].IsEmpty()
+                    && !horizontal_surroundings[11].IsEmpty()
+                    && !horizontal_surroundings[11].IsHazardous()
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 5.5f;
