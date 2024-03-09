@@ -284,7 +284,7 @@ namespace Botcraft
                 const float new_cost = cost[current_node.pos] + 1.0f;
                 const std::pair<Position, float> new_pos = {
                     current_node.pos.first + Position(0, -1, 0),
-                    current_node.pos.first.y + 1.0f
+                    current_node.pos.first.y - 1.0f
                 };
                 auto it = cost.find(new_pos);
                 // If we don't already know this node with a better path, add it
@@ -322,7 +322,6 @@ namespace Botcraft
                     new_cost < it->second)
                 {
                     cost[new_pos] = new_cost;
-                    // We need to take the max in case bottom block is a wall or a fence
                     nodes_to_explore.emplace(PathNode(
                         new_pos,
                         new_cost + PathNode::Heuristic(new_pos.first, end))
@@ -358,7 +357,6 @@ namespace Botcraft
                     new_cost < it->second)
                 {
                     cost[new_pos] = new_cost;
-                    // We need to take the max in case bottom block is a wall or a fence
                     nodes_to_explore.emplace(PathNode(
                         new_pos,
                         new_cost + PathNode::Heuristic(new_pos.first, end))
@@ -447,7 +445,7 @@ namespace Botcraft
                 horizontal_surroundings[1] = PathfindingBlockstate(block, pos, takes_damage);
                 const bool horizontal_movement =
                     (!horizontal_surroundings[1].IsSolid() || // 1 is not solid
-                        (horizontal_surroundings[1].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25 && // or 1 is solid and small
+                        (horizontal_surroundings[1].GetHeight() - current_node.pos.second < 1.25f && // or 1 is solid and small
                             !horizontal_surroundings[0].IsSolid() && !horizontal_surroundings[0].IsHazardous())  // and 0 does not prevent standing
                     ) && !horizontal_surroundings[1].IsHazardous();
 
@@ -546,12 +544,12 @@ namespace Botcraft
                     && !vertical_surroundings[0].IsHazardous()
                     && vertical_surroundings[1].IsEmpty()
                     && !vertical_surroundings[2].IsClimbable()
-                    && vertical_surroundings[3].IsSolid()
+                    && (vertical_surroundings[2].IsSolid() || !vertical_surroundings[3].IsClimbable())
                     && !horizontal_surroundings[0].IsSolid()
                     && !horizontal_surroundings[0].IsHazardous()
                     && !horizontal_surroundings[1].IsEmpty()
                     && !horizontal_surroundings[1].IsHazardous()
-                    && horizontal_surroundings[1].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
+                    && horizontal_surroundings[1].GetHeight() - current_node.pos.second < 1.25f
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -582,14 +580,14 @@ namespace Botcraft
                 if (!vertical_surroundings[0].IsSolid()
                     && !vertical_surroundings[0].IsHazardous()
                     && vertical_surroundings[1].IsEmpty()
-                    && vertical_surroundings[3].IsSolid()
+                    && (vertical_surroundings[2].IsSolid() || (vertical_surroundings[2].IsEmpty() && vertical_surroundings[3].IsSolid()))
                     && !horizontal_surroundings[0].IsSolid()
                     && !horizontal_surroundings[0].IsHazardous()
                     && !horizontal_surroundings[1].IsSolid()
                     && !horizontal_surroundings[1].IsHazardous()
                     && !horizontal_surroundings[2].IsEmpty()
                     && !horizontal_surroundings[2].IsHazardous()
-                    && horizontal_surroundings[2].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
+                    && horizontal_surroundings[2].GetHeight() - current_node.pos.second < 1.25f
                     )
                 {
                     const bool above_block = horizontal_surroundings[1].IsClimbable() || horizontal_surroundings[2].IsClimbable() || horizontal_surroundings[2].GetHeight() + 1e-3f > current_node.pos.first.y + 1;
@@ -762,7 +760,7 @@ namespace Botcraft
                 //    ?  ?
                 if (!horizontal_surroundings[7].IsEmpty()
                     && !horizontal_surroundings[7].IsHazardous()
-                    && horizontal_surroundings[7].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
+                    && horizontal_surroundings[7].GetHeight() - current_node.pos.second < 1.25f
                     )
                 {
                     // 5 > 4.5 as if horizontal_surroundings[3] is solid we prefer to walk then jump instead of big jump
@@ -795,7 +793,7 @@ namespace Botcraft
                 if (horizontal_surroundings[7].IsEmpty()
                     && !horizontal_surroundings[8].IsEmpty()
                     && !horizontal_surroundings[8].IsHazardous()
-                    && horizontal_surroundings[8].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
+                    && horizontal_surroundings[8].GetHeight() - current_node.pos.second < 1.25f
                     )
                 {
                     const bool above_block = horizontal_surroundings[8].IsClimbable() || horizontal_surroundings[8].GetHeight() + 1e-3f > current_node.pos.first.y + 1;
@@ -830,7 +828,6 @@ namespace Botcraft
                     && horizontal_surroundings[8].IsEmpty()
                     && !horizontal_surroundings[9].IsEmpty()
                     && !horizontal_surroundings[9].IsHazardous()
-                    && horizontal_surroundings[9].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
                     )
                 {
                     const bool above_block = horizontal_surroundings[9].IsClimbable() || horizontal_surroundings[9].GetHeight() + 1e-3f > current_node.pos.first.y;
