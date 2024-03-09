@@ -246,10 +246,10 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
         {
             const Position pathfinding_start = *components[i].begin() + Position(0, 1, 0);
             const Position pathfinding_end = *current_component.begin() + Position(0, 1, 0);
-            const std::vector<Position> path = FindPath(client, pathfinding_start, pathfinding_end, 0, 0, false, false);
-            const std::vector<Position> reversed_path = FindPath(client, pathfinding_end, pathfinding_start, 0, 0, false, false);
+            const std::vector<std::pair<Position, float>> path = FindPath(client, pathfinding_start, pathfinding_end, 0, 0, false, false);
+            const std::vector<std::pair<Position, float>> reversed_path = FindPath(client, pathfinding_end, pathfinding_start, 0, 0, false, false);
             // If we can pathfind from start to end (both ways to prevent cliff falls that would only allow one-way travel)
-            if (path.back() == pathfinding_end && reversed_path.back() == pathfinding_start)
+            if (path.back().first == pathfinding_end && reversed_path.back().first == pathfinding_start)
             {
                 merged = true;
                 // Add link between the two components as non adjacent neighbours
@@ -258,8 +258,8 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
                 {
                     // If the pathfinding crosses the boundaries of the work area anywhere else than the ladder,
                     // cancel the merging of the components
-                    if ((path[j].x < start.x || path[j].x > end.x || path[j].z < start.z || path[j].z > end.z) &&
-                        path[j].x != start_point.x && path[j].z != start_point.z)
+                    if ((path[j].first.x < start.x || path[j].first.x > end.x || path[j].first.z < start.z || path[j].first.z > end.z) &&
+                        path[j].first.x != start_point.x && path[j].first.z != start_point.z)
                     {
                         merged = false;
                         break;
@@ -268,10 +268,10 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
                     if (additional_neighbours != nullptr)
                     {
                         // If component index of the current path position is equal to the one currently compared to (i)
-                        auto it = components_index.find(path[j] + Position(0, -1, 0));
+                        auto it = components_index.find(path[j].first + Position(0, -1, 0));
                         if (it != components_index.end() && it->second == i)
                         {
-                            path_block_component1 = path[j] + Position(0, -1, 0);
+                            path_block_component1 = path[j].first + Position(0, -1, 0);
                         }
                     }
                 }
@@ -280,8 +280,8 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
                 {
                     // If the pathfinding crosses the boundaries of the work area anywhere else than the ladder,
                     // cancel the merging of the components
-                    if ((reversed_path[j].x < start.x || reversed_path[j].x > end.x || reversed_path[j].z < start.z || reversed_path[j].z > end.z) &&
-                        reversed_path[j].x != start_point.x && reversed_path[j].z != start_point.z)
+                    if ((reversed_path[j].first.x < start.x || reversed_path[j].first.x > end.x || reversed_path[j].first.z < start.z || reversed_path[j].first.z > end.z) &&
+                        reversed_path[j].first.x != start_point.x && reversed_path[j].first.z != start_point.z)
                     {
                         merged = false;
                         break;
@@ -290,10 +290,10 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
                     if (additional_neighbours != nullptr)
                     {
                         // If component index of the current path position is equal to the current one to add (components.size())
-                        auto it = components_index.find(reversed_path[j] + Position(0, -1, 0));
+                        auto it = components_index.find(reversed_path[j].first + Position(0, -1, 0));
                         if (it != components_index.end() && it->second == components.size())
                         {
-                            path_block_component2 = reversed_path[j] + Position(0, -1, 0);
+                            path_block_component2 = reversed_path[j].first + Position(0, -1, 0);
                         }
                     }
                 }
