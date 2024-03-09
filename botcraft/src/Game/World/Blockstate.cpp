@@ -586,9 +586,15 @@ namespace Botcraft
 
     unsigned char Blockstate::GetModelId(const Position& pos) const
     {
-        size_t random_value = std::hash<Position>{}(pos) % weights_sum;
-        
         const size_t num_models = models_weights.size();
+
+        // If there is only one model, don't bother computing hash
+        if (num_models == 1)
+        {
+            return 0;
+        }
+
+        size_t random_value = std::hash<Position>{}(pos) % weights_sum;
         for (int i = 0; i < num_models; ++i)
         {
             if (random_value < models_weights[i])

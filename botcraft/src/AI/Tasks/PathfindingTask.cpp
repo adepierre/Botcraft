@@ -18,13 +18,16 @@ namespace Botcraft
     class PathfindingBlockstate
     {
     public:
-        PathfindingBlockstate(const Blockstate* block = nullptr, const bool take_damage = true) : block(block)
+        PathfindingBlockstate() = default;
+        PathfindingBlockstate(const Blockstate* block, const Position& pos, const bool take_damage) : block(block)
         {
+            height = pos.y;
             if (block == nullptr)
             {
                 empty = true;
                 return;
             }
+            empty = false;
 
             if (take_damage && block->IsHazardous())
             {
@@ -48,6 +51,11 @@ namespace Botcraft
             if (block->IsSolid())
             {
                 solid = true;
+                const auto& colliders = block->GetCollidersAtPos(pos);
+                for (const auto& c : colliders)
+                {
+                    height = std::max(static_cast<float>(c.GetMax().y), height);
+                }
             }
             else
             {
@@ -61,25 +69,29 @@ namespace Botcraft
         bool IsHazardous() const { return hazardous; }
         bool IsClimbable() const { return climbable; }
         bool IsFluid() const { return fluid; }
+        float GetHeight() const { return height; }
 
     private:
-        const Blockstate* block;
-        bool empty = false;
+        const Blockstate* block = nullptr;
+        bool empty = true;
         bool solid = false;
         bool hazardous = false;
         bool climbable = false;
         bool fluid = false;
+        float height = 0.0f;
     };
 
     std::vector<Position> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump)
     {
         struct PathNode
         {
-            Position pos;
+            Position pos; // Block in which the feet are
+            float height; // y height of feet
             float score; // distance from start + heuristic to goal
-            PathNode(const Position& p, const float s)
+            PathNode(const Position& p, const float h, const float s)
             {
                 pos = p;
+                height = h;
                 score = s;
             }
 
@@ -101,7 +113,10 @@ namespace Botcraft
         std::unordered_map<Position, Position> came_from;
         std::unordered_map<Position, float> cost;
 
-        nodes_to_explore.emplace(PathNode(start, 0.0f));
+        const bool takes_damage = !client.GetLocalPlayer()->GetInvulnerable();
+        std::shared_ptr<World> world = client.GetWorld();
+        const Blockstate* block = world->GetBlock(start);
+        nodes_to_explore.emplace(PathNode(start, PathfindingBlockstate(block, start, takes_damage).GetHeight(), 0.0f));
         came_from[start] = start;
         cost[start] = 0.0f;
 
@@ -113,10 +128,8 @@ namespace Botcraft
         bool end_reached = false;
 
         bool end_is_inside_solid = false;
-        std::shared_ptr<World> world = client.GetWorld();
-        const Blockstate* block = world->GetBlock(end);
+        block = world->GetBlock(end);
         end_is_inside_solid = block != nullptr && block->IsSolid();
-        const bool takes_damage = !client.GetLocalPlayer()->GetInvulnerable();
 
         while (!nodes_to_explore.empty())
         {
@@ -148,26 +161,37 @@ namespace Botcraft
             // 3
             // 4
             // 5
-            const Blockstate* block = world->GetBlock(current_node.pos + Position(0, 2, 0));
-            vertical_surroundings[0] = PathfindingBlockstate(block, takes_damage);
-            block = world->GetBlock(current_node.pos + Position(0, 1, 0));
-            vertical_surroundings[1] = PathfindingBlockstate(block, takes_damage);
-            // Our feet block (should be climbable or empty)
-            block = world->GetBlock(current_node.pos);
-            vertical_surroundings[2] = PathfindingBlockstate(block, takes_damage);
+            Position pos = current_node.pos + Position(0, 2, 0);
+            block = world->GetBlock(pos);
+            vertical_surroundings[0] = PathfindingBlockstate(block, pos, takes_damage);
+            pos = current_node.pos + Position(0, 1, 0);
+            block = world->GetBlock(pos);
+            vertical_surroundings[1] = PathfindingBlockstate(block, pos, takes_damage);
+            // Current feet block
+            pos = current_node.pos;
+            block = world->GetBlock(pos);
+            vertical_surroundings[2] = PathfindingBlockstate(block, pos, takes_damage);
 
-            // if 3 is solid or hazardous, no down pathfinding is possible,
+            // if 2 is solid or hazardous, no down pathfinding is possible,
             // so we can skip a few checks
-            block = world->GetBlock(current_node.pos + Position(0, -1, 0));
-            vertical_surroundings[3] = PathfindingBlockstate(block, takes_damage);
-
-            // If we can move down, we need 4 and 5
-            if (!vertical_surroundings[3].IsSolid() && !vertical_surroundings[3].IsHazardous())
+            if (!vertical_surroundings[2].IsSolid() && !vertical_surroundings[2].IsHazardous())
             {
-                block = world->GetBlock(current_node.pos + Position(0, -2, 0));
-                vertical_surroundings[4] = PathfindingBlockstate(block, takes_damage);
-                block = world->GetBlock(current_node.pos + Position(0, -3, 0));
-                vertical_surroundings[5] = PathfindingBlockstate(block, takes_damage);
+                // if 3 is solid or hazardous, no down pathfinding is possible,
+                // so we can skip a few checks
+                pos = current_node.pos + Position(0, -1, 0);
+                block = world->GetBlock(pos);
+                vertical_surroundings[3] = PathfindingBlockstate(block, pos, takes_damage);
+
+                // If we can move down, we need 4 and 5
+                if (!vertical_surroundings[3].IsSolid() && !vertical_surroundings[3].IsHazardous())
+                {
+                    pos = current_node.pos + Position(0, -2, 0);
+                    block = world->GetBlock(pos);
+                    vertical_surroundings[4] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = current_node.pos + Position(0, -3, 0);
+                    block = world->GetBlock(pos);
+                    vertical_surroundings[5] = PathfindingBlockstate(block, pos, takes_damage);
+                }
             }
 
 
@@ -193,22 +217,23 @@ namespace Botcraft
                     new_cost < it->second)
                 {
                     cost[new_pos] = new_cost;
-                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    nodes_to_explore.emplace(PathNode(new_pos, new_pos.y, new_cost + PathNode::Heuristic(new_pos, end)));
                     came_from[new_pos] = current_node.pos;
                 }
             }
 
             // -
             // ^
-            //  
+            // x
             // o
             // ?
             // ?
-            if (vertical_surroundings[3].IsSolid()
-                && vertical_surroundings[2].IsEmpty()
-                && vertical_surroundings[1].IsClimbable()
+            if (vertical_surroundings[1].IsClimbable()
                 && !vertical_surroundings[0].IsSolid()
                 && !vertical_surroundings[0].IsHazardous()
+                && (vertical_surroundings[2].IsSolid() || // we stand on top of 2
+                    (!vertical_surroundings[2].IsClimbable() && vertical_surroundings[3].IsSolid()) // if not, it means we stand on 3. Height difference check is not necessary, as the feet are in 2, we know 3 is at least 1 tall
+                   )
                 )
             {
                 const float new_cost = cost[current_node.pos] + 1.5f;
@@ -219,18 +244,20 @@ namespace Botcraft
                     new_cost < it->second)
                 {
                     cost[new_pos] = new_cost;
-                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    nodes_to_explore.emplace(PathNode(new_pos, new_pos.y, new_cost + PathNode::Heuristic(new_pos, end)));
                     came_from[new_pos] = current_node.pos;
                 }
             }
 
             // ?
             // x
-            // x
+            //  
             // -
             // ?
             // ?
-            if (vertical_surroundings[3].IsClimbable())
+            if (!vertical_surroundings[2].IsSolid() &&
+                vertical_surroundings[3].IsClimbable()
+                )
             {
                 const float new_cost = cost[current_node.pos] + 1.0f;
                 const Position new_pos = current_node.pos + Position(0, -1, 0);
@@ -240,32 +267,39 @@ namespace Botcraft
                     new_cost < it->second)
                 {
                     cost[new_pos] = new_cost;
-                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    nodes_to_explore.emplace(PathNode(new_pos, new_pos.y, new_cost + PathNode::Heuristic(new_pos, end)));
                     came_from[new_pos] = current_node.pos;
                 }
             }
 
             // ?
             // x
-            // x
+            //  
             // -
             //  
             // o
-            if (vertical_surroundings[3].IsClimbable()
+            if (!vertical_surroundings[2].IsSolid() &&
+                vertical_surroundings[3].IsClimbable()
                 && vertical_surroundings[4].IsEmpty()
                 && !vertical_surroundings[5].IsEmpty()
                 && !vertical_surroundings[5].IsHazardous()
                 )
             {
-                const float new_cost = cost[current_node.pos] + 2.0f;
-                const Position new_pos = current_node.pos + Position(0, -2, 0);
+                const bool above_block = vertical_surroundings[5].IsClimbable() || vertical_surroundings[5].GetHeight() + 1e-3f > current_node.pos.y - 2;
+                const float new_cost = cost[current_node.pos] + 3.0f - 1.0f * above_block;
+                const Position new_pos = current_node.pos + Position(0, -3 + 1 * above_block, 0);
                 auto it = cost.find(new_pos);
                 // If we don't already know this node with a better path, add it
                 if (it == cost.end() ||
                     new_cost < it->second)
                 {
                     cost[new_pos] = new_cost;
-                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    // We need to take the max in case bottom block is a wall or a fence
+                    nodes_to_explore.emplace(PathNode(
+                        new_pos,
+                        above_block ? std::max(current_node.pos.y - 2.0f, vertical_surroundings[5].GetHeight()) : vertical_surroundings[5].GetHeight(),
+                        new_cost + PathNode::Heuristic(new_pos, end))
+                    );
                     came_from[new_pos] = current_node.pos;
                 }
             }
@@ -285,15 +319,21 @@ namespace Botcraft
                 && !vertical_surroundings[5].IsHazardous()
                 )
             {
-                const float new_cost = cost[current_node.pos] + 2.0f;
-                const Position new_pos = current_node.pos + Position(0, -2, 0);
+                const bool above_block = vertical_surroundings[5].IsClimbable() || vertical_surroundings[5].GetHeight() + 1e-3f > current_node.pos.y - 2;
+                const float new_cost = cost[current_node.pos] + 3.0f - 1.0f * above_block;
+                const Position new_pos = current_node.pos + Position(0, -3 + 1 * above_block, 0);
                 auto it = cost.find(new_pos);
                 // If we don't already know this node with a better path, add it
                 if (it == cost.end() ||
                     new_cost < it->second)
                 {
                     cost[new_pos] = new_cost;
-                    nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                    // We need to take the max in case bottom block is a wall or a fence
+                    nodes_to_explore.emplace(PathNode(
+                        new_pos,
+                        above_block ? std::max(current_node.pos.y - 2.0f, vertical_surroundings[5].GetHeight()) : vertical_surroundings[5].GetHeight(),
+                        new_cost + PathNode::Heuristic(new_pos, end))
+                    );
                     came_from[new_pos] = current_node.pos;
                 }
             }
@@ -301,27 +341,30 @@ namespace Botcraft
 
             // ?
             // x
-            // x
+            //  
             // -
             //  
             //  
             // Special case here, we can drop down
             // if there is a climbable at the bottom
-            if (vertical_surroundings[3].IsClimbable()
+            if (!vertical_surroundings[2].IsSolid() &&
+                vertical_surroundings[3].IsClimbable()
                 && vertical_surroundings[4].IsEmpty()
                 && vertical_surroundings[5].IsEmpty()
                 )
             {
                 for (int y = -4; current_node.pos.y + y >= world->GetMinY(); --y)
                 {
-                    block = world->GetBlock(current_node.pos + Position(0, y, 0));
+                    pos = current_node.pos + Position(0, y, 0);
+                    block = world->GetBlock(pos);
 
                     if (block != nullptr && block->IsSolid() && !block->IsClimbable())
                     {
                         break;
                     }
 
-                    if (PathfindingBlockstate(block, takes_damage).IsClimbable())
+                    const PathfindingBlockstate landing_block(block, pos, takes_damage);
+                    if (landing_block.IsClimbable())
                     {
                         const float new_cost = cost[current_node.pos] + std::abs(y);
                         const Position new_pos = current_node.pos + Position(0, y + 1, 0);
@@ -331,7 +374,7 @@ namespace Botcraft
                             new_cost < it->second)
                         {
                             cost[new_pos] = new_cost;
-                            nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                            nodes_to_explore.emplace(PathNode(new_pos, new_pos.y, new_cost + PathNode::Heuristic(new_pos, end)));
                             came_from[new_pos] = current_node.pos;
                         }
 
@@ -359,43 +402,59 @@ namespace Botcraft
                 // v4   4  10 --> ?  ?  ?
                 // v5   5  11 --> ?  ?  ?
 
-                // if 1 is solid, no horizontal pathfinding is possible,
+                // if 1 is solid and tall, no horizontal pathfinding is possible,
                 // so we can skip a lot of checks
-                block = world->GetBlock(next_location + Position(0, 1, 0));
-                horizontal_surroundings[1] = PathfindingBlockstate(block, takes_damage);
-                const bool horizontal_movement = !horizontal_surroundings[1].IsSolid() && !horizontal_surroundings[1].IsHazardous();
+                pos = next_location + Position(0, 2, 0);
+                block = world->GetBlock(pos);
+                horizontal_surroundings[0] = PathfindingBlockstate(block, pos, takes_damage);
+                pos = next_location + Position(0, 1, 0);
+                block = world->GetBlock(pos);
+                horizontal_surroundings[1] = PathfindingBlockstate(block, pos, takes_damage);
+                const bool horizontal_movement =
+                    (!horizontal_surroundings[1].IsSolid() || // 1 is not solid
+                        (horizontal_surroundings[1].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25 && // or 1 is solid and small
+                            !horizontal_surroundings[0].IsSolid() && !horizontal_surroundings[0].IsHazardous())  // and 0 does not prevent standing
+                    ) && !horizontal_surroundings[1].IsHazardous();
 
-                // If we can move horizontally, we need the full column
+                // If we can move horizontally, get the full column
                 if (horizontal_movement)
                 {
-                    block = world->GetBlock(next_location + Position(0, 2, 0));
-                    horizontal_surroundings[0] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_location);
-                    horizontal_surroundings[2] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_location + Position(0, -1, 0));
-                    horizontal_surroundings[3] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_location + Position(0, -2, 0));
-                    horizontal_surroundings[4] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_location + Position(0, -3, 0));
-                    horizontal_surroundings[5] = PathfindingBlockstate(block, takes_damage);
+                    pos = next_location;
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[2] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = next_location + Position(0, -1, 0);
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[3] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = next_location + Position(0, -2, 0);
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[4] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = next_location + Position(0, -3, 0);
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[5] = PathfindingBlockstate(block, pos, takes_damage);
                 }
 
                 // You can't make large jumps if your feet are in a climbable block
                 // If we can jump, then we need the third column
                 if (allow_jump && !vertical_surroundings[2].IsClimbable())
                 {
-                    block = world->GetBlock(next_next_location + Position(0, 2, 0));
-                    horizontal_surroundings[6] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_next_location + Position(0, 1, 0));
-                    horizontal_surroundings[7] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_next_location);
-                    horizontal_surroundings[8] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_next_location + Position(0, -1, 0));
-                    horizontal_surroundings[9] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_next_location + Position(0, -2, 0));
-                    horizontal_surroundings[10] = PathfindingBlockstate(block, takes_damage);
-                    block = world->GetBlock(next_next_location + Position(0, -3, 0));
-                    horizontal_surroundings[11] = PathfindingBlockstate(block, takes_damage);
+                    pos = next_next_location + Position(0, 2, 0);
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[6] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = next_next_location + Position(0, 1, 0);
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[7] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = next_next_location;
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[8] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = next_next_location + Position(0, -1, 0);
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[9] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = next_next_location + Position(0, -2, 0);
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[10] = PathfindingBlockstate(block, pos, takes_damage);
+                    pos = next_next_location + Position(0, -3, 0);
+                    block = world->GetBlock(pos);
+                    horizontal_surroundings[11] = PathfindingBlockstate(block, pos, takes_damage);
                 }
 
                 // Now that we know the surroundings, we can check all
@@ -421,21 +480,27 @@ namespace Botcraft
                         || vertical_surroundings[2].IsFluid())  // are also fluids
                     )
                 {
-                    const float new_cost = cost[current_node.pos] + 1.0f;
-                    auto it = cost.find(next_location);
+                    const bool above_block = horizontal_surroundings[2].IsClimbable() || horizontal_surroundings[3].IsClimbable() || horizontal_surroundings[3].GetHeight() + 1e-3f > current_node.pos.y;
+                    const float new_cost = cost[current_node.pos] + 2.0f - 1.0f * above_block;
+                    const Position new_pos = next_location + Position(0, 1 - 1 * above_block, 0);
+                    auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
                     if (it == cost.end() ||
                         new_cost < it->second)
                     {
-                        cost[next_location] = new_cost;
-                        nodes_to_explore.emplace(PathNode(next_location, new_cost + PathNode::Heuristic(next_location, end)));
-                        came_from[next_location] = current_node.pos;
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            above_block ? std::max(static_cast<float>(next_location.y), horizontal_surroundings[3].GetHeight()) : std::max(horizontal_surroundings[3].GetHeight(), horizontal_surroundings[4].GetHeight()),
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
+                        came_from[new_pos] = current_node.pos;
                     }
                 }
 
 
                 // -  -  ?
-                // x  ^  ?
+                // x  o  ?
                 // x  ?  ?
                 //--- ?  ?
                 //    ?  ?
@@ -443,11 +508,13 @@ namespace Botcraft
                 if (!vertical_surroundings[0].IsSolid()
                     && !vertical_surroundings[0].IsHazardous()
                     && vertical_surroundings[1].IsEmpty()
-                    && vertical_surroundings[2].IsEmpty()
+                    && !vertical_surroundings[2].IsClimbable()
                     && vertical_surroundings[3].IsSolid()
                     && !horizontal_surroundings[0].IsSolid()
                     && !horizontal_surroundings[0].IsHazardous()
-                    && horizontal_surroundings[1].IsClimbable()
+                    && !horizontal_surroundings[1].IsEmpty()
+                    && !horizontal_surroundings[1].IsHazardous()
+                    && horizontal_surroundings[1].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
                     )
                 {
                     const float new_cost = cost[current_node.pos] + 2.5f;
@@ -458,7 +525,11 @@ namespace Botcraft
                         new_cost < it->second)
                     {
                         cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            std::max(horizontal_surroundings[1].GetHeight(), horizontal_surroundings[2].GetHeight()), // for the carpet on wall trick
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
                         came_from[new_pos] = current_node.pos;
                     }
                 }
@@ -472,7 +543,6 @@ namespace Botcraft
                 if (!vertical_surroundings[0].IsSolid()
                     && !vertical_surroundings[0].IsHazardous()
                     && vertical_surroundings[1].IsEmpty()
-                    && vertical_surroundings[2].IsEmpty()
                     && vertical_surroundings[3].IsSolid()
                     && !horizontal_surroundings[0].IsSolid()
                     && !horizontal_surroundings[0].IsHazardous()
@@ -480,17 +550,23 @@ namespace Botcraft
                     && !horizontal_surroundings[1].IsHazardous()
                     && !horizontal_surroundings[2].IsEmpty()
                     && !horizontal_surroundings[2].IsHazardous()
+                    && horizontal_surroundings[2].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
                     )
                 {
-                    const float new_cost = cost[current_node.pos] + 2.5f;
-                    const Position new_pos = next_location + Position(0, 1, 0);
+                    const bool above_block = horizontal_surroundings[1].IsClimbable() || horizontal_surroundings[2].IsClimbable() || horizontal_surroundings[2].GetHeight() + 1e-3f > current_node.pos.y + 1;
+                    const float new_cost = cost[current_node.pos] + 1.0f + 1.0f * above_block + 0.5f * (horizontal_surroundings[1].IsClimbable() || horizontal_surroundings[2].GetHeight() - vertical_surroundings[2].GetHeight() > 0.5);
+                    const Position new_pos = next_location + Position(0, 1 * above_block, 0);
                     auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
                     if (it == cost.end() ||
                         new_cost < it->second)
                     {
                         cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            above_block ? std::max(current_node.pos.y + 1.0f, horizontal_surroundings[2].GetHeight()) : std::max(horizontal_surroundings[2].GetHeight(), horizontal_surroundings[3].GetHeight()),
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
                         came_from[new_pos] = current_node.pos;
                     }
                 }
@@ -509,15 +585,20 @@ namespace Botcraft
                     && !horizontal_surroundings[4].IsHazardous()
                     )
                 {
-                    const float new_cost = cost[current_node.pos] + 2.5f;
-                    const Position new_pos = next_location + Position(0, -1, 0);
+                    const bool above_block = horizontal_surroundings[4].IsClimbable() || horizontal_surroundings[4].GetHeight() + 1e-3f > current_node.pos.y - 1;
+                    const float new_cost = cost[current_node.pos] + 3.5f - 1.0f * above_block;
+                    const Position new_pos = next_location + Position(0, -2 + 1 * above_block, 0);
                     auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
                     if (it == cost.end() ||
                         new_cost < it->second)
                     {
                         cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            above_block ? std::max(current_node.pos.y - 1.0f, horizontal_surroundings[4].GetHeight()) : std::max(horizontal_surroundings[4].GetHeight(), horizontal_surroundings[5].GetHeight()),
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
                         came_from[new_pos] = current_node.pos;
                     }
                 }
@@ -537,15 +618,20 @@ namespace Botcraft
                     && !horizontal_surroundings[5].IsHazardous()
                     )
                 {
-                    const float new_cost = cost[current_node.pos] + 3.5f;
-                    const Position new_pos = next_location + Position(0, -2, 0);
+                    const bool above_block = horizontal_surroundings[5].IsClimbable() || horizontal_surroundings[5].GetHeight() + 1e-3f > current_node.pos.y - 2;
+                    const float new_cost = cost[current_node.pos] + 4.5f - 1.0f * above_block;
+                    const Position new_pos = next_location + Position(0, -3 + 1 * above_block, 0);
                     auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
                     if (it == cost.end() ||
                         new_cost < it->second)
                     {
                         cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            above_block ? std::max(current_node.pos.y - 2.0f, horizontal_surroundings[5].GetHeight()) : horizontal_surroundings[5].GetHeight(), // no carpet on wall check here as we don't have the block below
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
                         came_from[new_pos] = current_node.pos;
                     }
                 }
@@ -568,14 +654,16 @@ namespace Botcraft
                 {
                     for (int y = -4; next_location.y + y >= world->GetMinY(); --y)
                     {
-                        block = world->GetBlock(next_location + Position(0, y, 0));
+                        pos = next_location + Position(0, y, 0);
+                        block = world->GetBlock(pos);
 
                         if (block != nullptr && block->IsSolid() && !block->IsClimbable())
                         {
                             break;
                         }
 
-                        if (PathfindingBlockstate(block, takes_damage).IsClimbable())
+                        const PathfindingBlockstate landing_block(block, pos, takes_damage);
+                        if (landing_block.IsClimbable())
                         {
                             const float new_cost = cost[current_node.pos] + std::abs(y) + 1.5f;
                             const Position new_pos = next_location + Position(0, y + 1, 0);
@@ -585,7 +673,7 @@ namespace Botcraft
                                 new_cost < it->second)
                             {
                                 cost[new_pos] = new_cost;
-                                nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                                nodes_to_explore.emplace(PathNode(new_pos, new_pos.y, new_cost + PathNode::Heuristic(new_pos, end)));
                                 came_from[new_pos] = current_node.pos;
                             }
 
@@ -600,7 +688,7 @@ namespace Botcraft
                     || vertical_surroundings[0].IsSolid()       // Block above
                     || vertical_surroundings[0].IsHazardous()   // Block above
                     || !vertical_surroundings[1].IsEmpty()      // Block above
-                    || !vertical_surroundings[2].IsEmpty()      // Feet inside climbable
+                    || vertical_surroundings[2].IsClimbable()   // Feet inside climbable
                     || vertical_surroundings[3].IsFluid()       // "Walking" on fluid
                     || vertical_surroundings[3].IsEmpty()       // Feet on nothing (inside climbable)
                     || horizontal_surroundings[0].IsSolid()     // Block above next column
@@ -609,7 +697,6 @@ namespace Botcraft
                     || !horizontal_surroundings[2].IsEmpty()    // Non empty block in next column, can't jump through it
                     || horizontal_surroundings[6].IsSolid()     // Block above nextnext column
                     || horizontal_surroundings[6].IsHazardous() // Hazard above nextnext column
-                    || !horizontal_surroundings[7].IsEmpty()    // Non empty block in nextnext column, can't jump through it
                     )
                 {
                     continue;
@@ -617,18 +704,19 @@ namespace Botcraft
 
                 /************ BIG JUMP **************/
                 // -  -  -
-                // x      
                 // x     o
+                // x     ?
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (!horizontal_surroundings[8].IsEmpty()
-                    && !horizontal_surroundings[8].IsHazardous()
+                if (!horizontal_surroundings[7].IsEmpty()
+                    && !horizontal_surroundings[7].IsHazardous()
+                    && horizontal_surroundings[7].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
                     )
                 {
-                    // 4 > 3.5 as if horizontal_surroundings[3] is solid we prefer to walk then jump instead of big jump
+                    // 5 > 4.5 as if horizontal_surroundings[3] is solid we prefer to walk then jump instead of big jump
                     // but if horizontal_surroundings[3] is hazardous we can jump over it
-                    const float new_cost = cost[current_node.pos] + 4.0f;
+                    const float new_cost = cost[current_node.pos] + 5.0f;
                     const Position new_pos = next_next_location + Position(0, 1, 0);
                     auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
@@ -636,7 +724,43 @@ namespace Botcraft
                         new_cost < it->second)
                     {
                         cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            std::max(horizontal_surroundings[7].GetHeight(), horizontal_surroundings[8].GetHeight()), // for the carpet on wall trick
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
+                        came_from[new_pos] = current_node.pos;
+                    }
+                }
+
+                // -  -  -
+                // x      
+                // x     o
+                //--- ?  ?
+                //    ?  ?
+                //    ?  ?
+                if (horizontal_surroundings[7].IsEmpty()
+                    && !horizontal_surroundings[8].IsEmpty()
+                    && !horizontal_surroundings[8].IsHazardous()
+                    && horizontal_surroundings[8].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
+                    )
+                {
+                    const bool above_block = horizontal_surroundings[8].IsClimbable() || horizontal_surroundings[8].GetHeight() + 1e-3f > current_node.pos.y + 1;
+                    // 4 > 3.5 as if horizontal_surroundings[3] is solid we prefer to walk then jump instead of big jump
+                    // but if horizontal_surroundings[3] is hazardous we can jump over it
+                    const float new_cost = cost[current_node.pos] + 3.0f + 1.0f * above_block;
+                    const Position new_pos = next_next_location + Position(0, above_block * 1, 0);
+                    auto it = cost.find(new_pos);
+                    // If we don't already know this node with a better path, add it
+                    if (it == cost.end() ||
+                        new_cost < it->second)
+                    {
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            above_block ? std::max(current_node.pos.y + 1.0f, horizontal_surroundings[8].GetHeight()) : std::max(horizontal_surroundings[8].GetHeight(), horizontal_surroundings[9].GetHeight()),
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
                         came_from[new_pos] = current_node.pos;
                     }
                 }
@@ -647,20 +771,28 @@ namespace Botcraft
                 //--- ?  o
                 //    ?  ?
                 //    ?  ?
-                if (horizontal_surroundings[8].IsEmpty()
+                if (horizontal_surroundings[7].IsEmpty()
+                    && horizontal_surroundings[8].IsEmpty()
                     && !horizontal_surroundings[9].IsEmpty()
                     && !horizontal_surroundings[9].IsHazardous()
+                    && horizontal_surroundings[9].GetHeight() - vertical_surroundings[2].GetHeight() < 1.25
                     )
                 {
-                    const float new_cost = cost[current_node.pos] + 2.5f;
-                    auto it = cost.find(next_next_location);
+                    const bool above_block = horizontal_surroundings[9].IsClimbable() || horizontal_surroundings[9].GetHeight() + 1e-3f > current_node.pos.y;
+                    const float new_cost = cost[current_node.pos] + 3.5f - 1.0f * above_block;
+                    const Position new_pos = next_next_location + Position(0,  -1 + 1 * above_block, 0);
+                    auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
                     if (it == cost.end() ||
                         new_cost < it->second)
                     {
-                        cost[next_next_location] = new_cost;
-                        nodes_to_explore.emplace(PathNode(next_next_location, new_cost + PathNode::Heuristic(next_next_location, end)));
-                        came_from[next_next_location] = current_node.pos;
+                        cost[new_pos] = new_cost;
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            above_block ? std::max(static_cast<float>(current_node.pos.y), horizontal_surroundings[9].GetHeight()) : std::max(horizontal_surroundings[9].GetHeight(), horizontal_surroundings[10].GetHeight()),
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
+                        came_from[new_pos] = current_node.pos;
                     }
                 }
 
@@ -670,21 +802,27 @@ namespace Botcraft
                 //--- ?   
                 //    ?  o
                 //    ?  ?
-                if (horizontal_surroundings[8].IsEmpty()
+                if (horizontal_surroundings[7].IsEmpty()
+                    && horizontal_surroundings[8].IsEmpty()
                     && horizontal_surroundings[9].IsEmpty()
                     && !horizontal_surroundings[10].IsEmpty()
                     && !horizontal_surroundings[10].IsHazardous()
                     )
                 {
-                    const float new_cost = cost[current_node.pos] + 4.5f;
-                    const Position new_pos = next_next_location + Position(0, -1, 0);
+                    const bool above_block = horizontal_surroundings[10].IsClimbable() || horizontal_surroundings[10].GetHeight() + 1e-3f > current_node.pos.y - 1;
+                    const float new_cost = cost[current_node.pos] + 4.5f - 1.0f * above_block;
+                    const Position new_pos = next_next_location + Position(0, -2 + 1 * above_block, 0);
                     auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
                     if (it == cost.end() ||
                         new_cost < it->second)
                     {
                         cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            above_block ? std::max(current_node.pos.y - 1.0f, horizontal_surroundings[10].GetHeight()) : std::max(horizontal_surroundings[10].GetHeight(), horizontal_surroundings[11].GetHeight()),
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
                         came_from[new_pos] = current_node.pos;
                     }
                 }
@@ -695,22 +833,28 @@ namespace Botcraft
                 //--- ?   
                 //    ?   
                 //    ?  o
-                if (horizontal_surroundings[8].IsEmpty()
+                if (horizontal_surroundings[7].IsEmpty()
+                    && horizontal_surroundings[8].IsEmpty()
                     && horizontal_surroundings[9].IsEmpty()
                     && horizontal_surroundings[10].IsEmpty()
                     && !horizontal_surroundings[11].IsEmpty()
                     && !horizontal_surroundings[11].IsHazardous()
                     )
                 {
-                    const float new_cost = cost[current_node.pos] + 5.5f;
-                    const Position new_pos = next_next_location + Position(0, -2, 0);
+                    const bool above_block = horizontal_surroundings[11].IsClimbable() || horizontal_surroundings[11].GetHeight() + 1e-3f > current_node.pos.y - 2;
+                    const float new_cost = cost[current_node.pos] + 6.5f - 1.0f * above_block;
+                    const Position new_pos = next_next_location + Position(0, -3 + 1 * above_block, 0);
                     auto it = cost.find(new_pos);
                     // If we don't already know this node with a better path, add it
                     if (it == cost.end() ||
                         new_cost < it->second)
                     {
                         cost[new_pos] = new_cost;
-                        nodes_to_explore.emplace(PathNode(new_pos, new_cost + PathNode::Heuristic(new_pos, end)));
+                        nodes_to_explore.emplace(PathNode(
+                            new_pos,
+                            above_block ? std::max(current_node.pos.y - 2.0f, horizontal_surroundings[11].GetHeight()) : horizontal_surroundings[1].GetHeight(),
+                            new_cost + PathNode::Heuristic(new_pos, end))
+                        );
                         came_from[new_pos] = current_node.pos;
                     }
                 }
