@@ -989,9 +989,13 @@ namespace Botcraft
         0xCF, 0x0C, 0x18, 0xED, 0xE2, 0xD1
     };
 
-    bool Move(BehaviourClient& client, std::shared_ptr<LocalPlayer>& local_player, const Position& target_pos, const float speed_factor, const bool sprint)
+    bool Move(BehaviourClient& client, std::shared_ptr<LocalPlayer>& local_player, const Vector3<double>& target_position, const float speed_factor, const bool sprint)
     {
-        const Vector3<double> target_position(target_pos.x + 0.5, target_pos.y, target_pos.z + 0.5);
+        const Position target_block(
+            static_cast<int>(std::floor(target_position.x)),
+            static_cast<int>(std::floor(target_position.y)),
+            static_cast<int>(std::floor(target_position.z))
+        );
         const Vector3<double> look_at_target = target_position + Vector3<double>(0.0, local_player->GetEyeHeight(), 0.0);
         const Vector3<double> motion_vector = target_position - local_player->GetPosition();
         const double half_player_width = 0.5 * local_player->GetWidth();
@@ -1028,7 +1032,7 @@ namespace Botcraft
 
                     if (!Utilities::YieldForCondition([&]() -> bool
                         {
-                            return local_player->GetY() >= target_pos.y;
+                            return local_player->GetY() >= target_block.y;
                         }, client, 2000))
                     {
                         return false;
@@ -1089,8 +1093,8 @@ namespace Botcraft
                     // If we need to fall, stop accelerating to prevent "overshooting" and potentially
                     // hit some block on the bottom or on the side of the dropshoot
                     if (motion_vector.y < -0.5 &&
-                        static_cast<int>(std::floor(current_pos.x)) == target_pos.x &&
-                        static_cast<int>(std::floor(current_pos.z)) == target_pos.z)
+                        static_cast<int>(std::floor(current_pos.x)) == target_block.x &&
+                        static_cast<int>(std::floor(current_pos.z)) == target_block.z)
                     {
                         if (std::max(std::abs(speed.x), std::abs(speed.z)) > 0.12) // 0.12 because I needed a value so why not
                         {
@@ -1122,7 +1126,7 @@ namespace Botcraft
                     return false;
                 }
 
-                if (static_cast<int>(std::floor(local_player->GetY())) <= target_pos.y &&
+                if (static_cast<int>(std::floor(local_player->GetY())) <= target_block.y &&
                     (local_player->GetOnGround() || local_player->IsClimbing() || local_player->IsInFluid()))
                 {
                     return true;
@@ -1161,7 +1165,7 @@ namespace Botcraft
                 }
 
                 const Vector3<double> current_pos = local_player->GetPosition();
-                if (static_cast<int>(std::floor(current_pos.y)) >= target_pos.y)
+                if (static_cast<int>(std::floor(current_pos.y)) >= target_block.y)
                 {
                     return true;
                 }
@@ -1433,7 +1437,7 @@ namespace Botcraft
 
                 // If something went wrong, break and
                 // replan the whole path to the goal
-                if (!Move(client, local_player, path[i].first, speed_factor, sprint))
+                if (!Move(client, local_player, Vector3<double>(path[i].first.x + 0.5, path[i].second, path[i].first.z + 0.5), speed_factor, sprint))
                 {
                     break;
                 }
