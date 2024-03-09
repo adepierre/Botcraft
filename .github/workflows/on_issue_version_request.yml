@@ -87,19 +87,19 @@ jobs:
       - check_if_build_needed
     steps:
       - name: Download Linux artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: botcraft-Linux
           path: linux
 
       - name: Download Windows artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: botcraft-Windows
           path: windows
 
       - name: Download doc artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: botcraft-doc
           path: doc

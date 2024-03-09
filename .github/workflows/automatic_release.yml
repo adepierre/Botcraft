@@ -51,25 +51,25 @@ jobs:
           fetch-depth: 0
 
       - name: Download Windows artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: botcraft-Windows
           path: windows
 
       - name: Download Linux artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: botcraft-Linux
           path: linux
 
       - name: Download doc artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: botcraft-doc
           path: doc
 
       - name: Download version artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: MC-version
           path: version
@@ -131,13 +131,13 @@ jobs:
 
     steps:
       - name: Download doc artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: botcraft-doc
           path: doc
 
       - name: Download version artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: MC-version
           path: version
