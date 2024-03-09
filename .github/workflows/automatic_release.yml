@@ -150,11 +150,11 @@ jobs:
         run: mv doc/$(cat version/version.txt) doc/doc
 
       - name: Upload raw doc files for pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: doc/doc
 
       - name: Deploy to GitHub Pages
         id: deployment
-        # Will automatically fetch the artifact "github-pages" uploaded using actions/upload-pages-artifact@v1
-        uses: actions/deploy-pages@v2
+        # Will automatically fetch the artifact "github-pages" uploaded using actions/upload-pages-artifact@v3
+        uses: actions/deploy-pages@v4

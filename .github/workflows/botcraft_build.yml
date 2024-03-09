@@ -257,7 +257,7 @@ jobs:
           retention-days: 1
 
       - name: Cache build directory
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ${{ runner.workspace }}/build
           key: build_cache_${{ runner.os }}_${{ inputs.version }}_${{ github.run_id }}
@@ -272,7 +272,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -288,7 +288,7 @@ jobs:
         run: cmake -E make_directory ${{ runner.workspace }}/build
 
       - name: Restore build folder
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: ${{ runner.workspace }}/build
           key: build_cache_${{ runner.os }}_${{ inputs.version }}_${{ github.run_id }}
