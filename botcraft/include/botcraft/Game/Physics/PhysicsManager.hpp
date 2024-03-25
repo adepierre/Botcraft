@@ -4,6 +4,8 @@
 #include <memory>
 #include <thread>
 
+#include "protocolCraft/Handler.hpp"
+
 #include "botcraft/Game/Vector3.hpp"
 #include "botcraft/Game/Physics/AABB.hpp"
 
@@ -24,7 +26,7 @@ namespace Botcraft
     }
 #endif
 
-    class PhysicsManager// : public ProtocolCraft::Handler // There is no physics related packets yet
+    class PhysicsManager : public ProtocolCraft::Handler
     {
     public:
         PhysicsManager() = delete;
@@ -41,6 +43,10 @@ namespace Botcraft
 
         void StartPhysics();
         void StopPhysics();
+
+    protected:
+        virtual void Handle(ProtocolCraft::Message& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
 
     private:
         void Physics();

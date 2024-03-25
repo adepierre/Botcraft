@@ -73,6 +73,18 @@ namespace Botcraft
         }
     }
 
+    void PhysicsManager::Handle(ProtocolCraft::Message& msg)
+    {
+
+    }
+
+    void PhysicsManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
+    {
+        // Reset the player because *some* non vanilla servers
+        // sends new login packets
+        player = nullptr;
+    }
+
     void PhysicsManager::Physics()
     {
         Logger::GetInstance().RegisterThread("Physics - " + network_manager->GetMyName());
