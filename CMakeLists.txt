@@ -24,7 +24,10 @@ option(BOTCRAFT_FORCE_LOCAL_GLFW "Set to true to force using a local install of 
 option(BOTCRAFT_FORCE_LOCAL_GLAD "Set to true to force using a local install of glad even if already present on the system" OFF)
 option(BOTCRAFT_FORCE_LOCAL_CATCH "Set to true to force using a local install of catch2 even if already present on the system" OFF)
 option(BOTCRAFT_INSTALL_MC_ASSETS "Install Minecraft assets next to custom ones" ON)
+
+# Only change them if you really know what you are doing, very untested
 option(PROTOCOLCRAFT_STATIC "If ON, will build protocolcraft as a static library instead of a dynamic one" OFF)
+option(BOTCRAFT_STATIC "If ON, will build botcraft as a static library instead of a dynamic one" OFF)
 
 set(BOTCRAFT_OUTPUT_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Base output build path")
 

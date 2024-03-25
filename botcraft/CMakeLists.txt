@@ -512,7 +512,11 @@ if(MSVC)
     endforeach()
 endif()
 
-add_library(botcraft SHARED ${botcraft_SRC} ${botcraft_PUBLIC_HDR} ${botcraft_PRIVATE_HDR})
+if(BOTCRAFT_STATIC)
+    add_library(botcraft STATIC ${botcraft_SRC} ${botcraft_PUBLIC_HDR} ${botcraft_PRIVATE_HDR})
+else()
+    add_library(botcraft SHARED ${botcraft_SRC} ${botcraft_PUBLIC_HDR} ${botcraft_PRIVATE_HDR})
+endif(BOTCRAFT_STATIC)
 set_property(TARGET botcraft PROPERTY CXX_STANDARD 17)
 set_target_properties(botcraft PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(botcraft PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")
@@ -570,8 +574,10 @@ target_include_directories(botcraft
 
 target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
 
-# Add DL lib for linux compilation
-target_link_libraries(botcraft PUBLIC ${CMAKE_DL_LIBS})
+if (NOT BOTCRAFT_STATIC)
+    # Add DL lib for linux compilation
+    target_link_libraries(botcraft PUBLIC ${CMAKE_DL_LIBS})
+endif()
 
 # Add protocolCraft
 target_link_libraries(botcraft PUBLIC protocolCraft)

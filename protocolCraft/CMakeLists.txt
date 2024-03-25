@@ -466,8 +466,10 @@ if(BOTCRAFT_COMPRESSION)
     target_compile_definitions(protocolCraft PRIVATE USE_COMPRESSION=1)
 endif(BOTCRAFT_COMPRESSION)
 
-# Add DL lib for linux compilation
-target_link_libraries(protocolCraft PUBLIC ${CMAKE_DL_LIBS})
+if (NOT PROTOCOLCRAFT_STATIC)
+    # Add DL lib for linux compilation
+    target_link_libraries(protocolCraft PUBLIC ${CMAKE_DL_LIBS})
+endif()
 
 # Installation stuff
 include(GNUInstallDirs)
