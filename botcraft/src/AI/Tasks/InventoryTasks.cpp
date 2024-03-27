@@ -101,6 +101,12 @@ namespace Botcraft
 
     Status SwapItemsInContainerImpl(BehaviourClient& client, const short container_id, const short first_slot, const short second_slot)
     {
+        // If both slots are equal, clicking three times will transfer the content to the cursor instead of being a no-op
+        if (first_slot == second_slot)
+        {
+            return Status::Success;
+        }
+
         // Left click on the first slot, transferring the slot to the cursor
         if (ClickSlotInContainer(client, container_id, first_slot, 0, 0) == Status::Failure)
         {
