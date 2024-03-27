@@ -3,8 +3,6 @@
 #include <limits>
 #include <mutex>
 
-#define PI 3.14159265359
-
 namespace Botcraft
 {
     LocalPlayer::LocalPlayer()
@@ -53,7 +51,7 @@ namespace Botcraft
         previous_on_ground = false;
         previous_jump = false;
         previous_sneak = false;
-        previous_forward = 0.0;
+        previous_forward = 0.0f;
     }
 
     LocalPlayer::~LocalPlayer()
@@ -271,31 +269,31 @@ namespace Botcraft
         }
     }
 
-    void LocalPlayer::SetInputsForward(const double d)
+    void LocalPlayer::SetInputsForward(const float f)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        inputs.forward_axis = std::clamp(d, -1.0, 1.0);
+        inputs.forward_axis = std::clamp(f, -1.0f, 1.0f);
         dirty_inputs = true;
     }
 
-    void LocalPlayer::AddInputsForward(const double d)
+    void LocalPlayer::AddInputsForward(const float f)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        inputs.forward_axis = std::clamp(inputs.forward_axis + d, -1.0, 1.0);
+        inputs.forward_axis = std::clamp(inputs.forward_axis + f, -1.0f, 1.0f);
         dirty_inputs = true;
     }
 
-    void LocalPlayer::SetInputsLeft(const double d)
+    void LocalPlayer::SetInputsLeft(const float f)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        inputs.left_axis = std::clamp(d, -1.0, 1.0);
+        inputs.left_axis = std::clamp(f, -1.0f, 1.0f);
         dirty_inputs = true;
     }
 
-    void LocalPlayer::AddInputsLeft(const double d)
+    void LocalPlayer::AddInputsLeft(const float f)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        inputs.left_axis = std::clamp(inputs.left_axis + d, -1.0, 1.0);
+        inputs.left_axis = std::clamp(inputs.left_axis + f, -1.0f, 1.0f);
         dirty_inputs = true;
     }
 
@@ -344,8 +342,8 @@ namespace Botcraft
         // We want to set the orientation from the eyes, not the feet
         direction.y -= GetEyeHeightImpl();
         direction.Normalize();
-        const float new_pitch = static_cast<float>(-std::asin(direction.y) * 180.0 / PI);
-        float new_yaw = static_cast<float>(-std::atan2(direction.x, direction.z) * 180.0 / PI);
+        const float new_pitch = static_cast<float>(-std::asin(direction.y) * 57.29577951308232 /* 180/PI */);
+        float new_yaw = static_cast<float>(-std::atan2(direction.x, direction.z) * 57.29577951308232 /* 180/PI */);
         if (new_yaw < 0)
         {
             new_yaw += 360.0f;
@@ -364,10 +362,10 @@ namespace Botcraft
 
     void LocalPlayer::UpdateVectors()
     {
-        const double rad_yaw = yaw * PI / 180.0;
-        const double rad_pitch = pitch * PI / 180.0;
-        const double cos_pitch = cos(rad_pitch);
-        front_vector = Vector3<double>(-sin(rad_yaw) * cos_pitch, -sin(rad_pitch), cos(rad_yaw) * cos_pitch);
+        const float rad_yaw = yaw * 0.017453292f /* PI/180 */;
+        const float rad_pitch = pitch * 0.017453292f /* PI/180 */;
+        const float cos_pitch = std::cos(rad_pitch);
+        front_vector = Vector3<double>(-std::sin(rad_yaw) * cos_pitch, -std::sin(rad_pitch), std::cos(rad_yaw) * cos_pitch);
 
         // Vector is already normalized as front_vector² = (cos²(rad_yaw) + sin²(rad_yaw)) * cos²(rad_pitch) + sin²(rad_pitch) = 1
         // front_vector.Normalize();
@@ -384,8 +382,8 @@ namespace Botcraft
 
     void LocalPlayer::ResetInputs()
     {
-        inputs.forward_axis = 0.0;
-        inputs.left_axis = 0.0;
+        inputs.forward_axis = 0.0f;
+        inputs.left_axis = 0.0f;
         inputs.jump = false;
         inputs.sneak = false;
         inputs.sprint = false;

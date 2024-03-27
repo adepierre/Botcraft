@@ -15,8 +15,6 @@
 #include "botcraft/Renderer/RenderingManager.hpp"
 #endif
 
-#define PI 3.14159265359
-
 using namespace ProtocolCraft;
 
 namespace Botcraft
@@ -176,13 +174,13 @@ namespace Botcraft
                     // If sneaking in water, add downward speed
                     if (player->in_water && player->inputs.sneak && !player->flying)
                     {
-                        player->speed.y -= 0.04;
+                        player->speed.y -= 0.03999999910593033;
                     }
 
                     // If flying in spectator/creative, go up/down if sneak/jump
                     if (player->flying)
                     {
-                        player->speed.y += (-1 * player->inputs.sneak + player->inputs.jump) * player->flying_speed * 3.0;
+                        player->speed.y += (-1 * player->inputs.sneak + player->inputs.jump) * player->flying_speed * 3.0f;
                     }
 
                     { // Player::aiStep
@@ -213,8 +211,8 @@ namespace Botcraft
 
                         InputsToJump();
 
-                        player->inputs.forward_axis *= 0.98;
-                        player->inputs.left_axis *= 0.98;
+                        player->inputs.forward_axis *= 0.98f;
+                        player->inputs.left_axis *= 0.98f;
 
                         // Compensate water downward speed depending on looking direction (?)
                         if (IsSwimmingAndNotFlying())
@@ -448,7 +446,8 @@ namespace Botcraft
             if (std::abs(player->speed.x) < 0.003 && std::abs(player->speed.z) < 0.003 && push_norm < 0.0045000000000000005)
             {
                 // Normalize and scale
-                push *= 0.0045000000000000005 / push_norm;
+                push /= push_norm;
+                push *= 0.0045000000000000005;
             }
             player->speed += push;
         }
@@ -503,7 +502,7 @@ namespace Botcraft
             !has_blindness;
 
         // Start sprinting if possible
-        const bool could_sprint_previous = player->previous_forward >= (player->under_water ? 1e-5 : 0.8);
+        const bool could_sprint_previous = player->previous_forward >= (player->under_water ? 1e-5f : 0.8f);
         if (can_start_sprinting && player->inputs.sprint && (
             (!player->in_water || player->under_water) ||
             ((player->on_ground || player->under_water) && !player->previous_sneak && !could_sprint_previous)
@@ -619,18 +618,18 @@ namespace Botcraft
             // Jump from fluid
             if (player->in_lava || player->in_water)
             {
-                player->speed.y += 0.04;
+                player->speed.y += 0.03999999910593033;
             }
             // Jump from ground
             else if (player->on_ground && player->jump_delay == 0)
             {
                 // Get jump boost
-                double jump_boost = 0.0;
+                float jump_boost = 0.0f;
                 for (const auto& effect : player->effects)
                 {
                     if (effect.type == EntityEffectType::JumpBoost && effect.end > std::chrono::steady_clock::now())
                     {
-                        jump_boost = 0.1 * effect.amplifier + 0.1; // amplifier is 0 for "Effect I"
+                        jump_boost = 0.1f * (effect.amplifier + 1); // amplifier is 0 for "Effect I"
                         break;
                     }
                 }
@@ -655,13 +654,12 @@ namespace Botcraft
                     block_jump_factor = 0.4f;
                 }
 
-                const double jump_power = 0.42 * block_jump_factor + jump_boost;
-                player->speed.y = jump_power;
+                player->speed.y = 0.42f * block_jump_factor + jump_boost;
                 if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
                 {
-                    const double yaw_rad = player->yaw * PI / 180.0;
-                    player->speed.x -= std::sin(yaw_rad) * 0.2;
-                    player->speed.z += std::cos(yaw_rad) * 0.2;
+                    const float yaw_rad = player->yaw * 0.017453292f /* PI/180 */;
+                    player->speed.x -= std::sin(yaw_rad) * 0.2f;
+                    player->speed.z += std::cos(yaw_rad) * 0.2f;
                 }
                 player->jump_delay = 10;
             }
@@ -672,7 +670,7 @@ namespace Botcraft
         }
     }
 
-    void PhysicsManager::ApplyInputs(const double strength) const
+    void PhysicsManager::ApplyInputs(const float strength) const
     {
         Vector3<double> input_vector(player->inputs.left_axis, 0.0, player->inputs.forward_axis);
         const double sqr_norm = input_vector.SqrNorm();
@@ -685,8 +683,8 @@ namespace Botcraft
             input_vector.Normalize();
         }
         input_vector *= strength;
-        const double sin_yaw = std::sin(player->yaw * PI / 180.0);
-        const double cos_yaw = std::cos(player->yaw * PI / 180.0);
+        const double sin_yaw = std::sin(player->yaw * 0.017453292f /* PI/180 */);
+        const double cos_yaw = std::cos(player->yaw * 0.017453292f /* PI/180 */);
 
         player->speed.x += input_vector.x * cos_yaw - input_vector.z * sin_yaw;
         player->speed.y += input_vector.y;
@@ -895,23 +893,23 @@ namespace Botcraft
         if (player->in_water && !player->flying)
         {
             const double init_y = player->position.y;
-            double water_slow_down = player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting) ? 0.8 : 0.8;
-            double inputs_strength = 0.02;
+            float water_slow_down = player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting) ? 0.9f : 0.8f;
+            float inputs_strength = 0.02f;
 
             const Slot boots_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-            double depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), EnchantmentID::DepthStrider), static_cast<short>(3));
+            float depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), EnchantmentID::DepthStrider), static_cast<short>(3));
 #else
-            double depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "depth_strider"), static_cast<short>(3));
+            float depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "depth_strider"), static_cast<short>(3));
 #endif
             if (!player->on_ground)
             {
-                depth_strider_mult *= 0.5;
+                depth_strider_mult *= 0.5f;
             }
             if (depth_strider_mult > 0.0)
             {
-                water_slow_down += (0.54600006 - water_slow_down) * depth_strider_mult / 3.0;
-                inputs_strength += (player->GetAttributeMovementSpeedValueImpl() - inputs_strength) * depth_strider_mult / 3.0;
+                water_slow_down += (0.54600006f - water_slow_down) * depth_strider_mult / 3.0f;
+                inputs_strength += (static_cast<float>(player->GetAttributeMovementSpeedValueImpl()) - inputs_strength) * depth_strider_mult / 3.0f;
             }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
@@ -919,7 +917,7 @@ namespace Botcraft
             {
                 if (effect.type == EntityEffectType::DolphinsGrace && effect.end > std::chrono::steady_clock::now())
                 {
-                    water_slow_down = 0.96;
+                    water_slow_down = 0.96f;
                     break;
                 }
             }
@@ -932,7 +930,7 @@ namespace Botcraft
                 player->speed.y = 0.2;
             }
             player->speed.x *= water_slow_down;
-            player->speed.y *= 0.8;
+            player->speed.y *= 0.800000011920929;
             player->speed.z *= water_slow_down;
 
             if (!player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
@@ -951,24 +949,24 @@ namespace Botcraft
 
             // Jump out of water
             if (player->horizontal_collision &&
-                world->IsFree(player->GetColliderImpl().Inflate(-1e-7) + player->speed + Vector3<double>(0.0, 0.6 - player->position.y + init_y, 0.0), true))
+                world->IsFree(player->GetColliderImpl().Inflate(-1e-7) + player->speed + Vector3<double>(0.0, 0.6000000238418579 - player->position.y + init_y, 0.0), true))
             {
-                player->speed.y = 0.3;
+                player->speed.y = 0.30000001192092896;
             }
         }
         // Move in lava
         else if (player->in_lava && !player->flying)
         {
             const double init_y = player->position.y;
-            ApplyInputs(0.02);
+            ApplyInputs(0.02f);
             ApplyMovement();
             player->speed *= 0.5;
             player->speed.y -= drag / 4.0;
             // Jump out of lava
             if (player->horizontal_collision &&
-                world->IsFree(player->GetColliderImpl().Inflate(-1e-7) + player->speed + Vector3<double>(0.0, 0.6 - player->position.y + init_y, 0.0), true))
+                world->IsFree(player->GetColliderImpl().Inflate(-1e-7) + player->speed + Vector3<double>(0.0, 0.6000000238418579 - player->position.y + init_y, 0.0), true))
             {
-                player->speed.y = 0.3;
+                player->speed.y = 0.30000001192092896;
             }
         }
         // Move with elytra
@@ -976,33 +974,34 @@ namespace Botcraft
         {
             // sqrt(front_vector.x² + front_vector.z²) to follow vanilla code
             // it's equal to cos(pitch) (as -90°<=pitch<=90°, cos(pitch) >= 0.0)
-            const double cos_pitch = std::cos(player->pitch * PI / 180.0);
+            const double cos_pitch_from_length = std::sqrt(player->front_vector.x * player->front_vector.x + player->front_vector.z * player->front_vector.z);
+            const double cos_pitch = std::cos(static_cast<double>(player->pitch * 0.017453292f /* PI/180 */));
             const double cos_pitch_sqr = cos_pitch * cos_pitch;
             const double horizontal_speed = std::sqrt(player->speed.x * player->speed.x + player->speed.z * player->speed.z);
 
             player->speed.y += drag * (-1.0 + 0.75 * cos_pitch_sqr);
 
-            if (player->speed.y < 0.0 && cos_pitch > 0.0) // cos condition to prevent dividing by 0
+            if (player->speed.y < 0.0 && cos_pitch_from_length > 0.0) // cos condition to prevent dividing by 0
             {
                 const double delta_speed = -player->speed.y * 0.1 * cos_pitch_sqr;
-                player->speed.x += player->front_vector.x * delta_speed / cos_pitch;
+                player->speed.x += player->front_vector.x * delta_speed / cos_pitch_from_length;
                 player->speed.y += delta_speed;
-                player->speed.z += player->front_vector.z * delta_speed / cos_pitch;
+                player->speed.z += player->front_vector.z * delta_speed / cos_pitch_from_length;
             }
-            if (player->pitch < 0.0 && cos_pitch > 0.0) // cos condition to prevent dividing by 0
+            if (player->pitch < 0.0 && cos_pitch_from_length > 0.0) // cos condition to prevent dividing by 0
             {
                 // player->front_vector.y == -sin(pitch)
                 const double delta_speed = horizontal_speed * player->front_vector.y * 0.04;
-                player->speed.x -= player->front_vector.x * delta_speed / cos_pitch;
+                player->speed.x -= player->front_vector.x * delta_speed / cos_pitch_from_length;
                 player->speed.y += delta_speed * 3.2;
-                player->speed.z -= player->front_vector.z * delta_speed / cos_pitch;
+                player->speed.z -= player->front_vector.z * delta_speed / cos_pitch_from_length;
             }
-            if (cos_pitch > 0.0) // cos condition to prevent dividing by 0
+            if (cos_pitch_from_length > 0.0) // cos condition to prevent dividing by 0
             {
-                player->speed.x += (player->front_vector.x / cos_pitch * horizontal_speed - player->speed.x) * 0.1;
-                player->speed.z += (player->front_vector.z / cos_pitch * horizontal_speed - player->speed.z) * 0.1;
+                player->speed.x += (player->front_vector.x / cos_pitch_from_length * horizontal_speed - player->speed.x) * 0.1;
+                player->speed.z += (player->front_vector.z / cos_pitch_from_length * horizontal_speed - player->speed.z) * 0.1;
             }
-            player->speed *= Vector3<double>(0.99, 0.98, 0.99);
+            player->speed *= Vector3<double>(0.9900000095367432, 0.9800000190734863, 0.9900000095367432);
             ApplyMovement();
             // Not sure this is required as the server should send an update
             // anyway in case it should be set to false
@@ -1018,11 +1017,11 @@ namespace Botcraft
             const float friction = below_block == nullptr ? 0.6f : below_block->GetFriction();
             const float inertia = player->on_ground ? friction * 0.91f : 0.91f;
 
-            ApplyInputs(player->on_ground ? (player->GetAttributeMovementSpeedValueImpl() * (0.21600002 / (friction * friction * friction))) : 0.02);
+            ApplyInputs(player->on_ground ? (static_cast<float>(player->GetAttributeMovementSpeedValueImpl()) * (0.21600002f / (friction * friction * friction))) : 0.02f);
             if (player->on_climbable)
             { // LivingEntity::handleOnClimbable
-                player->speed.x = std::clamp(player->speed.x, -0.15, 0.15);
-                player->speed.y = std::max(player->speed.y, -0.15);
+                player->speed.x = std::clamp(player->speed.x, -0.15000000596046448, 0.15000000596046448);
+                player->speed.y = std::max(player->speed.y, -0.15000000596046448);
                 // Remove negative Y speed if feet are inside a scaffolding block and not pressing
                 // sneak, or if not a scaffolding block and pressing sneak
                 const Blockstate* feet_block = world->GetBlock(Position(
@@ -1034,7 +1033,7 @@ namespace Botcraft
                 {
                     player->speed.y = 0.0;
                 }
-                player->speed.z = std::clamp(player->speed.z, -0.15, 0.15);
+                player->speed.z = std::clamp(player->speed.z, -0.15000000596046448, 0.15000000596046448);
             }
             ApplyMovement();
             // If colliding and in climbable, go up
@@ -1063,7 +1062,7 @@ namespace Botcraft
                 player->speed.y -= drag;
             }
             player->speed.x *= inertia;
-            player->speed.y *= 0.98;
+            player->speed.y *= 0.9800000190734863;
             player->speed.z *= inertia;
         }
     }
@@ -1203,19 +1202,19 @@ namespace Botcraft
                     static_cast<int>(std::floor(player->position.y - 0.2)),
                     static_cast<int>(std::floor(player->position.z))
                 ));
-                double speed_multiplier = 0.0;
+                double new_speed = 0.0;
                 if (block_below != nullptr)
                 {
                     if (block_below->IsSlime())
                     {
-                        speed_multiplier = -1.0;
+                        new_speed = -player->speed.y;
                     }
                     else if (block_below->IsBed())
                     {
-                        speed_multiplier = -0.66;
+                        new_speed = player->speed.y * -0.66f;
                     }
                 }
-                player->speed.y = speed_multiplier * player->speed.y;
+                player->speed.y = new_speed;
             }
         }
 
@@ -1282,18 +1281,18 @@ namespace Botcraft
                         continue;
                     }
                     else if (block->IsCobweb())
-                    {
-                        player->stuck_speed_multiplier = Vector3<double>(0.25, 0.05, 0.25);
+                    { // WebBlock::entityInside
+                        player->stuck_speed_multiplier = Vector3<double>(0.25, 0.05000000074505806, 0.25);
                     }
                     else if (block->IsBubbleColumn())
                     {
                         const Blockstate* above_block = world->GetBlock(block_pos + Position(0, 1, 0));
                         if (above_block == nullptr || above_block->IsAir())
-                        {
+                        { // Entity::onAboveBubbleCol
                             player->speed.y = block->IsDownBubbleColumn() ? std::max(-0.9, player->speed.y - 0.03) : std::min(1.8, player->speed.y + 0.1);
                         }
                         else
-                        {
+                        { // Entity::onInsideBubbleColumn
                             player->speed.y = block->IsDownBubbleColumn() ? std::max(-0.3, player->speed.y - 0.03) : std::min(0.7, player->speed.y + 0.06);
                         }
                     }
@@ -1321,12 +1320,12 @@ namespace Botcraft
                         }
                     }
                     else if (block->IsBerryBush())
-                    {
-                        player->stuck_speed_multiplier = Vector3<double>(0.8, 0.75, 0.8);
+                    { // SweetBerryBushBlock::entityInside
+                        player->stuck_speed_multiplier = Vector3<double>(0.800000011920929, 0.75, 0.800000011920929);
                     }
                     else if (block->IsPowderSnow())
-                    {
-                        player->stuck_speed_multiplier = Vector3<double>(0.9, 1.5, 0.9);
+                    { // PowderSnowBlock::entityInside
+                        player->stuck_speed_multiplier = Vector3<double>(0.8999999761581421, 1.5, 0.8999999761581421);
                     }
                 }
             }

@@ -8,8 +8,8 @@ namespace Botcraft
 {
     struct PlayerInputs
     {
-        double forward_axis = 0.0;
-        double left_axis = 0.0;
+        float forward_axis = 0.0f;
+        float left_axis = 0.0f;
         bool jump = false;
         bool sneak = false;
         bool sprint = false;
@@ -67,10 +67,10 @@ namespace Botcraft
         /// @param pitch_ New pitch, in degree
         virtual void SetPitch(const float pitch_) override;
 
-        void SetInputsForward(const double d);
-        void AddInputsForward(const double d);
-        void SetInputsLeft(const double d);
-        void AddInputsLeft(const double d);
+        void SetInputsForward(const float f);
+        void AddInputsForward(const float f);
+        void SetInputsLeft(const float f);
+        void AddInputsLeft(const float f);
         void SetInputsJump(const bool b);
         void SetInputsSneak(const bool b);
         void SetInputsSprint(const bool b);
@@ -140,6 +140,6 @@ namespace Botcraft
         bool previous_on_ground;
         bool previous_jump;
         bool previous_sneak;
-        double previous_forward;
+        float previous_forward;
     };
 } // Botcraft

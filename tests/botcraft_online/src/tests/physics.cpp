@@ -237,8 +237,8 @@ TEST_CASE("fall on", "[!mayfail][.physics]")
         INFO("Tick " << i);
         INFO("Position " << position << " | Target: " << target_pos_y[i]);
         INFO("Speed " << speed << " | Target: " << target_speed_y[i]);
-        REQUIRE_THAT(target_pos_y[i] - position, Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(target_speed_y[i] - speed, Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(target_pos_y[i] - position, Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(target_speed_y[i] - speed, Catch::Matchers::WithinAbs(0.0, 1e-6));
     }
 }
 
@@ -255,11 +255,11 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
     {
         section = "forward";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.5980000033676625 }, { 2.5, 1.0, 2.749508014789164 },
@@ -283,11 +283,11 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
     {
         section = "backward";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            {  0.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.4019999966323375 }, { 2.5, 1.0, 2.250491985210836 },
@@ -311,10 +311,10 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
     {
         section = "right";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f,  0.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f,  0.0f, false, false, false }, { 0.0f,  0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.4019999966323375, 1.0, 2.5 }, { 2.250491985210836, 1.0, 2.5 },
@@ -336,10 +336,10 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
     {
         section = "left";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5980000033676625, 1.0, 2.5 }, { 2.749508014789164, 1.0, 2.5 },
@@ -361,11 +361,11 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
     {
         section = "forward right";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, -1.0, false, false, false }, { 1.0, -1.0, false, false, false },
-            { 1.0, -1.0, false, false, false }, { 1.0, -1.0, false, false, false }, { 1.0, -1.0, false, false, false },
-            { 1.0, -1.0, false, false, false }, { 1.0, -1.0, false, false, false }, { 1.0, -1.0, false, false, false },
-            { 1.0, -1.0, false, false, false }, { 1.0, -1.0, false, false, false }, { 1.0, -1.0, false, false, false },
-            { 1.0, -1.0, false, false, false }, { 1.0, -1.0, false, false, false }
+            { 0.0f,  0.0f, false, false, false }, { 1.0f, -1.0f, false, false, false }, { 1.0f, -1.0f, false, false, false },
+            { 1.0f, -1.0f, false, false, false }, { 1.0f, -1.0f, false, false, false }, { 1.0f, -1.0f, false, false, false },
+            { 1.0f, -1.0f, false, false, false }, { 1.0f, -1.0f, false, false, false }, { 1.0f, -1.0f, false, false, false },
+            { 1.0f, -1.0f, false, false, false }, { 1.0f, -1.0f, false, false, false }, { 1.0f, -1.0f, false, false, false },
+            { 1.0f, -1.0f, false, false, false }, { 1.0f, -1.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.4292893208276745, 1.0, 2.5707106791723255 }, { 2.3199706063428334, 1.0, 2.6800293936571666 },
@@ -389,11 +389,11 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
     {
         section = "forward left";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 1.0, 1.0, false, false, false },
-            { 1.0, 1.0, false, false, false }, { 1.0, 1.0, false, false, false }, { 1.0, 1.0, false, false, false },
-            { 1.0, 1.0, false, false, false }, { 1.0, 1.0, false, false, false }, { 1.0, 1.0, false, false, false },
-            { 1.0, 1.0, false, false, false }, { 1.0, 1.0, false, false, false }, { 1.0, 1.0, false, false, false },
-            { 1.0, 1.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 1.0f, 1.0f, false, false, false },
+            { 1.0f, 1.0f, false, false, false }, { 1.0f, 1.0f, false, false, false }, { 1.0f, 1.0f, false, false, false },
+            { 1.0f, 1.0f, false, false, false }, { 1.0f, 1.0f, false, false, false }, { 1.0f, 1.0f, false, false, false },
+            { 1.0f, 1.0f, false, false, false }, { 1.0f, 1.0f, false, false, false }, { 1.0f, 1.0f, false, false, false },
+            { 1.0f, 1.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5980000033676625, 1.0, 2.5 }, { 2.722218690593828, 1.0, 2.5707106791723255 },
@@ -417,12 +417,12 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
     {
         section = "backward left";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 1.0, false, false, false }, { -1.0, 1.0, false, false, false },
-            { -1.0, 1.0, false, false, false }, { -1.0, 1.0, false, false, false }, { -1.0, 1.0, false, false, false },
-            { -1.0, 1.0, false, false, false }, { -1.0, 1.0, false, false, false }, { -1.0, 1.0, false, false, false },
-            { -1.0, 1.0, false, false, false }, { -1.0, 1.0, false, false, false }, { -1.0, 1.0, false, false, false },
-            { -1.0, 1.0, false, false, false }, { -1.0, 1.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            {  0.0f, 0.0f, false, false, false }, {  0.0f, 1.0f, false, false, false }, { -1.0f, 1.0f, false, false, false },
+            { -1.0f, 1.0f, false, false, false }, { -1.0f, 1.0f, false, false, false }, { -1.0f, 1.0f, false, false, false },
+            { -1.0f, 1.0f, false, false, false }, { -1.0f, 1.0f, false, false, false }, { -1.0f, 1.0f, false, false, false },
+            { -1.0f, 1.0f, false, false, false }, { -1.0f, 1.0f, false, false, false }, { -1.0f, 1.0f, false, false, false },
+            { -1.0f, 1.0f, false, false, false }, { -1.0f, 1.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5980000033676625, 1.0, 2.5 }, { 2.722218690593828, 1.0, 2.4292893208276745 },
@@ -448,12 +448,12 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
     {
         section = "backward right";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, -1.0, false, false, false }, { -1.0, -1.0, false, false, false },
-            { -1.0, -1.0, false, false, false }, { -1.0, -1.0, false, false, false }, { -1.0, -1.0, false, false, false },
-            { -1.0, -1.0, false, false, false }, { -1.0, -1.0, false, false, false }, { -1.0, -1.0, false, false, false },
-            { -1.0, -1.0, false, false, false }, { -1.0, -1.0, false, false, false }, { -1.0, -1.0, false, false, false },
-            { -1.0, -1.0, false, false, false }, { -1.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            {  0.0f,  0.0f, false, false, false }, {  0.0f, -1.0f, false, false, false }, { -1.0f, -1.0f, false, false, false },
+            { -1.0f, -1.0f, false, false, false }, { -1.0f, -1.0f, false, false, false }, { -1.0f, -1.0f, false, false, false },
+            { -1.0f, -1.0f, false, false, false }, { -1.0f, -1.0f, false, false, false }, { -1.0f, -1.0f, false, false, false },
+            { -1.0f, -1.0f, false, false, false }, { -1.0f, -1.0f, false, false, false }, { -1.0f, -1.0f, false, false, false },
+            { -1.0f, -1.0f, false, false, false }, { -1.0f, -1.0f, false, false, false }, {  0.0f, -1.0f, false, false, false },
+            {  0.0f,  0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.4019999966323375, 1.0, 2.5 }, { 2.277781309406172, 1.0, 2.4292893208276745 },
@@ -511,8 +511,8 @@ TEST_CASE("walk on concrete", "[!mayfail][.physics]")
         INFO("Tick " << i);
         INFO("Position " << positions[i] << " | Target: " << target_pos[i]);
         INFO("Speed " << speeds[i] << " | Target: " << target_speed[i]);
-        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
     }
 }
 
@@ -529,10 +529,10 @@ TEST_CASE("walk on concrete#sprint", "[!mayfail][.physics]")
     {
         section = "forward";
         inputs = {
-            { 0.0, 0.0, false, false, true }, { 1.0, 0.0, false, false, true }, { 1.0, 0.0, false, false, true },
-            { 1.0, 0.0, false, false, true }, { 1.0, 0.0, false, false, true }, { 1.0, 0.0, false, false, true },
-            { 1.0, 0.0, false, false, true }, { 1.0, 0.0, false, false, true }, { 0.0, 0.0, false, false, true },
-            { 0.0, 0.0, false, false, true }
+            { 0.0f, 0.0f, false, false, true }, { 1.0f, 0.0f, false, false, true }, { 1.0f, 0.0f, false, false, true },
+            { 1.0f, 0.0f, false, false, true }, { 1.0f, 0.0f, false, false, true }, { 1.0f, 0.0f, false, false, true },
+            { 1.0f, 0.0f, false, false, true }, { 1.0f, 0.0f, false, false, true }, { 0.0f, 0.0f, false, false, true },
+            { 0.0f, 0.0f, false, false, true }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.6274000124096872 }, { 2.5, 1.0, 2.824360439674688 },
@@ -553,11 +553,11 @@ TEST_CASE("walk on concrete#sprint", "[!mayfail][.physics]")
     {
         section = "backward";
         inputs = {
-            { 0.0, 0.0, false, false, true }, { -1.0, 0.0, false, false, true }, { -1.0, 0.0, false, false, true },
-            { -1.0, 0.0, false, false, true }, { -1.0, 0.0, false, false, true }, { -1.0, 0.0, false, false, true },
-            { -1.0, 0.0, false, false, true }, { -1.0, 0.0, false, false, true }, { -1.0, 0.0, false, false, true },
-            { -1.0, 0.0, false, false, true }, { -1.0, 0.0, false, false, true }, { 0.0, 0.0, false, false, true },
-            { 0.0, 0.0, false, false, true }
+            {  0.0f, 0.0f, false, false, true }, { -1.0f, 0.0f, false, false, true }, { -1.0f, 0.0f, false, false, true },
+            { -1.0f, 0.0f, false, false, true }, { -1.0f, 0.0f, false, false, true }, { -1.0f, 0.0f, false, false, true },
+            { -1.0f, 0.0f, false, false, true }, { -1.0f, 0.0f, false, false, true }, { -1.0f, 0.0f, false, false, true },
+            { -1.0f, 0.0f, false, false, true }, { -1.0f, 0.0f, false, false, true }, {  0.0f, 0.0f, false, false, true },
+            {  0.0f, 0.0f, false, false, true }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.4019999966323375 }, { 2.5, 1.0, 2.250491985210836 },
@@ -581,10 +581,10 @@ TEST_CASE("walk on concrete#sprint", "[!mayfail][.physics]")
     {
         section = "right";
         inputs = {
-            { 0.0, 0.0, false, false, true }, { 0.0, -1.0, false, false, true }, { 0.0, -1.0, false, false, true },
-            { 0.0, -1.0, false, false, true }, { 0.0, -1.0, false, false, true }, { 0.0, -1.0, false, false, true },
-            { 0.0, -1.0, false, false, true }, { 0.0, -1.0, false, false, true }, { 0.0, -1.0, false, false, true },
-            { 0.0, 0.0, false, false, true }, { 0.0, 0.0, false, false, true }
+            { 0.0f,  0.0f, false, false, true }, { 0.0f, -1.0f, false, false, true }, { 0.0f, -1.0f, false, false, true },
+            { 0.0f, -1.0f, false, false, true }, { 0.0f, -1.0f, false, false, true }, { 0.0f, -1.0f, false, false, true },
+            { 0.0f, -1.0f, false, false, true }, { 0.0f, -1.0f, false, false, true }, { 0.0f, -1.0f, false, false, true },
+            { 0.0f,  0.0f, false, false, true }, { 0.0f,  0.0f, false, false, true }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.4019999966323375, 1.0, 2.5 }, { 2.250491985210836, 1.0, 2.5 },
@@ -606,10 +606,10 @@ TEST_CASE("walk on concrete#sprint", "[!mayfail][.physics]")
     {
         section = "left";
         inputs = {
-            { 0.0, 0.0, false, false, true }, { 0.0, 1.0, false, false, true }, { 0.0, 1.0, false, false, true },
-            { 0.0, 1.0, false, false, true }, { 0.0, 1.0, false, false, true }, { 0.0, 1.0, false, false, true },
-            { 0.0, 1.0, false, false, true }, { 0.0, 1.0, false, false, true }, { 0.0, 1.0, false, false, true },
-            { 0.0, 1.0, false, false, true }, { 0.0, 0.0, false, false, true }, { 0.0, 0.0, false, false, true }
+            { 0.0f, 0.0f, false, false, true }, { 0.0f, 1.0f, false, false, true }, { 0.0f, 1.0f, false, false, true },
+            { 0.0f, 1.0f, false, false, true }, { 0.0f, 1.0f, false, false, true }, { 0.0f, 1.0f, false, false, true },
+            { 0.0f, 1.0f, false, false, true }, { 0.0f, 1.0f, false, false, true }, { 0.0f, 1.0f, false, false, true },
+            { 0.0f, 1.0f, false, false, true }, { 0.0f, 0.0f, false, false, true }, { 0.0f, 0.0f, false, false, true }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5980000033676625, 1.0, 2.5 }, { 2.749508014789164, 1.0, 2.5 },
@@ -663,8 +663,8 @@ TEST_CASE("walk on concrete#sprint", "[!mayfail][.physics]")
         INFO("Tick " << i);
         INFO("Position " << positions[i] << " | Target: " << target_pos[i]);
         INFO("Speed " << speeds[i] << " | Target: " << target_speed[i]);
-        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
     }
 }
 
@@ -685,10 +685,10 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
     {
         section = "forward";
         inputs = {
-            { 0.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }
+            { 0.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.5294000033944855 }, { 2.5, 1.0, 2.574852410506887 },
@@ -710,10 +710,10 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
     {
         section = "backward";
         inputs = {
-            { 0.0, 0.0, false, true, false }, { -1.0, 0.0, false, true, false }, { -1.0, 0.0, false, true, false },
-            { -1.0, 0.0, false, true, false }, { -1.0, 0.0, false, true, false }, { -1.0, 0.0, false, true, false },
-            { -1.0, 0.0, false, true, false }, { -1.0, 0.0, false, true, false }, { -1.0, 0.0, false, true, false },
-            { -1.0, 0.0, false, true, false }, { -1.0, 0.0, false, true, false }
+            {  0.0f, 0.0f, false, true, false }, { -1.0f, 0.0f, false, true, false }, { -1.0f, 0.0f, false, true, false },
+            { -1.0f, 0.0f, false, true, false }, { -1.0f, 0.0f, false, true, false }, { -1.0f, 0.0f, false, true, false },
+            { -1.0f, 0.0f, false, true, false }, { -1.0f, 0.0f, false, true, false }, { -1.0f, 0.0f, false, true, false },
+            { -1.0f, 0.0f, false, true, false }, { -1.0f, 0.0f, false, true, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.4705999966055145 }, { 2.5, 1.0, 2.425147589493113 },
@@ -735,10 +735,10 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
     {
         section = "right";
         inputs = {
-            { 0.0, 0.0, false, true, false }, { 0.0, -1.0, false, true, false }, { 0.0, -1.0, false, true, false },
-            { 0.0, -1.0, false, true, false }, { 0.0, -1.0, false, true, false }, { 0.0, -1.0, false, true, false },
-            { 0.0, -1.0, false, true, false }, { 0.0, -1.0, false, true, false }, { 0.0, -1.0, false, true, false },
-            { 0.0, -1.0, false, true, false }, { 0.0, -1.0, false, true, false }
+            { 0.0f,  0.0f, false, true, false }, { 0.0f, -1.0f, false, true, false }, { 0.0f, -1.0f, false, true, false },
+            { 0.0f, -1.0f, false, true, false }, { 0.0f, -1.0f, false, true, false }, { 0.0f, -1.0f, false, true, false },
+            { 0.0f, -1.0f, false, true, false }, { 0.0f, -1.0f, false, true, false }, { 0.0f, -1.0f, false, true, false },
+            { 0.0f, -1.0f, false, true, false }, { 0.0f, -1.0f, false, true, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.4705999966055154, 1.0, 2.5 }, { 2.425147589493114, 1.0, 2.5 },
@@ -760,10 +760,10 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
     {
         section = "left";
         inputs = {
-            { 0.0, 0.0, false, true, false }, { 0.0, 1.0, false, true, false }, { 0.0, 1.0, false, true, false },
-            { 0.0, 1.0, false, true, false }, { 0.0, 1.0, false, true, false }, { 0.0, 1.0, false, true, false },
-            { 0.0, 1.0, false, true, false }, { 0.0, 1.0, false, true, false }, { 0.0, 1.0, false, true, false },
-            { 0.0, 1.0, false, true, false }, { 0.0, 1.0, false, true, false }
+            { 0.0f, 0.0f, false, true, false }, { 0.0f, 1.0f, false, true, false }, { 0.0f, 1.0f, false, true, false },
+            { 0.0f, 1.0f, false, true, false }, { 0.0f, 1.0f, false, true, false }, { 0.0f, 1.0f, false, true, false },
+            { 0.0f, 1.0f, false, true, false }, { 0.0f, 1.0f, false, true, false }, { 0.0f, 1.0f, false, true, false },
+            { 0.0f, 1.0f, false, true, false }, { 0.0f, 1.0f, false, true, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5294000033944846, 1.0, 2.5 }, { 2.574852410506886, 1.0, 2.5 },
@@ -785,10 +785,10 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
     {
         section = "forward left";
         inputs = {
-            { 0.0, 0.0, false, true, false }, { 1.0, 1.0, false, true, false }, { 1.0, 1.0, false, true, false },
-            { 1.0, 1.0, false, true, false }, { 1.0, 1.0, false, true, false }, { 1.0, 1.0, false, true, false },
-            { 1.0, 1.0, false, true, false }, { 1.0, 1.0, false, true, false }, { 1.0, 1.0, false, true, false },
-            { 1.0, 1.0, false, true, false }, { 1.0, 1.0, false, true, false }
+            { 0.0f, 0.0f, false, true, false }, { 1.0f, 1.0f, false, true, false }, { 1.0f, 1.0f, false, true, false },
+            { 1.0f, 1.0f, false, true, false }, { 1.0f, 1.0f, false, true, false }, { 1.0f, 1.0f, false, true, false },
+            { 1.0f, 1.0f, false, true, false }, { 1.0f, 1.0f, false, true, false }, { 1.0f, 1.0f, false, true, false },
+            { 1.0f, 1.0f, false, true, false }, { 1.0f, 1.0f, false, true, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5294000033944846, 1.0, 2.5294000033944855 }, { 2.574852410506886, 1.0, 2.574852410506887 },
@@ -811,11 +811,11 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
     {
         section = "forward swift sneak III";
         inputs = {
-            { 0.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 0.0, 0.0, false, true, false }, { 0.0, 0.0, false, true, false }
+            { 0.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 0.0f, 0.0f, false, true, false }, { 0.0f, 0.0f, false, true, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.5735000025257477 }, { 2.5, 1.0, 2.687131011091875 },
@@ -875,8 +875,8 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
         INFO("Tick " << i);
         INFO("Position " << positions[i] << " | Target: " << target_pos[i]);
         INFO("Speed " << speeds[i] << " | Target: " << target_speed[i]);
-        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
     }
 }
 
@@ -893,11 +893,11 @@ TEST_CASE("walk on concrete#jump", "[!mayfail][.physics]")
     {
         section = "on the spot";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, true, false, false }, { 0.0, 0.0, true, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f,  true, false, false }, { 0.0f, 0.0f,  true, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.4199999868869781, 2.5 }, { 2.5, 1.753199980521202, 2.5 },
@@ -921,11 +921,11 @@ TEST_CASE("walk on concrete#jump", "[!mayfail][.physics]")
     {
         section = "forward";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, true, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f,  true, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.4199999868869781, 2.5 }, { 2.5, 1.753199980521202, 2.5 },
@@ -949,11 +949,11 @@ TEST_CASE("walk on concrete#jump", "[!mayfail][.physics]")
     {
         section = "backward";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, true, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f,  true, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.4199999868869781, 2.5 }, { 2.5, 1.753199980521202, 2.5 },
@@ -977,11 +977,11 @@ TEST_CASE("walk on concrete#jump", "[!mayfail][.physics]")
     {
         section = "right";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, true, false, false }, { 0.0, 0.0, true, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f,  0.0f, false, false, false }, { 0.0f,  0.0f,  true, false, false }, { 0.0f,  0.0f,  true, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f,  0.0f, false, false, false }, { 0.0f,  0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.4199999868869781, 2.5 }, { 2.5, 1.753199980521202, 2.5 },
@@ -1005,11 +1005,11 @@ TEST_CASE("walk on concrete#jump", "[!mayfail][.physics]")
     {
         section = "left";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, true, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f,  true, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.4199999868869781, 2.5 }, { 2.5, 1.753199980521202, 2.5 },
@@ -1065,8 +1065,8 @@ TEST_CASE("walk on concrete#jump", "[!mayfail][.physics]")
         INFO("Tick " << i);
         INFO("Position " << positions[i] << " | Target: " << target_pos[i]);
         INFO("Speed " << speeds[i] << " | Target: " << target_speed[i]);
-        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
     }
 }
 
@@ -1083,11 +1083,11 @@ TEST_CASE("walk on ice", "[!mayfail][.physics]")
     {
         section = "forward";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.5224906290974545 }, { 2.5, 1.0, 2.565038402257848 },
@@ -1111,12 +1111,12 @@ TEST_CASE("walk on ice", "[!mayfail][.physics]")
     {
         section = "backward";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            {  0.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5, 1.0, 2.4775093709025455 }, { 2.5, 1.0, 2.434961597742152 },
@@ -1142,11 +1142,11 @@ TEST_CASE("walk on ice", "[!mayfail][.physics]")
     {
         section = "right";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f,  0.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f,  0.0f, false, false, false },
+            { 0.0f,  0.0f, false, false, false }, { 0.0f,  0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.4775093709025455, 1.0, 2.5 }, { 2.434961597742152, 1.0, 2.5 },
@@ -1170,11 +1170,11 @@ TEST_CASE("walk on ice", "[!mayfail][.physics]")
     {
         section = "left";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 1.0, 2.5 }, { 2.5224906290974545, 1.0, 2.5 }, { 2.565038402257848, 1.0, 2.5 },
@@ -1230,8 +1230,8 @@ TEST_CASE("walk on ice", "[!mayfail][.physics]")
         INFO("Tick " << i);
         INFO("Position " << positions[i] << " | Target: " << target_pos[i]);
         INFO("Speed " << speeds[i] << " | Target: " << target_speed[i]);
-        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
     }
 }
 
@@ -1252,11 +1252,11 @@ TEST_CASE("walk on soul sand", "[!mayfail][.physics]")
     {
         section = "forward";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 0.875, 2.5 }, { 2.5, 0.875, 2.5980000033676625 }, { 2.5, 0.875, 2.717403210275794 },
@@ -1280,10 +1280,10 @@ TEST_CASE("walk on soul sand", "[!mayfail][.physics]")
     {
         section = "backward";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            {  0.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 0.875, 2.5 }, { 2.5, 0.875, 2.4019999966323375 }, { 2.5, 0.875, 2.282596789724206 },
@@ -1306,10 +1306,10 @@ TEST_CASE("walk on soul sand", "[!mayfail][.physics]")
     {
         section = "right";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false }, { 0.0, -1.0, false, false, false },
-            { 0.0, -1.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }
+            { 0.0f,  0.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false }, { 0.0f, -1.0f, false, false, false },
+            { 0.0f, -1.0f, false, false, false }, { 0.0f,  0.0f, false, false, false }, { 0.0f,  0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 0.875, 2.5 }, { 2.4019999966323375, 0.875, 2.5 }, { 2.2825967897242068, 0.875, 2.5 },
@@ -1331,11 +1331,11 @@ TEST_CASE("walk on soul sand", "[!mayfail][.physics]")
     {
         section = "left";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false },
-            { 0.0, 1.0, false, false, false }, { 0.0, 1.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false },
+            { 0.0f, 1.0f, false, false, false }, { 0.0f, 1.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 0.875, 2.5 }, { 2.5980000033676625, 0.875, 2.5 }, { 2.7174032102757932, 0.875, 2.5 },
@@ -1360,10 +1360,10 @@ TEST_CASE("walk on soul sand", "[!mayfail][.physics]")
     {
         section = "forward soul speed III";
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }
+            { 0.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false }, { 0.0f, 0.0f, false, false, false },
+            { 0.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 2.5, 0.875, 2.5 }, { 2.5, 0.875, 2.5980000033676625 }, { 2.5, 0.875, 2.749508014789164 },
@@ -1421,8 +1421,8 @@ TEST_CASE("walk on soul sand", "[!mayfail][.physics]")
         INFO("Tick " << i);
         INFO("Position " << positions[i] << " | Target: " << target_pos[i]);
         INFO("Speed " << speeds[i] << " | Target: " << target_speed[i]);
-        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
     }
 }
 
@@ -1586,8 +1586,8 @@ TEST_CASE("jump bump", "[!mayfail][.physics]")
         INFO("Position " << pos_y[i] << " | Target: " << target_pos_y[i]);
         INFO("Speed " << speed_y[i] << " | Target: " << target_speed_y[i]);
         INFO("Flying " << flying[i] << " | Target: " << target_flying[i]);
-        REQUIRE_THAT(std::abs(pos_y[i] - target_pos_y[i]), Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(std::abs(speed_y[i] - target_speed_y[i]), Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(std::abs(pos_y[i] - target_pos_y[i]), Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(std::abs(speed_y[i] - target_speed_y[i]), Catch::Matchers::WithinAbs(0.0, 1e-6));
         REQUIRE(flying[i] == target_flying[i]);
     }
 }
@@ -1609,13 +1609,13 @@ TEST_CASE("block transition", "[!mayfail][.physics]")
         section = "sneak small step down";
         local_player->SetYaw(0.0f);
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 0.0, 0.0, false, true, false },
-            { 0.0, 0.0, false, true, false }, { 0.0, 0.0, false, true, false }
+            { 0.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false }, { 0.0f, 0.0f, false, true, false },
+            { 0.0f, 0.0f, false,  true, false }, { 0.0f, 0.0f, false, true, false }
         };
         target_pos = {
             { 1.5, 1.0, 1.5 }, { 1.5, 1.0, 1.5980000033676625 }, { 1.5, 1.0, 1.6809080148159872 },
@@ -1645,17 +1645,17 @@ TEST_CASE("block transition", "[!mayfail][.physics]")
         section = "sneak big step down";
         local_player->SetYaw(90.0f);
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 0.0, 0.0, false, true, false }, { 0.0, 0.0, false, true, false },
-            { 0.0, 0.0, false, true, false }, { 0.0, 0.0, false, true, false }, { 0.0, 0.0, false, true, false },
-            { 0.0, 0.0, false, true, false }
+            { 0.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false, true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 0.0f, 0.0f, false,  true, false }, { 0.0f, 0.0f, false, true, false },
+            { 0.0f, 0.0f, false,  true, false }, { 0.0f, 0.0f, false,  true, false }, { 0.0f, 0.0f, false, true, false },
+            { 0.0f, 0.0f, false,  true, false }
         };
         target_pos = {
             { 1.5, 1.0, 1.5 }, { 1.4019999966323375, 1.0, 1.5 }, { 1.2504919852108358, 1.0, 1.5 },
@@ -1695,14 +1695,14 @@ TEST_CASE("block transition", "[!mayfail][.physics]")
         section = "step up crouching";
         local_player->SetYaw(180.0f);
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false },
-            { 1.0, 0.0, false, true, false }, { 1.0, 0.0, false, true, false }
+            { 0.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false, false, false },
+            { 1.0f, 0.0f, false, false, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false },
+            { 1.0f, 0.0f, false,  true, false }, { 1.0f, 0.0f, false,  true, false }
         };
         target_pos = {
             { 1.5, 1.0, 1.5 }, { 1.5, 1.0, 1.4019999966323375 }, { 1.5, 1.0, 1.300000011920929 },
@@ -1735,21 +1735,21 @@ TEST_CASE("block transition", "[!mayfail][.physics]")
         section = "back and forth soul sand";
         local_player->SetYaw(270.0f);
         inputs = {
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false }, { 1.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false }, { 0.0, 0.0, false, false, false },
-            { 0.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false }, { -1.0, 0.0, false, false, false },
-            { -1.0, 0.0, false, false, false }
+            {  0.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false },
+            {  1.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false },
+            {  1.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false },
+            {  1.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false },
+            {  1.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false }, {  1.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false }, {  0.0f, 0.0f, false, false, false },
+            {  0.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false }, { -1.0f, 0.0f, false, false, false },
+            { -1.0f, 0.0f, false, false, false }
         };
         target_pos = {
             { 1.5, 1.0, 1.5 }, { 1.5980000033676625, 1.0, 1.5 }, { 1.7495080147891642, 1.0, 1.5 },
@@ -1827,8 +1827,8 @@ TEST_CASE("block transition", "[!mayfail][.physics]")
         INFO("Tick " << i);
         INFO("Position " << positions[i] << " | Target: " << target_pos[i]);
         INFO("Speed " << speeds[i] << " | Target: " << target_speed[i]);
-        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
-        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-4));
+        REQUIRE_THAT(std::sqrt((target_pos[i] - positions[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
+        REQUIRE_THAT(std::sqrt((target_speed[i] - speeds[i]).SqrNorm()), Catch::Matchers::WithinAbs(0.0, 1e-6));
     }
 }
 
@@ -1836,15 +1836,15 @@ TEST_CASE("collisions")
 {
     std::unique_ptr<ManagersClient> bot = SetupTestBot(Vector3<double>(2.5, 1.51, 2.5));
 
-    std::vector<std::tuple<std::string, float, double, double, Vector3<double>>> directions = {
-        {"south", 0.0f, 1.0, 0.0, Vector3<double>(0.0, 0.0, 1.0)},
-        {"north", 0.0f, -1.0, 0.0, Vector3<double>(0.0, 0.0, -1.0)},
-        {"east", 0.0f, 0.0, 1.0, Vector3<double>(1.0, 0.0, 0.0)},
-        {"west", 0.0f, 0.0, -1.0, Vector3<double>(-1.0, 0.0, 0.0)},
-        {"south facing east", -90.0f, 0.0, -1.0, Vector3<double>(0.0, 0.0, 1.0)},
-        {"north facing east", -90.0f, 0.0, 1.0, Vector3<double>(0.0, 0.0, -1.0)},
-        {"east facing east", -90.0f, 1.0, 0.0, Vector3<double>(1.0, 0.0, 0.0)},
-        {"west facing east", -90.0f, -1.0, 0.0, Vector3<double>(-1.0, 0.0, 0.0)},
+    std::vector<std::tuple<std::string, float, float, float, Vector3<double>>> directions = {
+        {"south", 0.0f, 1.0f, 0.0f, Vector3<double>(0.0, 0.0, 1.0)},
+        {"north", 0.0f, -1.0f, 0.0f, Vector3<double>(0.0, 0.0, -1.0)},
+        {"east", 0.0f, 0.0f, 1.0f, Vector3<double>(1.0, 0.0, 0.0)},
+        {"west", 0.0f, 0.0f, -1.0f, Vector3<double>(-1.0, 0.0, 0.0)},
+        {"south facing east", -90.0f, 0.0f, -1.0f, Vector3<double>(0.0, 0.0, 1.0)},
+        {"north facing east", -90.0f, 0.0f, 1.0f, Vector3<double>(0.0, 0.0, -1.0)},
+        {"east facing east", -90.0f, 1.0f, 0.0f, Vector3<double>(1.0, 0.0, 0.0)},
+        {"west facing east", -90.0f, -1.0f, 0.0f, Vector3<double>(-1.0, 0.0, 0.0)},
     };
 
     std::shared_ptr<LocalPlayer> local_player = bot->GetLocalPlayer();

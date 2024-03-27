@@ -62,7 +62,7 @@ namespace Botcraft
         void SetSprinting(const bool b) const;
         void InputsToFly() const;
         void InputsToJump() const;
-        void ApplyInputs(const double strength) const;
+        void ApplyInputs(const float strength) const;
         /// @brief Send position/rotation/on_ground to server
         void SendPosition();
 

@@ -325,22 +325,22 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::FORWARD)])
     {
-        local_player->SetInputsForward(1.0);
+        local_player->SetInputsForward(1.0f);
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::BACKWARD)])
     {
-        local_player->SetInputsForward(-1.0);
+        local_player->SetInputsForward(-1.0f);
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::RIGHT)])
     {
-        local_player->SetInputsLeft(-1.0);
+        local_player->SetInputsLeft(-1.0f);
     }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::LEFT)])
     {
-        local_player->SetInputsLeft(1.0);
+        local_player->SetInputsLeft(1.0f);
     }
 }
 #endif
