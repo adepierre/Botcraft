@@ -190,7 +190,6 @@ namespace Botcraft
                                 ImGui::Text("DownBubbleColumn: "); ImGui::SameLine(); raycasted_blockstate->IsDownBubbleColumn() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
                                 ImGui::Text("Berry Bush: "); ImGui::SameLine(); raycasted_blockstate->IsBerryBush() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
                                 ImGui::Text("Powder Snow: "); ImGui::SameLine(); raycasted_blockstate->IsPowderSnow() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
-                                ImGui::Text("Wall Height: "); ImGui::SameLine(); raycasted_blockstate->IsWallHeight() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
                                 ImGui::Text("Fluid Height: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetFluidHeight()).data());
                                 ImGui::Text("Hardness: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetHardness()).data());
                                 ImGui::Text("Friction: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetFriction()).data());

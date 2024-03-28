@@ -1420,7 +1420,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -1655,7 +1654,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 6
         },
         {
@@ -1720,7 +1718,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -1988,7 +1985,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 11
         },
         {
@@ -2458,7 +2454,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 6
         },
         {
@@ -2471,7 +2466,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 6
         },
         {
@@ -2484,7 +2478,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 6
         },
         {
@@ -2497,7 +2490,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 6
         },
         {
@@ -2510,7 +2502,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 6
         },
         {
@@ -2523,7 +2514,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -2536,7 +2526,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -2549,7 +2538,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -2562,7 +2550,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -2575,7 +2562,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {

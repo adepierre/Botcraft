@@ -79,8 +79,6 @@ namespace Botcraft
         bool berry_bush = false;
         /// @brief True if this block is powder_snow
         bool powder_snow = false;
-        /// @brief True if block has the WALLS/FENCES/FENCE_GATES tag
-        bool wall_height = false;
         /// @brief Max horizontal offset value of the colliders (for bamboo and pointed dripstone)
         float horizontal_offset = 0.0f;
         /// @brief Digging hardness
@@ -141,7 +139,6 @@ namespace Botcraft
         bool IsDownBubbleColumn() const;
         bool IsBerryBush() const;
         bool IsPowderSnow() const;
-        bool IsWallHeight() const;
         float GetHardness() const;
         float GetFriction() const;
         TintType GetTintType() const;
@@ -225,7 +222,6 @@ namespace Botcraft
             DownBubbleColumn,
             BerryBush,
             PowderSnow,
-            WallHeight,
             HorizontalOffset0_25,
             HorizontalOffset0_125,
             NUM_FLAGS

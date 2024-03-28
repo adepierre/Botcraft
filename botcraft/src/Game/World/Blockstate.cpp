@@ -800,11 +800,6 @@ namespace Botcraft
 #endif
     }
 
-    bool Blockstate::IsWallHeight() const
-    {
-        return flags[static_cast<size_t>(BlockstateFlags::WallHeight)];
-    }
-
     float Blockstate::GetHardness() const
     {
         return hardness;
@@ -1034,7 +1029,6 @@ namespace Botcraft
         flags[static_cast<size_t>(BlockstateFlags::UpBubbleColumn)] = GetBoolFromCondition(properties.up_bubble_column);
         flags[static_cast<size_t>(BlockstateFlags::BerryBush)] = properties.berry_bush;
         flags[static_cast<size_t>(BlockstateFlags::PowderSnow)] = properties.powder_snow;
-        flags[static_cast<size_t>(BlockstateFlags::WallHeight)] = properties.wall_height;
         flags[static_cast<size_t>(BlockstateFlags::HorizontalOffset0_25)] = std::abs(properties.horizontal_offset - 0.25f) < 0.01f;
         flags[static_cast<size_t>(BlockstateFlags::HorizontalOffset0_125)] = std::abs(properties.horizontal_offset - 0.125f) < 0.01f;
     }

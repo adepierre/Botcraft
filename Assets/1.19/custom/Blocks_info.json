@@ -3516,7 +3516,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -4139,7 +4138,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -4204,7 +4202,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -4440,7 +4437,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -4452,7 +4448,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -6486,7 +6481,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -6499,7 +6493,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -6512,7 +6505,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -6525,7 +6517,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -6538,7 +6529,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -6551,7 +6541,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -6564,7 +6553,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -6577,7 +6565,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -6590,7 +6577,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -6603,7 +6589,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -8353,7 +8338,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8365,7 +8349,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8377,7 +8360,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8389,7 +8371,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8401,7 +8382,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8413,7 +8393,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8425,7 +8404,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8437,7 +8415,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8449,7 +8426,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8461,7 +8437,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8473,7 +8448,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8485,7 +8459,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -8977,7 +8950,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -8990,7 +8962,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -9025,7 +8996,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -9038,7 +9008,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -9365,7 +9334,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -9447,7 +9415,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -9509,7 +9476,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -10858,7 +10824,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -10900,7 +10865,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -10942,7 +10906,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -10984,7 +10947,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
@@ -11138,7 +11100,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 3
         },
         {
@@ -11151,7 +11112,6 @@
                 "any",
                 "axe"
             ],
-            "wall_height": true,
             "colliders": 8
         },
         {
@@ -11334,7 +11294,6 @@
             "tools": [
                 "pickaxe"
             ],
-            "wall_height": true,
             "colliders": 13
         },
         {
