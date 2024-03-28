@@ -322,7 +322,13 @@ TEST_CASE("speed pathfinding")
     CHECK_THAT(time_taken, Catch::Matchers::WithinAbs(expected_time_s, 0.2));
 }
 
+#if PROTOCOL_VERSION == 340 /* 1.12.2 */
+// In 1.12.2, all walls orientations have the same block ID so we can't differentiate
+// their colliders, which make this pathfinding being blocked
+TEST_CASE("wall carpet pathfinding", "[!shouldfail]")
+#else
 TEST_CASE("wall carpet pathfinding")
+#endif
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot;
     bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(0.0, 1.01, 0.0));
@@ -332,7 +338,7 @@ TEST_CASE("wall carpet pathfinding")
     std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 
-    bot->SyncAction(60000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, false, 1.0f);
+    bot->SyncAction(15000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, false, 1.0f);
     CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
     CHECK_THAT(local_player->GetHealth(), Catch::Matchers::WithinAbs(20.0, 0.01));
 }
