@@ -785,11 +785,23 @@ TEST_CASE("Parse")
         CHECK(result.is<unsigned long long int>());
         CHECK(result.get<unsigned long long int>() == 1);
 
+        s = "9";
+        result = Json::Parse(s);
+        CHECK(result.is_integer());
+        CHECK(result.is<unsigned long long int>());
+        CHECK(result.get<unsigned long long int>() == 9);
+
         s = "-1";
         result = Json::Parse(s);
         CHECK(result.is_integer());
         CHECK(result.is<long long int>());
         CHECK(result.get<long long int>() == -1);
+
+        s = "-99";
+        result = Json::Parse(s);
+        CHECK(result.is_integer());
+        CHECK(result.is<long long int>());
+        CHECK(result.get<long long int>() == -99);
 
         s = "0e+1";
         result = Json::Parse(s);

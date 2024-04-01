@@ -568,7 +568,7 @@ namespace ProtocolCraft
             if (s[0] == '-')
             {
                 // min long long int (but with > because string comparison)
-                if (s > "-9223372036854775808")
+                if (s.size() >= 20 && s > "-9223372036854775808")
                 {
                     return std::stod(s);
                 }
@@ -576,7 +576,7 @@ namespace ProtocolCraft
             }
 
             // max unsigned long long int
-            if (s > "18446744073709551615")
+            if (s.size() >= 20 && s > "18446744073709551615")
             {
                 return std::stod(s);
             }
