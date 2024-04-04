@@ -1213,7 +1213,7 @@ namespace Botcraft
             }, client, 1000);
     }
 
-    // Try to cancel speed while going toward the center of the block
+    // Try to cancel speed while going toward the target position
     void AdjustPosSpeed(BehaviourClient& client, const Vector3<double>& target)
     {
         std::shared_ptr<LocalPlayer> player = client.GetLocalPlayer();
@@ -1506,41 +1506,32 @@ namespace Botcraft
         return GoToImpl(client, Vector3<double>(goal.x + 0.5, goal.y, goal.z + 0.5), dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump, sprint, speed_factor);
     }
 
-    Status GoToXZ(BehaviourClient& client, const Vector3<double>& goal, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump, const bool sprint, const float speed_factor)
+    Status GoToDouble(BehaviourClient& client, const Vector3<double>& goal, const bool allow_jump, const bool sprint, const float speed_factor)
     {
         constexpr std::array variable_names = {
-            "GoToXZ.goal",
-            "GoToXZ.dist_tolerance",
-            "GoToXZ.min_end_dist",
-            "GoToXZ.min_end_dist_xz",
-            "GoToXZ.allow_jump",
-            "GoToXZ.sprint",
-            "GoToXZ.speed_factor"
+            "GoToDouble.goal",
+            "GoToDouble.allow_jump",
+            "GoToDouble.sprint",
+            "GoToDouble.speed_factor"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
 
         blackboard.Set<Vector3<double>>(variable_names[0], goal);
-        blackboard.Set<int>(variable_names[1], dist_tolerance);
-        blackboard.Set<int>(variable_names[2], min_end_dist);
-        blackboard.Set<int>(variable_names[3], min_end_dist_xz);
-        blackboard.Set<bool>(variable_names[4], allow_jump);
-        blackboard.Set<bool>(variable_names[5], sprint);
-        blackboard.Set<float>(variable_names[6], speed_factor);
+        blackboard.Set<bool>(variable_names[1], allow_jump);
+        blackboard.Set<bool>(variable_names[2], sprint);
+        blackboard.Set<float>(variable_names[3], speed_factor);
 
-        return GoToImpl(client, goal, dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump, sprint, speed_factor);
+        return GoToImpl(client, goal, 0, 0, 0, allow_jump, sprint, speed_factor);
     }
 
-    Status GoToXZBlackboard(BehaviourClient& client)
+    Status GoToDoubleBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-            "GoToXZ.goal",
-            "GoToXZ.dist_tolerance",
-            "GoToXZ.min_end_dist",
-            "GoToXZ.min_end_dist_xz",
-            "GoToXZ.allow_jump",
-            "GoToXZ.sprint",
-            "GoToXZ.speed_factor"
+            "GoToDouble.goal",
+            "GoToDouble.allow_jump",
+            "GoToDouble.sprint",
+            "GoToDouble.speed_factor"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1549,14 +1540,11 @@ namespace Botcraft
         const Vector3<double>& goal = blackboard.Get<Vector3<double>>(variable_names[0]);
 
         // Optional
-        const int dist_tolerance = blackboard.Get(variable_names[1], 0);
-        const int min_end_dist = blackboard.Get(variable_names[2], 0);
-        const int min_end_dist_xz = blackboard.Get(variable_names[3], 0);
-        const bool allow_jump = blackboard.Get(variable_names[4], true);
-        const bool sprint = blackboard.Get(variable_names[5], true);
-        const float speed_factor = blackboard.Get(variable_names[6], 1.0f);
+        const bool allow_jump = blackboard.Get(variable_names[1], true);
+        const bool sprint = blackboard.Get(variable_names[2], true);
+        const float speed_factor = blackboard.Get(variable_names[3], 1.0f);
 
-        return GoToImpl(client, goal, dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump, sprint, speed_factor);
+        return GoToImpl(client, goal, 0, 0, 0, allow_jump, sprint, speed_factor);
     }
 
 
