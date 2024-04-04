@@ -19,7 +19,9 @@ jobs:
       - id: retrieve
         name: Retrieve the version from body
         if: ${{ steps.check.outputs.is_valid_request == 'true' }}
-        run: echo "version="$(echo "${{ github.event.issue.body }}" | tail -n1) >> $GITHUB_OUTPUT
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: echo "version="$(echo "$BODY" | tail -n1) >> $GITHUB_OUTPUT
 
       - id: exist
         name: Check if version already exists in release
