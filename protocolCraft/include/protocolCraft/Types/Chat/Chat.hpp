@@ -61,12 +61,14 @@ namespace ProtocolCraft
 
         }
 
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
             WriteData<std::string>(raw_text, container);
-        }
+#else
+            NBT::Tag::WriteUnnamedImpl(container);
 #endif
+        }
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         virtual Json::Value SerializeImpl() const override
