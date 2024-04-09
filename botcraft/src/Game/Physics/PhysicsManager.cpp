@@ -1325,7 +1325,15 @@ namespace Botcraft
                     }
                     else if (block->IsPowderSnow())
                     { // PowderSnowBlock::entityInside
-                        player->stuck_speed_multiplier = Vector3<double>(0.8999999761581421, 1.5, 0.8999999761581421);
+                        const Blockstate* feet_block = world->GetBlock(Position(
+                            static_cast<int>(std::floor(player->position.x)),
+                            static_cast<int>(std::floor(player->position.y)),
+                            static_cast<int>(std::floor(player->position.z))
+                        ));
+                        if (feet_block != nullptr && feet_block->IsPowderSnow())
+                        {
+                            player->stuck_speed_multiplier = Vector3<double>(0.8999999761581421, 1.5, 0.8999999761581421);
+                        }
                     }
                 }
             }
