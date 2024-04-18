@@ -80,6 +80,12 @@ namespace Botcraft
 
     }
 
+    void ConnectionClient::Handle(ClientboundPingPacket &msg) {
+        std::shared_ptr<ServerboundPongPacket> reply_message = std::make_shared<ServerboundPongPacket>();
+        reply_message->SetId_(msg.GetId_());
+        network_manager->Send(reply_message);
+    }
+
     void ConnectionClient::Handle(ClientboundLoginDisconnectPacket& msg)
     {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */

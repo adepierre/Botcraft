@@ -39,6 +39,7 @@ namespace Botcraft
 
     protected:
         virtual void Handle(ProtocolCraft::Message& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPingPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket& msg) override;
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
