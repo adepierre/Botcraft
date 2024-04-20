@@ -226,9 +226,7 @@ namespace Botcraft
     {
         if (msg.GetHealth() <= 0.0f && auto_respawn)
         {
-            std::shared_ptr<ServerboundClientCommandPacket> status_message(new ServerboundClientCommandPacket);
-            status_message->SetAction(0);
-            network_manager->Send(status_message);
+            Respawn();
         }
     }
 
