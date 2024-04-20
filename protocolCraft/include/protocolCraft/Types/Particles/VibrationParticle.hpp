@@ -25,7 +25,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         const VibrationPath& GetVibrationPath() const;
 #else
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        PositionSourceType GetDestinationType() const;
+#else
         const Identifier& GetDestinationType() const;
+#endif
         const std::shared_ptr<PositionSource>& GetDestination() const;
         int GetArrivalInTicks() const;
 #endif
@@ -33,7 +37,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         void SetVibrationPath(const VibrationPath& vibration_path_);
 #else
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        void SetDestinationType(const PositionSourceType destination_type_);
+#else
         void SetDestinationType(const Identifier& destination_type_);
+#endif
         void SetDestination(const std::shared_ptr<PositionSource>& destination_);
         void SetArrivalInTicks(const int arrival_in_ticks_);
 #endif
@@ -49,7 +57,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         VibrationPath vibration_path;
 #else
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        PositionSourceType destination_type = PositionSourceType::None;
+#else
         Identifier destination_type;
+#endif
         std::shared_ptr<PositionSource> destination;
         int arrival_in_ticks = 0;
 #endif
