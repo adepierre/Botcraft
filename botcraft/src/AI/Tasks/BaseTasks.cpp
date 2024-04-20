@@ -61,6 +61,11 @@ namespace Botcraft
     {
         std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
 
+        if (local_player == nullptr)
+        {
+            return Status::Failure;
+        }
+
         // Compute the distance from the hand? Might be from somewhere else
         const Vector3<double> player_hand_pos = local_player->GetPosition() + Vector3<double>(0.0, 1.0, 0.0);
 
@@ -240,7 +245,7 @@ namespace Botcraft
 
     Status IsHungryImpl(BehaviourClient& client, const int threshold)
     {
-        return client.GetLocalPlayer()->GetFood() < threshold ? Status::Success : Status::Failure;
+        return (client.GetLocalPlayer() == nullptr || client.GetLocalPlayer()->GetFood() >= threshold) ? Status::Failure : Status::Success;
     }
 
     Status IsHungry(BehaviourClient& client, const int threshold)
@@ -319,6 +324,6 @@ namespace Botcraft
 
     Status IsAlive(BehaviourClient& client)
     {
-        return client.GetLocalPlayer()->GetHealth() > 0.0f ? Status::Success : Status::Failure;
+        return (client.GetLocalPlayer() == nullptr || client.GetLocalPlayer()->GetHealth() <= 0.0f) ? Status::Failure : Status::Success;
     }
 }
