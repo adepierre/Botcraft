@@ -20,6 +20,7 @@ namespace Botcraft
         ItemId id;
         std::string name;
         unsigned char stack_size;
+        int durability;
     };
 
     class Item
@@ -33,8 +34,8 @@ namespace Botcraft
         ToolType GetToolType() const;
         ToolMaterial GetToolMaterial() const;
 
-        /// @brief Get the max durability of this item (only implemented for tools)
-        /// @return -1 if unknown, max durability otherwise
+        /// @brief Get the max durability of this item
+        /// @return -1 if undefined, max durability otherwise
         int GetMaxDurability() const;
 
     private:
@@ -44,6 +45,7 @@ namespace Botcraft
         ItemId id;
         std::string name;
         unsigned char stack_size;
+        int durability;
         ToolType tool_type;
         ToolMaterial tool_material;
     };

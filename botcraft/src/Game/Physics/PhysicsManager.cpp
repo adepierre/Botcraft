@@ -599,7 +599,7 @@ namespace Botcraft
             const Slot chest_slot = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_CHEST_ARMOR);
             if (!chest_slot.IsEmptySlot() &&
                 chest_slot.GetItemID() == elytra_item->GetId() &&
-                Utilities::GetDamageCount(chest_slot.GetNBT()) < 432 - 1) // TODO: replace 432 by max elytra durability
+                Utilities::GetDamageCount(chest_slot.GetNBT()) < elytra_item->GetMaxDurability() - 1)
             {
                 player->SetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying, true);
                 std::shared_ptr<ServerboundPlayerCommandPacket> player_command_msg = std::make_shared<ServerboundPlayerCommandPacket>();

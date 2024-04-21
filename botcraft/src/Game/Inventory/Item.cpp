@@ -9,6 +9,7 @@ namespace Botcraft
         id = props.id;
         name = props.name;
         stack_size = props.stack_size;
+        durability = props.durability;
         LoadTypeAndMaterialFromName();
     }
 
@@ -39,37 +40,7 @@ namespace Botcraft
 
     int Item::GetMaxDurability() const
     {
-        switch (tool_type)
-        {
-        case ToolType::Axe:
-        case ToolType::Hoe:
-        case ToolType::Pickaxe:
-        case ToolType::Shovel:
-        case ToolType::Sword:
-            switch (tool_material)
-            {
-            case ToolMaterial::Wood:
-                return 59;
-            case ToolMaterial::Gold:
-                return 32;
-            case ToolMaterial::Stone:
-                return 131;
-            case ToolMaterial::Iron:
-                return 250;
-            case ToolMaterial::Diamond:
-                return 1561;
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-            case ToolMaterial::Netherite:
-                return 2031;
-#endif
-            default:
-                return -1;
-            }
-        case ToolType::Shears:
-            return 238;
-        default:
-            return -1;
-        }
+        return durability;
     }
 
     void Item::LoadTypeAndMaterialFromName()

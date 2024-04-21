@@ -975,6 +975,7 @@ namespace Botcraft
 #endif
                 "default", //name
                 64, //stack_size
+                -1, // durability
         };
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
         items[{-1, 0}] = std::make_unique<Item>(props);
@@ -1006,6 +1007,16 @@ namespace Botcraft
             else
             {
                 props.stack_size = 64;
+            }
+
+            if (properties.contains("durability") && properties["durability"].is_number())
+            {
+                props.durability = properties["durability"].get_number<int>();
+            }
+            // Default value
+            else
+            {
+                props.durability = -1;
             }
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */

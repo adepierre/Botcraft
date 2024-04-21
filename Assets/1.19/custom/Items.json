@@ -349,7 +349,8 @@
     },
     "minecraft:bow": {
         "id": 718,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 384
     },
     "minecraft:bowl": {
         "id": 766
@@ -473,7 +474,8 @@
     },
     "minecraft:carrot_on_a_stick": {
         "id": 695,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 25
     },
     "minecraft:cartography_table": {
         "id": 1092
@@ -498,19 +500,23 @@
     },
     "minecraft:chainmail_boots": {
         "id": 781,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 195
     },
     "minecraft:chainmail_chestplate": {
         "id": 779,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 240
     },
     "minecraft:chainmail_helmet": {
         "id": 778,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 165
     },
     "minecraft:chainmail_leggings": {
         "id": 780,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 225
     },
     "minecraft:charcoal": {
         "id": 721
@@ -756,7 +762,8 @@
     },
     "minecraft:crossbow": {
         "id": 1078,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 465
     },
     "minecraft:crying_obsidian": {
         "id": 1111
@@ -1004,26 +1011,31 @@
     },
     "minecraft:diamond_axe": {
         "id": 758,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 1561
     },
     "minecraft:diamond_block": {
         "id": 71
     },
     "minecraft:diamond_boots": {
         "id": 789,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 429
     },
     "minecraft:diamond_chestplate": {
         "id": 787,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 528
     },
     "minecraft:diamond_helmet": {
         "id": 786,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 363
     },
     "minecraft:diamond_hoe": {
         "id": 759,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 1561
     },
     "minecraft:diamond_horse_armor": {
         "id": 1018,
@@ -1031,22 +1043,26 @@
     },
     "minecraft:diamond_leggings": {
         "id": 788,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 495
     },
     "minecraft:diamond_ore": {
         "id": 57
     },
     "minecraft:diamond_pickaxe": {
         "id": 757,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 1561
     },
     "minecraft:diamond_shovel": {
         "id": 756,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 1561
     },
     "minecraft:diamond_sword": {
         "id": 755,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 1561
     },
     "minecraft:diorite": {
         "id": 4
@@ -1114,7 +1130,8 @@
     },
     "minecraft:elytra": {
         "id": 697,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 432
     },
     "minecraft:emerald": {
         "id": 723
@@ -1228,7 +1245,8 @@
     },
     "minecraft:fishing_rod": {
         "id": 836,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 64
     },
     "minecraft:fletching_table": {
         "id": 1093
@@ -1238,7 +1256,8 @@
     },
     "minecraft:flint_and_steel": {
         "id": 716,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 64
     },
     "minecraft:flower_banner_pattern": {
         "id": 1081,
@@ -1339,26 +1358,31 @@
     },
     "minecraft:golden_axe": {
         "id": 748,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 32
     },
     "minecraft:golden_boots": {
         "id": 793,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 91
     },
     "minecraft:golden_carrot": {
         "id": 995
     },
     "minecraft:golden_chestplate": {
         "id": 791,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 112
     },
     "minecraft:golden_helmet": {
         "id": 790,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 77
     },
     "minecraft:golden_hoe": {
         "id": 749,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 32
     },
     "minecraft:golden_horse_armor": {
         "id": 1017,
@@ -1366,19 +1390,23 @@
     },
     "minecraft:golden_leggings": {
         "id": 792,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 105
     },
     "minecraft:golden_pickaxe": {
         "id": 747,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 32
     },
     "minecraft:golden_shovel": {
         "id": 746,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 32
     },
     "minecraft:golden_sword": {
         "id": 745,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 32
     },
     "minecraft:granite": {
         "id": 2
@@ -1573,7 +1601,8 @@
     },
     "minecraft:iron_axe": {
         "id": 753,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 250
     },
     "minecraft:iron_bars": {
         "id": 310
@@ -1583,22 +1612,26 @@
     },
     "minecraft:iron_boots": {
         "id": 785,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 195
     },
     "minecraft:iron_chestplate": {
         "id": 783,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 240
     },
     "minecraft:iron_door": {
         "id": 656
     },
     "minecraft:iron_helmet": {
         "id": 782,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 165
     },
     "minecraft:iron_hoe": {
         "id": 754,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 250
     },
     "minecraft:iron_horse_armor": {
         "id": 1016,
@@ -1609,7 +1642,8 @@
     },
     "minecraft:iron_leggings": {
         "id": 784,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 225
     },
     "minecraft:iron_nugget": {
         "id": 1055
@@ -1619,15 +1653,18 @@
     },
     "minecraft:iron_pickaxe": {
         "id": 752,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 250
     },
     "minecraft:iron_shovel": {
         "id": 751,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 250
     },
     "minecraft:iron_sword": {
         "id": 750,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 250
     },
     "minecraft:iron_trapdoor": {
         "id": 666
@@ -1735,15 +1772,18 @@
     },
     "minecraft:leather_boots": {
         "id": 777,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 65
     },
     "minecraft:leather_chestplate": {
         "id": 775,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 80
     },
     "minecraft:leather_helmet": {
         "id": 774,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 55
     },
     "minecraft:leather_horse_armor": {
         "id": 1019,
@@ -1751,7 +1791,8 @@
     },
     "minecraft:leather_leggings": {
         "id": 776,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 75
     },
     "minecraft:lectern": {
         "id": 621
@@ -2219,48 +2260,57 @@
     },
     "minecraft:netherite_axe": {
         "id": 763,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 2031
     },
     "minecraft:netherite_block": {
         "id": 72
     },
     "minecraft:netherite_boots": {
         "id": 797,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 481
     },
     "minecraft:netherite_chestplate": {
         "id": 795,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 592
     },
     "minecraft:netherite_helmet": {
         "id": 794,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 407
     },
     "minecraft:netherite_hoe": {
         "id": 764,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 2031
     },
     "minecraft:netherite_ingot": {
         "id": 733
     },
     "minecraft:netherite_leggings": {
         "id": 796,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 555
     },
     "minecraft:netherite_pickaxe": {
         "id": 762,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 2031
     },
     "minecraft:netherite_scrap": {
         "id": 734
     },
     "minecraft:netherite_shovel": {
         "id": 761,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 2031
     },
     "minecraft:netherite_sword": {
         "id": 760,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 2031
     },
     "minecraft:netherrack": {
         "id": 280
@@ -2934,14 +2984,16 @@
     },
     "minecraft:shears": {
         "id": 887,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 238
     },
     "minecraft:sheep_spawn_egg": {
         "id": 956
     },
     "minecraft:shield": {
         "id": 1052,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 336
     },
     "minecraft:shroomlight": {
         "id": 1104
@@ -3145,7 +3197,8 @@
     },
     "minecraft:stone_axe": {
         "id": 743,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 131
     },
     "minecraft:stone_brick_slab": {
         "id": 230
@@ -3164,18 +3217,21 @@
     },
     "minecraft:stone_hoe": {
         "id": 744,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 131
     },
     "minecraft:stone_pickaxe": {
         "id": 742,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 131
     },
     "minecraft:stone_pressure_plate": {
         "id": 643
     },
     "minecraft:stone_shovel": {
         "id": 741,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 131
     },
     "minecraft:stone_slab": {
         "id": 223
@@ -3185,7 +3241,8 @@
     },
     "minecraft:stone_sword": {
         "id": 740,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 131
     },
     "minecraft:stonecutter": {
         "id": 1096
@@ -3319,7 +3376,8 @@
     },
     "minecraft:trident": {
         "id": 1074,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 250
     },
     "minecraft:tripwire_hook": {
         "id": 627
@@ -3351,7 +3409,8 @@
     },
     "minecraft:turtle_helmet": {
         "id": 714,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 275
     },
     "minecraft:turtle_spawn_egg": {
         "id": 969
@@ -3397,7 +3456,8 @@
     },
     "minecraft:warped_fungus_on_a_stick": {
         "id": 696,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 100
     },
     "minecraft:warped_hyphae": {
         "id": 141
@@ -3571,23 +3631,28 @@
     },
     "minecraft:wooden_axe": {
         "id": 738,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 59
     },
     "minecraft:wooden_hoe": {
         "id": 739,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 59
     },
     "minecraft:wooden_pickaxe": {
         "id": 737,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 59
     },
     "minecraft:wooden_shovel": {
         "id": 736,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 59
     },
     "minecraft:wooden_sword": {
         "id": 735,
-        "stack_size": 1
+        "stack_size": 1,
+        "durability": 59
     },
     "minecraft:writable_book": {
         "id": 985,
