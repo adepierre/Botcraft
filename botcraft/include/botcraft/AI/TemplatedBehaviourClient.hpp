@@ -157,8 +157,8 @@ namespace Botcraft
             // Set the tree
             SetBehaviourTree(Builder<TDerived>()
                 .sequence()
-                .succeeder().leaf(std::forward<Args>(args)...)
-                .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
+                    .succeeder().leaf(std::forward<Args>(args)...)
+                    .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
                 .end());
 
             // Perform one step to get out of the Yield lock and swap tree
