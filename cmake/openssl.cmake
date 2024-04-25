@@ -8,7 +8,7 @@ endif()
 # If not found, build from sources
 if(NOT OPENSSL_FOUND)
     set(OPENSSL_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/openssl/")
-    set(OPENSSL_BUILD_PATH "${CMAKE_CURRENT_BINARY_DIR}/3rdparty/openssl")
+    set(OPENSSL_BUILD_PATH "${CMAKE_CURRENT_BINARY_DIR}/3rdparty/openssl" CACHE INTERNAL "Local OpenSSL build path")
 
     file(GLOB RESULT "${OPENSSL_BUILD_PATH}/install")
     list(LENGTH RESULT RES_LEN)
