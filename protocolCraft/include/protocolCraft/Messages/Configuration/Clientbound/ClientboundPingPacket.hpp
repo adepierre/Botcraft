@@ -8,7 +8,13 @@ namespace ProtocolCraft
     class ClientboundPingConfigurationPacket : public BaseMessage<ClientboundPingConfigurationPacket>
     {
     public:
+#if   PROTOCOL_VERSION < 766 /* < 1.20.5 */
         static constexpr int packet_id = 0x04;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x05;
+#else
+#error "Protocol version not implemented"
+#endif
 
         static constexpr std::string_view packet_name = "Ping (Configuration)";
 

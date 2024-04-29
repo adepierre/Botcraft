@@ -37,6 +37,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+        void SetShouldAuthenticate(const bool should_authenticate_)
+        {
+            should_authenticate = should_authenticate_;
+        }
+#endif
+
         const std::string& GetServerID() const
         {
             return server_ID;
@@ -59,6 +66,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+        bool GetShouldAuthenticate() const
+        {
+            return should_authenticate;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
@@ -68,6 +82,9 @@ namespace ProtocolCraft
             nonce = ReadVector<unsigned char>(iter, length);
 #else
             challenge = ReadVector<unsigned char>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+            should_authenticate = ReadData<bool>(iter, length);
 #endif
         }
 
@@ -79,6 +96,9 @@ namespace ProtocolCraft
             WriteVector<unsigned char>(nonce, container);
 #else
             WriteVector<unsigned char>(challenge, container);
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+            WriteData<bool>(should_authenticate, container);
 #endif
         }
 
@@ -93,6 +113,9 @@ namespace ProtocolCraft
 #else
             output["challenge"] = "vector of " + std::to_string(challenge.size()) + " unsigned char";
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+            output["should_authenticate"] = should_authenticate;
+#endif
 
             return output;
         }
@@ -104,6 +127,9 @@ namespace ProtocolCraft
         std::vector<unsigned char> nonce;
 #else
         std::vector<unsigned char> challenge;
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+        bool should_authenticate = false;
 #endif
     };
 }

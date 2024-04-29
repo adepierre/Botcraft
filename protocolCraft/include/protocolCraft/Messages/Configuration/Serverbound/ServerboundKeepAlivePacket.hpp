@@ -8,7 +8,13 @@ namespace ProtocolCraft
     class ServerboundKeepAliveConfigurationPacket : public BaseMessage<ServerboundKeepAliveConfigurationPacket>
     {
     public:
+#if   PROTOCOL_VERSION < 766 /* < 1.20.5 */
         static constexpr int packet_id = 0x03;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x04;
+#else
+#error "Protocol version not implemented"
+#endif
 
         static constexpr std::string_view packet_name = "Keep Alive (Configuration)";
 

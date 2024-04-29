@@ -8,7 +8,13 @@ namespace ProtocolCraft
     class ServerboundResourcePackConfigurationPacket : public BaseMessage<ServerboundResourcePackConfigurationPacket>
     {
     public:
+#if   PROTOCOL_VERSION < 766 /* < 1.20.5 */
         static constexpr int packet_id = 0x05;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x06;
+#else
+#error "Protocol version not implemented"
+#endif
 
         static constexpr std::string_view packet_name = "Resource Pack (Configuration)";
 

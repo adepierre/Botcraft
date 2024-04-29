@@ -16,12 +16,14 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Handshaking/Serverbound/ServerboundClientIntentionPacket.hpp
 
 
+    include/protocolCraft/Messages/Login/Clientbound/ClientboundCookieRequestPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundCustomQueryPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundGameProfilePacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundHelloPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundLoginCompressionPacket.hpp
     include/protocolCraft/Messages/Login/Clientbound/ClientboundLoginDisconnectPacket.hpp
 
+    include/protocolCraft/Messages/Login/Serverbound/ServerboundCookieResponsePacket.hpp
     include/protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryAnswerPacket.hpp
     include/protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryPacket.hpp
     include/protocolCraft/Messages/Login/Serverbound/ServerboundHelloPacket.hpp
@@ -60,11 +62,13 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetContentPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetDataPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundContainerSetSlotPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundCookieRequestPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCooldownPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomChatCompletionsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomPayloadPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomSoundPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDamageEventPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundDebugSamplePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDeleteChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDisconnectPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDisguisedChatPacket.hpp
@@ -107,6 +111,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerLookAtPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPlayerPositionPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundPongResponsePacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundProjectilePowerPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundRecipePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntitiesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntityPacket.hpp
@@ -154,6 +159,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSoundPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundStartConfigurationPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundStopSoundPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundStoreCookiePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSystemChatPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTabListPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTagQueryPacket.hpp
@@ -161,6 +167,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTeleportEntityPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTickingStatePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTickingStepPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundTransferPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateAdvancementsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateAttributesPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp
@@ -170,9 +177,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundUseBedPacket.hpp
 
     include/protocolCraft/Messages/Play/Serverbound/ServerboundAcceptTeleportationPacket.hpp
-    include/protocolCraft/Messages/Play/Serverbound/ServerboundBlockEntityTagQuery.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundBlockEntityTagQueryPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChangeDifficultyPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChatAckPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundChatCommandSignedPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChatCommandPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChatPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundChatPreviewPacket.hpp
@@ -187,10 +195,12 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundContainerClickPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundContainerClosePacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundContainerSlotStateChangedPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundCookieResponsePacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundCustomPayloadPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundDebugSampleSubscriptionPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundEditBookPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundEnchantItemPacket.hpp
-    include/protocolCraft/Messages/Play/Serverbound/ServerboundEntityTagQuery.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundEntityTagQueryPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundInteractPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundJigsawGeneratePacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundKeepAlivePacket.hpp
@@ -238,24 +248,31 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Status/Serverbound/ServerboundStatusRequestPacket.hpp
 
 
+    include/protocolCraft/Messages/Configuration/Clientbound/ClientboundCookieRequestPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundCustomPayloadPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundDisconnectPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundFinishConfigurationPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundKeepAlivePacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundPingPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundRegistryDataPacket.hpp
+    include/protocolCraft/Messages/Configuration/Clientbound/ClientboundResetChatPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPopConfigurationPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPushConfigurationPacket.hpp
+    include/protocolCraft/Messages/Configuration/Clientbound/ClientboundSelectKnownPacksPacket.hpp
+    include/protocolCraft/Messages/Configuration/Clientbound/ClientboundStoreCookiePacket.hpp
+    include/protocolCraft/Messages/Configuration/Clientbound/ClientboundTransferPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateTagsPacket.hpp
 
     include/protocolCraft/Messages/Configuration/Serverbound/ServerboundClientInformationPacket.hpp
+    include/protocolCraft/Messages/Configuration/Serverbound/ServerboundCookieResponsePacket.hpp
     include/protocolCraft/Messages/Configuration/Serverbound/ServerboundCustomPayloadPacket.hpp
     include/protocolCraft/Messages/Configuration/Serverbound/ServerboundFinishConfigurationPacket.hpp
     include/protocolCraft/Messages/Configuration/Serverbound/ServerboundKeepAlivePacket.hpp
     include/protocolCraft/Messages/Configuration/Serverbound/ServerboundPongPacket.hpp
     include/protocolCraft/Messages/Configuration/Serverbound/ServerboundResourcePackPacket.hpp
+    include/protocolCraft/Messages/Configuration/Serverbound/ServerboundSelectKnownPacksPacket.hpp
 
 
     include/protocolCraft/Types/Advancement.hpp
@@ -274,8 +291,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/EntityProperty.hpp
     include/protocolCraft/Types/GlobalPos.hpp
     include/protocolCraft/Types/Identifier.hpp
+    include/protocolCraft/Types/KnownPack.hpp
     include/protocolCraft/Types/MapDecoration.hpp
     include/protocolCraft/Types/NetworkPosition.hpp
+    include/protocolCraft/Types/PackedRegistryEntry.hpp
     include/protocolCraft/Types/PlayerUpdate.hpp
     include/protocolCraft/Types/Record.hpp
     include/protocolCraft/Types/SaltSignature.hpp

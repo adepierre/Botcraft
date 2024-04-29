@@ -9,7 +9,13 @@ namespace ProtocolCraft
     class ClientboundDisconnectConfigurationPacket : public BaseMessage<ClientboundDisconnectConfigurationPacket>
     {
     public:
+#if   PROTOCOL_VERSION < 766 /* < 1.20.5 */
         static constexpr int packet_id = 0x01;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x02;
+#else
+#error "Protocol version not implemented"
+#endif
 
         static constexpr std::string_view packet_name = "Disconnect (Configuration)";
 

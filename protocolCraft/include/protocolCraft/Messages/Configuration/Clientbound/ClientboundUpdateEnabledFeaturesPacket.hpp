@@ -13,8 +13,12 @@ namespace ProtocolCraft
     public:
 #if   PROTOCOL_VERSION < 765 /* < 1.20.3 */
         static constexpr int packet_id = 0x07;
-#else
+#elif PROTOCOL_VERSION == 765 /* 1.20.3/4 */
         static constexpr int packet_id = 0x08;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x0C;
+#else
+#error "Protocol version not implemented"
 #endif
 
         static constexpr std::string_view packet_name = "Update Enabled Features";

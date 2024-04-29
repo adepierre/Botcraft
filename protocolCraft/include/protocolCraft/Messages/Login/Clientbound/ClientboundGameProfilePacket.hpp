@@ -24,12 +24,6 @@ namespace ProtocolCraft
         {
             game_profile = game_profile_;
         }
-
-
-        const GameProfile& GetGameProfile() const
-        {
-            return game_profile;
-        }
 #else
 #if PROTOCOL_VERSION > 706 /* > 1.15.2 */
         void SetUUID(const UUID& uuid_)
@@ -48,6 +42,21 @@ namespace ProtocolCraft
             username = username_;
         }
 
+#endif
+
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+        void SetStrictErrorHandling(const bool strict_error_handling_)
+        {
+            strict_error_handling = strict_error_handling_;
+        }
+#endif
+
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+        const GameProfile& GetGameProfile() const
+        {
+            return game_profile;
+        }
+#else
 #if PROTOCOL_VERSION > 706 /* > 1.15.2 */
         const UUID& GetUUID() const
         {
@@ -66,6 +75,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+        bool GetStrictErrorHandling() const
+        {
+            return strict_error_handling;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
@@ -78,6 +94,9 @@ namespace ProtocolCraft
             uuid = ReadData<std::string>(iter, length);
 #endif
             username = ReadData<std::string>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+            strict_error_handling = ReadData<bool>(iter, length);
 #endif
         }
 
@@ -93,6 +112,9 @@ namespace ProtocolCraft
 #endif
             WriteData<std::string>(username, container);
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+            WriteData<bool>(strict_error_handling, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -104,6 +126,9 @@ namespace ProtocolCraft
 #else
             output["uuid"] = uuid;
             output["username"] = username;
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+            output["strict_error_handling"] = strict_error_handling;
 #endif
 
             return output;
@@ -120,6 +145,9 @@ namespace ProtocolCraft
         std::string uuid;
 #endif
         std::string username;
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+        bool strict_error_handling = false;
 #endif
     };
 } //ProtocolCraft

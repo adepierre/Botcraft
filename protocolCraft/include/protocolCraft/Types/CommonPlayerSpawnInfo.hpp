@@ -22,10 +22,17 @@ namespace ProtocolCraft
             dimension = dimension_;
         }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetDimensionType(const Identifier& dimension_type_)
         {
             dimension_type = dimension_type_;
         }
+#else
+        void SetDimensionType(const int dimension_type_)
+        {
+            dimension_type = dimension_type_;
+        }
+#endif
 
         void SetSeed(const long long int seed_)
         {
@@ -63,10 +70,17 @@ namespace ProtocolCraft
         }
 
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         const Identifier& GetDimensionType() const
         {
             return dimension_type;
         }
+#else
+        int GetDimensionType() const
+        {
+            return dimension_type;
+        }
+#endif
 
         const Identifier& GetDimension() const
         {
@@ -111,7 +125,11 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             dimension_type = ReadData<Identifier>(iter, length);
+#else
+            dimension_type = ReadData<VarInt>(iter, length);
+#endif
             dimension = ReadData<Identifier>(iter, length);
             seed = ReadData<long long int>(iter, length);
             game_type = ReadData<unsigned char>(iter, length);
@@ -124,7 +142,11 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<Identifier>(dimension_type, container);
+#else
+            WriteData<VarInt>(dimension_type, container);
+#endif
             WriteData<Identifier>(dimension, container);
             WriteData<long long int>(seed, container);
             WriteData<unsigned char>(game_type, container);
@@ -156,7 +178,11 @@ namespace ProtocolCraft
         }
 
     private:
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         Identifier dimension_type;
+#else
+        int dimension_type = 0;
+#endif
         Identifier dimension;
         long long int seed = 0;
         unsigned char game_type = 0;

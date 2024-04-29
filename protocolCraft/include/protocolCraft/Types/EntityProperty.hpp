@@ -5,7 +5,9 @@
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/EntityModifierData.hpp"
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
 #include "protocolCraft/Types/Identifier.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -17,7 +19,12 @@ namespace ProtocolCraft
 
         }
 
-#if PROTOCOL_VERSION > 709 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        void SetKey(const int key_)
+        {
+            key = key_;
+        }
+#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
         void SetKey(const Identifier& key_)
         {
             key = key_;
@@ -40,7 +47,12 @@ namespace ProtocolCraft
         }
 
 
-#if PROTOCOL_VERSION > 709 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        int GetKey() const
+        {
+            return key;
+        }
+#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
         const Identifier& GetKey() const
         {
             return key;
@@ -65,7 +77,9 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION > 709 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            key = ReadData<VarInt>(iter, length);
+#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
             key = ReadData<Identifier>(iter, length);
 #else
             key = ReadData<std::string>(iter, length);
@@ -76,7 +90,9 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION > 709 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            WriteData<VarInt>(key, container);
+#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
             WriteData<Identifier>(key, container);
 #else
             WriteData<std::string>(key, container);
@@ -97,7 +113,9 @@ namespace ProtocolCraft
         }
 
     private:
-#if PROTOCOL_VERSION > 709 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        int key = 0;
+#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
         Identifier key;
 #else
         std::string key;

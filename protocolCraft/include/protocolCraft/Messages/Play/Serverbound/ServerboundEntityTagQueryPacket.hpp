@@ -5,7 +5,7 @@
 
 namespace ProtocolCraft
 {
-    class ServerboundEntityTagQuery : public BaseMessage<ServerboundEntityTagQuery>
+    class ServerboundEntityTagQueryPacket : public BaseMessage<ServerboundEntityTagQueryPacket>
     {
     public:
 #if   PROTOCOL_VERSION == 393 /* 1.13 */ || PROTOCOL_VERSION == 401 /* 1.13.1 */ ||  \
@@ -34,13 +34,15 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x11;
 #elif PROTOCOL_VERSION == 765 /* 1.20.3/4 */
         static constexpr int packet_id = 0x12;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x15;
 #else
 #error "Protocol version not implemented"
 #endif
 
         static constexpr std::string_view packet_name = "Entity Tag Query";
 
-        virtual ~ServerboundEntityTagQuery() override
+        virtual ~ServerboundEntityTagQueryPacket() override
         {
 
         }

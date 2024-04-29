@@ -9,6 +9,9 @@
 
 
 // Login serverbound
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Messages/Login/Serverbound/ServerboundCookieResponsePacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */ 
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryPacket.hpp"
 #endif
@@ -26,6 +29,10 @@
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 // Configuration Serverbound
 #include "protocolCraft/Messages/Configuration/Serverbound/ServerboundClientInformationPacket.hpp"
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Messages/Configuration/Serverbound/ServerboundCookieResponsePacket.hpp"
+#include "protocolCraft/Messages/Configuration/Serverbound/ServerboundSelectKnownPacksPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Configuration/Serverbound/ServerboundCustomPayloadPacket.hpp"
 #include "protocolCraft/Messages/Configuration/Serverbound/ServerboundFinishConfigurationPacket.hpp"
 #include "protocolCraft/Messages/Configuration/Serverbound/ServerboundKeepAlivePacket.hpp"
@@ -80,8 +87,8 @@
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundUseItemOnPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundUseItemPacket.hpp"
 #if PROTOCOL_VERSION > 388 /* > 1.12.2 */
-#include "protocolCraft/Messages/Play/Serverbound/ServerboundBlockEntityTagQuery.hpp"
-#include "protocolCraft/Messages/Play/Serverbound/ServerboundEntityTagQuery.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundBlockEntityTagQueryPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundEntityTagQueryPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundEditBookPacket.hpp"
@@ -130,10 +137,18 @@
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundContainerSlotStateChangedPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.5 */
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundChatCommandSignedPacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundCookieResponsePacket.hpp"
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundDebugSampleSubscriptionPacket.hpp"
+#endif
 
 namespace ProtocolCraft
 {
     using AllServerboundLoginMessages = std::tuple<
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        ServerboundCookieResponseLoginPacket,
+#endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         ServerboundCustomQueryAnswerPacket,
         ServerboundLoginAcknowledgedPacket,
@@ -157,6 +172,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     using AllServerboundConfigurationMessages = std::tuple<
         ServerboundClientInformationConfigurationPacket,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        ServerboundCookieResponseConfigurationPacket,
+        ServerboundSelectKnownPacksPacket,
+#endif
         ServerboundCustomPayloadConfigurationPacket,
         ServerboundFinishConfigurationPacket,
         ServerboundKeepAliveConfigurationPacket,
@@ -211,8 +230,8 @@ namespace ProtocolCraft
         ServerboundMovePlayerPacketPosRot,
         ServerboundCustomPayloadPacket,
 #if PROTOCOL_VERSION > 388 /* > 1.12.2 */
-        ServerboundBlockEntityTagQuery,
-        ServerboundEntityTagQuery,
+        ServerboundBlockEntityTagQueryPacket,
+        ServerboundEntityTagQueryPacket,
 #endif
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
         ServerboundRecipeBookSeenRecipePacket,
@@ -269,6 +288,11 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         ServerboundContainerSlotStateChangedPacket,
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        ServerboundChatCommandSignedPacket,
+        ServerboundCookieResponsePacket,
+        ServerboundDebugSampleSubscriptionPacket,
 #endif
         ServerboundKeepAlivePacket
     >;

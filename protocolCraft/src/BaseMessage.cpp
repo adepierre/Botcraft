@@ -16,6 +16,9 @@ namespace ProtocolCraft
 
 
     // Login serverbound
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    template class BaseMessage<ServerboundCookieResponseLoginPacket>;
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
     template class BaseMessage<ServerboundCustomQueryPacket>;
 #endif
@@ -27,6 +30,9 @@ namespace ProtocolCraft
 #endif
 
     // Login clientbound
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    template class BaseMessage<ClientboundCookieRequestLoginPacket>;
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     template class BaseMessage<ClientboundCustomQueryPacket>;
 #endif
@@ -46,6 +52,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     // Configuration serverbound
     template class BaseMessage<ServerboundClientInformationConfigurationPacket>;
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    template class BaseMessage<ServerboundCookieResponseConfigurationPacket>;
+    template class BaseMessage<ServerboundSelectKnownPacksPacket>;
+#endif
     template class BaseMessage<ServerboundCustomPayloadConfigurationPacket>;
     template class BaseMessage<ServerboundFinishConfigurationPacket>;
     template class BaseMessage<ServerboundKeepAliveConfigurationPacket>;
@@ -68,6 +78,13 @@ namespace ProtocolCraft
 #endif
     template class BaseMessage<ClientboundUpdateEnabledFeaturesPacket>;
     template class BaseMessage<ClientboundUpdateTagsConfigurationPacket>;
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    template class BaseMessage<ClientboundCookieRequestConfigurationPacket>;
+    template class BaseMessage<ClientboundResetChatPacket>;
+    template class BaseMessage<ClientboundStoreCookieConfigurationPacket>;
+    template class BaseMessage<ClientboundSelectKnownPacksPacket>;
+    template class BaseMessage<ClientboundTransferConfigurationPacket>;
 #endif
 
 
@@ -121,8 +138,8 @@ namespace ProtocolCraft
     template class BaseMessage<ServerboundMovePlayerPacketPosRot>;
     template class BaseMessage<ServerboundCustomPayloadPacket>;
 #if PROTOCOL_VERSION > 388 /* > 1.12.2 */
-    template class BaseMessage<ServerboundBlockEntityTagQuery>;
-    template class BaseMessage<ServerboundEntityTagQuery>;
+    template class BaseMessage<ServerboundBlockEntityTagQueryPacket>;
+    template class BaseMessage<ServerboundEntityTagQueryPacket>;
 #endif
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
     template class BaseMessage<ServerboundRecipeBookSeenRecipePacket>;
@@ -178,6 +195,11 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
     template class BaseMessage<ServerboundContainerSlotStateChangedPacket>;
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    template class BaseMessage<ServerboundChatCommandSignedPacket>;
+    template class BaseMessage<ServerboundCookieResponsePacket>;
+    template class BaseMessage<ServerboundDebugSampleSubscriptionPacket>;
 #endif
 
     // Play clientbound
@@ -404,5 +426,12 @@ namespace ProtocolCraft
     template class BaseMessage<ClientboundResourcePackPushPacket>;
     template class BaseMessage<ClientboundTickingStatePacket>;
     template class BaseMessage<ClientboundTickingStepPacket>;
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    template class BaseMessage<ClientboundCookieRequestPacket>;
+    template class BaseMessage<ClientboundDebugSamplePacket>;
+    template class BaseMessage<ClientboundProjectilePowerPacket>;
+    template class BaseMessage<ClientboundStoreCookiePacket>;
+    template class BaseMessage<ClientboundTransferPacket>;
 #endif
 }

@@ -43,6 +43,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x28;
 #elif PROTOCOL_VERSION == 764 /* 1.20.2 */ || PROTOCOL_VERSION == 765 /* 1.20.3/4 */
         static constexpr int packet_id = 0x29;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x2B;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -214,6 +216,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        void SetEnforceSecureChat(const bool enforce_secure_chat_)
+        {
+            enforce_secure_chat = enforce_secure_chat_;
+        }
+#endif
+
 
         int GetPlayerId() const
         {
@@ -374,6 +383,13 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        bool GetEnforceSecureChat() const
+        {
+            return enforce_secure_chat;
+        }
+#endif
+
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
@@ -441,6 +457,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
             do_limited_crafting = ReadData<bool>(iter, length);
             common_player_spawn_info = ReadData<CommonPlayerSpawnInfo>(iter, length);
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            enforce_secure_chat = ReadData<bool>(iter, length);
 #endif
         }
 
@@ -510,6 +529,9 @@ namespace ProtocolCraft
             WriteData<bool>(do_limited_crafting, container);
             WriteData<CommonPlayerSpawnInfo>(common_player_spawn_info, container);
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            WriteData<bool>(enforce_secure_chat, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -573,6 +595,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
             output["do_limited_crafting"] = do_limited_crafting;
             output["common_player_spawn_info"] = common_player_spawn_info;
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            output["enforce_secure_chat"] = enforce_secure_chat;
 #endif
 
             return output;
@@ -640,6 +665,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         bool do_limited_crafting = false;
         CommonPlayerSpawnInfo common_player_spawn_info;
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        bool enforce_secure_chat = false;
 #endif
     };
 } //ProtocolCraft

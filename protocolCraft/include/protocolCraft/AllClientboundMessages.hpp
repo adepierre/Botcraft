@@ -4,6 +4,9 @@
 #include "protocolCraft/Utilities/TupleCat.hpp"
 
 // Login clientbound
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Messages/Login/Clientbound/ClientboundCookieRequestPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundCustomQueryPacket.hpp"
 #endif
@@ -31,6 +34,13 @@
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPopConfigurationPacket.hpp"
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPushConfigurationPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundCookieRequestPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundResetChatPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundStoreCookiePacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundSelectKnownPacksPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundTransferPacket.hpp"
 #endif
 
 // Play clientbound
@@ -254,10 +264,20 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTickingStatePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTickingStepPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundCookieRequestPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundDebugSamplePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundProjectilePowerPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundStoreCookiePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundTransferPacket.hpp"
+#endif
 
 namespace ProtocolCraft
 {
     using AllClientboundLoginMessages = std::tuple<
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        ClientboundCookieRequestLoginPacket,
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         ClientboundCustomQueryPacket,
 #endif
@@ -286,6 +306,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         ClientboundResourcePackPopConfigurationPacket,
         ClientboundResourcePackPushConfigurationPacket,
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        ClientboundCookieRequestConfigurationPacket,
+        ClientboundResetChatPacket,
+        ClientboundStoreCookieConfigurationPacket,
+        ClientboundSelectKnownPacksPacket,
+        ClientboundTransferConfigurationPacket,
 #endif
         ClientboundUpdateEnabledFeaturesPacket,
         ClientboundUpdateTagsConfigurationPacket
@@ -515,6 +542,13 @@ namespace ProtocolCraft
         ClientboundResourcePackPushPacket,
         ClientboundTickingStatePacket,
         ClientboundTickingStepPacket,
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        ClientboundCookieRequestPacket,
+        ClientboundDebugSamplePacket,
+        ClientboundProjectilePowerPacket,
+        ClientboundStoreCookiePacket,
+        ClientboundTransferPacket,
 #endif
         ClientboundSetCarriedItemPacket
     >;

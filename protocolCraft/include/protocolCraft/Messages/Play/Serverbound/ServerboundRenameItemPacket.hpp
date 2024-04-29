@@ -32,6 +32,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x26;
 #elif PROTOCOL_VERSION == 765 /* 1.20.3/4 */
         static constexpr int packet_id = 0x27;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x2A;
 #else
 #error "Protocol version not implemented"
 #endif

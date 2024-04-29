@@ -20,7 +20,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x03;
 #elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */ || PROTOCOL_VERSION == 761 /* 1.19.3 */ ||  \
       PROTOCOL_VERSION == 762 /* 1.19.4 */ || PROTOCOL_VERSION == 763 /* 1.20/.1 */ ||  \
-      PROTOCOL_VERSION == 764 /* 1.20.2 */ || PROTOCOL_VERSION == 765 /* 1.20.3/4 */
+      PROTOCOL_VERSION == 764 /* 1.20.2 */ || PROTOCOL_VERSION == 765 /* 1.20.3/4 */ ||  \
+      PROTOCOL_VERSION == 766 /* 1.20.5 */
         static constexpr int packet_id = 0x04;
 #else
 #error "Protocol version not implemented"
@@ -38,6 +39,7 @@ namespace ProtocolCraft
             command = command_;
         }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetTimestamp(const long long int timestamp_)
         {
             timestamp = timestamp_;
@@ -68,6 +70,7 @@ namespace ProtocolCraft
             last_seen_messages = last_seen_messages_;
         }
 #endif
+#endif
 
 
         const std::string& GetCommand() const
@@ -75,6 +78,7 @@ namespace ProtocolCraft
             return command;
         }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         long long int GetTimestamp() const
         {
             return timestamp;
@@ -105,11 +109,13 @@ namespace ProtocolCraft
             return last_seen_messages;
         }
 #endif
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             command = ReadData<std::string>(iter, length);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             timestamp = ReadData<long long int>(iter, length);
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             salt = ReadData<long long int>(iter, length);
@@ -129,11 +135,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             last_seen_messages = ReadData<LastSeenMessagesUpdate>(iter, length);
 #endif
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(command, container);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<long long int>(timestamp, container);
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             WriteData<long long int>(salt, container);
@@ -151,6 +159,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             WriteData<LastSeenMessagesUpdate>(last_seen_messages, container);
 #endif
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -158,6 +167,7 @@ namespace ProtocolCraft
             Json::Value output;
 
             output["command"] = command;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             output["timestamp"] = timestamp;
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             output["salt"] = salt;
@@ -173,6 +183,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             output["last_seen_messages"] = last_seen_messages;
 #endif
+#endif
 
 
             return output;
@@ -180,6 +191,7 @@ namespace ProtocolCraft
 
     private:
         std::string command;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         long long int timestamp = 0;
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
         long long int salt = 0;
@@ -190,6 +202,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
         LastSeenMessagesUpdate last_seen_messages;
+#endif
 #endif
     };
 } //ProtocolCraft

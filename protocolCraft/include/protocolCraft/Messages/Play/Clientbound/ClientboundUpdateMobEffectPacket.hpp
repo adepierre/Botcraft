@@ -42,6 +42,8 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x6E;
 #elif PROTOCOL_VERSION == 765 /* 1.20.3/4 */
         static constexpr int packet_id = 0x72;
+#elif PROTOCOL_VERSION == 766 /* 1.20.5 */
+        static constexpr int packet_id = 0x76;
 #else
 #error "Protocol version not implemented"
 #endif
@@ -70,6 +72,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        void SetEffectAmplifier(const char effect_amplifier_)
+        {
+            effect_amplifier = effect_amplifier_;
+        }
+#else
+        void SetEffectAmplifier(const int effect_amplifier_)
+        {
+            effect_amplifier = effect_amplifier_;
+        }
+#endif
         void SetEffectAmplifier(const char effect_amplifier_)
         {
             effect_amplifier = effect_amplifier_;
@@ -85,7 +98,7 @@ namespace ProtocolCraft
             flags = flags_;
         }
 
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetFactorData(const std::optional<NBT::Value>& factor_data_)
         {
             factor_data = factor_data_;
@@ -110,10 +123,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         char GetEffectAmplifier() const
         {
             return effect_amplifier;
         }
+#else
+        int GetEffectAmplifier() const
+        {
+            return effect_amplifier;
+        }
+#endif
 
         int GetEffectDurationTicks() const
         {
@@ -125,7 +145,7 @@ namespace ProtocolCraft
             return flags;
         }
 
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
         const std::optional<NBT::Value>& GetFactorData() const
         {
             return factor_data;
@@ -142,10 +162,14 @@ namespace ProtocolCraft
 #else
             effect_id = ReadData<VarInt>(iter, length);
 #endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             effect_amplifier = ReadData<char>(iter, length);
+#else
+            effect_amplifier = ReadData<VarInt>(iter, length);
+#endif
             effect_duration_ticks = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
             factor_data = ReadOptional<NBT::UnnamedValue>(iter, length);
 #endif
         }
@@ -158,10 +182,14 @@ namespace ProtocolCraft
 #else
             WriteData<VarInt>(effect_id, container);
 #endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<char>(effect_amplifier, container);
+#else
+            WriteData<VarInt>(effect_amplifier, container);
+#endif
             WriteData<VarInt>(effect_duration_ticks, container);
             WriteData<char>(flags, container);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteOptional<NBT::UnnamedValue>(factor_data, container);
 #endif
         }
@@ -175,7 +203,7 @@ namespace ProtocolCraft
             output["effect_amplifier"] = effect_amplifier;
             output["effect_duration_ticks"] = effect_duration_ticks;
             output["flags"] = flags;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
             if (factor_data.has_value())
             {
                 output["factor_data"] = factor_data.value();
@@ -192,10 +220,14 @@ namespace ProtocolCraft
 #else
         int effect_id = 0;
 #endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         char effect_amplifier = 0;
+#else
+        int effect_amplifier = 0;
+#endif
         int effect_duration_ticks = 0;
         char flags = 0;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
         std::optional<NBT::Value> factor_data;
 #endif
 
