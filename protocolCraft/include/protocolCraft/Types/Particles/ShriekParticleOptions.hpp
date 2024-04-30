@@ -1,20 +1,16 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/Particle.hpp"
+#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
 
 namespace ProtocolCraft
 {
-    class ShriekParticle : public Particle
+    class ShriekParticleOptions : public ParticleOptions
     {
     public:
-        ShriekParticle();
+        ShriekParticleOptions();
         
-        virtual ~ShriekParticle();
-        
-        virtual std::string GetName() const override;
-        
-        virtual ParticleType GetType() const override;
+        virtual ~ShriekParticleOptions();
 
         int GetDelay() const;
 
@@ -22,9 +18,7 @@ namespace ProtocolCraft
         
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        
         virtual void WriteImpl(WriteContainer& container) const override;
-        
         virtual Json::Value SerializeImpl() const override;
         
     private:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string_view>
 
 #include "protocolCraft/NetworkType.hpp"
 
@@ -10,7 +11,9 @@ namespace ProtocolCraft
     enum class ParticleType
     {
         None = -1,
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         AmbientEntityEffect,
+#endif
         AngryVillager,
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
         Barrier,
@@ -50,7 +53,14 @@ namespace ProtocolCraft
         Explosion,
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         Gust,
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         GustEmitter,
+#endif
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        SmallGust,
+        GustEmitterLarge,
+        GustEmitterSmall,
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SonicBoom,
@@ -63,6 +73,9 @@ namespace ProtocolCraft
         DrippingCherryLeaves,
         FallingCherryLeaves,
         LandingCherryLeaves,
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        Infested,
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         CherryLeaves,
@@ -90,6 +103,9 @@ namespace ProtocolCraft
         Vibration,
 #endif
         ItemSlime,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        ItemCobweb,
+#endif
         ItemSnowball,
         LargeSmoke,
         Lava,
@@ -167,9 +183,20 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         DustPlume,
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         GustDust,
+#endif
         TrialSpawnerDetection,
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        TrialSpawnerDetectionOminous,
+        VaultConnection,
+        DustPillar,
+        OminousSpawning,
+        RaidOmen,
+        TrialOmen,
+#endif
+        NUM_PARTICLE_TYPES
     };
 #else
     enum class ParticleType
@@ -224,21 +251,33 @@ namespace ProtocolCraft
         FallingDust,
         Totem,
         Spit,
+        NUM_PARTICLE_TYPES
     };
 #endif
+
+    class ParticleOptions;
 
     class Particle : public NetworkType
     {
     public:
-        
         Particle();
-        
         virtual ~Particle();
-        
-        virtual std::string GetName() const = 0;
-        
-        virtual ParticleType GetType() const = 0;
-        
-        static std::shared_ptr<Particle> CreateParticle(const ParticleType type);
+        std::string_view GetName() const;
+        ParticleType GetType() const;
+        std::shared_ptr<ParticleOptions> GetOptions() const;
+
+        void SetParticleType(const ParticleType particle_type_);
+
+        void ReadOptions(ReadIterator& iter, size_t& length);
+        void WriteOptions(WriteContainer& container);
+
+    protected:
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
+        virtual void WriteImpl(WriteContainer& container) const override;
+        virtual Json::Value SerializeImpl() const override;
+
+    private:
+        ParticleType particle_type = ParticleType::None;
+        std::shared_ptr<ParticleOptions> options;
     };
 }

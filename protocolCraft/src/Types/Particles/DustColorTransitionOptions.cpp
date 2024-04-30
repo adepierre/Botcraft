@@ -1,121 +1,122 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Types/Particles/DustColorTransitionParticle.hpp"
+#include "protocolCraft/Types/Particles/DustColorTransitionOptions.hpp"
 
 namespace ProtocolCraft
 {
-    DustColorTransitionParticle::DustColorTransitionParticle()
+    DustColorTransitionOptions::DustColorTransitionOptions()
     {
         
     }
     
-    DustColorTransitionParticle::~DustColorTransitionParticle()
+    DustColorTransitionOptions::~DustColorTransitionOptions()
     {
         
-    }
-    
-    std::string DustColorTransitionParticle::GetName() const
-    {
-        return "dust_color_transition";
-    }
-    
-    ParticleType DustColorTransitionParticle::GetType() const
-    {
-        return ParticleType::DustColorTransition;
     }
 
-    float DustColorTransitionParticle::GetFromRed() const
+
+    float DustColorTransitionOptions::GetFromRed() const
     {
         return from_red;
     }
 
-    float DustColorTransitionParticle::GetFromGreen() const
+    float DustColorTransitionOptions::GetFromGreen() const
     {
         return from_green;
     }
 
-    float DustColorTransitionParticle::GetFromBlue() const
+    float DustColorTransitionOptions::GetFromBlue() const
     {
         return from_blue;
     }
 
-    float DustColorTransitionParticle::GetScale() const
+    float DustColorTransitionOptions::GetScale() const
     {
         return scale;
     }
 
-    float DustColorTransitionParticle::GetToRed() const
+    float DustColorTransitionOptions::GetToRed() const
     {
         return to_red;
     }
 
-    float DustColorTransitionParticle::GetToGreen() const
+    float DustColorTransitionOptions::GetToGreen() const
     {
         return to_green;
     }
 
-    float DustColorTransitionParticle::GetToBlue() const
+    float DustColorTransitionOptions::GetToBlue() const
     {
         return to_blue;
     }
 
-    void DustColorTransitionParticle::SetFromRed(const float from_red_)
+    void DustColorTransitionOptions::SetFromRed(const float from_red_)
     {
         from_red = from_red_;
     }
 
-    void DustColorTransitionParticle::SetFromGreen(const float from_green_)
+    void DustColorTransitionOptions::SetFromGreen(const float from_green_)
     {
         from_green = from_green_;
     }
 
-    void DustColorTransitionParticle::SetFromBlue(const float from_blue_)
+    void DustColorTransitionOptions::SetFromBlue(const float from_blue_)
     {
         from_blue = from_blue_;
     }
 
-    void DustColorTransitionParticle::SetScale(const float scale_)
+    void DustColorTransitionOptions::SetScale(const float scale_)
     {
         scale = scale_;
     }
 
-    void DustColorTransitionParticle::SetToRed(const float to_red_)
+    void DustColorTransitionOptions::SetToRed(const float to_red_)
     {
         to_red = to_red_;
     }
 
-    void DustColorTransitionParticle::SetToGreen(const float to_green_)
+    void DustColorTransitionOptions::SetToGreen(const float to_green_)
     {
         to_green = to_green_;
     }
 
-    void DustColorTransitionParticle::SetToBlue(const float to_blue_)
+    void DustColorTransitionOptions::SetToBlue(const float to_blue_)
     {
         to_blue = to_blue_;
     }
     
-    void DustColorTransitionParticle::ReadImpl(ReadIterator& iter, size_t& length)
+    void DustColorTransitionOptions::ReadImpl(ReadIterator& iter, size_t& length)
     {
         from_red = ReadData<float>(iter, length);
         from_green = ReadData<float>(iter, length);
         from_blue = ReadData<float>(iter, length);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         scale = ReadData<float>(iter, length);
+#endif
         to_red = ReadData<float>(iter, length);
         to_green = ReadData<float>(iter, length);
         to_blue = ReadData<float>(iter, length);
+#if PROTOCOL_VERSION > 765 /* > 1.20.4> */
+        scale = ReadData<float>(iter, length);
+#endif
     }
     
-    void DustColorTransitionParticle::WriteImpl(WriteContainer& container) const
+    void DustColorTransitionOptions::WriteImpl(WriteContainer& container) const
     {
         WriteData(from_red, container);
         WriteData(from_green, container);
         WriteData(from_blue, container);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         WriteData(scale, container);
+#endif
         WriteData(to_red, container);
         WriteData(to_green, container);
         WriteData(to_blue, container);
+#if PROTOCOL_VERSION > 765 /* > 1.20.4> */
+        WriteData(scale, container);
+#endif
     }
     
-    Json::Value DustColorTransitionParticle::SerializeImpl() const
+    Json::Value DustColorTransitionOptions::SerializeImpl() const
     {
         Json::Value output;
 

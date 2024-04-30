@@ -1,20 +1,15 @@
 #if PROTOCOL_VERSION > 392 /* > 1.12.2 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/Particle.hpp"
+#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
 
 namespace ProtocolCraft
 {
-    class DustParticle : public Particle
+    class DustParticleOptions : public ParticleOptions
     {
     public:
-        DustParticle();
-        
-        virtual ~DustParticle();
-        
-        virtual std::string GetName() const override;
-        
-        virtual ParticleType GetType() const override;
+        DustParticleOptions();
+        virtual ~DustParticleOptions();
 
         float GetRed() const;
         float GetGreen() const;
@@ -25,12 +20,10 @@ namespace ProtocolCraft
         void SetGreen(const float green_);
         void SetBlue(const float blue_);
         void SetScale(const float scale_);
-        
+
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        
         virtual void WriteImpl(WriteContainer& container) const override;
-        
         virtual Json::Value SerializeImpl() const override;
 
     private:
@@ -38,7 +31,6 @@ namespace ProtocolCraft
         float green = 0.0f;
         float blue = 0.0f;
         float scale = 0.0f;
-        
     };
 }
 #endif

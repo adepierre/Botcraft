@@ -335,20 +335,18 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/NBT/NBT.hpp
     include/protocolCraft/Types/NBT/Tag.hpp
 
-    include/protocolCraft/Types/Particles/BlockcrackParticle.hpp
-    include/protocolCraft/Types/Particles/BlockdustParticle.hpp
-    include/protocolCraft/Types/Particles/BlockMarkerParticle.hpp
-    include/protocolCraft/Types/Particles/BlockParticle.hpp
-    include/protocolCraft/Types/Particles/DustColorTransitionParticle.hpp
-    include/protocolCraft/Types/Particles/DustParticle.hpp
-    include/protocolCraft/Types/Particles/FallingDustParticle.hpp
-    include/protocolCraft/Types/Particles/IconcrackParticle.hpp
-    include/protocolCraft/Types/Particles/ItemParticle.hpp
-    include/protocolCraft/Types/Particles/NoDataTypedParticle.hpp
     include/protocolCraft/Types/Particles/Particle.hpp
-    include/protocolCraft/Types/Particles/SculkChargeParticle.hpp
-    include/protocolCraft/Types/Particles/ShriekParticle.hpp
-    include/protocolCraft/Types/Particles/VibrationParticle.hpp
+    include/protocolCraft/Types/Particles/ParticleOptions.hpp
+
+    include/protocolCraft/Types/Particles/BlockParticleOptions.hpp
+    include/protocolCraft/Types/Particles/ColorParticleOptions.hpp
+    include/protocolCraft/Types/Particles/IconcrackParticleOptions.hpp
+    include/protocolCraft/Types/Particles/DustColorTransitionOptions.hpp
+    include/protocolCraft/Types/Particles/DustParticleOptions.hpp
+    include/protocolCraft/Types/Particles/ItemParticleOptions.hpp
+    include/protocolCraft/Types/Particles/SculkChargeParticleOptions.hpp
+    include/protocolCraft/Types/Particles/ShriekParticleOptions.hpp
+    include/protocolCraft/Types/Particles/VibrationParticleOptions.hpp
 
     include/protocolCraft/Types/Recipes/Ingredient.hpp
     include/protocolCraft/Types/Recipes/Recipe.hpp
@@ -394,20 +392,18 @@ set(protocolCraft_SRC
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp
 
-    src/Types/Particles/BlockcrackParticle.cpp
-    src/Types/Particles/BlockdustParticle.cpp
-    src/Types/Particles/BlockMarkerParticle.cpp
-    src/Types/Particles/BlockParticle.cpp
-    src/Types/Particles/DustColorTransitionParticle.cpp
-    src/Types/Particles/DustParticle.cpp
-    src/Types/Particles/FallingDustParticle.cpp
-    src/Types/Particles/IconcrackParticle.cpp
-    src/Types/Particles/ItemParticle.cpp
-    src/Types/Particles/NoDataTypedParticle.cpp
     src/Types/Particles/Particle.cpp
-    src/Types/Particles/SculkChargeParticle.cpp
-    src/Types/Particles/ShriekParticle.cpp
-    src/Types/Particles/VibrationParticle.cpp
+    src/Types/Particles/ParticleOptions.cpp
+
+    src/Types/Particles/BlockParticleOptions.cpp
+    src/Types/Particles/ColorParticleOptions.cpp
+    src/Types/Particles/IconcrackParticleOptions.cpp
+    src/Types/Particles/DustColorTransitionOptions.cpp
+    src/Types/Particles/DustParticleOptions.cpp
+    src/Types/Particles/ItemParticleOptions.cpp
+    src/Types/Particles/SculkChargeParticleOptions.cpp
+    src/Types/Particles/ShriekParticleOptions.cpp
+    src/Types/Particles/VibrationParticleOptions.cpp
 
     src/Types/Recipes/RecipeTypeData.cpp
 

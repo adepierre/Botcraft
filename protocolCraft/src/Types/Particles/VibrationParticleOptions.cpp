@@ -1,87 +1,77 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Types/Particles/VibrationParticle.hpp"
+#include "protocolCraft/Types/Particles/VibrationParticleOptions.hpp"
 
 namespace ProtocolCraft
 {
-    VibrationParticle::VibrationParticle()
+    VibrationParticleOptions::VibrationParticleOptions()
     {
         
     }
     
-    VibrationParticle::~VibrationParticle()
+    VibrationParticleOptions::~VibrationParticleOptions()
     {
         
-    }
-    
-    std::string VibrationParticle::GetName() const
-    {
-        return "vibration";
-    }
-    
-    ParticleType VibrationParticle::GetType() const
-    {
-        return ParticleType::Vibration;
     }
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-    const VibrationPath& VibrationParticle::GetVibrationPath() const
+    const VibrationPath& VibrationParticleOptions::GetVibrationPath() const
     {
         return vibration_path;
     }
 #else
-    const std::shared_ptr<PositionSource>& VibrationParticle::GetDestination() const
+    const std::shared_ptr<PositionSource>& VibrationParticleOptions::GetDestination() const
     {
         return destination;
     }
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-    PositionSourceType VibrationParticle::GetDestinationType() const
+    PositionSourceType VibrationParticleOptions::GetDestinationType() const
     {
         return destination_type;
     }
 #else
-    const Identifier& VibrationParticle::GetDestinationType() const
+    const Identifier& VibrationParticleOptions::GetDestinationType() const
     {
         return destination_type;
     }
 #endif
 
-    int VibrationParticle::GetArrivalInTicks() const
+    int VibrationParticleOptions::GetArrivalInTicks() const
     {
         return arrival_in_ticks;
     }
 #endif
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-    void VibrationParticle::SetVibrationPath(const VibrationPath& vibration_path_)
+    void VibrationParticleOptions::SetVibrationPath(const VibrationPath& vibration_path_)
     {
         vibration_path = vibration_path_;
     }
 #else
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-    void VibrationParticle::SetDestinationType(const PositionSourceType destination_type_)
+    void VibrationParticleOptions::SetDestinationType(const PositionSourceType destination_type_)
     {
         destination_type = destination_type_;
     }
 #else
-    void VibrationParticle::SetDestinationType(const Identifier& destination_type_)
+    void VibrationParticleOptions::SetDestinationType(const Identifier& destination_type_)
     {
         destination_type = destination_type_;
     }
 #endif
 
-    void VibrationParticle::SetDestination(const std::shared_ptr<PositionSource>& destination_)
+    void VibrationParticleOptions::SetDestination(const std::shared_ptr<PositionSource>& destination_)
     {
         destination = destination_;
     }
 
-    void VibrationParticle::SetArrivalInTicks(const int arrival_in_ticks_)
+    void VibrationParticleOptions::SetArrivalInTicks(const int arrival_in_ticks_)
     {
         arrival_in_ticks = arrival_in_ticks_;
     }
 #endif
     
-    void VibrationParticle::ReadImpl(ReadIterator& iter, size_t& length)
+    void VibrationParticleOptions::ReadImpl(ReadIterator& iter, size_t& length)
     {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         vibration_path = ReadData<VibrationPath>(iter, length);
@@ -97,7 +87,7 @@ namespace ProtocolCraft
 #endif
     }
     
-    void VibrationParticle::WriteImpl(WriteContainer& container) const
+    void VibrationParticleOptions::WriteImpl(WriteContainer& container) const
     {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         WriteData<VibrationPath>(vibration_path, container);
@@ -112,7 +102,7 @@ namespace ProtocolCraft
 #endif
     }
     
-    Json::Value VibrationParticle::SerializeImpl() const
+    Json::Value VibrationParticleOptions::SerializeImpl() const
     {
         Json::Value output;
 

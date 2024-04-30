@@ -1,7 +1,7 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/Particle.hpp"
+#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
 #include "protocolCraft/Types/Vibrations/VibrationPath.hpp"
@@ -11,16 +11,12 @@
 
 namespace ProtocolCraft
 {
-    class VibrationParticle : public Particle
+    class VibrationParticleOptions : public ParticleOptions
     {
     public:
-        VibrationParticle();
+        VibrationParticleOptions();
         
-        virtual ~VibrationParticle();
-        
-        virtual std::string GetName() const override;
-        
-        virtual ParticleType GetType() const override;
+        virtual ~VibrationParticleOptions();
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         const VibrationPath& GetVibrationPath() const;
@@ -65,7 +61,6 @@ namespace ProtocolCraft
         std::shared_ptr<PositionSource> destination;
         int arrival_in_ticks = 0;
 #endif
-        
     };
 }
 #endif

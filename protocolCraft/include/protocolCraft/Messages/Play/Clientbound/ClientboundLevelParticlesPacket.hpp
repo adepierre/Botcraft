@@ -115,7 +115,7 @@ namespace ProtocolCraft
             override_limiter = override_limiter_;
         }
 
-        void SetParticle(const std::shared_ptr<Particle>& particle_)
+        void SetParticle(const Particle& particle_)
         {
             particle = particle_;
         }
@@ -183,7 +183,7 @@ namespace ProtocolCraft
             return override_limiter;
         }
 
-        std::shared_ptr<Particle> GetParticle() const
+        const Particle& GetParticle() const
         {
             return particle;
         }
@@ -194,7 +194,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
             const ParticleType particle_type = static_cast<ParticleType>(ReadData<int>(iter, length));
-#else
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             const ParticleType particle_type = static_cast<ParticleType>(static_cast<int>(ReadData<VarInt>(iter, length)));
 #endif
             override_limiter = ReadData<bool>(iter, length);
@@ -212,15 +212,19 @@ namespace ProtocolCraft
             z_dist = ReadData<float>(iter, length);
             max_speed = ReadData<float>(iter, length);
             count = ReadData<int>(iter, length);
-            particle = Particle::CreateParticle(particle_type);
-            particle->Read(iter, length);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+            particle.SetParticleType(static_cast<ParticleType>(particle_type));
+            particle.ReadOptions(iter, length);
+#else
+            particle = ReadData<Particle>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
             WriteData<int>(static_cast<int>(particle->GetType()), container);
-#else
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<VarInt>(static_cast<int>(particle->GetType()), container);
 #endif
             WriteData<bool>(override_limiter, container);
@@ -238,7 +242,11 @@ namespace ProtocolCraft
             WriteData<float>(z_dist, container);
             WriteData<float>(max_speed, container);
             WriteData<int>(count, container);
-            particle->Write(container);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+            particle.WriteOptions(container);
+#else
+            WriteData<Particle>(particle, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -254,8 +262,7 @@ namespace ProtocolCraft
             output["z_dist"] = z_dist;
             output["max_speed"] = max_speed;
             output["count"] = count;
-            output["particle_type"] = particle->GetName();
-            output["particle"] = particle->Serialize();
+            output["particle"] = particle;
 
             return output;
         }
@@ -276,7 +283,7 @@ namespace ProtocolCraft
         float max_speed = 0.0f;
         int count = 0;
         bool override_limiter = false;
-        std::shared_ptr<Particle> particle;
+        Particle particle;
 
     };
 } //ProtocolCraft

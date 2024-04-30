@@ -5,8 +5,6 @@
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #include "protocolCraft/Types/Sound/SoundEvent.hpp"
-
-#include <memory>
 #endif
 
 namespace ProtocolCraft
@@ -115,12 +113,12 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        void SetSmallExplosionParticles(const std::shared_ptr<Particle>& small_explosion_particles_)
+        void SetSmallExplosionParticles(const Particle& small_explosion_particles_)
         {
             small_explosion_particles = small_explosion_particles_;
         }
 
-        void SetLargeExplosionParticles(const std::shared_ptr<Particle>& large_explosion_particles_)
+        void SetLargeExplosionParticles(const Particle& large_explosion_particles_)
         {
             large_explosion_particles = large_explosion_particles_;
         }
@@ -196,12 +194,12 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        const std::shared_ptr<Particle>& GetSmallExplosionParticles() const
+        const Particle& GetSmallExplosionParticles() const
         {
             return small_explosion_particles;
         }
 
-        const std::shared_ptr<Particle>& GetLargeExplosionParticles() const
+        const Particle& GetLargeExplosionParticles() const
         {
             return large_explosion_particles;
         }
@@ -263,12 +261,8 @@ namespace ProtocolCraft
             knockback_z = ReadData<float>(iter, length);
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
             block_interaction = ReadData<VarInt>(iter, length);
-            const int small_explosion_particles_type = ReadData<VarInt>(iter, length);
-            small_explosion_particles = Particle::CreateParticle(static_cast<ParticleType>(small_explosion_particles_type));
-            small_explosion_particles->Read(iter, length);
-            const int large_explosion_particles_type = ReadData<VarInt>(iter, length);
-            large_explosion_particles = Particle::CreateParticle(static_cast<ParticleType>(large_explosion_particles_type));
-            large_explosion_particles->Read(iter, length);
+            small_explosion_particles = ReadData<Particle>(iter, length);
+            large_explosion_particles = ReadData<Particle>(iter, length);
             explosion_sound = ReadData<SoundEvent>(iter, length);
 #endif
         }
@@ -309,10 +303,8 @@ namespace ProtocolCraft
             WriteData<float>(knockback_z, container);
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
             WriteData<VarInt>(block_interaction, container);
-            WriteData<VarInt>(static_cast<int>(small_explosion_particles->GetType()), container);
-            small_explosion_particles->Write(container);
-            WriteData<VarInt>(static_cast<int>(large_explosion_particles->GetType()), container);
-            large_explosion_particles->Write(container);
+            WriteData<Particle>(small_explosion_particles, container);
+            WriteData<Particle>(large_explosion_particles, container);
             WriteData<SoundEvent>(explosion_sound, container);
 #endif
         }
@@ -331,8 +323,8 @@ namespace ProtocolCraft
             output["knockback_z"] = knockback_z;
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
             output["block_interaction"] = block_interaction;
-            output["small_explosion_particles"] = small_explosion_particles->Serialize();
-            output["large_explosion_particles"] = large_explosion_particles->Serialize();
+            output["small_explosion_particles"] = small_explosion_particles;
+            output["large_explosion_particles"] = large_explosion_particles;
             output["explosion_sound"] = explosion_sound;
 #endif
 
@@ -355,8 +347,8 @@ namespace ProtocolCraft
         float knockback_y = 0.0f;
         float knockback_z = 0.0f;
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        std::shared_ptr<Particle> small_explosion_particles;
-        std::shared_ptr<Particle> large_explosion_particles;
+        Particle small_explosion_particles;
+        Particle large_explosion_particles;
         int block_interaction;
         SoundEvent explosion_sound;
 #endif

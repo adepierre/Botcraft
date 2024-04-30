@@ -1,20 +1,15 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/Particle.hpp"
+#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
 
 namespace ProtocolCraft
 {
-    class DustColorTransitionParticle : public Particle
+    class DustColorTransitionOptions : public ParticleOptions
     {
     public:
-        DustColorTransitionParticle();
-        
-        virtual ~DustColorTransitionParticle();
-        
-        virtual std::string GetName() const override;
-        
-        virtual ParticleType GetType() const override;
+        DustColorTransitionOptions();
+        virtual ~DustColorTransitionOptions();
 
         float GetFromRed() const;
         float GetFromGreen() const;
@@ -34,9 +29,7 @@ namespace ProtocolCraft
         
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        
         virtual void WriteImpl(WriteContainer& container) const override;
-        
         virtual Json::Value SerializeImpl() const override;
 
     private:
@@ -47,7 +40,6 @@ namespace ProtocolCraft
         float to_red = 0.0f;
         float to_green = 0.0f;
         float to_blue = 0.0f;
-        
     };
 }
 #endif
