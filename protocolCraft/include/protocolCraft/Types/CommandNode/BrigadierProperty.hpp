@@ -49,6 +49,9 @@ namespace ProtocolCraft
         Swizzle,
         Team,
         ItemSlot,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        ItemSlots,
+#endif
         ResourceLocation,
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         MobEffect,
@@ -79,7 +82,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         Heightmap,
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        LootTable,
+        LootPredicate,
+        LootModifier,
+#endif
         Uuid,
+        NUM_BRIGADIER_PROPERTY_TYPE
     };
 #endif
 
