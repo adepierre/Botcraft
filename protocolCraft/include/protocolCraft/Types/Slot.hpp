@@ -15,9 +15,11 @@ namespace ProtocolCraft
             block_id = -1;
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
             item_id = -1;
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             present = false;
             item_id = -1;
+#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            item_id = 0;
 #endif
             item_count = 0;
         }
@@ -57,8 +59,10 @@ namespace ProtocolCraft
             return block_id == -1;
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
             return item_id == -1;
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             return !present;
+#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            return item_count <= 0 || item_id == 0;
 #endif
         }
 
@@ -78,17 +82,20 @@ namespace ProtocolCraft
             item_id = item_id_;
         }
 #elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetPresent(const bool present_)
         {
             present = present_;
         }
+#endif
 
-        void SetItemID(const short item_id_)
+        void SetItemID(const int item_id_)
         {
             item_id = item_id_;
         }
 #endif
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetItemCount(const char item_count_)
         {
             item_count = item_count_;
@@ -105,6 +112,12 @@ namespace ProtocolCraft
                 nbt = NBT::Value();
             }
         }
+#else
+        void SetItemCount(const int item_count_)
+        {
+            item_count = item_count_;
+        }
+#endif
 
         void SetNBT(const NBT::Value& nbt_)
         {
@@ -134,21 +147,30 @@ namespace ProtocolCraft
             return item_id;
         }
 #elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         bool GetPresent() const
         {
             return present;
         }
+#endif
 
-        short GetItemID() const
+        int GetItemID() const
         {
             return item_id;
         }
 #endif
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         char GetItemCount() const
         {
             return item_count;
         }
+#else
+        int GetItemCount() const
+        {
+            return item_count;
+        }
+#endif
 
         const NBT::Value& GetNBT() const
         {
@@ -175,7 +197,7 @@ namespace ProtocolCraft
             }
 
             item_count = ReadData<char>(iter, length);
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             present = ReadData<bool>(iter, length);
             if (!present)
             {
@@ -184,6 +206,13 @@ namespace ProtocolCraft
 
             item_id = ReadData<VarInt>(iter, length);
             item_count = ReadData<char>(iter, length);
+#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            item_count = ReadData<VarInt>(iter, length);
+            if (item_count <= 0)
+            {
+                return;
+            }
+            item_id = ReadData<VarInt>(iter, length);
 #endif
             nbt = ReadData<NBT::UnnamedValue>(iter, length);
         }
@@ -205,7 +234,7 @@ namespace ProtocolCraft
                 return;
             }
             WriteData<char>(item_count, container);
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<bool>(present, container);
             if (!present)
             {
@@ -213,6 +242,14 @@ namespace ProtocolCraft
             }
             WriteData<VarInt>(item_id, container);
             WriteData<char>(item_count, container);
+#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            if (IsEmptySlot())
+            {
+                WriteData<VarInt>(0, container);
+                return;
+            }
+            WriteData<VarInt>(item_count, container);
+            WriteData<VarInt>(item_id, container);
 #endif
             WriteData<NBT::UnnamedValue>(nbt, container);
         }
@@ -229,9 +266,14 @@ namespace ProtocolCraft
             }
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
             output["item_id"] = item_id;
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             output["present"] = present;
             if (present)
+            {
+                output["item_id"] = item_id;
+            }
+#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            if (item_count > 0)
             {
                 output["item_id"] = item_id;
             }
@@ -240,8 +282,10 @@ namespace ProtocolCraft
             if(block_id != -1)
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
             if(item_id != -1)
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             if (present)
+#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            if (item_count > 0)
 #endif
             {
                 output["item_count"] = item_count;
@@ -260,10 +304,16 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
         short item_id = 0;
 #elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         bool present = false;
-        short item_id = 0;
 #endif
+        int item_id = 0;
+#endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         char item_count = 0;
+#else
+        int item_count = 0;
+#endif
         NBT::Value nbt;
     };
 } // ProtocolCraft
