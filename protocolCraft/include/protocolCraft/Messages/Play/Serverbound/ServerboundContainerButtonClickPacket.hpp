@@ -42,6 +42,7 @@ namespace ProtocolCraft
 
         }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetContainerId(const char container_id_)
         {
             container_id = container_id_;
@@ -51,8 +52,20 @@ namespace ProtocolCraft
         {
             button_id = button_id_;
         }
+#else
+        void SetContainerId(const int container_id_)
+        {
+            container_id = container_id_;
+        }
+
+        void SetButtonId(const int button_id_)
+        {
+            button_id = button_id_;
+        }
+#endif
 
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         char GetContainerId() const
         {
             return container_id;
@@ -62,19 +75,40 @@ namespace ProtocolCraft
         {
             return button_id;
         }
+#else
+        int GetContainerId() const
+        {
+            return container_id;
+        }
+
+        int GetButtonId() const
+        {
+            return button_id;
+        }
+#endif
 
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             container_id = ReadData<char>(iter, length);
             button_id = ReadData<char>(iter, length);
+#else
+            container_id = ReadData<VarInt>(iter, length);
+            button_id = ReadData<VarInt>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<char>(container_id, container);
             WriteData<char>(button_id, container);
+#else
+            WriteData<VarInt>(container_id, container);
+            WriteData<VarInt>(button_id, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -88,9 +122,13 @@ namespace ProtocolCraft
         }
 
     private:
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         char container_id = 0;
         char button_id = 0;
-
+#else
+        int container_id = 0;
+        int button_id = 0;
+#endif
     };
 } //ProtocolCraft
 #endif

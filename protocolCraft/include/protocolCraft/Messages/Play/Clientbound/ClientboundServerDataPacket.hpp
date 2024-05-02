@@ -66,7 +66,7 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetEnforcesSecureChat(const bool enforces_secure_chat_)
         {
             enforces_secure_chat = enforces_secure_chat_;
@@ -103,7 +103,7 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
         bool GetEnforcesSecureChat() const
         {
             return enforces_secure_chat;
@@ -129,7 +129,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             previews_chat = ReadData<bool>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
             enforces_secure_chat = ReadData<bool>(iter, length);
 #endif
         }
@@ -151,7 +151,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<bool>(previews_chat, container);
 #endif
-#if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<bool>(enforces_secure_chat, container);
 #endif
         }
@@ -179,7 +179,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["previews_chat"] = previews_chat;
 #endif
-#if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
             output["enforces_secure_chat"] = enforces_secure_chat;
 #endif
 
@@ -198,7 +198,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         bool previews_chat = false;
 #endif
-#if PROTOCOL_VERSION > 759 /* > 1.19 */
+#if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
         bool enforces_secure_chat = false;
 #endif
 
