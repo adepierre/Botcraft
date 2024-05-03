@@ -7,7 +7,10 @@ namespace Botcraft
     class WolfEntity : public TamableAnimalEntity
     {
     protected:
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
+
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        static constexpr int metadata_count = 4;
+#elif PROTOCOL_VERSION > 578 /* > 1.15.2 */
         static constexpr int metadata_count = 3;
 #elif PROTOCOL_VERSION > 498 /* > 1.14.4 */
         static constexpr int metadata_count = 2;
@@ -44,6 +47,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         int GetDataRemainingAngerTime() const;
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        int GetDataVariantId() const;
+#endif
 
 #if PROTOCOL_VERSION < 499 /* < 1.15 */
         void SetDataHealthId(const float data_health_id);
@@ -52,6 +58,9 @@ namespace Botcraft
         void SetDataCollarColor(const int data_collar_color);
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         void SetDataRemainingAngerTime(const int data_remaining_anger_time);
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        void SetDataVariantId(const int data_variant_id);
 #endif
 
         // Attribute stuff

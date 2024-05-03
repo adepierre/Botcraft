@@ -8,10 +8,15 @@ namespace Botcraft
     BreezeEntity::BreezeEntity()
     {
         // Initialize all attributes with default values
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.6) });
+#else
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 3.0) });
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.63) });
+#endif
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 30.0) });
         attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 24.0) });
-        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
     }
 
     BreezeEntity::~BreezeEntity()
@@ -49,7 +54,11 @@ namespace Botcraft
 
     double BreezeEntity::GetHeightImpl() const
     {
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         return 1.7;
+#else
+        return 1.77;
+#endif
     }
 
 }

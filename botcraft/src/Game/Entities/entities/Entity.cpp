@@ -21,6 +21,9 @@
 #include "botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "botcraft/Game/Entities/entities/animal/armadillo/ArmadilloEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
@@ -32,8 +35,14 @@
 #endif
 #include "botcraft/Game/Entities/entities/monster/BlazeEntity.hpp"
 #include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "botcraft/Game/Entities/entities/monster/BoggedEntity.hpp"
+#endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "botcraft/Game/Entities/entities/monster/breeze/BreezeEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "botcraft/Game/Entities/entities/projectile/windcharge/BreezeWindChargeEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp"
@@ -102,6 +111,9 @@
 #include "botcraft/Game/Entities/entities/animal/IronGolemEntity.hpp"
 #include "botcraft/Game/Entities/entities/item/ItemEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/ItemFrameEntity.hpp"
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "botcraft/Game/Entities/entities/OminousItemSpawnerEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/projectile/LargeFireballEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/LeashFenceKnotEntity.hpp"
 #include "botcraft/Game/Entities/entities/LightningBoltEntity.hpp"
@@ -202,8 +214,10 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
 #include "botcraft/Game/Entities/entities/projectile/WindChargeEntity.hpp"
+#elif PROTOCOL_VERSION > 765 /* > 1.20.5 */
+#include "botcraft/Game/Entities/entities/projectile/windcharge/WindChargeEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/WitchEntity.hpp"
 #include "botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp"
@@ -355,6 +369,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
                 Particle,
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+                Particles,
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
                 VillagerDataType,
                 OptionalUint,
@@ -362,12 +379,18 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
                 CatVariant,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+                WolfVariant,
+#endif
                 FrogVariant,
                 OptionalGlobalPos,
                 PaintingVariant,
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
                 SnifferState,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+                ArmadilloState,
+#endif
                 Vec3,
                 Quaternion,
 #endif
@@ -482,8 +505,16 @@ namespace Botcraft
             }
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
             case EntityMetadataTypes::Particle:
-                value = ProtocolCraft::Particle::CreateParticle(static_cast<ProtocolCraft::ParticleType>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length))));
-                std::any_cast<std::shared_ptr<ProtocolCraft::Particle>&>(value)->Read(iter, length);
+            {
+                ProtocolCraft::Particle particle;
+                particle.Read(iter, length);
+                value = particle;
+                break;
+            }
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            case EntityMetadataTypes::Particles:
+                value = ProtocolCraft::ReadVector<ProtocolCraft::Particle>(iter, length);
                 break;
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
@@ -508,6 +539,11 @@ namespace Botcraft
             case EntityMetadataTypes::CatVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            case EntityMetadataTypes::WolfVariant:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+#endif
             case EntityMetadataTypes::FrogVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
@@ -537,6 +573,11 @@ namespace Botcraft
             case EntityMetadataTypes::SnifferState:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            case EntityMetadataTypes::ArmadilloState:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+#endif
             case EntityMetadataTypes::Vec3:
             {
                 const float x = ProtocolCraft::ReadData<float>(iter, length);
@@ -1271,6 +1312,13 @@ namespace Botcraft
         return false;
     }
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    bool Entity::IsAbstractWindCharge() const
+    {
+        return false;
+    }
+#endif
+
 
     std::shared_ptr<Entity> Entity::CreateEntity(const EntityType type)
     {
@@ -1284,6 +1332,10 @@ namespace Botcraft
 #endif
         case EntityType::AreaEffectCloud:
             return std::make_shared<AreaEffectCloudEntity>();
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        case EntityType::Armadillo:
+            return std::make_shared<ArmadilloEntity>();
+#endif
         case EntityType::ArmorStand:
             return std::make_shared<ArmorStandEntity>();
         case EntityType::Arrow:
@@ -1302,9 +1354,17 @@ namespace Botcraft
             return std::make_shared<BlazeEntity>();
         case EntityType::Boat:
             return std::make_shared<BoatEntity>();
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        case EntityType::Bogged:
+            return std::make_shared<BoggedEntity>();
+#endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         case EntityType::Breeze:
             return std::make_shared<BreezeEntity>();
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        case EntityType::BreezeWindCharge:
+            return std::make_shared<BreezeWindChargeEntity>();
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::ChestBoat:
@@ -1410,6 +1470,10 @@ namespace Botcraft
             return std::make_shared<ItemEntity>();
         case EntityType::ItemFrame:
             return std::make_shared<ItemFrameEntity>();
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        case EntityType::OminousItemSpawner:
+            return std::make_shared<OminousItemSpawnerEntity>();
+#endif
         case EntityType::LargeFireball:
             return std::make_shared<LargeFireballEntity>();
         case EntityType::LeashFenceKnotEntity:

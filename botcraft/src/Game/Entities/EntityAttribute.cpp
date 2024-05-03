@@ -73,6 +73,7 @@ namespace Botcraft
         return it->second;
     }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.4 */
     std::string EntityAttribute::TypeToString(const Type type)
     {
         switch (type)
@@ -263,6 +264,7 @@ namespace Botcraft
 #endif
         return Type::Unknown;
     }
+#endif
 
     void EntityAttribute::UpdateValue() const
     {
@@ -341,9 +343,40 @@ namespace Botcraft
         case Type::ZombieSpawnReinforcementsChance:
             current_value = std::min(1.0, std::max(0.0, current_value));
             break;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         case Type::HorseJumpStrength:
             current_value = std::min(2.0, std::max(0.0, current_value));
             break;
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        case Type::PlayerBlockBreakSpeed:
+            current_value = std::min(1024.0, std::max(0.0, current_value));
+            break;
+        case Type::PlayerBlockInteractionRange:
+            current_value = std::min(64.0, std::max(0.0, current_value));
+            break;
+        case Type::PlayerEntityInteractionRange:
+            current_value = std::min(64.0, std::max(0.0, current_value));
+            break;
+        case Type::FallDamageMultiplier:
+            current_value = std::min(100.0, std::max(0.0, current_value));
+            break;
+        case Type::Gravity:
+            current_value = std::min(1.0, std::max(-1.0, current_value));
+            break;
+        case Type::JumpStrength:
+            current_value = std::min(32.0, std::max(0.0, current_value));
+            break;
+        case Type::SafeFallDistance:
+            current_value = std::min(1024.0, std::max(-1024.0, current_value));
+            break;
+        case Type::Scale:
+            current_value = std::min(16.0, std::max(0.0625, current_value));
+            break;
+        case Type::StepHeight:
+            current_value = std::min(10.0, std::max(0.0, current_value));
+            break;
+#endif
         default:
             // No min or max value in case of Unknown attribute
             break;

@@ -6,7 +6,9 @@ namespace Botcraft
 {
     const std::array<std::string, LlamaEntity::metadata_count> LlamaEntity::metadata_names{ {
         "data_strength_id",
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         "data_swag_id",
+#endif
         "data_variant_id",
     } };
 
@@ -14,7 +16,9 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
         SetDataStrengthId(0);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SetDataSwagId(-1);
+#endif
         SetDataVariantId(0);
 
         // Initialize all attributes with default values
@@ -54,7 +58,9 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = AbstractChestedHorseEntity::Serialize();
 
         output["metadata"]["data_strength_id"] = GetDataStrengthId();
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         output["metadata"]["data_swag_id"] = GetDataSwagId();
+#endif
         output["metadata"]["data_variant_id"] = GetDataVariantId();
 
         return output;
@@ -80,11 +86,13 @@ namespace Botcraft
         return std::any_cast<int>(metadata.at("data_strength_id"));
     }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     int LlamaEntity::GetDataSwagId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_swag_id"));
     }
+#endif
 
     int LlamaEntity::GetDataVariantId() const
     {
@@ -99,11 +107,13 @@ namespace Botcraft
         metadata["data_strength_id"] = data_strength_id;
     }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     void LlamaEntity::SetDataSwagId(const int data_swag_id)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_swag_id"] = data_swag_id;
     }
+#endif
 
     void LlamaEntity::SetDataVariantId(const int data_variant_id)
     {

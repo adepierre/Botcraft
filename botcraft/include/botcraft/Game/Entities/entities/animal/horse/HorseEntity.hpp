@@ -44,8 +44,10 @@ namespace Botcraft
 #endif
 
         // Attribute stuff
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         // 556e1665-8b10-40c8-8f9d-cf9b1667f295
         static constexpr std::array<unsigned char, 16> armor_modifier_uuid = { 0x55, 0x6E, 0x16, 0x65, 0x8B, 0x10, 0x40, 0xC8, 0x8F, 0x9D, 0xCF, 0x9B, 0x16, 0x67, 0xF2, 0x95 };
+#endif
 
     protected:
         virtual double GetWidthImpl() const override;

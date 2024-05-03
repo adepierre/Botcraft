@@ -24,6 +24,11 @@ namespace Botcraft
         SetDataRightArmPose(Vector3<float>(-15.0f, 0.0f, 10.0f));
         SetDataLeftLegPose(Vector3<float>(-1.0f, 0.0f, -1.0f));
         SetDataRightLegPose(Vector3<float>(1.0f, 0.0f, 1.0f));
+
+        // Initialize all attributes with default values
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        attributes.insert({ EntityAttribute::Type::StepHeight, EntityAttribute(EntityAttribute::Type::StepHeight, 0.0) });
+#endif
     }
 
     ArmorStandEntity::~ArmorStandEntity()

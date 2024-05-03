@@ -28,6 +28,11 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.1) });
         attributes.insert({ EntityAttribute::Type::AttackSpeed, EntityAttribute(EntityAttribute::Type::AttackSpeed, 4.0) });
         attributes.insert({ EntityAttribute::Type::Luck, EntityAttribute(EntityAttribute::Type::Luck, 0.0) });
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        attributes.insert({ EntityAttribute::Type::PlayerBlockInteractionRange, EntityAttribute(EntityAttribute::Type::PlayerBlockInteractionRange, 4.5) });
+        attributes.insert({ EntityAttribute::Type::PlayerEntityInteractionRange, EntityAttribute(EntityAttribute::Type::PlayerEntityInteractionRange, 3.0) });
+        attributes.insert({ EntityAttribute::Type::PlayerBlockBreakSpeed, EntityAttribute(EntityAttribute::Type::PlayerBlockBreakSpeed, 1.0) });
+#endif
     }
 
     PlayerEntity::~PlayerEntity()
@@ -116,6 +121,11 @@ namespace Botcraft
         output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
         output["attributes"]["generic.attack_speed"] = GetAttributeAttackSpeedValue();
         output["attributes"]["generic.luck"] = GetAttributeLuckValue();
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        output["attributes"]["player.block_interaction_range"] = GetAttributePlayerBlockInteractionRangeValue();
+        output["attributes"]["player.entity_interaction_range"] = GetAttributePlayerEntityInteractionRangeValue();
+        output["attributes"]["player.block_break_speed"] = GetAttributePlayerBlockBreakSpeedValue();
+#endif
 
         return output;
     }
@@ -230,6 +240,26 @@ namespace Botcraft
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return attributes.at(EntityAttribute::Type::Luck).GetValue();
     }
+
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    double PlayerEntity::GetAttributePlayerBlockInteractionRangeValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::PlayerBlockInteractionRange).GetValue();
+    }
+
+    double PlayerEntity::GetAttributePlayerEntityInteractionRangeValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::PlayerEntityInteractionRange).GetValue();
+    }
+
+    double PlayerEntity::GetAttributePlayerBlockBreakSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::PlayerBlockBreakSpeed).GetValue();
+    }
+#endif
 
 
     double PlayerEntity::GetEyeHeightImpl() const

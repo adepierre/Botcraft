@@ -12,8 +12,8 @@ namespace Botcraft
 
     ThrowableItemProjectileEntity::ThrowableItemProjectileEntity()
     {
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         // Initialize all metadata with default values
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataItemStack(ProtocolCraft::Slot());
 #endif
     }

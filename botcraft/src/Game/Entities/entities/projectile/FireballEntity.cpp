@@ -1,5 +1,9 @@
 #include "botcraft/Game/Entities/entities/projectile/FireballEntity.hpp"
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "botcraft/Game/AssetsManager.hpp"
+#endif
+
 #include <mutex>
 
 namespace Botcraft
@@ -12,9 +16,17 @@ namespace Botcraft
 
     FireballEntity::FireballEntity()
     {
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         // Initialize all metadata with default values
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SetDataItemStack(ProtocolCraft::Slot());
+#else
+        const static int item_id = AssetsManager::getInstance().GetItemID("minecraft:fire_charge");
+        ProtocolCraft::Slot default_slot;
+        default_slot.SetItemID(item_id);
+        default_slot.SetItemCount(1);
+        SetDataItemStack(default_slot);
+#endif
 #endif
     }
 

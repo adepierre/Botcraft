@@ -27,6 +27,9 @@ namespace Botcraft
         // Initialize all attributes with default values
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 30.0) });
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.25) });
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        attributes.insert({ EntityAttribute::Type::StepHeight, EntityAttribute(EntityAttribute::Type::StepHeight, 1.0) });
+#endif
     }
 
     TurtleEntity::~TurtleEntity()

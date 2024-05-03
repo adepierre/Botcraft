@@ -3,6 +3,12 @@
 #include "botcraft/Game/Entities/entities/Entity.hpp"
 #include "botcraft/Game/Entities/EntityAttribute.hpp"
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Types/Particles/Particle.hpp"
+
+#include <vector>
+#endif
+
 #include <array>
 
 namespace Botcraft
@@ -33,7 +39,11 @@ namespace Botcraft
 
         char GetDataLivingEntityFlags() const;
         float GetDataHealthId() const;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         int GetDataEffectColorId() const;
+#else
+        std::vector<ProtocolCraft::Particle> GetDataEffectParticles() const;
+#endif
         bool GetDataEffectAmbienceId() const;
         int GetDataArrowCountId() const;
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
@@ -45,7 +55,11 @@ namespace Botcraft
 
         void SetDataLivingEntityFlags(const char data_living_entity_flags);
         void SetDataHealthId(const float data_health_id);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetDataEffectColorId(const int data_effect_color_id);
+#else
+        void SetDataEffectParticles(const std::vector<ProtocolCraft::Particle>& data_effect_particles);
+#endif
         void SetDataEffectAmbienceId(const bool data_effect_ambience_id);
         void SetDataArrowCountId(const int data_arrow_count_id);
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
@@ -72,6 +86,14 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         double GetAttributeMaxAbsorptionValue() const;
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        double GetAttributeStepHeightValue() const;
+        double GetAttributeScaleValue() const;
+        double GetAttributeGravityValue() const;
+        double GetAttributeSafeFallDistanceValue() const;
+        double GetAttributeFallDamageMultiplierValue() const;
+        double GetAttributeJumpStrengthValue() const;
+#endif
 
         // 87f46a96-686f-4796-b035-22e16ee9e038
         static constexpr std::array<unsigned char, 16> speed_modifier_soul_speed_uuid = { 0x87, 0xF4, 0x6A, 0x96, 0x68, 0x6F, 0x47, 0x96, 0xB0, 0x35, 0x22, 0xE1, 0x6E, 0xE9, 0xE0, 0x38 };
@@ -87,6 +109,11 @@ namespace Botcraft
         char GetDataLivingEntityFlagsImpl() const;
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         std::optional<Position> GetSleepingPosIdImpl() const;
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        double GetAttributeStepHeightValueImpl() const;
+        double GetAttributeGravityValueImpl() const;
+        double GetAttributeJumpStrengthValueImpl() const;
 #endif
 
     protected:

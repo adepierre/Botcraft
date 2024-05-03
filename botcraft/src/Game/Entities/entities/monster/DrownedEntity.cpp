@@ -5,7 +5,10 @@ namespace Botcraft
 {
     DrownedEntity::DrownedEntity()
     {
-
+        // Initialize all attributes with default values
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        attributes.insert({ EntityAttribute::Type::StepHeight, EntityAttribute(EntityAttribute::Type::StepHeight, 1.0) });
+#endif
     }
 
     DrownedEntity::~DrownedEntity()

@@ -22,9 +22,5 @@ namespace Botcraft
         static std::string GetClassName();
         static EntityType GetClassType();
 
-    protected:
-        virtual double GetWidthImpl() const override;
-        virtual double GetHeightImpl() const override;
-
     };
 }

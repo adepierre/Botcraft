@@ -15,7 +15,11 @@ namespace Botcraft
 
         // Initialize all attributes with default values
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.175) });
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         attributes.insert({ EntityAttribute::Type::HorseJumpStrength, EntityAttribute(EntityAttribute::Type::HorseJumpStrength, 0.5) });
+#else
+        attributes.insert({ EntityAttribute::Type::JumpStrength, EntityAttribute(EntityAttribute::Type::JumpStrength, 0.5) });
+#endif
     }
 
     AbstractChestedHorseEntity::~AbstractChestedHorseEntity()

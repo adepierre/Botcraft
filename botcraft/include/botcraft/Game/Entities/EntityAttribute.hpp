@@ -20,9 +20,20 @@ namespace Botcraft
             AttackKnockback,
 #endif
             AttackSpeed,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            PlayerBlockBreakSpeed,
+            PlayerBlockInteractionRange,
+            PlayerEntityInteractionRange,
+            FallDamageMultiplier,
+#endif
             FlyingSpeed,
             FollowRange,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            Gravity,
+            JumpStrength,
+#else
             HorseJumpStrength,
+#endif
             KnockbackResistance,
             Luck,
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
@@ -30,7 +41,14 @@ namespace Botcraft
 #endif
             MaxHealth,
             MovementSpeed,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            SafeFallDistance,
+            Scale,
+#endif
             ZombieSpawnReinforcementsChance,
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            StepHeight,
+#endif
             NUM_ENTITY_ATTRIBUTES
         };
 
@@ -61,8 +79,10 @@ namespace Botcraft
         double GetValue() const;
         std::optional<Modifier> GetModifier(const std::array<unsigned char, 16>& uuid);
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.4 */
         static std::string TypeToString(const Type type);
         static Type StringToType(const std::string& s);
+#endif
 
     private:
         void UpdateValue() const;

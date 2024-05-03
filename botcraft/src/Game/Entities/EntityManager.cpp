@@ -452,7 +452,9 @@ namespace Botcraft
             std::shared_ptr<LivingEntity> living_entity = std::dynamic_pointer_cast<LivingEntity>(entity);
             for (const auto& a : msg.GetAttributes())
             {
-#if PROTOCOL_VERSION > 709 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+                const EntityAttribute::Type type = static_cast<EntityAttribute::Type>(a.GetKey());
+#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
                 const EntityAttribute::Type type = EntityAttribute::StringToType(a.GetKey().GetFull());
 #else
                 const EntityAttribute::Type type = EntityAttribute::StringToType(a.GetKey());

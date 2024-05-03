@@ -37,12 +37,14 @@ set(botcraft_PUBLIC_HDR
 
     include/botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp
     include/botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/armadillo/ArmadilloEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp
     include/botcraft/Game/Entities/entities/animal/axolotl/AxolotlEntity.hpp
     include/botcraft/Game/Entities/entities/ambient/BatEntity.hpp
     include/botcraft/Game/Entities/entities/animal/BeeEntity.hpp
     include/botcraft/Game/Entities/entities/monster/BlazeEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/BoggedEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp
     include/botcraft/Game/Entities/entities/monster/breeze/BreezeEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp
@@ -151,6 +153,9 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/npc/WanderingTraderEntity.hpp
     include/botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/WindChargeEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/windcharge/AbstractWindChargeEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/windcharge/BreezeWindChargeEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/windcharge/WindChargeEntity.hpp
     include/botcraft/Game/Entities/entities/monster/WitchEntity.hpp
     include/botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp
     include/botcraft/Game/Entities/entities/monster/WitherSkeletonEntity.hpp
@@ -175,6 +180,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/horse/AbstractChestedHorseEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/AbstractHurtingProjectileEntity.hpp
     include/botcraft/Game/Entities/entities/MobEntity.hpp
+    include/botcraft/Game/Entities/entities/OminousItemSpawnerEntity.hpp
     include/botcraft/Game/Entities/entities/monster/SpellcasterIllagerEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ProjectileEntity.hpp
     include/botcraft/Game/Entities/entities/FlyingMobEntity.hpp
@@ -270,12 +276,14 @@ set(botcraft_SRC
 
     src/Game/Entities/entities/animal/allay/AllayEntity.cpp
     src/Game/Entities/entities/AreaEffectCloudEntity.cpp
+    src/Game/Entities/entities/animal/armadillo/ArmadilloEntity.cpp
     src/Game/Entities/entities/decoration/ArmorStandEntity.cpp
     src/Game/Entities/entities/projectile/ArrowEntity.cpp
     src/Game/Entities/entities/animal/axolotl/AxolotlEntity.cpp
     src/Game/Entities/entities/ambient/BatEntity.cpp
     src/Game/Entities/entities/animal/BeeEntity.cpp
     src/Game/Entities/entities/monster/BlazeEntity.cpp
+    src/Game/Entities/entities/monster/BoggedEntity.cpp
     src/Game/Entities/entities/vehicle/BoatEntity.cpp
     src/Game/Entities/entities/monster/breeze/BreezeEntity.cpp
     src/Game/Entities/entities/vehicle/ChestBoatEntity.cpp
@@ -383,6 +391,9 @@ set(botcraft_SRC
     src/Game/Entities/entities/monster/VindicatorEntity.cpp
     src/Game/Entities/entities/npc/WanderingTraderEntity.cpp
     src/Game/Entities/entities/projectile/WindChargeEntity.cpp
+    src/Game/Entities/entities/projectile/windcharge/AbstractWindChargeEntity.cpp
+    src/Game/Entities/entities/projectile/windcharge/BreezeWindChargeEntity.cpp
+    src/Game/Entities/entities/projectile/windcharge/WindChargeEntity.cpp
     src/Game/Entities/entities/monster/warden/WardenEntity.cpp
     src/Game/Entities/entities/monster/WitchEntity.cpp
     src/Game/Entities/entities/boss/wither/WitherBossEntity.cpp
@@ -408,6 +419,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/horse/AbstractChestedHorseEntity.cpp
     src/Game/Entities/entities/projectile/AbstractHurtingProjectileEntity.cpp
     src/Game/Entities/entities/MobEntity.cpp
+    src/Game/Entities/entities/OminousItemSpawnerEntity.cpp
     src/Game/Entities/entities/monster/SpellcasterIllagerEntity.cpp
     src/Game/Entities/entities/projectile/ProjectileEntity.cpp
     src/Game/Entities/entities/FlyingMobEntity.cpp

@@ -37,7 +37,9 @@ namespace Botcraft
 #endif
 
         // Attribute stuff
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         double GetAttributeJumpStrengthValue() const;
+#endif
 
     };
 }

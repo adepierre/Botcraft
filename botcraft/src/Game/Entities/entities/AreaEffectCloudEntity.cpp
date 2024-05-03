@@ -1,5 +1,9 @@
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Types/Particles/ColorParticleOptions.hpp"
+#endif
+
 #include <mutex>
 
 namespace Botcraft
@@ -8,7 +12,9 @@ namespace Botcraft
         "data_radius",
         "data_color",
         "data_waiting",
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         "data_particle",
+#endif
 #if PROTOCOL_VERSION < 341 /* < 1.13 */
         "data_particle_argument1",
         "data_particle_argument2",
@@ -23,10 +29,17 @@ namespace Botcraft
 #else
         SetDataRadius(3.0f);
 #endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SetDataColor(0);
+#endif
         SetDataWaiting(false);
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        SetDataParticle(ProtocolCraft::Particle::CreateParticle(ProtocolCraft::ParticleType::EntityEffect));
+        ProtocolCraft::Particle particle;
+        particle.SetParticleType(ProtocolCraft::ParticleType::EntityEffect);
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        std::dynamic_pointer_cast<ProtocolCraft::ColorParticleOptions>(particle.GetOptions())->SetColor(-1);
+#endif
+        SetDataParticle(particle);
 #else
         SetDataParticle(std::optional<int>());
         SetDataParticleArgument1(0);
@@ -67,7 +80,9 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = Entity::Serialize();
 
         output["metadata"]["data_radius"] = GetDataRadius();
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         output["metadata"]["data_color"] = GetDataColor();
+#endif
         output["metadata"]["data_waiting"] = GetDataWaiting();
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         output["metadata"]["data_particle"] = GetDataParticle() ? ProtocolCraft::Json::Value({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : ProtocolCraft::Json::Value();
@@ -104,11 +119,13 @@ namespace Botcraft
         return GetDataRadiusImpl();
     }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     int AreaEffectCloudEntity::GetDataColor() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_color"));
     }
+#endif
 
     bool AreaEffectCloudEntity::GetDataWaiting() const
     {
@@ -152,11 +169,13 @@ namespace Botcraft
 #endif
     }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     void AreaEffectCloudEntity::SetDataColor(const int data_color)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_color"] = data_color;
     }
+#endif
 
     void AreaEffectCloudEntity::SetDataWaiting(const bool data_waiting)
     {
@@ -165,7 +184,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-    void AreaEffectCloudEntity::SetDataParticle(const std::shared_ptr<ProtocolCraft::Particle>& data_particle)
+    void AreaEffectCloudEntity::SetDataParticle(const ProtocolCraft::Particle& data_particle)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_particle"] = data_particle;

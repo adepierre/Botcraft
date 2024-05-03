@@ -289,6 +289,14 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         Darkness,
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        TrialOmen,
+        RaidOmen,
+        WindCharged,
+        Weaving,
+        Oozing,
+        Infested,
+#endif
     };
 
     enum class PlayerCommandAction

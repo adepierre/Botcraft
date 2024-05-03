@@ -10,7 +10,9 @@ namespace Botcraft
     class AreaEffectCloudEntity : public Entity
     {
     protected:
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        static constexpr int metadata_count = 3;
+#elif PROTOCOL_VERSION > 340 /* > 1.12.2 */
         static constexpr int metadata_count = 4;
 #else
         static constexpr int metadata_count = 6;
@@ -37,7 +39,9 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         float GetDataRadius() const;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         int GetDataColor() const;
+#endif
         bool GetDataWaiting() const;
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         //TODO: pointed object won't be thread safe
@@ -49,10 +53,12 @@ namespace Botcraft
 #endif
 
         void SetDataRadius(const float data_radius);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetDataColor(const int data_color);
+#endif
         void SetDataWaiting(const bool data_waiting);
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        void SetDataParticle(const std::shared_ptr<ProtocolCraft::Particle>& data_particle);
+        void SetDataParticle(const ProtocolCraft::Particle& data_particle);
 #else
         void SetDataParticle(const std::optional<int>& data_particle_type_id);
         void SetDataParticleArgument1(const int data_particle_argument1);

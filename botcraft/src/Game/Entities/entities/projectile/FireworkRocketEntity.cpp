@@ -1,5 +1,9 @@
 #include "botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp"
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "botcraft/Game/AssetsManager.hpp"
+#endif
+
 #include <mutex>
 
 namespace Botcraft
@@ -15,6 +19,15 @@ namespace Botcraft
     FireworkRocketEntity::FireworkRocketEntity()
     {
         // Initialize all metadata with default values
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        SetDataIdFireworksItem(ProtocolCraft::Slot());
+#else
+        const static int item_id = AssetsManager::getInstance().GetItemID("minecraft:firework_rocket");
+        ProtocolCraft::Slot default_slot;
+        default_slot.SetItemID(item_id);
+        default_slot.SetItemCount(1);
+        SetDataIdFireworksItem(default_slot);
+#endif
         SetDataIdFireworksItem(ProtocolCraft::Slot());
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataAttachedToTarget(std::optional<int>());

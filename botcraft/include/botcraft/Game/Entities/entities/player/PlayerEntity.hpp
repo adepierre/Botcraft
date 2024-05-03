@@ -60,6 +60,11 @@ namespace Botcraft
         double GetAttributeAttackDamageValue() const;
         double GetAttributeAttackSpeedValue() const;
         double GetAttributeLuckValue() const;
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        double GetAttributePlayerBlockInteractionRangeValue() const;
+        double GetAttributePlayerEntityInteractionRangeValue() const;
+        double GetAttributePlayerBlockBreakSpeedValue() const;
+#endif
 
     protected:
         virtual double GetEyeHeightImpl() const;

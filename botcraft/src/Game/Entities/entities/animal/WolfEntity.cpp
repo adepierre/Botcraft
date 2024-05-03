@@ -13,6 +13,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         "data_remaining_anger_time",
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        "data_variant_id",
+#endif
     } };
 
     WolfEntity::WolfEntity()
@@ -26,11 +29,18 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         SetDataRemainingAngerTime(0);
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        SetDataVariantId(0);
+#endif
 
         // Initialize all attributes with default values
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 8.0) });
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
+#else
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 4.0) });
+#endif
     }
 
     WolfEntity::~WolfEntity()
@@ -72,6 +82,9 @@ namespace Botcraft
         output["metadata"]["data_collar_color"] = GetDataCollarColor();
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         output["metadata"]["data_remaining_anger_time"] = GetDataRemainingAngerTime();
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        output["metadata"]["data_variant_id"] = GetDataVariantId();
 #endif
 
         output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
@@ -121,6 +134,14 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    int WolfEntity::GetDataVariantId() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<int>(metadata.at("data_variant_id"));
+    }
+#endif
+
 
 #if PROTOCOL_VERSION < 499 /* < 1.15 */
     void WolfEntity::SetDataHealthId(const float data_health_id)
@@ -147,6 +168,14 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_remaining_anger_time"] = data_remaining_anger_time;
+    }
+#endif
+
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    void WolfEntity::SetDataVariantId(const int data_variant_id)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        metadata["data_variant_id"] = data_variant_id;
     }
 #endif
 

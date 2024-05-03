@@ -8,7 +8,11 @@ namespace Botcraft
     const std::array<std::string, LivingEntity::metadata_count> LivingEntity::metadata_names{ {
         "data_living_entity_flags",
         "data_health_id",
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         "data_effect_color_id",
+#else
+        "data_effect_particles",
+#endif
         "data_effect_ambience_id",
         "data_arrow_count_id",
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
@@ -24,7 +28,11 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataLivingEntityFlags(0);
         SetDataHealthId(1.0f);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SetDataEffectColorId(0);
+#else
+        SetDataEffectParticles({});
+#endif
         SetDataEffectAmbienceId(false);
         SetDataArrowCountId(0);
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
@@ -42,6 +50,14 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::ArmorToughness, EntityAttribute(EntityAttribute::Type::ArmorToughness, 0.0) });
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         attributes.insert({ EntityAttribute::Type::MaxAbsorption, EntityAttribute(EntityAttribute::Type::MaxAbsorption, 0.0) });
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        attributes.insert({ EntityAttribute::Type::StepHeight, EntityAttribute(EntityAttribute::Type::StepHeight, 0.6) });
+        attributes.insert({ EntityAttribute::Type::Scale, EntityAttribute(EntityAttribute::Type::Scale, 1.0) });
+        attributes.insert({ EntityAttribute::Type::Gravity, EntityAttribute(EntityAttribute::Type::Gravity, 0.08) });
+        attributes.insert({ EntityAttribute::Type::SafeFallDistance, EntityAttribute(EntityAttribute::Type::SafeFallDistance, 3.0) });
+        attributes.insert({ EntityAttribute::Type::FallDamageMultiplier, EntityAttribute(EntityAttribute::Type::FallDamageMultiplier, 1.0) });
+        attributes.insert({ EntityAttribute::Type::JumpStrength, EntityAttribute(EntityAttribute::Type::JumpStrength, 0.42) });
 #endif
     }
 
@@ -62,7 +78,11 @@ namespace Botcraft
 
         output["metadata"]["data_living_entity_flags"] = GetDataLivingEntityFlags();
         output["metadata"]["data_health_id"] = GetDataHealthId();
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         output["metadata"]["data_effect_color_id"] = GetDataEffectColorId();
+#else
+        output["metadata"]["data_effect_particles"] = GetDataEffectParticles();
+#endif
         output["metadata"]["data_effect_ambience_id"] = GetDataEffectAmbienceId();
         output["metadata"]["data_arrow_count_id"] = GetDataArrowCountId();
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
@@ -81,6 +101,14 @@ namespace Botcraft
         output["attributes"]["generic.armor_toughness"] = GetAttributeArmorToughnessValue();
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         output["attributes"]["generic.max_absorption"] = GetAttributeMaxAbsorptionValue();
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        output["attributes"]["generic.step_height"] = GetAttributeStepHeightValue();
+        output["attributes"]["generic.scale"] = GetAttributeScaleValue();
+        output["attributes"]["generic.gravity"] = GetAttributeGravityValue();
+        output["attributes"]["generic.safe_fall_distance"] = GetAttributeSafeFallDistanceValue();
+        output["attributes"]["generic.fall_damage_multiplier"] = GetAttributeFallDamageMultiplierValue();
+        output["attributes"]["generic.jump_strength"] = GetAttributeJumpStrengthValue();
 #endif
 
         return output;
@@ -112,11 +140,19 @@ namespace Botcraft
         return std::any_cast<float>(metadata.at("data_health_id"));
     }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     int LivingEntity::GetDataEffectColorId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_effect_color_id"));
     }
+#else
+    std::vector<ProtocolCraft::Particle> LivingEntity::GetDataEffectParticles() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<std::vector<ProtocolCraft::Particle>>(metadata.at("data_effect_particle"));
+    }
+#endif
 
     bool LivingEntity::GetDataEffectAmbienceId() const
     {
@@ -159,11 +195,19 @@ namespace Botcraft
         metadata["data_health_id"] = data_health_id;
     }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     void LivingEntity::SetDataEffectColorId(const int data_effect_color_id)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_effect_color_id"] = data_effect_color_id;
     }
+#else
+    void LivingEntity::SetDataEffectParticles(const std::vector<ProtocolCraft::Particle>& data_effect_particles)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        metadata["data_effect_particles"] = data_effect_particles;
+    }
+#endif
 
     void LivingEntity::SetDataEffectAmbienceId(const bool data_effect_ambience_id)
     {
@@ -301,6 +345,44 @@ namespace Botcraft
         return attributes.at(EntityAttribute::Type::MovementSpeed).GetValue();
     }
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    double LivingEntity::GetAttributeStepHeightValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetAttributeStepHeightValueImpl();
+    }
+
+    double LivingEntity::GetAttributeScaleValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::Scale).GetValue();
+    }
+
+    double LivingEntity::GetAttributeGravityValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetAttributeGravityValueImpl();
+    }
+
+    double LivingEntity::GetAttributeSafeFallDistanceValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::SafeFallDistance).GetValue();
+    }
+
+    double LivingEntity::GetAttributeFallDamageMultiplierValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::FallDamageMultiplier).GetValue();
+    }
+
+    double LivingEntity::GetAttributeJumpStrengthValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetAttributeJumpStrengthValueImpl();
+    }
+#endif
+
     void LivingEntity::RemoveAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid)
     {
         auto it = attributes.find(type);
@@ -331,6 +413,23 @@ namespace Botcraft
     std::optional<Position> LivingEntity::GetSleepingPosIdImpl() const
     {
         return std::any_cast<std::optional<Position>>(metadata.at("sleeping_pos_id"));
+    }
+#endif
+
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    double LivingEntity::GetAttributeStepHeightValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::StepHeight).GetValue();
+    }
+
+    double LivingEntity::GetAttributeGravityValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::Gravity).GetValue();
+    }
+
+    double LivingEntity::GetAttributeJumpStrengthValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::JumpStrength).GetValue();
     }
 #endif
 }

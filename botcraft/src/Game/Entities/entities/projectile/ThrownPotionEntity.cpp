@@ -1,6 +1,12 @@
 #include "botcraft/Game/Entities/entities/projectile/ThrownPotionEntity.hpp"
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "botcraft/Game/AssetsManager.hpp"
+#endif
+
+#if PROTOCOL_VERSION < 579 /* < 1.16 */
 #include <mutex>
+#endif
 
 namespace Botcraft
 {
@@ -12,9 +18,16 @@ namespace Botcraft
 
     ThrownPotionEntity::ThrownPotionEntity()
     {
-#if PROTOCOL_VERSION < 579 /* < 1.16 */
         // Initialize all metadata with default values
+#if PROTOCOL_VERSION < 579 /* < 1.16 */
         SetDataItemStack(ProtocolCraft::Slot());
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        static const int item_id = AssetsManager::getInstance().GetItemID("minecraft:splash_potion");
+        ProtocolCraft::Slot default_slot;
+        default_slot.SetItemID(item_id);
+        default_slot.SetItemCount(1);
+        SetDataItemStack(default_slot);
 #endif
     }
 

@@ -1,5 +1,5 @@
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-#include "botcraft/Game/Entities/entities/projectile/WindChargeEntity.hpp"
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "botcraft/Game/Entities/entities/projectile/windcharge/WindChargeEntity.hpp"
 
 #include <mutex>
 

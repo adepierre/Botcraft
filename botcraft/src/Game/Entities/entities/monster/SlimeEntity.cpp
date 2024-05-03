@@ -131,12 +131,20 @@ namespace Botcraft
 
     double SlimeEntity::GetWidthImpl() const
     {
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         return 0.255 * 2.04 * GetIdSizeImpl();
+#else
+        return 0.52 * GetIdSizeImpl();
+#endif
     }
 
     double SlimeEntity::GetHeightImpl() const
     {
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         return 0.255 * 2.04 * GetIdSizeImpl();
+#else
+        return 0.52 * GetIdSizeImpl();
+#endif
     }
 
 }
