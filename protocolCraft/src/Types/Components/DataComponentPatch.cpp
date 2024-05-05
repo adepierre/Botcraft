@@ -126,6 +126,22 @@ namespace ProtocolCraft
             map = map_;
         }
 
+        bool DataComponentPatch::contains(const DataComponentTypes type, bool match_null) const
+        {
+            auto it = map.find(type);
+            return it != map.end() && (match_null || it->second != nullptr);
+        }
+
+        std::shared_ptr<DataComponentType> DataComponentPatch::GetComponent(const DataComponentTypes type) const
+        {
+            auto it = map.find(type);
+            if (it == map.end())
+            {
+                return nullptr;
+            }
+            return it->second;
+        }
+
         void DataComponentPatch::ReadImpl(ReadIterator& iter, size_t& length)
         {
             const int num_data = ReadData<VarInt>(iter, length);
@@ -292,7 +308,6 @@ namespace ProtocolCraft
             }
 
             for (int i = 0; i < num_void; ++i)
-            for (int i = 0; i < num_data; ++i)
             {
                 const DataComponentTypes type = static_cast<DataComponentTypes>(static_cast<int>(ReadData<VarInt>(iter, length)));
                 map.insert({ type, nullptr });

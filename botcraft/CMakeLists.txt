@@ -218,7 +218,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Utilities/EnumUtilities.hpp
     include/botcraft/Utilities/Logger.hpp
     include/botcraft/Utilities/MiscUtilities.hpp
-    include/botcraft/Utilities/NBTUtilities.hpp
+    include/botcraft/Utilities/ItemUtilities.hpp
     include/botcraft/Utilities/ScopeLockedWrapper.hpp
     include/botcraft/Utilities/SleepUtilities.hpp
     include/botcraft/Utilities/StdAnyUtilities.hpp
@@ -455,7 +455,7 @@ set(botcraft_SRC
 
     src/Utilities/DemanglingUtilities.cpp
     src/Utilities/Logger.cpp
-    src/Utilities/NBTUtilities.cpp
+    src/Utilities/ItemUtilities.cpp
     src/Utilities/SleepUtilities.cpp
     src/Utilities/StdAnyUtilities.cpp
     src/Utilities/StringUtilities.cpp

@@ -85,6 +85,9 @@ namespace ProtocolCraft
             const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& GetMap() const;
             void SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_);
 
+            bool contains(const DataComponentTypes type, bool match_null = false) const;
+            std::shared_ptr<DataComponentType> GetComponent(const DataComponentTypes type) const;
+
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
             virtual void WriteImpl(WriteContainer& container) const override;

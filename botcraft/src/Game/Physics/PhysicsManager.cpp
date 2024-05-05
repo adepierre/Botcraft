@@ -2,7 +2,7 @@
 #include "botcraft/Game/Physics/PhysicsManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/SleepUtilities.hpp"
-#include "botcraft/Utilities/NBTUtilities.hpp"
+#include "botcraft/Utilities/ItemUtilities.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp"
@@ -475,7 +475,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             // Get SneakSpeed bonus from pants
             const Slot leggings_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_LEGS_ARMOR);
-            sneak_coefficient += Utilities::GetEnchantmentLvl(leggings_armor.GetNBT(), "swift_sneak") * 0.15f;
+            sneak_coefficient += Utilities::GetEnchantmentLvl(leggings_armor, Enchantment::SwiftSneak) * 0.15f;
             sneak_coefficient = std::min(std::max(0.0f, sneak_coefficient), 1.0f);
 #endif
             player->inputs.forward_axis *= sneak_coefficient;
@@ -599,7 +599,7 @@ namespace Botcraft
             const Slot chest_slot = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_CHEST_ARMOR);
             if (!chest_slot.IsEmptySlot() &&
                 chest_slot.GetItemID() == elytra_item->GetId() &&
-                Utilities::GetDamageCount(chest_slot.GetNBT()) < elytra_item->GetMaxDurability() - 1)
+                Utilities::GetDamageCount(chest_slot) < elytra_item->GetMaxDurability() - 1)
             {
                 player->SetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying, true);
                 std::shared_ptr<ServerboundPlayerCommandPacket> player_command_msg = std::make_shared<ServerboundPlayerCommandPacket>();
@@ -897,11 +897,7 @@ namespace Botcraft
             float inputs_strength = 0.02f;
 
             const Slot boots_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-            float depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), EnchantmentID::DepthStrider), static_cast<short>(3));
-#else
-            float depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "depth_strider"), static_cast<short>(3));
-#endif
+            float depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor, Enchantment::DepthStrider), static_cast<short>(3));
             if (!player->on_ground)
             {
                 depth_strider_mult *= 0.5f;
@@ -1224,7 +1220,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         // Get SoulSpeed bonus from boots
         const Slot boots_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
-        soul_speed_lvl = Utilities::GetEnchantmentLvl(boots_armor.GetNBT(), "soul_speed");
+        soul_speed_lvl = Utilities::GetEnchantmentLvl(boots_armor, Enchantment::SoulSpeed);
 #endif
         float block_speed_factor = 1.0f;
         const Blockstate* feet_block = world->GetBlock(Position(

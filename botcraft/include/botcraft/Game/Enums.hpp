@@ -56,7 +56,7 @@ namespace Botcraft
     };
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-    enum class EnchantmentID
+    enum class Enchantment
     {
         Protection = 0,
         FireProtection = 1,
@@ -86,7 +86,63 @@ namespace Botcraft
         Lure = 62,
         Mending = 70,
     };
+#else
+    enum class Enchantment
+    {
+        None = -1,
+        Protection,
+        FireProtection,
+        FeatherFalling,
+        BlastProtection,
+        ProjectileProtection,
+        Respiration,
+        AquaAffinity,
+        Thorns,
+        DepthStrider,
+        FrostWalker,
+        BindingCurse,
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
+        SoulSpeed,
 #endif
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+        SwiftSneak,
+#endif
+        Sharpness,
+        Smite,
+        BaneOfArthropods,
+        Knockback,
+        FireAspect,
+        Looting,
+        SweepingEdge,
+        Efficiency,
+        SilkTouch,
+        Unbreaking,
+        Fortune,
+        Power,
+        Punch,
+        Flame,
+        Infinity,
+        LuckOfTheSea,
+        Lure,
+        Loyalty,
+        Impaling,
+        Riptide,
+        Channeling,
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        Multishot,
+        QuickCharge,
+        Piercing,
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        Density,
+        Breach,
+        WindBurst,
+#endif
+        Mending,
+        VanishingCurse,
+    };
+#endif
+
     enum class Hand
     {
         Right = 0,
