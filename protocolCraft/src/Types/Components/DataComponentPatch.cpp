@@ -291,6 +291,7 @@ namespace ProtocolCraft
                 map.insert({ type, data });
             }
 
+            for (int i = 0; i < num_void; ++i)
             for (int i = 0; i < num_data; ++i)
             {
                 const DataComponentTypes type = static_cast<DataComponentTypes>(static_cast<int>(ReadData<VarInt>(iter, length)));
