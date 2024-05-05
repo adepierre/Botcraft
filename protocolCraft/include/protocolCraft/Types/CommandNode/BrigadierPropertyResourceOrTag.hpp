@@ -2,6 +2,7 @@
 
 #if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #include "protocolCraft/Types/CommandNode/BrigadierProperty.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {

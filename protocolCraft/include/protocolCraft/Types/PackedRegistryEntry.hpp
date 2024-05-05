@@ -23,7 +23,7 @@ namespace ProtocolCraft
             id_ = id__;
         }
 
-        void SetNamespace(const std::optional<NBT::Value>& data_)
+        void SetData(const std::optional<NBT::Value>& data_)
         {
             data = data_;
         }

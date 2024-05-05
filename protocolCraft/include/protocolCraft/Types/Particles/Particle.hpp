@@ -263,7 +263,7 @@ namespace ProtocolCraft
         Particle();
         virtual ~Particle();
         std::string_view GetName() const;
-        ParticleType GetType() const;
+        ParticleType GetParticleType() const;
         std::shared_ptr<ParticleOptions> GetOptions() const;
 
         void SetParticleType(const ParticleType particle_type_);

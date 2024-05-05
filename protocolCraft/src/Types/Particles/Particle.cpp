@@ -282,14 +282,14 @@ namespace ProtocolCraft
             "spit",
         };
 #endif
-        if (particle_type == ParticleType::None)
+        if (particle_type <= ParticleType::None || particle_type >= ParticleType::NUM_PARTICLE_TYPES)
         {
             return "";
         }
         return names[static_cast<size_t>(particle_type)];
     }
 
-    ParticleType Particle::GetType() const
+    ParticleType Particle::GetParticleType() const
     {
         return particle_type;
     }

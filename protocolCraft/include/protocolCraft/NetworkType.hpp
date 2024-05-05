@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include "protocolCraft/BinaryReadWrite.hpp"
 #include "protocolCraft/Utilities/Json.hpp"
 

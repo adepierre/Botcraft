@@ -1,8 +1,6 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
-#include <string>
-
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 

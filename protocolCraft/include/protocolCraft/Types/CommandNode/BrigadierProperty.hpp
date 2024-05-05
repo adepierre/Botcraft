@@ -2,10 +2,11 @@
 
 #if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #include <memory>
-#include <string>
 
 #include "protocolCraft/NetworkType.hpp"
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
 #include "protocolCraft/Types/Identifier.hpp"
+#endif
 
 namespace ProtocolCraft
 {
