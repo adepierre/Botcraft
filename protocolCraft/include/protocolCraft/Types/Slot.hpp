@@ -1,7 +1,11 @@
 #pragma once
 
 #include "protocolCraft/NetworkType.hpp"
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#else
+#include "protocolCraft/Types/Components/DataComponentPatch.hpp"
+#endif
 
 namespace ProtocolCraft 
 {
@@ -119,10 +123,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetNBT(const NBT::Value& nbt_)
         {
             nbt = nbt_;
         }
+#else
+        void SetComponents(const Components::DataComponentPatch& components_)
+        {
+            components = components_;
+        }
+#endif
 
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
         short GetBlockID() const
@@ -172,10 +183,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         const NBT::Value& GetNBT() const
         {
             return nbt;
         }
+#else
+        const Components::DataComponentPatch& GetComponents() const
+        {
+            return components;
+        }
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -214,7 +232,11 @@ namespace ProtocolCraft
             }
             item_id = ReadData<VarInt>(iter, length);
 #endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             nbt = ReadData<NBT::UnnamedValue>(iter, length);
+#else
+            components = ReadData<Components::DataComponentPatch>(iter, length);
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -251,7 +273,11 @@ namespace ProtocolCraft
             WriteData<VarInt>(item_count, container);
             WriteData<VarInt>(item_id, container);
 #endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<NBT::UnnamedValue>(nbt, container);
+#else
+            WriteData<Components::DataComponentPatch>(components, container);
+#endif
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -289,10 +315,14 @@ namespace ProtocolCraft
 #endif
             {
                 output["item_count"] = item_count;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
                 if (nbt.HasData())
                 {
                     output["nbt"] = nbt;
                 }
+#else
+                output["components"] = components;
+#endif
             }
             return output;
         }
@@ -314,6 +344,10 @@ namespace ProtocolCraft
 #else
         int item_count = 0;
 #endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         NBT::Value nbt;
+#else
+        Components::DataComponentPatch components;
+#endif
     };
 } // ProtocolCraft

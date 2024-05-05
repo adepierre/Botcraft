@@ -290,6 +290,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/EntityModifierData.hpp
     include/protocolCraft/Types/EntityProperty.hpp
     include/protocolCraft/Types/GlobalPos.hpp
+    include/protocolCraft/Types/HolderSet.hpp
     include/protocolCraft/Types/Identifier.hpp
     include/protocolCraft/Types/KnownPack.hpp
     include/protocolCraft/Types/MapDecoration.hpp
@@ -328,6 +329,63 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/CommandNode/BrigadierPropertyTime.hpp
     include/protocolCraft/Types/CommandNode/CommandNode.hpp
 
+    include/protocolCraft/Types/Components/DataComponentPatch.hpp
+    include/protocolCraft/Types/Components/DataComponentType.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeAdventureModePredicate.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeArmorTrim.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeBannerPatternLayers.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeBlockItemStateProperties.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeBoolean.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeBundleContents.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeChargedProjectiles.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeComponent.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeCustomData.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeCustomModelData.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeDefault.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeDyeColor.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeDyedItemColor.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeFireworkExplosion.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeFireworks.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeFoodProperties.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeHolderInstrument.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeInteger.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeItemAttributeModifiers.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeItemContainerContents.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeItemEnchantments.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeItemLore.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeListBeehiveBlockEntityOccupant.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeLodestoneTracker.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeMapId.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeMapItemColor.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeMapPostProcessing.hpp
+    include/protocolCraft/Types/Components/DataComponentTypePotDecorations.hpp
+    include/protocolCraft/Types/Components/DataComponentTypePotionContents.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeRarity.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeResolvableProfile.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeResourceLocation.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeSuspiciousStewEffects.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeTool.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeUnbreakable.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeUnit.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeWritableBookContent.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeWrittenBookContent.hpp
+
+    include/protocolCraft/Types/Components/Subtypes/AttributeModifier.hpp
+    include/protocolCraft/Types/Components/Subtypes/BannerPatternLayer.hpp
+    include/protocolCraft/Types/Components/Subtypes/BlockPredicate.hpp
+    include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiersEntry.hpp
+    include/protocolCraft/Types/Components/Subtypes/MobEffectInstance.hpp
+    include/protocolCraft/Types/Components/Subtypes/MobEffectInstanceDetails.hpp
+    include/protocolCraft/Types/Components/Subtypes/PossibleEffect.hpp
+    include/protocolCraft/Types/Components/Subtypes/PropertyMatcher.hpp
+    include/protocolCraft/Types/Components/Subtypes/StatePropertiesPredicate.hpp
+    include/protocolCraft/Types/Components/Subtypes/SuspiciousStewEntry.hpp
+    include/protocolCraft/Types/Components/Subtypes/ToolRule.hpp
+
+    include/protocolCraft/Types/Components/Subtypes/Matcher/ExactMatcher.hpp
+    include/protocolCraft/Types/Components/Subtypes/Matcher/RangedMatcher.hpp
+    include/protocolCraft/Types/Components/Subtypes/Matcher/ValueMatcher.hpp
+
     include/protocolCraft/Types/GameProfile/GameProfile.hpp
     include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp
     include/protocolCraft/Types/GameProfile/ProfilePublicKey.hpp
@@ -351,18 +409,15 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Recipes/Ingredient.hpp
     include/protocolCraft/Types/Recipes/Recipe.hpp
     include/protocolCraft/Types/Recipes/RecipeBookSettings.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeData.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataBlasting.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataCampfireCooking.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataNone.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataShaped.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataShapeless.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataSmelting.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataSmithing.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataSmithingTransform.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataSmithingTrim.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataSmoking.hpp
-    include/protocolCraft/Types/Recipes/RecipeTypeDataStoneCutting.hpp
+    include/protocolCraft/Types/Recipes/RecipeData.hpp
+    include/protocolCraft/Types/Recipes/RecipeDataCraftingShaped.hpp
+    include/protocolCraft/Types/Recipes/RecipeDataCraftingShapeless.hpp
+    include/protocolCraft/Types/Recipes/RecipeDataSimpleCooking.hpp
+    include/protocolCraft/Types/Recipes/RecipeDataSimpleCrafting.hpp
+    include/protocolCraft/Types/Recipes/RecipeDataSingleItem.hpp
+    include/protocolCraft/Types/Recipes/RecipeDataSmithing.hpp
+    include/protocolCraft/Types/Recipes/RecipeDataSmithingTransform.hpp
+    include/protocolCraft/Types/Recipes/RecipeDataSmithingTrim.hpp
 
     include/protocolCraft/Types/Sound/SoundEvent.hpp
 
@@ -389,6 +444,8 @@ set(protocolCraft_SRC
 
     src/Types/CommandNode/BrigadierProperty.cpp
 
+    src/Types/Components/DataComponentPatch.cpp
+
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp
 
@@ -405,7 +462,7 @@ set(protocolCraft_SRC
     src/Types/Particles/ShriekParticleOptions.cpp
     src/Types/Particles/VibrationParticleOptions.cpp
 
-    src/Types/Recipes/RecipeTypeData.cpp
+    src/Types/Recipes/Recipe.cpp
 
     src/Types/Vibrations/PositionSource.cpp
 
