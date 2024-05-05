@@ -11,6 +11,10 @@ namespace Botcraft
 
     SlimeEntity::SlimeEntity()
     {
+        // As Slime don't inherit from MonsterEntity, AttackDamage is not initialized in parent constructor
+        // It is overwritten when size is set, but it needs to be initialized before
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 1.0) });
+
         // Initialize all metadata with default values
         SetIdSize(1);
     }
