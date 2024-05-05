@@ -1,6 +1,7 @@
 #pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
+#include "protocolCraft/Types/Filterable.hpp"
 
 #include <string>
 #include <vector>
@@ -18,13 +19,13 @@ namespace ProtocolCraft
             }
 
 
-            const std::vector<std::string>& GetPages() const
+            const std::vector<Filterable<std::string>>& GetPages() const
             {
                 return pages;
             }
 
 
-            void SetPages(const std::vector<std::string>& pages_)
+            void SetPages(const std::vector<Filterable<std::string>>& pages_)
             {
                 pages = pages_;
             }
@@ -32,12 +33,12 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                pages = ReadVector<std::string>(iter, length);
+                pages = ReadVector<Filterable<std::string>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteVector<std::string>(pages, container);
+                WriteVector<Filterable<std::string>>(pages, container);
             }
 
             virtual Json::Value SerializeImpl() const override
@@ -50,7 +51,7 @@ namespace ProtocolCraft
             }
 
         private:
-            std::vector<std::string> pages;
+            std::vector<Filterable<std::string>> pages;
 
         };
     }

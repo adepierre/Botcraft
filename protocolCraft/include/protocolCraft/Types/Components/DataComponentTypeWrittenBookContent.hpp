@@ -1,6 +1,7 @@
 #pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
+#include "protocolCraft/Types/Filterable.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
 #include <string>
@@ -18,7 +19,7 @@ namespace ProtocolCraft
 
             }
 
-            const std::string& GetTitle() const
+            const Filterable<std::string>& GetTitle() const
             {
                 return title;
             }
@@ -33,7 +34,7 @@ namespace ProtocolCraft
                 return generation;
             }
 
-            const std::vector<Chat>& GetPages() const
+            const std::vector<Filterable<Chat>>& GetPages() const
             {
                 return pages;
             }
@@ -44,7 +45,7 @@ namespace ProtocolCraft
             }
 
 
-            void SetTitle(const std::string& title_)
+            void SetTitle(const Filterable<std::string>& title_)
             {
                 title = title_;
             }
@@ -59,7 +60,7 @@ namespace ProtocolCraft
                 generation = generation_;
             }
 
-            void SetPages(const std::vector<Chat>& pages_)
+            void SetPages(const std::vector<Filterable<Chat>>& pages_)
             {
                 pages = pages_;
             }
@@ -72,19 +73,19 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                title = ReadData<std::string>(iter, length);
+                title = ReadData<Filterable<std::string>>(iter, length);
                 author = ReadData<std::string>(iter, length);
                 generation = ReadData<VarInt>(iter, length);
-                pages = ReadVector<Chat>(iter, length);
+                pages = ReadVector<Filterable<Chat>>(iter, length);
                 resolved = ReadData<bool>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteData<std::string>(title, container);
+                WriteData<Filterable<std::string>>(title, container);
                 WriteData<std::string>(author, container);
                 WriteData<VarInt>(generation, container);
-                WriteVector<Chat>(pages, container);
+                WriteVector<Filterable<Chat>>(pages, container);
                 WriteData<bool>(resolved, container);
             }
 
@@ -102,11 +103,10 @@ namespace ProtocolCraft
             }
 
         private:
-            //TODO: check title and pages, weird codec stuff with filterable
-            std::string title;
+            Filterable<std::string> title;
             std::string author;
             int generation = 0;
-            std::vector<Chat> pages;
+            std::vector<Filterable<Chat>> pages;
             bool resolved = false;
 
         };
