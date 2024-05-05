@@ -92,10 +92,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
         void SetType(const char type_)
         {
             type = type_;
         }
+#else
+        void SetType(const int type_)
+        {
+            type = type_;
+        }
+#endif
 
         void SetData(const int data_)
         {
@@ -159,10 +166,17 @@ namespace ProtocolCraft
         }
 #endif
 
+#if PROTOCOL_VERSION < 458 /* < 1.14 */
         char GetType() const
         {
             return type;
         }
+#else
+        int GetType() const
+        {
+            return type;
+        }
+#endif
 
         int GetData() const
         {
