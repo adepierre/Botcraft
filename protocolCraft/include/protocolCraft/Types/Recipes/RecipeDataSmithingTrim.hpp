@@ -1,16 +1,15 @@
 #pragma once
 
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-#include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
+#include "protocolCraft/Types/Recipes/RecipeData.hpp"
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
-#include "protocolCraft/Types/Slot.hpp"
 
 namespace ProtocolCraft
 {
-    class RecipeTypeDataSmithingTransform : public RecipeTypeData
+    class RecipeDataSmithingTrim : public RecipeData
     {
     public:
-        virtual ~RecipeTypeDataSmithingTransform() override
+        virtual ~RecipeDataSmithingTrim() override
         {
 
         }
@@ -30,11 +29,6 @@ namespace ProtocolCraft
             addition = addition_;
         }
 
-        void SetResult(const Slot& result_)
-        {
-            result = result_;
-        }
-
 
         const Ingredient& GetTemplate() const
         {
@@ -51,18 +45,12 @@ namespace ProtocolCraft
             return addition;
         }
 
-        const Slot& GetResult() const
-        {
-            return result;
-        }
-
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             template_ = ReadData<Ingredient>(iter, length);
             base = ReadData<Ingredient>(iter, length);
             addition = ReadData<Ingredient>(iter, length);
-            result = ReadData<Slot>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -70,7 +58,6 @@ namespace ProtocolCraft
             WriteData<Ingredient>(template_, container);
             WriteData<Ingredient>(base, container);
             WriteData<Ingredient>(addition, container);
-            WriteData<Slot>(result, container);
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -80,7 +67,6 @@ namespace ProtocolCraft
             output["template"] = template_;
             output["base"] = base;
             output["addition"] = addition;
-            output["result"] = result;
 
             return output;
         }
@@ -89,7 +75,6 @@ namespace ProtocolCraft
         Ingredient template_;
         Ingredient base;
         Ingredient addition;
-        Slot result;
     };
 }
 #endif

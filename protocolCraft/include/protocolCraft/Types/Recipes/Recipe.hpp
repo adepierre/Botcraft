@@ -1,94 +1,86 @@
 #pragma once
 
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
-#include <memory>
 
 #include "protocolCraft/NetworkType.hpp"
-#include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
+
+#include <memory>
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include <string_view>
+#endif
 
 namespace ProtocolCraft
 {
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    enum class RecipeDataType
+    {
+        None = -1,
+        CraftingShaped,
+        CraftingShapeless,
+        CraftingSpecialArmordye,
+        CraftingSpecialBookcloning,
+        CraftingSpecialMapcloning,
+        CraftingSpecialMapextending,
+        CraftingSpecialFireworkRocket,
+        CraftingSpecialFireworkStar,
+        CraftingSpecialFireworkStarFade,
+        CraftingSpecialTippedarrow,
+        CraftingSpecialBannerduplicate,
+        CraftingSpecialShielddecoration,
+        CraftingSpecialShulkerboxcoloring,
+        CraftingSpecialSuspiciousstew,
+        CraftingSpecialRepairitem,
+        Smelting,
+        Blasting,
+        Smoking,
+        CampfireCooking,
+        Stonecutting,
+        SmithingTransform,
+        SmithingTrim,
+        CraftingDecoratedPot,
+        NUM_RECIPE_DATA_TYPES
+    };
+#endif
+
+    class RecipeData;
+
     class Recipe : public NetworkType
     {
     public:
-        virtual ~Recipe() override
-        {
-
-        }
-
-        void SetRecipeId(const Identifier& recipe_id_)
-        {
-            recipe_id = recipe_id_;
-        }
-
-        void SetType(const Identifier& type_)
-        {
-            type = type_;
-        }
-
-        void SetData(const std::shared_ptr<RecipeTypeData> data_)
-        {
-            data = data_;
-        }
+        virtual ~Recipe() override;
 
 
-        const Identifier& GetRecipeId() const
-        {
-            return recipe_id;
-        }
-        
-        const Identifier& GetType() const
-        {
-            return type;
-        }
+        void SetRecipeId(const Identifier& recipe_id_);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        void SetType(const Identifier& type_);
+#else
+        void SetType(const RecipeDataType type_);
+#endif
 
-        std::shared_ptr<RecipeTypeData> GetData() const
-        {
-            return data;
-        }
+
+        const Identifier& GetRecipeId() const;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        const Identifier& GetType() const;
+#else
+        RecipeDataType GetType() const;
+        std::string_view GetName() const;
+#endif
+        std::shared_ptr<RecipeData> GetData() const;
 
     protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 453 /* < 1.14 */
-            recipe_id = ReadData<Identifier>(iter, length);
-            type = ReadData<Identifier>(iter, length);
-#else
-            type = ReadData<Identifier>(iter, length);
-            recipe_id = ReadData<Identifier>(iter, length);
-#endif
-            data = RecipeTypeData::CreateRecipeTypeData(type);
-            data->Read(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 453 /* < 1.14 */
-            WriteData<Identifier>(recipe_id, container);
-            WriteData<Identifier>(type, container);
-#else
-            WriteData<Identifier>(type, container);
-            WriteData<Identifier>(recipe_id, container);
-#endif
-            data->Write(container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["recipe_id"] = recipe_id;
-            output["type"] = type;
-            output["data"] = data->Serialize();
-
-            return output;
-        }
+        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
+        virtual void WriteImpl(WriteContainer& container) const override;
+        virtual Json::Value SerializeImpl() const override;
 
     private:
         Identifier recipe_id;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         Identifier type;
-        std::shared_ptr<RecipeTypeData> data;
+#else
+        RecipeDataType type;
+#endif
+        std::shared_ptr<RecipeData> data;
     };
 }
 #endif

@@ -1,23 +1,23 @@
 #pragma once
 
-#if PROTOCOL_VERSION > 732 /* > 1.15.2 */ && PROTOCOL_VERSION < 763 /* < 1.20 */
-#include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
+#if PROTOCOL_VERSION > 453 /* > 1.13.2 */
+#include "protocolCraft/Types/Recipes/RecipeData.hpp"
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #include "protocolCraft/Types/Slot.hpp"
 
 namespace ProtocolCraft
 {
-    class RecipeTypeDataSmithing : public RecipeTypeData
+    class RecipeDataSingleItem : public RecipeData
     {
     public:
-        virtual ~RecipeTypeDataSmithing() override
+        virtual ~RecipeDataSingleItem() override
         {
 
         }
 
-        void SetBase(const Ingredient& base_)
+        void SetGroup(const std::string& group_)
         {
-            base = base_;
+            group = group_;
         }
 
         void SetIngredient(const Ingredient& ingredient_)
@@ -31,9 +31,9 @@ namespace ProtocolCraft
         }
 
 
-        const Ingredient& GetBase() const
+        const std::string& GetGroup() const
         {
-            return base;
+            return group;
         }
 
         const Ingredient& GetIngredient() const
@@ -49,14 +49,14 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            base = ReadData<Ingredient>(iter, length);
+            group = ReadData<std::string>(iter, length);
             ingredient = ReadData<Ingredient>(iter, length);
             result = ReadData<Slot>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<Ingredient>(base, container);
+            WriteData<std::string>(group, container);
             WriteData<Ingredient>(ingredient, container);
             WriteData<Slot>(result, container);
         }
@@ -65,7 +65,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["base"] = base;
+            output["group"] = group;
             output["ingredient"] = ingredient;
             output["result"] = result;
 
@@ -73,7 +73,7 @@ namespace ProtocolCraft
         }
 
     private:
-        Ingredient base;
+        std::string group;
         Ingredient ingredient;
         Slot result;
     };

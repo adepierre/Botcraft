@@ -1,16 +1,16 @@
 #pragma once
 
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
-#include "protocolCraft/Types/Recipes/RecipeTypeData.hpp"
+#include "protocolCraft/Types/Recipes/RecipeData.hpp"
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #include "protocolCraft/Types/Slot.hpp"
 
 namespace ProtocolCraft
 {
-    class RecipeTypeDataSmelting : public RecipeTypeData
+    class RecipeDataSimpleCooking : public RecipeData
     {
     public:
-        virtual ~RecipeTypeDataSmelting() override
+        virtual ~RecipeDataSimpleCooking() override
         {
 
         }
