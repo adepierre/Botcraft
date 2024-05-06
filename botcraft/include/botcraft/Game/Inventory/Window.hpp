@@ -3,7 +3,7 @@
 #include <map>
 #include <shared_mutex>
 
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Utilities/ScopeLockedWrapper.hpp"

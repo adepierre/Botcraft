@@ -10,7 +10,7 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #endif
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 #include "protocolCraft/Utilities/Json.hpp"
 
 #include "botcraft/Game/Physics/AABB.hpp"

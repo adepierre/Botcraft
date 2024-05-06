@@ -846,7 +846,7 @@ namespace Botcraft
                 return Status::Failure;
             }
 
-            num_trades = inventory_manager->GetAvailableTrades().size();
+            num_trades = inventory_manager->GetAvailableMerchantOffers().size();
             client.Yield();
         } while (num_trades <= 0 || inventory_manager->GetFirstOpenedWindowId() == -1);
 
@@ -861,7 +861,7 @@ namespace Botcraft
 
         int trade_index = trade_id;
         bool has_trade_second_item = false;
-        const std::vector<ProtocolCraft::Trade> trades = inventory_manager->GetAvailableTrades();
+        const std::vector<ProtocolCraft::MerchantOffer> trades = inventory_manager->GetAvailableMerchantOffers();
 
         // Find which trade we want in the list
         if (trade_id == -1)
@@ -990,7 +990,7 @@ namespace Botcraft
 
         // If we are here, everything is fine (or should be),
         // remove 1 to the possible trade counter on the villager
-        inventory_manager->IncrementTradeUse(trade_index);
+        inventory_manager->IncrementMerchantOfferUse(trade_index);
 
         return Status::Success;
     }

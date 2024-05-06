@@ -4,7 +4,10 @@
 #include <memory>
 #include <shared_mutex>
 
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
+#include "protocolCraft/Types/Item/MerchantOffer.hpp"
+#endif
 #include "protocolCraft/Handler.hpp"
 
 #include "botcraft/Game/Enums.hpp"
@@ -57,8 +60,8 @@ namespace Botcraft
         /// @param transaction The transaction to apply
         void ApplyTransaction(const InventoryTransaction& transaction);
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-        std::vector<ProtocolCraft::Trade> GetAvailableTrades() const;
-        void IncrementTradeUse(const int index);
+        std::vector<ProtocolCraft::MerchantOffer> GetAvailableMerchantOffers() const;
+        void IncrementMerchantOfferUse(const int index);
 #endif
 
     private:
@@ -106,7 +109,7 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         int trading_container_id;
-        std::vector<ProtocolCraft::Trade> available_trades;
+        std::vector<ProtocolCraft::MerchantOffer> available_trades;
 #endif
     };
 } // Botcraft

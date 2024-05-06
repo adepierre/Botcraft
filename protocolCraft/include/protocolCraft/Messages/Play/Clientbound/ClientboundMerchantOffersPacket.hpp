@@ -2,7 +2,7 @@
 
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Trade.hpp"
+#include "protocolCraft/Types/Item/MerchantOffer.hpp"
 
 namespace ProtocolCraft
 {
@@ -52,7 +52,7 @@ namespace ProtocolCraft
             container_id = container_id_;
         }
 
-        void SetOffers(const std::vector<Trade>& offers_)
+        void SetOffers(const std::vector<MerchantOffer>& offers_)
         {
             offers = offers_;
         }
@@ -83,7 +83,7 @@ namespace ProtocolCraft
             return container_id;
         }
 
-        const std::vector<Trade>& GetOffers() const
+        const std::vector<MerchantOffer>& GetOffers() const
         {
             return offers;
         }
@@ -113,7 +113,11 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             container_id = ReadData<VarInt>(iter, length);
-            offers = ReadVector<Trade, char>(iter, length);
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+            offers = ReadVector<MerchantOffer, char>(iter, length);
+#else
+            offers = ReadVector<MerchantOffer>(iter, length);
+#endif
             villager_level = ReadData<VarInt>(iter, length);
             villager_xp = ReadData<VarInt>(iter, length);
             show_progress = ReadData<bool>(iter, length);
@@ -123,7 +127,11 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(container_id, container);
-            WriteVector<Trade, char>(offers, container);
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+            WriteVector<MerchantOffer, char>(offers, container);
+#else
+            WriteVector<MerchantOffer>(offers, container);
+#endif
             WriteData<VarInt>(villager_level, container);
             WriteData<VarInt>(villager_xp, container);
             WriteData<bool>(show_progress, container);
@@ -146,7 +154,7 @@ namespace ProtocolCraft
 
     private:
         int container_id = 0;
-        std::vector<Trade> offers;
+        std::vector<MerchantOffer> offers;
         int villager_level = 0;
         int villager_xp = 0;
         bool show_progress = false;

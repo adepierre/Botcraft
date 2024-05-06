@@ -1,7 +1,7 @@
 #pragma once
 
 #include "botcraft/Game/Entities/entities/Entity.hpp"
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 
 namespace Botcraft
 {

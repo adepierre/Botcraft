@@ -1,7 +1,7 @@
 #pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 
 namespace ProtocolCraft
 {

@@ -3,7 +3,7 @@
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #else
-#include "protocolCraft/Types/Components/DataComponentPatch.hpp"
+#include "protocolCraft/Types/Components/DataComponents.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeInteger.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeItemEnchantments.hpp"
 #endif

@@ -2,7 +2,7 @@
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft

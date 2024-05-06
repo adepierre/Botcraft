@@ -3,7 +3,7 @@
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/Types/Recipes/RecipeData.hpp"
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 
 namespace ProtocolCraft
 {

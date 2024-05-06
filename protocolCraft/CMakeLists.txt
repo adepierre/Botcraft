@@ -301,8 +301,6 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/PlayerUpdate.hpp
     include/protocolCraft/Types/Record.hpp
     include/protocolCraft/Types/SaltSignature.hpp
-    include/protocolCraft/Types/Slot.hpp
-    include/protocolCraft/Types/Trade.hpp
 
     include/protocolCraft/Types/Chat/Chat.hpp
     include/protocolCraft/Types/Chat/ChatMessageContent.hpp
@@ -331,7 +329,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/CommandNode/BrigadierPropertyTime.hpp
     include/protocolCraft/Types/CommandNode/CommandNode.hpp
 
-    include/protocolCraft/Types/Components/DataComponentPatch.hpp
+    include/protocolCraft/Types/Components/DataComponents.hpp
     include/protocolCraft/Types/Components/DataComponentType.hpp
     include/protocolCraft/Types/Components/DataComponentTypeAdventureModePredicate.hpp
     include/protocolCraft/Types/Components/DataComponentTypeArmorTrim.hpp
@@ -392,6 +390,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp
     include/protocolCraft/Types/GameProfile/ProfilePublicKey.hpp
 
+    include/protocolCraft/Types/Item/ItemCost.hpp
+    include/protocolCraft/Types/Item/MerchantOffer.hpp
+    include/protocolCraft/Types/Item/Slot.hpp
+
     include/protocolCraft/Types/NBT/NBT.hpp
     include/protocolCraft/Types/NBT/Tag.hpp
 
@@ -446,7 +448,7 @@ set(protocolCraft_SRC
 
     src/Types/CommandNode/BrigadierProperty.cpp
 
-    src/Types/Components/DataComponentPatch.cpp
+    src/Types/Components/DataComponents.cpp
 
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp

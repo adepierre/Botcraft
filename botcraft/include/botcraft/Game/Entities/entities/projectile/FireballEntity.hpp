@@ -2,7 +2,7 @@
 
 #include "botcraft/Game/Entities/entities/projectile/AbstractHurtingProjectileEntity.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 #endif
 
 namespace Botcraft

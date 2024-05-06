@@ -8,7 +8,7 @@
 #endif
 
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 
 namespace ProtocolCraft
 {

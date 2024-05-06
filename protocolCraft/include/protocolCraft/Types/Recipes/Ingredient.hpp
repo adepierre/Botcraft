@@ -2,7 +2,7 @@
 
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/NetworkType.hpp"
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 
 namespace ProtocolCraft
 {

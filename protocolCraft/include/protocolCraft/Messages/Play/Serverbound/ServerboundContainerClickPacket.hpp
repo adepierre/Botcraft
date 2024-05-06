@@ -1,7 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include <map>
 #endif

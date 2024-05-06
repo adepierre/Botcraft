@@ -4,7 +4,7 @@
 #include "botcraft/Game/Entities/entities/projectile/ThrowableItemProjectileEntity.hpp"
 #else
 #include "botcraft/Game/Entities/entities/projectile/ThrowableProjectileEntity.hpp"
-#include "protocolCraft/Types/Slot.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
 #endif
 
 namespace Botcraft
