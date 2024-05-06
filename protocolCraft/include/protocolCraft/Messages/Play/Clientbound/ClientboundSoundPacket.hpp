@@ -3,6 +3,7 @@
 #include "protocolCraft/BaseMessage.hpp"
 
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
+#include "protocolCraft/Types/Holder.hpp"
 #include "protocolCraft/Types/Sound/SoundEvent.hpp"
 #endif
 
@@ -61,12 +62,7 @@ namespace ProtocolCraft
             sound = sound_;
         }
 #else
-        void SetSoundId(const int sound_id_)
-        {
-            sound_id = sound_id_;
-        }
-
-        void SetSound(const SoundEvent& sound_)
+        void SetSound(const Holder<SoundEvent>& sound_)
         {
             sound = sound_;
         }
@@ -116,12 +112,7 @@ namespace ProtocolCraft
             return sound;
         }
 #else
-        int GetSoundId() const
-        {
-            return sound_id;
-        }
-
-        const SoundEvent& GetSound() const
+        const Holder<SoundEvent>& GetSound() const
         {
             return sound;
         }
@@ -171,15 +162,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             sound = ReadData<VarInt>(iter, length);
 #else
-            sound_id = ReadData<VarInt>(iter, length);
-            if (sound_id == 0)
-            {
-                sound = ReadData<SoundEvent>(iter, length);
-            }
-            else
-            {
-                sound_id -= 1;
-            }
+            sound = ReadData<Holder<SoundEvent>>(iter, length);
 #endif
             source = ReadData<VarInt>(iter, length);
             x = ReadData<int>(iter, length);
@@ -197,15 +180,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<VarInt>(sound, container);
 #else
-            if (sound.GetLocation().GetFull().empty())
-            {
-                WriteData<VarInt>(sound_id + 1, container);
-            }
-            else
-            {
-                WriteData<VarInt>(0, container);
-                WriteData<SoundEvent>(sound, container);
-            }
+            WriteData<Holder<SoundEvent>>(sound, container);
 #endif
             WriteData<VarInt>(source, container);
             WriteData<int>(x, container);
@@ -222,18 +197,7 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             output["sound"] = sound;
-#else
-            if (sound.GetLocation().GetFull().empty())
-            {
-                output["sound"] = sound;
-            }
-            else
-            {
-                output["sound_id"] = sound_id;
-            }
-#endif
             output["source"] = source;
             output["x"] = x;
             output["y"] = y;
@@ -251,8 +215,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         int sound = 0;
 #else
-        int sound_id = 0;
-        SoundEvent sound;
+        Holder<SoundEvent> sound;
 #endif
         int source = 0;
         int x = 0;

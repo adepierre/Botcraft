@@ -291,6 +291,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/EntityProperty.hpp
     include/protocolCraft/Types/Filterable.hpp
     include/protocolCraft/Types/GlobalPos.hpp
+    include/protocolCraft/Types/Holder.hpp
     include/protocolCraft/Types/HolderSet.hpp
     include/protocolCraft/Types/Identifier.hpp
     include/protocolCraft/Types/KnownPack.hpp

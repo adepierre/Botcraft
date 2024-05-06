@@ -6,6 +6,9 @@
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #include "protocolCraft/Types/Sound/SoundEvent.hpp"
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Types/Holder.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -128,10 +131,17 @@ namespace ProtocolCraft
             block_interaction = block_interaction_;
         }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetExplosionSound(const SoundEvent& explosion_sound_)
         {
             explosion_sound = explosion_sound_;
         }
+#else
+        void SetExplosionSound(const Holder<SoundEvent>& explosion_sound_)
+        {
+            explosion_sound = explosion_sound_;
+        }
+#endif
 #endif
 
 
@@ -209,10 +219,17 @@ namespace ProtocolCraft
             return block_interaction;
         }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         const SoundEvent& GetExplosionSound() const
         {
             return explosion_sound;
         }
+#else
+        const Holder<SoundEvent>& GetExplosionSound() const
+        {
+            return explosion_sound;
+        }
+#endif
 #endif
 
 
@@ -263,7 +280,11 @@ namespace ProtocolCraft
             block_interaction = ReadData<VarInt>(iter, length);
             small_explosion_particles = ReadData<Particle>(iter, length);
             large_explosion_particles = ReadData<Particle>(iter, length);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             explosion_sound = ReadData<SoundEvent>(iter, length);
+#else
+            explosion_sound = ReadData<Holder<SoundEvent>>(iter, length);
+#endif
 #endif
         }
 
@@ -305,7 +326,11 @@ namespace ProtocolCraft
             WriteData<VarInt>(block_interaction, container);
             WriteData<Particle>(small_explosion_particles, container);
             WriteData<Particle>(large_explosion_particles, container);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             WriteData<SoundEvent>(explosion_sound, container);
+#else
+            WriteData<Holder<SoundEvent>>(explosion_sound, container);
+#endif
 #endif
         }
 
@@ -350,7 +375,11 @@ namespace ProtocolCraft
         Particle small_explosion_particles;
         Particle large_explosion_particles;
         int block_interaction;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SoundEvent explosion_sound;
+#else
+        Holder<SoundEvent> explosion_sound;
+#endif
 #endif
 
     };
