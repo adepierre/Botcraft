@@ -12,6 +12,99 @@ using namespace ProtocolCraft;
 
 namespace Botcraft::Utilities
 {
+    std::string_view EnchantmentToString(const Botcraft::Enchantment enchantment)
+    {
+        switch (enchantment)
+        {
+        case Enchantment::Protection:
+            return "protection";
+        case Enchantment::FireProtection:
+            return "fire_protection";
+        case Enchantment::FeatherFalling:
+            return "feather_falling";
+        case Enchantment::BlastProtection:
+            return "blast_protection";
+        case Enchantment::ProjectileProtection:
+            return "projectile_protection";
+        case Enchantment::Respiration:
+            return "respiration";
+        case Enchantment::AquaAffinity:
+            return "aqua_affinity";
+        case Enchantment::Thorns:
+            return "thorns";
+        case Enchantment::DepthStrider:
+            return "depth_strider";
+        case Enchantment::FrostWalker:
+            return "frost_walker";
+        case Enchantment::BindingCurse:
+            return "binding_curse";
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
+        case Enchantment::SoulSpeed:
+            return "soul_speed";
+#endif
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+        case Enchantment::SwiftSneak:
+            return "swift_sneak";
+#endif
+        case Enchantment::Sharpness:
+            return "sharpness";
+        case Enchantment::Smite:
+            return "smite";
+        case Enchantment::BaneOfArthropods:
+            return "bane_of_arthropods";
+        case Enchantment::Knockback:
+            return "knockback";
+        case Enchantment::FireAspect:
+            return "fire_aspect";
+        case Enchantment::Looting:
+            return "looting";
+        case Enchantment::SweepingEdge:
+            return "sweeping_edge";
+        case Enchantment::Efficiency:
+            return "efficiency";
+        case Enchantment::SilkTouch:
+            return "silk_touch";
+        case Enchantment::Unbreaking:
+            return "unbreaking";
+        case Enchantment::Fortune:
+            return "fortune";
+        case Enchantment::Power:
+            return "power";
+        case Enchantment::Punch:
+            return "punch";
+        case Enchantment::Flame:
+            return "flame";
+        case Enchantment::Infinity:
+            return "infinity";
+        case Enchantment::LuckOfTheSea:
+            return "luck_of_the_sea";
+        case Enchantment::Lure:
+            return "lure";
+        case Enchantment::Loyalty:
+            return "loyalty";
+        case Enchantment::Impaling:
+            return "impaling";
+        case Enchantment::Riptide:
+            return "riptide";
+        case Enchantment::Channeling:
+            return "channeling";
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        case Enchantment::Multishot:
+            return "multishot";
+        case Enchantment::QuickCharge:
+            return "quick_charge";
+        case Enchantment::Piercing:
+            return "piercing";
+#endif
+        case Enchantment::Mending:
+            return "mending";
+        case Enchantment::VanishingCurse:
+            return "vanishing_curse";
+        default:
+            return "";
+        }
+    }
+
     short GetEnchantmentLvl(const Slot& item, const Enchantment enchantment)
     {
         if (item.IsEmptySlot())
@@ -20,6 +113,7 @@ namespace Botcraft::Utilities
         }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        const NBT::Value& item_nbt = item.GetNBT();
         if (!item_nbt.HasData())
         {
             return 0;
@@ -35,139 +129,6 @@ namespace Botcraft::Utilities
         {
             return 0;
         }
-
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        std::string enchantment_name;
-        switch (enchantment)
-        {
-        case Enchantment::Protection:
-            enchantment_name = "protection";
-            break;
-        case Enchantment::FireProtection:
-            enchantment_name = "fire_protection";
-            break;
-        case Enchantment::FeatherFalling:
-            enchantment_name = "feather_falling";
-            break;
-        case Enchantment::BlastProtection:
-            enchantment_name = "blast_protection";
-            break;
-        case Enchantment::ProjectileProtection:
-            enchantment_name = "projectile_protection";
-            break;
-        case Enchantment::Respiration:
-            enchantment_name = "respiration";
-            break;
-        case Enchantment::AquaAffinity:
-            enchantment_name = "aqua_affinity";
-            break;
-        case Enchantment::Thorns:
-            enchantment_name = "thorns";
-            break;
-        case Enchantment::DepthStrider:
-            enchantment_name = "depth_strider";
-            break;
-        case Enchantment::FrostWalker:
-            enchantment_name = "frost_walker";
-            break;
-        case Enchantment::BindingCurse:
-            enchantment_name = "binding_curse";
-            break;
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-        case Enchantment::SoulSpeed:
-            enchantment_name = "soul_speed";
-            break;
-#endif
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        case Enchantment::SwiftSneak:
-            enchantment_name = "swift_sneak";
-            break;
-#endif
-        case Enchantment::Sharpness:
-            enchantment_name = "sharpness";
-            break;
-        case Enchantment::Smite:
-            enchantment_name = "smite";
-            break;
-        case Enchantment::BaneOfArthropods:
-            enchantment_name = "bane_of_arthropods";
-            break;
-        case Enchantment::Knockback:
-            enchantment_name = "knockback";
-            break;
-        case Enchantment::FireAspect:
-            enchantment_name = "fire_aspect";
-            break;
-        case Enchantment::Looting:
-            enchantment_name = "looting";
-            break;
-        case Enchantment::SweepingEdge:
-            enchantment_name = "sweeping_edge";
-            break;
-        case Enchantment::Efficiency:
-            enchantment_name = "efficiency";
-            break;
-        case Enchantment::SilkTouch:
-            enchantment_name = "silk_touch";
-            break;
-        case Enchantment::Unbreaking:
-            enchantment_name = "unbreaking";
-            break;
-        case Enchantment::Fortune:
-            enchantment_name = "fortune";
-            break;
-        case Enchantment::Power:
-            enchantment_name = "power";
-            break;
-        case Enchantment::Punch:
-            enchantment_name = "punch";
-            break;
-        case Enchantment::Flame:
-            enchantment_name = "flame";
-            break;
-        case Enchantment::Infinity:
-            enchantment_name = "infinity";
-            break;
-        case Enchantment::LuckOfTheSea:
-            enchantment_name = "luck_of_the_sea";
-            break;
-        case Enchantment::Lure:
-            enchantment_name = "lure";
-            break;
-        case Enchantment::Loyalty:
-            enchantment_name = "loyalty";
-            break;
-        case Enchantment::Impaling:
-            enchantment_name = "impaling";
-            break;
-        case Enchantment::Riptide:
-            enchantment_name = "riptide";
-            break;
-        case Enchantment::Channeling:
-            enchantment_name = "channeling";
-            break;
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        case Enchantment::Multishot:
-            enchantment_name = "multishot";
-            break;
-        case Enchantment::QuickCharge:
-            enchantment_name = "quick_charge";
-            break;
-        case Enchantment::Piercing:
-            enchantment_name = "piercing";
-            break;
-#endif
-        case Enchantment::Mending:
-            enchantment_name = "mending";
-            break;
-        case Enchantment::VanishingCurse:
-            enchantment_name = "vanishing_curse";
-            break;
-        default:
-            enchantment_name = "";
-            break;
-        }
-#endif
 
         for (const auto& enchantment_tag : item_nbt[enchantment_key].as_list_of<NBT::TagCompound>())
         {
@@ -186,7 +147,7 @@ namespace Botcraft::Utilities
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
             if (enchantment_tag["id"].get<NBT::TagInt>() == static_cast<int>(enchantment_id))
 #else
-            if (enchantment_tag["id"].get<NBT::TagString>() == enchantment_name)
+            if (enchantment_tag["id"].get<NBT::TagString>() == EnchantmentToString(enchantment))
 #endif
             {
                 if (enchantment_tag["lvl"].is<NBT::TagShort>())
@@ -202,20 +163,21 @@ namespace Botcraft::Utilities
 
         return 0;
 #else
-        const Components::DataComponentPatch& components = item.GetComponents();
-        if (!components.contains(Components::DataComponentTypes::Enchantments))
+        const auto& components = item.GetComponents().GetMap();
+        auto c = components.find(Components::DataComponentTypes::Enchantments);
+        if (c == components.end())
         {
             return 0;
         }
 
-        const std::map<int, int>& enchantments = std::static_pointer_cast<Components::DataComponentTypeItemEnchantments>(components.GetComponent(Components::DataComponentTypes::Enchantments))->GetEnchantments();
+        const std::map<int, int>& enchantments = std::static_pointer_cast<Components::DataComponentTypeItemEnchantments>(c->second)->GetEnchantments();
         
         auto it = enchantments.find(static_cast<int>(enchantment));
         if (it == enchantments.end())
         {
             return 0;
         }
-        
+
         return it->second;
 #endif
     }
@@ -242,13 +204,14 @@ namespace Botcraft::Utilities
 
         return item_nbt["Damage"].get<NBT::TagInt>();
 #else
-        const Components::DataComponentPatch& components = item.GetComponents();
-        if (!components.contains(Components::DataComponentTypes::Damage))
+        const auto& components = item.GetComponents().GetMap();
+        auto it = components.find(Components::DataComponentTypes::Damage);
+        if (it == components.end())
         {
             return 0;
         }
 
-        std::shared_ptr<Components::DataComponentTypeInteger> damage = std::static_pointer_cast<Components::DataComponentTypeInteger>(components.GetComponent(Components::DataComponentTypes::Damage));
+        std::shared_ptr<Components::DataComponentTypeInteger> damage = std::static_pointer_cast<Components::DataComponentTypeInteger>(it->second);
         return damage->GetValue();
 
 #endif

@@ -76,6 +76,9 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundChunkBatchStartPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundChunkBatchFinishedPacket& msg) override;
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        virtual void Handle(ProtocolCraft::ClientboundSelectKnownPacksPacket& msg) override;
+#endif
 
     private:
         std::vector<ProtocolCraft::Handler*> subscribed;

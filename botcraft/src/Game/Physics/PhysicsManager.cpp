@@ -654,6 +654,7 @@ namespace Botcraft
                     block_jump_factor = 0.4f;
                 }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
                 player->speed.y = 0.42f * block_jump_factor + jump_boost;
                 if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
                 {
@@ -661,6 +662,19 @@ namespace Botcraft
                     player->speed.x -= std::sin(yaw_rad) * 0.2f;
                     player->speed.z += std::cos(yaw_rad) * 0.2f;
                 }
+#else
+                const float jump_power = static_cast<float>(player->GetAttributeJumpStrengthValueImpl()) * block_jump_factor + jump_boost;
+                if (jump_power > 1e-5f)
+                {
+                    player->speed.y = jump_power;
+                    if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
+                    {
+                        const float yaw_rad = player->yaw * 0.017453292f /* PI/180 */;
+                        player->speed.x -= static_cast<double>(std::sin(yaw_rad)) * 0.2;
+                        player->speed.z += static_cast<double>(std::cos(yaw_rad)) * 0.2;
+                    }
+                }
+#endif
                 player->jump_delay = 10;
             }
         }
@@ -887,7 +901,12 @@ namespace Botcraft
             }
         }
 #endif
+
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         const double drag = (going_down && has_slow_falling) ? 0.01 : 0.08;
+#else
+        const double drag = (going_down && has_slow_falling) ? std::min(0.01, player->GetAttributeGravityValueImpl()) : player->GetAttributeGravityValueImpl();
+#endif
 
         // Move in water
         if (player->in_water && !player->flying)
@@ -1081,22 +1100,31 @@ namespace Botcraft
             player->speed *= 0.0;
         }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        constexpr double max_up_step = 0.6;
+#else
+        const double max_up_step = player->GetAttributeStepHeightValueImpl();
+#endif
         const AABB player_aabb = player->GetColliderImpl();
-        if (!player->flying && movement.y <= 0.0 && player->inputs.sneak && player->on_ground)
+        if (!player->flying
+            && movement.y <= 0.0
+            && player->inputs.sneak
+            && player->on_ground
+        )
         { // Player::maybeBackOffFromEdge
             const double step = 0.05;
 
-            while (movement.x != 0.0 && world->IsFree((player_aabb + Vector3<double>(movement.x, -0.6, 0.0)).Inflate(-1e-7), false))
+            while (movement.x != 0.0 && world->IsFree((player_aabb + Vector3<double>(movement.x, -max_up_step, 0.0)).Inflate(-1e-7), false))
             {
                 movement.x = (movement.x < step && movement.x >= -step) ? 0.0 : (movement.x > 0.0 ? (movement.x - step) : (movement.x + step));
             }
 
-            while (movement.z != 0.0 && world->IsFree((player_aabb + Vector3<double>(0.0, -0.6, movement.z)).Inflate(-1e-7), false))
+            while (movement.z != 0.0 && world->IsFree((player_aabb + Vector3<double>(0.0, -max_up_step, movement.z)).Inflate(-1e-7), false))
             {
                 movement.z = (movement.z < step && movement.z >= -step) ? 0.0 : (movement.z > 0.0 ? (movement.z - step) : (movement.z + step));
             }
 
-            while (movement.x != 0.0 && movement.z != 0.0 && world->IsFree((player_aabb + Vector3<double>(movement.x, -0.6, movement.z)).Inflate(-1e-7), false))
+            while (movement.x != 0.0 && movement.z != 0.0 && world->IsFree((player_aabb + Vector3<double>(movement.x, -max_up_step, movement.z)).Inflate(-1e-7), false))
             {
                 movement.x = (movement.x < step && movement.x >= -step) ? 0.0 : (movement.x > 0.0 ? (movement.x - step) : (movement.x + step));
                 movement.z = (movement.z < step && movement.z >= -step) ? 0.0 : (movement.z > 0.0 ? (movement.z - step) : (movement.z + step));
@@ -1110,19 +1138,19 @@ namespace Botcraft
                 movement = CollideBoundingBox(player_aabb, movement);
             }
 
-            // Step up if block height delta is < 0.6
+            // Step up if block height delta is < max_up_step
             // If already on ground (or collided with the ground while moving down) and horizontal collision
             if ((player->on_ground || (movement.y != movement_before_collisions.y && movement_before_collisions.y < 0.0)) &&
                 (movement.x != movement_before_collisions.x || movement.z != movement_before_collisions.z))
             {
-                Vector3<double> movement_with_step_up = CollideBoundingBox(player_aabb, Vector3<double>(movement_before_collisions.x, 0.6, movement_before_collisions.z));
+                Vector3<double> movement_with_step_up = CollideBoundingBox(player_aabb, Vector3<double>(movement_before_collisions.x, max_up_step, movement_before_collisions.z));
                 const Vector3<double> horizontal_movement(
                     movement_before_collisions.x,
                     0.0,
                     movement_before_collisions.z
                 );
-                const Vector3<double> movement_step_up_only = CollideBoundingBox(AABB(player_aabb.GetCenter() + horizontal_movement * 0.5, player_aabb.GetHalfSize() + horizontal_movement.Abs() * 0.5), Vector3<double>(0.0, 0.6, 0.0));
-                if (movement_step_up_only.y < 0.6)
+                const Vector3<double> movement_step_up_only = CollideBoundingBox(AABB(player_aabb.GetCenter() + horizontal_movement * 0.5, player_aabb.GetHalfSize() + horizontal_movement.Abs() * 0.5), Vector3<double>(0.0, max_up_step, 0.0));
+                if (movement_step_up_only.y < max_up_step)
                 {
                     const Vector3<double> check = CollideBoundingBox(player_aabb + movement_step_up_only, horizontal_movement) + movement_step_up_only;
                     if (check.x * check.x + check.z * check.z > movement_with_step_up.x * movement_with_step_up.x + movement_with_step_up.z * movement_with_step_up.z)

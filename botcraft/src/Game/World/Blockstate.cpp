@@ -839,7 +839,7 @@ namespace Botcraft
 
     float Blockstate::GetMiningTimeSeconds(const ToolType tool_type, const ToolMaterial tool_material,
         const unsigned char tool_efficiency, const unsigned char haste, const unsigned char fatigue,
-        const bool on_ground, const bool head_in_fluid_wo_aqua_affinity) const
+        const bool on_ground, const bool head_in_fluid_wo_aqua_affinity, const float speed_factor) const
     {
         if (hardness < 0.0f || IsWater() || IsLava())
         {
@@ -894,6 +894,7 @@ namespace Botcraft
         speed_multiplier += (tool_efficiency > 0) * 1.0f + tool_efficiency * tool_efficiency;
         speed_multiplier *= 1.0f + 0.2f * haste;
         speed_multiplier *= static_cast<float>(std::pow(0.3f, std::min(static_cast<int>(fatigue), 4)));
+        speed_multiplier *= speed_factor;
         speed_multiplier *= head_in_fluid_wo_aqua_affinity ? 0.2f : 1.0f;
         speed_multiplier *= on_ground ? 1.0f : 0.2f;
 

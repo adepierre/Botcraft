@@ -31,9 +31,15 @@ namespace Botcraft
         Vector3<double> entity_position = entity->GetPosition();
         Vector3<double> position = local_player->GetPosition();
 
-        while (position.SqrDist(entity_position) > 16.0)
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        constexpr double range = 3.0;
+#else
+        const double range = local_player->GetAttributePlayerEntityInteractionRangeValue();
+#endif
+
+        while (position.SqrDist(entity_position) > range * range)
         {
-            if (GoTo(client, entity_position, 3, 0) == Status::Failure)
+            if (GoTo(client, entity_position, static_cast<int>(range)) == Status::Failure)
             {
                 return Status::Failure;
             }

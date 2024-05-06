@@ -485,13 +485,13 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-    std::vector<Trade> InventoryManager::GetAvailableTrades() const
+    std::vector<MerchantOffer> InventoryManager::GetAvailableMerchantOffers() const
     {
         std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
         return available_trades;
     }
 
-    void InventoryManager::IncrementTradeUse(const int index)
+    void InventoryManager::IncrementMerchantOfferUse(const int index)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         if (index < 0 || index > available_trades.size())
@@ -499,7 +499,7 @@ namespace Botcraft
             LOG_WARNING("Trying to update trade use of an invalid trade (" << index << "<" << available_trades.size() << ")");
             return;
         }
-        Trade& trade = available_trades[index];
+        MerchantOffer& trade = available_trades[index];
         trade.SetNumberOfTradesUses(trade.GetNumberOfTradesUses() + 1);
     }
 #endif

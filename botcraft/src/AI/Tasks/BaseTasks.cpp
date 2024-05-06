@@ -69,10 +69,16 @@ namespace Botcraft
         // Compute the distance from the hand? Might be from somewhere else
         const Vector3<double> player_hand_pos = local_player->GetPosition() + Vector3<double>(0.0, 1.0, 0.0);
 
-        if (player_hand_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 16.0f)
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        constexpr double range = 4.5;
+#else
+        const double range = local_player->GetAttributePlayerBlockInteractionRangeValue();
+#endif
+
+        if (player_hand_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > range * range)
         {
             // Go in range
-            if (GoTo(client, pos, 4) == Status::Failure)
+            if (GoTo(client, pos, static_cast<int>(range)) == Status::Failure)
             {
                 return Status::Failure;
             }

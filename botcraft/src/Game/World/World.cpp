@@ -918,6 +918,7 @@ namespace Botcraft
     void World::Handle(ProtocolCraft::ClientboundRegistryDataPacket& msg)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
@@ -925,6 +926,30 @@ namespace Botcraft
             dimension_min_y[dim_name] = d["element"]["min_y"].get<int>();
             dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
         }
+#else
+        if (msg.GetRegistry().GetFull() != "minecraft:dimension_type")
+        {
+            return;
+        }
+
+        const auto& entries = msg.GetEntries();
+        for (size_t i = 0; i < entries.size(); ++i)
+        {
+            const std::string dim_name = entries[i].GetId_().GetFull();
+            // Make sure we use the same indices as minecraft registry
+            // Not really useful but just in case
+            dimension_index_map.insert({ dim_name, i });
+            index_dimension_map.insert({ i, dim_name });
+
+            if (entries[i].GetData().has_value())
+            {
+                const ProtocolCraft::NBT::Value& data = entries[i].GetData().value();
+                dimension_height[dim_name] = static_cast<unsigned int>(data["height"].get<int>());
+                dimension_min_y[dim_name] = data["min_y"].get<int>();
+                dimension_ultrawarm[dim_name] = static_cast<bool>(data["ultrawarm"].get<char>());
+            }
+        }
+#endif
     }
 #endif
 

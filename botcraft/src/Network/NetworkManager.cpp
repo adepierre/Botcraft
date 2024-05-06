@@ -238,8 +238,21 @@ namespace Botcraft
 
     void NetworkManager::SendChatCommand(const std::string& command)
     {
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        if (authentifier == nullptr)
+        {
+            std::shared_ptr<ServerboundChatCommandPacket> chat_command = std::make_shared<ServerboundChatCommandPacket>();
+            chat_command->SetCommand(command);
+            Send(chat_command);
+            return;
+        }
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        std::shared_ptr<ServerboundChatCommandSignedPacket> chat_command = std::make_shared<ServerboundChatCommandSignedPacket>();
+#else
         std::shared_ptr<ServerboundChatCommandPacket> chat_command = std::make_shared<ServerboundChatCommandPacket>();
+#endif
         chat_command->SetCommand(command);
         chat_command->SetTimestamp(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
@@ -599,6 +612,18 @@ namespace Botcraft
         // Ask as many chunks as we can process in one tick (50 ms)
         chunk_per_tick_msg->SetDesiredChunksPerTick(msg.GetBatchSize() * 50.0f / time_elapsed_ms);
         Send(chunk_per_tick_msg);
+    }
+#endif
+
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    void NetworkManager::Handle(ProtocolCraft::ClientboundSelectKnownPacksPacket& msg)
+    {
+        std::shared_ptr<ServerboundSelectKnownPacksPacket> select_known_packs = std::make_shared<ServerboundSelectKnownPacksPacket>();
+        // Datapacks are not supported by Botcraft
+        select_known_packs->SetKnownPacks({});
+
+        Send(select_known_packs);
+
     }
 #endif
 }

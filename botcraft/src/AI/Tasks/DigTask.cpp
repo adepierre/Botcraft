@@ -112,7 +112,24 @@ namespace Botcraft
             }
         }
 
-        const float expected_mining_time_s = local_player->GetInstabuild() ? 0.0f : blockstate->GetMiningTimeSeconds(current_tool_type, current_tool_material, current_tool_efficiency, haste_amplifier, mining_fatigue_amplifier, is_on_ground, is_head_in_fluid);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        constexpr float speed_multiplier = 1.0f;
+#else
+        const float speed_multiplier = static_cast<float>(local_player->GetAttributePlayerBlockBreakSpeedValue());
+#endif
+
+        const float expected_mining_time_s =
+            local_player->GetInstabuild() ? 0.0f :
+            blockstate->GetMiningTimeSeconds(
+                current_tool_type,
+                current_tool_material,
+                current_tool_efficiency,
+                haste_amplifier,
+                mining_fatigue_amplifier,
+                is_on_ground,
+                is_head_in_fluid,
+                speed_multiplier
+            );
         if (expected_mining_time_s > 60.0f)
         {
             LOG_INFO("Starting an expected " << expected_mining_time_s << " seconds long mining at " << pos << ".A little help?");
