@@ -371,7 +371,7 @@ namespace ProtocolCraft
         }
     }
 
-    void Particle::WriteOptions(WriteContainer& container)
+    void Particle::WriteOptions(WriteContainer& container) const
     {
         if (options != nullptr)
         {

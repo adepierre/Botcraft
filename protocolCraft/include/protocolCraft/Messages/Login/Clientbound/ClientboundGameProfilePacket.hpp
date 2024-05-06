@@ -44,7 +44,7 @@ namespace ProtocolCraft
 
 #endif
 
-#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         void SetStrictErrorHandling(const bool strict_error_handling_)
         {
             strict_error_handling = strict_error_handling_;
@@ -75,7 +75,7 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         bool GetStrictErrorHandling() const
         {
             return strict_error_handling;
@@ -95,7 +95,7 @@ namespace ProtocolCraft
 #endif
             username = ReadData<std::string>(iter, length);
 #endif
-#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             strict_error_handling = ReadData<bool>(iter, length);
 #endif
         }
@@ -112,7 +112,7 @@ namespace ProtocolCraft
 #endif
             WriteData<std::string>(username, container);
 #endif
-#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             WriteData<bool>(strict_error_handling, container);
 #endif
         }
@@ -127,7 +127,7 @@ namespace ProtocolCraft
             output["uuid"] = uuid;
             output["username"] = username;
 #endif
-#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             output["strict_error_handling"] = strict_error_handling;
 #endif
 
@@ -146,7 +146,7 @@ namespace ProtocolCraft
 #endif
         std::string username;
 #endif
-#if PROTOCOL_VERSION > 764 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         bool strict_error_handling = false;
 #endif
     };

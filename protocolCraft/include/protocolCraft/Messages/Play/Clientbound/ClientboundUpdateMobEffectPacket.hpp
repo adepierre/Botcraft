@@ -83,10 +83,6 @@ namespace ProtocolCraft
             effect_amplifier = effect_amplifier_;
         }
 #endif
-        void SetEffectAmplifier(const char effect_amplifier_)
-        {
-            effect_amplifier = effect_amplifier_;
-        }
 
         void SetEffectDurationTicks(const int effect_duration_ticks_)
         {

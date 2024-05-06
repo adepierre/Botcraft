@@ -269,7 +269,7 @@ namespace ProtocolCraft
         void SetParticleType(const ParticleType particle_type_);
 
         void ReadOptions(ReadIterator& iter, size_t& length);
-        void WriteOptions(WriteContainer& container);
+        void WriteOptions(WriteContainer& container) const;
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
