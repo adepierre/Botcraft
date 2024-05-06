@@ -68,15 +68,17 @@ namespace Botcraft
         Thorns = 7,
         DepthStrider = 8,
         FrostWalker = 9,
+        BindingCurse = 10,
         Sharpness = 16,
         Smite = 17,
         BaneOfArthropods = 18,
         Knockback = 19,
         FireAspect = 20,
         Looting = 21,
+        SweepingEdge = 22,
         Efficiency = 32,
-        SilkTourch = 33,
-        Unbreaking = 33,
+        SilkTouch = 33,
+        Unbreaking = 34,
         Fortune = 35,
         Power = 48,
         Punch = 49,
@@ -85,6 +87,7 @@ namespace Botcraft
         LuckOfTheSea = 61,
         Lure = 62,
         Mending = 70,
+        VanishingCurse = 71,
     };
 #else
     enum class Enchantment

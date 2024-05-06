@@ -80,6 +80,7 @@ namespace Botcraft::Utilities
             return "luck_of_the_sea";
         case Enchantment::Lure:
             return "lure";
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case Enchantment::Loyalty:
             return "loyalty";
         case Enchantment::Impaling:
@@ -88,6 +89,7 @@ namespace Botcraft::Utilities
             return "riptide";
         case Enchantment::Channeling:
             return "channeling";
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case Enchantment::Multishot:
             return "multishot";
@@ -145,7 +147,7 @@ namespace Botcraft::Utilities
             }
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-            if (enchantment_tag["id"].get<NBT::TagInt>() == static_cast<int>(enchantment_id))
+            if (enchantment_tag["id"].get<NBT::TagInt>() == static_cast<int>(enchantment))
 #else
             if (enchantment_tag["id"].get<NBT::TagString>() == EnchantmentToString(enchantment))
 #endif

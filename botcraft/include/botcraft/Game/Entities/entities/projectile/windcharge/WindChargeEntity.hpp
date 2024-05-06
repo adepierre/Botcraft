@@ -1,15 +1,27 @@
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #pragma once
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+#include "botcraft/Game/Entities/entities/projectile/AbstractHurtingProjectileEntity.hpp"
+#else
 #include "botcraft/Game/Entities/entities/projectile/windcharge/AbstractWindChargeEntity.hpp"
+#endif
 
 namespace Botcraft
 {
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+    class WindChargeEntity : public AbstractHurtingProjectileEntity
+#else
     class WindChargeEntity : public AbstractWindChargeEntity
+#endif
     {
     protected:
         static constexpr int metadata_count = 0;
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        static constexpr int hierarchy_metadata_count = AbstractHurtingProjectileEntity::metadata_count + AbstractHurtingProjectileEntity::hierarchy_metadata_count;
+#else
         static constexpr int hierarchy_metadata_count = AbstractWindChargeEntity::metadata_count + AbstractWindChargeEntity::hierarchy_metadata_count;
+#endif
 
     public:
         WindChargeEntity();

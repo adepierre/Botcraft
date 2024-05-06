@@ -152,7 +152,6 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/monster/VindicatorEntity.hpp
     include/botcraft/Game/Entities/entities/npc/WanderingTraderEntity.hpp
     include/botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/WindChargeEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/windcharge/AbstractWindChargeEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/windcharge/BreezeWindChargeEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/windcharge/WindChargeEntity.hpp
@@ -390,7 +389,6 @@ set(botcraft_SRC
     src/Game/Entities/entities/npc/VillagerEntity.cpp
     src/Game/Entities/entities/monster/VindicatorEntity.cpp
     src/Game/Entities/entities/npc/WanderingTraderEntity.cpp
-    src/Game/Entities/entities/projectile/WindChargeEntity.cpp
     src/Game/Entities/entities/projectile/windcharge/AbstractWindChargeEntity.cpp
     src/Game/Entities/entities/projectile/windcharge/BreezeWindChargeEntity.cpp
     src/Game/Entities/entities/projectile/windcharge/WindChargeEntity.cpp

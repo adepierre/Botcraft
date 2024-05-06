@@ -214,9 +214,7 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-#include "botcraft/Game/Entities/entities/projectile/WindChargeEntity.hpp"
-#elif PROTOCOL_VERSION > 765 /* > 1.20.5 */
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "botcraft/Game/Entities/entities/projectile/windcharge/WindChargeEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/WitchEntity.hpp"

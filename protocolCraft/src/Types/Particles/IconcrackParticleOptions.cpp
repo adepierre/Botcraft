@@ -3,52 +3,52 @@
 
 namespace ProtocolCraft
 {
-    IconcrackParticle::IconcrackParticleOptions()
+    IconcrackParticleOptions::IconcrackParticleOptions()
     {
 
     }
     
-    IconcrackParticle::~IconcrackParticleOptions()
+    IconcrackParticleOptions::~IconcrackParticleOptions()
     {
 
     }
 
 
-    int IconcrackParticle::GetArgument1() const
+    int IconcrackParticleOptions::GetArgument1() const
     {
         return argument1;
     }
 
-    int IconcrackParticle::GetArgument2() const
+    int IconcrackParticleOptions::GetArgument2() const
     {
         return argument2;
     }
 
 
-    void IconcrackParticle::SetArgument1(const int argument1_)
+    void IconcrackParticleOptions::SetArgument1(const int argument1_)
     {
         argument1 = argument1_;
     }
 
-    void IconcrackParticle::SetArgument2(const int argument2_)
+    void IconcrackParticleOptions::SetArgument2(const int argument2_)
     {
         argument2 = argument2_;
     }
 
 
-    void IconcrackParticle::ReadImpl(ReadIterator& iter, size_t& length)
+    void IconcrackParticleOptions::ReadImpl(ReadIterator& iter, size_t& length)
     {
         argument1 = ReadData<VarInt>(iter, length);
         argument2 = ReadData<VarInt>(iter, length);
     }
 
-    void IconcrackParticle::WriteImpl(WriteContainer& container) const
+    void IconcrackParticleOptions::WriteImpl(WriteContainer& container) const
     {
         WriteData<VarInt>(argument1, container);
         WriteData<VarInt>(argument2, container);
     }
 
-    Json::Value IconcrackParticle::SerializeImpl() const
+    Json::Value IconcrackParticleOptions::SerializeImpl() const
     {
         Json::Value output;
 

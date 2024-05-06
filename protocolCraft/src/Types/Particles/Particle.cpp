@@ -354,7 +354,7 @@ namespace ProtocolCraft
             options = std::make_shared<BlockParticleOptions>();
             break;
         case ParticleType::Iconcrack:
-            options = std::make_shared<IconcrackParticle>();
+            options = std::make_shared<IconcrackParticleOptions>();
             break;
 #endif
         default:
