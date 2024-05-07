@@ -1,9 +1,7 @@
 #include "botcraft/Utilities/ItemUtilities.hpp"
 
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-#include "protocolCraft/Types/NBT/NBT.hpp"
-#else
-#include "protocolCraft/Types/Components/DataComponents.hpp"
+#include "protocolCraft/Types/Item/Slot.hpp"
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/Components/DataComponentTypeInteger.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeItemEnchantments.hpp"
 #endif

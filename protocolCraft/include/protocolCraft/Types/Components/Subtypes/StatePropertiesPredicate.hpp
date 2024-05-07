@@ -1,7 +1,7 @@
 #pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/NetworkType.hpp"
-#include "protocolCraft/Types/Components/Subtypes/Propertymatcher.hpp"
+#include "protocolCraft/Types/Components/Subtypes/PropertyMatcher.hpp"
 
 #include <vector>
 
