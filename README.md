@@ -41,7 +41,7 @@ Main features are listed below. To see the evolution of the project, check the [
 
 - Connection to minecraft server (both offline "cracked" mode and online connection with ~~Mojang or~~ Microsoft account)
 - DNS server name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.20.4 supported
+- All official releases from 1.12.2 to 1.20.6 supported
 - Compression
 - Signed chat system for 1.19+ versions
 - Vanilla physics and collisions ([wiki page](https://github.com/adepierre/Botcraft/wiki/Physics) for details)
@@ -58,7 +58,7 @@ Available bot behaviours includes:
 - Block breaking (including with correct tool/haste effects)
 - Inventory managing (including interactions with chest/anvil/brewing stand...)
 - Block placing (vanilla or mid-air)
-- Entity interactions (attack...)
+- Entity interactions
 - Item use (fishing rods, food eating...)
 - Block interaction (button, lever, bed...)
 - Villager trading (only for versions 1.14+)
@@ -110,7 +110,7 @@ Optional dependencies (rendering):
 Optional dependencies (testing)
 - [catch2](https://github.com/catchorg/Catch2)† for tests management
 - [subprocess.h](https://github.com/sheredom/subprocess.h)\* to launch the vanilla test server
-- [Java](https://www.java.com/) 8 for Minecraft < 1.17, 17 for Minecraft 1.17+ to run the vanilla test server
+- [Java](https://www.java.com/) 8 for Minecraft < 1.17, 17 for Minecraft < 1.20.5, 21 for Minecraft 1.20.5+ to run the vanilla test server
 
 Optional dependencies (doc generation)
 - [doxygen](https://www.doxygen.nl/) for documentation generation

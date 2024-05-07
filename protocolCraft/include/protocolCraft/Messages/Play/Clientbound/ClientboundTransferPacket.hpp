@@ -10,7 +10,7 @@ namespace ProtocolCraft
     class ClientboundTransferPacket : public BaseMessage<ClientboundTransferPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 766 /* 1.20.5 */
+#if   PROTOCOL_VERSION == 766 /* 1.20.5/6 */
         static constexpr int packet_id = 0x73;
 #else
 #error "Protocol version not implemented"
