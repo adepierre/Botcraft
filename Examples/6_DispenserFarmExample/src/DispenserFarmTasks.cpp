@@ -9,6 +9,7 @@
 #include "botcraft/Game/Entities/entities/item/ItemEntity.hpp"
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/ItemUtilities.hpp"
 
 #include "botcraft/AI/Tasks/AllTasks.hpp"
 
@@ -266,21 +267,9 @@ Status CheckFrostWalkerMob(BehaviourClient& client)
     {
         if (entity->IsMonster())
         {
-            const Slot boots = entity->GetEquipment(EquipmentSlot::Boots);
-            if (!boots.IsEmptySlot())
+            if (Utilities::GetEnchantmentLvl(entity->GetEquipment(EquipmentSlot::Boots), Enchantment::FrostWalker) != 0)
             {
-                if (boots.GetNBT().contains("Enchantments") && boots.GetNBT()["Enchantments"].is_list_of<NBT::TagCompound>())
-                {
-                    for (const auto& enchantment : boots.GetNBT()["Enchantments"].as_list_of<NBT::TagCompound>())
-                    {
-                        if (enchantment.contains("id") &&
-                            enchantment["id"].is<std::string>() &&
-                            enchantment["id"].get<std::string>() == "minecraft:frost_walker")
-                        {
-                            return Status::Success;
-                        }
-                    }
-                }
+                return Status::Success;
             }
         }
     }

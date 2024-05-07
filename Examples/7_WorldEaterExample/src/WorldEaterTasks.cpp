@@ -4,7 +4,7 @@
 #include <botcraft/Game/Entities/EntityManager.hpp>
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/AI/Tasks/AllTasks.hpp>
-#include <botcraft/Utilities/NBTUtilities.hpp>
+#include <botcraft/Utilities/ItemUtilities.hpp>
 #include <botcraft/Utilities/MiscUtilities.hpp>
 
 #include <queue>
@@ -311,7 +311,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
             if (item->GetToolType() == best_tool_type)
             {
                 // Check the tool won't break, with a "large" margin of 5 to be safe
-                const int damage_count = Utilities::GetDamageCount(slot.GetNBT());
+                const int damage_count = Utilities::GetDamageCount(slot);
                 if (damage_count < item->GetMaxDurability() - 6)
                 {
                     tool_name = item->GetName();
@@ -1048,7 +1048,7 @@ Status BaseCampDropItems(SimpleBehaviourClient& client, const bool all_items)
         }
         const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
         // Don't throw tools with more than 10% durability
-        if (!all_items && item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot.GetNBT()) < 9 * item->GetMaxDurability() / 10)
+        if (!all_items && item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot) < 9 * item->GetMaxDurability() / 10)
         {
             continue;
         }
@@ -1197,7 +1197,7 @@ Botcraft::Status HasToolInInventory(Botcraft::SimpleBehaviourClient& client, con
         }
 
         const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
-        if (item->GetToolType() == tool_type && Utilities::GetDamageCount(slot.GetNBT()) < item->GetMaxDurability() - min_durability)
+        if (item->GetToolType() == tool_type && Utilities::GetDamageCount(slot) < item->GetMaxDurability() - min_durability)
         {
             return Status::Success;
         }
