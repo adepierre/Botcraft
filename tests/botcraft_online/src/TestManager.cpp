@@ -165,6 +165,7 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
 #endif
             << "id:\"written_book\"" << ","
             << "Count:1" << ","
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
             << "tag:{"
                 << "pages:[";
     for (size_t i = 0; i < pages.size(); ++i)
@@ -204,8 +205,35 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
         }
         command << "]}";
     }
+#else
+            << "components:{\"written_book_content\":{"
+                << "title:\"" << ReplaceCharacters(title, { {'"', "\\\\\""}, { '\'', "\\'" }, {'\n', "\\\\n"}}) << "\","
+                << "author:\"" << ReplaceCharacters(author, { {'"', "\\\\\""}, { '\'', "\\'" }, {'\n', "\\\\n"} }) << "\","
+                << "pages:[";
+    for (size_t i = 0; i < pages.size(); ++i)
+    {
+        command
+            << "'{"
+            << "\"text\"" << ":" << "\"" << ReplaceCharacters(pages[i], { {'"', "\\\\\""}, { '\'', "\\'" }, {'\n', "\\\\n"} }) << "\""
+            << "}'" << ((i < pages.size() - 1) ? "," : "");
+    }
+    command << "]" // pages
+        << "}"; // written_book_component
+    if (!description.empty())
+    {
+        command << ",\"lore\":[";
+        for (size_t i = 0; i < description.size(); ++i)
+        {
+            command
+                << "'{\"text\":\"" << ReplaceCharacters(description[i], { {'"', "\\\\\""}, { '\'', "\\'" }, {'\n', "\\\\n"} }) << "\""
+                << "}'" << ((i < description.size() - 1) ? "," : "");
+        }
+        command << "]"; // lore
+    }
+
+#endif
     command
-        << "}" // tag
+        << "}" // tag/components
         << "}" // Item
         << "}"; // Main
 

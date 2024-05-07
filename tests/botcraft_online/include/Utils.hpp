@@ -107,3 +107,7 @@ bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, co
             return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(receiving_slot).IsEmptySlot();
         }, 5000);
 }
+
+void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const std::map<Botcraft::Enchantment, int>& enchantments = {});
+
+void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const Botcraft::Enchantment enchantment);

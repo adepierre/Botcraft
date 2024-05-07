@@ -90,6 +90,7 @@ TEST_CASE("drop items")
                 return false;
             }, 5000));
     }
+
     SECTION("drop all")
     {
         // Drop all sticks

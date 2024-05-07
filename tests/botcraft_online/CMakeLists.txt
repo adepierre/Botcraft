@@ -11,6 +11,7 @@ set(SRC_FILES
 
     src/MinecraftServer.cpp
     src/TestManager.cpp
+    src/Utils.cpp
 
     src/tests/base_tasks.cpp
     src/tests/dig.cpp

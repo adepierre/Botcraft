@@ -833,7 +833,8 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
             { 0.0, -0.0784000015258789, 0.08818616087173836 }, { 0.0, -0.0784000015258789, 0.08828065546905701 },
             { 0.0, -0.0784000015258789, 0.048201243484806214 }, { 0.0, -0.0784000015258789, 0.02631788199959534 }
         };
-        MinecraftServer::GetInstance().SendLine("item replace entity " + bot->GetNetworkManager()->GetMyName() + " armor.legs with minecraft:netherite_leggings{Enchantments:[{id:swift_sneak,lvl:3}]} 1");
+
+        SendCommandSetItem(bot->GetNetworkManager()->GetMyName(), "minecraft:netherite_leggings", EquipmentSlot::Leggings, { {Enchantment::SwiftSneak, 3} });
 
         REQUIRE(Utilities::WaitForCondition([&]() -> bool
             {
@@ -1379,7 +1380,7 @@ TEST_CASE("walk on soul sand", "[!mayfail][.physics]")
             { 0.0, -0.0784000015258789, 0.04401501086206116 }, { 0.0, -0.0784000015258789, 0.02403219872208842 }
         };
 
-        MinecraftServer::GetInstance().SendLine("item replace entity " + bot->GetNetworkManager()->GetMyName() + " armor.feet with minecraft:netherite_boots{Enchantments:[{id:soul_speed,lvl:3}]} 1");
+        SendCommandSetItem(bot->GetNetworkManager()->GetMyName(), "minecraft:netherite_boots", EquipmentSlot::Boots, { {Enchantment::SoulSpeed, 3} });
 
         REQUIRE(Utilities::WaitForCondition([&]() -> bool
             {
