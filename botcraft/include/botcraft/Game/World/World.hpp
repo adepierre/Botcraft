@@ -202,6 +202,16 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
+        /// @brief Get current world dimension. Thread-safe
+        /// @return Current world dimension
+        Dimension GetCurrentDimension() const;
+#else
+        /// @brief Get current world dimension. Thread-safe
+        /// @return Current world dimension
+        std::string GetCurrentDimension() const;
+#endif
+
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
         /// @brief Set current world dimension. Thread-safe
         /// @param dimension Dimension to set
         void SetCurrentDimension(const Dimension dimension);

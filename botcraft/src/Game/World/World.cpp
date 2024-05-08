@@ -442,6 +442,16 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
+    Dimension World::GetCurrentDimension() const
+#else
+    std::string World::GetCurrentDimension() const
+#endif
+    {
+        std::shared_lock<std::shared_mutex> lock(world_mutex);
+        return current_dimension;
+    }
+
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
     void World::SetCurrentDimension(const Dimension dimension)
 #else
     void World::SetCurrentDimension(const std::string& dimension)
