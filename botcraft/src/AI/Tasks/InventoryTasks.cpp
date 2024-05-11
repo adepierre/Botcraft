@@ -520,6 +520,10 @@ namespace Botcraft
         // Place the block
         network_manager->Send(place_block_msg);
 
+        std::shared_ptr<ServerboundSwingPacket> swing = std::make_shared<ServerboundSwingPacket>();
+        swing->SetHand(static_cast<int>(Hand::Right));
+        network_manager->Send(swing);
+
         if (!wait_confirmation)
         {
             return Status::Success;
