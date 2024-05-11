@@ -264,6 +264,11 @@ namespace Botcraft
         Emerging,
         Digging,
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        Sliding,
+        Shooting,
+        Inhaling,
+#endif
     };
 
     enum class EquipmentSlot
