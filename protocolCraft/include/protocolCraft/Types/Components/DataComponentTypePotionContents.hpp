@@ -54,7 +54,7 @@ namespace ProtocolCraft
                     {
                         return ReadData<VarInt>(i, l);
                     });
-                custom_color = ReadData<int>(iter, length);
+                custom_color = ReadOptional<int>(iter, length);
                 custom_effects = ReadVector<MobEffectInstance>(iter, length);
             }
 
