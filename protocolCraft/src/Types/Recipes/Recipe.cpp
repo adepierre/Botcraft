@@ -206,7 +206,7 @@ namespace ProtocolCraft
         recipe_id = ReadData<Identifier>(iter, length);
 #else
         recipe_id = ReadData<Identifier>(iter, length);
-        SetType(static_cast<RecipeDataType>(static_cast<int>(ReadData<VarInt>(iter, length))));
+        SetType(ReadData<RecipeDataType, VarInt>(iter, length));
 #endif
         if (data != nullptr)
         {
@@ -224,7 +224,7 @@ namespace ProtocolCraft
         WriteData<Identifier>(recipe_id, container);
 #else
         WriteData<Identifier>(recipe_id, container);
-        WriteData<VarInt>(static_cast<int>(type), container);
+        WriteData<RecipeDataType, VarInt>(type, container);
 #endif
         if (data != nullptr)
         {

@@ -5,12 +5,12 @@ namespace ProtocolCraft
 {
     VibrationParticleOptions::VibrationParticleOptions()
     {
-        
+
     }
-    
+
     VibrationParticleOptions::~VibrationParticleOptions()
     {
-        
+
     }
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
@@ -70,14 +70,14 @@ namespace ProtocolCraft
         arrival_in_ticks = arrival_in_ticks_;
     }
 #endif
-    
+
     void VibrationParticleOptions::ReadImpl(ReadIterator& iter, size_t& length)
     {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         vibration_path = ReadData<VibrationPath>(iter, length);
 #else
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        destination_type = static_cast<PositionSourceType>(static_cast<int>(ReadData<VarInt>(iter, length)));
+        destination_type = ReadData<PositionSourceType, VarInt>(iter, length);
 #else
         destination_type = ReadData<Identifier>(iter, length);
 #endif
@@ -86,14 +86,14 @@ namespace ProtocolCraft
         arrival_in_ticks = ReadData<VarInt>(iter, length);
 #endif
     }
-    
+
     void VibrationParticleOptions::WriteImpl(WriteContainer& container) const
     {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         WriteData<VibrationPath>(vibration_path, container);
 #else
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        WriteData<VarInt>(static_cast<int>(destination_type), container);
+        WriteData<PositionSourceType, VarInt>(destination_type, container);
 #else
         WriteData<Identifier>(destination_type, container);
 #endif
@@ -101,7 +101,7 @@ namespace ProtocolCraft
         WriteData<VarInt>(arrival_in_ticks, container);
 #endif
     }
-    
+
     Json::Value VibrationParticleOptions::SerializeImpl() const
     {
         Json::Value output;

@@ -80,7 +80,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            action = static_cast<PlayerInfoAction>(static_cast<int>(ReadData<VarInt>(iter, length)));
+            action = ReadData<PlayerInfoAction, VarInt>(iter, length);
             switch (action)
             {
             case PlayerInfoAction::AddPlayer:
@@ -143,7 +143,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(static_cast<int>(action), container);
+            WriteData<PlayerInfoAction, VarInt>(action, container);
             switch (action)
             {
             case PlayerInfoAction::AddPlayer:
@@ -155,7 +155,7 @@ namespace ProtocolCraft
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
                         WriteData<UUID>(p.first, c);
-                        WriteData<VarInt>(static_cast<int>(p.second.GetGameMode()), c);
+                        WriteData<VarInt>(p.second.GetGameMode(), c);
                     }
                 );
                 break;
@@ -165,7 +165,7 @@ namespace ProtocolCraft
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
                         WriteData<UUID>(p.first, c);
-                        WriteData<VarInt>(static_cast<int>(p.second.GetLatency()), c);
+                        WriteData<VarInt>(p.second.GetLatency(), c);
                     }
                 );
                 break;

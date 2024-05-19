@@ -64,17 +64,15 @@ namespace ProtocolCraft
         {
             length_ = length__;
         }
-#endif
 
-        void SetSuggestions(const std::vector<std::string>& suggestions_)
+        void SetSuggestions(const std::map<std::string, std::optional<Chat>>& suggestions_)
         {
             suggestions = suggestions_;
         }
-
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-        void SetTooltips(const std::vector<std::optional<Chat>>& tooltips_)
+#else
+        void SetSuggestions(const std::vector<std::string>& suggestions_)
         {
-            tooltips = tooltips_;
+            suggestions = suggestions_;
         }
 #endif
 
@@ -93,17 +91,15 @@ namespace ProtocolCraft
         {
             return length_;
         }
-#endif
 
-        const std::vector<std::string>& GetSuggestions() const
+        const std::map<std::string, std::optional<Chat>>& GetSuggestions() const
         {
             return suggestions;
         }
-
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-        const std::vector<std::optional<Chat>>& GetTooltips() const
+#else
+        const std::vector<std::string>& GetSuggestions() const
         {
-            return tooltips;
+            return suggestions;
         }
 #endif
 
@@ -114,19 +110,10 @@ namespace ProtocolCraft
             id_ = ReadData<VarInt>(iter, length);
             start = ReadData<VarInt>(iter, length);
             length_ = ReadData<VarInt>(iter, length);
+            suggestions = ReadData<std::map<std::string, std::optional<Chat>>>(iter, length);
+#else
+            suggestions = ReadData<std::vector<std::string>>(iter, length);
 #endif
-            const int count = ReadData<VarInt>(iter, length);
-            suggestions = std::vector<std::string>(count);
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-            tooltips = std::vector<std::optional<Chat>>(count);
-#endif
-            for (int i = 0; i < count; ++i)
-            {
-                suggestions[i] = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-                tooltips[i] = ReadData<std::optional<Chat>>(iter, length);
-#endif
-            }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -136,36 +123,27 @@ namespace ProtocolCraft
             WriteData<VarInt>(id_, container);
             WriteData<VarInt>(start, container);
             WriteData<VarInt>(length_, container);
+            WriteData<std::map<std::string, std::optional<Chat>>>(suggestions, container);
+#else
+            WriteData<std::vector<std::string>>(suggestions, container);
 #endif
-            WriteData<VarInt>(static_cast<int>(suggestions.size()), container);
-            for (int i = 0; i < suggestions.size(); ++i)
-            {
-                WriteData<std::string>(suggestions[i], container);
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-                WriteData<std::optional<Chat>>(tooltips[i], container);
-#endif
-            }
         }
 
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
-
-
 #if PROTOCOL_VERSION > 356 /* > 1.12.2 */
             output["id_"] = id_;
             output["start"] = start;
             output["length_"] = length_;
-#endif
-            output["suggestions"] = suggestions;
-
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-            output["tooltips"] = Json::Array();
-            for (const auto& t : tooltips)
+            output["suggestions"] = Json::Object();
+            for (const auto& [k, v] : suggestions)
             {
-                output["tooltips"].push_back(t.has_value() ? t.value().Serialize() : Json::Value());
+                output["suggestions"][k] = v.has_value() ? v.value() : Json::Value();
             }
+#else
+            output["suggestions"] = suggestions;
 #endif
 
             return output;
@@ -176,10 +154,9 @@ namespace ProtocolCraft
         int id_ = 0;
         int start = 0;
         int length_ = 0;
-#endif
+        std::map<std::string, std::optional<Chat>> suggestions;
+#else
         std::vector<std::string> suggestions;
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-        std::vector<std::optional<Chat>> tooltips;
 #endif
 
     };

@@ -193,9 +193,9 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-            const ParticleType particle_type = static_cast<ParticleType>(ReadData<int>(iter, length));
+            const ParticleType particle_type = ReadData<ParticleType, int>(iter, length);
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            const ParticleType particle_type = static_cast<ParticleType>(static_cast<int>(ReadData<VarInt>(iter, length)));
+            const ParticleType particle_type = ReadData<ParticleType, VarInt>(iter, length);
 #endif
             override_limiter = ReadData<bool>(iter, length);
 #if PROTOCOL_VERSION < 569 /* < 1.15 */
@@ -223,9 +223,9 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-            WriteData<int>(static_cast<int>(particle.GetParticleType()), container);
+            WriteData<ParticleType, int>(particle.GetParticleType(), container);
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<VarInt>(static_cast<int>(particle.GetParticleType()), container);
+            WriteData<ParticleType, VarInt>(particle.GetParticleType(), container);
 #endif
             WriteData<bool>(override_limiter, container);
 #if PROTOCOL_VERSION < 569 /* < 1.15 */

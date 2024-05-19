@@ -242,7 +242,7 @@ namespace ProtocolCraft
             map = ReadMap<DataComponentTypes, std::shared_ptr<DataComponentType>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
-                    const DataComponentTypes first = static_cast<DataComponentTypes>(static_cast<int>(ReadData<VarInt>(i, l)));
+                    const DataComponentTypes first = ReadData<DataComponentTypes, VarInt>(i, l);
                     std::shared_ptr<DataComponentType> second = CreateComponentType(first);
                     if (second != nullptr)
                     {
@@ -259,7 +259,7 @@ namespace ProtocolCraft
             WriteMap<DataComponentTypes, std::shared_ptr<DataComponentType>>(map, container,
                 [](const std::pair<const DataComponentTypes, std::shared_ptr<DataComponentType>>& p, WriteContainer& c)
                 {
-                    WriteData<VarInt>(static_cast<int>(p.first), c);
+                    WriteData<DataComponentTypes, VarInt>(p.first, c);
                     if (p.second != nullptr)
                     {
                         p.second->Write(c);
@@ -308,7 +308,7 @@ namespace ProtocolCraft
 
             for (int i = 0; i < num_data; ++i)
             {
-                const DataComponentTypes type = static_cast<DataComponentTypes>(static_cast<int>(ReadData<VarInt>(iter, length)));
+                const DataComponentTypes type = ReadData<DataComponentTypes, VarInt>(iter, length);
                 std::shared_ptr<DataComponentType> data = CreateComponentType(type);
 
                 if (data != nullptr)
@@ -320,7 +320,7 @@ namespace ProtocolCraft
 
             for (int i = 0; i < num_void; ++i)
             {
-                const DataComponentTypes type = static_cast<DataComponentTypes>(static_cast<int>(ReadData<VarInt>(iter, length)));
+                const DataComponentTypes type = ReadData<DataComponentTypes, VarInt>(iter, length);
                 map.insert({ type, nullptr });
             }
         }
@@ -343,7 +343,7 @@ namespace ProtocolCraft
                 {
                     continue;
                 }
-                WriteData<VarInt>(static_cast<int>(p.first), container);
+                WriteData<DataComponentTypes, VarInt>(p.first, container);
                 p.second->Write(container);
             }
 
@@ -353,7 +353,7 @@ namespace ProtocolCraft
                 {
                     continue;
                 }
-                WriteData<VarInt>(static_cast<int>(p.first), container);
+                WriteData<DataComponentTypes, VarInt>(p.first, container);
             }
         }
 

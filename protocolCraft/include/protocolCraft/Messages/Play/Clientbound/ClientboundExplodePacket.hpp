@@ -256,9 +256,9 @@ namespace ProtocolCraft
                 {
                     NetworkPosition output;
 
-                    output.SetX(static_cast<int>(ReadData<char>(i, l)));
-                    output.SetY(static_cast<int>(ReadData<char>(i, l)));
-                    output.SetZ(static_cast<int>(ReadData<char>(i, l)));
+                    output.SetX(ReadData<int, char>(i, l));
+                    output.SetY(ReadData<int, char>(i, l));
+                    output.SetZ(ReadData<int, char>(i, l));
 
                     return output;
                 }
@@ -298,9 +298,9 @@ namespace ProtocolCraft
 #endif
                 [](const NetworkPosition& n, WriteContainer& c)
                 {
-                    WriteData<char>(static_cast<char>(n.GetX()), c);
-                    WriteData<char>(static_cast<char>(n.GetY()), c);
-                    WriteData<char>(static_cast<char>(n.GetZ()), c);
+                    WriteData<int, char>(n.GetX(), c);
+                    WriteData<int, char>(n.GetY(), c);
+                    WriteData<int, char>(n.GetZ(), c);
                 }
             );
             WriteData<float>(knockback_x, container);

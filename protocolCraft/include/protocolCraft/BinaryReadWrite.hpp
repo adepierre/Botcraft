@@ -236,7 +236,7 @@ namespace ProtocolCraft
     }
 
     template <typename StorageType, typename SerializationType>
-    void WriteData(typename std::conditional_t<std::is_arithmetic_v<StorageType>, StorageType, const StorageType&> value, WriteContainer& container)
+    void WriteData(typename std::conditional_t<std::is_arithmetic_v<StorageType> || std::is_enum_v<StorageType>, StorageType, const StorageType&> value, WriteContainer& container)
     {
         // bool, char, short, int, long, float, double ...
         if constexpr (std::is_arithmetic_v<SerializationType>)
@@ -368,7 +368,7 @@ namespace ProtocolCraft
     }
 
     template <typename T>
-    void WriteData(std::conditional_t<std::is_arithmetic_v<typename Internal::NetworkType<T>::storage_type>, typename Internal::NetworkType<T>::storage_type, const typename Internal::NetworkType<T>::storage_type&> value, WriteContainer& container)
+    void WriteData(std::conditional_t<std::is_arithmetic_v<typename Internal::NetworkType<T>::storage_type> || std::is_enum_v<typename Internal::NetworkType<T>::storage_type>, typename Internal::NetworkType<T>::storage_type, const typename Internal::NetworkType<T>::storage_type&> value, WriteContainer& container)
     {
         WriteData<typename Internal::NetworkType<T>::storage_type, typename Internal::NetworkType<T>::serialization_type>(value, container);
     }

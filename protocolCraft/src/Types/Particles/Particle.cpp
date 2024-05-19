@@ -31,12 +31,12 @@ namespace ProtocolCraft
 {
     Particle::Particle()
     {
-         
+
     };
 
     Particle::~Particle()
     {
-         
+
     }
 
     std::string_view Particle::GetName() const
@@ -381,7 +381,7 @@ namespace ProtocolCraft
 
     void Particle::ReadImpl(ReadIterator& iter, size_t& length)
     {
-        particle_type = static_cast<ParticleType>(static_cast<int>(ReadData<VarInt>(iter, length)));
+        particle_type = ReadData<ParticleType, VarInt>(iter, length);
         SetParticleType(particle_type);
         if (options != nullptr)
         {
@@ -391,7 +391,7 @@ namespace ProtocolCraft
 
     void Particle::WriteImpl(WriteContainer& container) const
     {
-        WriteData<VarInt>(static_cast<int>(particle_type), container);
+        WriteData<ParticleType, VarInt>(particle_type, container);
         if (options != nullptr)
         {
             options->Write(container);

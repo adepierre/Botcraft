@@ -140,7 +140,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            action = static_cast<SetBorderType>(static_cast<int>(ReadData<VarInt>(iter, length)));
+            action = ReadData<SetBorderType, VarInt>(iter, length);
             switch (action)
             {
             case SetBorderType::SetSize:
@@ -178,7 +178,7 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(static_cast<int>(action), container);
+            WriteData<SetBorderType, VarInt>(action, container);
             switch (static_cast<SetBorderType>(action))
             {
             case SetBorderType::SetSize:
