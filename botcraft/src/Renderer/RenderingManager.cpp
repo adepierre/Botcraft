@@ -190,9 +190,9 @@ namespace Botcraft
                                 ImGui::Text("DownBubbleColumn: "); ImGui::SameLine(); raycasted_blockstate->IsDownBubbleColumn() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
                                 ImGui::Text("Berry Bush: "); ImGui::SameLine(); raycasted_blockstate->IsBerryBush() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
                                 ImGui::Text("Powder Snow: "); ImGui::SameLine(); raycasted_blockstate->IsPowderSnow() ? ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "1") : ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "0");
-                                ImGui::Text("Fluid Height: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetFluidHeight()).data());
-                                ImGui::Text("Hardness: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetHardness()).data());
-                                ImGui::Text("Friction: "); ImGui::SameLine(); ImGui::Text(std::to_string(raycasted_blockstate->GetFriction()).data());
+                                ImGui::Text("Fluid Height: "); ImGui::SameLine(); ImGui::TextUnformatted(std::to_string(raycasted_blockstate->GetFluidHeight()).data());
+                                ImGui::Text("Hardness: "); ImGui::SameLine(); ImGui::TextUnformatted(std::to_string(raycasted_blockstate->GetHardness()).data());
+                                ImGui::Text("Friction: "); ImGui::SameLine(); ImGui::TextUnformatted(std::to_string(raycasted_blockstate->GetFriction()).data());
 
                                 ImGui::EndTooltip();
                             }
@@ -346,7 +346,7 @@ namespace Botcraft
                 }
 
                 real_fps = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count() / 1e6);
-                
+
                 //Wait to have 60 FPS
                 Utilities::SleepUntil(end);
             }
@@ -493,7 +493,7 @@ namespace Botcraft
             my_shader = std::make_unique<Shader>();
 
             glEnable(GL_DEPTH_TEST);
-            //glEnable(GL_CULL_FACE); 
+            //glEnable(GL_CULL_FACE);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -659,7 +659,7 @@ namespace Botcraft
                         world_renderer->UpdateChunk(pos.x, pos.z, chunk);
                     }
 
-                    // If we left the game, we don't need to process 
+                    // If we left the game, we don't need to process
                     // the rest of the data, just discard them
                     if (!running)
                     {
@@ -701,7 +701,7 @@ namespace Botcraft
                         world_renderer->UpdateEntity(entity_id, faces);
                     }
 
-                    // If we left the game, we don't need to process 
+                    // If we left the game, we don't need to process
                     // the rest of the data, just discard them
                     if (!running)
                     {
