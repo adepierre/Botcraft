@@ -70,8 +70,8 @@ namespace ProtocolCraft
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
                 shape = ReadData<int>(iter, length);
-                colors = ReadVector<int>(iter, length);
-                fade_colors = ReadVector<int>(iter, length);
+                colors = ReadData<std::vector<int>>(iter, length);
+                fade_colors = ReadData<std::vector<int>>(iter, length);
                 has_trail = ReadData<bool>(iter, length);
                 has_twinkle = ReadData<bool>(iter, length);
             }
@@ -79,8 +79,8 @@ namespace ProtocolCraft
             virtual void WriteImpl(WriteContainer& container) const override
             {
                 WriteData<int>(shape, container);
-                WriteVector<int>(colors, container);
-                WriteVector<int>(fade_colors, container);
+                WriteData<std::vector<int>>(colors, container);
+                WriteData<std::vector<int>>(fade_colors, container);
                 WriteData<bool>(has_trail, container);
                 WriteData<bool>(has_twinkle, container);
             }

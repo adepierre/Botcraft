@@ -124,7 +124,7 @@ namespace ProtocolCraft
             {
                 suggestions[i] = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-                tooltips[i] = ReadOptional<Chat>(iter, length);
+                tooltips[i] = ReadData<std::optional<Chat>>(iter, length);
 #endif
             }
         }
@@ -142,7 +142,7 @@ namespace ProtocolCraft
             {
                 WriteData<std::string>(suggestions[i], container);
 #if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-                WriteOptional<Chat>(tooltips[i], container);
+                WriteData<std::optional<Chat>>(tooltips[i], container);
 #endif
             }
         }

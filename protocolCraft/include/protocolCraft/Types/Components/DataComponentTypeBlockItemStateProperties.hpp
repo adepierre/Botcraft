@@ -31,12 +31,12 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                properties = ReadMap<std::string, std::string>(iter, length);
+                properties = ReadData<std::map<std::string, std::string>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteMap<std::string, std::string>(properties, container);
+                WriteData<std::map<std::string, std::string>>(properties, container);
             }
 
             virtual Json::Value SerializeImpl() const override

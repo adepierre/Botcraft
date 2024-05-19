@@ -66,12 +66,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            tab = ReadOptional<std::string>(iter, length);
+            tab = ReadData<std::optional<std::string>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteOptional<std::string>(tab, container);
+            WriteData<std::optional<std::string>>(tab, container);
         }
 
         virtual Json::Value SerializeImpl() const override

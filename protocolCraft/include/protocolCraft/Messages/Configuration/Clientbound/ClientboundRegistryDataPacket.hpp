@@ -75,7 +75,7 @@ namespace ProtocolCraft
             registry_holder = ReadData<NBT::UnnamedValue>(iter, length);
 #else
             registry = ReadData<Identifier>(iter, length);
-            entries = ReadVector<PackedRegistryEntry>(iter, length);
+            entries = ReadData<std::vector<PackedRegistryEntry>>(iter, length);
 #endif
         }
 
@@ -85,7 +85,7 @@ namespace ProtocolCraft
             WriteData<NBT::UnnamedValue>(registry_holder, container);
 #else
             WriteData<Identifier>(registry, container);
-            WriteVector<PackedRegistryEntry>(entries, container);
+            WriteData<std::vector<PackedRegistryEntry>>(entries, container);
 #endif
         }
 

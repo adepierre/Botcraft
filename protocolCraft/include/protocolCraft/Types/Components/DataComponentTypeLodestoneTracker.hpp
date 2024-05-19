@@ -42,13 +42,13 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                target = ReadOptional<GlobalPos>(iter, length);
+                target = ReadData<std::optional<GlobalPos>>(iter, length);
                 tracked = ReadData<bool>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteOptional<GlobalPos>(target, container);
+                WriteData<std::optional<GlobalPos>>(target, container);
                 WriteData<bool>(tracked, container);
             }
 

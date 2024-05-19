@@ -171,7 +171,7 @@ namespace ProtocolCraft
 #endif
             click_type = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            changed_slots = ReadMap<short, Slot>(iter, length);
+            changed_slots = ReadData<std::map<short, Slot>>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             item_stack = ReadData<Slot>(iter, length);
@@ -193,7 +193,7 @@ namespace ProtocolCraft
 #endif
             WriteData<VarInt>(click_type, container);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            WriteMap<short, Slot>(changed_slots, container);
+            WriteData<std::map<short, Slot>>(changed_slots, container);
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             WriteData<Slot>(item_stack, container);

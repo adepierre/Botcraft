@@ -433,7 +433,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Utilities/GZip.hpp
     include/protocolCraft/Utilities/Json.hpp
     include/protocolCraft/Utilities/RecursiveWrapper.hpp
-    include/protocolCraft/Utilities/TupleCat.hpp
+    include/protocolCraft/Utilities/Templates.hpp
 
     include/protocolCraft/Utilities/Plugins/PluginLoader.hpp
     include/protocolCraft/Utilities/Plugins/PluginObject.hpp

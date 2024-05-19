@@ -27,13 +27,13 @@ namespace ProtocolCraft
         {
             data = data_;
         }
-    
+
 
         const Identifier& GetId_() const
         {
             return id_;
         }
-        
+
         const std::optional<NBT::Value>& GetData() const
         {
             return data;
@@ -43,13 +43,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             id_ = ReadData<Identifier>(iter, length);
-            data = ReadOptional<NBT::UnnamedValue>(iter, length);
+            data = ReadData<std::optional<NBT::Value>, std::optional<NBT::UnnamedValue>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Identifier>(id_, container);
-            WriteOptional<NBT::UnnamedValue>(data, container);
+            WriteData<std::optional<NBT::Value>, std::optional<NBT::UnnamedValue>>(data, container);
         }
 
         virtual Json::Value SerializeImpl() const override

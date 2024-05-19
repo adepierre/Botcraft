@@ -4,7 +4,7 @@
 
 #include "protocolCraft/NetworkType.hpp"
 
-namespace ProtocolCraft 
+namespace ProtocolCraft
 {
     class SoundEvent : public NetworkType
     {
@@ -40,13 +40,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             location = ReadData<Identifier>(iter, length);
-            range = ReadOptional<float>(iter, length);
+            range = ReadData<std::optional<float>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Identifier>(location, container);
-            WriteOptional<float>(range, container);
+            WriteData<std::optional<float>>(range, container);
         }
 
         virtual Json::Value SerializeImpl() const override

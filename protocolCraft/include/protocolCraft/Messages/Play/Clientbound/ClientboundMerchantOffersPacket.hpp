@@ -114,9 +114,10 @@ namespace ProtocolCraft
         {
             container_id = ReadData<VarInt>(iter, length);
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-            offers = ReadVector<MerchantOffer, char>(iter, length);
+            // Special case, the size is a char instead of a varint
+            offers = ReadVector<MerchantOffer, char>(iter, length, ReadData<MerchantOffer>);
 #else
-            offers = ReadVector<MerchantOffer>(iter, length);
+            offers = ReadData<std::vector<MerchantOffer>>(iter, length);
 #endif
             villager_level = ReadData<VarInt>(iter, length);
             villager_xp = ReadData<VarInt>(iter, length);
@@ -128,9 +129,10 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(container_id, container);
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-            WriteVector<MerchantOffer, char>(offers, container);
+            // Special case, the size is a char instead of a varint
+            WriteVector<MerchantOffer, char>(offers, container, WriteData<MerchantOffer>);
 #else
-            WriteVector<MerchantOffer>(offers, container);
+            WriteData<std::vector<MerchantOffer>>(offers, container);
 #endif
             WriteData<VarInt>(villager_level, container);
             WriteData<VarInt>(villager_xp, container);

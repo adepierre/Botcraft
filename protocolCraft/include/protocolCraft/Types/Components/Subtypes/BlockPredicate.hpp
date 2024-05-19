@@ -54,16 +54,16 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                blocks = ReadOptional<HolderSet>(iter, length);
-                properties = ReadOptional<StatePropertiesPredicate>(iter, length);
-                nbt = ReadOptional<NBT::UnnamedValue>(iter, length);
+                blocks = ReadData<std::optional<HolderSet>>(iter, length);
+                properties = ReadData<std::optional<StatePropertiesPredicate>>(iter, length);
+                nbt = ReadData<std::optional<NBT::Value>, std::optional<NBT::UnnamedValue>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteOptional<HolderSet>(blocks, container);
-                WriteOptional<StatePropertiesPredicate>(properties, container);
-                WriteOptional<NBT::UnnamedValue>(nbt, container);
+                WriteData<std::optional<HolderSet>>(blocks, container);
+                WriteData<std::optional<StatePropertiesPredicate>>(properties, container);
+                WriteData<std::optional<NBT::Value>, std::optional<NBT::UnnamedValue>>(nbt, container);
             }
 
             virtual Json::Value SerializeImpl() const override

@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace ProtocolCraft 
+namespace ProtocolCraft
 {
     class GameProfileProperty : public NetworkType
     {
@@ -56,14 +56,14 @@ namespace ProtocolCraft
         {
             name = ReadData<std::string>(iter, length);
             value = ReadData<std::string>(iter, length);
-            signature = ReadOptional<std::string>(iter, length);
+            signature = ReadData<std::optional<std::string>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(name, container);
             WriteData<std::string>(value, container);
-            WriteOptional<std::string>(signature, container);
+            WriteData<std::optional<std::string>>(signature, container);
         }
 
         virtual Json::Value SerializeImpl() const override

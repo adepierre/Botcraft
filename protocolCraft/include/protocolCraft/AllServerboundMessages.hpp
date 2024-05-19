@@ -1,8 +1,6 @@
 #pragma once
 
-#include <tuple>
-
-#include "protocolCraft/Utilities/TupleCat.hpp"
+#include "protocolCraft/Utilities/Templates.hpp"
 
 // Handshaking serverbound
 #include "protocolCraft/Messages/Handshaking/Serverbound/ServerboundClientIntentionPacket.hpp"
@@ -12,7 +10,7 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundCookieResponsePacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */ 
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundCustomQueryPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Login/Serverbound/ServerboundHelloPacket.hpp"

@@ -106,7 +106,7 @@ namespace ProtocolCraft
             command = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION < 345 /* < 1.13 */
             assume_command = ReadData<bool>(iter, length);
-            looked_at_block = ReadOptional<NetworkPosition>(iter, length);
+            looked_at_block = ReadData<std::optional<NetworkPosition>>(iter, length);
 #endif
         }
 
@@ -118,7 +118,7 @@ namespace ProtocolCraft
             WriteData<std::string>(command, container);
 #if PROTOCOL_VERSION < 345 /* < 1.13 */
             WriteData<bool>(assume_command, container);
-            WriteOptional<NetworkPosition>(looked_at_block, container);
+            WriteData<std::optional<NetworkPosition>>(looked_at_block, container);
 #endif
         }
 

@@ -50,14 +50,14 @@ namespace ProtocolCraft
         {
             uuid = ReadData<UUID>(iter, length);
             name = ReadData<Chat>(iter, length);
-            team_name = ReadOptional<Chat>(iter, length);
+            team_name = ReadData<std::optional<Chat>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<UUID>(uuid, container);
             WriteData<Chat>(name, container);
-            WriteOptional<Chat>(team_name, container);
+            WriteData<std::optional<Chat>>(team_name, container);
         }
 
         virtual Json::Value SerializeImpl() const override

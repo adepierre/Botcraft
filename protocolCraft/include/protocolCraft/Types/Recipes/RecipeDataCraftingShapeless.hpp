@@ -68,7 +68,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             cooking_book_category = ReadData<VarInt>(iter, length);
 #endif
-            ingredients = ReadVector<Ingredient>(iter, length);
+            ingredients = ReadData<std::vector<Ingredient>>(iter, length);
             result = ReadData<Slot>(iter, length);
         }
 
@@ -78,7 +78,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
             WriteData<VarInt>(cooking_book_category, container);
 #endif
-            WriteVector<Ingredient>(ingredients, container);
+            WriteData<std::vector<Ingredient>>(ingredients, container);
             WriteData<Slot>(result, container);
         }
 

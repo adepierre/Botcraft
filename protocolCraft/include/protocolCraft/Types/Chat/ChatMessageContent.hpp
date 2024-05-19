@@ -40,13 +40,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             plain = ReadData<std::string>(iter, length);
-            decorated = ReadOptional<Chat>(iter, length);
+            decorated = ReadData<std::optional<Chat>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(plain, container);
-            WriteOptional<Chat>(decorated, container);
+            WriteData<std::optional<Chat>>(decorated, container);
         }
 
         virtual Json::Value SerializeImpl() const override

@@ -34,20 +34,20 @@ namespace ProtocolCraft
 
         void SetFiltered(const std::optional<T>& filtered_)
         {
-            filtered = filtered;
+            filtered = filtered_;
         }
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             raw = ReadData<T>(iter, length);
-            filtered = ReadOptional<T>(iter, length);
+            filtered = ReadData<std::optional<T>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<T>(raw, container);
-            WriteOptional<T>(filtered, container);
+            WriteData<std::optional<T>>(filtered, container);
         }
 
         virtual Json::Value SerializeImpl() const override

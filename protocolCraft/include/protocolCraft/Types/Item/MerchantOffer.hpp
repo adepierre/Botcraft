@@ -159,9 +159,9 @@ namespace ProtocolCraft
 #endif
             output_item = ReadData<Slot>(iter, length);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            input_item_2 = ReadOptional<Slot>(iter, length);
+            input_item_2 = ReadData<std::optional<Slot>>(iter, length);
 #else
-            input_item_2 = ReadOptional<ItemCost>(iter, length);
+            input_item_2 = ReadData<std::optional<ItemCost>>(iter, length);
 #endif
             trade_disabled = ReadData<bool>(iter, length);
             number_of_trades_uses = ReadData<int>(iter, length);
@@ -181,9 +181,9 @@ namespace ProtocolCraft
 #endif
             WriteData<Slot>(output_item, container);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteOptional<Slot>(input_item_2, container);
+            WriteData<std::optional<Slot>>(input_item_2, container);
 #else
-            WriteOptional<ItemCost>(input_item_2, container);
+            WriteData<std::optional<ItemCost>>(input_item_2, container);
 #endif
             WriteData<bool>(trade_disabled, container);
             WriteData<int>(number_of_trades_uses, container);

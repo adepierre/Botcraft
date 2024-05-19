@@ -65,7 +65,7 @@ namespace ProtocolCraft
             url = ReadData<std::string>(iter, length);
             hash = ReadData<std::string>(iter, length);
             required = ReadData<bool>(iter, length);
-            prompt = ReadOptional<Chat>(iter, length);
+            prompt = ReadData<std::optional<Chat>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -73,7 +73,7 @@ namespace ProtocolCraft
             WriteData<std::string>(url, container);
             WriteData<std::string>(hash, container);
             WriteData<bool>(required, container);
-            WriteOptional<Chat>(prompt, container);
+            WriteData<std::optional<Chat>>(prompt, container);
         }
 
         virtual Json::Value SerializeImpl() const override

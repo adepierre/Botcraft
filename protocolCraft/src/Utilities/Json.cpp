@@ -101,7 +101,7 @@ namespace ProtocolCraft
             val = std::move(new_val);
         }
 
-        Value::Value(const NetworkType& o) : val(std::move(o.Serialize().val))
+        Value::Value(const ProtocolCraft::NetworkType& o) : val(std::move(o.Serialize().val))
         {
 
         }
@@ -228,7 +228,7 @@ namespace ProtocolCraft
 
             return is;
         }
-        
+
         bool Value::contains(const std::string& s) const
         {
             return is_object() && get<Object>().count(s);

@@ -54,16 +54,16 @@ namespace ProtocolCraft
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
                 blocks = ReadData<HolderSet>(iter, length);
-                speed = ReadOptional<float>(iter, length);
-                correct_for_drop = ReadOptional<bool>(iter, length);
+                speed = ReadData<std::optional<float>>(iter, length);
+                correct_for_drop = ReadData<std::optional<bool>>(iter, length);
 
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
                 WriteData<HolderSet>(blocks, container);
-                WriteOptional<float>(speed, container);
-                WriteOptional<bool>(correct_for_drop, container);
+                WriteData<std::optional<float>>(speed, container);
+                WriteData<std::optional<bool>>(correct_for_drop, container);
             }
 
             virtual Json::Value SerializeImpl() const override

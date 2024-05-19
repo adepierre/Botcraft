@@ -39,26 +39,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            tags = ReadMap<Identifier, std::vector<BlockEntityTag>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    const Identifier key = ReadData<Identifier>(i, l);
-                    const std::vector<BlockEntityTag> val = ReadVector<BlockEntityTag>(i, l);
-
-                    return std::make_pair(key, val);
-                }
-            );
+            tags = ReadData<std::map<Identifier, std::vector<BlockEntityTag>>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteMap<Identifier, std::vector<BlockEntityTag>>(tags, container,
-                [](const std::pair<const Identifier, std::vector<BlockEntityTag>>& p, WriteContainer& c)
-                {
-                    WriteData<Identifier>(p.first, c);
-                    WriteVector<BlockEntityTag>(p.second, c);
-                }
-            );
+            WriteData<std::map<Identifier, std::vector<BlockEntityTag>>>(tags, container);
         }
 
         virtual Json::Value SerializeImpl() const override

@@ -512,7 +512,7 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             case EntityMetadataTypes::Particles:
-                value = ProtocolCraft::ReadVector<ProtocolCraft::Particle>(iter, length);
+                value = ProtocolCraft::ReadData<std::vector<ProtocolCraft::Particle>>(iter, length);
                 break;
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
@@ -981,7 +981,7 @@ namespace Botcraft
             are_rendered_faces_up_to_date = false;
             for (size_t i = 0; i < faces.size(); ++i)
             {
-                std::static_pointer_cast<Renderer::Rotation>(face_descriptors[i].transformations.rotations.back())->deg_angle = pitch_; 
+                std::static_pointer_cast<Renderer::Rotation>(face_descriptors[i].transformations.rotations.back())->deg_angle = pitch_;
             }
         }
 #endif

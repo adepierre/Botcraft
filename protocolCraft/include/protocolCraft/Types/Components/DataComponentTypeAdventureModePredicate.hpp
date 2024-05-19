@@ -42,13 +42,13 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                predicates = ReadVector<BlockPredicate>(iter, length);
+                predicates = ReadData<std::vector<BlockPredicate>>(iter, length);
                 show_in_tooltip = ReadData<bool>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteVector<BlockPredicate>(predicates, container);
+                WriteData<std::vector<BlockPredicate>>(predicates, container);
                 WriteData<bool>(show_in_tooltip, container);
             }
 

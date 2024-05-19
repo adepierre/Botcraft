@@ -50,6 +50,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             key = ReadData<Identifier>(iter, length);
+            // special case, read all remaining bytes
             payload = ReadOptional<std::vector<unsigned char>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
@@ -61,6 +62,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Identifier>(key, container);
+            // special case, write all bytes without size prefix
             WriteOptional<std::vector<unsigned char>>(payload, container,
                 [](const std::vector<unsigned char>& v, WriteContainer& c)
                 {

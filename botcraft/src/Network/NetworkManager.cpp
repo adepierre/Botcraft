@@ -381,7 +381,7 @@ namespace Botcraft
             }
         }
     }
-    
+
     void NetworkManager::OnNewRawData(const std::vector<unsigned char>& packet)
     {
         {
@@ -521,7 +521,7 @@ namespace Botcraft
         {
             std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
 
-            chat_context.AddSeenMessage(msg.GetSignature().value());
+            chat_context.AddSeenMessage(std::vector<unsigned char>(msg.GetSignature().value().begin(), msg.GetSignature().value().end()));
 
             if (chat_context.GetOffset() > 64)
             {

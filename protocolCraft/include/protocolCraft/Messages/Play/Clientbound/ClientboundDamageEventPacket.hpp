@@ -88,16 +88,7 @@ namespace ProtocolCraft
             source_type_id = ReadData<VarInt>(iter, length);
             source_cause_id = ReadData<VarInt>(iter, length) - 1;
             source_direct_id = ReadData<VarInt>(iter, length) - 1;
-            source_position = ReadOptional<std::array<double, 3>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    std::array<double, 3> output;
-                    output[0] = ReadData<double>(i, l);
-                    output[1] = ReadData<double>(i, l);
-                    output[2] = ReadData<double>(i, l);
-                    return output;
-                }
-            );
+            source_position = ReadData<std::optional<std::array<double, 3>>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -106,14 +97,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(source_type_id, container);
             WriteData<VarInt>(source_cause_id + 1, container);
             WriteData<VarInt>(source_direct_id + 1, container);
-            WriteOptional<std::array<double, 3>>(source_position, container,
-                [](const std::array<double, 3>& v, WriteContainer& c)
-                {
-                    WriteData<double>(v[0], c);
-                    WriteData<double>(v[1], c);
-                    WriteData<double>(v[2], c);
-                }
-            );
+            WriteData<std::optional<std::array<double, 3>>>(source_position, container);
         }
 
         virtual Json::Value SerializeImpl() const override

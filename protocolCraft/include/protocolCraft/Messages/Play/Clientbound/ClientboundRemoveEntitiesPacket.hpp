@@ -67,22 +67,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_ids = ReadVector<int>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadData<VarInt>(i, l);
-                }
-            );
+            entity_ids = ReadData<std::vector<VarInt>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVector<int>(entity_ids, container,
-                [](const int& i, WriteContainer& c)
-                {
-                    WriteData<VarInt>(i, c);
-                }
-            );
+            WriteData<std::vector<VarInt>>(entity_ids, container);
         }
 
         virtual Json::Value SerializeImpl() const override

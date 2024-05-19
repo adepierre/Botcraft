@@ -39,7 +39,7 @@ namespace ProtocolCraft
         {
 
         }
-        
+
         void SetX(const int x_)
         {
             x = x_;
@@ -170,7 +170,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             available_sections = ReadData<VarInt>(iter, length);
 #else
-            available_sections = ReadVector<unsigned long long int>(iter, length);
+            available_sections = ReadData<std::vector<unsigned long long int>>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 442 /* > 1.13.2 */
             heightmaps = ReadData<NBT::UnnamedValue>(iter, length);
@@ -181,12 +181,7 @@ namespace ProtocolCraft
             {
 #endif
 #if PROTOCOL_VERSION > 738 /* > 1.16.1 */
-                biomes = ReadVector<int>(iter, length,
-                    [](ReadIterator& i, size_t& l)
-                    {
-                        return ReadData<VarInt>(i, l);
-                    }
-                );
+                biomes = ReadData<std::vector<VarInt>>(iter, length);
 #else
                 biomes = std::vector<int>(1024);
                 for (size_t i = 0; i < biomes.size(); ++i)
@@ -198,13 +193,8 @@ namespace ProtocolCraft
             }
 #endif
 #endif
-            buffer = ReadVector<unsigned char>(iter, length);
-            block_entities_tags = ReadVector<NBT::Value>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadData<NBT::UnnamedValue>(i, l);
-                }
-            );
+            buffer = ReadData<std::vector<unsigned char>>(iter, length);
+            block_entities_tags = ReadData<std::vector<NBT::Value>, std::vector<NBT::UnnamedValue>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -220,7 +210,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             WriteData<VarInt>(available_sections, container);
 #else
-            WriteVector<unsigned long long int>(available_sections, container);
+            WriteData<std::vector<unsigned long long int>>(available_sections, container);
 #endif
 #if PROTOCOL_VERSION > 442 /* > 1.13.2 */
             WriteData<NBT::UnnamedValue>(heightmaps, container);
@@ -231,12 +221,7 @@ namespace ProtocolCraft
             {
 #endif
 #if PROTOCOL_VERSION > 738 /* > 1.16.1 */
-                WriteVector<int>(biomes, container,
-                    [](const int& i, WriteContainer& c)
-                    {
-                        WriteData<VarInt>(i, c);
-                    }
-                );
+                WriteData<std::vector<VarInt>>(biomes, container);
 #else
                 for (const auto i : biomes)
                 {
@@ -247,13 +232,8 @@ namespace ProtocolCraft
             }
 #endif
 #endif
-            WriteVector<unsigned char>(buffer, container);
-            WriteVector<NBT::Value>(block_entities_tags, container,
-                [](const NBT::UnnamedValue& i, WriteContainer& c)
-                {
-                    WriteData<NBT::UnnamedValue>(i, c);
-                }
-            );
+            WriteData<std::vector<unsigned char>>(buffer, container);
+            WriteData<std::vector<NBT::Value>, std::vector<NBT::UnnamedValue>>(block_entities_tags, container);
         }
 
         virtual Json::Value SerializeImpl() const override

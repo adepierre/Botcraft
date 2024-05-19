@@ -5,12 +5,12 @@ namespace ProtocolCraft
 {
     DustColorTransitionOptions::DustColorTransitionOptions()
     {
-        
+
     }
-    
+
     DustColorTransitionOptions::~DustColorTransitionOptions()
     {
-        
+
     }
 
 
@@ -83,7 +83,7 @@ namespace ProtocolCraft
     {
         to_blue = to_blue_;
     }
-    
+
     void DustColorTransitionOptions::ReadImpl(ReadIterator& iter, size_t& length)
     {
         from_red = ReadData<float>(iter, length);
@@ -99,23 +99,23 @@ namespace ProtocolCraft
         scale = ReadData<float>(iter, length);
 #endif
     }
-    
+
     void DustColorTransitionOptions::WriteImpl(WriteContainer& container) const
     {
-        WriteData(from_red, container);
-        WriteData(from_green, container);
-        WriteData(from_blue, container);
+        WriteData<float>(from_red, container);
+        WriteData<float>(from_green, container);
+        WriteData<float>(from_blue, container);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        WriteData(scale, container);
+        WriteData<float>(scale, container);
 #endif
-        WriteData(to_red, container);
-        WriteData(to_green, container);
-        WriteData(to_blue, container);
+        WriteData<float>(to_red, container);
+        WriteData<float>(to_green, container);
+        WriteData<float>(to_blue, container);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4> */
-        WriteData(scale, container);
+        WriteData<float>(scale, container);
 #endif
     }
-    
+
     Json::Value DustColorTransitionOptions::SerializeImpl() const
     {
         Json::Value output;

@@ -10,7 +10,7 @@
 #include "protocolCraft/Types/GameProfile/ProfilePublicKey.hpp"
 #endif
 
-namespace ProtocolCraft 
+namespace ProtocolCraft
 {
     class PlayerUpdate : public NetworkType
     {
@@ -94,24 +94,24 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             name = ReadData<std::string>(iter, length);
-            properties = ReadVector<GameProfileProperty>(iter, length);
+            properties = ReadData<std::vector<GameProfileProperty>>(iter, length);
             game_mode = ReadData<VarInt>(iter, length);
             latency = ReadData<VarInt>(iter, length);
-            display_name = ReadOptional<Chat>(iter, length);
+            display_name = ReadData<std::optional<Chat>>(iter, length);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            profile_public_key = ReadOptional<ProfilePublicKey>(iter, length);
+            profile_public_key = ReadData<std::optional<ProfilePublicKey>>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(name, container);
-            WriteVector<GameProfileProperty>(properties, container);
+            WriteData<std::vector<GameProfileProperty>>(properties, container);
             WriteData<VarInt>(game_mode, container);
             WriteData<VarInt>(latency, container);
-            WriteOptional<Chat>(display_name, container);
+            WriteData<std::optional<Chat>>(display_name, container);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteOptional<ProfilePublicKey>(profile_public_key, container);
+            WriteData<std::optional<ProfilePublicKey>>(profile_public_key, container);
 #endif
         }
 

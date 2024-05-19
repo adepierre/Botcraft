@@ -124,27 +124,17 @@ namespace ProtocolCraft
             book_settings = ReadData<RecipeBookSettings>(iter, length);
 
 #if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-            recipes = ReadVector<Identifier>(iter, length);
+            recipes = ReadData<std::vector<Identifier>>(iter, length);
 #else
-            recipes = ReadVector<int>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadData<VarInt>(i, l);
-                }
-            );
+            recipes = ReadData<std::vector<VarInt>>(iter, length);
 #endif
 
             if (state == RecipeState::Init)
             {
 #if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-                to_highlight = ReadVector<Identifier>(iter, length);
+                to_highlight = ReadData<std::vector<Identifier>>(iter, length);
 #else
-                to_highlight = ReadVector<int>(iter, length,
-                    [](ReadIterator& i, size_t& l)
-                    {
-                        return ReadData<VarInt>(i, l);
-                    }
-                );
+                to_highlight = ReadData<std::vector<VarInt>>(iter, length);
 #endif
             }
         }
@@ -157,28 +147,18 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 348 /* > 1.12.2 */
 
-            WriteVector<Identifier>(recipes, container);
+            WriteData<std::vector<Identifier>>(recipes, container);
 #else
-            WriteVector<int>(recipes, container,
-                [](const int& i, WriteContainer& c)
-                {
-                    WriteData<VarInt>(i, c);
-                }
-            );
+            WriteData<std::vector<VarInt>>(recipes, container);
 #endif
 
             if (state == RecipeState::Init)
             {
 #if PROTOCOL_VERSION > 348 /* > 1.12.2 */
 
-                WriteVector<Identifier>(to_highlight, container);
+                WriteData<std::vector<Identifier>>(to_highlight, container);
 #else
-                WriteVector<int>(to_highlight, container,
-                    [](const int& i, WriteContainer& c)
-                    {
-                        WriteData<VarInt>(i, c);
-                    }
-                );
+                WriteData<std::vector<VarInt>>(to_highlight, container);
 #endif
             }
         }

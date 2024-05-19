@@ -115,16 +115,11 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
-            motd = ReadOptional<Chat>(iter, length);
-            icon_base_64 = ReadOptional<std::string>(iter, length);
+            motd = ReadData<std::optional<Chat>>(iter, length);
+            icon_base_64 = ReadData<std::optional<std::string>>(iter, length);
 #else
             motd = ReadData<Chat>(iter, length);
-            icon_bytes = ReadOptional<std::vector<unsigned char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadVector<unsigned char>(i, l);
-                }
-            );
+            icon_bytes = ReadData<std::optional<std::vector<unsigned char>>>(iter, length);
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             previews_chat = ReadData<bool>(iter, length);
@@ -137,16 +132,11 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
-            WriteOptional<Chat>(motd, container);
-            WriteOptional<std::string>(icon_base_64, container);
+            WriteData<std::optional<Chat>>(motd, container);
+            WriteData<std::optional<std::string>>(icon_base_64, container);
 #else
             WriteData<Chat>(motd, container);
-            WriteOptional<std::vector<unsigned char>>(icon_bytes, container,
-                [](const std::vector<unsigned char>& v, WriteContainer& c)
-                {
-                    WriteVector<unsigned char>(v, c);
-                }
-            );
+            WriteData<std::optional<std::vector<unsigned char>>>(icon_bytes, container);
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<bool>(previews_chat, container);

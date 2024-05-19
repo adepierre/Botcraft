@@ -84,9 +84,10 @@ namespace ProtocolCraft
             switch (action)
             {
             case PlayerInfoAction::AddPlayer:
-                entries = ReadMap<UUID, PlayerUpdate>(iter, length);
+                entries = ReadData<std::map<UUID, PlayerUpdate>>(iter, length);
                 break;
             case PlayerInfoAction::UpdateGameMode:
+                // Special case, partial read
                 entries = ReadMap<UUID, PlayerUpdate>(iter, length,
                     [](ReadIterator& i, size_t& l)
                     {
@@ -99,6 +100,7 @@ namespace ProtocolCraft
                 );
                 break;
             case PlayerInfoAction::UpdateLatency:
+                // Special case, partial read
                 entries = ReadMap<UUID, PlayerUpdate>(iter, length,
                     [](ReadIterator& i, size_t& l)
                     {
@@ -111,18 +113,20 @@ namespace ProtocolCraft
                 );
                 break;
             case PlayerInfoAction::UpdateDisplayName:
+                // Special case, partial read
                 entries = ReadMap<UUID, PlayerUpdate>(iter, length,
                     [](ReadIterator& i, size_t& l)
                     {
                         const UUID uuid = ReadData<UUID>(i, l);
                         PlayerUpdate player_update;
-                        player_update.SetDisplayName(ReadOptional<Chat>(i, l));
+                        player_update.SetDisplayName(ReadData<std::optional<Chat>>(i, l));
 
                         return std::make_pair(uuid, player_update);
                     }
                 );
                 break;
             case PlayerInfoAction::RemovePlayer:
+                // Special case, partial read
                 entries = ReadMap<UUID, PlayerUpdate>(iter, length,
                     [](ReadIterator& i, size_t& l)
                     {
@@ -143,9 +147,10 @@ namespace ProtocolCraft
             switch (action)
             {
             case PlayerInfoAction::AddPlayer:
-                WriteMap<UUID, PlayerUpdate>(entries, container);
+                WriteData<std::map<UUID, PlayerUpdate>>(entries, container);
                 break;
             case PlayerInfoAction::UpdateGameMode:
+                // Special case, partial write
                 WriteMap<UUID, PlayerUpdate>(entries, container,
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
@@ -155,6 +160,7 @@ namespace ProtocolCraft
                 );
                 break;
             case PlayerInfoAction::UpdateLatency:
+                // Special case, partial write
                 WriteMap<UUID, PlayerUpdate>(entries, container,
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
@@ -164,15 +170,17 @@ namespace ProtocolCraft
                 );
                 break;
             case PlayerInfoAction::UpdateDisplayName:
+                // Special case, partial write
                 WriteMap<UUID, PlayerUpdate>(entries, container,
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
                         WriteData<UUID>(p.first, c);
-                        WriteOptional<Chat>(p.second.GetDisplayName(), c);
+                        WriteData<std::optional<Chat>>(p.second.GetDisplayName(), c);
                     }
                 );
                 break;
             case PlayerInfoAction::RemovePlayer:
+                // Special case, partial write
                 WriteMap<UUID, PlayerUpdate>(entries, container,
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {

@@ -50,15 +50,15 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             heightmaps = ReadData<NBT::UnnamedValue>(iter, length);
-            buffer = ReadVector<unsigned char>(iter, length);
-            block_entities_data = ReadVector<BlockEntityInfo>(iter, length);
+            buffer = ReadData<std::vector<unsigned char>>(iter, length);
+            block_entities_data = ReadData<std::vector<BlockEntityInfo>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<NBT::UnnamedValue>(heightmaps, container);
-            WriteVector<unsigned char>(buffer, container);
-            WriteVector<BlockEntityInfo>(block_entities_data, container);
+            WriteData<std::vector<unsigned char>>(buffer, container);
+            WriteData<std::vector<BlockEntityInfo>>(block_entities_data, container);
         }
 
         virtual Json::Value SerializeImpl() const override

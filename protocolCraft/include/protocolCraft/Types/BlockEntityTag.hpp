@@ -5,7 +5,7 @@
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
 
-namespace ProtocolCraft 
+namespace ProtocolCraft
 {
     class BlockEntityTag : public NetworkType
     {
@@ -40,23 +40,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             tag_name = ReadData<Identifier>(iter, length);
-            entries = ReadVector<int>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return static_cast<int>(ReadData<VarInt>(i, l));
-                }
-            );
+            entries = ReadData<std::vector<VarInt>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<Identifier>(tag_name, container);
-            WriteVector<int>(entries, container,
-                [](const int& i, WriteContainer& c)
-                {
-                    WriteData<VarInt>(i, c);
-                }
-            );
+            WriteData<std::vector<VarInt>>(entries, container);
         }
 
         virtual Json::Value SerializeImpl() const override

@@ -70,13 +70,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            nodes = ReadVector<CommandNode>(iter, length);
+            nodes = ReadData<std::vector<CommandNode>>(iter, length);
             root_index = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVector<CommandNode>(nodes, container);
+            WriteData<std::vector<CommandNode>>(nodes, container);
             WriteData<VarInt>(root_index, container);
         }
 

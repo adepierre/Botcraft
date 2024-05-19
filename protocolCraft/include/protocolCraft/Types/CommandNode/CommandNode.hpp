@@ -8,7 +8,7 @@
 #include "protocolCraft/Types/Identifier.hpp"
 
 
-namespace ProtocolCraft 
+namespace ProtocolCraft
 {
     class CommandNode : public NetworkType
     {
@@ -107,12 +107,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             flags = ReadData<char>(iter, length);
-            children = ReadVector<int>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadData<VarInt>(i, l);
-                }
-            );
+            children = ReadData<std::vector<VarInt>>(iter, length);
             if (flags & 0x08)
             {
                 redirect_node = ReadData<VarInt>(iter, length);
@@ -142,12 +137,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<char>(flags, container);
-            WriteVector<int>(children, container,
-                [](const int& i, WriteContainer& c)
-                {
-                    WriteData<VarInt>(i, c);
-                }
-            );
+            WriteData<std::vector<VarInt>>(children, container);
             if (flags & 0x08)
             {
                 WriteData<VarInt>(redirect_node, container);

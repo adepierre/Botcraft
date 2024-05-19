@@ -72,18 +72,18 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             signed_header = ReadData<SignedMessageHeader>(iter, length);
-            header_signature = ReadVector<unsigned char>(iter, length);
+            header_signature = ReadData<std::vector<unsigned char>>(iter, length);
             signed_body = ReadData<SignedMessageBody>(iter, length);
-            unsigned_content = ReadOptional<Chat>(iter, length);
+            unsigned_content = ReadData<std::optional<Chat>>(iter, length);
             filter_mask = ReadData<FilterMask>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<SignedMessageHeader>(signed_header, container);
-            WriteVector<unsigned char>(header_signature, container);
+            WriteData<std::vector<unsigned char>>(header_signature, container);
             WriteData<SignedMessageBody>(signed_body, container);
-            WriteOptional<Chat>(unsigned_content, container);
+            WriteData<std::optional<Chat>>(unsigned_content, container);
             WriteData<FilterMask>(filter_mask, container);
         }
 

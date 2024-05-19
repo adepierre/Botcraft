@@ -63,10 +63,10 @@ namespace ProtocolCraft
 
     void DustParticleOptions::WriteImpl(WriteContainer& container) const
     {
-        WriteData(red, container);
-        WriteData(green, container);
-        WriteData(blue, container);
-        WriteData(scale, container);
+        WriteData<float>(red, container);
+        WriteData<float>(green, container);
+        WriteData<float>(blue, container);
+        WriteData<float>(scale, container);
     }
 
     Json::Value DustParticleOptions::SerializeImpl() const

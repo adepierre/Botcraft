@@ -126,7 +126,7 @@ namespace ProtocolCraft
             index = index_;
         }
 
-        void SetSignature(const std::optional<std::vector<unsigned char>>& signature_)
+        void SetSignature(const std::optional<std::array<unsigned char, 256>>& signature_)
         {
             signature = signature_;
         }
@@ -169,7 +169,7 @@ namespace ProtocolCraft
             return index;
         }
 
-        const std::optional<std::vector<unsigned char>>& GetSignature() const
+        const std::optional<std::array<unsigned char, 256>>& GetSignature() const
         {
             return signature;
         }
@@ -201,7 +201,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 760 /* < 1.19.1 */
             signed_content = ReadData<Chat>(iter, length);
-            unsigned_content = ReadOptional<Chat>(iter, length);
+            unsigned_content = ReadData<std::optional<Chat>>(iter, length);
             type_id = ReadData<VarInt>(iter, length);
             sender = ReadData<ChatSender>(iter, length);
             timestamp = ReadData<long long int>(iter, length);
@@ -212,14 +212,9 @@ namespace ProtocolCraft
 #else
             sender = ReadData<UUID>(iter, length);
             index = ReadData<VarInt>(iter, length);
-            signature = ReadOptional<std::vector<unsigned char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadByteArray(i, l, 256);
-                }
-            );
+            signature = ReadData<std::optional<std::array<unsigned char, 256>>>(iter, length);
             body = ReadData<SignedMessageBody>(iter, length);
-            unsigned_content = ReadOptional<Chat>(iter, length);
+            unsigned_content = ReadData<std::optional<Chat>>(iter, length);
             filter_mask = ReadData<FilterMask>(iter, length);
 #endif
             chat_type = ReadData<ChatTypeBoundNetwork>(iter, length);
@@ -241,14 +236,9 @@ namespace ProtocolCraft
 #else
             WriteData<UUID>(sender, container);
             WriteData<VarInt>(index, container);
-            WriteOptional<std::vector<unsigned char>>(signature, container,
-                [](const std::vector<unsigned char>& v, WriteContainer& c)
-                {
-                    WriteByteArray(v, c);
-                }
-            );
+            WriteData<std::optional<std::array<unsigned char, 256>>>(signature, container);
             WriteData<SignedMessageBody>(body, container);
-            WriteOptional<Chat>(unsigned_content, container);
+            WriteData<std::optional<Chat>>(unsigned_content, container);
             WriteData<FilterMask>(filter_mask, container);
 #endif
             WriteData<ChatTypeBoundNetwork>(chat_type, container);
@@ -307,7 +297,7 @@ namespace ProtocolCraft
 #else
         UUID sender = {};
         int index = 0;
-        std::optional<std::vector<unsigned char>> signature;
+        std::optional<std::array<unsigned char, 256>> signature;
         SignedMessageBody body;
         std::optional<Chat> unsigned_content;
         FilterMask filter_mask;

@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace ProtocolCraft 
+namespace ProtocolCraft
 {
     class Identifier : public NetworkType
     {
@@ -19,7 +19,7 @@ namespace ProtocolCraft
         {
 
         }
-        
+
         const bool operator <(const Identifier& rhs) const
         {
             return name < rhs.name ||

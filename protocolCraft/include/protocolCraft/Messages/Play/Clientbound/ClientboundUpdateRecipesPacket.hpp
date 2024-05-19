@@ -68,12 +68,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            recipes = ReadVector<Recipe>(iter, length);
+            recipes = ReadData<std::vector<Recipe>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVector<Recipe>(recipes, container);
+            WriteData<std::vector<Recipe>>(recipes, container);
         }
 
         virtual Json::Value SerializeImpl() const override

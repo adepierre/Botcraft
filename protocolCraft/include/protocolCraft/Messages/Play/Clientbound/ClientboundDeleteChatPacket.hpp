@@ -64,7 +64,7 @@ namespace ProtocolCraft
                 message_signature = ReadByteArray(iter, length, 256);
             }
 #else
-            message_signature = ReadVector<unsigned char>(iter, length);
+            message_signature = ReadData<std::vector<unsigned char>>(iter, length);
 #endif
         }
 
@@ -77,7 +77,7 @@ namespace ProtocolCraft
                 WriteByteArray(message_signature, container);
             }
 #else
-            WriteVector<unsigned char>(message_signature, container);
+            WriteData<std::vector<unsigned char>>(message_signature, container);
 #endif
         }
 

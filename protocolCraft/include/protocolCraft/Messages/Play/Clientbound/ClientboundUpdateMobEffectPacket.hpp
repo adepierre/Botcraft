@@ -166,7 +166,7 @@ namespace ProtocolCraft
             effect_duration_ticks = ReadData<VarInt>(iter, length);
             flags = ReadData<char>(iter, length);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            factor_data = ReadOptional<NBT::UnnamedValue>(iter, length);
+            factor_data = ReadData<std::optional<NBT::Value>, std::optional<NBT::UnnamedValue>>(iter, length);
 #endif
         }
 
@@ -186,7 +186,7 @@ namespace ProtocolCraft
             WriteData<VarInt>(effect_duration_ticks, container);
             WriteData<char>(flags, container);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteOptional<NBT::UnnamedValue>(factor_data, container);
+            WriteData<std::optional<NBT::Value>, std::optional<NBT::UnnamedValue>>(factor_data, container);
 #endif
         }
 

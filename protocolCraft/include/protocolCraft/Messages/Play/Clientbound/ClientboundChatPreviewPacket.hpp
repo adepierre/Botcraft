@@ -31,8 +31,8 @@ namespace ProtocolCraft
         {
             preview = preview_;
         }
-        
-        
+
+
         char GetQueryId() const
         {
             return query_id;
@@ -48,13 +48,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             query_id = ReadData<int>(iter, length);
-            preview = ReadOptional<Chat>(iter, length);
+            preview = ReadData<std::optional<Chat>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<int>(query_id, container);
-            WriteOptional<Chat>(preview, container);
+            WriteData<std::optional<Chat>>(preview, container);
         }
 
         virtual Json::Value SerializeImpl() const override

@@ -50,22 +50,16 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                potion_id = ReadOptional<int>(iter, length, [](ReadIterator& i, size_t& l)
-                    {
-                        return ReadData<VarInt>(i, l);
-                    });
-                custom_color = ReadOptional<int>(iter, length);
-                custom_effects = ReadVector<MobEffectInstance>(iter, length);
+                potion_id = ReadData<std::optional<VarInt>>(iter, length);
+                custom_color = ReadData<std::optional<int>>(iter, length);
+                custom_effects = ReadData<std::vector<MobEffectInstance>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteOptional<int>(potion_id, container, [](const int& i, WriteContainer& c)
-                    {
-                        WriteData<VarInt>(i, c);
-                    });
-                WriteOptional<int>(custom_color, container);
-                WriteVector<MobEffectInstance>(custom_effects, container);
+                WriteData<std::optional<VarInt>>(potion_id, container);
+                WriteData<std::optional<int>>(custom_color, container);
+                WriteData<std::vector<MobEffectInstance>>(custom_effects, container);
             }
 
             virtual Json::Value SerializeImpl() const override

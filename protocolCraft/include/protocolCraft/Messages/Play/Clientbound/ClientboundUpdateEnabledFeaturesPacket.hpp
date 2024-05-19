@@ -42,12 +42,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            features = ReadVector<Identifier>(iter, length);
+            features = ReadData<std::vector<Identifier>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVector<Identifier>(features, container);
+            WriteData<std::vector<Identifier>>(features, container);
         }
 
         virtual Json::Value SerializeImpl() const override

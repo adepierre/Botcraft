@@ -39,13 +39,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             pos = ReadData<ChunkPos>(iter, length);
-            buffer = ReadVector<unsigned char>(iter, length);
+            buffer = ReadData<std::vector<unsigned char>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<ChunkPos>(pos, container);
-            WriteVector<unsigned char>(buffer, container);
+            WriteData<std::vector<unsigned char>>(buffer, container);
         }
 
         virtual Json::Value SerializeImpl() const override

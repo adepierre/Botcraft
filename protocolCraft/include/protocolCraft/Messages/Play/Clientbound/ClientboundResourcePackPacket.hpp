@@ -104,7 +104,7 @@ namespace ProtocolCraft
             hash = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             required = ReadData<bool>(iter, length);
-            prompt = ReadOptional<Chat>(iter, length);
+            prompt = ReadData<std::optional<Chat>>(iter, length);
 #endif
         }
 
@@ -114,7 +114,7 @@ namespace ProtocolCraft
             WriteData<std::string>(hash, container);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             WriteData<bool>(required, container);
-            WriteOptional<Chat>(prompt, container);
+            WriteData<std::optional<Chat>>(prompt, container);
 #endif
         }
 

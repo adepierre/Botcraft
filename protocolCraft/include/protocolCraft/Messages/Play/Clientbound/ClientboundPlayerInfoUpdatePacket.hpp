@@ -87,7 +87,7 @@ namespace ProtocolCraft
         {
             // Get the number of bits to encode all possible actions in a bitset
             constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
-            std::bitset<bitset_size> bitset = ReadBitset<bitset_size>(iter, length);
+            std::bitset<bitset_size> bitset = ReadData<std::bitset<bitset_size>>(iter, length);
             actions.clear();
             for (size_t i = 0; i < bitset_size; ++i)
             {
@@ -109,10 +109,10 @@ namespace ProtocolCraft
                     case PlayerInfoUpdateAction::AddPlayer:
                         entry.game_profile.SetUUID(uuid);
                         entry.game_profile.SetName(ReadData<std::string>(iter, length));
-                        entry.game_profile.SetProperties(ReadVector<GameProfileProperty>(iter, length));
+                        entry.game_profile.SetProperties(ReadData<std::vector<GameProfileProperty>>(iter, length));
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
-                        entry.chat_session = ReadOptional<RemoteChatSessionData>(iter, length);
+                        entry.chat_session = ReadData<std::optional<RemoteChatSessionData>>(iter, length);
                         break;
                     case PlayerInfoUpdateAction::UpdateGameMode:
                         entry.game_mode = ReadData<VarInt>(iter, length);
@@ -124,7 +124,7 @@ namespace ProtocolCraft
                         entry.latency = ReadData<VarInt>(iter, length);
                         break;
                     case PlayerInfoUpdateAction::UpdateDisplayName:
-                        entry.display_name = ReadOptional<Chat>(iter, length);
+                        entry.display_name = ReadData<std::optional<Chat>>(iter, length);
                         break;
                     default:
                         break;
@@ -141,7 +141,7 @@ namespace ProtocolCraft
             {
                 bitset.set(static_cast<size_t>(a), true);
             }
-            WriteBitset<bitset_size>(bitset, container);
+            WriteData<std::bitset<bitset_size>>(bitset, container);
 
             WriteData<VarInt>(static_cast<int>(entries.size()), container);
             for (const auto& p : entries)
@@ -153,10 +153,10 @@ namespace ProtocolCraft
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
                         WriteData<std::string>(p.second.game_profile.GetName(), container);
-                        WriteVector<GameProfileProperty>(p.second.game_profile.GetProperties(), container);
+                        WriteData<std::vector<GameProfileProperty>>(p.second.game_profile.GetProperties(), container);
                         break;
                     case PlayerInfoUpdateAction::InitializeChat:
-                        WriteOptional<RemoteChatSessionData>(p.second.chat_session, container);
+                        WriteData<std::optional<RemoteChatSessionData>>(p.second.chat_session, container);
                         break;
                     case PlayerInfoUpdateAction::UpdateGameMode:
                         WriteData<VarInt>(p.second.game_mode, container);
@@ -168,7 +168,7 @@ namespace ProtocolCraft
                         WriteData<VarInt>(p.second.latency, container);
                         break;
                     case PlayerInfoUpdateAction::UpdateDisplayName:
-                        WriteOptional<Chat>(p.second.display_name, container);
+                        WriteData<std::optional<Chat>>(p.second.display_name, container);
                         break;
                     default:
                         break;

@@ -19,18 +19,18 @@ namespace ProtocolCraft
         {
             salt = salt_;
         }
-        
+
         void SetSignature(const std::vector<unsigned char>& signature_)
         {
             signature = signature_;
         }
-    
+
 
         long long int GetSalt() const
         {
             return salt;
         }
-        
+
         const std::vector<unsigned char>& GetSignature() const
         {
             return signature;
@@ -40,13 +40,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             salt = ReadData<long long int>(iter, length);
-            signature = ReadVector<unsigned char>(iter, length);
+            signature = ReadData<std::vector<unsigned char>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<long long int>(salt, container);
-            WriteVector<unsigned char>(signature, container);
+            WriteData<std::vector<unsigned char>>(signature, container);
         }
 
         virtual Json::Value SerializeImpl() const override

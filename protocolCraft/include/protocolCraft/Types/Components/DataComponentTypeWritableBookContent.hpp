@@ -33,12 +33,12 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                pages = ReadVector<Filterable<std::string>>(iter, length);
+                pages = ReadData<std::vector<Filterable<std::string>>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteVector<Filterable<std::string>>(pages, container);
+                WriteData<std::vector<Filterable<std::string>>>(pages, container);
             }
 
             virtual Json::Value SerializeImpl() const override

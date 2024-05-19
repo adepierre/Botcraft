@@ -95,25 +95,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
             trust_edges = ReadData<bool>(iter, length);
 #endif
-            
-            sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
-            block_Y_mask = ReadVector<unsigned long long int>(iter, length);
-            empty_sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
-            empty_block_Y_mask = ReadVector<unsigned long long int>(iter, length);
-
-            sky_updates = ReadVector<std::vector<char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadVector<char>(i, l);
-                }
-            );
-
-            block_updates = ReadVector<std::vector<char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadVector<char>(i, l);
-                }
-            );
+            sky_Y_mask = ReadData<std::vector<unsigned long long int>>(iter, length);
+            block_Y_mask = ReadData<std::vector<unsigned long long int>>(iter, length);
+            empty_sky_Y_mask = ReadData<std::vector<unsigned long long int>>(iter, length);
+            empty_block_Y_mask = ReadData<std::vector<unsigned long long int>>(iter, length);
+            sky_updates = ReadData<std::vector<std::vector<char>>>(iter, length);
+            block_updates = ReadData<std::vector<std::vector<char>>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -122,24 +109,12 @@ namespace ProtocolCraft
             WriteData<bool>(trust_edges, container);
 #endif
 
-            WriteVector<unsigned long long int>(sky_Y_mask, container);
-            WriteVector<unsigned long long int>(block_Y_mask, container);
-            WriteVector<unsigned long long int>(empty_sky_Y_mask, container);
-            WriteVector<unsigned long long int>(empty_block_Y_mask, container);
-
-            WriteVector<std::vector<char>>(sky_updates, container,
-                [](const std::vector<char>& v, WriteContainer& c)
-                {
-                    WriteVector<char>(v, c);
-                }
-            );
-
-            WriteVector<std::vector<char>>(block_updates, container,
-                [](const std::vector<char>& v, WriteContainer& c)
-                {
-                    WriteVector<char>(v, c);
-                }
-            );
+            WriteData<std::vector<unsigned long long int>>(sky_Y_mask, container);
+            WriteData<std::vector<unsigned long long int>>(block_Y_mask, container);
+            WriteData<std::vector<unsigned long long int>>(empty_sky_Y_mask, container);
+            WriteData<std::vector<unsigned long long int>>(empty_block_Y_mask, container);
+            WriteData<std::vector<std::vector<char>>>(sky_updates, container);
+            WriteData<std::vector<std::vector<char>>>(block_updates, container);
         }
 
         virtual Json::Value SerializeImpl() const override
@@ -163,12 +138,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
         bool trust_edges = false;
 #endif
-
         std::vector<unsigned long long int> sky_Y_mask;
         std::vector<unsigned long long int> block_Y_mask;
         std::vector<unsigned long long int> empty_sky_Y_mask;
         std::vector<unsigned long long int> empty_block_Y_mask;
-
         std::vector<std::vector<char> > sky_updates;
         std::vector<std::vector<char> > block_updates;
     };

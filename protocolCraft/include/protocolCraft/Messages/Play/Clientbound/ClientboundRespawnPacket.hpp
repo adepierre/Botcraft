@@ -307,7 +307,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            last_death_location = ReadOptional<GlobalPos>(iter, length);
+            last_death_location = ReadData<std::optional<GlobalPos>>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             portal_cooldown = ReadData<VarInt>(iter, length);
@@ -353,7 +353,7 @@ namespace ProtocolCraft
 #endif
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteOptional<GlobalPos>(last_death_location, container);
+            WriteData<std::optional<GlobalPos>>(last_death_location, container);
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             WriteData<VarInt>(portal_cooldown, container);

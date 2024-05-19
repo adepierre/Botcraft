@@ -30,12 +30,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            criteria = ReadMap<Identifier, CriterionProgress>(iter, length);
+            criteria = ReadData<std::map<Identifier, CriterionProgress>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteMap<Identifier, CriterionProgress>(criteria, container);
+            WriteData<std::map<Identifier, CriterionProgress>>(criteria, container);
         }
 
         virtual Json::Value SerializeImpl() const override

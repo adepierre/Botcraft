@@ -97,22 +97,23 @@ namespace ProtocolCraft
         {
             container_id = ReadData<unsigned char>(iter, length);
 #if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-            items = ReadVector<Slot, short>(iter, length);
+            // Special case, the data size is a short instead of a varint
+            items = ReadVector<Slot, short>(iter, length, ReadData<Slot>);
 #else
             state_id = ReadData<VarInt>(iter, length);
-            items = ReadVector<Slot>(iter, length);
+            items = ReadData<std::vector<Slot>>(iter, length);
             carried_item = ReadData<Slot>(iter, length);
-#endif            
+#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<unsigned char>(container_id, container);
 #if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-            WriteVector<Slot, short>(items, container);
+            WriteVector<Slot, short>(items, container, WriteData<Slot>);
 #else
             WriteData<VarInt>(state_id, container);
-            WriteVector<Slot>(items, container);
+            WriteData<std::vector<Slot>>(items, container);
             WriteData<Slot>(carried_item, container);
 #endif
         }

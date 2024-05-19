@@ -39,14 +39,14 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                min_value = ReadOptional<std::string>(iter, length);
-                max_value = ReadOptional<std::string>(iter, length);
+                min_value = ReadData<std::optional<std::string>>(iter, length);
+                max_value = ReadData<std::optional<std::string>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteOptional<std::string>(min_value, container);
-                WriteOptional<std::string>(max_value, container);
+                WriteData<std::optional<std::string>>(min_value, container);
+                WriteData<std::optional<std::string>>(max_value, container);
             }
 
             virtual Json::Value SerializeImpl() const override

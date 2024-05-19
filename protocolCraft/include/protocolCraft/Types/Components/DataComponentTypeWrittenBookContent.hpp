@@ -76,7 +76,7 @@ namespace ProtocolCraft
                 title = ReadData<Filterable<std::string>>(iter, length);
                 author = ReadData<std::string>(iter, length);
                 generation = ReadData<VarInt>(iter, length);
-                pages = ReadVector<Filterable<Chat>>(iter, length);
+                pages = ReadData<std::vector<Filterable<Chat>>>(iter, length);
                 resolved = ReadData<bool>(iter, length);
             }
 
@@ -85,7 +85,7 @@ namespace ProtocolCraft
                 WriteData<Filterable<std::string>>(title, container);
                 WriteData<std::string>(author, container);
                 WriteData<VarInt>(generation, container);
-                WriteVector<Filterable<Chat>>(pages, container);
+                WriteData<std::vector<Filterable<Chat>>>(pages, container);
                 WriteData<bool>(resolved, container);
             }
 

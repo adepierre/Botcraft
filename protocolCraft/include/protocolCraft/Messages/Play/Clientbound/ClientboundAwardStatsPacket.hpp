@@ -73,48 +73,18 @@ namespace ProtocolCraft
         {
 
 #if PROTOCOL_VERSION < 346 /* < 1.13 */
-            stats = ReadMap<std::string, int>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    const std::string name = ReadData<std::string>(i, l);
-                    const int val = ReadData<VarInt>(i, l);
-
-                    return std::make_pair(name, val);
-                }
-            );
+            stats = ReadData<std::map<std::string, VarInt>>(iter, length);
 #else
-            stats = ReadMap<std::pair<int, int>, int>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    const int category_id = ReadData<VarInt>(i, l);
-                    const int stats_id = ReadData<VarInt>(i, l);
-                    const int val = ReadData<VarInt>(i, l);
-
-                    return std::make_pair(std::make_pair(category_id, stats_id), val);
-                }
-            );
+            stats = ReadData<std::map<std::pair<VarInt, VarInt>, VarInt>>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 346 /* < 1.13 */
-            WriteMap<std::string, int>(stats, container,
-                [](const std::pair<const std::string, int>& p, WriteContainer& c)
-                {
-                    WriteData<std::string>(p.first, c);
-                    WriteData<VarInt>(p.second, c);
-                }
-            );
+            WriteData<std::map<std::string, VarInt>>(stats, container);
 #else
-            WriteMap<std::pair<int, int>, int>(stats, container,
-                [](const std::pair<const std::pair<int, int>, int>& p, WriteContainer& c)
-                {
-                    WriteData<VarInt>(p.first.first, c);
-                    WriteData<VarInt>(p.first.second, c);
-                    WriteData<VarInt>(p.second, c);
-                }
-            );
+            WriteData<std::map<std::pair<VarInt, VarInt>, VarInt>>(stats, container);
 #endif
         }
 

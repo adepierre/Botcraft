@@ -77,9 +77,16 @@ namespace ProtocolCraft
             signature = signature_;
         }
 #else
-        void SetSignature(const std::optional<std::vector<unsigned char>>& signature_)
+        void SetSignature(const std::optional<std::array<unsigned char, 256>>& signature_)
         {
             signature = signature_;
+        }
+
+        // Convenient set from a std::vector
+        void SetSignature(const std::vector<unsigned char>& signature_)
+        {
+            signature = std::array<unsigned char, 256>();
+            std::copy_n(signature_.begin(), 256, signature.value().begin());
         }
 #endif
 #endif
@@ -128,7 +135,7 @@ namespace ProtocolCraft
             return signature;
         }
 #else
-        const std::optional<std::vector<unsigned char>>& GetSignature() const
+        const std::optional<std::array<unsigned char, 256>>& GetSignature() const
         {
             return signature;
         }
@@ -160,14 +167,9 @@ namespace ProtocolCraft
 #else
             salt = ReadData<long long int>(iter, length);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            signature = ReadVector<unsigned char>(iter, length);
+            signature = ReadData<std::vector<unsigned char>>(iter, length);
 #else
-            signature = ReadOptional<std::vector<unsigned char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadByteArray(i, l, 256);
-                }
-            );
+            signature = ReadData<std::optional<std::array<unsigned char, 256>>>(iter, length);
 #endif
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -190,14 +192,9 @@ namespace ProtocolCraft
             WriteData<long long int>(salt, container);
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteVector<unsigned char>(signature, container);
+            WriteData<std::vector<unsigned char>>(signature, container);
 #else
-            WriteOptional<std::vector<unsigned char>>(signature, container,
-                [](const std::vector<unsigned char>& v, WriteContainer& c)
-                {
-                    WriteByteArray(v, c);
-                }
-            );
+            WriteData<std::optional<std::array<unsigned char, 256>>>(signature, container);
 #endif
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -251,7 +248,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         std::vector<unsigned char> signature;
 #else
-        std::optional<std::vector<unsigned char>> signature;
+        std::optional<std::array<unsigned char, 256>> signature;
 #endif
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */

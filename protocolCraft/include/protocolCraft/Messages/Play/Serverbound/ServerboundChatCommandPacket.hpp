@@ -120,15 +120,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             salt = ReadData<long long int>(iter, length);
 #endif
-            argument_signatures = ReadMap<std::string, std::vector<unsigned char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    const std::string key = ReadData<std::string>(i, l);
-                    const std::vector<unsigned char> val = ReadVector<unsigned char>(i, l);
-
-                    return std::make_pair(key, val);
-                }
-            );
+            argument_signatures = ReadData<std::map<std::string, std::vector<unsigned char>>>(iter, length);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             signed_preview = ReadData<bool>(iter, length);
 #endif
@@ -146,13 +138,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             WriteData<long long int>(salt, container);
 #endif
-            WriteMap<std::string, std::vector<unsigned char>>(argument_signatures, container,
-                [](const std::pair<const std::string, std::vector<unsigned char>>& p, WriteContainer& c)
-                {
-                    WriteData<std::string>(p.first, c);
-                    WriteVector<unsigned char>(p.second, c);
-                }
-            );
+            WriteData<std::map<std::string, std::vector<unsigned char>>>(argument_signatures, container);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<bool>(signed_preview, container);
 #endif

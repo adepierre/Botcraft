@@ -32,7 +32,7 @@ namespace ProtocolCraft
         {
             last_signature = last_signature_;
         }
-    
+
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const UUID& GetProfileId() const
@@ -56,7 +56,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             profile_id = ReadData<UUID>(iter, length);
-            last_signature = ReadVector<unsigned char>(iter, length);
+            last_signature = ReadData<std::vector<unsigned char>>(iter, length);
 #else
             id = ReadData<VarInt>(iter, length) - 1;
             if (id == -1)
@@ -74,7 +74,7 @@ namespace ProtocolCraft
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
             WriteData<UUID>(profile_id, container);
-            WriteVector<unsigned char>(last_signature, container);
+            WriteData<std::vector<unsigned char>>(last_signature, container);
 #else
             WriteData<VarInt>(id + 1, container);
             if (last_signature.size() > 0)

@@ -202,10 +202,10 @@ namespace ProtocolCraft
                 player_suffix = ReadData<Chat>(iter, length);
 #endif
             }
-            
+
             if (method == 0 || method == 3 || method == 4)
             {
-                players = ReadVector<std::string>(iter, length);
+                players = ReadData<std::vector<std::string>>(iter, length);
             }
         }
 
@@ -234,10 +234,10 @@ namespace ProtocolCraft
                 WriteData<Chat>(player_suffix, container);
 #endif
             }
-            
+
             if (method == 0 || method == 3 || method == 4)
             {
-                WriteVector<std::string>(players, container);
+                WriteData<std::vector<std::string>>(players, container);
             }
         }
 

@@ -84,15 +84,7 @@ namespace ProtocolCraft
             command = ReadData<std::string>(iter, length);
             timestamp = ReadData<long long int>(iter, length);
             salt = ReadData<long long int>(iter, length);
-            argument_signatures = ReadMap<std::string, std::vector<unsigned char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    const std::string key = ReadData<std::string>(i, l);
-                    const std::vector<unsigned char> val = ReadVector<unsigned char>(i, l);
-
-                    return std::make_pair(key, val);
-                }
-            );
+            argument_signatures = ReadData<std::map<std::string, std::vector<unsigned char>>>(iter, length);
             last_seen_messages = ReadData<LastSeenMessagesUpdate>(iter, length);
         }
 
@@ -101,13 +93,7 @@ namespace ProtocolCraft
             WriteData<std::string>(command, container);
             WriteData<long long int>(timestamp, container);
             WriteData<long long int>(salt, container);
-            WriteMap<std::string, std::vector<unsigned char>>(argument_signatures, container,
-                [](const std::pair<const std::string, std::vector<unsigned char>>& p, WriteContainer& c)
-                {
-                    WriteData<std::string>(p.first, c);
-                    WriteVector<unsigned char>(p.second, c);
-                }
-            );
+            WriteData<std::map<std::string, std::vector<unsigned char>>>(argument_signatures, container);
             WriteData<LastSeenMessagesUpdate>(last_seen_messages, container);
         }
 

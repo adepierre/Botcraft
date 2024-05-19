@@ -89,11 +89,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             name_ = ReadData<std::string>(iter, length);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            public_key = ReadOptional<ProfilePublicKey>(iter, length);
+            public_key = ReadData<std::optional<ProfilePublicKey>>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            profile_id = ReadOptional<UUID>(iter, length);
+            profile_id = ReadData<std::optional<UUID>>(iter, length);
 #else
             profile_id = ReadData<UUID>(iter, length);
 #endif
@@ -108,11 +108,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteData<std::string>(name_, container);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteOptional<ProfilePublicKey>(public_key, container);
+            WriteData<std::optional<ProfilePublicKey>>(public_key, container);
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            WriteOptional<UUID>(profile_id, container);
+            WriteData<std::optional<UUID>>(profile_id, container);
 #else
             WriteData<UUID>(profile_id, container);
 #endif
@@ -157,7 +157,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         std::optional<ProfilePublicKey> public_key;
 #endif
-#if PROTOCOL_VERSION > 759 /* > 1.19 */ 
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         std::optional<UUID> profile_id;
 #else

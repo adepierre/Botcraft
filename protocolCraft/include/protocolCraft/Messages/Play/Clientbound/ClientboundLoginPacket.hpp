@@ -404,7 +404,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             previous_game_type = ReadData<unsigned char>(iter, length);
 #endif
-            levels = ReadVector<Identifier>(iter, length);
+            levels = ReadData<std::vector<Identifier>>(iter, length);
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             registry_holder = ReadData<NBT::UnnamedValue>(iter, length);
 #endif
@@ -449,7 +449,7 @@ namespace ProtocolCraft
             is_flat = ReadData<bool>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            last_death_location = ReadOptional<GlobalPos>(iter, length);
+            last_death_location = ReadData<std::optional<GlobalPos>>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             portal_cooldown = ReadData<VarInt>(iter, length);
@@ -476,7 +476,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<unsigned char>(previous_game_type, container);
 #endif
-            WriteVector<Identifier>(levels, container);
+            WriteData<std::vector<Identifier>>(levels, container);
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<NBT::UnnamedValue>(registry_holder, container);
 #endif
@@ -520,7 +520,7 @@ namespace ProtocolCraft
             WriteData<bool>(is_flat, container);
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            WriteOptional<GlobalPos>(last_death_location, container);
+            WriteData<std::optional<GlobalPos>>(last_death_location, container);
 #endif
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
             WriteData<VarInt>(portal_cooldown, container);

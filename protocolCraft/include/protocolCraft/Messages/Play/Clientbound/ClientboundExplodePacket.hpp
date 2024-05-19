@@ -247,20 +247,11 @@ namespace ProtocolCraft
 #endif
             power = ReadData<float>(iter, length);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
+            // Special case, read size as int instead of VarInt, and custom read function
             to_blow = ReadVector<NetworkPosition, int>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    NetworkPosition output;
-
-                    output.SetX(static_cast<int>(ReadData<char>(i, l)));
-                    output.SetY(static_cast<int>(ReadData<char>(i, l)));
-                    output.SetZ(static_cast<int>(ReadData<char>(i, l)));
-
-                    return output;
-                }
-            );
 #else
             to_blow = ReadVector<NetworkPosition>(iter, length,
+#endif
                 [](ReadIterator& i, size_t& l)
                 {
                     NetworkPosition output;
@@ -272,7 +263,6 @@ namespace ProtocolCraft
                     return output;
                 }
             );
-#endif
             knockback_x = ReadData<float>(iter, length);
             knockback_y = ReadData<float>(iter, length);
             knockback_z = ReadData<float>(iter, length);
@@ -301,16 +291,11 @@ namespace ProtocolCraft
 #endif
             WriteData<float>(power, container);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
+            // Special case, write size as int instead of VarInt, with custom write function
             WriteVector<NetworkPosition, int>(to_blow, container,
-                [](const NetworkPosition& n, WriteContainer& c)
-                {
-                    WriteData<char>(static_cast<char>(n.GetX()), c);
-                    WriteData<char>(static_cast<char>(n.GetY()), c);
-                    WriteData<char>(static_cast<char>(n.GetZ()), c);
-                }
-            );
 #else
             WriteVector<NetworkPosition>(to_blow, container,
+#endif
                 [](const NetworkPosition& n, WriteContainer& c)
                 {
                     WriteData<char>(static_cast<char>(n.GetX()), c);
@@ -318,7 +303,6 @@ namespace ProtocolCraft
                     WriteData<char>(static_cast<char>(n.GetZ()), c);
                 }
             );
-#endif
             WriteData<float>(knockback_x, container);
             WriteData<float>(knockback_y, container);
             WriteData<float>(knockback_z, container);

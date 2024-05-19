@@ -38,12 +38,12 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            uuid = ReadOptional<UUID>(iter, length);
+            uuid = ReadData<std::optional<UUID>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteOptional<UUID>(uuid, container);
+            WriteData<std::optional<UUID>>(uuid, container);
         }
 
         virtual Json::Value SerializeImpl() const override

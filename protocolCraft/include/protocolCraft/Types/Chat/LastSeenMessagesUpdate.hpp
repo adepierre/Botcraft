@@ -70,22 +70,22 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            last_seen = ReadVector<LastSeenMessagesEntry>(iter, length);
-            last_received = ReadOptional<LastSeenMessagesEntry>(iter, length);
+            last_seen = ReadData<std::vector<LastSeenMessagesEntry>>(iter, length);
+            last_received = ReadData<std::optional<LastSeenMessagesEntry>>(iter, length);
 #else
             offset = ReadData<VarInt>(iter, length);
-            acknowledged = ReadBitset<20>(iter, length);
+            acknowledged = ReadData<std::bitset<20>>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteVector<LastSeenMessagesEntry>(last_seen, container);
-            WriteOptional<LastSeenMessagesEntry>(last_received, container);
+            WriteData<std::vector<LastSeenMessagesEntry>>(last_seen, container);
+            WriteData<std::optional<LastSeenMessagesEntry>>(last_received, container);
 #else
             WriteData<VarInt>(offset, container);
-            WriteBitset<20>(acknowledged, container);
+            WriteData<std::bitset<20>>(acknowledged, container);
 #endif
         }
 

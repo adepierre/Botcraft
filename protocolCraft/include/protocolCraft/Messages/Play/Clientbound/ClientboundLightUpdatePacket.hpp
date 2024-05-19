@@ -218,10 +218,10 @@ namespace ProtocolCraft
             empty_sky_Y_mask = ReadData<VarInt>(iter, length);
             empty_block_Y_mask = ReadData<VarInt>(iter, length);
 #else
-            sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
-            block_Y_mask = ReadVector<unsigned long long int>(iter, length);
-            empty_sky_Y_mask = ReadVector<unsigned long long int>(iter, length);
-            empty_block_Y_mask = ReadVector<unsigned long long int>(iter, length);
+            sky_Y_mask = ReadData<std::vector<unsigned long long int>>(iter, length);
+            block_Y_mask = ReadData<std::vector<unsigned long long int>>(iter, length);
+            empty_sky_Y_mask = ReadData<std::vector<unsigned long long int>>(iter, length);
+            empty_block_Y_mask = ReadData<std::vector<unsigned long long int>>(iter, length);
 #endif
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -230,7 +230,7 @@ namespace ProtocolCraft
             {
                 if ((sky_Y_mask >> i) & 1)
                 {
-                    sky_updates.push_back(ReadVector<char>(iter, length)); // Should always contain 2048 chars
+                    sky_updates.push_back(ReadData<std::vector<char>>(iter, length)); // Should always contain 2048 chars
                 }
             }
 
@@ -239,22 +239,12 @@ namespace ProtocolCraft
             {
                 if ((block_Y_mask >> i) & 1)
                 {
-                    block_updates.push_back(ReadVector<char>(iter, length)); // Should always contain 2048 chars
+                    block_updates.push_back(ReadData<std::vector<char>>(iter, length)); // Should always contain 2048 chars
                 }
             }
 #else
-            sky_updates = ReadVector<std::vector<char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadVector<char>(i, l); // Should always contain 2048 chars
-                }
-            );
-            block_updates = ReadVector<std::vector<char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadVector<char>(i, l); // Should always contain 2048 chars
-                }
-            );
+            sky_updates = ReadData<std::vector<std::vector<char>>>(iter, length); // Subvectors should always contain 2048 chars
+            block_updates = ReadData<std::vector<std::vector<char>>>(iter, length); // Subvectors should always contain 2048 chars
 #endif
 #else
             light_data = ReadData<ClientboundLightUpdatePacketData>(iter, length);
@@ -275,38 +265,28 @@ namespace ProtocolCraft
             WriteData<VarInt>(empty_sky_Y_mask, container);
             WriteData<VarInt>(empty_block_Y_mask, container);
 #else
-            WriteVector<unsigned long long int>(sky_Y_mask, container);
-            WriteVector<unsigned long long int>(block_Y_mask, container);
-            WriteVector<unsigned long long int>(empty_sky_Y_mask, container);
-            WriteVector<unsigned long long int>(empty_block_Y_mask, container);
+            WriteData<std::vector<unsigned long long int>>(sky_Y_mask, container);
+            WriteData<std::vector<unsigned long long int>>(block_Y_mask, container);
+            WriteData<std::vector<unsigned long long int>>(empty_sky_Y_mask, container);
+            WriteData<std::vector<unsigned long long int>>(empty_block_Y_mask, container);
 #endif
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             for (const auto& v : sky_updates)
             {
-                WriteVector<char>(v, container);
+                WriteData<std::vector<char>>(v, container);
             }
 #else
-            WriteVector<std::vector<char>>(sky_updates, container,
-                [](const std::vector<char>& v, WriteContainer& c)
-                {
-                    WriteVector<char>(v, c);
-                }
-            );
+            WriteData<std::vector<std::vector<char>>>(sky_updates, container);
 #endif
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             for (const auto& v : block_updates)
             {
-                WriteVector<char>(v, container);
+                WriteData<std::vector<char>>(v, container);
             }
 #else
-            WriteVector<std::vector<char>>(block_updates, container,
-                [](const std::vector<char>& v, WriteContainer& c)
-                {
-                    WriteVector<char>(v, c);
-                }
-            );
+            WriteData<std::vector<std::vector<char>>>(block_updates, container);
 #endif
 #else
             WriteData<ClientboundLightUpdatePacketData>(light_data, container);

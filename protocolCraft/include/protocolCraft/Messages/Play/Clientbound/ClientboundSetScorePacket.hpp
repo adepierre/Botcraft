@@ -137,8 +137,8 @@ namespace ProtocolCraft
 #else
             objective_name = ReadData<std::string>(iter, length);
             score = ReadData<VarInt>(iter, length);
-            display = ReadOptional<Chat>(iter, length);
-            number_format = ReadOptional<NumberFormat>(iter, length);
+            display = ReadData<std::optional<Chat>>(iter, length);
+            number_format = ReadData<std::optional<NumberFormat>>(iter, length);
 #endif
         }
 
@@ -155,8 +155,8 @@ namespace ProtocolCraft
 #else
             WriteData<std::string>(objective_name, container);
             WriteData<VarInt>(score, container);
-            WriteOptional<Chat>(display, container);
-            WriteOptional<NumberFormat>(number_format, container);
+            WriteData<std::optional<Chat>>(display, container);
+            WriteData<std::optional<NumberFormat>>(number_format, container);
 #endif
         }
 

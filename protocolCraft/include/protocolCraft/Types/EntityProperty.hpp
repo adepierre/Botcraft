@@ -40,7 +40,7 @@ namespace ProtocolCraft
         {
             value = value_;
         }
-        
+
         void SetModifiers(const std::vector<EntityModifierData>& modifiers_)
         {
             modifiers = modifiers_;
@@ -68,7 +68,7 @@ namespace ProtocolCraft
         {
             return value;
         }
-        
+
         const std::vector<EntityModifierData>& GetModifiers() const
         {
             return modifiers;
@@ -85,7 +85,7 @@ namespace ProtocolCraft
             key = ReadData<std::string>(iter, length);
 #endif
             value = ReadData<double>(iter, length);
-            modifiers = ReadVector<EntityModifierData>(iter, length);
+            modifiers = ReadData<std::vector<EntityModifierData>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -98,7 +98,7 @@ namespace ProtocolCraft
             WriteData<std::string>(key, container);
 #endif
             WriteData<double>(value, container);
-            WriteVector<EntityModifierData>(modifiers, container);
+            WriteData<std::vector<EntityModifierData>>(modifiers, container);
         }
 
         virtual Json::Value SerializeImpl() const override

@@ -238,6 +238,7 @@ namespace ProtocolCraft
 
         void DataComponentPredicate::ReadImpl(ReadIterator& iter, size_t& length)
         {
+            // special case, dynamic factory
             map = ReadMap<DataComponentTypes, std::shared_ptr<DataComponentType>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
@@ -254,6 +255,7 @@ namespace ProtocolCraft
 
         void DataComponentPredicate::WriteImpl(WriteContainer& container) const
         {
+            // special case, dynamic factory
             WriteMap<DataComponentTypes, std::shared_ptr<DataComponentType>>(map, container,
                 [](const std::pair<const DataComponentTypes, std::shared_ptr<DataComponentType>>& p, WriteContainer& c)
                 {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "protocolCraft/NetworkType.hpp"
 
 namespace ProtocolCraft

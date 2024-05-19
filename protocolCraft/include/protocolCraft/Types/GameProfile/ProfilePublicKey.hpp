@@ -6,7 +6,7 @@
 #include <string>
 #include <map>
 
-namespace ProtocolCraft 
+namespace ProtocolCraft
 {
     class ProfilePublicKey : public NetworkType
     {
@@ -58,15 +58,15 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             timestamp = ReadData<long long int>(iter, length);
-            key = ReadVector<unsigned char>(iter, length);
-            signature = ReadVector<unsigned char>(iter, length);
+            key = ReadData<std::vector<unsigned char>>(iter, length);
+            signature = ReadData<std::vector<unsigned char>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<long long int>(timestamp, container);
-            WriteVector<unsigned char>(key, container);
-            WriteVector<unsigned char>(signature, container);
+            WriteData<std::vector<unsigned char>>(key, container);
+            WriteData<std::vector<unsigned char>>(signature, container);
         }
 
         virtual Json::Value SerializeImpl() const override

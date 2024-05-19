@@ -185,14 +185,9 @@ namespace ProtocolCraft
             locked = ReadData<bool>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            decorations = ReadOptional<std::vector<MapDecoration>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadVector<MapDecoration>(i, l);
-                }
-            );
+            decorations = ReadData<std::optional<std::vector<MapDecoration>>>(iter, length);
 #else
-            decorations = ReadVector<MapDecoration>(iter, length);
+            decorations = ReadData<std::vector<MapDecoration>>(iter, length);
 #endif
 
             width = ReadData<unsigned char>(iter, length);
@@ -201,7 +196,7 @@ namespace ProtocolCraft
                 height = ReadData<unsigned char>(iter, length);
                 start_x = ReadData<unsigned char>(iter, length);
                 start_z = ReadData<unsigned char>(iter, length);
-                map_colors = ReadVector<unsigned char>(iter, length);
+                map_colors = ReadData<std::vector<unsigned char>>(iter, length);
             }
         }
 
@@ -216,14 +211,9 @@ namespace ProtocolCraft
             WriteData<bool>(locked, container);
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            WriteOptional<std::vector<MapDecoration>>(decorations, container,
-                [](const std::vector<MapDecoration>& v, WriteContainer& c)
-                {
-                    WriteVector<MapDecoration>(v, c);
-                }
-            );
+            WriteData<std::optional<std::vector<MapDecoration>>>(decorations, container);
 #else
-            WriteVector<MapDecoration>(decorations, container);
+            WriteData<std::vector<MapDecoration>>(decorations, container);
 #endif
 
             WriteData<unsigned char>(width, container);
@@ -232,7 +222,7 @@ namespace ProtocolCraft
                 WriteData<unsigned char>(height, container);
                 WriteData<unsigned char>(start_x, container);
                 WriteData<unsigned char>(start_z, container);
-                WriteVector<unsigned char>(map_colors, container);
+                WriteData<std::vector<unsigned char>>(map_colors, container);
             }
         }
 

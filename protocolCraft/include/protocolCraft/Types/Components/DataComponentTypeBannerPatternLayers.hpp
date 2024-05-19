@@ -32,12 +32,12 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                layers = ReadVector<BannerPatternLayer>(iter, length);
+                layers = ReadData<std::vector<BannerPatternLayer>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteVector<BannerPatternLayer>(layers, container);
+                WriteData<std::vector<BannerPatternLayer>>(layers, container);
             }
 
             virtual Json::Value SerializeImpl() const override

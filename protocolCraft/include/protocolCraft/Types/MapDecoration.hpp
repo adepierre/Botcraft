@@ -103,7 +103,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 363 /* > 1.12.2 */
-            display_name = ReadOptional<Chat>(iter, length);
+            display_name = ReadData<std::optional<Chat>>(iter, length);
 #endif
         }
 
@@ -121,7 +121,7 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION > 363 /* > 1.12.2 */
-            WriteOptional<Chat>(display_name, container);
+            WriteData<std::optional<Chat>>(display_name, container);
 #endif
         }
 

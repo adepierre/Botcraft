@@ -57,15 +57,15 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             header = ReadData<SignedMessageHeader>(iter, length);
-            header_signature = ReadVector<unsigned char>(iter, length);
-            body_digest = ReadVector<unsigned char>(iter, length);
+            header_signature = ReadData<std::vector<unsigned char>>(iter, length);
+            body_digest = ReadData<std::vector<unsigned char>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<SignedMessageHeader>(header, container);
-            WriteVector<unsigned char>(header_signature, container);
-            WriteVector<unsigned char>(body_digest, container);
+            WriteData<std::vector<unsigned char>>(header_signature, container);
+            WriteData<std::vector<unsigned char>>(body_digest, container);
         }
 
         virtual Json::Value SerializeImpl() const override

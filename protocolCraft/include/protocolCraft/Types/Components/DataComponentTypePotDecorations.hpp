@@ -31,18 +31,12 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                sides = ReadVector<int>(iter, length, [](ReadIterator& i, size_t& l)
-                    {
-                        return ReadData<VarInt>(i, l);
-                    });
+                sides = ReadData<std::vector<VarInt>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteVector<int>(sides, container, [](const int& i, WriteContainer& c)
-                    {
-                        WriteData<VarInt>(i, c);
-                    });
+                WriteData<std::vector<VarInt>>(sides, container);
             }
 
             virtual Json::Value SerializeImpl() const override

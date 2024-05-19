@@ -119,42 +119,28 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            block_tags = ReadVector<BlockEntityTag>(iter, length);
-            item_tags = ReadVector<BlockEntityTag>(iter, length);
-            fluid_tags = ReadVector<BlockEntityTag>(iter, length);
+            block_tags = ReadData<std::vector<BlockEntityTag>>(iter, length);
+            item_tags = ReadData<std::vector<BlockEntityTag>>(iter, length);
+            fluid_tags = ReadData<std::vector<BlockEntityTag>>(iter, length);
 #if PROTOCOL_VERSION > 440 /* > 1.13.2 */
-            entity_tags = ReadVector<BlockEntityTag>(iter, length);
+            entity_tags = ReadData<std::vector<BlockEntityTag>>(iter, length);
 #endif
 #else
-            tags = ReadMap<Identifier, std::vector<BlockEntityTag>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    const Identifier key = ReadData<Identifier>(i, l);
-                    const std::vector<BlockEntityTag> val = ReadVector<BlockEntityTag>(i, l);
-
-                    return std::make_pair(key, val);
-                }
-            );
+            tags = ReadData<std::map<Identifier, std::vector<BlockEntityTag>>>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteVector<BlockEntityTag>(block_tags, container);
-            WriteVector<BlockEntityTag>(item_tags, container);
-            WriteVector<BlockEntityTag>(fluid_tags, container);
+            WriteData<std::vector<BlockEntityTag>>(block_tags, container);
+            WriteData<std::vector<BlockEntityTag>>(item_tags, container);
+            WriteData<std::vector<BlockEntityTag>>(fluid_tags, container);
 #if PROTOCOL_VERSION > 440 /* > 1.13.2 */
-            WriteVector<BlockEntityTag>(entity_tags, container);
+            WriteData<std::vector<BlockEntityTag>>(entity_tags, container);
 #endif
 #else
-            WriteMap<Identifier, std::vector<BlockEntityTag>>(tags, container,
-                [](const std::pair<const Identifier, std::vector<BlockEntityTag>>& p, WriteContainer& c)
-                {
-                    WriteData<Identifier>(p.first, c);
-                    WriteVector<BlockEntityTag>(p.second, c);
-                }
-            );
+            WriteData<std::map<Identifier, std::vector<BlockEntityTag>>>(tags, container);
 #endif
         }
 
@@ -163,15 +149,15 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            output["block_tags"] = block_tags;            
-            output["item_tags"] = item_tags;            
+            output["block_tags"] = block_tags;
+            output["item_tags"] = item_tags;
             output["fluid_tags"] = fluid_tags;
 #if PROTOCOL_VERSION > 440 /* > 1.13.2 */
             output["entity_tags"] = entity_tags;
 #endif
 #else
             output["tags"] = Json::Object();
-            
+
             for (const auto& p : tags)
             {
                 output["tags"][p.first.GetFull()] = p.second;

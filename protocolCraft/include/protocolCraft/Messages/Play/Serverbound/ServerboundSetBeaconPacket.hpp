@@ -98,8 +98,8 @@ namespace ProtocolCraft
             primary = ReadData<VarInt>(iter, length);
             secondary = ReadData<VarInt>(iter, length);
 #else
-            primary = ReadOptional<VarInt>(iter, length);
-            secondary = ReadOptional<VarInt>(iter, length);
+            primary = ReadData<std::optional<VarInt>>(iter, length);
+            secondary = ReadData<std::optional<VarInt>>(iter, length);
 #endif
         }
 
@@ -109,8 +109,8 @@ namespace ProtocolCraft
             WriteData<VarInt>(primary, container);
             WriteData<VarInt>(secondary, container);
 #else
-            WriteOptional<VarInt>(primary, container);
-            WriteOptional<VarInt>(secondary, container);
+            WriteData<std::optional<VarInt>>(primary, container);
+            WriteData<std::optional<VarInt>>(secondary, container);
 #endif
         }
 

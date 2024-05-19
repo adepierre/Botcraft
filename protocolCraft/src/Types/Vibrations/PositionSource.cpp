@@ -18,7 +18,7 @@ namespace ProtocolCraft
             case PositionSourceType::Entity:
                 return std::make_shared<EntityPositionSource>();
             default:
-                throw std::runtime_error("Unable to create position source with type: " + static_cast<int>(position_source_type));
+                throw std::runtime_error("Unable to create position source with type: " + std::to_string(static_cast<int>(position_source_type)));
         }
     }
 #else

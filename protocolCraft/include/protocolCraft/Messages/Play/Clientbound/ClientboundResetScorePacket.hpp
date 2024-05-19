@@ -48,13 +48,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             owner = ReadData<std::string>(iter, length);
-            objective_name = ReadOptional<std::string>(iter, length);
+            objective_name = ReadData<std::optional<std::string>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(owner, container);
-            WriteOptional<std::string>(objective_name, container);
+            WriteData<std::optional<std::string>>(objective_name, container);
         }
 
         virtual Json::Value SerializeImpl() const override

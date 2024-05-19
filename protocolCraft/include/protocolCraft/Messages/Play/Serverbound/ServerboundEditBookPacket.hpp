@@ -95,7 +95,7 @@ namespace ProtocolCraft
         {
             return signing;
         }
-#else        
+#else
         const std::vector<std::string>& GetPages() const
         {
             return pages;
@@ -126,8 +126,8 @@ namespace ProtocolCraft
             slot = ReadData<VarInt>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-            pages = ReadVector<std::string>(iter, length);
-            title = ReadOptional<std::string>(iter, length);
+            pages = ReadData<std::vector<std::string>>(iter, length);
+            title = ReadData<std::optional<std::string>>(iter, length);
 #endif
         }
 
@@ -141,8 +141,8 @@ namespace ProtocolCraft
             WriteData<VarInt>(slot, container);
 #endif
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-            WriteVector<std::string>(pages, container);
-            WriteOptional<std::string>(title, container);
+            WriteData<std::vector<std::string>>(pages, container);
+            WriteData<std::optional<std::string>>(title, container);
 #endif
         }
 

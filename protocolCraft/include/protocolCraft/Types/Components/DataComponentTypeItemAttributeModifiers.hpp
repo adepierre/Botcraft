@@ -42,13 +42,13 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                modifiers = ReadVector<ItemAttributeModifiersEntry>(iter, length);
+                modifiers = ReadData<std::vector<ItemAttributeModifiersEntry>>(iter, length);
                 show_in_tooltip = ReadData<bool>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteVector<ItemAttributeModifiersEntry>(modifiers, container);
+                WriteData<std::vector<ItemAttributeModifiersEntry>>(modifiers, container);
                 WriteData<bool>(show_in_tooltip, container);
             }
 

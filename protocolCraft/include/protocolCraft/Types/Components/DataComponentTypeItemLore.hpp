@@ -32,12 +32,12 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                lines = ReadVector<Chat>(iter, length);
+                lines = ReadData<std::vector<Chat>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteVector<Chat>(lines, container);
+                WriteData<std::vector<Chat>>(lines, container);
             }
 
             virtual Json::Value SerializeImpl() const override

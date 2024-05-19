@@ -54,16 +54,16 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                name = ReadOptional<std::string>(iter, length);
-                uuid = ReadOptional<UUID>(iter, length);
-                properties = ReadVector<GameProfileProperty>(iter, length);
+                name = ReadData<std::optional<std::string>>(iter, length);
+                uuid = ReadData<std::optional<UUID>>(iter, length);
+                properties = ReadData<std::vector<GameProfileProperty>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteOptional<std::string>(name, container);
-                WriteOptional<UUID>(uuid, container);
-                WriteVector<GameProfileProperty>(properties, container);
+                WriteData<std::optional<std::string>>(name, container);
+                WriteData<std::optional<UUID>>(uuid, container);
+                WriteData<std::vector<GameProfileProperty>>(properties, container);
             }
 
             virtual Json::Value SerializeImpl() const override

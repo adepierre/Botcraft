@@ -1,18 +1,14 @@
 #pragma once
 
-#include <vector>
-#include <array>
-#include <string>
-#include <cstring>
+#include "protocolCraft/Utilities/Templates.hpp"
+
 #include <algorithm>
-#include <stdexcept>
-#include <type_traits>
-#include <optional>
+#include <array>
+#include <cstring>
 #include <functional>
-#include <map>
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-#include <bitset>
-#endif
+#include <stdexcept>
+#include <string>
+#include <type_traits>
 
 namespace ProtocolCraft
 {
@@ -24,17 +20,6 @@ namespace ProtocolCraft
     using Angle = unsigned char;
     using UUID = std::array<unsigned char, 16>;
 
-    template <class T>
-    class VarType
-    {
-    public:
-        VarType(const T& val) : value(val) {}
-        VarType() {}
-        operator T() const { return value; }
-    private:
-        T value;
-    };
-
     using VarInt = VarType<int>;
     using VarLong = VarType<long long int>;
 
@@ -45,193 +30,353 @@ namespace ProtocolCraft
     void WriteByteArray(const std::vector<unsigned char>& my_array, WriteContainer& container);
     void WriteByteArray(const unsigned char* data, const size_t& length, WriteContainer& container);
 
-    template <typename T>
-    T ChangeEndianness(const T& in)
+    namespace Internal
     {
-        T out;
-        std::reverse_copy(
-            reinterpret_cast<const unsigned char*>(&in),
-            reinterpret_cast<const unsigned char*>(&in) + sizeof(T),
-            reinterpret_cast<unsigned char*>(&out)
-        );
-        return out;
+        template <typename T>
+        T ChangeEndianness(const T& in)
+        {
+            T out;
+            std::reverse_copy(
+                reinterpret_cast<const unsigned char*>(&in),
+                reinterpret_cast<const unsigned char*>(&in) + sizeof(T),
+                reinterpret_cast<unsigned char*>(&out)
+            );
+            return out;
+        }
     }
 
-    template<
-        typename T,
-        typename std::enable_if_t<!std::is_base_of_v<NetworkType, T>, bool> = true
-    >
-    T ReadData(ReadIterator& iter, size_t& length)
+    template<typename StorageType, typename SerializationType>
+    StorageType ReadData(ReadIterator& iter, size_t& length)
     {
-        if (length < sizeof(T))
+        // bool, char, short, int, long, float, double ...
+        if constexpr (std::is_arithmetic_v<SerializationType>)
         {
-            throw std::runtime_error("Not enough input in ReadData");
-        }
-        else
-        {
-            T output;
-            std::memcpy(&output, &(*iter), sizeof(T));
-            length -= sizeof(T);
-            iter += sizeof(T);
-
-            // Don't need to change endianess of char!
-            if (sizeof(T) > 1)
+            if (length < sizeof(SerializationType))
+            {
+                throw std::runtime_error("Not enough input in ReadData");
+            }
+            SerializationType output;
+            std::memcpy(&output, &(*iter), sizeof(SerializationType));
+            length -= sizeof(SerializationType);
+            iter += sizeof(SerializationType);
+            // Don't need to change endianess of single byte
+            if constexpr (sizeof(SerializationType) > 1)
             {
                 // The compiler should(?) optimize that
                 // This check doesn't work if int and char
                 // have the same size, but I guess this is not
                 // the only thing that souldn't work in this case
-                const int num = 1;
+                constexpr int num = 1;
                 if (*(char*)&num == 1)
                 {
-                    // Little endian
-                    return ChangeEndianness(output);
+                    // Little endian --> change endianess
+                    return static_cast<StorageType>(Internal::ChangeEndianness(output));
                 }
             }
 
-            // Big endian or sizeof(1)
+            // Big endian or sizeof(1) --> endianess is good
+            return static_cast<StorageType>(output);
+        }
+        // VarType
+        else if constexpr (Internal::IsVarType<SerializationType>)
+        {
+            int num_read = 0;
+            typename SerializationType::underlying_type result = 0;
+
+            unsigned char read;
+
+            do
+            {
+                if (num_read >= length)
+                {
+                    throw std::runtime_error("Not enough input in ReadData<VarType>");
+                }
+                if (num_read * 7 > sizeof(typename SerializationType::underlying_type) * 8)
+                {
+                    throw std::runtime_error("VarType is too big in ReadData<VarType>");
+                }
+
+                read = *(iter + num_read);
+
+                typename SerializationType::underlying_type value = static_cast<typename SerializationType::underlying_type>(read & 127);//0b01111111
+                result |= (value << (7 * num_read));
+
+                num_read++;
+            } while ((read & 128) != 0);//0b10000000
+
+            iter += num_read;
+            length -= num_read;
+
+            return static_cast<StorageType>(result);
+        }
+        // std::string
+        else if constexpr (std::is_same_v<SerializationType, std::string> && std::is_same_v<StorageType, std::string>)
+        {
+            const int size = ReadData<int, VarInt>(iter, length);
+            if (length < size)
+            {
+                throw std::runtime_error("Not enough input in ReadData<std::string>");
+            }
+
+            iter += size;
+            length -= size;
+
+            return std::string(iter - size, iter);
+        }
+        // NetworkType
+        else if constexpr (std::is_base_of_v<ProtocolCraft::NetworkType, SerializationType> && std::is_base_of_v<ProtocolCraft::NetworkType, StorageType>)
+        {
+            SerializationType output;
+            output.Read(iter, length);
+            // static_cast required for example to convert between NBT::Value and NBT::UnnamedValue
+            return static_cast<StorageType>(output);
+        }
+        // std::vector // std::array
+        else if constexpr ((Internal::IsVector<StorageType> && Internal::IsVector<SerializationType>) ||
+            (Internal::IsArray<StorageType> && Internal::IsArray<SerializationType>))
+        {
+            int N;
+            StorageType output;
+            if constexpr (Internal::IsVector<StorageType>)
+            {
+                N = ReadData<int, VarInt>(iter, length);
+                output.resize(N);
+            }
+            else
+            {
+                static_assert(Internal::IsArray<StorageType>, "StorageType should be an array");
+                N = static_cast<int>(output.size());
+            }
+
+            // If we need to read char/unsigned char, just memcpy it
+            if constexpr (sizeof(typename SerializationType::value_type) == 1 &&
+                !std::is_same_v<typename SerializationType::value_type, bool> &&
+                std::is_same_v<typename SerializationType::value_type, typename StorageType::value_type> &&
+                !std::is_base_of_v<ProtocolCraft::NetworkType, typename SerializationType::value_type>)
+            {
+                if (length < N)
+                {
+                    throw std::runtime_error("Not enough input to read vector data");
+                }
+                std::memcpy(output.data(), &(*iter), N);
+                length -= N;
+                iter += N;
+            }
+            // else read the elements one by one
+            else
+            {
+                for (int i = 0; i < N; ++i)
+                {
+                    output[i] = ReadData<typename StorageType::value_type, typename SerializationType::value_type>(iter, length);
+                }
+            }
             return output;
         }
-    }
-
-    template<
-        typename T,
-        typename std::enable_if_t<std::is_base_of_v<NetworkType, T>, bool> = true
-    >
-    T ReadData(ReadIterator& iter, size_t& length)
-    {
-        T output;
-        output.Read(iter, length);
-        return output;
-    }
-
-    template<>
-    std::string ReadData(ReadIterator& iter, size_t& length);
-
-    template<>
-    VarInt ReadData(ReadIterator& iter, size_t& length);
-
-    template<>
-    VarLong ReadData(ReadIterator& iter, size_t& length);
-
-    // We could use base ReadData<T>, but sizeof(std::array<?, N>)
-    // is not guaranteed to be N
-    template<>
-    UUID ReadData(ReadIterator& iter, size_t& length);
-
-    template<
-        typename T,
-        typename std::enable_if_t<!std::is_base_of_v<NetworkType, T>, bool> = true
-    >
-    void WriteData(const T& value, WriteContainer& container)
-    {
-        T val = value;
-
-        // Don't need to change endianess of char!
-        if constexpr(sizeof(T) > 1)
+        // std::optional
+        else if constexpr (Internal::IsOptional<StorageType> && Internal::IsOptional<SerializationType>)
         {
-            // Little endian check
-            // It doesn't work if int and char
-            // have the same size, but I guess this is not
-            // the only thing that souldn't work in this case
-            constexpr int num = 1;
-            if (*(char*)&num == 1)
+            StorageType output;
+
+            const bool has_value = ReadData<bool, bool>(iter, length);
+            if (has_value)
             {
-                // Little endian
-                val = ChangeEndianness(value);
-            }
-        }
-
-        // Big endian or sizeof(T) == 1
-        container.insert(
-            container.end(),
-            reinterpret_cast<unsigned char*>(&val),
-            reinterpret_cast<unsigned char*>(&val) + sizeof(T)
-        );
-    }
-
-    template<
-        typename T,
-        typename std::enable_if_t<std::is_base_of_v<NetworkType, T>, bool> = true
-    >
-    void WriteData(const T& value, WriteContainer& container)
-    {
-        value.Write(container);
-    }
-
-    template<>
-    void WriteData(const std::string& value, WriteContainer& container);
-
-    template<>
-    void WriteData(const VarInt& value, WriteContainer& container);
-
-    template<>
-    void WriteData(const VarLong& value, WriteContainer& container);
-
-    // We could use base WriteData<T>, but sizeof(std::array<?, N>)
-    // is not guaranteed to be N
-    template<>
-    void WriteData(const UUID& value, WriteContainer& container);
-
-
-    template<typename T>
-    std::optional<T> ReadOptional(ReadIterator& iter, size_t& length, const std::function<T(ReadIterator&, size_t&)>& read_func = ReadData<T>)
-    {
-        std::optional<T> output;
-
-        const bool has_value = ReadData<bool>(iter, length);
-        if (has_value)
-        {
-            output = read_func(iter, length);
-        }
-
-        return output;
-    }
-
-    template<typename T>
-    void WriteOptional(const std::optional<T>& value, WriteContainer& container, const std::function<void(const T&, WriteContainer&)>& write_func = WriteData<T>)
-    {
-        WriteData<bool>(value.has_value(), container);
-        if (value.has_value())
-        {
-            write_func(value.value(), container);
-        }
-    }
-
-
-    template<typename T, typename SizeType = VarInt>
-    std::vector<T> ReadVector(ReadIterator& iter, size_t& length)
-    {
-        const int output_length = ReadData<SizeType>(iter, length);
-
-        std::vector<T> output(output_length);
-
-        if constexpr(sizeof(T) == 1 && !std::is_base_of<NetworkType, T>::value)
-        {
-            if (length < output_length)
-            {
-                throw std::runtime_error("Not enough input in ReadVector");
+                output = ReadData<typename StorageType::value_type, typename SerializationType::value_type>(iter, length);
             }
 
-            std::memcpy(output.data(), &(*iter), output_length);
-            length -= output_length;
-            iter += output_length;
+            return output;
         }
-        else
+        // std::pair
+        else if constexpr (Internal::IsPair<StorageType> && Internal::IsPair<SerializationType>)
         {
+            StorageType output;
+            output.first = ReadData<typename StorageType::first_type, typename SerializationType::first_type>(iter, length);
+            output.second = ReadData<typename StorageType::second_type, typename SerializationType::second_type>(iter, length);
+            return output;
+        }
+        // std::map
+        else if constexpr (Internal::IsMap<StorageType> && Internal::IsMap<SerializationType>)
+        {
+            const int output_length = ReadData<int, VarInt>(iter, length);
+
+            StorageType output;
             for (int i = 0; i < output_length; ++i)
             {
-                output[i] = ReadData<T>(iter, length);
+                const typename StorageType::key_type key = ReadData<typename StorageType::key_type, typename SerializationType::key_type>(iter, length);
+                const typename StorageType::mapped_type val = ReadData<typename StorageType::mapped_type, typename SerializationType::mapped_type>(iter, length);
+                output.insert(std::make_pair(key, val));
+            }
+
+            return output;
+        }
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
+        // std::bitset
+        else if constexpr (Internal::IsBitset<StorageType> && std::is_same_v<SerializationType, StorageType>)
+        {
+            StorageType output;
+            const size_t N = output.size();
+            const std::vector<unsigned char> bytes = ReadByteArray(iter, length, N / 8 + (N % 8 != 0));
+            for (size_t i = 0; i < N; ++i)
+            {
+                output.set(i, (bytes[i / 8] >> (i % 8)) & 0x01);
+            }
+
+            return output;
+        }
+#endif
+        else
+        {
+            static_assert(Internal::dependant_false<SerializationType>, "Types not supported in ReadData");
+        }
+    }
+
+    template<typename T>
+    typename Internal::NetworkType<T>::storage_type ReadData(ReadIterator& iter, size_t& length)
+    {
+        return ReadData<typename Internal::NetworkType<T>::storage_type, typename Internal::NetworkType<T>::serialization_type>(iter, length);
+    }
+
+    template <typename StorageType, typename SerializationType>
+    void WriteData(typename std::conditional_t<std::is_arithmetic_v<StorageType>, StorageType, const StorageType&> value, WriteContainer& container)
+    {
+        // bool, char, short, int, long, float, double ...
+        if constexpr (std::is_arithmetic_v<SerializationType>)
+        {
+            SerializationType val = static_cast<SerializationType>(value);
+
+            // Don't need to change endianess of single byte
+            if constexpr (sizeof(SerializationType) > 1)
+            {
+                // Little endian check
+                // It doesn't work if int and char
+                // have the same size, but I guess this is not
+                // the only thing that souldn't work in this case
+                constexpr int num = 1;
+                if (*(char*)&num == 1)
+                {
+                    // Little endian
+                    val = Internal::ChangeEndianness(val);
+                }
+            }
+
+            // Insert bytes in the container
+            container.insert(
+                container.end(),
+                reinterpret_cast<unsigned char*>(&val),
+                reinterpret_cast<unsigned char*>(&val) + sizeof(SerializationType)
+            );
+        }
+        // VarType
+        else if constexpr (Internal::IsVarType<SerializationType>)
+        {
+            std::make_unsigned_t<typename SerializationType::underlying_type> val = static_cast<std::make_unsigned_t<typename SerializationType::underlying_type>>(value);
+            do {
+                unsigned char temp = static_cast<unsigned char>(val & 127);//0b01111111
+                val >>= 7;
+                if (val != 0)
+                {
+                    temp |= 128;//0b10000000
+                }
+                container.push_back(temp);
+            } while (val != 0);
+        }
+        // std::string
+        else if constexpr (std::is_same_v<SerializationType, std::string> && std::is_same_v<StorageType, std::string>)
+        {
+            WriteData<int, VarInt>(static_cast<int>(value.size()), container);
+            container.insert(container.end(), value.begin(), value.end());
+        }
+        // NetworkType
+        else if constexpr (std::is_base_of_v<ProtocolCraft::NetworkType, SerializationType> && std::is_base_of_v<ProtocolCraft::NetworkType, StorageType>)
+        {
+            // static_cast required for example to convert between NBT::Value and NBT::UnnamedValue
+            static_cast<SerializationType>(value).Write(container);
+        }
+        // std::vector // std::array
+        else if constexpr ((Internal::IsVector<StorageType> && Internal::IsVector<SerializationType>) ||
+            (Internal::IsArray<StorageType> && Internal::IsArray<SerializationType>))
+        {
+            if constexpr (Internal::IsVector<StorageType>)
+            {
+                WriteData<int, VarInt>(static_cast<int>(value.size()), container);
+            }
+            else
+            {
+                static_assert(Internal::IsArray<StorageType>, "StorageType should be an array");
+            }
+
+            // If we need to write char/unsigned char, just copy the data
+            if constexpr (sizeof(typename SerializationType::value_type) == 1 &&
+                !std::is_same_v<typename SerializationType::value_type, bool> &&
+                std::is_same_v<typename StorageType::value_type, typename SerializationType::value_type> &&
+                !std::is_base_of_v<ProtocolCraft::NetworkType, typename SerializationType::value_type>)
+            {
+                container.insert(container.end(), value.begin(), value.end());
+            }
+            else
+            {
+                for (const auto& e : value)
+                {
+                    WriteData<typename StorageType::value_type, typename SerializationType::value_type>(e, container);
+                }
             }
         }
+        // std::optional
+        else if constexpr (Internal::IsOptional<StorageType> && Internal::IsOptional<SerializationType>)
+        {
+            WriteData<bool, bool>(value.has_value(), container);
+            if (value.has_value())
+            {
+                WriteData<typename StorageType::value_type, typename SerializationType::value_type>(value.value(), container);
+            }
+        }
+        // std::pair
+        else if constexpr (Internal::IsPair<StorageType> && Internal::IsPair<SerializationType>)
+        {
+            WriteData<typename StorageType::first_type, typename SerializationType::first_type>(value.first, container);
+            WriteData<typename StorageType::second_type, typename SerializationType::second_type>(value.second, container);
+        }
+        // std::map
+        else if constexpr (Internal::IsMap<StorageType> && Internal::IsMap<SerializationType>)
+        {
+            WriteData<int, VarInt>(static_cast<int>(value.size()), container);
+            for (const auto& p : value)
+            {
+                WriteData<typename StorageType::key_type, typename SerializationType::key_type>(p.first, container);
+                WriteData<typename StorageType::mapped_type, typename SerializationType::mapped_type>(p.second, container);
+            }
+        }
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
+        // std::bitset
+        else if constexpr (Internal::IsBitset<StorageType> && Internal::IsBitset<SerializationType>)
+        {
+            const size_t N = value.size();
+            std::vector<unsigned char> bytes(N / 8 + (N % 8 != 0), 0);
+            for (size_t i = 0; i < N; ++i)
+            {
+                if (value[i])
+                {
+                    bytes[i / 8] |= 1 << (i % 8);
+                }
+            }
+            WriteByteArray(bytes, container);
+        }
+#endif
+        else
+        {
+            static_assert(Internal::dependant_false<SerializationType>, "Types not supported in WriteData");
+        }
+    }
 
-        return output;
+    template <typename T>
+    void WriteData(std::conditional_t<std::is_arithmetic_v<typename Internal::NetworkType<T>::storage_type>, typename Internal::NetworkType<T>::storage_type, const typename Internal::NetworkType<T>::storage_type&> value, WriteContainer& container)
+    {
+        WriteData<typename Internal::NetworkType<T>::storage_type, typename Internal::NetworkType<T>::serialization_type>(value, container);
     }
 
     template<typename T, typename SizeType = VarInt>
     std::vector<T> ReadVector(ReadIterator& iter, size_t& length, const std::function<T(ReadIterator&, size_t&)>& read_func)
     {
-        const int output_length = ReadData<SizeType>(iter, length);
+        const typename Internal::NetworkType<SizeType>::storage_type output_length = ReadData<SizeType>(iter, length);
 
         std::vector<T> output(output_length);
         for (int i = 0; i < output_length; ++i)
@@ -243,47 +388,13 @@ namespace ProtocolCraft
     }
 
     template<typename T, typename SizeType = VarInt>
-    void WriteVector(const std::vector<T>& value, WriteContainer& container)
-    {
-        WriteData<SizeType>(static_cast<int>(value.size()), container);
-        if constexpr (sizeof(T) == 1 && !std::is_base_of<NetworkType, T>::value)
-        {
-            container.insert(container.end(), value.begin(), value.end());
-        }
-        else
-        {
-            for (const auto& e: value)
-            {
-                WriteData<T>(e, container);
-            }
-        }
-    }
-
-    template<typename T, typename SizeType = VarInt>
     void WriteVector(const std::vector<T>& value, WriteContainer& container, const std::function<void(const T&, WriteContainer&)>& write_func)
     {
-        WriteData<SizeType>(static_cast<int>(value.size()), container);
+        WriteData<SizeType>(static_cast<typename Internal::NetworkType<SizeType>::storage_type>(value.size()), container);
         for (const auto& e: value)
         {
             write_func(e, container);
         }
-    }
-
-
-    template<typename K, typename V, typename SizeType = VarInt>
-    std::map<K, V> ReadMap(ReadIterator& iter, size_t& length)
-    {
-        const int output_length = ReadData<SizeType>(iter, length);
-
-        std::map<K, V> output;
-        for (int i = 0; i < output_length; ++i)
-        {
-            const K key = ReadData<K>(iter, length);
-            const V val = ReadData<V>(iter, length);
-            output.insert(std::make_pair(key, val));
-        }
-
-        return output;
     }
 
     template<typename K, typename V, typename SizeType = VarInt>
@@ -301,17 +412,6 @@ namespace ProtocolCraft
     }
 
     template<typename K, typename V, typename SizeType = VarInt>
-    void WriteMap(const std::map<K, V>& value, WriteContainer& container)
-    {
-        WriteData<SizeType>(static_cast<int>(value.size()), container);
-        for (const auto& p : value)
-        {
-            WriteData<K>(p.first, container);
-            WriteData<V>(p.second, container);
-        }
-    }
-
-    template<typename K, typename V, typename SizeType = VarInt>
     void WriteMap(const std::map<K, V>& value, WriteContainer& container, const std::function<void(const std::pair<const K, V>&, WriteContainer&)>& write_func)
     {
         WriteData<SizeType>(static_cast<int>(value.size()), container);
@@ -321,34 +421,25 @@ namespace ProtocolCraft
         }
     }
 
-
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-    template<size_t N>
-    std::bitset<N> ReadBitset(ReadIterator& iter, size_t& length)
+    template<typename T>
+    std::optional<T> ReadOptional(ReadIterator& iter, size_t& length, const std::function<T(ReadIterator&, size_t&)>& read_func)
     {
-        std::bitset<N> output;
-        const std::vector<unsigned char> bytes = ReadByteArray(iter, length, N / 8 + (N % 8 != 0));
-        for (size_t i = 0; i < N; ++i)
+        std::optional<T> output;
+        const bool has_value = ReadData<bool>(iter, length);
+        if (has_value)
         {
-            output.set(i, (bytes[i / 8] >> (i % 8)) & 0x01);
+            output = read_func(iter, length);
         }
-
         return output;
     }
 
-    template<size_t N>
-    void WriteBitset(const std::bitset<N>& values, WriteContainer& container)
+    template<typename T>
+    void WriteOptional(const std::optional<T>& value, WriteContainer& container, const std::function<void(const T&, WriteContainer&)>& write_func)
     {
-        std::vector<unsigned char> bytes(N / 8 + (N % 8 != 0), 0);
-        for (size_t i = 0; i < N; ++i)
+        WriteData<bool>(value.has_value(), container);
+        if (value.has_value())
         {
-            if (values[i])
-            {
-                bytes[i / 8] |= 1 << (i % 8);
-            }
+            write_func(value.value(), container);
         }
-        WriteByteArray(bytes, container);
     }
-
-#endif
 } // ProtocolCraft

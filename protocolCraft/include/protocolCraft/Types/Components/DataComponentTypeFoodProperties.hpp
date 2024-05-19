@@ -76,7 +76,7 @@ namespace ProtocolCraft
                 saturation = ReadData<float>(iter, length);
                 can_always_eat = ReadData<bool>(iter, length);
                 eat_seconds = ReadData<float>(iter, length);
-                effects = ReadVector<PossibleEffect>(iter, length);
+                effects = ReadData<std::vector<PossibleEffect>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
@@ -85,7 +85,7 @@ namespace ProtocolCraft
                 WriteData<float>(saturation, container);
                 WriteData<bool>(can_always_eat, container);
                 WriteData<float>(eat_seconds, container);
-                WriteVector<PossibleEffect>(effects, container);
+                WriteData<std::vector<PossibleEffect>>(effects, container);
             }
 
             virtual Json::Value SerializeImpl() const override

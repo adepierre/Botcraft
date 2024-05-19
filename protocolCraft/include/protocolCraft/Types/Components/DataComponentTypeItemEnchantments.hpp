@@ -41,27 +41,13 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                enchantments = ReadMap<int, int>(iter, length,
-                    [](ReadIterator& i, size_t& l)
-                    {
-                        const int enchantment = ReadData<VarInt>(i, l);
-                        const int level = ReadData<VarInt>(i, l);
-
-                        return std::make_pair(enchantment, level);
-                    }
-                );
+                enchantments = ReadData<std::map<VarInt, VarInt>>(iter, length);
                 show_in_tooltip = ReadData<bool>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteMap<int, int>(enchantments, container,
-                    [](const std::pair<int, int>& p, WriteContainer& c)
-                    {
-                        WriteData<VarInt>(p.first, c);
-                        WriteData<VarInt>(p.second, c);
-                    }
-                );
+                WriteData<std::map<VarInt, VarInt>>(enchantments, container);
                 WriteData<bool>(show_in_tooltip, container);
             }
 

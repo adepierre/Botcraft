@@ -1,7 +1,6 @@
 #pragma once
 
-#include <tuple>
-#include "protocolCraft/Utilities/TupleCat.hpp"
+#include "protocolCraft/Utilities/Templates.hpp"
 
 // Login clientbound
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */

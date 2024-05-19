@@ -55,13 +55,13 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             action = ReadData<VarInt>(iter, length);
-            entries = ReadVector<std::string>(iter, length);
+            entries = ReadData<std::vector<std::string>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(action, container);
-            WriteVector<std::string>(entries, container);
+            WriteData<std::vector<std::string>>(entries, container);
         }
 
         virtual Json::Value SerializeImpl() const override

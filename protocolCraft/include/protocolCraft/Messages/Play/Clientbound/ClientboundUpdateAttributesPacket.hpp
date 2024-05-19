@@ -83,9 +83,10 @@ namespace ProtocolCraft
             entity_id = ReadData<VarInt>(iter, length);
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            attributes = ReadVector<EntityProperty, int>(iter, length);
+            // Special case, size is a int instead of a varint
+            attributes = ReadVector<EntityProperty, int>(iter, length, ReadData<EntityProperty>);
 #else
-            attributes = ReadVector<EntityProperty>(iter, length);
+            attributes = ReadData<std::vector<EntityProperty>>(iter, length);
 #endif
         }
 
@@ -93,9 +94,10 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(entity_id, container);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteVector<EntityProperty, int>(attributes, container);
+            // Special case, size is a int instead of a varint
+            WriteVector<EntityProperty, int>(attributes, container, WriteData<EntityProperty>);
 #else
-            WriteVector<EntityProperty>(attributes, container);
+            WriteData<std::vector<EntityProperty>>(attributes, container);
 #endif
         }
 

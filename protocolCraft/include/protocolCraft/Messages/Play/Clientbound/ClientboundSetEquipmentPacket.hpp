@@ -55,7 +55,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-        void SetSlots(const std::vector<std::pair<unsigned char, Slot> >& slots_)
+        void SetSlots(const std::map<unsigned char, Slot>& slots_)
         {
             slots = slots_;
         }
@@ -73,7 +73,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-        const std::vector<std::pair<unsigned char, Slot> >& GetSlots() const
+        const std::map<unsigned char, Slot>& GetSlots() const
         {
             return slots;
         }
@@ -91,12 +91,12 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
             bool has_value = true;
-            slots = std::vector<std::pair<unsigned char, Slot> >(0);
+            slots.clear();
             while (has_value)
             {
                 unsigned char current_value = ReadData<unsigned char>(iter, length);
-                
-                slots.push_back({ current_value & 0x7F, ReadData<Slot>(iter, length) });
+
+                slots.insert({ current_value & 0x7F, ReadData<Slot>(iter, length) });
 
                 has_value = current_value & (1 << 7);
             }
@@ -110,10 +110,11 @@ namespace ProtocolCraft
         {
             WriteData<VarInt>(entity_id, container);
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-            for (int i = 0; i < slots.size(); ++i)
+            size_t index = 0;
+            for (const auto& [k, v] : slots)
             {
-                WriteData<unsigned char>(i != slots.size() - 1 ? slots[i].first | (1 << 7) : slots[i].first, container);
-                WriteData<Slot>(slots[i].second, container);
+                WriteData<unsigned char>(index != slots.size() - 1 ? k | (1 << 7) : k, container);
+                WriteData<Slot>(v, container);
             }
 #else
             WriteData<VarInt>(slot.first, container);
@@ -127,11 +128,11 @@ namespace ProtocolCraft
 
             output["entity_id"] = entity_id;
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-            output["slots"] = Json::Array();
+            output["slots"] = Json::Object();
 
-            for (const auto& s : slots)
+            for (const auto& [k, v] : slots)
             {
-                output["slots"].push_back({ {"first", s.first}, {"second", s.second} });
+                output["slots"][std::to_string(k)] = v;
             }
 #else
             output["slot_first"] = slot.first;
@@ -144,7 +145,7 @@ namespace ProtocolCraft
     private:
         int entity_id = 0;
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-        std::vector<std::pair<unsigned char, Slot> > slots;
+        std::map<unsigned char, Slot> slots;
 #else
         std::pair<int, Slot> slot;
 #endif

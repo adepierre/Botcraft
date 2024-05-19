@@ -48,13 +48,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            sample = ReadVector<long long int>(iter, length);
+            sample = ReadData<std::vector<long long int>>(iter, length);
             debug_sample_type = ReadData<VarInt>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVector<long long int>(sample, container);
+            WriteData<std::vector<long long int>>(sample, container);
             WriteData<VarInt>(debug_sample_type, container);
         }
 

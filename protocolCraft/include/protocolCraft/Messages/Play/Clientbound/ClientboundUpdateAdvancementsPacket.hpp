@@ -103,17 +103,17 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             reset = ReadData<bool>(iter, length);
-            added = ReadMap<Identifier, Advancement>(iter, length);
-            removed = ReadVector<Identifier>(iter, length);
-            progress = ReadMap<Identifier, AdvancementProgress, VarInt>(iter, length);
+            added = ReadData<std::map<Identifier, Advancement>>(iter, length);
+            removed = ReadData<std::vector<Identifier>>(iter, length);
+            progress = ReadData<std::map<Identifier, AdvancementProgress>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<bool>(reset, container);
-            WriteMap<Identifier, Advancement>(added, container);
-            WriteVector<Identifier>(removed, container);
-            WriteMap<Identifier, AdvancementProgress>(progress, container);
+            WriteData<std::map<Identifier, Advancement>>(added, container);
+            WriteData<std::vector<Identifier>>(removed, container);
+            WriteData<std::map<Identifier, AdvancementProgress>>(progress, container);
         }
 
         virtual Json::Value SerializeImpl() const override

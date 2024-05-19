@@ -46,7 +46,7 @@ namespace ProtocolCraft
         {
             last_seen = last_seen_;
         }
-    
+
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const ChatMessageContent& GetContent() const
@@ -85,7 +85,7 @@ namespace ProtocolCraft
 #endif
             timestamp = ReadData<long long int>(iter, length);
             salt = ReadData<long long int>(iter, length);
-            last_seen = ReadVector<LastSeenMessagesEntry>(iter, length);
+            last_seen = ReadData<std::vector<LastSeenMessagesEntry>>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
@@ -97,7 +97,7 @@ namespace ProtocolCraft
 #endif
             WriteData<long long int>(timestamp, container);
             WriteData<long long int>(salt, container);
-            WriteVector<LastSeenMessagesEntry>(last_seen, container);
+            WriteData<std::vector<LastSeenMessagesEntry>>(last_seen, container);
         }
 
         virtual Json::Value SerializeImpl() const override

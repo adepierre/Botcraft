@@ -86,7 +86,7 @@ namespace ProtocolCraft
         {
             return dimension;
         }
-        
+
         long long int GetSeed() const
         {
             return seed;
@@ -136,7 +136,7 @@ namespace ProtocolCraft
             previous_game_type = ReadData<unsigned char>(iter, length);
             is_debug = ReadData<bool>(iter, length);
             is_flat = ReadData<bool>(iter, length);
-            last_death_location = ReadOptional<GlobalPos>(iter, length);
+            last_death_location = ReadData<std::optional<GlobalPos>>(iter, length);
             portal_cooldown = ReadData<VarInt>(iter, length);
         }
 
@@ -153,7 +153,7 @@ namespace ProtocolCraft
             WriteData<unsigned char>(previous_game_type, container);
             WriteData<bool>(is_debug, container);
             WriteData<bool>(is_flat, container);
-            WriteOptional<GlobalPos>(last_death_location, container);
+            WriteData<std::optional<GlobalPos>>(last_death_location, container);
             WriteData<VarInt>(portal_cooldown, container);
         }
 

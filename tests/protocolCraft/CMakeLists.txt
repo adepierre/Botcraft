@@ -3,6 +3,8 @@ project(protocolCraft_tests)
 set(SRC_FILES
     src/json.cpp
     src/nbt.cpp
+    src/serialization.cpp
+    src/templates.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})

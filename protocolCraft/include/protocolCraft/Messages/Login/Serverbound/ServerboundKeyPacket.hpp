@@ -70,7 +70,7 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            key_bytes = ReadVector<unsigned char>(iter, length);
+            key_bytes = ReadData<std::vector<unsigned char>>(iter, length);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             const bool has_nonce = ReadData<bool>(iter, length);
@@ -84,16 +84,16 @@ namespace ProtocolCraft
                 salt_signature = ReadData<SaltSignature>(iter, length);
             }
 #else
-            nonce = ReadVector<unsigned char>(iter, length);
+            nonce = ReadData<std::vector<unsigned char>>(iter, length);
 #endif
 #else
-            encrypted_challenge = ReadVector<unsigned char>(iter, length);
+            encrypted_challenge = ReadData<std::vector<unsigned char>>(iter, length);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteVector<unsigned char>(key_bytes, container);
+            WriteData<std::vector<unsigned char>>(key_bytes, container);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             WriteData<bool>(salt_signature.GetSignature().empty(), container);
@@ -107,10 +107,10 @@ namespace ProtocolCraft
                 WriteData<SaltSignature>(salt_signature, container);
             }
 #else
-            WriteVector<unsigned char>(nonce, container);
+            WriteData<std::vector<unsigned char>>(nonce, container);
 #endif
 #else
-            WriteVector<unsigned char>(encrypted_challenge, container);
+            WriteData<std::vector<unsigned char>>(encrypted_challenge, container);
 #endif
         }
 

@@ -52,14 +52,14 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                rules = ReadVector<ToolRule>(iter, length);
+                rules = ReadData<std::vector<ToolRule>>(iter, length);
                 default_mining_speed = ReadData<float>(iter, length);
                 damage_per_block = ReadData<VarInt>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteVector<ToolRule>(rules, container);
+                WriteData<std::vector<ToolRule>>(rules, container);
                 WriteData<float>(default_mining_speed, container);
                 WriteData<VarInt>(damage_per_block, container);
             }

@@ -41,13 +41,13 @@ namespace ProtocolCraft
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
                 flight_duration = ReadData<VarInt>(iter, length);
-                explosions = ReadVector<DataComponentTypeFireworkExplosion>(iter, length);
+                explosions = ReadData<std::vector<DataComponentTypeFireworkExplosion>>(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
                 WriteData<VarInt>(flight_duration, container);
-                WriteVector<DataComponentTypeFireworkExplosion>(explosions, container);
+                WriteData<std::vector<DataComponentTypeFireworkExplosion>>(explosions, container);
             }
 
             virtual Json::Value SerializeImpl() const override

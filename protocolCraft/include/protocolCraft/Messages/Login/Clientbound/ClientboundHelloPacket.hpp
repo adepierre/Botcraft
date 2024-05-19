@@ -77,11 +77,11 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             server_ID = ReadData<std::string>(iter, length);
-            public_key = ReadVector<unsigned char>(iter, length);
+            public_key = ReadData<std::vector<unsigned char>>(iter, length);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            nonce = ReadVector<unsigned char>(iter, length);
+            nonce = ReadData<std::vector<unsigned char>>(iter, length);
 #else
-            challenge = ReadVector<unsigned char>(iter, length);
+            challenge = ReadData<std::vector<unsigned char>>(iter, length);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.4 */
             should_authenticate = ReadData<bool>(iter, length);
@@ -91,11 +91,11 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<std::string>(server_ID, container);
-            WriteVector<unsigned char>(public_key, container);
+            WriteData<std::vector<unsigned char>>(public_key, container);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteVector<unsigned char>(nonce, container);
+            WriteData<std::vector<unsigned char>>(nonce, container);
 #else
-            WriteVector<unsigned char>(challenge, container);
+            WriteData<std::vector<unsigned char>>(challenge, container);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.4 */
             WriteData<bool>(should_authenticate, container);

@@ -19,18 +19,18 @@ namespace ProtocolCraft
         {
             previous_signature = previous_signature_;
         }
-        
+
         void SetSender(const UUID& sender_)
         {
             sender = sender_;
         }
-    
+
 
         const std::optional<std::vector<unsigned char>>& GetPreviousSignature() const
         {
             return previous_signature;
         }
-        
+
         const UUID& GetSender() const
         {
             return sender;
@@ -39,23 +39,13 @@ namespace ProtocolCraft
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            previous_signature = ReadOptional<std::vector<unsigned char>>(iter, length,
-                [](ReadIterator& i, size_t& l)
-                {
-                    return ReadVector<unsigned char>(i, l);
-                }
-            );
+            previous_signature = ReadData<std::optional<std::vector<unsigned char>>>(iter, length);
             sender = ReadData<UUID>(iter, length);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteOptional<std::vector<unsigned char>>(previous_signature, container,
-                [](const std::vector<unsigned char>& v, WriteContainer& c)
-                {
-                    WriteVector<unsigned char>(v, c);
-                }
-            );
+            WriteData<std::optional<std::vector<unsigned char>>>(previous_signature, container);
             WriteData<UUID>(sender, container);
         }
 
