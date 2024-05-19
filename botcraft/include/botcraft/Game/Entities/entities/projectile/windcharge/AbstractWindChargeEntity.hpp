@@ -9,7 +9,7 @@ namespace Botcraft
     {
     protected:
         static constexpr int metadata_count = 0;
-        static constexpr int hierarchy_metadata_count = AbstractWindChargeEntity::metadata_count + AbstractWindChargeEntity::hierarchy_metadata_count;
+        static constexpr int hierarchy_metadata_count = AbstractHurtingProjectileEntity::metadata_count + AbstractHurtingProjectileEntity::hierarchy_metadata_count;
 
     public:
         AbstractWindChargeEntity();

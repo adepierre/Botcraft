@@ -53,7 +53,7 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[msg.GetPlayerId()] = local_player;
     }
-    
+
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg)
     {
@@ -80,7 +80,7 @@ namespace Botcraft
                 entity = it->second;
             }
         }
-        
+
         if (entity != nullptr)
         {
             const Vector3<double> entity_position = entity->GetPosition();
@@ -277,7 +277,7 @@ namespace Botcraft
         local_player->SetFood(msg.GetFood());
         local_player->SetFoodSaturation(msg.GetFoodSaturation());
     }
-    
+
     void EntityManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg)
     {
         std::shared_ptr<Entity> entity = nullptr;
