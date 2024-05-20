@@ -72,64 +72,64 @@ TEST_CASE("Network Type extraction")
     };
 
     // Simple type
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<int>::storage_type, int>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<int>::serialization_type, int>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<TestEnum>::storage_type, TestEnum>);
-    STATIC_REQUIRE_FALSE(std::is_same_v<typename Internal::NetworkType<TestEnum>::serialization_type, int>);
-    STATIC_REQUIRE_FALSE(std::is_same_v<typename Internal::NetworkType<TestEnum>::serialization_type, std::underlying_type_t<TestEnum>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<TestClass>::storage_type, TestClass>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<TestClass>::serialization_type, TestClass>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<int>::storage_type, int>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<int>::serialization_type, int>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<TestEnum>::storage_type, TestEnum>);
+    STATIC_REQUIRE_FALSE(std::is_same_v<typename Internal::SerializedType<TestEnum>::serialization_type, int>);
+    STATIC_REQUIRE_FALSE(std::is_same_v<typename Internal::SerializedType<TestEnum>::serialization_type, std::underlying_type_t<TestEnum>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<TestClass>::storage_type, TestClass>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<TestClass>::serialization_type, TestClass>);
 
     // VarType
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<VarType<int>>::storage_type, int>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<VarType<int>>::serialization_type, VarType<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<VarType<int>>::storage_type, int>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<VarType<int>>::serialization_type, VarType<int>>);
 
     // Array
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::array<int, 4>>::storage_type, std::array<int, 4>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::array<int, 3>>::serialization_type, std::array<int, 3>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::array<VarType<int>, 2>>::storage_type, std::array<int, 2>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::array<VarType<int>, 1>>::serialization_type, std::array<VarType<int>, 1>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::array<std::vector<VarType<int>>, 5>>::storage_type, std::array<std::vector<int>, 5>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::array<std::vector<VarType<int>>, 5>>::serialization_type, std::array<std::vector<VarType<int>>, 5>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::array<int, 4>>::storage_type, std::array<int, 4>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::array<int, 3>>::serialization_type, std::array<int, 3>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::array<VarType<int>, 2>>::storage_type, std::array<int, 2>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::array<VarType<int>, 1>>::serialization_type, std::array<VarType<int>, 1>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::array<std::vector<VarType<int>>, 5>>::storage_type, std::array<std::vector<int>, 5>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::array<std::vector<VarType<int>>, 5>>::serialization_type, std::array<std::vector<VarType<int>>, 5>>);
 
     // Vector
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::vector<int>>::storage_type, std::vector<int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::vector<int>>::serialization_type, std::vector<int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::vector<VarType<int>>>::storage_type, std::vector<int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::vector<VarType<int>>>::serialization_type, std::vector<VarType<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::vector<std::vector<VarType<int>>>>::storage_type, std::vector<std::vector<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::vector<std::vector<VarType<int>>>>::serialization_type, std::vector<std::vector<VarType<int>>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::vector<int>>::storage_type, std::vector<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::vector<int>>::serialization_type, std::vector<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::vector<VarType<int>>>::storage_type, std::vector<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::vector<VarType<int>>>::serialization_type, std::vector<VarType<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::vector<std::vector<VarType<int>>>>::storage_type, std::vector<std::vector<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::vector<std::vector<VarType<int>>>>::serialization_type, std::vector<std::vector<VarType<int>>>>);
 
     // Map
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::map<char, int>>::storage_type, std::map<char, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::map<char, int>>::serialization_type, std::map<char, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::map<char, VarType<int>>>::storage_type, std::map<char, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::map<char, VarType<int>>>::serialization_type, std::map<char, VarType<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::map<char, std::map<int, VarType<int>>>>::storage_type, std::map<char, std::map<int, int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::map<char, std::map<int, VarType<int>>>>::serialization_type, std::map<char, std::map<int, VarType<int>>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::map<char, int>>::storage_type, std::map<char, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::map<char, int>>::serialization_type, std::map<char, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::map<char, VarType<int>>>::storage_type, std::map<char, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::map<char, VarType<int>>>::serialization_type, std::map<char, VarType<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::map<char, std::map<int, VarType<int>>>>::storage_type, std::map<char, std::map<int, int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::map<char, std::map<int, VarType<int>>>>::serialization_type, std::map<char, std::map<int, VarType<int>>>>);
 
     // Optional
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::optional<int>>::storage_type, std::optional<int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::optional<int>>::serialization_type, std::optional<int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::optional<VarType<int>>>::storage_type, std::optional<int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::optional<VarType<int>>>::serialization_type, std::optional<VarType<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::optional<int>>::storage_type, std::optional<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::optional<int>>::serialization_type, std::optional<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::optional<VarType<int>>>::storage_type, std::optional<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::optional<VarType<int>>>::serialization_type, std::optional<VarType<int>>>);
 
     // Pair
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::pair<int, int>>::storage_type, std::pair<int, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::pair<int, int>>::serialization_type, std::pair<int, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::pair<int, VarType<int>>>::storage_type, std::pair<int, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::pair<int, VarType<int>>>::serialization_type, std::pair<int, VarType<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::pair<std::vector<int>, std::vector<VarType<int>>>>::storage_type, std::pair<std::vector<int>, std::vector<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::pair<std::vector<int>, std::vector<VarType<int>>>>::serialization_type, std::pair<std::vector<int>, std::vector<VarType<int>>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::pair<int, int>>::storage_type, std::pair<int, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::pair<int, int>>::serialization_type, std::pair<int, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::pair<int, VarType<int>>>::storage_type, std::pair<int, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::pair<int, VarType<int>>>::serialization_type, std::pair<int, VarType<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::pair<std::vector<int>, std::vector<VarType<int>>>>::storage_type, std::pair<std::vector<int>, std::vector<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::pair<std::vector<int>, std::vector<VarType<int>>>>::serialization_type, std::pair<std::vector<int>, std::vector<VarType<int>>>>);
 
     // Tuple
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::tuple<int, int>>::storage_type, std::tuple<int, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::tuple<int, int>>::serialization_type, std::tuple<int, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::tuple<int, VarType<int>>>::storage_type, std::tuple<int, int>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::tuple<int, VarType<int>>>::serialization_type, std::tuple<int, VarType<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::tuple<int, DiffType<TestEnum, VarType<int>>>>::storage_type, std::tuple<int, TestEnum>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::tuple<int, DiffType<TestEnum, VarType<int>>>>::serialization_type, std::tuple<int, VarType<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::tuple<int, DiffType<TestEnum, VarType<int>>, TestClass>>::storage_type, std::tuple<int, TestEnum, TestClass>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::NetworkType<std::tuple<int, DiffType<TestEnum, VarType<int>>, TestClass>>::serialization_type, std::tuple<int, VarType<int>, TestClass>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, int>>::storage_type, std::tuple<int, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, int>>::serialization_type, std::tuple<int, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, VarType<int>>>::storage_type, std::tuple<int, int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, VarType<int>>>::serialization_type, std::tuple<int, VarType<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>>>::storage_type, std::tuple<int, TestEnum>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>>>::serialization_type, std::tuple<int, VarType<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>, TestClass>>::storage_type, std::tuple<int, TestEnum, TestClass>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>, TestClass>>::serialization_type, std::tuple<int, VarType<int>, TestClass>>);
 
 }

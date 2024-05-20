@@ -115,7 +115,7 @@ namespace Botcraft
 #else
         LOG_INFO("Disconnect during playing with reason: " << msg.GetReason().Serialize().Dump());
 #endif
-        
+
         should_be_closed = true;
     }
 

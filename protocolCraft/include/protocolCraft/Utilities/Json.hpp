@@ -55,7 +55,7 @@ namespace ProtocolCraft
             Value(const Array& a);
             Value(Array&& a);
             Value(const std::initializer_list<Value>& init);
-            Value(const ProtocolCraft::NetworkType& o);
+            Value(const NetworkType& o);
 
             // Add support for any std::vector<T>, std::deque<T>, std::list<T> etc... when T is compatible with Value
             template<

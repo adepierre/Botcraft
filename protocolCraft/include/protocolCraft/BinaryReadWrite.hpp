@@ -124,7 +124,7 @@ namespace ProtocolCraft
             return std::string(iter - size, iter);
         }
         // NetworkType
-        else if constexpr (std::is_base_of_v<ProtocolCraft::NetworkType, SerializationType> && std::is_base_of_v<ProtocolCraft::NetworkType, StorageType>)
+        else if constexpr (std::is_base_of_v<NetworkType, SerializationType> && std::is_base_of_v<NetworkType, StorageType>)
         {
             SerializationType output;
             output.Read(iter, length);
@@ -152,7 +152,7 @@ namespace ProtocolCraft
             if constexpr (sizeof(typename SerializationType::value_type) == 1 &&
                 !std::is_same_v<typename SerializationType::value_type, bool> &&
                 std::is_same_v<typename SerializationType::value_type, typename StorageType::value_type> &&
-                !std::is_base_of_v<ProtocolCraft::NetworkType, typename SerializationType::value_type>)
+                !std::is_base_of_v<NetworkType, typename SerializationType::value_type>)
             {
                 if (length < N)
                 {
@@ -230,9 +230,9 @@ namespace ProtocolCraft
     }
 
     template<typename T>
-    typename Internal::NetworkType<T>::storage_type ReadData(ReadIterator& iter, size_t& length)
+    typename Internal::SerializedType<T>::storage_type ReadData(ReadIterator& iter, size_t& length)
     {
-        return ReadData<typename Internal::NetworkType<T>::storage_type, typename Internal::NetworkType<T>::serialization_type>(iter, length);
+        return ReadData<typename Internal::SerializedType<T>::storage_type, typename Internal::SerializedType<T>::serialization_type>(iter, length);
     }
 
     template <typename StorageType, typename SerializationType>
@@ -286,7 +286,7 @@ namespace ProtocolCraft
             container.insert(container.end(), value.begin(), value.end());
         }
         // NetworkType
-        else if constexpr (std::is_base_of_v<ProtocolCraft::NetworkType, SerializationType> && std::is_base_of_v<ProtocolCraft::NetworkType, StorageType>)
+        else if constexpr (std::is_base_of_v<NetworkType, SerializationType> && std::is_base_of_v<NetworkType, StorageType>)
         {
             // static_cast required for example to convert between NBT::Value and NBT::UnnamedValue
             static_cast<SerializationType>(value).Write(container);
@@ -308,7 +308,7 @@ namespace ProtocolCraft
             if constexpr (sizeof(typename SerializationType::value_type) == 1 &&
                 !std::is_same_v<typename SerializationType::value_type, bool> &&
                 std::is_same_v<typename StorageType::value_type, typename SerializationType::value_type> &&
-                !std::is_base_of_v<ProtocolCraft::NetworkType, typename SerializationType::value_type>)
+                !std::is_base_of_v<NetworkType, typename SerializationType::value_type>)
             {
                 container.insert(container.end(), value.begin(), value.end());
             }
@@ -368,15 +368,15 @@ namespace ProtocolCraft
     }
 
     template <typename T>
-    void WriteData(std::conditional_t<std::is_arithmetic_v<typename Internal::NetworkType<T>::storage_type> || std::is_enum_v<typename Internal::NetworkType<T>::storage_type>, typename Internal::NetworkType<T>::storage_type, const typename Internal::NetworkType<T>::storage_type&> value, WriteContainer& container)
+    void WriteData(std::conditional_t<std::is_arithmetic_v<typename Internal::SerializedType<T>::storage_type> || std::is_enum_v<typename Internal::SerializedType<T>::storage_type>, typename Internal::SerializedType<T>::storage_type, const typename Internal::SerializedType<T>::storage_type&> value, WriteContainer& container)
     {
-        WriteData<typename Internal::NetworkType<T>::storage_type, typename Internal::NetworkType<T>::serialization_type>(value, container);
+        WriteData<typename Internal::SerializedType<T>::storage_type, typename Internal::SerializedType<T>::serialization_type>(value, container);
     }
 
     template<typename T, typename SizeType = VarInt>
     std::vector<T> ReadVector(ReadIterator& iter, size_t& length, const std::function<T(ReadIterator&, size_t&)>& read_func)
     {
-        const typename Internal::NetworkType<SizeType>::storage_type output_length = ReadData<SizeType>(iter, length);
+        const typename Internal::SerializedType<SizeType>::storage_type output_length = ReadData<SizeType>(iter, length);
 
         std::vector<T> output(output_length);
         for (int i = 0; i < output_length; ++i)
@@ -390,7 +390,7 @@ namespace ProtocolCraft
     template<typename T, typename SizeType = VarInt>
     void WriteVector(const std::vector<T>& value, WriteContainer& container, const std::function<void(const T&, WriteContainer&)>& write_func)
     {
-        WriteData<SizeType>(static_cast<typename Internal::NetworkType<SizeType>::storage_type>(value.size()), container);
+        WriteData<SizeType>(static_cast<typename Internal::SerializedType<SizeType>::storage_type>(value.size()), container);
         for (const auto& e: value)
         {
             write_func(e, container);

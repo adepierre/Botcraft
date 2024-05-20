@@ -42,15 +42,15 @@ namespace ProtocolCraft
         template <typename T> constexpr bool IsBitset = false;
         template <size_t N> constexpr bool IsBitset<std::bitset<N>> = true;
 #endif
-        template <typename T> struct NetworkType { using storage_type = T; using serialization_type = T; };
-        template <typename T> struct NetworkType<VarType<T>> { using storage_type = typename VarType<T>::underlying_type; using serialization_type = VarType<T>; };
-        template <typename T, size_t N> struct NetworkType<std::array<T, N>> { using storage_type = std::array<typename NetworkType<T>::storage_type, N>; using serialization_type = std::array<T, N>; };
-        template <typename T> struct NetworkType<std::vector<T>> { using storage_type = std::vector<typename NetworkType<T>::storage_type>; using serialization_type = std::vector<T>; };
-        template <typename T> struct NetworkType<std::optional<T>> { using storage_type = std::optional<typename NetworkType<T>::storage_type>; using serialization_type = std::optional<T>; };
-        template <typename K, typename V> struct NetworkType<std::map<K, V>> { using storage_type = std::map<typename NetworkType<K>::storage_type, typename NetworkType<V>::storage_type>; using serialization_type = std::map<K, V>; };
-        template <typename T1, typename T2> struct NetworkType<std::pair<T1, T2>> { using storage_type = std::pair<typename NetworkType<T1>::storage_type, typename NetworkType<T2>::storage_type>; using serialization_type = std::pair<T1, T2>; };
-        template <typename T1, typename T2> struct NetworkType<DiffType<T1, T2>> { using storage_type = T1; using serialization_type = T2; };
-        template <typename ...P> struct NetworkType<std::tuple<P...>> { using storage_type = std::tuple<typename NetworkType<P>::storage_type...>; using serialization_type = std::tuple<typename NetworkType<P>::serialization_type...>; };
+        template <typename T> struct SerializedType { using storage_type = T; using serialization_type = T; };
+        template <typename T> struct SerializedType<VarType<T>> { using storage_type = typename VarType<T>::underlying_type; using serialization_type = VarType<T>; };
+        template <typename T, size_t N> struct SerializedType<std::array<T, N>> { using storage_type = std::array<typename SerializedType<T>::storage_type, N>; using serialization_type = std::array<T, N>; };
+        template <typename T> struct SerializedType<std::vector<T>> { using storage_type = std::vector<typename SerializedType<T>::storage_type>; using serialization_type = std::vector<T>; };
+        template <typename T> struct SerializedType<std::optional<T>> { using storage_type = std::optional<typename SerializedType<T>::storage_type>; using serialization_type = std::optional<T>; };
+        template <typename K, typename V> struct SerializedType<std::map<K, V>> { using storage_type = std::map<typename SerializedType<K>::storage_type, typename SerializedType<V>::storage_type>; using serialization_type = std::map<K, V>; };
+        template <typename T1, typename T2> struct SerializedType<std::pair<T1, T2>> { using storage_type = std::pair<typename SerializedType<T1>::storage_type, typename SerializedType<T2>::storage_type>; using serialization_type = std::pair<T1, T2>; };
+        template <typename T1, typename T2> struct SerializedType<DiffType<T1, T2>> { using storage_type = T1; using serialization_type = T2; };
+        template <typename ...P> struct SerializedType<std::tuple<P...>> { using storage_type = std::tuple<typename SerializedType<P>::storage_type...>; using serialization_type = std::tuple<typename SerializedType<P>::serialization_type...>; };
 
         /// @brief To be used in constexpr else to fail compilation in a C++ compliant way
         /// @tparam T Any type

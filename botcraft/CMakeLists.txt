@@ -580,7 +580,7 @@ target_include_directories(botcraft
         "$<INSTALL_INTERFACE:include>"
     PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private_include>"
-        )
+)
 
 target_compile_definitions(botcraft PRIVATE ASSETS_PATH="${ASSET_DIR}")
 

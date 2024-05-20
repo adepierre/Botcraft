@@ -101,7 +101,7 @@ namespace ProtocolCraft
             val = std::move(new_val);
         }
 
-        Value::Value(const ProtocolCraft::NetworkType& o) : val(std::move(o.Serialize().val))
+        Value::Value(const NetworkType& o) : val(std::move(o.Serialize().val))
         {
 
         }
@@ -221,7 +221,7 @@ namespace ProtocolCraft
 
         std::istream& operator>>(std::istream& is, Value& v)
         {
-            v = ProtocolCraft::Json::Parse(std::string(
+            v = Json::Parse(std::string(
                 std::istreambuf_iterator<char>(is),
                 std::istreambuf_iterator<char>()
             ));
