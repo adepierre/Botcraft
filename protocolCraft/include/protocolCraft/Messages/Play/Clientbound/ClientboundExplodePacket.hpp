@@ -358,7 +358,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         Particle small_explosion_particles;
         Particle large_explosion_particles;
-        int block_interaction;
+        int block_interaction = 0;
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SoundEvent explosion_sound;
 #else

@@ -181,7 +181,7 @@ namespace ProtocolCraft
         }
 
     private:
-        RecipeState state;
+        RecipeState state = RecipeState::Init;
 #if PROTOCOL_VERSION > 348 /* > 1.12.2 */
         std::vector<Identifier> recipes;
 #else

@@ -117,7 +117,7 @@ namespace ProtocolCraft
         {
             return target;
         }
-        
+
         const Identifier& GetPool() const
         {
             return pool;
@@ -242,8 +242,8 @@ namespace ProtocolCraft
         std::string joint;
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        int selection_priority;
-        int placement_priority;
+        int selection_priority = 0;
+        int placement_priority = 0;
 #endif
 
     };

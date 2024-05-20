@@ -78,7 +78,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         Identifier type;
 #else
-        RecipeDataType type;
+        RecipeDataType type = RecipeDataType::None;
 #endif
         std::shared_ptr<RecipeData> data;
     };

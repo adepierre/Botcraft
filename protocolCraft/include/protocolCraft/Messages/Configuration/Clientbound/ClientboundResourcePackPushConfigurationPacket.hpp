@@ -111,7 +111,7 @@ namespace ProtocolCraft
         }
 
     private:
-        UUID uuid;
+        UUID uuid = {};
         std::string url;
         std::string hash;
         bool required = false;

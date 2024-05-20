@@ -58,7 +58,7 @@ namespace ProtocolCraft
         }
 
     private:
-        long long int time;
+        long long int time = 0;
 
     };
 } //ProtocolCraft
