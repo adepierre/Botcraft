@@ -6,7 +6,7 @@
 namespace Botcraft
 {
     // The corners of the triangle defining grass and leaves colors in the following order:
-    // upper left, lower left, lower right 
+    // upper left, lower left, lower right
     const std::vector<std::vector<unsigned int> > grass_color_triangle{ { 71, 205, 51 }, { 191, 183, 85 }, { 128, 180, 151 } };
     const std::vector<std::vector<unsigned int> > leaves_color_triangle{ { 26, 191, 0 }, { 174, 164, 42 }, { 96, 161, 123 } };
 
@@ -77,6 +77,8 @@ namespace Botcraft
             const unsigned int base_color = is_grass ? 0xFF90814D : 0xFF9E814D;
             return base_color;
         }
+        default:
+            return 0xFFFFFFFF;
         }
         return 0xFFFFFFFF;
     }
