@@ -439,10 +439,18 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Utilities/Plugins/PluginObject.hpp
 )
 
+set(protocolCraft_PRIVATE_HDR
+    private_include/protocolCraft/BaseMessage.ipp
+
+    private_include/protocolCraft/Utilities/PrivateTemplates.hpp
+)
+
 set(protocolCraft_SRC
-    src/BaseMessage.cpp
+    src/BaseMessageClientbound.cpp
+    src/BaseMessageServerbound.cpp
     src/BinaryReadWrite.cpp
-    src/MessageFactory.cpp
+    src/MessageFactoryClientbound.cpp
+    src/MessageFactoryServerbound.cpp
 
     src/Types/Chat/Chat.cpp
 
@@ -485,6 +493,13 @@ if(MSVC)
         source_group("${source_path_msvc}" FILES "${source}")
     endforeach()
 
+    foreach(source IN LISTS protocolCraft_PRIVATE_HDR)
+        get_filename_component(source_path_header "${source}" PATH)
+        string(REPLACE "private_include/protocolCraft" "Header Files/private" source_path_header "${source_path_header}")
+        string(REPLACE "/" "\\" source_path_msvc "${source_path_header}")
+        source_group("${source_path_msvc}" FILES "${source}")
+    endforeach()
+
     foreach(source IN LISTS protocolCraft_SRC)
         get_filename_component(source_path "${source}" PATH)
         string(REPLACE "src" "Source Files" source_path "${source_path}")
@@ -494,9 +509,9 @@ if(MSVC)
 endif()
 
 if(PROTOCOLCRAFT_STATIC)
-    add_library(protocolCraft STATIC ${protocolCraft_SRC} ${protocolCraft_PUBLIC_HDR})
+    add_library(protocolCraft STATIC ${protocolCraft_SRC} ${protocolCraft_PUBLIC_HDR} ${protocolCraft_PRIVATE_HDR})
 else()
-    add_library(protocolCraft SHARED ${protocolCraft_SRC} ${protocolCraft_PUBLIC_HDR})
+    add_library(protocolCraft SHARED ${protocolCraft_SRC} ${protocolCraft_PUBLIC_HDR} ${protocolCraft_PRIVATE_HDR})
 endif(PROTOCOLCRAFT_STATIC)
 set_property(TARGET protocolCraft PROPERTY CXX_STANDARD 17)
 set_property(TARGET protocolCraft PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -535,6 +550,8 @@ target_include_directories(protocolCraft
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:include>"
+    PRIVATE
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private_include>"
 )
 
 if(BOTCRAFT_COMPRESSION)
