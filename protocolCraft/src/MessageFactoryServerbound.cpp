@@ -11,16 +11,16 @@ namespace ProtocolCraft
         switch (state)
         {
         case ConnectionState::Handshake:
-            return Internal::AutomaticMessageFactory<AllServerboundHandshakeMessages>(id);
+            return AutomaticMessageFactory<AllServerboundHandshakeMessages>(id);
         case ConnectionState::Login:
-            return Internal::AutomaticMessageFactory<AllServerboundLoginMessages>(id);
+            return AutomaticMessageFactory<AllServerboundLoginMessages>(id);
         case ConnectionState::Status:
-            return Internal::AutomaticMessageFactory<AllServerboundStatusMessages>(id);
+            return AutomaticMessageFactory<AllServerboundStatusMessages>(id);
         case ConnectionState::Play:
-            return Internal::AutomaticMessageFactory<AllServerboundPlayMessages>(id);
+            return AutomaticMessageFactory<AllServerboundPlayMessages>(id);
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         case ConnectionState::Configuration:
-            return Internal::AutomaticMessageFactory<AllServerboundConfigurationMessages>(id);
+            return AutomaticMessageFactory<AllServerboundConfigurationMessages>(id);
 #endif
         default:
             return nullptr;

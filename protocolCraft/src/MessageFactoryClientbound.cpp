@@ -11,14 +11,14 @@ namespace ProtocolCraft
         switch (state)
         {
         case ConnectionState::Login:
-            return Internal::AutomaticMessageFactory<AllClientboundLoginMessages>(id);
+            return AutomaticMessageFactory<AllClientboundLoginMessages>(id);
         case ConnectionState::Status:
-            return Internal::AutomaticMessageFactory<AllClientboundStatusMessages>(id);
+            return AutomaticMessageFactory<AllClientboundStatusMessages>(id);
         case ConnectionState::Play:
-            return Internal::AutomaticMessageFactory<AllClientboundPlayMessages>(id);
+            return AutomaticMessageFactory<AllClientboundPlayMessages>(id);
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         case ConnectionState::Configuration:
-            return Internal::AutomaticMessageFactory<AllClientboundConfigurationMessages>(id);
+            return AutomaticMessageFactory<AllClientboundConfigurationMessages>(id);
 #endif
         default:
             return nullptr;

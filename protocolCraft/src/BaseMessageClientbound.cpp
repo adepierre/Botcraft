@@ -1,5 +1,6 @@
 #include "protocolCraft/BaseMessage.ipp"
 #include "protocolCraft/AllClientboundMessages.hpp"
+#include "protocolCraft/Utilities/PrivateTemplates.hpp"
 
 namespace ProtocolCraft
 {

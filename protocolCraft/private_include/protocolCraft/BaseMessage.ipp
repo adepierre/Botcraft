@@ -1,4 +1,5 @@
 #pragma once
+
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Handler.hpp"
 
