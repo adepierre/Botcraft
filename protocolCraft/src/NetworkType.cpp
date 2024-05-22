@@ -4,4 +4,5 @@
 namespace ProtocolCraft
 {
     // All NetworkType auto serializable methods can be defined here
+
 }

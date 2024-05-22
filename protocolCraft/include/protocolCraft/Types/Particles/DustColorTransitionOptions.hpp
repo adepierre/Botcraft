@@ -7,39 +7,21 @@ namespace ProtocolCraft
 {
     class DustColorTransitionOptions : public ParticleOptions
     {
-    public:
-        DustColorTransitionOptions();
-        virtual ~DustColorTransitionOptions();
+        DECLARE_FIELDS_TYPES(float,   float,     float,    float, float, float,   float);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        DECLARE_FIELDS_NAMES(FromRed, FromGreen, FromBlue, Scale, ToRed, ToGreen, ToBlue);
+#else
+        DECLARE_FIELDS_NAMES(FromRed, FromGreen, FromBlue, ToRed, ToGreen, ToBlue, Scale);
+#endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        float GetFromRed() const;
-        float GetFromGreen() const;
-        float GetFromBlue() const;
-        float GetScale() const;
-        float GetToRed() const;
-        float GetToGreen() const;
-        float GetToBlue() const;
-
-        void SetFromRed(const float from_red_);
-        void SetFromGreen(const float from_green_);
-        void SetFromBlue(const float from_blue_);
-        void SetScale(const float scale_);
-        void SetToRed(const float to_red_);
-        void SetToGreen(const float to_green_);
-        void SetToBlue(const float to_blue_);
-        
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        virtual void WriteImpl(WriteContainer& container) const override;
-        virtual Json::Value SerializeImpl() const override;
-
-    private:
-        float from_red = 0.0f;
-        float from_green = 0.0f;
-        float from_blue = 0.0f;
-        float scale = 0.0f;
-        float to_red = 0.0f;
-        float to_green = 0.0f;
-        float to_blue = 0.0f;
+        GETTER_SETTER(FromRed);
+        GETTER_SETTER(FromGreen);
+        GETTER_SETTER(FromBlue);
+        GETTER_SETTER(Scale);
+        GETTER_SETTER(ToRed);
+        GETTER_SETTER(ToGreen);
+        GETTER_SETTER(ToBlue);
     };
 }
 #endif

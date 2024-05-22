@@ -1,7 +1,9 @@
 #include "protocolCraft/Types/Particles/Particle.hpp"
+#include "protocolCraft/Utilities/PrivateTemplates.hpp"
 
 #include "protocolCraft/Types/Particles/ParticleOptions.hpp"
 #include "protocolCraft/Types/Particles/BlockParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/EmptyParticleOptions.hpp"
 
 #if PROTOCOL_VERSION > 392 /* > 1.12.2 */
 #include "protocolCraft/Types/Particles/DustParticleOptions.hpp"
@@ -22,13 +24,36 @@
 #include "protocolCraft/Types/Particles/ColorParticleOptions.hpp"
 #endif
 
-
-
 #include <array>
 #include <stdexcept>
 
 namespace ProtocolCraft
 {
+    // ParticlesOptions
+    DEFINE_NETWORK_TYPE(BlockParticleOptions);
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+    DEFINE_NETWORK_TYPE(ColorParticleOptions);
+#endif
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+    DEFINE_NETWORK_TYPE(DustColorTransitionOptions);
+#endif
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
+    DEFINE_NETWORK_TYPE(DustParticleOptions);
+#endif
+    DEFINE_NETWORK_TYPE(EmptyParticleOptions);
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+    DEFINE_NETWORK_TYPE(IconcrackParticleOptions);
+#endif
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
+    DEFINE_NETWORK_TYPE(ItemParticleOptions);
+#endif
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+    DEFINE_NETWORK_TYPE(SculkChargeParticleOptions);
+#endif
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+    DEFINE_NETWORK_TYPE(ShriekParticleOptions);
+#endif
+
     Particle::Particle()
     {
 
@@ -358,7 +383,7 @@ namespace ProtocolCraft
             break;
 #endif
         default:
-            options = std::make_shared<ParticleOptions>();
+            options = std::make_shared<EmptyParticleOptions>();
             break;
         }
     }

@@ -7,21 +7,11 @@ namespace ProtocolCraft
 {
     class ColorParticleOptions : public ParticleOptions
     {
-    public:
-        ColorParticleOptions();
-        virtual ~ColorParticleOptions();
+        DECLARE_FIELDS_TYPES(int);
+        DECLARE_FIELDS_NAMES(Color);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        int GetColor() const;
-
-        void SetColor(const int color_);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        virtual void WriteImpl(WriteContainer& container) const override;
-        virtual Json::Value SerializeImpl() const override;
-
-    private:
-        int color = 0;
+        GETTER_SETTER(Color);
     };
 }
 #endif

@@ -7,22 +7,11 @@ namespace ProtocolCraft
 {
     class ShriekParticleOptions : public ParticleOptions
     {
-    public:
-        ShriekParticleOptions();
-        
-        virtual ~ShriekParticleOptions();
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Delay);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        int GetDelay() const;
-
-        void SetDelay(const int delay_);
-        
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        virtual void WriteImpl(WriteContainer& container) const override;
-        virtual Json::Value SerializeImpl() const override;
-        
-    private:
-        int delay = 0;
+        GETTER_SETTER(Delay);
     };
 }
 #endif

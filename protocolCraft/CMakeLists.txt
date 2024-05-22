@@ -405,6 +405,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Particles/IconcrackParticleOptions.hpp
     include/protocolCraft/Types/Particles/DustColorTransitionOptions.hpp
     include/protocolCraft/Types/Particles/DustParticleOptions.hpp
+    include/protocolCraft/Types/Particles/EmptyParticleOptions.hpp
     include/protocolCraft/Types/Particles/ItemParticleOptions.hpp
     include/protocolCraft/Types/Particles/SculkChargeParticleOptions.hpp
     include/protocolCraft/Types/Particles/ShriekParticleOptions.hpp
@@ -465,17 +466,6 @@ set(protocolCraft_SRC
     src/Types/NBT/Tag.cpp
 
     src/Types/Particles/Particle.cpp
-    src/Types/Particles/ParticleOptions.cpp
-
-    src/Types/Particles/BlockParticleOptions.cpp
-    src/Types/Particles/ColorParticleOptions.cpp
-    src/Types/Particles/IconcrackParticleOptions.cpp
-    src/Types/Particles/DustColorTransitionOptions.cpp
-    src/Types/Particles/DustParticleOptions.cpp
-    src/Types/Particles/ItemParticleOptions.cpp
-    src/Types/Particles/SculkChargeParticleOptions.cpp
-    src/Types/Particles/ShriekParticleOptions.cpp
-    src/Types/Particles/VibrationParticleOptions.cpp
 
     src/Types/Recipes/Recipe.cpp
 

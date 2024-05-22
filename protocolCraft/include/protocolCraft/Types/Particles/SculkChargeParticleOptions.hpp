@@ -7,22 +7,11 @@ namespace ProtocolCraft
 {
     class SculkChargeParticleOptions : public ParticleOptions
     {
-    public:
-        SculkChargeParticleOptions();
-        
-        virtual ~SculkChargeParticleOptions();
+        DECLARE_FIELDS_TYPES(float);
+        DECLARE_FIELDS_NAMES(Roll);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        float GetRoll() const;
-
-        void SetRoll(const float roll_);
-        
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        virtual void WriteImpl(WriteContainer& container) const override;
-        virtual Json::Value SerializeImpl() const override;
-        
-    private:
-        float roll = 0.0f;
+        GETTER_SETTER(Roll);
     };
 }
 #endif
