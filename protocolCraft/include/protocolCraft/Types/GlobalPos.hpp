@@ -8,60 +8,12 @@ namespace ProtocolCraft
 {
     class GlobalPos : public NetworkType
     {
-    public:
-        virtual ~GlobalPos() override
-        {
+        DECLARE_FIELDS_TYPES(Identifier, NetworkPosition);
+        DECLARE_FIELDS_NAMES(Dimension,  Pos);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetDimension(const Identifier& dimension_)
-        {
-            dimension = dimension_;
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-
-        const Identifier& GetDimension() const
-        {
-            return dimension;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            dimension = ReadData<Identifier>(iter, length);
-            pos = ReadData<NetworkPosition>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<Identifier>(dimension, container);
-            WriteData<NetworkPosition>(pos, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["dimension"] = dimension;
-            output["pos"] = pos;
-
-
-            return output;
-        }
-
-    private:
-        Identifier dimension;
-        NetworkPosition pos;
+        GETTER_SETTER(Dimension);
+        GETTER_SETTER(Pos);
     };
 }
 #endif

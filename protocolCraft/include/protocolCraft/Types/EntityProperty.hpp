@@ -13,114 +13,20 @@ namespace ProtocolCraft
 {
     class EntityProperty : public NetworkType
     {
-    public:
-        virtual ~EntityProperty() override
-        {
-
-        }
-
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        void SetKey(const int key_)
-        {
-            key = key_;
-        }
-#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
-        void SetKey(const Identifier& key_)
-        {
-            key = key_;
-        }
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        DECLARE_FIELDS_TYPES(std::string, double, std::vector<EntityModifierData>);
+        DECLARE_FIELDS_NAMES(Key,         Value,  Modifiers);
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        DECLARE_FIELDS_TYPES(Identifier,  double, std::vector<EntityModifierData>);
+        DECLARE_FIELDS_NAMES(Key,         Value,  Modifiers);
 #else
-        void SetKey(const std::string& key_)
-        {
-            key = key_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt, double, std::vector<EntityModifierData>);
+        DECLARE_FIELDS_NAMES(Key,    Value,  Modifiers);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetValue(const double value_)
-        {
-            value = value_;
-        }
-
-        void SetModifiers(const std::vector<EntityModifierData>& modifiers_)
-        {
-            modifiers = modifiers_;
-        }
-
-
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        int GetKey() const
-        {
-            return key;
-        }
-#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
-        const Identifier& GetKey() const
-        {
-            return key;
-        }
-#else
-        const std::string& GetKey() const
-        {
-            return key;
-        }
-#endif
-
-        double GetValue() const
-        {
-            return value;
-        }
-
-        const std::vector<EntityModifierData>& GetModifiers() const
-        {
-            return modifiers;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            key = ReadData<VarInt>(iter, length);
-#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
-            key = ReadData<Identifier>(iter, length);
-#else
-            key = ReadData<std::string>(iter, length);
-#endif
-            value = ReadData<double>(iter, length);
-            modifiers = ReadData<std::vector<EntityModifierData>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            WriteData<VarInt>(key, container);
-#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
-            WriteData<Identifier>(key, container);
-#else
-            WriteData<std::string>(key, container);
-#endif
-            WriteData<double>(value, container);
-            WriteData<std::vector<EntityModifierData>>(modifiers, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["key"] = key;
-            output["value"] = value;
-            output["modifiers"] = modifiers;
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        int key = 0;
-#elif PROTOCOL_VERSION > 709 /* > 1.15.2 */
-        Identifier key;
-#else
-        std::string key;
-#endif
-        double value = 0.0;
-        std::vector<EntityModifierData> modifiers;
+        GETTER_SETTER(Key);
+        GETTER_SETTER(Value);
+        GETTER_SETTER(Modifiers);
     };
 }

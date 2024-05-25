@@ -12,6 +12,12 @@
 
 namespace ProtocolCraft
 {
+    namespace NBT
+    {
+        class Value;
+        class UnnamedValue;
+    }
+
     template <typename T>
     struct VarType { using underlying_type = T; };
 
@@ -44,6 +50,7 @@ namespace ProtocolCraft
 #endif
         template <typename T> struct SerializedType { using storage_type = T; using serialization_type = T; };
         template <typename T> struct SerializedType<VarType<T>> { using storage_type = typename VarType<T>::underlying_type; using serialization_type = VarType<T>; };
+        template <> struct SerializedType<NBT::UnnamedValue> { using storage_type = NBT::Value; using serialization_type = NBT::UnnamedValue; };
         template <typename T, size_t N> struct SerializedType<std::array<T, N>> { using storage_type = std::array<typename SerializedType<T>::storage_type, N>; using serialization_type = std::array<T, N>; };
         template <typename T> struct SerializedType<std::vector<T>> { using storage_type = std::vector<typename SerializedType<T>::storage_type>; using serialization_type = std::vector<T>; };
         template <typename T> struct SerializedType<std::optional<T>> { using storage_type = std::optional<typename SerializedType<T>::storage_type>; using serialization_type = std::optional<T>; };

@@ -6,48 +6,10 @@ namespace ProtocolCraft
 {
     class CriterionProgress : public NetworkType
     {
-    public:
-        virtual ~CriterionProgress() override
-        {
+        DECLARE_FIELDS_TYPES(std::optional<long long int>);
+        DECLARE_FIELDS_NAMES(DateOfAchieving);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetDateOfAchieving(const std::optional<long long int>& date_of_achieving_)
-        {
-            date_of_achieving = date_of_achieving_;
-        }
-
-
-        const std::optional<long long int>& GetDateOfAchieving() const
-        {
-            return date_of_achieving;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            date_of_achieving = ReadData<std::optional<long long int>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::optional<long long int>>(date_of_achieving, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            if (date_of_achieving.has_value())
-            {
-                output["date_of_achieving"] = date_of_achieving.value();
-            }
-
-            return output;
-        }
-
-    private:
-        std::optional<long long int> date_of_achieving;
+        GETTER_SETTER(DateOfAchieving);
     };
 }

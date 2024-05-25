@@ -2,60 +2,33 @@
 
 #include "protocolCraft/NetworkType.hpp"
 
-#include <string>
-
 namespace ProtocolCraft
 {
     class Identifier : public NetworkType
     {
+        DECLARE_FIELDS_TYPES(std::string, std::string);
+        DECLARE_FIELDS_NAMES(Namespace, Name);
+        DECLARE_SERIALIZE;
+
+        GETTER_SETTER(Namespace);
+        GETTER_SETTER(Name);
+
     public:
-
-        Identifier()
-        {
-
-        }
-
-        virtual ~Identifier() override
-        {
-
-        }
-
         const bool operator <(const Identifier& rhs) const
         {
-            return name < rhs.name ||
-                (name == rhs.name && namespace_ < rhs.namespace_);
-        }
-
-        void SetNamespace(const std::string& namespace__)
-        {
-            namespace_ = namespace__;
-        }
-
-        void SetName(const std::string& name_)
-        {
-            name = name_;
-        }
-
-
-        const std::string& GetNamespace() const
-        {
-            return namespace_;
-        }
-
-        const std::string& GetName() const
-        {
-            return name;
+            return GetName() < rhs.GetName() ||
+                (GetName() == rhs.GetName() && GetNamespace() < rhs.GetNamespace());
         }
 
         std::string GetFull() const
         {
-            if (namespace_.empty())
+            if (GetNamespace().empty())
             {
-                return "minecraft:" + name;
+                return "minecraft:" + GetName();
             }
             else
             {
-                return namespace_ + ':' + name;
+                return GetNamespace() + ':' + GetName();
             }
         }
 
@@ -67,41 +40,26 @@ namespace ProtocolCraft
 
             if (split == std::string::npos)
             {
-                namespace_ = "";
-                name = str;
+                SetNamespace("");
+                SetName(str);
             }
             else
             {
-                namespace_ = str.substr(0, split);
-                name = str.substr(split + 1);
+                SetNamespace(str.substr(0, split));
+                SetName(str.substr(split + 1));
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            if (namespace_.empty())
+            if (GetNamespace().empty())
             {
-                WriteData<std::string>(name, container);
+                WriteData<std::string>(GetName(), container);
             }
             else
             {
-                WriteData<std::string>(namespace_ + ':' + name, container);
+                WriteData<std::string>(GetNamespace() + ':' + GetName(), container);
             }
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["namespace"] = namespace_;
-            output["name"] = name;
-
-
-            return output;
-        }
-
-    private:
-        std::string namespace_;
-        std::string name;
     };
 } // ProtocolCraft

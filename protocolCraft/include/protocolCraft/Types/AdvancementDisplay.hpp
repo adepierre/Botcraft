@@ -9,151 +9,62 @@ namespace ProtocolCraft
 {
     class AdvancementDisplay : public NetworkType
     {
+        DECLARE_FIELDS_TYPES(Chat,  Chat,        Slot, VarInt,    int,   std::optional<Identifier>, float,  float);
+        DECLARE_FIELDS_NAMES(Title, Description, Icon, FrameType, Flags, BackgroundTexture,         XCoord, YCoord);
+        // Manually declare read/write because of the flags thing
+        DECLARE_SERIALIZE;
+
+        GETTER_SETTER(Title);
+        GETTER_SETTER(Description);
+        GETTER_SETTER(Icon);
+        GETTER_SETTER(FrameType);
+        GETTER_SETTER(Flags);
     public:
-        virtual ~AdvancementDisplay() override
+        const std::optional<Identifier>& GetBackgroundTexture() const
         {
-
+            return std::get<static_cast<size_t>(FieldsEnum::BackgroundTexture)>(fields);
         }
-
-        void SetTitle(const Chat& title_)
+        void SetBackgroundTexture(const std::optional<Identifier>& BackgroundTexture)
         {
-            title = title_;
+            SetFlags(BackgroundTexture.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
+            std::get<static_cast<size_t>(FieldsEnum::BackgroundTexture)>(fields) = BackgroundTexture;
         }
-
-        void SetDescription(const Chat& description_)
-        {
-            description = description_;
-        }
-
-        void SetIcon(const Slot& icon_)
-        {
-            icon = icon_;
-        }
-
-        void SetFrameType(const int frame_type_)
-        {
-            frame_type = frame_type_;
-        }
-
-        void SetFlags(const int flags_)
-        {
-            flags = flags_;
-        }
-
-        void SetBackgroundTexture(const Identifier& background_texture_)
-        {
-            background_texture = background_texture_;
-        }
-
-        void SetXCoord(const float x_coord_)
-        {
-            x_coord = x_coord_;
-        }
-        
-        void SetYCoord(const float y_coord_)
-        {
-            y_coord = y_coord_;
-        }
-
-
-        const Chat& GetTitle() const
-        {
-            return title;
-        }
-
-        const Chat& GetDescription() const
-        {
-            return description;
-        }
-
-        const Slot& GetIcon() const
-        {
-            return icon;
-        }
-
-        int GetFrameType() const
-        {
-            return frame_type;
-        }
-
-        int GetFlags() const
-        {
-            return flags;
-        }
-        
-        const Identifier& GetBackgroundTexture() const
-        {
-            return background_texture;
-        }
-
-        float GetXCoord() const
-        {
-            return x_coord;
-        }
-        
-        float GetYCoord() const
-        {
-            return y_coord;
-        }
+        GETTER_SETTER(XCoord);
+        GETTER_SETTER(YCoord);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            title = ReadData<Chat>(iter, length);
-            description = ReadData<Chat>(iter, length);
-            icon = ReadData<Slot>(iter, length);
-            frame_type = ReadData<VarInt>(iter, length);
-            flags = ReadData<int>(iter, length);
-            if (flags & 0x01)
+            SetTitle(ReadData<Chat>(iter, length));
+            SetDescription(ReadData<Chat>(iter, length));
+            SetIcon(ReadData<Slot>(iter, length));
+            SetFrameType(ReadData<VarInt>(iter, length));
+            SetFlags(ReadData<int>(iter, length));
+            if (GetFlags() & 0x01)
             {
-                background_texture = ReadData<Identifier>(iter, length);
+                SetBackgroundTexture(ReadData<Identifier>(iter, length));
             }
-            x_coord = ReadData<float>(iter, length);
-            y_coord = ReadData<float>(iter, length);
+            else
+            {
+                SetBackgroundTexture(std::optional<Identifier>());
+            }
+            SetXCoord(ReadData<float>(iter, length));
+            SetYCoord(ReadData<float>(iter, length));
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<Chat>(title, container);
-            WriteData<Chat>(description, container);
-            WriteData<Slot>(icon, container);
-            WriteData<VarInt>(frame_type, container);
-            WriteData<int>(flags, container);
-            if (flags & 0x01)
+            WriteData<Chat>(GetTitle(), container);
+            WriteData<Chat>(GetDescription(), container);
+            WriteData<Slot>(GetIcon(), container);
+            WriteData<VarInt>(GetFrameType(), container);
+            WriteData<int>(GetFlags(), container);
+            if (GetFlags() & 0x01) // Should always have value if flags 0x01 is set
             {
-                WriteData<Identifier>(background_texture, container);
+                WriteData<Identifier>(GetBackgroundTexture().value(), container);
             }
-            WriteData<float>(x_coord, container);
-            WriteData<float>(y_coord, container);
+            WriteData<float>(GetXCoord(), container);
+            WriteData<float>(GetYCoord(), container);
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["title"] = title;
-            output["description"] = description;
-            output["icon"] = icon;
-            output["frame_type"] = frame_type;
-            output["flags"] = flags;
-            if (flags & 0x01)
-            {
-                output["background_texture"] = background_texture;
-            }
-            output["x_coord"] = x_coord;
-            output["y_coord"] = y_coord;
-
-            return output;
-        }
-
-    private:
-        Chat title;
-        Chat description;
-        Slot icon;
-        int frame_type = 0;
-        int flags = 0;
-        Identifier background_texture;
-        float x_coord = 0.0f;
-        float y_coord = 0.0f;
     };
 }

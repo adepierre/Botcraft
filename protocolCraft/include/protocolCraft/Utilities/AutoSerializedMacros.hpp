@@ -105,10 +105,21 @@
     DEFINE_WRITE(ClassName);           \
     DEFINE_SERIALIZE(ClassName)
 
+// Define a NetworkType with auto serializable fields, but custom ReadImpl/WriteImpl
+#define DEFINE_SERIALIZED_NETWORK_TYPE(ClassName) \
+    DEFINE_JSON_NAMES(ClassName);                 \
+    DEFINE_SERIALIZE(ClassName)
+
 // Define a Message with auto serializable fields
 #define DEFINE_MESSAGE_CLASS(ClassName)   \
     DEFINE_JSON_NAMES(ClassName);         \
     DEFINE_READ(ClassName);               \
     DEFINE_WRITE(ClassName);              \
     DEFINE_SERIALIZE(ClassName);          \
+    template class BaseMessage<ClassName>
+
+// Define a Message with auto serializable fields, but custom ReadImpl/WriteImpl
+#define DEFINE_SERIALIZED_MESSAGE_CLASS(ClassName)   \
+    DEFINE_JSON_NAMES(ClassName);                    \
+    DEFINE_SERIALIZE(ClassName);                     \
     template class BaseMessage<ClassName>

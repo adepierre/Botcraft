@@ -130,7 +130,7 @@ namespace ProtocolCraft
                 {
                     if constexpr (std::is_same_v<typename CurrentElement::value_type, char>)
                     {
-                        if (std::get<i>(fields).size().size() > 10)
+                        if (std::get<i>(fields).size() > 16)
                         {
                             output[std::string(fields_names[i])] = "Vector of " + std::to_string(std::get<i>(fields).size()) + " chars";
                         }
@@ -141,7 +141,7 @@ namespace ProtocolCraft
                     }
                     else if constexpr (std::is_same_v<typename CurrentElement::value_type, unsigned char>)
                     {
-                        if (std::get<i>(fields).size().size() > 10)
+                        if (std::get<i>(fields).size() > 16)
                         {
                             output[std::string(fields_names[i])] = "Vector of " + std::to_string(std::get<i>(fields).size()) + " unsigned chars";
                         }
