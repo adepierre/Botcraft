@@ -9,93 +9,48 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyFloat : public BrigadierProperty
     {
-    public:
-        virtual ~BrigadierPropertyFloat()
-        {
+        DECLARE_FIELDS_TYPES(char,  float, float);
+        DECLARE_FIELDS_NAMES(Flags, Min,   Max);
+        DECLARE_SERIALIZE;
 
-        }
-
-        void SetFlags(const char flags_)
-        {
-            flags = flags_;
-        }
-
-        void SetMin(const float min_)
-        {
-            min = min_;
-        }
-
-        void SetMax(const float max_)
-        {
-            max = max_;
-        }
-
-
-        char GetFlags() const
-        {
-            return flags;
-        }
-
-        float GetMin() const
-        {
-            return min;
-        }
-
-        float GetMax() const
-        {
-            return max;
-        }
+        GETTER_SETTER(Flags);
+        GETTER_SETTER(Min);
+        GETTER_SETTER(Max);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            flags = ReadData<char>(iter, length);
-            if (flags & 0x01)
+            SetFlags(ReadData<char>(iter, length));
+            if (GetFlags() & 0x01)
             {
-                min = ReadData<float>(iter, length);
+                SetMin(ReadData<float>(iter, length));
             }
             else
             {
-                min = -std::numeric_limits<float>::max();
+                SetMin(-std::numeric_limits<float>::max());
             }
-            if (flags & 0x02)
+            if (GetFlags() & 0x02)
             {
-                max = ReadData<float>(iter, length);
+                SetMax(ReadData<float>(iter, length));
             }
             else
             {
-                max = std::numeric_limits<float>::max();
+                SetMax(std::numeric_limits<float>::max());
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<char>(flags, container);
-            if (flags & 0x01)
+            WriteData<char>(GetFlags(), container);
+            if (GetFlags() & 0x01)
             {
-                WriteData<float>(min, container);
+                WriteData<float>(GetMin(), container);
             }
-            if (flags & 0x02)
+            if (GetFlags() & 0x02)
             {
-                WriteData<float>(max, container);
+                WriteData<float>(GetMax(), container);
             }
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["flags"] = flags;
-            output["min"] = min;
-            output["max"] = max;
-
-            return output;
-        }
-
-    private:
-        char flags = 0;
-        float min = 0.0f;
-        float max = 0.0f;
     };
 }
 #endif

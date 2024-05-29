@@ -10,6 +10,7 @@
 #include "protocolCraft/Types/Components/DataComponentTypeBundleContents.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeChargedProjectiles.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeComponent.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeCustomData.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeCustomModelData.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeDefault.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeDyeColor.hpp"
@@ -40,10 +41,65 @@
 #include "protocolCraft/Types/Components/DataComponentTypeWritableBookContent.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeWrittenBookContent.hpp"
 
+#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+
 namespace ProtocolCraft
 {
     namespace Components
     {
+        DEFINE_NETWORK_TYPE(ExactMatcher);
+        DEFINE_NETWORK_TYPE(RangedMatcher);
+        DEFINE_NETWORK_TYPE(AttributeModifier);
+        DEFINE_NETWORK_TYPE(BannerPatternLayer);
+        DEFINE_NETWORK_TYPE(BlockPredicate);
+        DEFINE_NETWORK_TYPE(ItemAttributeModifiersEntry);
+        DEFINE_NETWORK_TYPE(MobEffectInstance);
+        DEFINE_JSON_NAMES(MobEffectInstanceDetails);
+        DEFINE_NETWORK_TYPE(PossibleEffect);
+        DEFINE_JSON_NAMES(PropertyMatcher);
+        DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
+        DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
+        DEFINE_NETWORK_TYPE(ToolRule);
+
+        DEFINE_NETWORK_TYPE(DataComponentTypeAdventureModePredicate);
+        DEFINE_NETWORK_TYPE(DataComponentTypeArmorTrim);
+        DEFINE_NETWORK_TYPE(DataComponentTypeBannerPatternLayers);
+        DEFINE_NETWORK_TYPE(DataComponentTypeBlockItemStateProperties);
+        DEFINE_NETWORK_TYPE(DataComponentTypeBoolean);
+        DEFINE_NETWORK_TYPE(DataComponentTypeBundleContents);
+        DEFINE_NETWORK_TYPE(DataComponentTypeChargedProjectiles);
+        DEFINE_NETWORK_TYPE(DataComponentTypeComponent);
+        DEFINE_NETWORK_TYPE(DataComponentTypeCustomData);
+        DEFINE_NETWORK_TYPE(DataComponentTypeCustomModelData);
+        DEFINE_NETWORK_TYPE(DataComponentTypeDefault);
+        DEFINE_NETWORK_TYPE(DataComponentTypeDyeColor);
+        DEFINE_NETWORK_TYPE(DataComponentTypeDyedItemColor);
+        DEFINE_NETWORK_TYPE(DataComponentTypeFireworkExplosion);
+        DEFINE_NETWORK_TYPE(DataComponentTypeFireworks);
+        DEFINE_NETWORK_TYPE(DataComponentTypeFoodProperties);
+        DEFINE_NETWORK_TYPE(DataComponentTypeHolderInstrument);
+        DEFINE_NETWORK_TYPE(DataComponentTypeInteger);
+        DEFINE_NETWORK_TYPE(DataComponentTypeItemAttributeModifiers);
+        DEFINE_NETWORK_TYPE(DataComponentTypeItemContainerContents);
+        DEFINE_NETWORK_TYPE(DataComponentTypeItemEnchantments);
+        DEFINE_NETWORK_TYPE(DataComponentTypeItemLore);
+        DEFINE_NETWORK_TYPE(DataComponentTypeListBeehiveBlockEntityOccupant);
+        DEFINE_NETWORK_TYPE(DataComponentTypeLodestoneTracker);
+        DEFINE_NETWORK_TYPE(DataComponentTypeMapId);
+        DEFINE_NETWORK_TYPE(DataComponentTypeMapItemColor);
+        DEFINE_NETWORK_TYPE(DataComponentTypeMapPostProcessing);
+        DEFINE_NETWORK_TYPE(DataComponentTypePotDecorations);
+        DEFINE_NETWORK_TYPE(DataComponentTypePotionContents);
+        DEFINE_NETWORK_TYPE(DataComponentTypeRarity);
+        DEFINE_NETWORK_TYPE(DataComponentTypeResolvableProfile);
+        DEFINE_NETWORK_TYPE(DataComponentTypeResourceLocation);
+        DEFINE_NETWORK_TYPE(DataComponentTypeSuspiciousStewEffects);
+        DEFINE_NETWORK_TYPE(DataComponentTypeTool);
+        DEFINE_NETWORK_TYPE(DataComponentTypeUnbreakable);
+        DEFINE_NETWORK_TYPE(DataComponentTypeUnit);
+        DEFINE_NETWORK_TYPE(DataComponentTypeWritableBookContent);
+        DEFINE_NETWORK_TYPE(DataComponentTypeWrittenBookContent);
+
         std::string_view DataComponentTypesToString(const DataComponentTypes type)
         {
             static constexpr std::array<std::string_view, static_cast<size_t>(DataComponentTypes::NUM_DATA_COMPONENT_TYPES)> names = {

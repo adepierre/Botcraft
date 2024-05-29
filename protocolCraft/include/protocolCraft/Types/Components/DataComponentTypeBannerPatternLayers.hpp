@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
 #include "protocolCraft/Types/Components/Subtypes/BannerPatternLayer.hpp"
 
@@ -11,47 +11,11 @@ namespace ProtocolCraft
     {
         class DataComponentTypeBannerPatternLayers : public DataComponentType
         {
-        public:
-            virtual ~DataComponentTypeBannerPatternLayers()
-            {
+            DECLARE_FIELDS_TYPES(std::vector<BannerPatternLayer>);
+            DECLARE_FIELDS_NAMES(Layers);
+            DECLARE_READ_WRITE_SERIALIZE;
 
-            }
-
-
-            const std::vector<BannerPatternLayer>& GetLayers() const
-            {
-                return layers;
-            }
-
-
-            void SetLayers(const std::vector<BannerPatternLayer>& layers_)
-            {
-                layers = layers_;
-            }
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                layers = ReadData<std::vector<BannerPatternLayer>>(iter, length);
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<std::vector<BannerPatternLayer>>(layers, container);
-            }
-
-            virtual Json::Value SerializeImpl() const override
-            {
-                Json::Value output;
-
-                output["layers"] = layers;
-
-                return output;
-            }
-
-        private:
-            std::vector<BannerPatternLayer> layers;
-
+            GETTER_SETTER(Layers);
         };
     }
 }

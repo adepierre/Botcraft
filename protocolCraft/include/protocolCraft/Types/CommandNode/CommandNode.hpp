@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #include <memory>
 
 #include "protocolCraft/NetworkType.hpp"
@@ -12,152 +12,88 @@ namespace ProtocolCraft
 {
     class CommandNode : public NetworkType
     {
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(char,  std::vector<VarInt>, VarInt,       std::string, Identifier, std::shared_ptr<BrigadierProperty>, Identifier);
+        DECLARE_FIELDS_NAMES(Flags, Children,            RedirectNode, Name,        Parser,     Properties,                         SuggestionType);
+#else
+        DECLARE_FIELDS_TYPES(char,  std::vector<VarInt>, VarInt,       std::string, DiffType<BrigadierPropertyType, VarInt>,   std::shared_ptr<BrigadierProperty>, Identifier);
+        DECLARE_FIELDS_NAMES(Flags, Children,            RedirectNode, Name,        ParserId,                                  Properties,                         SuggestionType);
+#endif
+
+        GETTER_SETTER(Flags);
+        GETTER_SETTER(Children);
+        GETTER_SETTER(RedirectNode);
+        GETTER_SETTER(Name);
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        GETTER_SETTER(Parser);
+#else
+        GETTER_SETTER(ParserId);
+#endif
+        GETTER_SETTER(Properties);
+        GETTER_SETTER(SuggestionType);
+
     public:
         virtual ~CommandNode()
         {
 
         }
 
-        void SetFlags(const char flags_)
-        {
-            flags = flags_;
-        }
-
-        void SetChildren(const std::vector<int>& children_)
-        {
-            children = children_;
-        }
-
-        void SetRedirectNode(const int redirect_node_)
-        {
-            redirect_node = redirect_node_;
-        }
-
-        void SetName(const std::string& name_)
-        {
-            name = name_;
-        }
-
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-        void SetParser(const Identifier& parser_)
-        {
-            parser = parser_;
-        }
-#else
-        void SetParserId(const int parser_id_)
-        {
-            parser_id = parser_id_;
-        }
-#endif
-
-        void SetProperties(const std::shared_ptr<BrigadierProperty> properties_)
-        {
-            properties = properties_;
-        }
-
-        void SetSuggestionsType(const Identifier& suggestions_type_)
-        {
-            suggestions_type = suggestions_type_;
-        }
-
-
-        char GetFlags() const
-        {
-            return flags;
-        }
-
-        const std::vector<int>& GetChildren() const
-        {
-            return children;
-        }
-
-        int GetRedirectNode() const
-        {
-            return redirect_node;
-        }
-
-        const std::string& GetName() const
-        {
-            return name;
-        }
-
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-        const Identifier& GetParser() const
-        {
-            return parser;
-        }
-#else
-        int GetParserId() const
-        {
-            return parser_id;
-        }
-#endif
-
-        std::shared_ptr<BrigadierProperty> GetProperties() const
-        {
-            return properties;
-        }
-
-        const Identifier& GetSuggestionsType() const
-        {
-            return suggestions_type;
-        }
-
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            flags = ReadData<char>(iter, length);
-            children = ReadData<std::vector<VarInt>>(iter, length);
-            if (flags & 0x08)
+            SetFlags(ReadData<char>(iter, length));
+            SetChildren(ReadData<std::vector<VarInt>>(iter, length));
+            if (GetFlags() & 0x08)
             {
-                redirect_node = ReadData<VarInt>(iter, length);
+                SetRedirectNode(ReadData<VarInt>(iter, length));
             }
-            const char node_type = flags & 0x03;
+            const char node_type = GetFlags() & 0x03;
             if (node_type == 1 || node_type == 2)
             {
-                name = ReadData<std::string>(iter, length);
+                SetName(ReadData<std::string>(iter, length));
             }
             if (node_type == 2)
             {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-                parser = ReadData<Identifier>(iter, length);
-                properties = BrigadierProperty::CreateProperties(parser);
+                SetParser(ReadData<Identifier>(iter, length));
+                std::shared_ptr<BrigadierProperty> properties = BrigadierProperty::CreateProperties(parser);
 #else
-                parser_id = ReadData<VarInt>(iter, length);
-                properties = BrigadierProperty::CreateProperties(static_cast<BrigadierPropertyType>(parser_id));
+                SetParserId(ReadData<BrigadierPropertyType, VarInt>(iter, length));
+                std::shared_ptr<BrigadierProperty> properties = BrigadierProperty::CreateProperties(GetParserId());
 #endif
                 properties->Read(iter, length);
-                if (flags & 0x10)
+                SetProperties(properties);
+                if (GetFlags() & 0x10)
                 {
-                    suggestions_type = ReadData<Identifier>(iter, length);
+                    SetSuggestionType(ReadData<Identifier>(iter, length));
                 }
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<char>(flags, container);
-            WriteData<std::vector<VarInt>>(children, container);
-            if (flags & 0x08)
+            WriteData<char>(GetFlags(), container);
+            WriteData<std::vector<VarInt>>(GetChildren(), container);
+            if (GetFlags() & 0x08)
             {
-                WriteData<VarInt>(redirect_node, container);
+                WriteData<VarInt>(GetRedirectNode(), container);
             }
-            const char node_type = flags & 0x03;
+            const char node_type = GetFlags() & 0x03;
             if (node_type == 1 || node_type == 2)
             {
-                WriteData<std::string>(name, container);
+                WriteData<std::string>(GetName(), container);
             }
             if (node_type == 2)
             {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-                WriteData<Identifier>(parser, container);
+                WriteData<Identifier>(GetParser(), container);
 #else
-                WriteData<VarInt>(parser_id, container);
+                WriteData<BrigadierPropertyType, VarInt>(GetParserId(), container);
 #endif
-                properties->Write(container);
-                if (flags & 0x10)
+                GetProperties()->Write(container);
+                if (GetFlags() & 0x10)
                 {
-                    WriteData<Identifier>(suggestions_type, container);
+                    WriteData<Identifier>(GetSuggestionType(), container);
                 }
             }
         }
@@ -166,49 +102,35 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["flags"] = flags;
-            output["children"] = children;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Flags)])] = GetFlags();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Children)])] = GetChildren();
 
-            if (flags & 0x08)
+            if (GetFlags() & 0x08)
             {
-                output["redirect_node"] = redirect_node;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::RedirectNode)])] = GetRedirectNode();
             }
 
-            const char node_type = flags & 0x03;
+            const char node_type = GetFlags() & 0x03;
             if (node_type == 1 || node_type == 2)
             {
-                output["name"] = name;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Name)])] = GetName();
             }
             if (node_type == 2)
             {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-                output["parser"] = parser;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Parser)])] = GetParser();
 #else
-                output["parser_id"] = parser_id;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ParserId)])] = GetParserId();
 #endif
-                output["properties"] = properties->Serialize();
-                if (flags & 0x10)
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Properties)])] = GetProperties()->Serialize();
+                if (GetFlags() & 0x10)
                 {
-                    output["suggestions_type"] = suggestions_type;
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::SuggestionType)])] = GetSuggestionType();
                 }
             }
 
             return output;
         }
-
-    private:
-        char flags = 0;
-        std::vector<int> children;
-        int redirect_node = 0;
-        std::string name;
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-        Identifier parser;
-#else
-        int parser_id = 0;
-#endif
-        std::shared_ptr<BrigadierProperty> properties;
-        Identifier suggestions_type;
-
     };
 } // ProtocolCraft
 #endif

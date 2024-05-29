@@ -8,63 +8,12 @@ namespace ProtocolCraft
 {
     class SoundEvent : public NetworkType
     {
-    public:
-        virtual ~SoundEvent() override
-        {
+        DECLARE_FIELDS_TYPES(Identifier, std::optional<float>);
+        DECLARE_FIELDS_NAMES(Location,   Range);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetLocation(const Identifier& location_)
-        {
-            location = location_;
-        }
-
-        void SetRange(const std::optional<float>& range_)
-        {
-            range = range_;
-        }
-
-
-        const Identifier& GetLocation() const
-        {
-            return location;
-        }
-
-        const std::optional<float>& GetRange() const
-        {
-            return range;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            location = ReadData<Identifier>(iter, length);
-            range = ReadData<std::optional<float>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<Identifier>(location, container);
-            WriteData<std::optional<float>>(range, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["location"] = location;
-            if (range.has_value())
-            {
-                output["range"] = range.value();
-            }
-
-            return output;
-        }
-
-    private:
-        Identifier location;
-        std::optional<float> range;
+        GETTER_SETTER(Location);
+        GETTER_SETTER(Range);
     };
 } // ProtocolCraft
 #endif

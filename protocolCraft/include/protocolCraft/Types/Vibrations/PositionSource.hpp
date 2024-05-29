@@ -1,10 +1,12 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include <memory>
 
 #include "protocolCraft/NetworkType.hpp"
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
 #include "protocolCraft/Types/Identifier.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -20,10 +22,7 @@ namespace ProtocolCraft
     class PositionSource : public NetworkType
     {
     public:
-        virtual ~PositionSource() override
-        {
-
-        }
+        virtual ~PositionSource() override {}
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         static std::shared_ptr<PositionSource> CreatePositionSource(const PositionSourceType position_source_type);

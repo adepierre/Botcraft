@@ -2,6 +2,16 @@
 
 #include "protocolCraft/Utilities/ConstexprStrProcessing.hpp"
 
+// Declare ReadImpl virtual function for auto serializable types
+#define DECLARE_READ protected: virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+// Declare WriteImpl virtual function for auto serializable types
+#define DECLARE_WRITE protected: virtual void WriteImpl(WriteContainer& container) const override
+// Declare SerializeImpl virtual function for auto serializable types
+#define DECLARE_SERIALIZE protected: virtual Json::Value SerializeImpl() const override
+
+// Declare ReadImpl, WriteImpl and SerializeImpl virtual functions for auto serializable types
+#define DECLARE_READ_WRITE_SERIALIZE DECLARE_READ; DECLARE_WRITE; DECLARE_SERIALIZE
+
 // Create all types and static variables without any internal field
 #define DECLARE_EMPTY                                               \
     private:                                                        \
@@ -10,7 +20,8 @@
         friend struct PrivateFieldsAccessor;                        \
         enum class FieldsEnum { None = -1, NUM_FIELDS };            \
         static constexpr std::string_view raw_names = "";           \
-        static const std::array<std::string_view, 0> json_names;
+        static const std::array<std::string_view, 0> json_names;    \
+        DECLARE_READ_WRITE_SERIALIZE
 
 // Creates a tuple with the given types, adds FieldsTupleAccessor as friend
 #define DECLARE_FIELDS_TYPES(...)                                  \
@@ -35,15 +46,6 @@
             "Fields types and names count don't match"                \
         )
 
-// Declare ReadImpl virtual function for auto serializable types
-#define DECLARE_READ protected: virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-// Declare WriteImpl virtual function for auto serializable types
-#define DECLARE_WRITE protected: virtual void WriteImpl(WriteContainer& container) const override
-// Declare SerializeImpl virtual function for auto serializable types
-#define DECLARE_SERIALIZE protected: virtual Json::Value SerializeImpl() const override
-
-// Declare ReadImpl, WriteImpl and SerializeImpl virtual functions for auto serializable types
-#define DECLARE_READ_WRITE_SERIALIZE DECLARE_READ; DECLARE_WRITE; DECLARE_SERIALIZE
 
 // Basically just a Get and a Set function, by value if it's a simple type, and by const ref if not
 // We don't use ::type in using name##_type so IDE autocomplete can still return the proper type

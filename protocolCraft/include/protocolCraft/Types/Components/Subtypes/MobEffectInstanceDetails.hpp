@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/NetworkType.hpp"
 
 #include <memory>
@@ -10,106 +10,46 @@ namespace ProtocolCraft
     {
         class MobEffectInstanceDetails : public NetworkType
         {
-        public:
-            virtual ~MobEffectInstanceDetails()
-            {
+            DECLARE_FIELDS_TYPES(VarInt,    VarInt,   bool,    bool,          bool,     std::shared_ptr<MobEffectInstanceDetails>);
+            DECLARE_FIELDS_NAMES(Amplifier, Duration, Ambient, ShowParticles, ShowIcon, HiddenEffect);
 
-            }
-
-
-            int GetAmplifier() const
-            {
-                return amplifier;
-            }
-
-            int GetDuration() const
-            {
-                return duration;
-            }
-
-            bool GetAmbient() const
-            {
-                return ambient;
-            }
-
-            bool GetShowParticles() const
-            {
-                return show_particles;
-            }
-
-            bool GetShowIcon() const
-            {
-                return show_icon;
-            }
-
-            std::shared_ptr<MobEffectInstanceDetails> GetHiddenEffect() const
-            {
-                return hidden_effect;
-            }
-
-
-            void SetAmplifier(const int amplifier_)
-            {
-                amplifier = amplifier_;
-            }
-
-            void SetDuration(const int duration_)
-            {
-                duration = duration_;
-            }
-
-            void SetAmbient(const bool ambient_)
-            {
-                ambient = ambient_;
-            }
-
-            void SetShowParticles(const bool show_particles_)
-            {
-                show_particles = show_particles_;
-            }
-
-            void SetShowIcon(const bool show_icon_)
-            {
-                show_icon = show_icon_;
-            }
-
-            void SetHiddenEffect(const std::shared_ptr<MobEffectInstanceDetails>& hidden_effect_)
-            {
-                hidden_effect = hidden_effect_;
-            }
+            GETTER_SETTER(Amplifier);
+            GETTER_SETTER(Duration);
+            GETTER_SETTER(Ambient);
+            GETTER_SETTER(ShowParticles);
+            GETTER_SETTER(ShowIcon);
+            GETTER_SETTER(HiddenEffect);
 
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                amplifier = ReadData<VarInt>(iter, length);
-                duration = ReadData<VarInt>(iter, length);
-                ambient = ReadData<bool>(iter, length);
-                show_particles = ReadData<bool>(iter, length);
-                show_icon = ReadData<bool>(iter, length);
+                SetAmplifier(ReadData<VarInt>(iter, length));
+                SetDuration(ReadData<VarInt>(iter, length));
+                SetAmbient(ReadData<bool>(iter, length));
+                SetShowParticles(ReadData<bool>(iter, length));
+                SetShowIcon(ReadData<bool>(iter, length));
                 // Pointer std::optional
+                std::shared_ptr<MobEffectInstanceDetails> hidden_effect = nullptr;
                 if (ReadData<bool>(iter, length))
                 {
-                    hidden_effect = std::make_shared<MobEffectInstanceDetails>();
+                    std::shared_ptr<MobEffectInstanceDetails> hidden_effect = std::make_shared<MobEffectInstanceDetails>();
                     hidden_effect->Read(iter, length);
                 }
-                else
-                {
-                    hidden_effect = nullptr;
-                }
+                SetHiddenEffect(hidden_effect);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteData<VarInt>(amplifier, container);
-                WriteData<VarInt>(duration, container);
-                WriteData<bool>(ambient, container);
-                WriteData<bool>(show_particles, container);
-                WriteData<bool>(show_icon, container);
+                WriteData<VarInt>(GetAmplifier(), container);
+                WriteData<VarInt>(GetDuration(), container);
+                WriteData<bool>(GetAmbient(), container);
+                WriteData<bool>(GetShowParticles(), container);
+                WriteData<bool>(GetShowIcon(), container);
                 // Pointer std::optional
-                WriteData<bool>(hidden_effect != nullptr, container);
-                if (hidden_effect != nullptr)
+                WriteData<bool>(GetHiddenEffect() != nullptr, container);
+                if (GetHiddenEffect() != nullptr)
                 {
-                    WriteData<MobEffectInstanceDetails>(*hidden_effect, container);
+                    WriteData<MobEffectInstanceDetails>(*GetHiddenEffect(), container);
                 }
             }
 
@@ -117,28 +57,18 @@ namespace ProtocolCraft
             {
                 Json::Value output;
 
-                output["amplifier"] = amplifier;
-                output["duration"] = duration;
-                output["ambient"] = ambient;
-                output["show_particles"] = show_particles;
-                output["show_icon"] = show_icon;
-                if (hidden_effect != nullptr)
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Amplifier)])] = GetAmplifier();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Duration)])] = GetDuration();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Ambient)])] = GetAmbient();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ShowParticles)])] = GetShowParticles();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ShowIcon)])] = GetShowIcon();
+                if (GetHiddenEffect() != nullptr)
                 {
-                    output["hidden_effect"] = *hidden_effect;
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::HiddenEffect)])] = *GetHiddenEffect();
                 }
 
                 return output;
             }
-
-        private:
-            int amplifier = 0;
-            int duration = 0;
-            bool ambient = false;
-            bool show_particles = true;
-            bool show_icon = false;
-            // Sadly we need a pointer here to break the class recursion, so we'll use it as a cheap std::optional
-            std::shared_ptr<MobEffectInstanceDetails> hidden_effect;
-
         };
     }
 }

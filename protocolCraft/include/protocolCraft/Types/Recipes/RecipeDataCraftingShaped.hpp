@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #include "protocolCraft/Types/Recipes/RecipeData.hpp"
 #include "protocolCraft/Types/Item/Slot.hpp"
@@ -9,172 +9,83 @@ namespace ProtocolCraft
 {
     class RecipeDataCraftingShaped : public RecipeData
     {
-    public:
-        virtual ~RecipeDataCraftingShaped() override
-        {
-
-        }
-
-        void SetWidth(const int width_)
-        {
-            width = width_;
-        }
-
-        void SetHeight(const int height_)
-        {
-            height = height_;
-        }
-        
-        void SetGroup(const std::string& group_)
-        {
-            group = group_;
-        }
-
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        void SetCookingBookCategory(const int cooking_book_category_)
-        {
-            cooking_book_category = cooking_book_category_;
-        }
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, std::string, std::vector<Ingredient>, Slot);
+        DECLARE_FIELDS_NAMES(Width,  Height, Group,       Ingredients,             Result);
+#elif PROTOCOL_VERSION < 762 /* < 1.19.4 */
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, std::string, VarInt,              std::vector<Ingredient>, Slot);
+        DECLARE_FIELDS_NAMES(Width,  Height, Group,       CookingBookCategory, Ingredients,             Result);
+#elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, std::string, VarInt,              std::vector<Ingredient>, Slot,   bool);
+        DECLARE_FIELDS_NAMES(Width,  Height, Group,       CookingBookCategory, Ingredients,             Result, ShowNotification);
+#else
+        DECLARE_FIELDS_TYPES(std::string, VarInt,              VarInt, VarInt, std::vector<Ingredient>, Slot,   bool);
+        DECLARE_FIELDS_NAMES(Group,       CookingBookCategory, Width,  Height, Ingredients,             Result, ShowNotification);
 #endif
-        
-        void SetIngredients(const std::vector<Ingredient>& ingredients_)
-        {
-            ingredients = ingredients_;
-        }
+        DECLARE_SERIALIZE;
 
-        void SetResult(const Slot& result_)
-        {
-            result = result_;
-        }
-
+        GETTER_SETTER(Width);
+        GETTER_SETTER(Height);
+        GETTER_SETTER(Group);
+        GETTER_SETTER(Ingredients);
+        GETTER_SETTER(Result);
+#if PROTOCOL_VERSION > 760 /* > 1.19.2*/
+        GETTER_SETTER(CookingBookCategory);
+#endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-        void SetShowNotification(const bool show_notification_)
-        {
-            show_notification = show_notification_;
-        }
-#endif
-
-
-        int GetWidth() const
-        {
-            return width;
-        }
-
-        int GetHeight() const
-        {
-            return height;
-        }
-
-        const std::string& GetGroup() const
-        {
-            return group;
-        }
-
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        int GetCookingBookCategory() const
-        {
-            return cooking_book_category;
-        }
-#endif
-
-        const std::vector<Ingredient>& GetIngredients() const
-        {
-            return ingredients;
-        }
-
-        const Slot& GetResult() const
-        {
-            return result;
-        }
-
-#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-        bool GetShowNotification() const
-        {
-            return show_notification;
-        }
+        GETTER_SETTER(ShowNotification);
 #endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-            width = ReadData<VarInt>(iter, length);
-            height = ReadData<VarInt>(iter, length);
+            SetWidth(ReadData<VarInt>(iter, length));
+            SetHeight(ReadData<VarInt>(iter, length));
 #endif
-            group = ReadData<std::string>(iter, length);
+            SetGroup(ReadData<std::string>(iter, length));
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            cooking_book_category = ReadData<VarInt>(iter, length);
+            SetCookingBookCategory(ReadData<VarInt>(iter, length));
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-            width = ReadData<VarInt>(iter, length);
-            height = ReadData<VarInt>(iter, length);
+            SetWidth(ReadData<VarInt>(iter, length));
+            SetHeight(ReadData<VarInt>(iter, length));
 #endif
-            ingredients = std::vector<Ingredient>(width * height);
-            for (int i = 0; i < width * height; ++i)
+            std::vector<Ingredient> ingredients(GetWidth() * GetHeight());
+            for (int i = 0; i < ingredients.size(); ++i)
             {
                 ingredients[i] = ReadData<Ingredient>(iter, length);
             }
-            result = ReadData<Slot>(iter, length);
+            SetIngredients(ingredients);
+            SetResult(ReadData<Slot>(iter, length));
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-            show_notification = ReadData<bool>(iter, length);
+            SetShowNotification(ReadData<bool>(iter, length));
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-            WriteData<VarInt>(width, container);
-            WriteData<VarInt>(height, container);
+            WriteData<VarInt>(GetWidth(), container);
+            WriteData<VarInt>(GetHeight(), container);
 #endif
-            WriteData<std::string>(group, container);
+            WriteData<std::string>(GetGroup(), container);
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            WriteData<VarInt>(cooking_book_category, container);
+            WriteData<VarInt>(GetCookingBookCategory(), container);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-            WriteData<VarInt>(width, container);
-            WriteData<VarInt>(height, container);
+            WriteData<VarInt>(GetWidth(), container);
+            WriteData<VarInt>(GetHeight(), container);
 #endif
-            for (int i = 0; i < width * height; ++i)
+            for (int i = 0; i < GetWidth() * GetHeight(); ++i)
             {
-                WriteData<Ingredient>(ingredients[i], container);
+                WriteData<Ingredient>(GetIngredients()[i], container);
             }
-            WriteData<Slot>(result, container);
+            WriteData<Slot>(GetResult(), container);
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-            WriteData<bool>(show_notification, container);
+            WriteData<bool>(GetShowNotification(), container);
 #endif
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["width"] = width;
-            output["height"] = height;
-            output["group"] = group;
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            output["cooking_book_category"] = cooking_book_category;
-#endif
-            output["ingredients"] = ingredients;
-            output["result"] = result;
-#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-            output["show_notification"] = show_notification;
-#endif
-
-            return output;
-        }
-
-    private:
-        int width = 0;
-        int height = 0;
-        std::string group;
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        int cooking_book_category = 0;
-#endif
-        std::vector<Ingredient> ingredients;
-        Slot result;
-#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-        bool show_notification = false;
-#endif
     };
 }
 #endif

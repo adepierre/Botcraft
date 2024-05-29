@@ -9,73 +9,35 @@ namespace ProtocolCraft
 {
     class NumberFormat : public NetworkType
     {
-    public:
-        virtual ~NumberFormat() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, std::optional<Chat>);
+        DECLARE_FIELDS_NAMES(Type,   Format);
+        DECLARE_SERIALIZE;
 
-        }
-
-
-        void SetType(const int type_)
-        {
-            type = type_;
-        }
-
-        void SetFormat(const Chat& format_)
-        {
-            format = format_;
-        }
-
-
-        int GetType() const
-        {
-            return type;
-        }
-
-        const Chat& GetFormat() const
-        {
-            return format;
-        }
+        GETTER_SETTER(Type);
+        GETTER_SETTER(Format);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            type = ReadData<VarInt>(iter, length);
-            if (type != 0)
+            SetType(ReadData<VarInt>(iter, length));
+            if (GetType() != 0)
             {
-                format = ReadData<Chat>(iter, length);
+                SetFormat(ReadData<Chat>(iter, length));
             }
             else
             {
-                format = Chat();
+                SetFormat({});
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(type, container);
-            if (type != 0)
+            WriteData<VarInt>(GetType(), container);
+            if (GetType() != 0)
             {
-                WriteData<Chat>(format, container);
+                WriteData<Chat>(GetFormat().value(), container);
             }
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["type"] = type;
-            if (type != 0)
-            {
-                output["format"] = format;
-            }
-
-            return output;
-        }
-
-    private:
-        int type = 0;
-        Chat format;
     };
 } // ProtocolCraft
 #endif

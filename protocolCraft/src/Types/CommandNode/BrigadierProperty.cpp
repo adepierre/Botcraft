@@ -1,5 +1,6 @@
 #if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #include "protocolCraft/Types/CommandNode/BrigadierProperty.hpp"
+#include "protocolCraft/Utilities/PrivateTemplates.hpp"
 
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyDouble.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyFloat.hpp"
@@ -17,10 +18,29 @@
 #endif
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyNone.hpp"
 
+#include "protocolCraft/Types/CommandNode/CommandNode.hpp"
+
 #include <stdexcept>
 
 namespace ProtocolCraft
 {
+    DEFINE_SERIALIZED_NETWORK_TYPE(BrigadierPropertyDouble);
+    DEFINE_NETWORK_TYPE(BrigadierPropertyEntity);
+    DEFINE_SERIALIZED_NETWORK_TYPE(BrigadierPropertyFloat);
+    DEFINE_SERIALIZED_NETWORK_TYPE(BrigadierPropertyInteger);
+    DEFINE_SERIALIZED_NETWORK_TYPE(BrigadierPropertyLong);
+    DEFINE_NETWORK_TYPE(BrigadierPropertyNone);
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+    DEFINE_NETWORK_TYPE(BrigadierPropertyRange);
+#endif
+    DEFINE_NETWORK_TYPE(BrigadierPropertyResourceOrTag);
+    DEFINE_NETWORK_TYPE(BrigadierPropertyScoreHolder);
+    DEFINE_NETWORK_TYPE(BrigadierPropertyString);
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
+    DEFINE_NETWORK_TYPE(BrigadierPropertyTime);
+#endif
+    DEFINE_JSON_NAMES(CommandNode);
+
     BrigadierProperty::~BrigadierProperty()
     {
 

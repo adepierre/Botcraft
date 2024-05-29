@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
 #include "protocolCraft/Types/GlobalPos.hpp"
 
@@ -11,64 +11,12 @@ namespace ProtocolCraft
     {
         class DataComponentTypeLodestoneTracker : public DataComponentType
         {
-        public:
-            virtual ~DataComponentTypeLodestoneTracker()
-            {
+            DECLARE_FIELDS_TYPES(std::optional<GlobalPos>, bool);
+            DECLARE_FIELDS_NAMES(Target,                   Tracked);
+            DECLARE_READ_WRITE_SERIALIZE;
 
-            }
-
-
-            const std::optional<GlobalPos>& GetTarget() const
-            {
-                return target;
-            }
-
-            bool GetTracked() const
-            {
-                return tracked;
-            }
-
-
-            void SetTarget(const std::optional<GlobalPos>& target_)
-            {
-                target = target_;
-            }
-
-            void SetTracked(const bool tracked_)
-            {
-                tracked = tracked_;
-            }
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                target = ReadData<std::optional<GlobalPos>>(iter, length);
-                tracked = ReadData<bool>(iter, length);
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<std::optional<GlobalPos>>(target, container);
-                WriteData<bool>(tracked, container);
-            }
-
-            virtual Json::Value SerializeImpl() const override
-            {
-                Json::Value output;
-
-                if (target.has_value())
-                {
-                    output["target"] = target.value();
-                }
-                output["tracked"] = tracked;
-
-                return output;
-            }
-
-        private:
-            std::optional<GlobalPos> target;
-            bool tracked = true;
-
+            GETTER_SETTER(Target);
+            GETTER_SETTER(Tracked);
         };
     }
 }

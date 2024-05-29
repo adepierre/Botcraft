@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Components/Subtypes/PropertyMatcher.hpp"
 
@@ -11,47 +11,11 @@ namespace ProtocolCraft
     {
         class StatePropertiesPredicate : public NetworkType
         {
-        public:
-            virtual ~StatePropertiesPredicate()
-            {
+            DECLARE_FIELDS_TYPES(std::vector<PropertyMatcher>);
+            DECLARE_FIELDS_NAMES(Properties);
+            DECLARE_READ_WRITE_SERIALIZE;
 
-            }
-
-
-            const std::vector<PropertyMatcher>& GetProperties() const
-            {
-                return properties;
-            }
-
-
-            void SetProperties(const std::vector<PropertyMatcher>& properties_)
-            {
-                properties = properties_;
-            }
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                properties = ReadData<std::vector<PropertyMatcher>>(iter, length);
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<std::vector<PropertyMatcher>>(properties, container);
-            }
-
-            virtual Json::Value SerializeImpl() const override
-            {
-                Json::Value output;
-
-                output["properties"] = properties;
-
-                return output;
-            }
-
-        private:
-            std::vector<PropertyMatcher> properties;
-
+            GETTER_SETTER(Properties);
         };
     }
 }

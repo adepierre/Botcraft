@@ -7,45 +7,11 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyString : public BrigadierProperty
     {
-    public:
-        virtual ~BrigadierPropertyString()
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(ReadType);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetReadType(const int read_type_)
-        {
-            read_type = read_type_;
-        }
-
-
-        int GetReadType() const
-        {
-            return read_type;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            read_type = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(read_type, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["read_type"] = read_type;
-
-            return output;
-        }
-
-    private:
-        int read_type = 0;
+        GETTER_SETTER(ReadType);
     };
 }
 #endif

@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Components/Subtypes/Matcher/ValueMatcher.hpp"
 #include "protocolCraft/Types/Components/Subtypes/Matcher/ExactMatcher.hpp"
@@ -22,52 +22,35 @@ namespace ProtocolCraft
 
         class PropertyMatcher : public NetworkType
         {
+            DECLARE_FIELDS_TYPES(std::string, ValueMatcherType, std::shared_ptr<ValueMatcher>);
+            DECLARE_FIELDS_NAMES(Name,        ValueMatcherType, ValueMatcher);
+
+            GETTER_SETTER(Name);
+            GETTER_SETTER(ValueMatcher);
         public:
-            virtual ~PropertyMatcher()
-            {
-
-            }
-
-
-            const std::string& GetName() const
-            {
-                return name;
-            }
-
             ValueMatcherType GetValueMatcherType() const
             {
-                return value_matcher_type;
-            }
-
-            std::shared_ptr<ValueMatcher> GetValueMatcher() const
-            {
-                return value_matcher;
-            }
-
-
-            void SetName(const std::string& name_)
-            {
-                name = name_;
+                return std::get<static_cast<size_t>(FieldsEnum::ValueMatcherType)>(fields);
             }
 
             void SetValueMatcherType(const ValueMatcherType value_matcher_type_)
             {
-                value_matcher_type = value_matcher_type_;
-                if (value_matcher_type_ == ValueMatcherType::None || value_matcher_type >= ValueMatcherType::NUM_VALUE_MATCHER_TYPES)
+                std::get<static_cast<size_t>(FieldsEnum::ValueMatcherType)>(fields) = value_matcher_type_;
+                if (value_matcher_type_ == ValueMatcherType::None || value_matcher_type_ >= ValueMatcherType::NUM_VALUE_MATCHER_TYPES)
                 {
                     throw std::runtime_error("Unable to create value matcher with id: " + std::to_string(static_cast<int>(value_matcher_type_)) + ".");
                 }
-                switch (value_matcher_type)
+                switch (value_matcher_type_)
                 {
                 case ValueMatcherType::Exact:
-                    value_matcher = std::make_shared<ExactMatcher>();
+                    std::get<static_cast<size_t>(FieldsEnum::ValueMatcher)>(fields) = std::make_shared<ExactMatcher>();
                     break;
                 case ValueMatcherType::Ranged:
-                    value_matcher = std::make_shared<RangedMatcher>();
+                    std::get<static_cast<size_t>(FieldsEnum::ValueMatcher)>(fields) = std::make_shared<RangedMatcher>();
                     break;
                 default:
                     // Should not happen
-                    value_matcher = nullptr;
+                    std::get<static_cast<size_t>(FieldsEnum::ValueMatcher)>(fields) = nullptr;
                     break;
                 }
             }
@@ -75,18 +58,18 @@ namespace ProtocolCraft
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override
             {
-                name = ReadData<std::string>(iter, length);
+                SetName(ReadData<std::string>(iter, length));
                 SetValueMatcherType(ReadData<bool>(iter, length) ? ValueMatcherType::Exact : ValueMatcherType::Ranged);
-                value_matcher->Read(iter, length);
+                GetValueMatcher()->Read(iter, length);
             }
 
             virtual void WriteImpl(WriteContainer& container) const override
             {
-                WriteData<std::string>(name, container);
-                WriteData<bool>(value_matcher_type == ValueMatcherType::Ranged, container);
-                if (value_matcher != nullptr)
+                WriteData<std::string>(GetName(), container);
+                WriteData<bool>(GetValueMatcherType() == ValueMatcherType::Ranged, container);
+                if (GetValueMatcher() != nullptr)
                 {
-                    value_matcher->Write(container);
+                    GetValueMatcher()->Write(container);
                 }
             }
 
@@ -94,20 +77,15 @@ namespace ProtocolCraft
             {
                 Json::Value output;
 
-                output["name"] = name;
-                if (value_matcher != nullptr)
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Name)])] = GetName();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ValueMatcherType)])] = GetValueMatcherType();
+                if (GetValueMatcher() != nullptr)
                 {
-                    output["value_matcher"] = *value_matcher;
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::ValueMatcher)])] = *GetValueMatcher();
                 }
 
                 return output;
             }
-
-        private:
-            std::string name;
-            ValueMatcherType value_matcher_type = ValueMatcherType::None;
-            std::shared_ptr<ValueMatcher> value_matcher;
-
         };
     }
 }

@@ -1,64 +1,22 @@
+#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/Types/Recipes/RecipeData.hpp"
 
 namespace ProtocolCraft
 {
     class RecipeDataSimpleCrafting : public RecipeData
     {
-    public:
-        virtual ~RecipeDataSimpleCrafting() override
-        {
-
-        }
-
-
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        void SetCookingBookCategory(const int cooking_book_category_)
-        {
-            cooking_book_category = cooking_book_category_;
-        }
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_EMPTY;
+#else
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(CookingBookCategory);
+        DECLARE_READ_WRITE_SERIALIZE;
 #endif
 
-
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        int GetCookingBookCategory() const
-        {
-            return cooking_book_category;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            cooking_book_category = ReadData<VarInt>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            WriteData<VarInt>(cooking_book_category, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            output["cooking_book_category"] = cooking_book_category;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        int cooking_book_category = 0;
+        GETTER_SETTER(CookingBookCategory);
 #endif
     };
 }

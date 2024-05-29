@@ -9,102 +9,50 @@ namespace ProtocolCraft
 {
     class LastSeenMessagesEntry : public NetworkType
     {
-    public:
-        virtual ~LastSeenMessagesEntry() override
-        {
-
-        }
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_FIELDS_TYPES(UUID,      std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(ProfileId, LastSignature);
+        DECLARE_READ_WRITE_SERIALIZE;
+#else
+        DECLARE_FIELDS_TYPES(VarInt, std::optional<std::vector<unsigned char>>);
+        DECLARE_FIELDS_NAMES(Id,     LastSignature);
+        DECLARE_SERIALIZE;
+#endif
 
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        void SetProfileId(const UUID& profile_id_)
-        {
-            profile_id = profile_id_;
-        }
+        GETTER_SETTER(ProfileId);
 #else
-        void SetId(const int id_)
-        {
-            id = id_;
-        }
+        GETTER_SETTER(Id);
 #endif
-
-        void SetLastSignature(const std::vector<unsigned char>& last_signature_)
-        {
-            last_signature = last_signature_;
-        }
-
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        const UUID& GetProfileId() const
-        {
-            return profile_id;
-        }
-#else
-        int GetId() const
-        {
-            return id;
-        }
-#endif
-
-        const std::vector<unsigned char>& GetLastSignature() const
-        {
-            return last_signature;
-        }
+        GETTER_SETTER(LastSignature);
 
     protected:
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            profile_id = ReadData<UUID>(iter, length);
-            last_signature = ReadData<std::vector<unsigned char>>(iter, length);
-#else
-            id = ReadData<VarInt>(iter, length) - 1;
-            if (id == -1)
+            SetId(ReadData<VarInt>(iter, length) - 1);
+            if (GetId() == -1)
             {
-                last_signature = ReadByteArray(iter, length, 256);
+                SetLastSignature(ReadByteArray(iter, length, 256));
             }
             else
             {
-                last_signature.clear();
+                SetLastSignature({});
             }
-#endif
         }
+#endif
 
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteData<UUID>(profile_id, container);
-            WriteData<std::vector<unsigned char>>(last_signature, container);
-#else
-            WriteData<VarInt>(id + 1, container);
-            if (last_signature.size() > 0)
+            WriteData<VarInt>(GetId() + 1, container);
+            if (GetLastSignature().has_value())
             {
-                WriteByteArray(last_signature, container);
+                WriteByteArray(GetLastSignature().value(), container);
             }
-#endif
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            output["profile_id"] = profile_id;
-#else
-            output["id"] = id;
 #endif
-            output["last_signature"] = "Vector of " + std::to_string(last_signature.size()) + " unsigned char";
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        UUID profile_id = {};
-#else
-        int id = 0;
-#endif
-        std::vector<unsigned char> last_signature;
     };
 } // ProtocolCraft
 #endif

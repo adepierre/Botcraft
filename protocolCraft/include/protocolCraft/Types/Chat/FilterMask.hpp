@@ -7,69 +7,47 @@ namespace ProtocolCraft
 {
     class FilterMask : public NetworkType
     {
+        DECLARE_FIELDS_TYPES(VarInt, std::optional<std::vector<long long int>>);
+        DECLARE_FIELDS_NAMES(Type, Mask);
+        DECLARE_SERIALIZE;
+
     public:
-        virtual ~FilterMask() override
+        GETTER_SETTER(Type);
+        const std::optional<std::vector<long long int>>& GetMask() const
         {
-
+            return std::get<static_cast<size_t>(FieldsEnum::Mask)>(fields);
         }
-
-        void SetType(const int type_)
+        void SetMask(const std::optional<std::vector<long long int>>& Mask)
         {
-            type = type_;
+            if (Mask.has_value())
+            {
+                SetType(2);
+            }
+            std::get<static_cast<size_t>(FieldsEnum::Mask)>(fields) = Mask;
         }
-
-        void SetMask(const std::vector<long long int>& mask_)
-        {
-            mask = mask_;
-        }
-
-
-        int GetType() const
-        {
-            return type;
-        }
-
-        const std::vector<long long int>& GetMask() const
-        {
-            return mask;
-        }
-
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            type = ReadData<VarInt>(iter, length);
-            if (type == 2)
+            SetType(ReadData<VarInt>(iter, length));
+            if (GetType() == 2)
             {
-                mask = ReadData<std::vector<long long int>>(iter, length);
+                SetMask(ReadData<std::vector<long long int>>(iter, length));
+            }
+            else
+            {
+                SetMask({});
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(type, container);
-            if (type == 2)
+            WriteData<VarInt>(GetType(), container);
+            if (GetType() == 2) // Should always have value if type is 2
             {
-                WriteData<std::vector<long long int>>(mask, container);
+                WriteData<std::vector<long long int>>(GetMask().value(), container);
             }
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["type"] = type;
-            if (type == 2)
-            {
-                output["mask"] = mask;
-            }
-
-            return output;
-        }
-
-    private:
-        int type = 0;
-        std::vector<long long int> mask;
     };
 }
 #endif

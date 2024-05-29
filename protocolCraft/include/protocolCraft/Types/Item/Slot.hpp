@@ -11,21 +11,51 @@ namespace ProtocolCraft
 {
     class Slot : public NetworkType
     {
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_FIELDS_TYPES(short,   char,      short,      NBT::UnnamedValue);
+        DECLARE_FIELDS_NAMES(BlockID, ItemCount, ItemDamage, NBT);
+#elif PROTOCOL_VERSION < 404 /* < 1.13.2 */
+        DECLARE_FIELDS_TYPES(short,  char,      NBT::UnnamedValue);
+        DECLARE_FIELDS_NAMES(ItemID, ItemCount, NBT);
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        DECLARE_FIELDS_TYPES(bool,    VarInt, char,      NBT::UnnamedValue);
+        DECLARE_FIELDS_NAMES(Present, ItemID, ItemCount, NBT);
+#else
+        DECLARE_FIELDS_TYPES(VarInt,    VarInt, Components::DataComponentPatch);
+        DECLARE_FIELDS_NAMES(ItemCount, ItemID, Components);
+#endif
+
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        GETTER_SETTER(BlockID);
+        GETTER_SETTER(ItemDamage);
+#endif
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+        GETTER_SETTER(ItemID);
+#endif
+#if PROTOCOL_VERSION > 401 /* > 1.13.1 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        GETTER_SETTER(Present);
+#endif
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        GETTER_SETTER(NBT);
+#else
+        GETTER_SETTER(Components);
+#endif
+
     public:
         // Default constructor for empty slot
         Slot()
         {
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-            block_id = -1;
+            SetBlockID(0);
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            item_id = -1;
+            SetItemID(-1);
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            present = false;
-            item_id = -1;
+            SetPresent(false);
+            SetItemID(-1);
 #elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            item_id = 0;
+            SetItemID(0);
 #endif
-            item_count = 0;
+            SetItemCount(0);
         }
 
         virtual ~Slot() override
@@ -51,232 +81,145 @@ namespace ProtocolCraft
 
             // Both are non empty
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-            return block_id == s.GetBlockID() && item_damage == s.GetItemDamage();
+            return GetBlockID() == s.GetBlockID() && GetItemDamage() == s.GetItemDamage();
 #else
-            return item_id == s.GetItemID();
+            return GetItemID() == s.GetItemID();
 #endif
         }
 
         const bool IsEmptySlot() const
         {
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-            return block_id == -1;
+            return GetBlockID() == -1;
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            return item_id == -1;
+            return GetItemID() == -1;
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            return !present;
+            return !GetPresent();
 #elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            return item_count <= 0 || item_id == 0;
+            return GetItemCount() <= 0 || GetItemID() == 0;
 #endif
         }
-
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-        void SetBlockID(const short block_id_)
-        {
-            block_id = block_id_;
-        }
-
-        void SetItemDamage(const short item_damage_)
-        {
-            item_damage = item_damage_;
-        }
-#elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-        void SetItemID(const short item_id_)
-        {
-            item_id = item_id_;
-        }
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetPresent(const bool present_)
-        {
-            present = present_;
-        }
-#endif
-
-        void SetItemID(const int item_id_)
-        {
-            item_id = item_id_;
-        }
-#endif
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void SetItemCount(const char item_count_)
         {
-            item_count = item_count_;
-            if (item_count == 0)
+            SetItemCount(item_count_);
+            if (item_count_ == 0)
             {
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-                block_id = -1;
+                SetBlockID(-1);
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-                item_id = -1;
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
-                present = false;
-                item_id = -1;
+                SetItemID(-1);
+#elif PROTOCOL_VERSION > 401 /* > 1.13.1 */
+                SetPresent(false);
+                SetItemID(-1);
 #endif
-                nbt = NBT::Value();
+                SetNBT(NBT::Value());
             }
         }
 #else
         void SetItemCount(const int item_count_)
         {
-            item_count = item_count_;
-        }
-#endif
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetNBT(const NBT::Value& nbt_)
-        {
-            nbt = nbt_;
-        }
-#else
-        void SetComponents(const Components::DataComponentPatch& components_)
-        {
-            components = components_;
+            std::get<static_cast<size_t>(FieldsEnum::ItemCount)>(fields) = item_count_;
         }
 #endif
 
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-        short GetBlockID() const
-        {
-            return block_id;
-        }
-
-        short GetItemDamage() const
-        {
-            return item_damage;
-        }
-
         /// @brief Utility function to simplify interfacing between 1.12.2 and later versions
         /// @return Paired { block_id, item_damage }
         std::pair<int, unsigned char> GetItemID() const
         {
-            return { static_cast<int>(block_id), static_cast<unsigned char>(item_damage) };
-        }
-#elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-        short GetItemID() const
-        {
-            return item_id;
-        }
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        bool GetPresent() const
-        {
-            return present;
+            return { static_cast<int>(GetBlockID()), static_cast<unsigned char>(GetItemDamage()) };
         }
 #endif
 
-        int GetItemID() const
+        std::tuple_element_t<static_cast<size_t>(FieldsEnum::ItemCount), decltype(fields)> GetItemCount() const
         {
-            return item_id;
+            return std::get<static_cast<size_t>(FieldsEnum::ItemCount)>(fields);
         }
-#endif
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        char GetItemCount() const
-        {
-            return item_count;
-        }
-#else
-        int GetItemCount() const
-        {
-            return item_count;
-        }
-#endif
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        const NBT::Value& GetNBT() const
-        {
-            return nbt;
-        }
-#else
-        const Components::DataComponentPatch& GetComponents() const
-        {
-            return components;
-        }
-#endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-            block_id = ReadData<short>(iter, length);
-            if (block_id == -1)
+            SetBlockID(ReadData<short>(iter, length));
+            if (GetBlockID() == -1)
             {
                 return;
             }
 
-            item_count = ReadData<char>(iter, length);
-            item_damage = ReadData<short>(iter, length);
+            SetItemCount(ReadData<char>(iter, length));
+            SetItemDamage(ReadData<short>(iter, length));
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            item_id = ReadData<short>(iter, length);
-            if (item_id == -1)
+            SetItemID(ReadData<short>(iter, length));
+            if (GetItemID() == -1)
             {
                 return;
             }
 
-            item_count = ReadData<char>(iter, length);
+            SetItemCount(ReadData<char>(iter, length));
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            present = ReadData<bool>(iter, length);
-            if (!present)
+            SetPresent(ReadData<bool>(iter, length));
+            if (!GetPresent())
             {
                 return;
             }
 
-            item_id = ReadData<VarInt>(iter, length);
-            item_count = ReadData<char>(iter, length);
+            SetItemID(ReadData<VarInt>(iter, length));
+            SetItemCount(ReadData<char>(iter, length));
 #elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            item_count = ReadData<VarInt>(iter, length);
-            if (item_count <= 0)
+            SetItemCount(ReadData<VarInt>(iter, length));
+            if (GetItemCount() <= 0)
             {
                 return;
             }
-            item_id = ReadData<VarInt>(iter, length);
+            SetItemID(ReadData<VarInt>(iter, length));
 #endif
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            nbt = ReadData<NBT::UnnamedValue>(iter, length);
+            SetNBT(ReadData<NBT::UnnamedValue>(iter, length));
 #else
-            components = ReadData<Components::DataComponentPatch>(iter, length);
+            SetComponents(ReadData<Components::DataComponentPatch>(iter, length));
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-            WriteData<short>(block_id, container);
-            if (block_id == -1)
+            WriteData<short>(GetBlockID(), container);
+            if (GetBlockID() == -1)
             {
                 return;
             }
-            WriteData<char>(item_count, container);
-            WriteData<short>(item_damage, container);
+            WriteData<char>(GetItemCount(), container);
+            WriteData<short>(GetItemDamage(), container);
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            WriteData<short>(item_id, container);
-            if (item_id == -1)
+            WriteData<short>(GetItemID(), container);
+            if (GetItemID() == -1)
             {
                 return;
             }
-            WriteData<char>(item_count, container);
+            WriteData<char>(GetItemCount(), container);
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<bool>(present, container);
-            if (!present)
+            WriteData<bool>(GetPresent(), container);
+            if (!GetPresent())
             {
                 return;
             }
-            WriteData<VarInt>(item_id, container);
-            WriteData<char>(item_count, container);
+            WriteData<VarInt>(GetItemID(), container);
+            WriteData<char>(GetItemCount(), container);
 #elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
             if (IsEmptySlot())
             {
                 WriteData<VarInt>(0, container);
                 return;
             }
-            WriteData<VarInt>(item_count, container);
-            WriteData<VarInt>(item_id, container);
+            WriteData<VarInt>(GetItemCount(), container);
+            WriteData<VarInt>(GetItemID(), container);
 #endif
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<NBT::UnnamedValue>(nbt, container);
+            WriteData<NBT::UnnamedValue>(GetNBT(), container);
 #else
-            WriteData<Components::DataComponentPatch>(components, container);
+            WriteData<Components::DataComponentPatch>(GetComponents(), container);
 #endif
         }
 
@@ -285,69 +228,46 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-            output["block_id"] = block_id;
-            if (block_id != -1)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::BlockID)])] = GetBlockID();
+            if (GetBlockID() != -1)
             {
-                output["item_damage"] = item_damage;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemDamage)])] = GetItemDamage();
             }
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            output["item_id"] = item_id;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemID)])] = GetItemID();
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            output["present"] = present;
-            if (present)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Present)])] = GetPresent();
+            if (GetPresent())
             {
-                output["item_id"] = item_id;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemID)])] = GetItemID();
             }
 #elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            if (item_count > 0)
+            if (GetItemCount() > 0)
             {
-                output["item_id"] = item_id;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemID)])] = GetItemID();
             }
 #endif
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-            if(block_id != -1)
+            if(GetBlockID() != -1)
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            if(item_id != -1)
+            if(GetItemID() != -1)
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            if (present)
+            if (GetPresent())
 #elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            if (item_count > 0)
+            if (GetItemCount() > 0)
 #endif
             {
-                output["item_count"] = item_count;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemCount)])] = GetItemCount();
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-                if (nbt.HasData())
+                if (GetNBT().HasData())
                 {
-                    output["nbt"] = nbt;
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::NBT)])] = GetNBT();
                 }
 #else
-                output["components"] = components;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Components)])] = GetComponents();
 #endif
             }
             return output;
         }
-
-    private:
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-        short block_id = 0;
-        short item_damage = 0;
-#elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-        short item_id = 0;
-#elif PROTOCOL_VERSION >= 402 /* >= 1.13.1 */
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        bool present = false;
-#endif
-        int item_id = 0;
-#endif
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        char item_count = 0;
-#else
-        int item_count = 0;
-#endif
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        NBT::Value nbt;
-#else
-        Components::DataComponentPatch components;
-#endif
     };
 } // ProtocolCraft

@@ -1,100 +1,55 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
 #include <memory>
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Types/Identifier.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 #include "protocolCraft/Types/Vibrations/PositionSource.hpp"
 
-namespace ProtocolCraft 
+namespace ProtocolCraft
 {
     class VibrationPath : public NetworkType
     {
-    public:
-        virtual ~VibrationPath() override
-        {
+        DECLARE_FIELDS_TYPES(NetworkPosition, Identifier,      std::shared_ptr<PositionSource>, VarInt);
+        DECLARE_FIELDS_NAMES(Origin,          DestinationType, Destination,                     ArrivalInTicks);
 
-        }
-
-
-        void SetOrigin(const NetworkPosition& origin_)
-        {
-            origin = origin_;
-        }
-
-        void SetDestinationType(const Identifier& destination_type_)
-        {
-            destination_type = destination_type_;
-        }
-
-        void SetDestination(const std::shared_ptr<PositionSource> destination_)
-        {
-            destination = destination_;
-        }
-
-        void SetArrivalInTicks(const int arrival_in_ticks_)
-        {
-            arrival_in_ticks = arrival_in_ticks_;
-        }
-
-
-        const NetworkPosition& GetOrigin() const
-        {
-            return origin;
-        }
-
-        const Identifier& GetDestinationType() const
-        {
-            return destination_type;
-        }
-
-        std::shared_ptr<PositionSource> GetDestination() const
-        {
-            return destination;
-        }
-
-        int GetArrivalInTicks() const
-        {
-            return arrival_in_ticks;
-        }
-
+        GETTER_SETTER(Origin);
+        GETTER_SETTER(DestinationType);
+        GETTER_SETTER(Destination);
+        GETTER_SETTER(ArrivalInTicks);
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            origin = ReadData<NetworkPosition>(iter, length);
-            destination_type = ReadData<Identifier>(iter, length);
-            destination = PositionSource::CreatePositionSource(destination_type);
+            SetOrigin(ReadData<NetworkPosition>(iter, length));
+            SetDestinationType(ReadData<Identifier>(iter, length));
+            std::shared_ptr<PositionSource> destination = PositionSource::CreatePositionSource(GetDestinationType());
             destination->Read(iter, length);
-            arrival_in_ticks = ReadData<VarInt>(iter, length);
+            SetDestination(destination);
+            SetArrivalInTicks(ReadData<VarInt>(iter, length));
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<NetworkPosition>(origin, container);
-            WriteData<Identifier>(destination_type, container);
-            destination->Write(container);
-            WriteData<VarInt>(arrival_in_ticks, container);
+            WriteData<NetworkPosition>(GetOrigin(), container);
+            WriteData<Identifier>(GetDestinationType(), container);
+            GetDestination()->Write(container);
+            WriteData<VarInt>(GetArrivalInTicks(), container);
         }
 
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
-            output["origin"] = origin;
-            output["destination_type"] = destination_type;
-            output["destination"] = destination->Serialize();
-            output["arrival_in_ticks"] = arrival_in_ticks;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Origin)])] = GetOrigin();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::DestinationType)])] = GetDestinationType();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Destination)])] = *GetDestination();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::ArrivalInTicks)])] = GetArrivalInTicks();
 
 
             return output;
         }
-
-    private:
-        NetworkPosition origin;
-        Identifier destination_type;
-        std::shared_ptr<PositionSource> destination;
-        int arrival_in_ticks = 0;
     };
 } // ProtocolCraft
 #endif

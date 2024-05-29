@@ -7,45 +7,11 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyRange : public BrigadierProperty
     {
-    public:
-        virtual ~BrigadierPropertyRange()
-        {
+        DECLARE_FIELDS_TYPES(bool);
+        DECLARE_FIELDS_NAMES(Decimals);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetDecimals(const double decimals_)
-        {
-            decimals = decimals_;
-        }
-        
-        
-        bool GetDecimals() const
-        {
-            return decimals;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            decimals = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<bool>(decimals, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["decimals"] = decimals;
-
-            return output;
-        }
-
-    private:
-        bool decimals = false;
+        GETTER_SETTER(Decimals);
     };
 }
 #endif

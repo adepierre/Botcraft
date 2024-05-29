@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
@@ -11,47 +11,11 @@ namespace ProtocolCraft
     {
         class DataComponentTypeItemLore : public DataComponentType
         {
-        public:
-            virtual ~DataComponentTypeItemLore()
-            {
+            DECLARE_FIELDS_TYPES(std::vector<Chat>);
+            DECLARE_FIELDS_NAMES(Lines);
+            DECLARE_READ_WRITE_SERIALIZE;
 
-            }
-
-
-            const std::vector<Chat>& GetLines() const
-            {
-                return lines;
-            }
-
-
-            void SetLines(const std::vector<Chat>& lines_)
-            {
-                lines = lines_;
-            }
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                lines = ReadData<std::vector<Chat>>(iter, length);
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<std::vector<Chat>>(lines, container);
-            }
-
-            virtual Json::Value SerializeImpl() const override
-            {
-                Json::Value output;
-
-                output["lines"] = lines;
-
-                return output;
-            }
-
-        private:
-            std::vector<Chat> lines;
-
+            GETTER_SETTER(Lines);
         };
     }
 }

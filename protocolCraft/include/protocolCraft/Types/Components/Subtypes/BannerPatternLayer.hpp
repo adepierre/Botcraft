@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/NetworkType.hpp"
 
 namespace ProtocolCraft
@@ -8,61 +8,12 @@ namespace ProtocolCraft
     {
         class BannerPatternLayer : public NetworkType
         {
-        public:
-            virtual ~BannerPatternLayer()
-            {
+            DECLARE_FIELDS_TYPES(VarInt, VarInt);
+            DECLARE_FIELDS_NAMES(Pattern, Color);
+            DECLARE_READ_WRITE_SERIALIZE;
 
-            }
-
-
-            int GetPattern() const
-            {
-                return pattern;
-            }
-
-            int GetColor() const
-            {
-                return color;
-            }
-
-
-            void SetPattern(const int pattern_)
-            {
-                pattern = pattern_;
-            }
-
-            void SetColor(const int color_)
-            {
-                color = color_;
-            }
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                pattern = ReadData<VarInt>(iter, length);
-                color = ReadData<VarInt>(iter, length);
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<VarInt>(pattern, container);
-                WriteData<VarInt>(color, container);
-            }
-
-            virtual Json::Value SerializeImpl() const override
-            {
-                Json::Value output;
-
-                output["pattern"] = pattern;
-                output["color"] = color;
-
-                return output;
-            }
-
-        private:
-            int pattern;
-            int color;
-
+            GETTER_SETTER(Pattern);
+            GETTER_SETTER(Color);
         };
     }
 }

@@ -155,6 +155,10 @@ namespace ProtocolCraft
                         output[std::string(fields_names[i])] = std::get<i>(fields);
                     }
                 }
+                else if constexpr (Internal::IsBitset<CurrentElement>)
+                {
+                    output[std::string(fields_names[i])] = std::get<i>(fields).to_string();
+                }
                 else
                 {
                     output[std::string(fields_names[i])] = std::get<i>(fields);

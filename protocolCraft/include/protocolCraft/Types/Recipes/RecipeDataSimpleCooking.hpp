@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/Types/Recipes/RecipeData.hpp"
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #include "protocolCraft/Types/Item/Slot.hpp"
@@ -9,127 +9,23 @@ namespace ProtocolCraft
 {
     class RecipeDataSimpleCooking : public RecipeData
     {
-    public:
-        virtual ~RecipeDataSimpleCooking() override
-        {
-
-        }
-
-        void SetGroup(const std::string& group_)
-        {
-            group = group_;
-        }
-
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        void SetCookingBookCategory(const int cooking_book_category_)
-        {
-            cooking_book_category = cooking_book_category_;
-        }
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_FIELDS_TYPES(std::string, Ingredient, Slot,   float,      VarInt);
+        DECLARE_FIELDS_NAMES(Group,       Ingredient, Result, Experience, CookingTime);
+#else
+        DECLARE_FIELDS_TYPES(std::string, VarInt,              Ingredient, Slot,   float,      VarInt);
+        DECLARE_FIELDS_NAMES(Group,       CookingBookCategory, Ingredient, Result, Experience, CookingTime);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetIngredient(const Ingredient& ingredient_)
-        {
-            ingredient = ingredient_;
-        }
-
-        void SetResult(const Slot& result_)
-        {
-            result = result_;
-        }
-
-        void SetExperience(const float experience_)
-        {
-            experience = experience_;
-        }
-
-        void SetCookingTime(const int cooking_time_)
-        {
-            cooking_time = cooking_time_;
-        }
-
-
-        const std::string& GetGroup() const
-        {
-            return group;
-        }
-
+        GETTER_SETTER(Group);
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        int GetCookingBookCategory() const
-        {
-            return cooking_book_category;
-        }
+        GETTER_SETTER(CookingBookCategory);
 #endif
-
-        const Ingredient& GetIngredient() const
-        {
-            return ingredient;
-        }
-
-        const Slot& GetResult() const
-        {
-            return result;
-        }
-
-        float GetExperience() const
-        {
-            return experience;
-        }
-
-        int GetCookingTime() const
-        {
-            return cooking_time;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            group = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            cooking_book_category = ReadData<VarInt>(iter, length);
-#endif
-            ingredient = ReadData<Ingredient>(iter, length);
-            result = ReadData<Slot>(iter, length);
-            experience = ReadData<float>(iter, length);
-            cooking_time = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::string>(group, container);
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            WriteData<VarInt>(cooking_book_category, container);
-#endif
-            WriteData<Ingredient>(ingredient, container);
-            WriteData<Slot>(result, container);
-            WriteData<float>(experience, container);
-            WriteData<VarInt>(cooking_time, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["group"] = group;
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            output["cooking_book_category"] = cooking_book_category;
-#endif
-            output["ingredient"] = ingredient;
-            output["result"] = result;
-            output["experience"] = experience;
-            output["cooking_time"] = cooking_time;
-
-            return output;
-        }
-
-    private:
-        std::string group;
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        int cooking_book_category = 0;
-#endif
-        Ingredient ingredient;
-        Slot result;
-        float experience = 0.0f;
-        int cooking_time = 0;
+        GETTER_SETTER(Ingredient);
+        GETTER_SETTER(Result);
+        GETTER_SETTER(Experience);
+        GETTER_SETTER(CookingTime);
     };
 }
 #endif

@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
 
 namespace ProtocolCraft
@@ -8,47 +8,11 @@ namespace ProtocolCraft
     {
         class DataComponentTypeHolderInstrument : public DataComponentType
         {
-        public:
-            virtual ~DataComponentTypeHolderInstrument()
-            {
+            DECLARE_FIELDS_TYPES(VarInt);
+            DECLARE_FIELDS_NAMES(InstrumentId);
+            DECLARE_READ_WRITE_SERIALIZE;
 
-            }
-
-
-            int GetInstrumentId() const
-            {
-                return instrument_id;
-            }
-
-
-            void SetInstrumentId(const int instrument_id_)
-            {
-                instrument_id = instrument_id_;
-            }
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                instrument_id = ReadData<VarInt>(iter, length);
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<VarInt>(instrument_id, container);
-            }
-
-            virtual Json::Value SerializeImpl() const override
-            {
-                Json::Value output;
-
-                output["instrument_id"] = instrument_id;
-
-                return output;
-            }
-
-        private:
-            int instrument_id = 0;
-
+            GETTER_SETTER(InstrumentId);
         };
     }
 }

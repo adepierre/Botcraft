@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
 
 #include <map>
@@ -10,47 +10,11 @@ namespace ProtocolCraft
     {
         class DataComponentTypeBlockItemStateProperties : public DataComponentType
         {
-        public:
-            virtual ~DataComponentTypeBlockItemStateProperties()
-            {
+            DECLARE_FIELDS_TYPES(std::map<std::string, std::string>);
+            DECLARE_FIELDS_NAMES(Properties);
+            DECLARE_READ_WRITE_SERIALIZE;
 
-            }
-
-
-            const std::map<std::string, std::string>& GetProperties() const
-            {
-                return properties;
-            }
-
-
-            void SetProperties(const std::map<std::string, std::string>& properties_)
-            {
-                properties = properties_;
-            }
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                properties = ReadData<std::map<std::string, std::string>>(iter, length);
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<std::map<std::string, std::string>>(properties, container);
-            }
-
-            virtual Json::Value SerializeImpl() const override
-            {
-                Json::Value output;
-
-                output["properties"] = properties;
-
-                return output;
-            }
-
-        private:
-            std::map<std::string, std::string> properties;
-
+            GETTER_SETTER(Properties);
         };
     }
 }

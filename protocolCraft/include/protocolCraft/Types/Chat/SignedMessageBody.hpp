@@ -13,115 +13,19 @@ namespace ProtocolCraft
 {
     class SignedMessageBody : public NetworkType
     {
-    public:
-        virtual ~SignedMessageBody() override
-        {
-
-        }
-
-
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        void SetContent(const ChatMessageContent& content_)
-        {
-            content = content_;
-        }
+        DECLARE_FIELDS_TYPES(ChatMessageContent, long long int, long long int, std::vector<LastSeenMessagesEntry>);
+        DECLARE_FIELDS_NAMES(Content,            Timestamp,     Salt,          LastSeen);
 #else
-        void SetContent(const std::string& content_)
-        {
-            content = content_;
-        }
+        DECLARE_FIELDS_TYPES(std::string, long long int, long long int, std::vector<LastSeenMessagesEntry>);
+        DECLARE_FIELDS_NAMES(Content,     Timestamp,     Salt,          LastSeen);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetTimestamp(const long long int timestamp_)
-        {
-            timestamp = timestamp_;
-        }
-
-        void SetSalt(const long long int salt_)
-        {
-            salt = salt_;
-        }
-
-        void SetLastSeen(const std::vector<LastSeenMessagesEntry>& last_seen_)
-        {
-            last_seen = last_seen_;
-        }
-
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        const ChatMessageContent& GetContent() const
-        {
-            return content;
-        }
-#else
-        const std::string& GetContent() const
-        {
-            return content;
-        }
-#endif
-
-        long long int GetTimestamp() const
-        {
-            return timestamp;
-        }
-
-        long long int GetSalt() const
-        {
-            return salt;
-        }
-
-        const std::vector<LastSeenMessagesEntry>& GetLastSeen() const
-        {
-            return last_seen;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            content = ReadData<ChatMessageContent>(iter, length);
-#else
-            content = ReadData<std::string>(iter, length);
-#endif
-            timestamp = ReadData<long long int>(iter, length);
-            salt = ReadData<long long int>(iter, length);
-            last_seen = ReadData<std::vector<LastSeenMessagesEntry>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteData<ChatMessageContent>(content, container);
-#else
-            WriteData<std::string>(content, container);
-#endif
-            WriteData<long long int>(timestamp, container);
-            WriteData<long long int>(salt, container);
-            WriteData<std::vector<LastSeenMessagesEntry>>(last_seen, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["content"] = content;
-            output["timestamp"] = timestamp;
-            output["salt"] = salt;
-            output["last_seen"] = last_seen;
-
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        ChatMessageContent content;
-#else
-        std::string content;
-#endif
-        long long int timestamp = 0;
-        long long int salt = 0;
-        std::vector<LastSeenMessagesEntry> last_seen;
+        GETTER_SETTER(Content);
+        GETTER_SETTER(Timestamp);
+        GETTER_SETTER(Salt);
+        GETTER_SETTER(LastSeen);
     };
 } // ProtocolCraft
 #endif
