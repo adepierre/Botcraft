@@ -96,7 +96,7 @@ namespace ProtocolCraft
             {
                 unsigned char current_value = ReadData<unsigned char>(iter, length);
 
-                slots.insert({ current_value & 0x7F, ReadData<Slot>(iter, length) });
+                slots.insert({ static_cast<unsigned char>(current_value & 0x7F), ReadData<Slot>(iter, length) });
 
                 has_value = current_value & (1 << 7);
             }

@@ -190,7 +190,7 @@ namespace ProtocolCraft
             WriteData<bool>(suppress_light_updates, container);
 #endif
             WriteData<VarInt>(static_cast<int>(positions.size()), container);
-            for (int i = 0; i < positions.size(); ++i)
+            for (size_t i = 0; i < positions.size(); ++i)
             {
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
                 WriteData<VarLong>((states[i] << 12) | positions[i], container);

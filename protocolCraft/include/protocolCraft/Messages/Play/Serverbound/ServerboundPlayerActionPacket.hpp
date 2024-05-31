@@ -56,7 +56,7 @@ namespace ProtocolCraft
             pos = pos_;
         }
 
-        void SetDirection(const int direction_)
+        void SetDirection(const char direction_)
         {
             direction = direction_;
         }
@@ -79,7 +79,7 @@ namespace ProtocolCraft
             return pos;
         }
 
-        int GetDirection() const
+        char GetDirection() const
         {
             return direction;
         }

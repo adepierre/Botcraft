@@ -37,7 +37,7 @@ namespace ProtocolCraft
                 decompressed_data.resize(decompressed_data.size() + length / 2);
             }
             strm.next_out = decompressed_data.data() + strm.total_out;
-            strm.avail_out = decompressed_data.size() - strm.total_out;
+            strm.avail_out = static_cast<unsigned long>(decompressed_data.size()) - strm.total_out;
 
             res = inflate(&strm, Z_SYNC_FLUSH);
             if (res == Z_STREAM_END)

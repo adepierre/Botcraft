@@ -52,7 +52,7 @@ namespace ProtocolCraft
             SetHeight(ReadData<VarInt>(iter, length));
 #endif
             std::vector<Ingredient> ingredients(GetWidth() * GetHeight());
-            for (int i = 0; i < ingredients.size(); ++i)
+            for (size_t i = 0; i < ingredients.size(); ++i)
             {
                 ingredients[i] = ReadData<Ingredient>(iter, length);
             }

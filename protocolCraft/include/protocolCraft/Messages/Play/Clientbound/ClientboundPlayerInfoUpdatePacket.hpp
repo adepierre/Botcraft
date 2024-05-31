@@ -98,7 +98,7 @@ namespace ProtocolCraft
             }
 
             const int entries_length = ReadData<VarInt>(iter, length);
-            for (size_t i = 0; i < entries_length; ++i)
+            for (int i = 0; i < entries_length; ++i)
             {
                 const UUID uuid = ReadData<UUID>(iter, length);
                 PlayerInfoUpdateEntry& entry = entries[uuid];

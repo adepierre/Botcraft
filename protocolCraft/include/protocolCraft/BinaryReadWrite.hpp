@@ -23,12 +23,12 @@ namespace ProtocolCraft
     using VarInt = VarType<int>;
     using VarLong = VarType<long long int>;
 
-    std::string ReadRawString(ReadIterator& iter, size_t& length, const int size);
+    std::string ReadRawString(ReadIterator& iter, size_t& length, const size_t size);
     void WriteRawString(const std::string& s, WriteContainer& container);
 
-    std::vector<unsigned char> ReadByteArray(ReadIterator& iter, size_t& length, const size_t& desired_length);
+    std::vector<unsigned char> ReadByteArray(ReadIterator& iter, size_t& length, const size_t desired_length);
     void WriteByteArray(const std::vector<unsigned char>& my_array, WriteContainer& container);
-    void WriteByteArray(const unsigned char* data, const size_t& length, WriteContainer& container);
+    void WriteByteArray(const unsigned char* data, const size_t length, WriteContainer& container);
 
     namespace Internal
     {
@@ -80,7 +80,7 @@ namespace ProtocolCraft
         // VarType
         else if constexpr (Internal::IsVarType<SerializationType>)
         {
-            int num_read = 0;
+            size_t num_read = 0;
             typename SerializationType::underlying_type result = 0;
 
             unsigned char read;
@@ -112,7 +112,7 @@ namespace ProtocolCraft
         // std::string
         else if constexpr (std::is_same_v<SerializationType, std::string> && std::is_same_v<StorageType, std::string>)
         {
-            const int size = ReadData<int, VarInt>(iter, length);
+            const size_t size = ReadData<size_t, VarInt>(iter, length);
             if (length < size)
             {
                 throw std::runtime_error("Not enough input in ReadData<std::string>");
@@ -135,17 +135,17 @@ namespace ProtocolCraft
         else if constexpr ((Internal::IsVector<StorageType> && Internal::IsVector<SerializationType>) ||
             (Internal::IsArray<StorageType> && Internal::IsArray<SerializationType>))
         {
-            int N;
-            StorageType output;
+            size_t N;
+            StorageType output{};
             if constexpr (Internal::IsVector<StorageType>)
             {
-                N = ReadData<int, VarInt>(iter, length);
+                N = ReadData<size_t, VarInt>(iter, length);
                 output.resize(N);
             }
             else
             {
                 static_assert(Internal::IsArray<StorageType>, "StorageType should be an array");
-                N = static_cast<int>(output.size());
+                N = std::size(output);
             }
 
             // If we need to read char/unsigned char, just memcpy it
@@ -165,7 +165,7 @@ namespace ProtocolCraft
             // else read the elements one by one
             else
             {
-                for (int i = 0; i < N; ++i)
+                for (size_t i = 0; i < N; ++i)
                 {
                     output[i] = ReadData<typename StorageType::value_type, typename SerializationType::value_type>(iter, length);
                 }

@@ -14,7 +14,7 @@ namespace ProtocolCraft
         GETTER_SETTER(Name);
 
     public:
-        const bool operator <(const Identifier& rhs) const
+        bool operator <(const Identifier& rhs) const
         {
             return GetName() < rhs.GetName() ||
                 (GetName() == rhs.GetName() && GetNamespace() < rhs.GetNamespace());

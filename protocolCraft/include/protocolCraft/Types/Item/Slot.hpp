@@ -63,7 +63,7 @@ namespace ProtocolCraft
 
         }
 
-        const bool SameItem(const Slot& s) const
+        bool SameItem(const Slot& s) const
         {
             if (IsEmptySlot() && s.IsEmptySlot())
             {
@@ -87,7 +87,7 @@ namespace ProtocolCraft
 #endif
         }
 
-        const bool IsEmptySlot() const
+        bool IsEmptySlot() const
         {
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
             return GetBlockID() == -1;

@@ -166,7 +166,7 @@ namespace ProtocolCraft
 
     std::string_view Recipe::GetName() const
     {
-        static constexpr std::array<std::string_view, static_cast<size_t>(RecipeDataType::NUM_RECIPE_DATA_TYPES)> names = {
+        static constexpr std::array<std::string_view, static_cast<size_t>(RecipeDataType::NUM_RECIPE_DATA_TYPES)> recipe_names = {
             "crafting_shaped",
             "crafting_shapeless",
             "crafting_special_armordye",
@@ -195,7 +195,7 @@ namespace ProtocolCraft
         {
             return "";
         }
-        return names[static_cast<size_t>(GetType())];
+        return recipe_names[static_cast<size_t>(GetType())];
     }
 #endif
 

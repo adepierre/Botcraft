@@ -32,7 +32,7 @@ namespace ProtocolCraft
                 std::shared_ptr<MobEffectInstanceDetails> hidden_effect = nullptr;
                 if (ReadData<bool>(iter, length))
                 {
-                    std::shared_ptr<MobEffectInstanceDetails> hidden_effect = std::make_shared<MobEffectInstanceDetails>();
+                    hidden_effect = std::make_shared<MobEffectInstanceDetails>();
                     hidden_effect->Read(iter, length);
                 }
                 SetHiddenEffect(hidden_effect);
