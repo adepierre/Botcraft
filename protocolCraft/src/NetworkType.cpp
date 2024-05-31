@@ -92,7 +92,6 @@
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
 #include "protocolCraft/Types/Item/MerchantOffer.hpp"
 #endif
-#include "protocolCraft/Types/Item/Slot.hpp"
 
 // Recipes
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
@@ -118,7 +117,7 @@ namespace ProtocolCraft
 {
     // All NetworkType auto serializable methods can be defined here
     DEFINE_NETWORK_TYPE(Advancement);
-    DEFINE_SERIALIZED_NETWORK_TYPE(AdvancementDisplay);
+    DEFINE_SERIALIZE(AdvancementDisplay);
     DEFINE_NETWORK_TYPE(AdvancementProgress);
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     DEFINE_NETWORK_TYPE(BlockEntityInfo);
@@ -128,7 +127,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
     DEFINE_NETWORK_TYPE(ChunkBiomeData);
-    DEFINE_SERIALIZED_NETWORK_TYPE(ChunkPos);
+    DEFINE_SERIALIZE(ChunkPos);
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     DEFINE_NETWORK_TYPE(ClientboundLevelChunkPacketData);
@@ -148,12 +147,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     DEFINE_NETWORK_TYPE(GlobalPos);
 #endif
-    DEFINE_SERIALIZED_NETWORK_TYPE(Identifier);
+    DEFINE_SERIALIZE(Identifier);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     DEFINE_NETWORK_TYPE(KnownPack);
 #endif
     DEFINE_NETWORK_TYPE(MapDecoration);
-    DEFINE_SERIALIZED_NETWORK_TYPE(NetworkPosition);
+    DEFINE_SERIALIZE(NetworkPosition);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     DEFINE_NETWORK_TYPE(PackedRegistryEntry);
 #endif
@@ -176,16 +175,16 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
     DEFINE_NETWORK_TYPE(ChatTypeBoundNetwork);
-    DEFINE_SERIALIZED_NETWORK_TYPE(FilterMask);
+    DEFINE_SERIALIZE(FilterMask);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_NETWORK_TYPE(LastSeenMessagesEntry);
 #else
-    DEFINE_SERIALIZED_NETWORK_TYPE(LastSeenMessagesEntry);
+    DEFINE_SERIALIZE(LastSeenMessagesEntry);
 #endif
     DEFINE_NETWORK_TYPE(LastSeenMessagesUpdate);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-    DEFINE_SERIALIZED_NETWORK_TYPE(NumberFormat);
+    DEFINE_SERIALIZE(NumberFormat);
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
     DEFINE_NETWORK_TYPE(PlayerChatMessage);
@@ -212,7 +211,6 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     DEFINE_NETWORK_TYPE(MerchantOffer);
 #endif
-    DEFINE_JSON_NAMES(Slot);
 
     // Recipes
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */

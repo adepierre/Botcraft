@@ -13,8 +13,8 @@ namespace ProtocolCraft
 
     // Big boy to process packets 20 by 20, preventing needlessly copying vtable many times at each inheritance stage
     template <typename TCommon,
-        typename T1, typename T2, typename T3, typename T4, typename T5,
-        typename T6, typename T7, typename T8, typename T9, typename T10,
+         typename T1,  typename T2,  typename T3, typename T4,  typename T5,
+         typename T6,  typename T7,  typename T8, typename T9,  typename T10,
         typename T11, typename T12, typename T13, typename T14, typename T15,
         typename T16, typename T17, typename T18, typename T19, typename T20,
         typename... TRest>

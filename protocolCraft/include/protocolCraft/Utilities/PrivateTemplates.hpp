@@ -10,12 +10,6 @@
 
 namespace ProtocolCraft
 {
-    struct PrivateFieldsAccessor
-    {
-        template <typename T> static constexpr int num_fields = static_cast<int>(T::FieldsEnum::NUM_FIELDS);
-        template <typename T> static constexpr std::string_view raw_names = T::raw_names;
-    };
-
     // Template black magic to loop at compile time
     template<std::size_t... indices, class LoopBody>
     void loop_impl(std::index_sequence<indices...>, LoopBody&& loop_body) {
@@ -25,26 +19,6 @@ namespace ProtocolCraft
     template<std::size_t N, class LoopBody>
     void loop(LoopBody&& loop_body) {
         loop_impl(std::make_index_sequence<N>{}, std::forward<LoopBody>(loop_body));
-    }
-
-    class Message;
-    template<typename TypesTuple>
-    std::shared_ptr<ProtocolCraft::Message> AutomaticMessageFactory(const int id)
-    {
-        std::shared_ptr<ProtocolCraft::Message> output = nullptr;
-
-        loop<std::tuple_size<TypesTuple>{}> (
-            [&](auto i)
-            {
-                using TupleElement = std::tuple_element_t<i, TypesTuple>;
-                if (id == TupleElement::packet_id)
-                {
-                    output = std::make_shared<TupleElement>();
-                }
-            }
-        );
-
-        return output;
     }
 
     /// @brief ReadData for each types in a tuple and store it in given ref

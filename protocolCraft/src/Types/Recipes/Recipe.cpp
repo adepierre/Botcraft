@@ -20,8 +20,7 @@
 
 namespace ProtocolCraft
 {
-    DEFINE_JSON_NAMES(Recipe);
-    DEFINE_SERIALIZED_NETWORK_TYPE(RecipeDataCraftingShaped);
+    DEFINE_SERIALIZE(RecipeDataCraftingShaped);
     DEFINE_NETWORK_TYPE(RecipeDataCraftingShapeless);
     DEFINE_NETWORK_TYPE(RecipeDataSimpleCooking);
     DEFINE_NETWORK_TYPE(RecipeDataSimpleCrafting);

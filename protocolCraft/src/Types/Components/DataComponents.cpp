@@ -54,9 +54,7 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(BlockPredicate);
         DEFINE_NETWORK_TYPE(ItemAttributeModifiersEntry);
         DEFINE_NETWORK_TYPE(MobEffectInstance);
-        DEFINE_JSON_NAMES(MobEffectInstanceDetails);
         DEFINE_NETWORK_TYPE(PossibleEffect);
-        DEFINE_JSON_NAMES(PropertyMatcher);
         DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
         DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
         DEFINE_NETWORK_TYPE(ToolRule);
