@@ -45,10 +45,10 @@ namespace ProtocolCraft
             size_t size = 0;
             for (size_t i = 0; i < str.length(); ++i)
             {
-                if (i > 0 && (
-                    (str[i] >= 'A' && str[i] <= 'Z' && (str[i - 1] < 'A' || str[i - 1] > 'Z')) ||
-                    (str[i] >= '0' && str[i] <= '9' && (str[i - 1] < '0' || str[i - 1] > '9'))
-                ))
+                if (i > 0 &&
+                    ((str[i] >= 'A' && str[i] <= 'Z') ||
+                        (str[i] >= '0' && str[i] <= '9' && (str[i - 1] < '0' || str[i - 1] > '9')))
+                )
                 {
                     size += 2;
                 }
@@ -101,7 +101,7 @@ namespace ProtocolCraft
             {
                 if (str[i] >= 'A' && str[i] <= 'Z')
                 {
-                    if (i > 0 && (str[i - 1] < 'A' || str[i - 1] > 'Z'))
+                    if (i > 0)
                     {
                         output[index++] = '_';
                     }

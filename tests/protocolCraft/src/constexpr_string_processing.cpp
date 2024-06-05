@@ -43,7 +43,7 @@ TEST_CASE("Split")
 TEST_CASE("Get snake_case Size")
 {
     static constexpr std::array<std::string_view, 7> test_strings = {
-        "hello", "Hello", "HelloWorld", "_", "1", "Hello1", "HelloXP10"
+        "hello", "Hello", "HelloWorld", "_", "1", "Hello1", "Hello10"
     };
     STATIC_REQUIRE(Internal::GetSnakeCaseSize(test_strings[0]) == 5);
     STATIC_REQUIRE(Internal::GetSnakeCaseSize(test_strings[1]) == 5);
@@ -51,7 +51,7 @@ TEST_CASE("Get snake_case Size")
     STATIC_REQUIRE(Internal::GetSnakeCaseSize(test_strings[3]) == 1);
     STATIC_REQUIRE(Internal::GetSnakeCaseSize(test_strings[4]) == 1);
     STATIC_REQUIRE(Internal::GetSnakeCaseSize(test_strings[5]) == 7);
-    STATIC_REQUIRE(Internal::GetSnakeCaseSize(test_strings[6]) == 11);
+    STATIC_REQUIRE(Internal::GetSnakeCaseSize(test_strings[6]) == 8);
 
     static constexpr std::array snake_case_size = Internal::GetSnakeCaseSize(test_strings);
     STATIC_REQUIRE(std::size(snake_case_size) == 7);
@@ -61,13 +61,13 @@ TEST_CASE("Get snake_case Size")
     STATIC_REQUIRE(snake_case_size[3] == 1);
     STATIC_REQUIRE(snake_case_size[4] == 1);
     STATIC_REQUIRE(snake_case_size[5] == 7);
-    STATIC_REQUIRE(snake_case_size[6] == 11);
+    STATIC_REQUIRE(snake_case_size[6] == 8);
 }
 
 TEST_CASE("To snake_case")
 {
-    static constexpr std::array snake_case = Internal::ToSnakeCase<17>("HelloWorldXP10");
-    STATIC_REQUIRE(std::size(snake_case) == 17);
+    static constexpr std::array snake_case = Internal::ToSnakeCase<14>("HelloWorld10");
+    STATIC_REQUIRE(std::size(snake_case) == 14);
     STATIC_REQUIRE(snake_case[0] ==  'h');
     STATIC_REQUIRE(snake_case[1] ==  'e');
     STATIC_REQUIRE(snake_case[2] ==  'l');
@@ -80,14 +80,11 @@ TEST_CASE("To snake_case")
     STATIC_REQUIRE(snake_case[9] ==  'l');
     STATIC_REQUIRE(snake_case[10] == 'd');
     STATIC_REQUIRE(snake_case[11] == '_');
-    STATIC_REQUIRE(snake_case[12] == 'x');
-    STATIC_REQUIRE(snake_case[13] == 'p');
-    STATIC_REQUIRE(snake_case[14] == '_');
-    STATIC_REQUIRE(snake_case[15] == '1');
-    STATIC_REQUIRE(snake_case[16] == '0');
+    STATIC_REQUIRE(snake_case[12] == '1');
+    STATIC_REQUIRE(snake_case[13] == '0');
 
     static constexpr std::array<std::string_view, 7> test_strings = {
-        "hello", "Hello", "HelloWorld", "_", "1", "Hello1", "HelloXP10"
+        "hello", "Hello", "HelloWorld", "_", "1", "Hello1", "Hello10"
     };
     static constexpr std::array test_strings_size = Internal::GetSnakeCaseSize(test_strings);
     static constexpr std::tuple test_strings_tuple = Internal::ArrayToSnakeCaseTuple<std::size(test_strings), test_strings_size>(test_strings);
@@ -100,5 +97,5 @@ TEST_CASE("To snake_case")
     STATIC_REQUIRE(test_strings_snake_case[3] == "_");
     STATIC_REQUIRE(test_strings_snake_case[4] == "1");
     STATIC_REQUIRE(test_strings_snake_case[5] == "hello_1");
-    STATIC_REQUIRE(test_strings_snake_case[6] == "hello_xp_10");
+    STATIC_REQUIRE(test_strings_snake_case[6] == "hello_10");
 }
