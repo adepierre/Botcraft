@@ -38,73 +38,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Break Animation";
 
-        virtual ~ClientboundBlockDestructionPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, char);
+        DECLARE_FIELDS_NAMES(Id_,    Pos,             Progress);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetProgress(const char progress_)
-        {
-            progress = progress_;
-        }
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        char GetProgress() const
-        {
-            return progress;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            pos = ReadData<NetworkPosition>(iter, length);
-            progress = ReadData<char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<char>(progress, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["pos"] = pos;
-            output["progress"] = progress;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        NetworkPosition pos;
-        char progress = 0;
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Progress);
     };
 } //ProtocolCraft

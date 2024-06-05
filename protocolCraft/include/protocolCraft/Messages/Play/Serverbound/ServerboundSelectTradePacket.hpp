@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -40,46 +40,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Select Trade";
 
-        virtual ~ServerboundSelectTradePacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Item);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetItem(const int item_)
-        {
-            item = item_;
-        }
-
-
-        int GetItem() const
-        {
-            return item;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            item = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(item, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["item"] = item;
-
-            return output;
-        }
-
-    private:
-        int item = 0;
-
+        GETTER_SETTER(Item);
     };
 } //ProtocolCraft
 #endif

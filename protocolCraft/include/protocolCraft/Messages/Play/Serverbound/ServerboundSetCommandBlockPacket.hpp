@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
@@ -41,88 +41,14 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Command Block";
 
-        virtual ~ServerboundSetCommandBlockPacket() override
-        {
+        DECLARE_FIELDS_TYPES(NetworkPosition, std::string, VarInt, char);
+        DECLARE_FIELDS_NAMES(Pos,             Command,     Mode,   Flags);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetCommand(const std::string& command_)
-        {
-            command = command_;
-        }
-
-        void SetMode(const int mode_)
-        {
-            mode = mode_;
-        }
-
-        void SetFlags(const char flags_)
-        {
-            flags = flags_;
-        }
-
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        const std::string& GetCommand() const
-        {
-            return command;
-        }
-
-        int GetMode() const
-        {
-            return mode;
-        }
-
-        char GetFlags() const
-        {
-            return flags;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            pos = ReadData<NetworkPosition>(iter, length);
-            command = ReadData<std::string>(iter, length);
-            mode = ReadData<VarInt>(iter, length);
-            flags = ReadData<char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<std::string>(command, container);
-            WriteData<VarInt>(mode, container);
-            WriteData<char>(flags, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-            output["command"] = command;
-            output["mode"] = mode;
-            output["flags"] = flags;
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-        std::string command;
-        int mode = 0;
-        char flags = 0;
-
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Command);
+        GETTER_SETTER(Mode);
+        GETTER_SETTER(Flags);
     };
 } //ProtocolCraft
 #endif

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Chat/Chat.hpp"
 
 namespace ProtocolCraft
 {
@@ -25,84 +24,54 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Delete Chat";
 
-        virtual ~ClientboundDeleteChatPacket() override
-        {
-
-        }
-
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        void SetMessageSignatureId(const int message_signature_id_)
-        {
-            message_signature_id = message_signature_id_;
-        }
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_FIELDS_TYPES(std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(MessageSignature);
+        DECLARE_READ_WRITE_SERIALIZE;
+#else
+        // TODO: That looks like a Holder<std::array<unsigned char, 256>>
+        DECLARE_FIELDS_TYPES(VarInt,             std::array<unsigned char, 256>);
+        DECLARE_FIELDS_NAMES(MessageSignatureId, MessageSignature);
 #endif
 
-        void SetMessageSignature(const std::vector<unsigned char>& message_signature_)
-        {
-            message_signature = message_signature_;
-        }
-
+        GETTER_SETTER(MessageSignature);
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        int GetMessageSignatureId() const
-        {
-            return message_signature_id;
-        }
+        GETTER_SETTER(MessageSignatureId);
 #endif
 
-        const std::vector<unsigned char>& GetMessageSignature() const
-        {
-            return message_signature;
-        }
-
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            message_signature_id = ReadData<VarInt>(iter, length) - 1;
-            if (message_signature_id == -1)
+            SetMessageSignatureId(ReadData<VarInt>(iter, length) - 1);
+            if (GetMessageSignatureId() == -1)
             {
-                message_signature = ReadByteArray(iter, length, 256);
+                SetMessageSignature(ReadData<std::array<unsigned char, 256>>(iter, length));
             }
-#else
-            message_signature = ReadData<std::vector<unsigned char>>(iter, length);
-#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            WriteData<VarInt>(message_signature_id + 1, container);
-            if (message_signature_id == -1)
+            WriteData<VarInt>(GetMessageSignatureId() + 1, container);
+            if (GetMessageSignatureId() == -1)
             {
-                WriteByteArray(message_signature, container);
+                WriteData<std::array<unsigned char, 256>>(GetMessageSignature(), container);
             }
-#else
-            WriteData<std::vector<unsigned char>>(message_signature, container);
-#endif
         }
 
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-            output["message_signature_id"] = message_signature_id;
-            if (message_signature_id == -1)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::MessageSignatureId)])] = GetMessageSignatureId();
+            if (GetMessageSignatureId() == -1)
             {
-                output["message_signature"] = "Vector of " + std::to_string(message_signature.size()) + " unsigned char";
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::MessageSignature)])] = "Vector of " + std::to_string(GetMessageSignature().size()) + " unsigned char";
             }
-#else
-            output["message_signature"] = "Vector of " + std::to_string(message_signature.size()) + " unsigned char";
-#endif
 
             return output;
         }
-
-    private:
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        int message_signature_id = 0;
 #endif
-        std::vector<unsigned char> message_signature;
     };
 } //ProtocolCraft
 #endif

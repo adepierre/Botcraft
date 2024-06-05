@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -31,46 +31,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Player Status Only";
 
-        virtual ~ServerboundMovePlayerPacketStatusOnly() override
-        {
+        DECLARE_FIELDS_TYPES(bool);
+        DECLARE_FIELDS_NAMES(OnGround);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetOnGround(const bool on_ground_)
-        {
-            on_ground = on_ground_;
-        }
-
-
-        bool GetOnGround() const
-        {
-            return on_ground;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            on_ground = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<bool>(on_ground, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["on_ground"] = on_ground;
-
-            return output;
-        }
-
-    private:
-        bool on_ground = false;
-
+        GETTER_SETTER(OnGround);
     };
 } //ProtocolCraft
 #endif

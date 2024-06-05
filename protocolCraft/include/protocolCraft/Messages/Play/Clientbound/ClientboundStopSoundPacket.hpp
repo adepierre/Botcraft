@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 342 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 342 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
 
@@ -46,81 +46,33 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Stop Sound";
 
-        virtual ~ClientboundStopSoundPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::optional<VarInt>, std::optional<Identifier>);
+        DECLARE_FIELDS_NAMES(Source,                Name_);
+        DECLARE_SERIALIZE;
 
-        }
-
-        void SetSource(const int source_)
-        {
-            source = source_;
-        }
-
-        void SetName_(const Identifier& name__)
-        {
-            name_ = name__;
-        }
-
-
-        int GetSource() const
-        {
-            return source;
-        }
-
-        const Identifier& GetName_() const
-        {
-            return name_;
-        }
-
+        GETTER_SETTER(Source);
+        GETTER_SETTER(Name_);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            char flags = ReadData<char>(iter, length);
-            if (flags & 0x01)
-            {
-                source = ReadData<VarInt>(iter, length);
-            }
-            if (flags & 0x02)
-            {
-                name_ = ReadData<Identifier>(iter, length);
-            }
+            const char flags = ReadData<char>(iter, length);
+            SetSource(flags & 0x01 ? ReadData<VarInt>(iter, length) : std::optional<int>());
+            SetName_(flags & 0x02 ? ReadData<Identifier>(iter, length) : std::optional<Identifier>());
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<char>(((!name_.GetName().empty()) << 1) | (source != -1), container);
-            if (source != -1)
+            WriteData<char>(static_cast<char>((static_cast<int>(GetName_().has_value()) << 1) | static_cast<int>(GetSource().has_value())), container);
+            if (GetSource().has_value())
             {
-                WriteData<VarInt>(source, container);
+                WriteData<VarInt>(GetSource().value(), container);
             }
-            if (!name_.GetName().empty())
+            if (GetName_().has_value())
             {
-                WriteData<Identifier>(name_, container);
+                WriteData<Identifier>(GetName_().value(), container);
             }
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-
-            if (source != -1)
-            {
-                output["source"] = source;
-            }
-            if (!name_.GetName().empty())
-            {
-                output["name_"] = name_;
-            }
-
-            return output;
-        }
-
-    private:
-        int source = -1;
-        Identifier name_;
-
     };
 } //ProtocolCraft
 #endif

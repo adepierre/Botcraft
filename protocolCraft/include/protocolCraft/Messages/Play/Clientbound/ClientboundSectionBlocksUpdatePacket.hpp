@@ -49,193 +49,75 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Section Blocks Update";
 
-        virtual ~ClientboundSectionBlocksUpdatePacket() override
-        {
-
-        }
-
-#if PROTOCOL_VERSION < 739 /* < 1.16.2 */
-        void SetChunkX(const int chunk_x_)
-        {
-            chunk_x = chunk_x_;
-        }
-
-        void SetChunkZ(const int chunk_z_)
-        {
-            chunk_z = chunk_z_;
-        }
-
-        void SetRecordCount(const int record_count_)
-        {
-            record_count = record_count_;
-        }
-
-        void SetRecords(const std::vector<Record>& records_)
-        {
-            records = records_;
-        }
+#if PROTOCOL_VERSION < 751 /* < 1.16.2 */
+        DECLARE_FIELDS_TYPES(int,    int,    std::vector<Record>);
+        DECLARE_FIELDS_NAMES(ChunkX, ChunkZ, Records);
+#elif PROTOCOL_VERSION < 763 /* < 1.20 */
+        DECLARE_FIELDS_TYPES(long long int, bool,                 std::vector<short>, std::vector<int>);
+        DECLARE_FIELDS_NAMES(SectionPos,    SuppressLightUpdates, Positions,          States);
 #else
-        void SetSectionPos(const long long int section_pos_)
-        {
-            section_pos = section_pos_;
-        }
-
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-        void SetSuppressLightUpdates(const bool suppress_light_updates_)
-        {
-            suppress_light_updates = suppress_light_updates_;
-        }
+        DECLARE_FIELDS_TYPES(long long int, std::vector<short>, std::vector<int>);
+        DECLARE_FIELDS_NAMES(SectionPos,    Positions,          States);
 #endif
+        DECLARE_SERIALIZE;
 
-        void SetPositions(const std::vector<short>& positions_)
-        {
-            positions = positions_;
-        }
-
-        void SetStates(const std::vector<int>& states_)
-        {
-            states = states_;
-        }
+#if PROTOCOL_VERSION < 751 /* < 1.16.2 */
+        GETTER_SETTER(ChunkX);
+        GETTER_SETTER(ChunkZ);
+        GETTER_SETTER(Records);
 #endif
-
-
-#if PROTOCOL_VERSION < 739 /* < 1.16.2 */
-        int GetChunkX() const
-        {
-            return chunk_x;
-        }
-
-        int GetChunkZ() const
-        {
-            return chunk_z;
-        }
-
-        int GetRecordCount() const
-        {
-            return record_count;
-        }
-
-        const std::vector<Record>& GetRecords() const
-        {
-            return records;
-        }
-#else
-        long long int GetSectionPos() const
-        {
-            return section_pos;
-        }
-
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-        bool GetSuppressLightUpdates() const
-        {
-            return suppress_light_updates;
-        }
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
+        GETTER_SETTER(SectionPos);
+        GETTER_SETTER(Positions);
+        GETTER_SETTER(States);
 #endif
-
-        const std::vector<short>& GetPositions() const
-        {
-            return positions;
-        }
-
-        const std::vector<int>& GetStates() const
-        {
-            return states;
-        }
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */ && PROTOCOL_VERSION < 763 /* < 1.20 */
+        GETTER_SETTER(SuppressLightUpdates);
 #endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
-            chunk_x = ReadData<int>(iter, length);
-            chunk_z = ReadData<int>(iter, length);
-            record_count = ReadData<VarInt>(iter, length);
-
-            records = std::vector<Record>(record_count);
-
-            for (int i = 0; i < record_count; ++i)
-            {
-                records[i].Read(iter, length);
-            }
+            SetChunkX(ReadData<int>(iter, length));
+            SetChunkZ(ReadData<int>(iter, length));
+            SetRecords(ReadData<std::vector<Records>>(iter, length));
 #else
-            section_pos = ReadData<long long int>(iter, length);
+            SetSectionPos(ReadData<long long int>(iter, length));
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-            suppress_light_updates = ReadData<bool>(iter, length);
+            SetSuppressLightUpdates(ReadData<bool>(iter, length));
 #endif
-            const int data_size = ReadData<VarInt>(iter, length);
-            positions = std::vector<short>(data_size);
-            states = std::vector<int>(data_size);
-            for (int i = 0; i < data_size; ++i)
+            const std::vector<long long int> data = ReadData<std::vector<VarLong>>(iter, length);
+            std::vector<short> positions(data.size());
+            std::vector<int> states(data.size());
+            for (size_t i = 0; i < data.size(); ++i)
             {
                 const long long int data = ReadData<VarLong>(iter, length);
                 positions[i] = static_cast<short>(data & 0xFFFl);
                 states[i] = static_cast<int>(data >> 12);
             }
+            SetPositions(positions);
+            SetStates(states);
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
-            WriteData<int>(chunk_x, container);
-            WriteData<int>(chunk_z, container);
-            WriteData<VarInt>(record_count, container);
-            for (int i = 0; i < record_count; ++i)
-            {
-                records[i].Write(container);
-            }
+            WriteData<int>(GetChunkX(), container);
+            WriteData<int>(GetChunkZ(), container);
+            WriteData<std::vector<Record>>(GetRecords(), container);
 #else
-            WriteData<long long int>(section_pos, container);
+            WriteData<long long int>(GetSectionPos(), container);
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-            WriteData<bool>(suppress_light_updates, container);
+            WriteData<bool>(GetSuppressLightUpdates(), container);
 #endif
-            WriteData<VarInt>(static_cast<int>(positions.size()), container);
-            for (size_t i = 0; i < positions.size(); ++i)
+            WriteData<VarInt>(static_cast<int>(GetPositions().size()), container);
+            for (size_t i = 0; i < GetPositions().size(); ++i)
             {
-#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
-                WriteData<VarLong>((states[i] << 12) | positions[i], container);
-#else
-                WriteData<VarLong>((static_cast<long long int>(states[i]) << 12) | static_cast<long long int>(positions[i]), container);
-#endif
+                WriteData<VarLong>((static_cast<long long int>(GetStates()[i]) << 12) | static_cast<long long int>(GetPositions()[i]), container);
             }
 #endif
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION < 739 /* < 1.16.2 */
-            output["chunk_x"] = chunk_x;
-            output["chunk_z"] = chunk_z;
-            output["record_count"] = record_count;
-
-            output["records"] = records;
-#else
-            output["section_pos"] = section_pos;
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-            output["suppress_light_updates"] = suppress_light_updates;
-#endif
-            output["positions"] = positions;
-            output["states"] = states;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 739 /* < 1.16.2 */
-        int chunk_x = 0;
-        int chunk_z = 0;
-        int record_count = 0;
-        std::vector<Record> records;
-#else
-        long long int section_pos = 0;
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-        bool suppress_light_updates = false;
-#endif
-        std::vector<short> positions;
-        std::vector<int> states;
-#endif
     };
 }

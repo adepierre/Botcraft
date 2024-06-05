@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #pragma once
 
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
@@ -32,94 +32,46 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Combat";
 
-        virtual ~ClientboundPlayerCombatPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, int, VarInt, Chat);
+        DECLARE_FIELDS_NAMES(Event, Duration, KillerId, PlayerId, Message);
 
-        }
-
-        void SetEvent(const int event__)
-        {
-            event_ = event__;
-        }
-
-        void SetPlayerId(const int player_id_)
-        {
-            player_id = player_id_;
-        }
-
-        void SetKillerId(const int killer_id_)
-        {
-            killer_id = killer_id_;
-        }
-
-        void SetDuration(const int duration_)
-        {
-            duration = duration_;
-        }
-
-        void SetMessage(const Chat& message_)
-        {
-            message = message_;
-        }
-
-
-        int GetEvent() const
-        {
-            return event_;
-        }
-
-        int GetPlayerId() const
-        {
-            return player_id;
-        }
-
-        int GetKillerId() const
-        {
-            return killer_id;
-        }
-
-        int GetDuration() const
-        {
-            return duration;
-        }
-
-        const Chat& GetMessage() const
-        {
-            return message;
-        }
-
+        GETTER_SETTER(Event);
+        GETTER_SETTER(Duration);
+        GETTER_SETTER(KillerId);
+        GETTER_SETTER(PlayerId);
+        GETTER_SETTER(Message);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            event_ = ReadData<VarInt>(iter, length);
+            SetEvent(ReadData<VarInt>(iter, length));
 
-            if (event_ == 1)
+            if (GetEvent() == 1)
             {
-                duration = ReadData<VarInt>(iter, length);
-                killer_id = ReadData<int>(iter, length);
+                SetDuration(ReadData<VarInt>(iter, length));
+                SetKillerId(ReadData<int>(iter, length));
             }
-            else if (event_ == 2)
+            else if (GetEvent() == 2)
             {
-                player_id = ReadData<VarInt>(iter, length);
-                killer_id = ReadData<int>(iter, length);
-                message = ReadData<Chat>(iter, length);
+                SetPlayerId(ReadData<VarInt>(iter, length));
+                SetKillerId(ReadData<int>(iter, length));
+                SetMessage(ReadData<Chat>(iter, length));
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(event_, container);
-            if (event_ == 1)
+            WriteData<VarInt>(GetEvent(), container);
+            if (GetEvent() == 1)
             {
-                WriteData<VarInt>(duration, container);
-                WriteData<int>(killer_id, container);
+                WriteData<VarInt>(GetDuration(), container);
+                WriteData<int>(GetKillerId(), container);
             }
-            else if (event_ == 2)
+            else if (GetEvent() == 2)
             {
-                WriteData<VarInt>(player_id, container);
-                WriteData<int>(killer_id, container);
-                WriteData<Chat>(message, container);
+                WriteData<VarInt>(GetPlayerId(), container);
+                WriteData<int>(GetKillerId(), container);
+                WriteData<Chat>(GetMessage(), container);
             }
         }
 
@@ -127,29 +79,21 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["event"] = event_;
-            if (event_ == 1)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Event)])] = GetEvent();
+            if (GetEvent() == 1)
             {
-                output["duration"] = duration;
-                output["killer_id"] = killer_id;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Duration)])] = GetDuration();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::KillerId)])] = GetKillerId();
             }
-            else if (event_ == 2)
+            else if (GetEvent() == 2)
             {
-                output["player_id"] = player_id;
-                output["killer_id"] = killer_id;
-                output["message"] = message;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::PlayerId)])] = GetPlayerId();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::KillerId)])] = GetKillerId();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Message)])] = GetMessage();
             }
 
             return output;
         }
-
-    private:
-        int event_ = 0;
-        int player_id = 0;
-        int killer_id = 0;
-        int duration = 0;
-        Chat message;
-
     };
 } //ProtocolCraft
 #endif

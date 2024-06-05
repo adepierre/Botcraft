@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -42,60 +42,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Entity Tag Query";
 
-        virtual ~ServerboundEntityTagQueryPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, VarInt);
+        DECLARE_FIELDS_NAMES(TransactionId, EntityId);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetTransactionId(const int transaction_id_)
-        {
-            transaction_id = transaction_id_;
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
-
-        int GetTransactionId() const
-        {
-            return transaction_id;
-        }
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            transaction_id = ReadData<VarInt>(iter, length);
-            entity_id = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(transaction_id, container);
-            WriteData<VarInt>(entity_id, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["transaction_id"] = transaction_id;
-            output["entity_id"] = entity_id;
-
-            return output;
-        }
-
-    private:
-        int transaction_id = 0;
-        int entity_id = 0;
-
+        GETTER_SETTER(TransactionId);
+        GETTER_SETTER(EntityId);
     };
 } //ProtocolCraft
 #endif

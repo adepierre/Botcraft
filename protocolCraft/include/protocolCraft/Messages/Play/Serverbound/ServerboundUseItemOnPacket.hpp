@@ -42,178 +42,29 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Use Item On";
 
-        virtual ~ServerboundUseItemOnPacket() override
-        {
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt,    VarInt, float,           float,           float);
+        DECLARE_FIELDS_NAMES(Location,        Direction, Hand,   CursorPositionX, CursorPositionY, CursorPositionZ);
+#elif PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, VarInt,    float,           float,           float,           bool);
+        DECLARE_FIELDS_NAMES(Hand,   Location,        Direction, CursorPositionX, CursorPositionY, CursorPositionZ, Inside);
+#else
+        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, VarInt,    float,           float,           float,           bool,   VarInt);
+        DECLARE_FIELDS_NAMES(Hand,   Location,        Direction, CursorPositionX, CursorPositionY, CursorPositionZ, Inside, Sequence);
+#endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetHand(const int hand_)
-        {
-            hand = hand_;
-        }
-
-        void SetLocation(const NetworkPosition& location_)
-        {
-            location = location_;
-        }
-
-        void SetDirection(const int direction_)
-        {
-            direction = direction_;
-        }
-
-        void SetCursorPositionX(const float cursor_position_x_)
-        {
-            cursor_position_x = cursor_position_x_;
-        }
-
-        void SetCursorPositionY(const float cursor_position_y_)
-        {
-            cursor_position_y = cursor_position_y_;
-        }
-
-        void SetCursorPositionZ(const float cursor_position_z_)
-        {
-            cursor_position_z = cursor_position_z_;
-        }
-
+        GETTER_SETTER(Location);
+        GETTER_SETTER(Direction);
+        GETTER_SETTER(Hand);
+        GETTER_SETTER(CursorPositionX);
+        GETTER_SETTER(CursorPositionY);
+        GETTER_SETTER(CursorPositionZ);
 #if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-        void SetInside(const bool inside_)
-        {
-            inside = inside_;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        void SetSequence(const int sequence_)
-        {
-            sequence = sequence_;
-        }
-#endif
-
-
-        int GetHand() const
-        {
-            return hand;
-        }
-
-        const NetworkPosition& GetLocation() const
-        {
-            return location;
-        }
-
-        int GetDirection() const
-        {
-            return direction;
-        }
-
-        float GetCursorPositionX() const
-        {
-            return cursor_position_x;
-        }
-
-        float GetCursorPositionY() const
-        {
-            return cursor_position_y;
-        }
-
-        float GetCursorPositionZ() const
-        {
-            return cursor_position_z;
-        }
-
-#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-        bool GetInside() const
-        {
-            return inside;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        int GetSequence() const
-        {
-            return sequence;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-            hand = ReadData<VarInt>(iter, length);
-#endif
-            location = ReadData<NetworkPosition>(iter, length);
-            direction = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION < 453 /* < 1.14 */
-            hand = ReadData<VarInt>(iter, length);
-#endif
-            cursor_position_x = ReadData<float>(iter, length);
-            cursor_position_y = ReadData<float>(iter, length);
-            cursor_position_z = ReadData<float>(iter, length);
-#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-            inside = ReadData<bool>(iter, length);
+        GETTER_SETTER(Inside);
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            sequence = ReadData<VarInt>(iter, length);
+        GETTER_SETTER(Sequence);
 #endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-            WriteData<VarInt>(hand, container);
-#endif
-            WriteData<NetworkPosition>(location, container);
-            WriteData<VarInt>(direction, container);
-#if PROTOCOL_VERSION < 453 /* < 1.14 */
-            WriteData<VarInt>(hand, container);
-#endif
-            WriteData<float>(cursor_position_x, container);
-            WriteData<float>(cursor_position_y, container);
-            WriteData<float>(cursor_position_z, container);
-#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-            WriteData<bool>(inside, container);
-#endif
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteData<VarInt>(sequence, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["location"] = location;
-            output["direction"] = direction;
-            output["cursor_position_x"] = cursor_position_x;
-            output["cursor_position_y"] = cursor_position_y;
-            output["cursor_position_z"] = cursor_position_z;
-#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-            output["inside"] = inside;
-#endif
-            output["hand"] = hand;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            output["sequence"] = sequence;
-#endif
-
-
-            return output;
-        }
-
-    private:
-        NetworkPosition location;
-        int direction = 0;
-        float cursor_position_x = 0.0f;
-        float cursor_position_y = 0.0f;
-        float cursor_position_z = 0.0f;
-#if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-        bool inside = false;
-#endif
-        int hand = 0;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        int sequence = 0;
-#endif
-
     };
 } //ProtocolCraft

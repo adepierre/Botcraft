@@ -32,82 +32,19 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chat";
 
-        virtual ~ClientboundChatPacket() override
-        {
-
-        }
-
-        void SetMessage(const Chat& message_)
-        {
-            message = message_;
-        }
-
-        void SetType(const char type_)
-        {
-            type = type_;
-        }
-
-#if PROTOCOL_VERSION > 717 /* > 1.15.2 */
-        void SetSender(const UUID& sender_)
-        {
-            sender = sender_;
-        }
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        DECLARE_FIELDS_TYPES(Chat,    char);
+        DECLARE_FIELDS_NAMES(Message, Type);
+#else
+        DECLARE_FIELDS_TYPES(Chat,    char, UUID);
+        DECLARE_FIELDS_NAMES(Message, Type, Sender);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        const Chat& GetMessage() const
-        {
-            return message;
-        }
-
-        char GetType() const
-        {
-            return type;
-        }
-
+        GETTER_SETTER(Message);
+        GETTER_SETTER(Type);
 #if PROTOCOL_VERSION > 717 /* > 1.15.2 */
-        const UUID& GetSender() const
-        {
-            return sender;
-        }
-#endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            message = ReadData<Chat>(iter, length);
-            type = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION > 717 /* > 1.15.2 */
-            sender = ReadData<UUID>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<Chat>(message, container);
-            WriteData<char>(type, container);
-#if PROTOCOL_VERSION > 717 /* > 1.15.2 */
-            WriteData<UUID>(sender, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["message"] = message;
-            output["type"] = type;
-#if PROTOCOL_VERSION > 717 /* > 1.15.2 */
-            output["sender"] = sender;
-#endif
-
-            return output;
-        }
-
-    private:
-        Chat message;
-        char type = 0;
-#if PROTOCOL_VERSION > 717 /* > 1.15.2 */
-        UUID sender = {};
+        GETTER_SETTER(Sender);
 #endif
     };
 } //ProtocolCraft

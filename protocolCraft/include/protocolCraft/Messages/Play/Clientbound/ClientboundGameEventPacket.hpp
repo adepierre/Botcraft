@@ -45,59 +45,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Game Event";
 
-        virtual ~ClientboundGameEventPacket() override
-        {
+        DECLARE_FIELDS_TYPES(unsigned char, float);
+        DECLARE_FIELDS_NAMES(Type,          Param);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetType(const unsigned char type_)
-        {
-            type = type_;
-        }
-
-        void SetParam(const float param_)
-        {
-            param = param_;
-        }
-
-
-        unsigned char GetType() const
-        {
-            return type;
-        }
-
-        float GetParam() const
-        {
-            return param;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            type = ReadData<unsigned char>(iter, length);
-            param = ReadData<float>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<unsigned char>(type, container);
-            WriteData<float>(param, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["type"] = type;
-            output["param"] = param;
-
-            return output;
-        }
-
-    private:
-        unsigned char type = 0;
-        float param = 0.0f;
-
+        GETTER_SETTER(Type);
+        GETTER_SETTER(Param);
     };
 } //ProtocolCraft

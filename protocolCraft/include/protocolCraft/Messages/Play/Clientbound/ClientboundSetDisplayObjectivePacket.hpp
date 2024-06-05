@@ -1,7 +1,6 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/NetworkPosition.hpp"
 
 namespace ProtocolCraft
 {
@@ -44,85 +43,16 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Display Objective";
 
-        virtual ~ClientboundSetDisplayObjectivePacket() override
-        {
-
-        }
-
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-       void SetSlot(const char slot_)
-        {
-            slot = slot_;
-        }
+        DECLARE_FIELDS_TYPES(char, std::string);
+        DECLARE_FIELDS_NAMES(Slot, ObjectiveName);
 #else
-        void SetSlot(const int slot_)
-        {
-            slot = slot_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt, std::string);
+        DECLARE_FIELDS_NAMES(Slot,   ObjectiveName);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetObjectiveName(const std::string& objective_name_)
-        {
-            objective_name = objective_name_;
-        }
-
-
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        char GetSlot() const
-        {
-            return slot;
-        }
-#else
-        int GetSlot() const
-        {
-            return slot;
-        }
-#endif
-
-        const std::string& GetObjectiveName() const
-        {
-            return objective_name;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            slot = ReadData<char>(iter, length);
-#else
-            slot = ReadData<VarInt>(iter, length);
-#endif
-            objective_name = ReadData<std::string>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            WriteData<char>(slot, container);
-#else
-            WriteData<VarInt>(slot, container);
-#endif
-            WriteData<std::string>(objective_name, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["slot"] = slot;
-            output["objective_name"] = objective_name;
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        char slot = 0;
-#else
-        int slot = 0;
-#endif
-        std::string objective_name;
-
+        GETTER_SETTER(Slot);
+        GETTER_SETTER(ObjectiveName);
     };
 } //ProtocolCraft

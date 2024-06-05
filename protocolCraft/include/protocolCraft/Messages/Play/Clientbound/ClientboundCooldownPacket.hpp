@@ -43,59 +43,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Cooldown";
 
-        virtual ~ClientboundCooldownPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, VarInt);
+        DECLARE_FIELDS_NAMES(Item,   Duration);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetItem(const int item_)
-        {
-            item = item_;
-        }
-
-        void SetDuration(const int duration_)
-        {
-            duration = duration_;
-        }
-
-
-        int GetItem() const
-        {
-            return item;
-        }
-
-        int GetDuration() const
-        {
-            return duration;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            item = ReadData<VarInt>(iter, length);
-            duration = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(item, container);
-            WriteData<VarInt>(duration, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["item"] = item;
-            output["duration"] = duration;
-
-            return output;
-        }
-
-    private:
-        int item = 0;
-        int duration = 0;
-
+        GETTER_SETTER(Item);
+        GETTER_SETTER(Duration);
     };
 } //ProtocolCraft

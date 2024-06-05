@@ -13,68 +13,15 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x00;
         static constexpr std::string_view packet_name = "Login Disconnect";
 
-        virtual ~ClientboundLoginDisconnectPacket() override
-        {
-
-        }
-
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        void SetReason(const Chat& reason_)
-        {
-            reason = reason_;
-        }
+        DECLARE_FIELDS_TYPES(Chat);
+        DECLARE_FIELDS_NAMES(Reason);
 #else
-        void SetReason(const std::string& reason_)
-        {
-            reason = reason_;
-        }
+        DECLARE_FIELDS_TYPES(std::string);
+        DECLARE_FIELDS_NAMES(Reason);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        const Chat& GetReason() const
-        {
-            return reason;
-        }
-#else
-        const std::string& GetReason() const
-        {
-            return reason;
-        }
-#endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-            reason = ReadData<Chat>(iter, length);
-#else
-            reason = ReadData<std::string>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-            WriteData<Chat>(reason, container);
-#else
-            WriteData<std::string>(reason, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["reason"] = reason;
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        Chat reason;
-#else
-        std::string reason;
-#endif
+        GETTER_SETTER(Reason);
     };
 }

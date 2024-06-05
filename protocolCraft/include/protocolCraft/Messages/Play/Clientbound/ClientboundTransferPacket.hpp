@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
 
@@ -17,59 +17,12 @@ namespace ProtocolCraft
 #endif
         static constexpr std::string_view packet_name = "Transfer";
 
-        virtual ~ClientboundTransferPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::string, VarInt);
+        DECLARE_FIELDS_NAMES(Host,        Port);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetHost(const std::string& host_)
-        {
-            host = host_;
-        }
-
-        void SetPort(const int port_)
-        {
-            port = port_;
-        }
-
-
-        const std::string& GetHost() const
-        {
-            return host;
-        }
-
-        int GetPort() const
-        {
-            return port;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            host = ReadData<std::string>(iter, length);
-            port = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::string>(host, container);
-            WriteData<VarInt>(port, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["host"] = host;
-            output["port"] = port;
-
-            return output;
-        }
-
-    private:
-        std::string host;
-        int port = 0;
+        GETTER_SETTER(Host);
+        GETTER_SETTER(Port);
     };
 }
 #endif

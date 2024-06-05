@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
@@ -30,60 +30,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Entity Tag Query";
 
-        virtual ~ServerboundBlockEntityTagQueryPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt,        NetworkPosition);
+        DECLARE_FIELDS_NAMES(TransactionId, Pos);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetTransactionId(const int transaction_id_)
-        {
-            transaction_id = transaction_id_;
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-
-        int GetTransactionId() const
-        {
-            return transaction_id;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            transaction_id = ReadData<VarInt>(iter, length);
-            pos = ReadData<NetworkPosition>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(transaction_id, container);
-            WriteData<NetworkPosition>(pos, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["transaction_id"] = transaction_id;
-            output["pos"] = pos;
-
-            return output;
-        }
-
-    private:
-        int transaction_id = 0;
-        NetworkPosition pos;
-
+        GETTER_SETTER(TransactionId);
+        GETTER_SETTER(Pos);
     };
 } //ProtocolCraft
 #endif

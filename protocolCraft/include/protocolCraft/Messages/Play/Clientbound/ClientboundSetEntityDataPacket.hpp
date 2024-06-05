@@ -43,59 +43,24 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Entity Data";
 
-        virtual ~ClientboundSetEntityDataPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(Id_, PackedItems);
+        DECLARE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetPackedItems(const std::vector<unsigned char>& packed_items_)
-        {
-            packed_items = packed_items_;
-        }
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        const std::vector<unsigned char>& GetPackedItems() const
-        {
-            return packed_items;
-        }
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(PackedItems);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            id_ = ReadData<VarInt>(iter, length);
-            packed_items = ReadByteArray(iter, length, length);
+            SetId_(ReadData<VarInt>(iter, length));
+            SetPackedItems(ReadByteArray(iter, length, length));
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(id_, container);
-            WriteByteArray(packed_items, container);
+            WriteData<VarInt>(GetId_(), container);
+            WriteByteArray(GetPackedItems(), container);
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["packed_items"] = "Vector of " + std::to_string(packed_items.size()) + " unsigned chars";
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        std::vector<unsigned char> packed_items;
-
     };
 } //ProtocolCraft

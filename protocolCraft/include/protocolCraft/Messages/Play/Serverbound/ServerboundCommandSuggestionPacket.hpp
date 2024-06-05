@@ -1,7 +1,9 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
 #include "protocolCraft/Types/NetworkPosition.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -41,115 +43,22 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Command Suggestion";
 
-        virtual ~ServerboundCommandSuggestionPacket() override
-        {
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_FIELDS_TYPES(std::string, bool,          std::optional<NetworkPosition>);
+        DECLARE_FIELDS_NAMES(Command,     AssumeCommand, LookedAtBlock);
+#else
+        DECLARE_FIELDS_TYPES(VarInt, std::string);
+        DECLARE_FIELDS_NAMES(Id_,    Command);
+#endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
+        GETTER_SETTER(Command);
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        GETTER_SETTER(AssumeCommand);
+        GETTER_SETTER(LookedAtBlock);
+#endif
 #if PROTOCOL_VERSION > 344 /* > 1.12.2 */
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
+        GETTER_SETTER(Id_);
 #endif
-
-        void SetCommand(const std::string& command_)
-        {
-            command = command_;
-        }
-
-#if PROTOCOL_VERSION < 345 /* < 1.13 */
-        void SetAssumeCommand(const bool assume_command_)
-        {
-            assume_command = assume_command_;
-        }
-
-        void SetLookedAtBlock(const std::optional<NetworkPosition>& looked_at_block_)
-        {
-            looked_at_block = looked_at_block_;
-        }
-#endif
-
-
-#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
-        int GetId_() const
-        {
-            return id_;
-        }
-#endif
-
-        const std::string& GetCommand() const
-        {
-            return command;
-        }
-
-#if PROTOCOL_VERSION < 345 /* < 1.13 */
-        bool GetAssumeCommand() const
-        {
-            return assume_command;
-        }
-
-        const std::optional<NetworkPosition>& GetLookedAtBlock() const
-        {
-            return looked_at_block;
-        }
-#endif
-
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
-            id_ = ReadData<VarInt>(iter, length);
-#endif
-            command = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION < 345 /* < 1.13 */
-            assume_command = ReadData<bool>(iter, length);
-            looked_at_block = ReadData<std::optional<NetworkPosition>>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
-            WriteData<VarInt>(id_, container);
-#endif
-            WriteData<std::string>(command, container);
-#if PROTOCOL_VERSION < 345 /* < 1.13 */
-            WriteData<bool>(assume_command, container);
-            WriteData<std::optional<NetworkPosition>>(looked_at_block, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
-            output["id_"] = id_;
-#endif
-            output["command"] = command;
-#if PROTOCOL_VERSION < 345 /* < 1.13 */
-            output["assume_command"] = assume_command;
-            if (looked_at_block.has_value())
-            {
-                output["looked_at_block"] = looked_at_block.value();
-            }
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
-        int id_ = 0;
-#endif
-        std::string command;
-#if PROTOCOL_VERSION < 345 /* < 1.13 */
-        bool assume_command = false;
-        std::optional<NetworkPosition> looked_at_block;
-#endif
-
     };
 } //ProtocolCraft

@@ -44,185 +44,81 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Map Item Data";
 
-        virtual ~ClientboundMapItemDataPacket() override
-        {
-
-        }
-
-        void SetMapId(const int map_id_)
-        {
-            map_id = map_id_;
-        }
-
-        void SetScale(const char scale_)
-        {
-            scale = scale_;
-        }
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        void SetTrackingPosition(const bool tracking_position_)
-        {
-            tracking_position = tracking_position_;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-        void SetLocked(const bool locked_)
-        {
-            locked = locked_;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        void SetDecorations(const std::optional<std::vector<MapDecoration>>& decorations_)
-        {
-            decorations = decorations_;
-        }
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        DECLARE_FIELDS_TYPES(VarInt, char,  bool,             std::vector<MapDecoration>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(MapId,  Scale, TrackingPosition, Decorations,                Width,         Height,        StartX,        StartZ,        MapColors);
+#elif PROTOCOL_VERSION < 755 /* < 1.17 */
+        DECLARE_FIELDS_TYPES(VarInt, char,  bool,             bool,   std::vector<MapDecoration>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(MapId,  Scale, TrackingPosition, Locked, Decorations,                Width,         Height,        StartX,        StartZ,        MapColors);
 #else
-        void SetDecorations(const std::vector<MapDecoration>& decorations_)
-        {
-            decorations = decorations_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt, char,  bool,   std::optional<std::vector<MapDecoration>>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(MapId,  Scale, Locked, Decorations,                               Width,         Height,        StartX,        StartZ,        MapColors);
 #endif
-
-        void SetStartX(const unsigned char start_x_)
-        {
-            start_x = start_x_;
-        }
-
-        void SetStartZ(const unsigned char start_z_)
-        {
-            start_z = start_z_;
-        }
-
-        void SetWidth(const unsigned char width_)
-        {
-            width = width_;
-        }
-
-        void SetHeight(const unsigned char height_)
-        {
-            height = height_;
-        }
-
-        void SetMapColors(const std::vector<unsigned char>& map_colors_)
-        {
-            map_colors = map_colors_;
-        }
-
-
-        int GetMapId() const
-        {
-            return map_id;
-        }
-
-        char GetScale() const
-        {
-            return scale;
-        }
-
+        GETTER_SETTER(MapId);
+        GETTER_SETTER(Scale);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        bool GetTrackingPosition() const
-        {
-            return tracking_position;
-        }
+        GETTER_SETTER(TrackingPosition);
 #endif
-
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-        bool GetLocked() const
-        {
-            return locked;
-        }
+        GETTER_SETTER(Decorations);
+        GETTER_SETTER(Width);
+        GETTER_SETTER(Height);
+        GETTER_SETTER(StartX);
+        GETTER_SETTER(StartZ);
+        GETTER_SETTER(MapColors);
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        GETTER_SETTER(Locked);
 #endif
-
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        const std::optional<std::vector<MapDecoration>>& GetDecorations() const
-        {
-            return decorations;
-        }
-#else
-        const std::vector<MapDecoration>& GetDecorations() const
-        {
-            return decorations;
-        }
-#endif
-
-        unsigned char GetStartX() const
-        {
-            return start_x;
-        }
-
-        unsigned char GetStartZ() const
-        {
-            return start_z;
-        }
-
-        unsigned char GetWidth() const
-        {
-            return width;
-        }
-
-        unsigned char GetHeight() const
-        {
-            return height;
-        }
-
-        const std::vector<unsigned char>& GetMapColors() const
-        {
-            return map_colors;
-        }
-
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            map_id = ReadData<VarInt>(iter, length);
-            scale = ReadData<char>(iter, length);
+            SetMapId(ReadData<VarInt>(iter, length));
+            SetScale(ReadData<char>(iter, length));
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            tracking_position = ReadData<bool>(iter, length);
+            SetTrackingPosition(ReadData<bool>(iter, length));
 #endif
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-            locked = ReadData<bool>(iter, length);
+            SetLocked(ReadData<bool>(iter, length));
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            decorations = ReadData<std::optional<std::vector<MapDecoration>>>(iter, length);
+            SetDecorations(ReadData<std::optional<std::vector<MapDecoration>>>(iter, length));
 #else
-            decorations = ReadData<std::vector<MapDecoration>>(iter, length);
+            SetDecorations(ReadData<std::vector<MapDecoration>>(iter, length));
 #endif
 
-            width = ReadData<unsigned char>(iter, length);
-            if (width > 0)
+            SetWidth(ReadData<unsigned char>(iter, length));
+            if (GetWidth() > 0)
             {
-                height = ReadData<unsigned char>(iter, length);
-                start_x = ReadData<unsigned char>(iter, length);
-                start_z = ReadData<unsigned char>(iter, length);
-                map_colors = ReadData<std::vector<unsigned char>>(iter, length);
+                SetHeight(ReadData<unsigned char>(iter, length));
+                SetStartX(ReadData<unsigned char>(iter, length));
+                SetStartZ(ReadData<unsigned char>(iter, length));
+                SetMapColors(ReadData<std::vector<unsigned char>>(iter, length));
             }
         }
 
         virtual void WriteImpl(WriteContainer & container) const override
         {
-            WriteData<VarInt>(map_id, container);
-            WriteData<char>(scale, container);
+            WriteData<VarInt>(GetMapId(), container);
+            WriteData<char>(GetScale(), container);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteData<bool>(tracking_position, container);
+            WriteData<bool>(GetTrackingPosition(), container);
 #endif
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-            WriteData<bool>(locked, container);
+            WriteData<bool>(GetLocked(), container);
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            WriteData<std::optional<std::vector<MapDecoration>>>(decorations, container);
+            WriteData<std::optional<std::vector<MapDecoration>>>(GetDecorations(), container);
 #else
-            WriteData<std::vector<MapDecoration>>(decorations, container);
+            WriteData<std::vector<MapDecoration>>(GetDecorations(), container);
 #endif
 
-            WriteData<unsigned char>(width, container);
-            if (width > 0)
+            WriteData<unsigned char>(GetWidth(), container);
+            if (GetWidth() > 0)
             {
-                WriteData<unsigned char>(height, container);
-                WriteData<unsigned char>(start_x, container);
-                WriteData<unsigned char>(start_z, container);
-                WriteData<std::vector<unsigned char>>(map_colors, container);
+                WriteData<unsigned char>(GetHeight(), container);
+                WriteData<unsigned char>(GetStartX(), container);
+                WriteData<unsigned char>(GetStartZ(), container);
+                WriteData<std::vector<unsigned char>>(GetMapColors(), container);
             }
         }
 
@@ -230,53 +126,33 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["map_id"] = map_id;
-            output["scale"] = scale;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::MapId)])] = GetMapId();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Scale)])] = GetScale();
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            output["tracking_position"] = tracking_position;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::TrackingPosition)])] = GetTrackingPosition();
 #endif
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-            output["locked"] = locked;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Locked)])] = GetLocked();
 #endif
 
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            if (decorations.has_value())
+            if (GetDecorations().has_value())
             {
-                output["decorations"] = decorations.value();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Decorations)])] = GetDecorations().value();
             }
 #else
-            output["decorations"] = decorations;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Decorations)])] = GetDecorations();
 #endif
-            output["width"] = width;
-            if (width > 0)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Width)])] = GetWidth();
+            if (GetWidth() > 0)
             {
-                output["height"] = height;
-                output["start_x"] = start_x;
-                output["start_z"] = start_z;
-                output["map_colors"] = "Vector of " + std::to_string(map_colors.size()) + " unsigned chars";
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Height)])] = GetHeight();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::StartX)])] = GetStartX();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::StartZ)])] = GetStartZ();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::MapColors)])] = "Vector of " + std::to_string(GetMapColors().size()) + " unsigned chars";
             }
 
             return output;
         }
-
-    private:
-        int map_id = 0;
-        char scale = 0;
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        bool tracking_position = false;
-#endif
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-        bool locked = false;
-#endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        std::optional<std::vector<MapDecoration>> decorations;
-#else
-        std::vector<MapDecoration> decorations;
-#endif
-        unsigned char start_x = 0;
-        unsigned char start_z = 0;
-        unsigned char width = 0;
-        unsigned char height = 0;
-        std::vector<unsigned char> map_colors;
     };
 } //ProtocolCraft

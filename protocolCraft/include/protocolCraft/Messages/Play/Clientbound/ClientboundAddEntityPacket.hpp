@@ -30,253 +30,32 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Add Entity";
 
-        virtual ~ClientboundAddEntityPacket() override
-        {
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        DECLARE_FIELDS_TYPES(VarInt, UUID, char, double, double, double, Angle, Angle, int,  short, short, short);
+        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type, X,      Y,      Z,      XRot,  YRot,  Data, Xa,    Ya,    Za);
+#elif PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, Angle, Angle, int,  short, short, short);
+        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      XRot,  YRot,  Data, Xa,    Ya,    Za);
+#else
+        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, Angle, Angle, Angle,    VarInt, short, short, short);
+        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      XRot,  YRot,  YHeadRot, Data,   Xa,    Ya,    Za);
+#endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetUUID(const UUID& uuid_)
-        {
-            uuid = uuid_;
-        }
-
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
-
-        void SetXa(const short xa_)
-        {
-            xa = xa_;
-        }
-
-        void SetYa(const short ya_)
-        {
-            ya = ya_;
-        }
-
-        void SetZa(const short za_)
-        {
-            za = za_;
-        }
-
-        void SetXRot(const Angle xRot_)
-        {
-            x_rot = xRot_;
-        }
-
-        void SetYRot(const Angle yRot_)
-        {
-            y_rot = yRot_;
-        }
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Uuid);
+        GETTER_SETTER(Type);
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(XRot);
+        GETTER_SETTER(YRot);
+        GETTER_SETTER(Data);
+        GETTER_SETTER(Xa);
+        GETTER_SETTER(Ya);
+        GETTER_SETTER(Za);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        void SetYHeadRot(const Angle y_head_rot_)
-        {
-            y_head_rot = y_head_rot_;
-        }
+        GETTER_SETTER(YHeadRot);
 #endif
-
-#if PROTOCOL_VERSION < 458 /* < 1.14 */
-        void SetType(const char type_)
-        {
-            type = type_;
-        }
-#else
-        void SetType(const int type_)
-        {
-            type = type_;
-        }
-#endif
-
-        void SetData(const int data_)
-        {
-            data = data_;
-        }
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        const UUID& GetUUID() const
-        {
-            return uuid;
-        }
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        short GetXa() const
-        {
-            return xa;
-        }
-
-        short GetYa() const
-        {
-            return ya;
-        }
-
-        short GetZa() const
-        {
-            return za;
-        }
-
-        Angle GetXRot() const
-        {
-            return x_rot;
-        }
-
-        Angle GetYRot() const
-        {
-            return y_rot;
-        }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        Angle GetYHeadRot() const
-        {
-            return y_head_rot;
-        }
-#endif
-
-#if PROTOCOL_VERSION < 458 /* < 1.14 */
-        char GetType() const
-        {
-            return type;
-        }
-#else
-        int GetType() const
-        {
-            return type;
-        }
-#endif
-
-        int GetData() const
-        {
-            return data;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            uuid = ReadData<UUID>(iter, length);
-#if PROTOCOL_VERSION < 458 /* < 1.14 */
-            type = ReadData<char>(iter, length);
-#else
-            type = ReadData<VarInt>(iter, length);
-#endif
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-            x_rot = ReadData<Angle>(iter, length);
-            y_rot = ReadData<Angle>(iter, length);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            y_head_rot = ReadData<Angle>(iter, length);
-            data = ReadData<VarInt>(iter, length);
-#else
-            data = ReadData<int>(iter, length);
-#endif
-            xa = ReadData<short>(iter, length);
-            ya = ReadData<short>(iter, length);
-            za = ReadData<short>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<UUID>(uuid, container);
-#if PROTOCOL_VERSION < 458 /* < 1.14 */
-            WriteData<char>(type, container);
-#else
-            WriteData<VarInt>(type, container);
-#endif
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-            WriteData<Angle>(x_rot, container);
-            WriteData<Angle>(y_rot, container);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteData<Angle>(y_head_rot, container);
-            WriteData<VarInt>(data, container);
-#else
-            WriteData<int>(data, container);
-#endif
-            WriteData<short>(xa, container);
-            WriteData<short>(ya, container);
-            WriteData<short>(za, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["uuid"] = uuid;
-            output["type"] = type;
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["x_rot"] = x_rot;
-            output["y_rot"] = y_rot;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            output["y_head_rot"] = y_head_rot;
-#endif
-            output["data"] = data;
-            output["xa"] = xa;
-            output["ya"] = ya;
-            output["za"] = za;
-
-            return output;
-    }
-
-    private:
-        int id_ = 0;
-        UUID uuid = {};
-#if PROTOCOL_VERSION < 458 /* < 1.14 */
-        char type = 0;
-#else
-        int type = 0;
-#endif
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        short xa = 0;
-        short ya = 0;
-        short za = 0;
-        Angle x_rot = 0;
-        Angle y_rot = 0;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        Angle y_head_rot = 0;
-#endif
-        int data = 0;
-
     };
 } //ProtocolCraft

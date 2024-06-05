@@ -18,46 +18,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Add Vibration Signal";
 
-        virtual ~ClientboundAddVibrationSignalPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VibrationPath);
+        DECLARE_FIELDS_NAMES(VibrationPath);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetVibrationPath(const VibrationPath& vibration_path_)
-        {
-            vibration_path = vibration_path_;
-        }
-
-        
-        const VibrationPath& GetVibrationPath() const
-        {
-            return vibration_path;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            vibration_path = ReadData<VibrationPath>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VibrationPath>(vibration_path, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["vibration_path"] = vibration_path;
-
-            return output;
-    }
-
-    private:
-        VibrationPath vibration_path;
-
+        GETTER_SETTER(VibrationPath);
     };
 } //ProtocolCraft
 #endif

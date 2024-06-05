@@ -10,84 +10,13 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x00;
         static constexpr std::string_view packet_name = "Client Intention";
 
-        virtual ~ServerboundClientIntentionPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt         , std::string, unsigned short, VarInt);
+        DECLARE_FIELDS_NAMES(ProtocolVersion, HostName   , Port          , Intention);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetProtocolVersion(const int p)
-        {
-            protocol_version = p;
-        }
-
-        void SetHostName(const std::string& s)
-        {
-            host_name = s;
-        }
-
-        void SetPort(const unsigned short p)
-        {
-            port = p;
-        }
-
-        void SetIntention(const int n)
-        {
-            intention = n;
-        }
-
-        int GetProtocolVersion() const
-        {
-            return protocol_version;
-        }
-
-        const std::string& GetHostName() const
-        {
-            return host_name;
-        }
-
-        unsigned short GetPort() const
-        {
-            return port;
-        }
-
-        int GetIntention() const
-        {
-            return intention;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            protocol_version = ReadData<VarInt>(iter, length);
-            host_name = ReadData<std::string>(iter, length);
-            port = ReadData<unsigned short>(iter, length);
-            intention = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(protocol_version, container);
-            WriteData<std::string>(host_name, container);
-            WriteData<unsigned short>(port, container);
-            WriteData<VarInt>(intention, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["protocol_version"] = protocol_version;
-            output["host_name"] = host_name;
-            output["port"] = port;
-            output["intention"] = intention;
-
-            return output;
-        }
-
-    private:
-        int protocol_version = 0;
-        std::string host_name;
-        unsigned short port = 0;
-        int intention = 0;
+        GETTER_SETTER(ProtocolVersion);
+        GETTER_SETTER(HostName);
+        GETTER_SETTER(Port);
+        GETTER_SETTER(Intention);
     };
 } //ProtocolCraft

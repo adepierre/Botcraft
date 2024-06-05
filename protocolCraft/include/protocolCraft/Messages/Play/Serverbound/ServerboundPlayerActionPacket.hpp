@@ -45,98 +45,20 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Action";
 
-        virtual ~ServerboundPlayerActionPacket() override
-        {
-
-        }
-
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetDirection(const char direction_)
-        {
-            direction = direction_;
-        }
-
-        void SetAction(const int action_)
-        {
-            action = action_;
-        }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        void SetSequence(const int sequence_)
-        {
-            sequence = sequence_;
-        }
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, char);
+        DECLARE_FIELDS_NAMES(Action, Pos,             Direction);
+#else
+        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, char,      VarInt);
+        DECLARE_FIELDS_NAMES(Action, Pos,             Direction, Sequence);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        char GetDirection() const
-        {
-            return direction;
-        }
-
-        int GetAction() const
-        {
-            return action;
-        }
-
+        GETTER_SETTER(Action);
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Direction);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        int GetSequence() const
-        {
-            return sequence;
-        }
-#endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            action = ReadData<VarInt>(iter, length);
-            pos = ReadData<NetworkPosition>(iter, length);
-            direction = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            sequence = ReadData<VarInt>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(action, container);
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<char>(direction, container);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteData<VarInt>(sequence, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-            output["direction"] = direction;
-            output["action"] = action;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            output["sequence"] = sequence;
-#endif
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-        char direction = 0;
-        int action = 0;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        int sequence = 0;
+        GETTER_SETTER(Sequence);
 #endif
     };
 } //ProtocolCraft

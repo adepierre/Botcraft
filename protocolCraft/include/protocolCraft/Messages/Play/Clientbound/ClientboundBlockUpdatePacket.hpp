@@ -38,56 +38,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Update";
 
-        virtual ~ClientboundBlockUpdatePacket() override
-        {
+        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt);
+        DECLARE_FIELDS_NAMES(Pos,             Blockstate);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetBlockstate(const int blockstate_)
-        {
-            blockstate = blockstate_;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        int GetBlockstate() const
-        {
-            return blockstate;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            pos = ReadData<NetworkPosition>(iter, length);
-            blockstate = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<VarInt>(blockstate, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-            output["blockstate"] = blockstate;
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-        int blockstate = 0;
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Blockstate);
     };
 } //ProtocolCraft

@@ -45,85 +45,16 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Remove Mob Effect";
 
-        virtual ~ClientboundRemoveMobEffectPacket() override
-        {
-
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
 #if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-        void SetEffect(const char effect_)
-        {
-            effect = effect_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt,   char);
+        DECLARE_FIELDS_NAMES(EntityId, Effect);
 #else
-        void SetEffect(const int effect_)
-        {
-            effect = effect_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt,   VarInt);
+        DECLARE_FIELDS_NAMES(EntityId, Effect);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-#if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-        char GetEffect() const
-        {
-            return effect;
-        }
-#else
-        int GetEffect() const
-        {
-            return effect;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            entity_id = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-            effect = ReadData<char>(iter, length);
-#else
-            effect = ReadData<VarInt>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(entity_id, container);
-#if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-            WriteData<char>(effect, container);
-#else
-            WriteData<VarInt>(effect, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["entity_id"] = entity_id;
-            output["effect"] = effect;
-
-            return output;
-        }
-
-    private:
-        int entity_id = 0;
-#if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-        char effect = 0;
-#else
-        int effect = 0;
-#endif
-
+        GETTER_SETTER(EntityId);
+        GETTER_SETTER(Effect);
     };
 } //ProtocolCraft

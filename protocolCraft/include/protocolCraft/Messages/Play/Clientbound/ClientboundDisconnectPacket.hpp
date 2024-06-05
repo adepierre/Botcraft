@@ -46,42 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Disconnect";
 
-        virtual ~ClientboundDisconnectPacket() override
-        {
+        DECLARE_FIELDS_TYPES(Chat);
+        DECLARE_FIELDS_NAMES(Reason);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetReason(const Chat& reason_)
-        {
-            reason = reason_;
-        }
-
-        const Chat& GetReason() const
-        {
-            return reason;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            reason = ReadData<Chat>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<Chat>(reason, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["reason"] = reason;
-
-            return output;
-        }
-
-    private:
-        Chat reason;
+        GETTER_SETTER(Reason);
     };
 } //ProtocolCraft

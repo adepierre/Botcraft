@@ -44,73 +44,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Command";
 
-        virtual ~ServerboundPlayerCommandPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt);
+        DECLARE_FIELDS_NAMES(Id_,    Action, Data);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetAction(const int action_)
-        {
-            action = action_;
-        }
-
-        void SetData(const int data_)
-        {
-            data = data_;
-        }
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        int GetAction() const
-        {
-            return action;
-        }
-
-        int GetData() const
-        {
-            return data;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            action = ReadData<VarInt>(iter, length);
-            data = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<VarInt>(action, container);
-            WriteData<VarInt>(data, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["action"] = action;
-            output["data"] = data;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        int action = 0;
-        int data = 0;
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Action);
+        GETTER_SETTER(Data);
     };
 } //ProtocolCraft

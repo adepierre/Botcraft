@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -40,46 +40,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Rename Item";
 
-        virtual ~ServerboundRenameItemPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::string);
+        DECLARE_FIELDS_NAMES(Name_);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetName_(const std::string& name__)
-        {
-            name_ = name__;
-        }
-
-
-        const std::string& GetName_() const
-        {
-            return name_;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            name_ = ReadData<std::string>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::string>(name_, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["name_"] = name_;
-
-            return output;
-        }
-
-    private:
-        std::string name_;
-
+        GETTER_SETTER(Name_);
     };
 } //ProtocolCraft
 #endif

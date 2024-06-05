@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -31,45 +31,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Pong";
 
-        virtual ~ServerboundPongPacket() override
-        {
+        DECLARE_FIELDS_TYPES(int);
+        DECLARE_FIELDS_NAMES(Id_);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<int>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<int>(id_, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id"] = id_;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-
+        GETTER_SETTER(Id_);
     };
 } //ProtocolCraft
 #endif

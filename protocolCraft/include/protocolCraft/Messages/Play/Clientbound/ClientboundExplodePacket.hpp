@@ -53,204 +53,54 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Explode";
 
-        virtual ~ClientboundExplodePacket() override
-        {
-
-        }
-
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        void SetX(const float x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const float y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const float z_)
-        {
-            z = z_;
-        }
+        DECLARE_FIELDS_TYPES(float, float, float, float, std::vector<NetworkPosition>, float,      float,      float);
+        DECLARE_FIELDS_NAMES(X,     Y,     Z,     Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ);
+#elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
+        DECLARE_FIELDS_TYPES(double, double, double, float, std::vector<NetworkPosition>, float,      float,      float);
+        DECLARE_FIELDS_NAMES(X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ);
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        DECLARE_FIELDS_TYPES(double, double, double, float, std::vector<NetworkPosition>, float,      float,      float,      VarInt,           Particle,                Particle,                SoundEvent);
+        DECLARE_FIELDS_NAMES(X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound);
 #else
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
+        DECLARE_FIELDS_TYPES(double, double, double, float, std::vector<NetworkPosition>, float,      float,      float,      VarInt,           Particle,                Particle,                Holder<SoundEvent>);
+        DECLARE_FIELDS_NAMES(X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound);
 #endif
+        DECLARE_SERIALIZE;
 
-        void SetPower(const float power_)
-        {
-            power = power_;
-        }
-
-        void SetToBlow(const std::vector<NetworkPosition>& to_blow_)
-        {
-            to_blow = to_blow_;
-        }
-
-        void SetKnockbackX(const float knockback_x_)
-        {
-            knockback_x = knockback_x_;
-        }
-
-        void SetKnockbackY(const float knockback_y_)
-        {
-            knockback_y = knockback_y_;
-        }
-
-        void SetKnockbackZ(const float knockback_z_)
-        {
-            knockback_z = knockback_z_;
-        }
-
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(Power);
+        GETTER_SETTER(ToBlow);
+        GETTER_SETTER(KnockbackX);
+        GETTER_SETTER(KnockbackY);
+        GETTER_SETTER(KnockbackZ);
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        void SetSmallExplosionParticles(const Particle& small_explosion_particles_)
-        {
-            small_explosion_particles = small_explosion_particles_;
-        }
-
-        void SetLargeExplosionParticles(const Particle& large_explosion_particles_)
-        {
-            large_explosion_particles = large_explosion_particles_;
-        }
-
-        void SetBlockInteraction(const int block_interaction_)
-        {
-            block_interaction = block_interaction_;
-        }
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetExplosionSound(const SoundEvent& explosion_sound_)
-        {
-            explosion_sound = explosion_sound_;
-        }
-#else
-        void SetExplosionSound(const Holder<SoundEvent>& explosion_sound_)
-        {
-            explosion_sound = explosion_sound_;
-        }
+        GETTER_SETTER(BlockInteraction);
+        GETTER_SETTER(SmallExplosionParticles);
+        GETTER_SETTER(LargeExplosionParticles);
+        GETTER_SETTER(ExplosionSound);
 #endif
-#endif
-
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        float GetX() const
-        {
-            return x;
-        }
-
-        float GetY() const
-        {
-            return y;
-        }
-
-        float GetZ() const
-        {
-            return z;
-        }
-#else
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-#endif
-
-        float GetPower() const
-        {
-            return power;
-        }
-
-        const std::vector<NetworkPosition>& GetToBlow() const
-        {
-            return to_blow;
-        }
-
-        float GetKnockbackX() const
-        {
-            return knockback_x;
-        }
-
-        float GetKnockbackY() const
-        {
-            return knockback_y;
-        }
-
-        float GetKnockbackZ() const
-        {
-            return knockback_z;
-        }
-
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        const Particle& GetSmallExplosionParticles() const
-        {
-            return small_explosion_particles;
-        }
-
-        const Particle& GetLargeExplosionParticles() const
-        {
-            return large_explosion_particles;
-        }
-
-        int GetBlockInteraction() const
-        {
-            return block_interaction;
-        }
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        const SoundEvent& GetExplosionSound() const
-        {
-            return explosion_sound;
-        }
-#else
-        const Holder<SoundEvent>& GetExplosionSound() const
-        {
-            return explosion_sound;
-        }
-#endif
-#endif
-
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            x = ReadData<float>(iter, length);
-            y = ReadData<float>(iter, length);
-            z = ReadData<float>(iter, length);
+            SetX(ReadData<float>(iter, length));
+            SetY(ReadData<float>(iter, length));
+            SetZ(ReadData<float>(iter, length));
 #else
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
+            SetX(ReadData<double>(iter, length));
+            SetY(ReadData<double>(iter, length));
+            SetZ(ReadData<double>(iter, length));
 #endif
-            power = ReadData<float>(iter, length);
+            SetPower(ReadData<float>(iter, length));
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             // Special case, read size as int instead of VarInt, and custom read function
-            to_blow = ReadVector<NetworkPosition, int>(iter, length,
+            SetToBlow(ReadVector<NetworkPosition, int>(iter, length,
 #else
-            to_blow = ReadVector<NetworkPosition>(iter, length,
+            SetToBlow(ReadVector<NetworkPosition>(iter, length,
 #endif
                 [](ReadIterator& i, size_t& l)
                 {
@@ -262,18 +112,18 @@ namespace ProtocolCraft
 
                     return output;
                 }
-            );
-            knockback_x = ReadData<float>(iter, length);
-            knockback_y = ReadData<float>(iter, length);
-            knockback_z = ReadData<float>(iter, length);
+            ));
+            SetKnockbackX(ReadData<float>(iter, length));
+            SetKnockbackY(ReadData<float>(iter, length));
+            SetKnockbackZ(ReadData<float>(iter, length));
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-            block_interaction = ReadData<VarInt>(iter, length);
-            small_explosion_particles = ReadData<Particle>(iter, length);
-            large_explosion_particles = ReadData<Particle>(iter, length);
+            SetBlockInteraction(ReadData<VarInt>(iter, length));
+            SetSmallExplosionParticles(ReadData<Particle>(iter, length));
+            SetLargeExplosionParticles(ReadData<Particle>(iter, length));
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            explosion_sound = ReadData<SoundEvent>(iter, length);
+            SetExplosionSound(ReadData<SoundEvent>(iter, length));
 #else
-            explosion_sound = ReadData<Holder<SoundEvent>>(iter, length);
+            SetExplosionSound(ReadData<Holder<SoundEvent>>(iter, length));
 #endif
 #endif
         }
@@ -281,20 +131,20 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteData<float>(x, container);
-            WriteData<float>(y, container);
-            WriteData<float>(z, container);
+            WriteData<float>(GetX(), container);
+            WriteData<float>(GetY(), container);
+            WriteData<float>(GetZ(), container);
 #else
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
+            WriteData<double>(GetX(), container);
+            WriteData<double>(GetY(), container);
+            WriteData<double>(GetZ(), container);
 #endif
-            WriteData<float>(power, container);
+            WriteData<float>(GetPower(), container);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             // Special case, write size as int instead of VarInt, with custom write function
-            WriteVector<NetworkPosition, int>(to_blow, container,
+            WriteVector<NetworkPosition, int>(GetToBlow(), container,
 #else
-            WriteVector<NetworkPosition>(to_blow, container,
+            WriteVector<NetworkPosition>(GetToBlow(), container,
 #endif
                 [](const NetworkPosition& n, WriteContainer& c)
                 {
@@ -303,68 +153,19 @@ namespace ProtocolCraft
                     WriteData<int, char>(n.GetZ(), c);
                 }
             );
-            WriteData<float>(knockback_x, container);
-            WriteData<float>(knockback_y, container);
-            WriteData<float>(knockback_z, container);
+            WriteData<float>(GetKnockbackX(), container);
+            WriteData<float>(GetKnockbackY(), container);
+            WriteData<float>(GetKnockbackZ(), container);
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-            WriteData<VarInt>(block_interaction, container);
-            WriteData<Particle>(small_explosion_particles, container);
-            WriteData<Particle>(large_explosion_particles, container);
+            WriteData<VarInt>(GetBlockInteraction(), container);
+            WriteData<Particle>(GetSmallExplosionParticles(), container);
+            WriteData<Particle>(GetLargeExplosionParticles(), container);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<SoundEvent>(explosion_sound, container);
+            WriteData<SoundEvent>(GetExplosionSound(), container);
 #else
-            WriteData<Holder<SoundEvent>>(explosion_sound, container);
+            WriteData<Holder<SoundEvent>>(GetExplosionSound(), container);
 #endif
 #endif
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["power"] = power;
-            output["to_blow"] = to_blow;
-            output["knockback_x"] = knockback_x;
-            output["knockback_y"] = knockback_y;
-            output["knockback_z"] = knockback_z;
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-            output["block_interaction"] = block_interaction;
-            output["small_explosion_particles"] = small_explosion_particles;
-            output["large_explosion_particles"] = large_explosion_particles;
-            output["explosion_sound"] = explosion_sound;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        float x = 0.0f;
-        float y = 0.0f;
-        float z = 0.0f;
-#else
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-#endif
-        float power = 0.0f;
-        std::vector<NetworkPosition> to_blow;
-        float knockback_x = 0.0f;
-        float knockback_y = 0.0f;
-        float knockback_z = 0.0f;
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        Particle small_explosion_particles;
-        Particle large_explosion_particles;
-        int block_interaction = 0;
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        SoundEvent explosion_sound;
-#else
-        Holder<SoundEvent> explosion_sound;
-#endif
-#endif
-
     };
 } //ProtocolCraft

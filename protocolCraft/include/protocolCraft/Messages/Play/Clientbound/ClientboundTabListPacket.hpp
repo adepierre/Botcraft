@@ -48,59 +48,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Tab List";
 
-        virtual ~ClientboundTabListPacket() override
-        {
+        DECLARE_FIELDS_TYPES(Chat,   Chat);
+        DECLARE_FIELDS_NAMES(Header, Footer);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetHeader(const Chat& header_)
-        {
-            header = header_;
-        }
-
-        void SetFooter(const Chat& footer_)
-        {
-            footer = footer_;
-        }
-
-
-        const Chat& GetHeader() const
-        {
-            return header;
-        }
-
-        const Chat& GetFooter() const
-        {
-            return footer;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            header = ReadData<Chat>(iter, length);
-            footer = ReadData<Chat>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<Chat>(header, container);
-            WriteData<Chat>(footer, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["header"] = header;
-            output["footer"] = footer;
-
-            return output;
-        }
-
-    private:
-        Chat header;
-        Chat footer;
-
+        GETTER_SETTER(Header);
+        GETTER_SETTER(Footer);
     };
 } //ProtocolCraft

@@ -47,126 +47,16 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Teleport Entity";
 
-        virtual ~ClientboundTeleportEntityPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, double, double, double, unsigned char, unsigned char, bool);
+        DECLARE_FIELDS_NAMES(Id_,    X,      Y,      Z,      YRot,          XRot,          OnGround);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
-
-        void SetYRot(const unsigned char yRot_)
-        {
-            yRot = yRot_;
-        }
-
-        void SetXRot(const unsigned char xRot_)
-        {
-            xRot = xRot_;
-        }
-
-        void SetOnGround(const bool on_ground_)
-        {
-            on_ground = on_ground_;
-        }
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        unsigned char GetYRot() const
-        {
-            return yRot;
-        }
-
-        unsigned char GetXRot() const
-        {
-            return xRot;
-        }
-
-        bool GetOnGround() const
-        {
-            return on_ground;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-            yRot = ReadData<unsigned char>(iter, length);
-            xRot = ReadData<unsigned char>(iter, length);
-            on_ground = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-            WriteData<unsigned char>(yRot, container);
-            WriteData<unsigned char>(xRot, container);
-            WriteData<bool>(on_ground, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["yRot"] = yRot;
-            output["xRot"] = xRot;
-            output["on_ground"] = on_ground;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        unsigned char yRot = 0;
-        unsigned char xRot = 0;
-        bool on_ground = false;
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(YRot);
+        GETTER_SETTER(XRot);
+        GETTER_SETTER(OnGround);
     };
 } //ProtocolCraft

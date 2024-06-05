@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -40,110 +40,17 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Beacon";
 
-        virtual ~ServerboundSetBeaconPacket() override
-        {
-
-        }
-
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        void SetPrimary(const int primary_)
-        {
-            primary = primary_;
-        }
-
-        void SetSecondary(const int secondary_)
-        {
-            secondary = secondary_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt,  VarInt);
+        DECLARE_FIELDS_NAMES(Primary, Secondary);
 #else
-        void SetPrimary(const std::optional<int>& primary_)
-        {
-            primary = primary_;
-        }
-
-        void SetSecondary(const std::optional<int>& secondary_)
-        {
-            secondary = secondary_;
-        }
+        DECLARE_FIELDS_TYPES(std::optional<VarInt>,  std::optional<VarInt>);
+        DECLARE_FIELDS_NAMES(Primary,                Secondary);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-        int GetPrimary() const
-        {
-            return primary;
-        }
-
-        int GetSecondary() const
-        {
-            return secondary;
-        }
-#else
-        const std::optional<int>& GetPrimary() const
-        {
-            return primary;
-        }
-
-        const std::optional<int>& GetSecondary() const
-        {
-            return secondary;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-            primary = ReadData<VarInt>(iter, length);
-            secondary = ReadData<VarInt>(iter, length);
-#else
-            primary = ReadData<std::optional<VarInt>>(iter, length);
-            secondary = ReadData<std::optional<VarInt>>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-            WriteData<VarInt>(primary, container);
-            WriteData<VarInt>(secondary, container);
-#else
-            WriteData<std::optional<VarInt>>(primary, container);
-            WriteData<std::optional<VarInt>>(secondary, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-            output["primary"] = primary;
-            output["secondary"] = secondary;
-#else
-            if (primary.has_value())
-            {
-                output["primary"] = primary.value();
-            }
-            if (secondary.has_value())
-            {
-                output["secondary"] = secondary.value();
-            }
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-        int primary = 0;
-        int secondary = 0;
-#else
-        std::optional<int> primary;
-        std::optional<int> secondary;
-#endif
-
+        GETTER_SETTER(Primary);
+        GETTER_SETTER(Secondary);
     };
 } //ProtocolCraft
 #endif

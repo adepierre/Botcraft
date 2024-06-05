@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -28,46 +28,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Change Difficulty";
 
-        virtual ~ServerboundChangeDifficultyPacket() override
-        {
+        DECLARE_FIELDS_TYPES(char);
+        DECLARE_FIELDS_NAMES(Difficulty);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetDifficulty(const char difficulty_)
-        {
-            difficulty = difficulty_;
-        }
-
-
-        char GetDifficulty() const
-        {
-            return difficulty;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            difficulty = ReadData<char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<char>(difficulty, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["difficulty"] = difficulty;
-
-            return output;
-        }
-
-    private:
-        char difficulty = 0;
-
+        GETTER_SETTER(Difficulty);
     };
 } //ProtocolCraft
 #endif

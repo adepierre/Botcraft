@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Item/MerchantOffer.hpp"
 
@@ -42,126 +42,47 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Merchant Offers";
 
-        virtual ~ClientboundMerchantOffersPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt,      std::vector<MerchantOffer>, VarInt,        VarInt,     bool,        bool);
+        DECLARE_FIELDS_NAMES(ContainerId, Offers,                     VillagerLevel, VillagerXp, ShowProgress, CanRestock);
+        DECLARE_SERIALIZE;
 
-        }
-
-        void SetContainerId(const int container_id_)
-        {
-            container_id = container_id_;
-        }
-
-        void SetOffers(const std::vector<MerchantOffer>& offers_)
-        {
-            offers = offers_;
-        }
-
-        void SetVillagerLevel(const int villager_level_)
-        {
-            villager_level = villager_level_;
-        }
-
-        void SetVillagerXp(const int villager_xp_)
-        {
-            villager_xp = villager_xp_;
-        }
-
-        void SetShowProgress(const bool show_progress_)
-        {
-            show_progress = show_progress_;
-        }
-
-        void SetCanRestock(const bool can_restock_)
-        {
-            can_restock = can_restock_;
-        }
-
-
-        int GetContainerId() const
-        {
-            return container_id;
-        }
-
-        const std::vector<MerchantOffer>& GetOffers() const
-        {
-            return offers;
-        }
-
-        int GetVillagerLevel() const
-        {
-            return villager_level;
-        }
-
-        int GetVillagerXp() const
-        {
-            return villager_xp;
-        }
-
-        bool GetShowProgress() const
-        {
-            return show_progress;
-        }
-
-        bool GetCanRestock() const
-        {
-            return can_restock;
-        }
-
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(Offers);
+        GETTER_SETTER(VillagerLevel);
+        GETTER_SETTER(VillagerXp);
+        GETTER_SETTER(ShowProgress);
+        GETTER_SETTER(CanRestock);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            container_id = ReadData<VarInt>(iter, length);
+            SetContainerId(ReadData<VarInt>(iter, length));
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
             // Special case, the size is a char instead of a varint
-            offers = ReadVector<MerchantOffer, char>(iter, length, ReadData<MerchantOffer>);
+            SetOffers(ReadVector<MerchantOffer, char>(iter, length, ReadData<MerchantOffer>));
 #else
-            offers = ReadData<std::vector<MerchantOffer>>(iter, length);
+            SetOffers(ReadData<std::vector<MerchantOffer>>(iter, length));
 #endif
-            villager_level = ReadData<VarInt>(iter, length);
-            villager_xp = ReadData<VarInt>(iter, length);
-            show_progress = ReadData<bool>(iter, length);
-            can_restock = ReadData<bool>(iter, length);
+            SetVillagerLevel(ReadData<VarInt>(iter, length));
+            SetVillagerXp(ReadData<VarInt>(iter, length));
+            SetShowProgress(ReadData<bool>(iter, length));
+            SetCanRestock(ReadData<bool>(iter, length));
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(container_id, container);
+            WriteData<VarInt>(GetContainerId(), container);
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
             // Special case, the size is a char instead of a varint
-            WriteVector<MerchantOffer, char>(offers, container, WriteData<MerchantOffer>);
+            WriteVector<MerchantOffer, char>(GetOffers(), container, WriteData<MerchantOffer>);
 #else
-            WriteData<std::vector<MerchantOffer>>(offers, container);
+            WriteData<std::vector<MerchantOffer>>(GetOffers(), container);
 #endif
-            WriteData<VarInt>(villager_level, container);
-            WriteData<VarInt>(villager_xp, container);
-            WriteData<bool>(show_progress, container);
-            WriteData<bool>(can_restock, container);
+            WriteData<VarInt>(GetVillagerLevel(), container);
+            WriteData<VarInt>(GetVillagerXp(), container);
+            WriteData<bool>(GetShowProgress(), container);
+            WriteData<bool>(GetCanRestock(), container);
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-            output["offers"] = offers;
-            output["villager_level"] = villager_level;
-            output["villager_xp"] = villager_xp;
-            output["show_progress"] = show_progress;
-            output["can_restock"] = can_restock;
-
-            return output;
-        }
-
-    private:
-        int container_id = 0;
-        std::vector<MerchantOffer> offers;
-        int villager_level = 0;
-        int villager_xp = 0;
-        bool show_progress = false;
-        bool can_restock = false;
-
     };
 } //ProtocolCraft
 #endif

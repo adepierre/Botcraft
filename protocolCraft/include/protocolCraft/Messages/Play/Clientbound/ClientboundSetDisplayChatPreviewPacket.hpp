@@ -18,47 +18,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Display Chat Preview";
 
-        virtual ~ClientboundSetDisplayChatPreviewPacket() override
-        {
+        DECLARE_FIELDS_TYPES(bool);
+        DECLARE_FIELDS_NAMES(Enabled);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetEnabled(const bool enabled_)
-        {
-            enabled = enabled_;
-        }
-
-
-        bool GetEnabled() const
-        {
-            return enabled;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            enabled = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<bool>(enabled, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["enabled"] = enabled;
-
-
-            return output;
-        }
-
-    private:
-        bool enabled = false;
-
+        GETTER_SETTER(Enabled);
     };
 } //ProtocolCraft
 #endif

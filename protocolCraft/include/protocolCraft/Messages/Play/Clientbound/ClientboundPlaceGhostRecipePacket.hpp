@@ -1,7 +1,9 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Types/Identifier.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -46,83 +48,16 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Place Ghost Recipe";
 
-        virtual ~ClientboundPlaceGhostRecipePacket() override
-        {
-
-        }
-
-        void SetContainerId(const char container_id_)
-        {
-            container_id = container_id_;
-        }
-
-#if PROTOCOL_VERSION < 348 /* < 1.13 */
-        void SetRecipe(const int recipe_)
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_FIELDS_TYPES(char,        VarInt);
+        DECLARE_FIELDS_NAMES(ContainerId, Recipe);
 #else
-        void SetRecipe(const Identifier& recipe_)
+        DECLARE_FIELDS_TYPES(char,        Identifier);
+        DECLARE_FIELDS_NAMES(ContainerId, Recipe);
 #endif
-        {
-            recipe = recipe_;
-        }
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-        char GetContainerId() const
-        {
-            return container_id;
-        }
-
-#if PROTOCOL_VERSION < 348 /* < 1.13 */
-        int GetRecipe() const
-#else
-        const Identifier& GetRecipe() const
-#endif
-        {
-            return recipe;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            container_id = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION < 348 /* < 1.13 */
-            recipe = ReadData<VarInt>(iter, length);
-#else
-            recipe = ReadData<Identifier>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<char>(container_id, container);
-#if PROTOCOL_VERSION < 348 /* < 1.13 */
-            WriteData<VarInt>(recipe, container);
-#else
-            WriteData<Identifier>(recipe, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-#if PROTOCOL_VERSION < 348 /* < 1.13 */
-            output["recipe"] = recipe;
-#else
-            output["recipe"] = recipe;
-#endif
-
-            return output;
-        }
-
-    private:
-        char container_id = 0;
-#if PROTOCOL_VERSION < 348 /* < 1.13 */
-        int recipe = 0;
-#else
-        Identifier recipe;
-#endif
-
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(Recipe);
     };
 } //ProtocolCraft

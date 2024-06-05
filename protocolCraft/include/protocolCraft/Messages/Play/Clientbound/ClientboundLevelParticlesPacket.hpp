@@ -47,147 +47,25 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Level Particles";
 
-        virtual ~ClientboundLevelParticlesPacket() override
-        {
-
-        }
-
-
-#if PROTOCOL_VERSION < 569 /* < 1.15 */
-        void SetX(const float x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const float y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const float z_)
-        {
-            z = z_;
-        }
+#if PROTOCOL_VERSION < 573 /* < 1.15 */
+        DECLARE_FIELDS_TYPES(bool,            float, float, float, float, float, float, float,    int,   Particle);
+        DECLARE_FIELDS_NAMES(OverrideLimiter, X,     Y,     Z,     XDist, YDist, ZDist, MaxSpeed, Count, Particle);
 #else
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
+        DECLARE_FIELDS_TYPES(bool,            double, double, double, float, float, float, float,    int,   Particle);
+        DECLARE_FIELDS_NAMES(OverrideLimiter, X,      Y,      Z,      XDist, YDist, ZDist, MaxSpeed, Count, Particle);
 #endif
+        DECLARE_SERIALIZE;
 
-        void SetXDist(const float x_dist_)
-        {
-            x_dist = x_dist_;
-        }
-
-        void SetYDist(const float y_dist_)
-        {
-            y_dist = y_dist_;
-        }
-
-        void SetZDist(const float z_dist_)
-        {
-            z_dist = z_dist_;
-        }
-
-        void SetMaxSpeed(const float max_speed_)
-        {
-            max_speed = max_speed_;
-        }
-
-        void SetCount(const int count_)
-        {
-            count = count_;
-        }
-
-        void SetOverrideLimiter(const bool override_limiter_)
-        {
-            override_limiter = override_limiter_;
-        }
-
-        void SetParticle(const Particle& particle_)
-        {
-            particle = particle_;
-        }
-
-
-#if PROTOCOL_VERSION < 569 /* < 1.15 */
-        float GetX() const
-        {
-            return x;
-        }
-
-        float GetY() const
-        {
-            return y;
-        }
-
-        float GetZ() const
-        {
-            return z;
-        }
-#else
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-#endif
-
-        float GetXDist() const
-        {
-            return x_dist;
-        }
-
-        float GetYDist() const
-        {
-            return y_dist;
-        }
-
-        float GetZDist() const
-        {
-            return z_dist;
-        }
-
-        float GetMaxSpeed() const
-        {
-            return max_speed;
-        }
-
-        int GetCount() const
-        {
-            return count;
-        }
-
-        bool GetOverrideLimiter() const
-        {
-            return override_limiter;
-        }
-
-        const Particle& GetParticle() const
-        {
-            return particle;
-        }
-
+        GETTER_SETTER(OverrideLimiter);
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(XDist);
+        GETTER_SETTER(YDist);
+        GETTER_SETTER(ZDist);
+        GETTER_SETTER(MaxSpeed);
+        GETTER_SETTER(Count);
+        GETTER_SETTER(Particle);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -197,93 +75,58 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
             const ParticleType particle_type = ReadData<ParticleType, VarInt>(iter, length);
 #endif
-            override_limiter = ReadData<bool>(iter, length);
+            SetOverrideLimiter(ReadData<bool>(iter, length));
 #if PROTOCOL_VERSION < 569 /* < 1.15 */
-            x = ReadData<float>(iter, length);
-            y = ReadData<float>(iter, length);
-            z = ReadData<float>(iter, length);
+            SetX(ReadData<float>(iter, length));
+            SetY(ReadData<float>(iter, length));
+            SetZ(ReadData<float>(iter, length));
 #else
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
+            SetX(ReadData<double>(iter, length));
+            SetY(ReadData<double>(iter, length));
+            SetZ(ReadData<double>(iter, length));
 #endif
-            x_dist = ReadData<float>(iter, length);
-            y_dist = ReadData<float>(iter, length);
-            z_dist = ReadData<float>(iter, length);
-            max_speed = ReadData<float>(iter, length);
-            count = ReadData<int>(iter, length);
+            SetXDist(ReadData<float>(iter, length));
+            SetYDist(ReadData<float>(iter, length));
+            SetZDist(ReadData<float>(iter, length));
+            SetMaxSpeed(ReadData<float>(iter, length));
+            SetCount(ReadData<int>(iter, length));
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+            Particle particle;
             particle.SetParticleType(static_cast<ParticleType>(particle_type));
             particle.ReadOptions(iter, length);
+            SetParticle(particle);
 #else
-            particle = ReadData<Particle>(iter, length);
+            SetParticle(ReadData<Particle>(iter, length));
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-            WriteData<ParticleType, int>(particle.GetParticleType(), container);
+            WriteData<ParticleType, int>(GetParticle().GetParticleType(), container);
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<ParticleType, VarInt>(particle.GetParticleType(), container);
+            WriteData<ParticleType, VarInt>(GetParticle().GetParticleType(), container);
 #endif
-            WriteData<bool>(override_limiter, container);
+            WriteData<bool>(GetOverrideLimiter(), container);
 #if PROTOCOL_VERSION < 569 /* < 1.15 */
-            WriteData<float>(x, container);
-            WriteData<float>(y, container);
-            WriteData<float>(z, container);
+            WriteData<float>(GetX(), container);
+            WriteData<float>(GetY(), container);
+            WriteData<float>(GetZ(), container);
 #else
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
+            WriteData<double>(GetX(), container);
+            WriteData<double>(GetY(), container);
+            WriteData<double>(GetZ(), container);
 #endif
-            WriteData<float>(x_dist, container);
-            WriteData<float>(y_dist, container);
-            WriteData<float>(z_dist, container);
-            WriteData<float>(max_speed, container);
-            WriteData<int>(count, container);
+            WriteData<float>(GetXDist(), container);
+            WriteData<float>(GetYDist(), container);
+            WriteData<float>(GetZDist(), container);
+            WriteData<float>(GetMaxSpeed(), container);
+            WriteData<int>(GetCount(), container);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            particle.WriteOptions(container);
+            GetParticle().WriteOptions(container);
 #else
-            WriteData<Particle>(particle, container);
+            WriteData<Particle>(GetParticle(), container);
 #endif
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["override_limiter"] = override_limiter;
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["x_dist"] = x_dist;
-            output["y_dist"] = y_dist;
-            output["z_dist"] = z_dist;
-            output["max_speed"] = max_speed;
-            output["count"] = count;
-            output["particle"] = particle;
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 569 /* < 1.15 */
-        float x = 0.0f;
-        float y = 0.0f;
-        float z = 0.0f;
-#else
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-#endif
-        float x_dist = 0.0f;
-        float y_dist = 0.0f;
-        float z_dist = 0.0f;
-        float max_speed = 0.0f;
-        int count = 0;
-        bool override_limiter = false;
-        Particle particle;
-
     };
 } //ProtocolCraft

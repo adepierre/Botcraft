@@ -37,66 +37,28 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Award Stats";
 
-        virtual ~ClientboundAwardStatsPacket() override
-        {
-
-        }
-
-#if PROTOCOL_VERSION < 346 /* < 1.13 */
-        void SetStats(const std::map<std::string, int>& stats_)
-        {
-            stats = stats_;
-        }
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_FIELDS_TYPES(std::map<std::string, VarInt>);
+        DECLARE_FIELDS_NAMES(Stats);
 #else
-        void SetStats(const std::map<std::pair<int, int>, int>& stats_)
-        {
-            stats = stats_;
-        }
+        DECLARE_FIELDS_TYPES(std::map<std::pair<VarInt, VarInt>, VarInt>);
+        DECLARE_FIELDS_NAMES(Stats);
 #endif
+        DECLARE_READ;
+        DECLARE_WRITE;
 
-
-#if PROTOCOL_VERSION < 346 /* < 1.13 */
-        const std::map<std::string, int>& GetStats() const
-        {
-            return stats;
-        }
-#else
-        const std::map<std::pair<int, int>, int>& GetStats() const
-        {
-            return stats;
-        }
-#endif
-
+        GETTER_SETTER(Stats);
 
     protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-
-#if PROTOCOL_VERSION < 346 /* < 1.13 */
-            stats = ReadData<std::map<std::string, VarInt>>(iter, length);
-#else
-            stats = ReadData<std::map<std::pair<VarInt, VarInt>, VarInt>>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 346 /* < 1.13 */
-            WriteData<std::map<std::string, VarInt>>(stats, container);
-#else
-            WriteData<std::map<std::pair<VarInt, VarInt>, VarInt>>(stats, container);
-#endif
-        }
-
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
 #if PROTOCOL_VERSION < 346 /* < 1.13 */
-            output["stats"] = stats;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Stats)])] = stats;
 #else
-            output["stats"] = Json::Array();
-            for (const auto& p : stats)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Stats)])] = Json::Array();
+            for (const auto& p : GetStats())
             {
                 output.push_back({
                     {"category_id", p.first.first},
@@ -108,13 +70,5 @@ namespace ProtocolCraft
 
             return output;
         }
-
-    private:
-#if PROTOCOL_VERSION < 346 /* < 1.13 */
-        std::map<std::string, int> stats;
-#else
-        std::map<std::pair<int, int>, int> stats;
-#endif
-
     };
 } //ProtocolCraft

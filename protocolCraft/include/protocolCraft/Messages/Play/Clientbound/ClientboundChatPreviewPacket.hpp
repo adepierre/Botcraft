@@ -17,63 +17,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chat Preview";
 
-        virtual ~ClientboundChatPreviewPacket() override
-        {
+        DECLARE_FIELDS_TYPES(int,     std::optional<Chat>);
+        DECLARE_FIELDS_NAMES(QueryId, Preview);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetQueryId(const int query_id_)
-        {
-            query_id = query_id_;
-        }
-
-        void SetPreview(const std::optional<Chat>& preview_)
-        {
-            preview = preview_;
-        }
-
-
-        char GetQueryId() const
-        {
-            return query_id;
-        }
-
-        const std::optional<Chat>& Getpreview() const
-        {
-            return preview;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            query_id = ReadData<int>(iter, length);
-            preview = ReadData<std::optional<Chat>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<int>(query_id, container);
-            WriteData<std::optional<Chat>>(preview, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["query_id"] = query_id;
-            if (preview.has_value())
-            {
-                output["preview"] = preview.value();
-            }
-
-
-            return output;
-        }
-
-    private:
-        int query_id = 0;
-        std::optional<Chat> preview;
+        GETTER_SETTER(QueryId);
+        GETTER_SETTER(Preview);
     };
 } //ProtocolCraft
 #endif

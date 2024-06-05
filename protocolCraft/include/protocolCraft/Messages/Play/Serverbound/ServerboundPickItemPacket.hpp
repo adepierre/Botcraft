@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -43,46 +43,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Pick Item";
 
-        virtual ~ServerboundPickItemPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Slot);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetSlot(const int slot_)
-        {
-            slot = slot_;
-        }
-
-
-        int GetSlot() const
-        {
-            return slot;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            slot = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(slot, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["slot"] = slot;
-
-            return output;
-        }
-
-    private:
-        int slot = 0;
-
+        GETTER_SETTER(Slot);
     };
 } //ProtocolCraft
 #endif

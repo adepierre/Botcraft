@@ -47,59 +47,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Rotate Head";
 
-        virtual ~ClientboundRotateHeadPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, Angle);
+        DECLARE_FIELDS_NAMES(EntityId, YHeadRot);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
-        void SetYHeadRot(const Angle y_head_rot_)
-        {
-            y_head_rot = y_head_rot_;
-        }
-
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-        Angle GetYHeadRot() const
-        {
-            return y_head_rot;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            entity_id = ReadData<VarInt>(iter, length);
-            y_head_rot = ReadData<Angle>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(entity_id, container);
-            WriteData<Angle>(y_head_rot, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["entity_id"] = entity_id;
-            output["y_head_rot"] = y_head_rot;
-
-            return output;
-        }
-
-    private:
-        int entity_id = 0;
-        Angle y_head_rot = 0;
-
+        GETTER_SETTER(EntityId);
+        GETTER_SETTER(YHeadRot);
     };
 } //ProtocolCraft

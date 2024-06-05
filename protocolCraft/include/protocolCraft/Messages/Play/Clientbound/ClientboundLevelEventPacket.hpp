@@ -46,87 +46,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Level Event";
 
-        virtual ~ClientboundLevelEventPacket() override
-        {
+        DECLARE_FIELDS_TYPES(int,  NetworkPosition, int,  bool);
+        DECLARE_FIELDS_NAMES(Type, Pos,             Data, GlobalEvent);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetType(const int type_)
-        {
-            type = type_;
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetData(const int data_)
-        {
-            data = data_;
-        }
-
-        void SetGlobalEvent(const bool global_event_)
-        {
-            global_event = global_event_;
-        }
-
-
-        int GetType() const
-        {
-            return type;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        int GetData() const
-        {
-            return data;
-        }
-
-        bool GetGlobalEvent() const
-        {
-            return global_event;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            type = ReadData<int>(iter, length);
-            pos = ReadData<NetworkPosition>(iter, length);
-            data = ReadData<int>(iter, length);
-            global_event = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<int>(type, container);
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<int>(data, container);
-            WriteData<bool>(global_event, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["type"] = type;
-            output["pos"] = pos;
-            output["data"] = data;
-            output["global_event"] = global_event;
-
-            return output;
-        }
-
-    private:
-        int type = 0;
-        NetworkPosition pos;
-        int data = 0;
-        bool global_event = false;
-
+        GETTER_SETTER(Type);
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Data);
+        GETTER_SETTER(GlobalEvent);
     };
 } //ProtocolCraft

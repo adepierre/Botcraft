@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #pragma once
 
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/ClientboundLevelChunkPacketData.hpp"
 #include "protocolCraft/Types/ClientboundLightUpdatePacketData.hpp"
@@ -31,89 +31,14 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Level Chunk With Light";
 
-        virtual ~ClientboundLevelChunkWithLightPacket() override
-        {
+        DECLARE_FIELDS_TYPES(int, int, ClientboundLevelChunkPacketData, ClientboundLightUpdatePacketData);
+        DECLARE_FIELDS_NAMES(X,   Z,   ChunkData,                       LightData);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-        
-        void SetX(const int x_)
-        {
-            x = x_;
-        }
-
-        void SetZ(const int z_)
-        {
-            z = z_;
-        }
-
-        void SetChunkData(const ClientboundLevelChunkPacketData& chunk_data_)
-        {
-            chunk_data = chunk_data_;
-        }
-
-        void SetLightData(const ClientboundLightUpdatePacketData& light_data_)
-        {
-            light_data = light_data_;
-        }
-
-
-        int GetX() const
-        {
-            return x;
-        }
-
-        int GetZ() const
-        {
-            return z;
-        }
-
-        const ClientboundLevelChunkPacketData& GetChunkData() const
-        {
-            return chunk_data;
-        }
-
-        const ClientboundLightUpdatePacketData& GetLightData() const
-        {
-            return light_data;
-        }
-
-    protected:
-
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            x = ReadData<int>(iter, length);
-            z = ReadData<int>(iter, length);
-
-            chunk_data = ReadData<ClientboundLevelChunkPacketData>(iter, length);
-            light_data = ReadData<ClientboundLightUpdatePacketData>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<int>(x, container);
-            WriteData<int>(z, container);
-
-            WriteData<ClientboundLevelChunkPacketData>(chunk_data, container);
-            WriteData<ClientboundLightUpdatePacketData>(light_data, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["x"] = x;
-            output["z"] = z;
-            output["chunk_data"] = chunk_data;
-            output["light_data"] = light_data;
-
-            return output;
-        }
-
-    private:
-        int x = 0;
-        int z = 0;
-        ClientboundLevelChunkPacketData chunk_data;
-        ClientboundLightUpdatePacketData light_data;
+        GETTER_SETTER(X);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(ChunkData);
+        GETTER_SETTER(LightData);
     };
 } //ProtocolCraft
 #endif

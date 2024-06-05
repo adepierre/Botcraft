@@ -24,60 +24,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Custom Chat Completion Packet";
 
-        virtual ~ClientboundCustomChatCompletionsPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, std::vector<std::string>);
+        DECLARE_FIELDS_NAMES(Action, Entries);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetAction(const int action_)
-        {
-            action = action_;
-        }
-
-        void SetEntries(const std::vector<std::string>& entries_)
-        {
-            entries = entries_;
-        }
-
-
-        int GetAction() const
-        {
-            return action;
-        }
-
-        const std::vector<std::string>& GetEntries() const
-        {
-            return entries;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            action = ReadData<VarInt>(iter, length);
-            entries = ReadData<std::vector<std::string>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(action, container);
-            WriteData<std::vector<std::string>>(entries, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["action"] = action;
-            output["entries"] = entries;
-
-            return output;
-        }
-
-    private:
-        int action = 0;
-        std::vector<std::string> entries;
-
+        GETTER_SETTER(Action);
+        GETTER_SETTER(Entries);
     };
 } //ProtocolCraft
 #endif

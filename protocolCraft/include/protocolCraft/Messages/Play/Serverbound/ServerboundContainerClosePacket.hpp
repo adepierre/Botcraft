@@ -41,45 +41,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Close";
 
-        virtual ~ServerboundContainerClosePacket() override
-        {
+        DECLARE_FIELDS_TYPES(unsigned char);
+        DECLARE_FIELDS_NAMES(ContainerId);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetContainerId(const unsigned char container_id_)
-        {
-            container_id = container_id_;
-        }
-
-
-        unsigned char GetContainerId() const
-        {
-            return container_id;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            container_id = ReadData<unsigned char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<unsigned char>(container_id, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-
-            return output;
-        }
-
-    private:
-        unsigned char container_id = 0;
-
+        GETTER_SETTER(ContainerId);
     };
 } //ProtocolCraft

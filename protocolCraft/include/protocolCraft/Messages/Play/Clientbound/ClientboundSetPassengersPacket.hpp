@@ -43,59 +43,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Passengers";
 
-        virtual ~ClientboundSetPassengersPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, std::vector<VarInt>);
+        DECLARE_FIELDS_NAMES(Vehicle, Passengers);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetVehicle(const int vehicle_)
-        {
-            vehicle = vehicle_;
-        }
-
-        void SetPassengers(const std::vector<int>& passengers_)
-        {
-            passengers = passengers_;
-        }
-
-
-        int GetVehicle() const
-        {
-            return vehicle;
-        }
-
-        const std::vector<int>& GetPassengers() const
-        {
-            return passengers;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            vehicle = ReadData<VarInt>(iter, length);
-            passengers = ReadData<std::vector<VarInt>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(vehicle, container);
-            WriteData<std::vector<VarInt>>(passengers, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["vehicle"] = vehicle;
-            output["passengers"] = passengers;
-
-            return output;
-        }
-
-    private:
-        int vehicle = 0;
-        std::vector<int> passengers;
-
+        GETTER_SETTER(Vehicle);
+        GETTER_SETTER(Passengers);
     };
 } //ProtocolCraft

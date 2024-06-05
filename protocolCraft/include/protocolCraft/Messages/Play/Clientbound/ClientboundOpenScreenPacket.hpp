@@ -46,155 +46,64 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Open Screen";
 
-        virtual ~ClientboundOpenScreenPacket() override
-        {
-
-        }
-
-#if PROTOCOL_VERSION < 452 /* < 1.14 */
-        void SetContainerId(const unsigned char container_id_)
-        {
-            container_id = container_id_;
-        }
-
-        void SetType(const std::string& type_)
-        {
-            type = type_;
-        }
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        DECLARE_FIELDS_TYPES(unsigned char, std::string, Chat,  unsigned char, int);
+        DECLARE_FIELDS_NAMES(ContainerId,   Type,        Title, NumberOfSlots, Id_);
 #else
-        void SetContainerId(const int container_id_)
-        {
-            container_id = container_id_;
-        }
-
-        void SetType(const int type_)
-        {
-            type = type_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt,      VarInt, Chat);
+        DECLARE_FIELDS_NAMES(ContainerId, Type,   Title);
+        DECLARE_READ_WRITE_SERIALIZE;
 #endif
 
-        void SetTitle(const Chat& title_)
-        {
-            title = title_;
-        }
-
-#if PROTOCOL_VERSION < 452 /* < 1.14 */
-        void SetNumberOfSlots(const unsigned char number_of_slots_)
-        {
-            number_of_slots = number_of_slots_;
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(Type);
+        GETTER_SETTER(Title);
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        GETTER_SETTER(NumberOfSlots);
+        GETTER_SETTER(Id_);
 #endif
 
 #if PROTOCOL_VERSION < 452 /* < 1.14 */
-        unsigned char GetContainerId() const
-        {
-            return container_id;
-        }
-
-        const std::string& GetType() const
-        {
-            return type;
-        }
-#else
-        int GetContainerId() const
-        {
-            return container_id;
-        }
-
-        int GetType() const
-        {
-            return type;
-        }
-#endif
-
-        const Chat& GetTitle() const
-        {
-            return title;
-        }
-
-#if PROTOCOL_VERSION < 452 /* < 1.14 */
-        unsigned char GetNumberOfSlots() const
-        {
-            return number_of_slots;
-        }
-
-        int GetId_() const
-        {
-            return id_;
-        }
-#endif
-
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-#if PROTOCOL_VERSION < 452 /* < 1.14 */
-            container_id = ReadData<unsigned char>(iter, length);
-            type = ReadData<std::string>(iter, length);
-            title = ReadData<Chat>(iter, length);
-            number_of_slots = ReadData<unsigned char>(iter, length);
-            if (type == "EntityHorse")
+            SetContainerId(ReadData<unsigned char>(iter, length));
+            SetType(ReadData<std::string>(iter, length));
+            SetTitle(ReadData<Chat>(iter, length));
+            SetNumberOfSlots(ReadData<unsigned char>(iter, length));
+            if (GetType() == "EntityHorse")
             {
-                id_ = ReadData<int>(iter, length);
+                SetId_(ReadData<int>(iter, length));
             }
-#else
-            container_id = ReadData<VarInt>(iter, length);
-            type = ReadData<VarInt>(iter, length);
-            title = ReadData<Chat>(iter, length);
-#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
-        {            
-#if PROTOCOL_VERSION < 452 /* < 1.14 */
-            WriteData<unsigned char>(container_id, container);
-            WriteData<std::string>(type, container);
-            WriteData<Chat>(title, container);
-            WriteData<unsigned char>(number_of_slots, container);
-            if (type == "EntityHorse")
+        {
+            WriteData<unsigned char>(GetContainerId(), container);
+            WriteData<std::string>(GetType(), container);
+            WriteData<Chat>(GetTitle(), container);
+            WriteData<unsigned char>(GetNumberOfSlots(), container);
+            if (GetType() == "EntityHorse")
             {
-                WriteData<int>(id_, container);
+                WriteData<int>(GetId_(), container);
             }
-#else
-            WriteData<VarInt>(container_id, container);
-            WriteData<VarInt>(type, container);
-            WriteData<Chat>(title, container);
-#endif
         }
 
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
-#if PROTOCOL_VERSION < 452 /* < 1.14 */
-            output["container_id"] = container_id;
-            output["type"] = type;
-            output["number_of_slots"] = number_of_slots;
-            output["id_"] = id_;
-#else
-            output["container_id"] = container_id;
-            output["type"] = type;
-#endif
-
-            output["title"] = title;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::ContainerId)])] = GetContainerId();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Type)])] = GetType();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Title)])] = GetTitle();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::NumberOfSlots)])] = GetNumberOfSlots();
+            if (GetType() == "EntityHorse")
+            {
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Id_)])] = GetId_();
+            }
 
             return output;
         }
-
-    private:
-#if PROTOCOL_VERSION < 452 /* < 1.14 */
-        unsigned char container_id = 0;
-        std::string type;
-        unsigned char number_of_slots = 0;
-        int id_ = 0;
-#else
-        int container_id = 0;
-        int type = 0;
 #endif
-        Chat title;
     };
 } //ProtocolCraft

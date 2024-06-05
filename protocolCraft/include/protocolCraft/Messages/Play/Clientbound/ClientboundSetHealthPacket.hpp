@@ -43,70 +43,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Health";
 
-        virtual ~ClientboundSetHealthPacket() override
-        {
+        DECLARE_FIELDS_TYPES(float,  VarInt, float);
+        DECLARE_FIELDS_NAMES(Health, Food,   FoodSaturation);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetHealth(const float health_)
-        {
-            health = health_;
-        }
-
-        void SetFood(const int food_)
-        {
-            food = food_;
-        }
-
-        void SetFoodSaturation(const float food_saturation_)
-        {
-            food_saturation = food_saturation_;
-        }
-
-        float GetHealth() const
-        {
-            return health;
-        }
-
-        int GetFood() const
-        {
-            return food;
-        }
-
-        float GetFoodSaturation() const
-        {
-            return food_saturation;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            health = ReadData<float>(iter, length);
-            food = ReadData<VarInt>(iter, length);
-            food_saturation = ReadData<float>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<float>(health, container);
-            WriteData<VarInt>(food, container);
-            WriteData<float>(food_saturation, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["health"] = health;
-            output["food"] = food;
-            output["food_saturation"] = food_saturation;
-
-            return output;
-        }
-
-    private:
-        float health = 0.0f;
-        int food = 0;
-        float food_saturation = 0.0f;
+        GETTER_SETTER(Health);
+        GETTER_SETTER(Food);
+        GETTER_SETTER(FoodSaturation);
     };
 } //ProtocolCraft

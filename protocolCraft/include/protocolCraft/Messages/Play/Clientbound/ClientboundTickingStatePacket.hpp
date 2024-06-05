@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -18,59 +18,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Ticking State";
 
-        virtual ~ClientboundTickingStatePacket() override
-        {
+        DECLARE_FIELDS_TYPES(float,    bool);
+        DECLARE_FIELDS_NAMES(TickRate, IsFrozen);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetTickRate(const float tick_rate_)
-        {
-            tick_rate = tick_rate_;
-        }
-
-        void SetIsFrozen(const bool is_frozen_)
-        {
-            is_frozen = is_frozen_;
-        }
-
-
-        float GetTickRate() const
-        {
-            return tick_rate;
-        }
-
-        bool GetIsFrozen() const
-        {
-            return is_frozen;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            tick_rate = ReadData<float>(iter, length);
-            is_frozen = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<float>(tick_rate, container);
-            WriteData<bool>(is_frozen, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["tick_rate"] = tick_rate;
-            output["is_frozen"] = is_frozen;
-
-            return output;
-        }
-
-    private:
-        float tick_rate = 0.0f;
-        bool is_frozen = false;
+        GETTER_SETTER(TickRate);
+        GETTER_SETTER(IsFrozen);
     };
 } //ProtocolCraft
 #endif

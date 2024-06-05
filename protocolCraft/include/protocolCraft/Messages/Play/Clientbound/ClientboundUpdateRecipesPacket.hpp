@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Recipes/Recipe.hpp"
 
@@ -47,47 +47,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Recipes";
 
-        virtual ~ClientboundUpdateRecipesPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::vector<Recipe>);
+        DECLARE_FIELDS_NAMES(Recipes);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetRecipes(const std::vector<Recipe>& recipes_)
-        {
-            recipes = recipes_;
-        }
-
-
-        const std::vector<Recipe>& GetRecipes() const
-        {
-            return recipes;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            recipes = ReadData<std::vector<Recipe>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::vector<Recipe>>(recipes, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["recipes"] = recipes;
-
-            return output;
-        }
-
-    private:
-        std::vector<Recipe> recipes;
-
+        GETTER_SETTER(Recipes);
     };
 } //ProtocolCraft
 #endif

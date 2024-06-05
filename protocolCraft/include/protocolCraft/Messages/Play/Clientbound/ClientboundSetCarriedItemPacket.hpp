@@ -46,42 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Carried Item";
 
-        virtual ~ClientboundSetCarriedItemPacket() override
-        {
+        DECLARE_FIELDS_TYPES(char);
+        DECLARE_FIELDS_NAMES(Slot);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetSlot(const char slot_)
-        {
-            slot = slot_;
-        }
-
-        char GetSlot() const
-        {
-            return slot;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            slot = ReadData<char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<char>(slot, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["slot"] = slot;
-
-            return output;
-        }
-
-    private:
-        char slot = 0;
+        GETTER_SETTER(Slot);
     };
 }

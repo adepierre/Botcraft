@@ -46,198 +46,86 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Player Team";
 
-        virtual ~ClientboundSetPlayerTeamPacket() override
-        {
-
-        }
-
-        void SetName_(const std::string& name__)
-        {
-            name_ = name__;
-        }
-
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        void SetDisplayName(const std::string& display_name_)
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_FIELDS_TYPES(std::string, char,   std::string, std::string,  std::string,  char,    std::string,       std::string,   char,  std::vector<std::string>);
+        DECLARE_FIELDS_NAMES(Name_,       Method, DisplayName, PlayerPrefix, PlayerSuffix, Options, NametagVisibility, CollisionRule, Color, Players);
 #else
-        void SetDisplayName(const Chat& display_name_)
+        DECLARE_FIELDS_TYPES(std::string, char,   Chat,        char,    std::string,       std::string,   VarInt, Chat,        Chat,         std::vector<std::string>);
+        DECLARE_FIELDS_NAMES(Name_,       Method, DisplayName, Options, NametagVisibility, CollisionRule, Color,  PlayerPrefix, PlayerSuffix, Players);
 #endif
-        {
-            display_name = display_name_;
-        }
 
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        void SetPlayerPrefix(const std::string& player_prefix_)
-#else
-        void SetPlayerPrefix(const Chat& player_prefix_)
-#endif
-        {
-            player_prefix = player_prefix_;
-        }
-
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        void SetPlayerSuffix(const std::string& player_suffix_)
-#else
-        void SetPlayerSuffix(const Chat& player_suffix_)
-#endif
-        {
-            player_suffix = player_suffix_;
-        }
-
-        void SetNametagVisibility(const std::string& nametag_visibility_)
-        {
-            nametag_visibility = nametag_visibility_;
-        }
-
-        void SetCollisionRule(const std::string& collision_rule_)
-        {
-            collision_rule = collision_rule_;
-        }
-
-        void SetColor(const int color_)
-        {
-            color = color_;
-        }
-
-        void SetPlayers(const std::vector<std::string>& players_)
-        {
-            players = players_;
-        }
-
-        void SetMethod(const char method_)
-        {
-            method = method_;
-        }
-
-        void SetOptions(const char options_)
-        {
-            options = options_;
-        }
-
-
-        const std::string& GetName_() const
-        {
-            return name_;
-        }
-
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        const std::string& GetDisplayName() const
-#else
-        const Chat& GetDisplayName() const
-#endif
-        {
-            return display_name;
-        }
-
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        const std::string& GetPlayerPrefix() const
-#else
-        const Chat& GetPlayerPrefix() const
-#endif
-        {
-            return player_prefix;
-        }
-
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        const std::string& GetPlayerSuffix() const
-#else
-        const Chat& GetPlayerSuffix() const
-#endif
-        {
-            return player_suffix;
-        }
-
-        const std::string& GetNametagVisibility() const
-        {
-            return nametag_visibility;
-        }
-
-        const std::string& GetCollisionRule() const
-        {
-            return collision_rule;
-        }
-
-        int GetColor() const
-        {
-            return color;
-        }
-
-        const std::vector<std::string>& GetPlayers() const
-        {
-            return players;
-        }
-
-        char GetMethod() const
-        {
-            return method;
-        }
-
-        char GetOptions() const
-        {
-            return options;
-        }
-
+        GETTER_SETTER(Name_);
+        GETTER_SETTER(Method);
+        GETTER_SETTER(DisplayName);
+        GETTER_SETTER(PlayerPrefix);
+        GETTER_SETTER(PlayerSuffix);
+        GETTER_SETTER(Options);
+        GETTER_SETTER(NametagVisibility);
+        GETTER_SETTER(CollisionRule);
+        GETTER_SETTER(Color);
+        GETTER_SETTER(Players);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            name_ = ReadData<std::string>(iter, length);
-            method = ReadData<char>(iter, length);
-            if (method == 0 || method == 2)
+            SetName_(ReadData<std::string>(iter, length));
+            SetMethod(ReadData<char>(iter, length));
+            if (GetMethod() == 0 || GetMethod() == 2)
             {
 #if PROTOCOL_VERSION < 375 /* < 1.13 */
-                display_name = ReadData<std::string>(iter, length);
-                player_prefix = ReadData<std::string>(iter, length);
-                player_suffix = ReadData<std::string>(iter, length);
-                options = ReadData<char>(iter, length);
-                nametag_visibility = ReadData<std::string>(iter, length);
-                collision_rule = ReadData<std::string>(iter, length);
-                color = ReadData<char>(iter, length);
+                SetDisplayName(ReadData<std::string>(iter, length));
+                SetPlayerPrefix(ReadData<std::string>(iter, length));
+                SetPlayerSuffix(ReadData<std::string>(iter, length));
+                SetOptions(ReadData<char>(iter, length));
+                SetNametagVisibility(ReadData<std::string>(iter, length));
+                SetCollisionRule(ReadData<std::string>(iter, length));
+                SetColor(ReadData<char>(iter, length));
 #else
-                display_name = ReadData<Chat>(iter, length);
-                options = ReadData<char>(iter, length);
-                nametag_visibility = ReadData<std::string>(iter, length);
-                collision_rule = ReadData<std::string>(iter, length);
-                color = ReadData<VarInt>(iter, length);
-                player_prefix = ReadData<Chat>(iter, length);
-                player_suffix = ReadData<Chat>(iter, length);
+                SetDisplayName(ReadData<Chat>(iter, length));
+                SetOptions(ReadData<char>(iter, length));
+                SetNametagVisibility(ReadData<std::string>(iter, length));
+                SetCollisionRule(ReadData<std::string>(iter, length));
+                SetColor(ReadData<VarInt>(iter, length));
+                SetPlayerPrefix(ReadData<Chat>(iter, length));
+                SetPlayerSuffix(ReadData<Chat>(iter, length));
 #endif
             }
 
-            if (method == 0 || method == 3 || method == 4)
+            if (GetMethod() == 0 || GetMethod() == 3 || GetMethod() == 4)
             {
-                players = ReadData<std::vector<std::string>>(iter, length);
+                SetPlayers(ReadData<std::vector<std::string>>(iter, length));
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<std::string>(name_, container);
-            WriteData<char>(method, container);
+            WriteData<std::string>(GetName_(), container);
+            WriteData<char>(GetMethod(), container);
 
-            if (method == 0 || method == 2)
+            if (GetMethod() == 0 || GetMethod() == 2)
             {
 #if PROTOCOL_VERSION < 375 /* < 1.13 */
-                WriteData<std::string>(display_name, container);
-                WriteData<std::string>(player_prefix, container);
-                WriteData<std::string>(player_suffix, container);
-                WriteData<char>(options, container);
-                WriteData<std::string>(nametag_visibility, container);
-                WriteData<std::string>(collision_rule, container);
-                WriteData<char>(color, container);
+                WriteData<std::string>(GetDisplayName(), container);
+                WriteData<std::string>(GetPlayerPrefix(), container);
+                WriteData<std::string>(GetPlayerSuffix(), container);
+                WriteData<char>(GetOptions(), container);
+                WriteData<std::string>(GetNametagVisibility(), container);
+                WriteData<std::string>(GetCollisionRule(), container);
+                WriteData<char>(GetColor(), container);
 #else
-                WriteData<Chat>(display_name, container);
-                WriteData<char>(options, container);
-                WriteData<std::string>(nametag_visibility, container);
-                WriteData<std::string>(collision_rule, container);
-                WriteData<VarInt>(color, container);
-                WriteData<Chat>(player_prefix, container);
-                WriteData<Chat>(player_suffix, container);
+                WriteData<Chat>(GetDisplayName(), container);
+                WriteData<char>(GetOptions(), container);
+                WriteData<std::string>(GetNametagVisibility(), container);
+                WriteData<std::string>(GetCollisionRule(), container);
+                WriteData<VarInt>(GetColor(), container);
+                WriteData<Chat>(GetPlayerPrefix(), container);
+                WriteData<Chat>(GetPlayerSuffix(), container);
 #endif
             }
 
-            if (method == 0 || method == 3 || method == 4)
+            if (GetMethod() == 0 || GetMethod() == 3 || GetMethod() == 4)
             {
-                WriteData<std::vector<std::string>>(players, container);
+                WriteData<std::vector<std::string>>(GetPlayers(), container);
             }
         }
 
@@ -245,62 +133,26 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["name_"] = name_;
-            output["method"] = method;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Name_)])] = GetName_();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Method)])] = GetMethod();
 
-            if (method == 0 || method == 2)
+            if (GetMethod() == 0 || GetMethod() == 2)
             {
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-                output["display_name"] = display_name;
-                output["player_prefix"] = player_prefix;
-                output["player_suffix"] = player_suffix;
-                output["options"] = options;
-                output["nametag_visibility"] = nametag_visibility;
-                output["collision_rule"] = collision_rule;
-                output["color"] = color;
-#else
-                output["display_name"] = display_name;
-                output["options"] = options;
-                output["nametag_visibility"] = nametag_visibility;
-                output["collision_rule"] = collision_rule;
-                output["color"] = color;
-                output["player_prefix"] = player_prefix;
-                output["player_suffix"] = player_suffix;
-#endif
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::DisplayName)])] = GetDisplayName();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Options)])] = GetOptions();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NametagVisibility)])] = GetNametagVisibility();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::CollisionRule)])] = GetCollisionRule();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Color)])] = GetColor();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::PlayerPrefix)])] = GetPlayerPrefix();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::PlayerSuffix)])] = GetPlayerSuffix();
             }
 
-            if (method == 0 || method == 3 || method == 4)
+            if (GetMethod() == 0 || GetMethod() == 3 || GetMethod() == 4)
             {
-                output["players"] = players;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Players)])] = GetPlayers();
             }
 
             return output;
         }
-
-    private:
-        std::string name_;
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        std::string display_name;
-#else
-        Chat display_name;
-#endif
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        std::string player_prefix;
-        std::string player_suffix;
-#else
-        Chat player_prefix;
-        Chat player_suffix;
-#endif
-        std::string nametag_visibility;
-        std::string collision_rule;
-#if PROTOCOL_VERSION < 375 /* < 1.13 */
-        char color = 0;
-#else
-        int color = 0;
-#endif
-        std::vector<std::string> players;
-        char method = 0;
-        char options = 0;
-
     };
 } //ProtocolCraft

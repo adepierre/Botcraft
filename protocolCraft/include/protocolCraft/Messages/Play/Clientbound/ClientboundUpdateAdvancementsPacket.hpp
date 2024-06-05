@@ -52,98 +52,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Advancements";
 
-        virtual ~ClientboundUpdateAdvancementsPacket() override
-        {
+        DECLARE_FIELDS_TYPES(bool,  std::map<Identifier, Advancement>, std::vector<Identifier>, std::map<Identifier, AdvancementProgress>);
+        DECLARE_FIELDS_NAMES(Reset, Added,                             Removed,                 Progress);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetReset(const bool reset_)
-        {
-            reset = reset_;
-        }
-
-        void SetAdded(const std::map<Identifier, Advancement>& added_)
-        {
-            added = added_;
-        }
-
-        void SetRemoved(const std::vector<Identifier>& removed_)
-        {
-            removed = removed_;
-        }
-
-        void SetProgress(const std::map<Identifier, AdvancementProgress>& progress_)
-        {
-            progress = progress_;
-        }
-
-
-        bool GetReset() const
-        {
-            return reset;
-        }
-
-        const std::map<Identifier, Advancement>& GetAdded() const
-        {
-            return added;
-        }
-
-        const std::vector<Identifier>& GetRemoved() const
-        {
-            return removed;
-        }
-
-        const std::map<Identifier, AdvancementProgress>& GetProgress() const
-        {
-            return progress;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            reset = ReadData<bool>(iter, length);
-            added = ReadData<std::map<Identifier, Advancement>>(iter, length);
-            removed = ReadData<std::vector<Identifier>>(iter, length);
-            progress = ReadData<std::map<Identifier, AdvancementProgress>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<bool>(reset, container);
-            WriteData<std::map<Identifier, Advancement>>(added, container);
-            WriteData<std::vector<Identifier>>(removed, container);
-            WriteData<std::map<Identifier, AdvancementProgress>>(progress, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["reset"] = reset;
-
-            output["added"] = Json::Array();
-            for (const auto& p : added)
-            {
-                output["added"].push_back({ {"key", p.first}, {"value", p.second} });
-            }
-
-            output["removed"] = removed;
-
-            output["progress"] = Json::Array();
-            for (const auto& p : progress)
-            {
-                output["progress"].push_back({ {"key", p.first}, {"value", p.second} });
-            }
-
-            return output;
-        }
-
-    private:
-        bool reset = false;
-        std::map<Identifier, Advancement> added;
-        std::vector<Identifier> removed;
-        std::map<Identifier, AdvancementProgress> progress;
-
+        GETTER_SETTER(Reset);
+        GETTER_SETTER(Added);
+        GETTER_SETTER(Removed);
+        GETTER_SETTER(Progress);
     };
 } //ProtocolCraft

@@ -28,132 +28,24 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Add Painting";
 
-        virtual ~ClientboundAddPaintingPacket() override
-        {
-
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetUuid(const UUID& uuid_)
-        {
-            uuid = uuid_;
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetDirection(const char direction_)
-        {
-            direction = direction_;
-        }
-
-#if PROTOCOL_VERSION < 353 /* < 1.13 */
-        void SetTitle(const std::string& title_)
-        {
-            title = title_;
-        }
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_FIELDS_TYPES(VarInt, UUID, std::string, NetworkPosition, char);
+        DECLARE_FIELDS_NAMES(Id_,    Uuid, Title,       Pos,             Direction);
 #else
-        void SetMotive(const int motive_)
-        {
-            motive = motive_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, NetworkPosition, char);
+        DECLARE_FIELDS_NAMES(Id_,    Uuid, Motive, Pos,             Direction);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        const UUID& GetUuid() const
-        {
-            return uuid;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        char GetDirection() const
-        {
-            return direction;
-        }
-
-#if PROTOCOL_VERSION < 353 /* < 1.13 */
-        const std::string& GetTitle() const
-        {
-            return title;
-        }
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Uuid);
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        GETTER_SETTER(Title);
 #else
-        int GetMotive() const
-        {
-            return motive;
-        }
+        GETTER_SETTER(Motive);
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            uuid = ReadData<UUID>(iter, length);
-#if PROTOCOL_VERSION < 353 /* < 1.13 */
-            title = ReadData<std::string>(iter, length);
-#else
-            motive = ReadData<VarInt>(iter, length);
-#endif
-            pos = ReadData<NetworkPosition>(iter, length);
-            direction = ReadData<char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<UUID>(uuid, container);
-#if PROTOCOL_VERSION < 353 /* < 1.13 */
-            WriteData<std::string>(title, container);
-#else
-            WriteData<VarInt>(motive, container);
-#endif
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<char>(direction, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["uuid"] = uuid;
-#if PROTOCOL_VERSION < 353 /* < 1.13 */
-            output["title"] = title;
-#else
-            output["motive"] = motive;
-#endif
-            output["pos"] = pos;
-            output["direction"] = direction;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        UUID uuid = {};
-        NetworkPosition pos;
-        char direction = 0;
-#if PROTOCOL_VERSION < 353 /* < 1.13 */
-        std::string title;
-#else
-        int motive = 0;
-#endif
-
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Direction);
     };
 } //ProtocolCraft
 #endif

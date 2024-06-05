@@ -38,42 +38,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Client Command";
 
-        virtual ~ServerboundClientCommandPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Action);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetAction(const int action_)
-        {
-            action = action_;
-        }
-
-        int GetAction() const
-        {
-            return action;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            action = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(action, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["action"] = action;
-
-            return output;
-        }
-
-    private:
-        int action = 0;
+        GETTER_SETTER(Action);
     };
 } //ProtocolCraft

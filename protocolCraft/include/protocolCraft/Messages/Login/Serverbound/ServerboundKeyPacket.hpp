@@ -14,57 +14,26 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x01;
         static constexpr std::string_view packet_name = "Key";
 
-        virtual ~ServerboundKeyPacket() override
-        {
-
-        }
-
-        void SetKeyBytes(const std::vector<unsigned char>& key_bytes_)
-        {
-            key_bytes = key_bytes_;
-        }
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        void SetNonce(const std::vector<unsigned char>& nonce_)
-        {
-            nonce = nonce_;
-        }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        void SetSaltSignature(const SaltSignature& salt_signature_)
-        {
-            salt_signature = salt_signature_;
-        }
-#endif
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(std::vector<unsigned char>, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(KeyBytes,                   Nonce);
+#elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_FIELDS_TYPES(std::vector<unsigned char>, std::vector<unsigned char>, SaltSignature);
+        DECLARE_FIELDS_NAMES(KeyBytes,                   Nonce,                      SaltSignature);
 #else
-        void SetEncryptedChallenge(const std::vector<unsigned char>& encrypted_challenge_)
-        {
-            encrypted_challenge = encrypted_challenge_;
-        }
+        DECLARE_FIELDS_TYPES(std::vector<unsigned char>, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(KeyBytes,                   EncryptedChallenge);
 #endif
 
-        const std::vector<unsigned char>& GetKeyBytes() const
-        {
-            return key_bytes;
-        }
-
+        GETTER_SETTER(KeyBytes);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        const std::vector<unsigned char>& GetNonce() const
-        {
-            return nonce;
-        }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        const SaltSignature& GetSaltSignature() const
-        {
-            return salt_signature;
-        }
+        GETTER_SETTER(Nonce);
 #endif
-#else
-        const std::vector<unsigned char>& GetEncryptedChallenge() const
-        {
-            return encrypted_challenge;
-        }
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        GETTER_SETTER(SaltSignature);
+#endif
+#if PROTOCOL_VERSION > 760 /* > 1.19 */
+        GETTER_SETTER(EncryptedChallenge);
 #endif
 
     protected:

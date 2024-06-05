@@ -17,72 +17,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Chat Header";
 
-        virtual ~ClientboundPlayerChatHeaderPacket() override
-        {
+        DECLARE_FIELDS_TYPES(SignedMessageHeader, std::vector<unsigned char>, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(Header,              HeaderSignature,            BodyDigest);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetHeader(const SignedMessageHeader& header_)
-        {
-            header = header_;
-        }
-
-        void SetHeaderSignature(const std::vector<unsigned char>& header_signature_)
-        {
-            header_signature = header_signature_;
-        }
-
-        void SetBodyDigest(const std::vector<unsigned char>& body_digest_)
-        {
-            body_digest = body_digest_;
-        }
-
-
-        const SignedMessageHeader& GetHeader() const
-        {
-            return header;
-        }
-
-        const std::vector<unsigned char>& GetHeaderSignature() const
-        {
-            return header_signature;
-        }
-
-        const std::vector<unsigned char>& GetBodyDigest() const
-        {
-            return body_digest;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            header = ReadData<SignedMessageHeader>(iter, length);
-            header_signature = ReadData<std::vector<unsigned char>>(iter, length);
-            body_digest = ReadData<std::vector<unsigned char>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<SignedMessageHeader>(header, container);
-            WriteData<std::vector<unsigned char>>(header_signature, container);
-            WriteData<std::vector<unsigned char>>(body_digest, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["header"] = header;
-            output["header_signature"] = "Vector of " + std::to_string(header_signature.size()) + " unsigned char";
-            output["body_digest"] = "Vector of " + std::to_string(body_digest.size()) + " unsigned char";
-
-            return output;
-        }
-
-    private:
-        SignedMessageHeader header;
-        std::vector<unsigned char> header_signature;
-        std::vector<unsigned char> body_digest;
+        GETTER_SETTER(Header);
+        GETTER_SETTER(HeaderSignature);
+        GETTER_SETTER(BodyDigest);
     };
 }
 #endif

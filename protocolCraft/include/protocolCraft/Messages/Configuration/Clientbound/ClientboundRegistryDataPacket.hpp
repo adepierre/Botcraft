@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #pragma once
 
-#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #include "protocolCraft/BaseMessage.hpp"
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
@@ -28,87 +28,20 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Registry Data";
 
-        virtual ~ClientboundRegistryDataPacket() override
-        {
-
-        }
-
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetRegistryHolder(const NBT::Value& registry_holder_)
-        {
-            registry_holder = registry_holder_;
-        }
+        DECLARE_FIELDS_TYPES(NBT::UnnamedValue);
+        DECLARE_FIELDS_NAMES(RegistryHolder);
 #else
-        void SetRegistry(const Identifier& registry_)
-        {
-            registry = registry_;
-        }
-
-        void SetEntries(const std::vector<PackedRegistryEntry>& entries_)
-        {
-            entries = entries_;
-        }
+        DECLARE_FIELDS_TYPES(Identifier, std::vector<PackedRegistryEntry>);
+        DECLARE_FIELDS_NAMES(Registry,   Entries);
 #endif
-
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        const NBT::Value& GetRegistryHolder() const
-        {
-            return registry_holder;
-        }
-#else
-        const Identifier& GetRegistry() const
-        {
-            return registry;
-        }
-
-        const std::vector<PackedRegistryEntry>& GetEntries() const
-        {
-            return entries;
-        }
-#endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            registry_holder = ReadData<NBT::UnnamedValue>(iter, length);
-#else
-            registry = ReadData<Identifier>(iter, length);
-            entries = ReadData<std::vector<PackedRegistryEntry>>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<NBT::UnnamedValue>(registry_holder, container);
-#else
-            WriteData<Identifier>(registry, container);
-            WriteData<std::vector<PackedRegistryEntry>>(entries, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
+        DECLARE_READ_WRITE_SERIALIZE;
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            output["registry_holder"] = registry_holder;
+        GETTER_SETTER(RegistryHolder);
 #else
-            output["registry"] = registry;
-            output["entries"] = entries;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        NBT::Value registry_holder;
-#else
-        Identifier registry;
-        std::vector<PackedRegistryEntry> entries;
+        GETTER_SETTER(Registry);
+        GETTER_SETTER(Entries);
 #endif
     };
 } //ProtocolCraft

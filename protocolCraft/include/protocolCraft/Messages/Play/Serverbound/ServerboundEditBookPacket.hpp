@@ -1,6 +1,5 @@
-#pragma once
-
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
+#pragma once
 
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
 #include <vector>
@@ -50,137 +49,29 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Edit Book";
 
-        virtual ~ServerboundEditBookPacket() override
-        {
-
-        }
-
-#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-        void SetBook(const Slot& book_)
-        {
-            book = book_;
-        }
-
-        void SetSigning(const bool signing_)
-        {
-            signing = signing_;
-        }
+#if PROTOCOL_VERSION < 401 /* < 1.13.1 */
+        DECLARE_FIELDS_TYPES(Slot, bool);
+        DECLARE_FIELDS_NAMES(Book, Signing);
+#elif PROTOCOL_VERSION < 756 /* < 1.17.1 */
+        DECLARE_FIELDS_TYPES(Slot, bool,    VarInt);
+        DECLARE_FIELDS_NAMES(Book, Signing, Slot);
 #else
-        void SetPages(const std::vector<std::string>& pages_)
-        {
-            pages = pages_;
-        }
-
-        void SetTitle(const std::optional<std::string>& title_)
-        {
-            title = title_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt, std::vector<std::string>, std::optional<std::string>);
+        DECLARE_FIELDS_NAMES(Slot,   Pages,                    Title);
 #endif
-
-#if PROTOCOL_VERSION > 393 /* > 1.13 */
-        void SetSlot(const int slot_)
-        {
-            slot = slot_;
-        }
-#endif
-
+        DECLARE_READ_WRITE_SERIALIZE;
 
 #if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-        const Slot& GetBook() const
-        {
-            return book;
-        }
-
-        bool GetSigning() const
-        {
-            return signing;
-        }
-#else
-        const std::vector<std::string>& GetPages() const
-        {
-            return pages;
-        }
-
-        const std::optional<std::string>& GetTitle() const
-        {
-            return title;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 393 /* > 1.13 */
-        int GetSlot() const
-        {
-            return slot;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-            book = ReadData<Slot>(iter, length);
-            signing = ReadData<bool>(iter, length);
+        GETTER_SETTER(Book);
+        GETTER_SETTER(Signing);
 #endif
 #if PROTOCOL_VERSION > 393 /* > 1.13 */
-            slot = ReadData<VarInt>(iter, length);
+        GETTER_SETTER(Slot);
 #endif
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-            pages = ReadData<std::vector<std::string>>(iter, length);
-            title = ReadData<std::optional<std::string>>(iter, length);
+        GETTER_SETTER(Pages);
+        GETTER_SETTER(Title);
 #endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-            WriteData<Slot>(book, container);
-            WriteData<bool>(signing, container);
-#endif
-#if PROTOCOL_VERSION > 393 /* > 1.13 */
-            WriteData<VarInt>(slot, container);
-#endif
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            WriteData<std::vector<std::string>>(pages, container);
-            WriteData<std::optional<std::string>>(title, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-            output["book"] = book;
-            output["signing"] = signing;
-#endif
-#if PROTOCOL_VERSION > 393 /* > 1.13 */
-            output["slot"] = slot;
-#endif
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            output["pages"] = pages;
-
-            if (title.has_value())
-            {
-                output["title"] = title.value();
-            }
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-        Slot book;
-        bool signing = false;
-#else
-        std::vector<std::string> pages;
-        std::optional<std::string> title;
-#endif
-#if PROTOCOL_VERSION > 393 /* > 1.13 */
-        int slot = 0;
-#endif
-
     };
 } //ProtocolCraft
 #endif

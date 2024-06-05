@@ -54,112 +54,42 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Recipe";
 
-        virtual ~ClientboundRecipePacket() override
-        {
-
-        }
-
-        void SetState(const RecipeState state_)
-        {
-            state = state_;
-        }
-
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-        void SetRecipes(const std::vector<Identifier>& recipes_)
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_FIELDS_TYPES(DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<VarInt>, std::vector<VarInt>);
+        DECLARE_FIELDS_NAMES(State,                         BookSettings,       Recipes,             ToHighlight);
 #else
-        void SetRecipes(const std::vector<int>& recipes_)
+        DECLARE_FIELDS_TYPES(DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<Identifier>, std::vector<Identifier>);
+        DECLARE_FIELDS_NAMES(State,                         BookSettings,       Recipes,                 ToHighlight);
 #endif
-        {
-            recipes = recipes_;
-        }
 
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-        void SetToHighlight(const std::vector<Identifier>& to_highlight_)
-#else
-        void SetToHighlight(const std::vector<int>& to_highlight_)
-#endif
-        {
-            to_highlight = to_highlight_;
-        }
-
-        void SetBookSettings(const RecipeBookSettings& book_settings_)
-        {
-            book_settings = book_settings_;
-        }
-
-
-        RecipeState GetState() const
-        {
-            return state;
-        }
-
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-        const std::vector<Identifier>& GetRecipes() const
-#else
-        const std::vector<int>& GetRecipes() const
-#endif
-        {
-            return recipes;
-        }
-
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-        const std::vector<Identifier>& GetToHighlight() const
-#else
-        const std::vector<int>& GetToHighlight() const
-#endif
-        {
-            return to_highlight;
-        }
-
-        const RecipeBookSettings& GetBookSettings() const
-        {
-            return book_settings;
-        }
-
+        GETTER_SETTER(State);
+        GETTER_SETTER(BookSettings);
+        GETTER_SETTER(Recipes);
+        GETTER_SETTER(ToHighlight);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            state = ReadData<RecipeState, VarInt>(iter, length);
-            book_settings = ReadData<RecipeBookSettings>(iter, length);
+            SetState(ReadData<RecipeState, VarInt>(iter, length));
+            SetBookSettings(ReadData<RecipeBookSettings>(iter, length));
+            SetRecipes(ReadData<std::tuple_element_t<static_cast<size_t>(FieldsEnum::Recipes), typename Internal::SerializedType<FieldsTuple>::serialization_type>>(iter, length));
 
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-            recipes = ReadData<std::vector<Identifier>>(iter, length);
-#else
-            recipes = ReadData<std::vector<VarInt>>(iter, length);
-#endif
-
-            if (state == RecipeState::Init)
+            if (GetState() == RecipeState::Init)
             {
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-                to_highlight = ReadData<std::vector<Identifier>>(iter, length);
-#else
-                to_highlight = ReadData<std::vector<VarInt>>(iter, length);
-#endif
+                SetToHighlight(ReadData<std::tuple_element_t<static_cast<size_t>(FieldsEnum::ToHighlight), typename Internal::SerializedType<FieldsTuple>::serialization_type>>(iter, length));
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<RecipeState, VarInt>(state, container);
-            WriteData<RecipeBookSettings>(book_settings, container);
+            WriteData<RecipeState, VarInt>(GetState(), container);
+            WriteData<RecipeBookSettings>(GetBookSettings(), container);
 
+            WriteData<std::tuple_element_t<static_cast<size_t>(FieldsEnum::Recipes), typename Internal::SerializedType<FieldsTuple>::serialization_type>>(GetRecipes(), container);
 
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-
-            WriteData<std::vector<Identifier>>(recipes, container);
-#else
-            WriteData<std::vector<VarInt>>(recipes, container);
-#endif
-
-            if (state == RecipeState::Init)
+            if (GetState() == RecipeState::Init)
             {
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-
-                WriteData<std::vector<Identifier>>(to_highlight, container);
-#else
-                WriteData<std::vector<VarInt>>(to_highlight, container);
-#endif
+                WriteData<std::tuple_element_t<static_cast<size_t>(FieldsEnum::ToHighlight), typename Internal::SerializedType<FieldsTuple>::serialization_type>>(GetToHighlight(), container);
             }
         }
 
@@ -167,32 +97,17 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["state"] = state;
-            output["recipes"]= recipes;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::State)])] = GetState();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Recipes)])] = GetRecipes();
 
-            if (state == RecipeState::Init)
+            if (GetState() == RecipeState::Init)
             {
-                output["to_highlight"] = to_highlight;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ToHighlight)])] = GetToHighlight();
             }
 
-            output["book_settings"] = book_settings;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::BookSettings)])] = GetBookSettings();
 
             return output;
         }
-
-    private:
-        RecipeState state = RecipeState::Init;
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-        std::vector<Identifier> recipes;
-#else
-        std::vector<int> recipes;
-#endif
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-        std::vector<Identifier> to_highlight;
-#else
-        std::vector<int> to_highlight;
-#endif
-        RecipeBookSettings book_settings;
-
     };
 } //ProtocolCraft

@@ -45,101 +45,14 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Vehicle";
 
-        virtual ~ClientboundMoveVehiclePacket() override
-        {
+        DECLARE_FIELDS_TYPES(double, double, double, float, float);
+        DECLARE_FIELDS_NAMES(X,      Y,      Z,      YRot,  XRot);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
-
-        void SetYRot(const float yRot_)
-        {
-            yRot = yRot_;
-        }
-
-        void SetXRot(const float xRot_)
-        {
-            xRot = xRot_;
-        }
-
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        float GetYRot() const
-        {
-            return yRot;
-        }
-
-        float GetXRot() const
-        {
-            return xRot;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-            yRot = ReadData<float>(iter, length);
-            xRot = ReadData<float>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-            WriteData<float>(yRot, container);
-            WriteData<float>(xRot, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["yRot"] = yRot;
-            output["xRot"] = xRot;
-
-            return output;
-        }
-
-    private:
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        float yRot = 0.0f;
-        float xRot = 0.0f;
-
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(YRot);
+        GETTER_SETTER(XRot);
     };
 } //ProtocolCraft

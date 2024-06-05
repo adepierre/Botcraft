@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 755 /* > 1.17 */
 #pragma once
 
-#if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 755 /* > 1.17 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -46,47 +46,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Remove Entities";
 
-        virtual ~ClientboundRemoveEntitiesPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::vector<VarInt>);
+        DECLARE_FIELDS_NAMES(EntityIds);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetEntityIds(const std::vector<int>& entity_ids_)
-        {
-            entity_ids = entity_ids_;
-        }
-
-
-        const std::vector<int>& GetEntityIds() const
-        {
-            return entity_ids;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            entity_ids = ReadData<std::vector<VarInt>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::vector<VarInt>>(entity_ids, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["entity_ids"] = entity_ids;
-
-            return output;
-        }
-
-    private:
-        std::vector<int> entity_ids;
-
+        GETTER_SETTER(EntityIds);
     };
 } //ProtocolCraft
 #endif

@@ -45,97 +45,21 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Set Slot";
 
-        virtual ~ClientboundContainerSetSlotPacket() override
-        {
+#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
+        DECLARE_FIELDS_TYPES(char,        short, Slot);
+        DECLARE_FIELDS_NAMES(ContainerId, Slot,  ItemStack);
+#else
+        DECLARE_FIELDS_TYPES(char,        VarInt,  short, Slot);
+        DECLARE_FIELDS_NAMES(ContainerId, StateId, Slot,  ItemStack);
 
-        }
-
-        void SetContainerId(const char container_id_)
-        {
-            container_id = container_id_;
-        }
-
-        void SetSlot_(const short slot_)
-        {
-            slot = slot_;
-        }
-
-        void SetItemStack(const Slot& item_stack_)
-        {
-            item_stack = item_stack_;
-        }
-
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-        void SetStateId(const int state_id_)
-        {
-            state_id = state_id_;
-        }
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        char GetContainerId() const
-        {
-            return container_id;
-        }
-
-        short GetSlot() const
-        {
-            return slot;
-        }
-
-        const Slot& GetItemStack() const
-        {
-            return item_stack;
-        }
-
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(Slot);
+        GETTER_SETTER(ItemStack);
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-        int GetStateId() const
-        {
-            return state_id;
-        }
+        GETTER_SETTER(StateId);
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            container_id = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            state_id = ReadData<VarInt>(iter, length);
-#endif
-            slot = ReadData<short>(iter, length);
-            item_stack = ReadData<Slot>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<char>(container_id, container);
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            WriteData<VarInt>(state_id, container);
-#endif
-            WriteData<short>(slot, container);
-            WriteData<Slot>(item_stack, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-            output["slot"] = slot;
-            output["item_stack"] = item_stack;
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            output["state_id"] = state_id;
-#endif
-
-            return output;
-        }
-
-    private:
-        char container_id = 0;
-        short slot = 0;
-        Slot item_stack;
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-        int state_id = 0;
-#endif
-
     };
 } //ProtocolCraft

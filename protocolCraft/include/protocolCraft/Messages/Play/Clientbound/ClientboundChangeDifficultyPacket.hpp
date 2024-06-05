@@ -37,69 +37,18 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Change Difficulty";
 
-        virtual ~ClientboundChangeDifficultyPacket() override
-        {
-
-        }
-
-        void SetDifficulty(const int difficulty_)
-        {
-            difficulty = difficulty_;
-        }
-
-#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
-        void SetLocked(const bool locked_)
-        {
-            locked = locked_;
-        }
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        DECLARE_FIELDS_TYPES(unsigned char);
+        DECLARE_FIELDS_NAMES(Difficulty);
+#else
+        DECLARE_FIELDS_TYPES(unsigned char, bool);
+        DECLARE_FIELDS_NAMES(Difficulty,    Locked);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        int GetDifficulty() const
-        {
-            return difficulty;
-        }
-
-#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
-        bool GetLocked() const
-        {
-            return locked;
-        }
-#endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            difficulty = ReadData<unsigned char>(iter, length);
-#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
-            locked = ReadData<bool>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<unsigned char>((unsigned char)difficulty, container);
-#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
-            WriteData<bool>(locked, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["difficulty"] = difficulty;
-#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
-            output["locked"] = locked;
-#endif
-
-            return output;
-        }
-
-    private:
-        int difficulty = 0;
-
-#if PROTOCOL_VERSION >= 477 /* >= 1.14 */
-        bool locked = false;
+        GETTER_SETTER(Difficulty);
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        GETTER_SETTER(Locked);
 #endif
     };
 } //ProtocolCraft

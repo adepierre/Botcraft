@@ -20,77 +20,20 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chat Ack";
 
-        virtual ~ServerboundChatAckPacket() override
-        {
-
-        }
-
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_FIELDS_TYPES(LastSeenMessagesUpdate);
+        DECLARE_FIELDS_NAMES(LastSeenMessages);
+#else
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Offset);
+#endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        void SetLastSeenMessages(const LastSeenMessagesUpdate& last_seen_messages_)
-        {
-            last_seen_messages = last_seen_messages_;
-        }
+        GETTER_SETTER(LastSeenMessages);
 #else
-        void SetOffset(const int offset_)
-        {
-            offset = offset_;
-        }
+        GETTER_SETTER(Offset);
 #endif
-
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        const LastSeenMessagesUpdate& GetLastSeenMessages() const
-        {
-            return last_seen_messages;
-        }
-#else
-        int GetOffset() const
-        {
-            return offset;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            last_seen_messages = ReadData<LastSeenMessagesUpdate>(iter, length);
-#else
-            offset = ReadData<VarInt>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteData<LastSeenMessagesUpdate>(last_seen_messages, container);
-#else
-            WriteData<VarInt>(offset, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            output["last_seen_message"] = last_seen_messages;
-#else
-            output["offset"] = offset;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        LastSeenMessagesUpdate last_seen_messages;
-#else
-        int offset = 0;
-#endif
-
     };
 } //ProtocolCraft
 #endif

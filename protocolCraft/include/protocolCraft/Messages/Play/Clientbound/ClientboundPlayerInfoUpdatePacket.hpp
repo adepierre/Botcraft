@@ -1,12 +1,11 @@
-#pragma once
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
+#pragma once
 
 #include <string>
 #include <map>
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
-#include "protocolCraft/Types/PlayerUpdate.hpp"
 #include "protocolCraft/Types/GameProfile/GameProfile.hpp"
 #include "protocolCraft/Types/GameProfile/GameProfileProperty.hpp"
 #include "protocolCraft/Types/Chat/RemoteChatSessionData.hpp"
@@ -56,31 +55,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Info Update";
 
-        virtual ~ClientboundPlayerInfoUpdatePacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::vector<PlayerInfoUpdateAction>, std::map<UUID, PlayerInfoUpdateEntry>);
+        DECLARE_FIELDS_NAMES(Actions,                             Entries);
 
-        }
-
-        void SetActions(const std::vector<PlayerInfoUpdateAction>& actions_)
-        {
-            actions = actions_;
-        }
-
-        void SetEntries(const std::map<UUID, PlayerInfoUpdateEntry>& entries_)
-        {
-            entries = entries_;
-        }
-
-
-        const std::vector<PlayerInfoUpdateAction>& GetActions() const
-        {
-            return actions;
-        }
-
-        const std::map<UUID, PlayerInfoUpdateEntry>& GetEntries() const
-        {
-            return entries;
-        }
+        GETTER_SETTER(Actions);
+        GETTER_SETTER(Entries);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
@@ -88,7 +67,7 @@ namespace ProtocolCraft
             // Get the number of bits to encode all possible actions in a bitset
             constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
             std::bitset<bitset_size> bitset = ReadData<std::bitset<bitset_size>>(iter, length);
-            actions.clear();
+            std::vector<PlayerInfoUpdateAction> actions;
             for (size_t i = 0; i < bitset_size; ++i)
             {
                 if (bitset[i])
@@ -96,7 +75,9 @@ namespace ProtocolCraft
                     actions.push_back(static_cast<PlayerInfoUpdateAction>(i));
                 }
             }
+            SetActions(actions);
 
+            std::map<UUID, PlayerInfoUpdateEntry> entries;
             const int entries_length = ReadData<VarInt>(iter, length);
             for (int i = 0; i < entries_length; ++i)
             {
@@ -107,7 +88,7 @@ namespace ProtocolCraft
                     switch (a)
                     {
                     case PlayerInfoUpdateAction::AddPlayer:
-                        entry.game_profile.SetUUID(uuid);
+                        entry.game_profile.SetUuid(uuid);
                         entry.game_profile.SetName(ReadData<std::string>(iter, length));
                         entry.game_profile.SetProperties(ReadData<std::vector<GameProfileProperty>>(iter, length));
                         break;
@@ -131,23 +112,24 @@ namespace ProtocolCraft
                     }
                 }
             }
+            SetEntries(entries);
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
             constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
             std::bitset<bitset_size> bitset;
-            for (const auto a : actions)
+            for (const auto a : GetActions())
             {
                 bitset.set(static_cast<size_t>(a), true);
             }
             WriteData<std::bitset<bitset_size>>(bitset, container);
 
-            WriteData<VarInt>(static_cast<int>(entries.size()), container);
-            for (const auto& p : entries)
+            WriteData<VarInt>(static_cast<int>(GetEntries().size()), container);
+            for (const auto& p : GetEntries())
             {
                 WriteData<UUID>(p.first, container);
-                for (const auto a : actions)
+                for (const auto a : GetActions())
                 {
                     switch (a)
                     {
@@ -181,14 +163,14 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["actions"] = actions;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Actions)])] = GetActions();
 
-            output["entries"] = Json::Array();
-            for (const auto& p : entries)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])] = Json::Array();
+            for (const auto& p : GetEntries())
             {
                 Json::Value entry = Json::Object();
                 entry["uuid"] = p.first;
-                for (const auto a : actions)
+                for (const auto a : GetActions())
                 {
                     switch (a)
                     {
@@ -220,15 +202,11 @@ namespace ProtocolCraft
                         break;
                     }
                 }
-                output["entries"].push_back(entry);
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])].push_back(entry);
             }
 
             return output;
         }
-
-    private:
-        std::vector<PlayerInfoUpdateAction> actions;
-        std::map<UUID, PlayerInfoUpdateEntry> entries;
     };
 } //ProtocolCraft
 #endif

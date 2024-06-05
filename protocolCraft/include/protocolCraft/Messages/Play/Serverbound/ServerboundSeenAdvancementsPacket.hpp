@@ -42,49 +42,28 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Seen Advancement";
 
-        virtual ~ServerboundSeenAdvancementsPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, Identifier);
+        DECLARE_FIELDS_NAMES(Action, Tab);
 
-        }
-
-        void SetAction(const int action_)
-        {
-            action = action_;
-        }
-
-        void SetTab(const Identifier& tab_)
-        {
-            tab = tab_;
-        }
-
-
-        int GetAction() const
-        {
-            return action;
-        }
-
-        const Identifier& GetTab() const
-        {
-            return tab;
-        }
-
+        GETTER_SETTER(Action);
+        GETTER_SETTER(Tab);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            action = ReadData<VarInt>(iter, length);
-            if (action == 0)
+            SetAction(ReadData<VarInt>(iter, length));
+            if (GetAction() == 0)
             {
-                tab = ReadData<Identifier>(iter, length);
+                SetTab(ReadData<Identifier>(iter, length));
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(action, container);
-            if (action == 0)
+            WriteData<VarInt>(GetAction(), container);
+            if (GetAction() == 0)
             {
-                WriteData<Identifier>(tab, container);
+                WriteData<Identifier>(GetTab(), container);
             }
         }
 
@@ -92,18 +71,13 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["action"] = action;
-            if (action == 0)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Action)])] = GetAction();
+            if (GetAction() == 0)
             {
-                output["tab"] = tab;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Tab)])] = GetTab();
             }
 
             return output;
         }
-
-    private:
-        int action = 0;
-        Identifier tab;
-
     };
 } //ProtocolCraft

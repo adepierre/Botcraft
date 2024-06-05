@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
@@ -32,47 +32,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Title Text";
 
-        virtual ~ClientboundSetTitleTextPacket() override
-        {
+        DECLARE_FIELDS_TYPES(Chat);
+        DECLARE_FIELDS_NAMES(Text);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetText(const Chat& text_)
-        {
-            text = text_;
-        }
-
-
-        const Chat& GetText() const
-        {
-            return text;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            text = ReadData<Chat>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<Chat>(text, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["text"] = text;
-
-            return output;
-        }
-
-    private:
-        Chat text;
-
+        GETTER_SETTER(Text);
     };
 } //ProtocolCraft
 #endif

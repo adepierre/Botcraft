@@ -47,73 +47,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Take Item Entity";
 
-        virtual ~ClientboundTakeItemEntityPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt);
+        DECLARE_FIELDS_NAMES(ItemId, PlayerId, Amount);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetItemId(const int item_id_)
-        {
-            item_id = item_id_;
-        }
-
-        void SetPlayerId(const int player_id_)
-        {
-            player_id = player_id_;
-        }
-
-        void SetAmount(const int amount_)
-        {
-            amount = amount_;
-        }
-
-
-        int GetItemId() const
-        {
-            return item_id;
-        }
-
-        int GetPlayerId() const
-        {
-            return player_id;
-        }
-
-        int GetAmount() const
-        {
-            return amount;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            item_id = ReadData<VarInt>(iter, length);
-            player_id = ReadData<VarInt>(iter, length);
-            amount = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(item_id, container);
-            WriteData<VarInt>(player_id, container);
-            WriteData<VarInt>(amount, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["item_id"] = item_id;
-            output["player_id"] = player_id;
-            output["amount"] = amount;
-
-            return output;
-        }
-
-    private:
-        int item_id = 0;
-        int player_id = 0;
-        int amount = 0;
-
+        GETTER_SETTER(ItemId);
+        GETTER_SETTER(PlayerId);
+        GETTER_SETTER(Amount);
     };
 } //ProtocolCraft

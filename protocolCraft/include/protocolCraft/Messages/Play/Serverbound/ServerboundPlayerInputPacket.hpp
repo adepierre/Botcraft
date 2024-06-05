@@ -44,73 +44,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Input";
 
-        virtual ~ServerboundPlayerInputPacket() override
-        {
+        DECLARE_FIELDS_TYPES(float, float, unsigned char);
+        DECLARE_FIELDS_NAMES(Xxa,   Zza,   Flags);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetXxa(const float xxa_)
-        {
-            xxa = xxa_;
-        }
-
-        void SetZza(const float zza_)
-        {
-            zza = zza_;
-        }
-
-        void SetFlags(const unsigned char flags_)
-        {
-            flags = flags_;
-        }
-
-
-        float GetXxa() const
-        {
-            return xxa;
-        }
-
-        float GetZza() const
-        {
-            return zza;
-        }
-
-        unsigned char GetFlags() const
-        {
-            return flags;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            xxa = ReadData<float>(iter, length);
-            zza = ReadData<float>(iter, length);
-            flags = ReadData<unsigned char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<float>(xxa, container);
-            WriteData<float>(zza, container);
-            WriteData<unsigned char>(flags, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["xxa"] = xxa;
-            output["zza"] = zza;
-            output["flags"] = flags;
-
-            return output;
-        }
-
-    private:
-        float xxa = 0.0f;
-        float zza = 0.0f;
-        unsigned char flags = 0;
-
+        GETTER_SETTER(Xxa);
+        GETTER_SETTER(Zza);
+        GETTER_SETTER(Flags);
     };
 } //ProtocolCraft

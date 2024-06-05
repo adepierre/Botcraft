@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
 #pragma once
 
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
 #include "protocolCraft/BaseMessage.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
@@ -47,102 +47,21 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Ressource Pack";
 
-        virtual ~ClientboundResourcePackPacket() override
-        {
-
-        }
-
-        void SetUrl(const std::string& url_)
-        {
-            url = url_;
-        }
-
-        void SetHash(const std::string& hash_)
-        {
-            hash = hash_;
-        }
-
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        void SetRequired(const bool required_)
-        {
-            required = required_;
-        }
-
-        void SetPrompt(const std::optional<Chat>& prompt_)
-        {
-            prompt = prompt_;
-        }
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        DECLARE_FIELDS_TYPES(std::string, std::string);
+        DECLARE_FIELDS_NAMES(Url,         Hash);
+#else
+        DECLARE_FIELDS_TYPES(std::string, std::string, bool,     std::optional<Chat>);
+        DECLARE_FIELDS_NAMES(Url,         Hash,        Required, Prompt);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-        const std::string& GetUrl() const
-        {
-            return url;
-        }
-
-        const std::string& GetHash() const
-        {
-            return hash;
-        }
-
+        GETTER_SETTER(Url);
+        GETTER_SETTER(Hash);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        bool GetRequired() const
-        {
-            return required;
-        }
-
-        const std::optional<Chat>& GetPrompt() const
-        {
-            return prompt;
-        }
+        GETTER_SETTER(Required);
+        GETTER_SETTER(Prompt);
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            url = ReadData<std::string>(iter, length);
-            hash = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            required = ReadData<bool>(iter, length);
-            prompt = ReadData<std::optional<Chat>>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::string>(url, container);
-            WriteData<std::string>(hash, container);
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            WriteData<bool>(required, container);
-            WriteData<std::optional<Chat>>(prompt, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["url"] = url;
-            output["hash"] = hash;
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            output["required"] = required;
-            if (prompt.has_value())
-            {
-                output["prompt"] = prompt.value();
-            }
-#endif
-
-            return output;
-        }
-
-    private:
-        std::string url;
-        std::string hash;
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        bool required = false;
-        std::optional<Chat> prompt;
-#endif
-
     };
 } //ProtocolCraft
 #endif

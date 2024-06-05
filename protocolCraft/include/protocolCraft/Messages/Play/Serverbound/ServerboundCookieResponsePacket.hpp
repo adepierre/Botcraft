@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
@@ -20,72 +20,36 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Cookie Response";
 
-        virtual ~ServerboundCookieResponsePacket() override
-        {
+        DECLARE_FIELDS_TYPES(Identifier, std::optional<std::vector<unsigned char>>);
+        DECLARE_FIELDS_NAMES(Key,        Payload);
+        DECLARE_SERIALIZE;
 
-        }
-
-        void SetKey(const Identifier& key_)
-        {
-            key = key_;
-        }
-
-        void SetPayload(const std::optional<std::vector<unsigned char>>& payload_)
-        {
-            payload = payload_;
-        }
-
-
-        const Identifier& GetKey() const
-        {
-            return key;
-        }
-
-        const std::optional<std::vector<unsigned char>>& GetPayload() const
-        {
-            return payload;
-        }
+        GETTER_SETTER(Key);
+        GETTER_SETTER(Payload);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            key = ReadData<Identifier>(iter, length);
+            SetKey(ReadData<Identifier>(iter, length));
             // special case, read all remaining bytes
-            payload = ReadOptional<std::vector<unsigned char>>(iter, length,
+            SetPayload(ReadOptional<std::vector<unsigned char>>(iter, length,
                 [](ReadIterator& i, size_t& l)
                 {
                     return ReadByteArray(i, l, l);
                 }
-            );
+            ));
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<Identifier>(key, container);
+            WriteData<Identifier>(GetKey(), container);
             // special case, write all bytes without size prefix
-            WriteOptional<std::vector<unsigned char>>(payload, container,
+            WriteOptional<std::vector<unsigned char>>(GetPayload(), container,
                 [](const std::vector<unsigned char>& v, WriteContainer& c)
                 {
                     WriteByteArray(v, c);
                 });
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["key"] = key;
-            if (payload.has_value())
-            {
-                output["payload"] = "vector of " + std::to_string(payload.value().size()) + " unsigned char";
-            }
-
-            return output;
-        }
-
-    private:
-        Identifier key;
-        std::optional<std::vector<unsigned char>> payload;
     };
 } // ProtocolCraft
 #endif

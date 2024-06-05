@@ -45,70 +45,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Abilities";
 
-        virtual ~ClientboundPlayerAbilitiesPacket() override
-        {
+        DECLARE_FIELDS_TYPES(char, float, float);
+        DECLARE_FIELDS_NAMES(Flags, FlyingSpeed, WalkingSpeed);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetFlags(const char flags_)
-        {
-            flags = flags_;
-        }
-
-        void SetFlyingSpeed(const float flying_speed_)
-        {
-            flying_speed = flying_speed_;
-        }
-
-        void SetWalkingSpeed(const float walking_speed_)
-        {
-            walking_speed = walking_speed_;
-        }
-
-        char GetFlags() const
-        {
-            return flags;
-        }
-
-        float GetFlyingSpeed() const
-        {
-            return flying_speed;
-        }
-
-        float GetWalkingSpeed() const
-        {
-            return walking_speed;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            flags = ReadData<char>(iter, length);
-            flying_speed = ReadData<float>(iter, length);
-            walking_speed = ReadData<float>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<char>(flags, container);
-            WriteData<float>(flying_speed, container);
-            WriteData<float>(walking_speed, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["flags"] = flags;
-            output["flying_speed"] = flying_speed;
-            output["walking_speed"] = walking_speed;
-
-            return output;
-        }
-
-    private:
-        char flags = 0;
-        float flying_speed = 0.0f;
-        float walking_speed = 0.0f;
+        GETTER_SETTER(Flags);
+        GETTER_SETTER(FlyingSpeed);
+        GETTER_SETTER(WalkingSpeed);
     };
 }

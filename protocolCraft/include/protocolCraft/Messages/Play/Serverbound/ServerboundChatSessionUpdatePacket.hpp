@@ -22,46 +22,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chat Session Update";
 
-        virtual ~ServerboundChatSessionUpdatePacket() override
-        {
+        DECLARE_FIELDS_TYPES(RemoteChatSessionData);
+        DECLARE_FIELDS_NAMES(ChatSession);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetChatSession(const RemoteChatSessionData& chat_session_)
-        {
-            chat_session = chat_session_;
-        }
-
-
-        const RemoteChatSessionData& GetChatSession() const
-        {
-            return chat_session;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            chat_session = ReadData<RemoteChatSessionData>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<RemoteChatSessionData>(chat_session, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["chat_session"] = chat_session;
-
-
-            return output;
-        }
-
-    private:
-        RemoteChatSessionData chat_session;
+        GETTER_SETTER(ChatSession);
     };
 } //ProtocolCraft
 #endif

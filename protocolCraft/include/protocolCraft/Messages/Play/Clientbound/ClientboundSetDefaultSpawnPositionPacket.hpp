@@ -47,71 +47,18 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Default Spawn Position";
 
-        virtual ~ClientboundSetDefaultSpawnPositionPacket() override
-        {
-
-        }
-
-        void SetLocation(const NetworkPosition& location_)
-        {
-            location = location_;
-        }
-
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        void SetAngle(const float angle_)
-        {
-            angle = angle_;
-        }
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        DECLARE_FIELDS_TYPES(NetworkPosition);
+        DECLARE_FIELDS_NAMES(Location);
+#else
+        DECLARE_FIELDS_TYPES(NetworkPosition, float);
+        DECLARE_FIELDS_NAMES(Location,        Angle);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-        const NetworkPosition& GetLocation() const
-        {
-            return location;
-        }
-
+        GETTER_SETTER(Location);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        float GetAngle() const
-        {
-            return angle;
-        }
+        GETTER_SETTER(Angle);
 #endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            location = ReadData<NetworkPosition>(iter, length);
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            angle = ReadData<float>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-           WriteData<NetworkPosition>(location, container);
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-           WriteData<float>(angle, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["location"] = location;
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            output["angle"] = angle;
-#endif
-
-            return output;
-        }
-
-    private:
-        NetworkPosition location;
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        float angle = 0.0f;
-#endif
-
     };
 } //ProtocolCraft

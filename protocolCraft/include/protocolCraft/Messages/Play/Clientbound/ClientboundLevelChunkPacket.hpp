@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #pragma once
 
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
 
@@ -35,195 +35,115 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Level Chunk";
 
-        virtual ~ClientboundLevelChunkPacket() override
-        {
-
-        }
-
-        void SetX(const int x_)
-        {
-            x = x_;
-        }
-
-        void SetZ(const int z_)
-        {
-            z = z_;
-        }
-
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */ && PROTOCOL_VERSION < 745 /* < 1.16.2 */
-        void SetIgnoreOldData(const bool ignore_old_data_)
-        {
-            ignore_old_data = ignore_old_data_;
-        }
-#endif
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        void SetAvailableSections(const int available_sections_)
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        DECLARE_FIELDS_TYPES(int, int, bool,      VarInt,            std::vector<unsigned char>, std::vector<NBT::UnnamedValue>);
+        DECLARE_FIELDS_NAMES(X,   Z,   FullChunk, AvailableSections, Buffer,                     BlockEntitiesTags);
+#elif PROTOCOL_VERSION < 573 /* < 1.15 */
+        DECLARE_FIELDS_TYPES(int, int, bool,      VarInt,            NBT::UnnamedValue, std::vector<unsigned char>, std::vector<NBT::UnnamedValue>);
+        DECLARE_FIELDS_NAMES(X,   Z,   FullChunk, AvailableSections, Heightmaps,        Buffer,                     BlockEntitiesTags);
+#elif PROTOCOL_VERSION < 735 /* < 1.16 */
+        DECLARE_FIELDS_TYPES(int, int, bool,      VarInt,            NBT::UnnamedValue, std::vector<int>, std::vector<unsigned char>, std::vector<NBT::UnnamedValue>);
+        DECLARE_FIELDS_NAMES(X,   Z,   FullChunk, AvailableSections, Heightmaps,        Biomes,           Buffer,                     BlockEntitiesTags);
+#elif PROTOCOL_VERSION < 751 /* < 1.16.2 */
+        DECLARE_FIELDS_TYPES(int, int, bool,      bool,          VarInt,            NBT::UnnamedValue, std::vector<int>, std::vector<unsigned char>, std::vector<NBT::UnnamedValue>);
+        DECLARE_FIELDS_NAMES(X,   Z,   FullChunk, IgnoreOldData, AvailableSections, Heightmaps,        Biomes,           Buffer,                     BlockEntitiesTags);
+#elif PROTOCOL_VERSION < 755 /* < 1.17 */
+        DECLARE_FIELDS_TYPES(int, int, bool,      VarInt,            NBT::UnnamedValue, std::vector<VarInt>, std::vector<unsigned char>, std::vector<NBT::UnnamedValue>);
+        DECLARE_FIELDS_NAMES(X,   Z,   FullChunk, AvailableSections, Heightmaps,        Biomes,              Buffer,                     BlockEntitiesTags);
 #else
-        void SetAvailableSections(const std::vector<unsigned long long int>& available_sections_)
+        DECLARE_FIELDS_TYPES(int, int, std::vector<unsigned long long int>, NBT::UnnamedValue, std::vector<VarInt>, std::vector<unsigned char>, std::vector<NBT::UnnamedValue>);
+        DECLARE_FIELDS_NAMES(X,   Z,   AvailableSections,                   Heightmaps,        Biomes,              Buffer,                     BlockEntitiesTags);
 #endif
-        {
-            available_sections = available_sections_;
-        }
+        DECLARE_SERIALIZE;
 
-#if PROTOCOL_VERSION > 442 /* > 1.13.2 */
-        void SetHeightmaps(const NBT::Value& heightmaps_)
-        {
-            heightmaps = heightmaps_;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
-        void SetBiomes(const std::vector<int>& biomes_)
-        {
-            biomes = biomes_;
-        }
-#endif
-
-        void SetBuffer(const std::vector<unsigned char>& buffer_)
-        {
-            buffer = buffer_;
-        }
-
-        void SetBlockEntitiesTags(const std::vector<NBT::Value>& block_entities_tags_)
-        {
-            block_entities_tags = block_entities_tags_;
-        }
-
+        GETTER_SETTER(X);
+        GETTER_SETTER(Z);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        void SetFullChunk(const bool full_chunk_)
-        {
-            full_chunk = full_chunk_;
-        }
+        GETTER_SETTER(FullChunk);
 #endif
-
-
-        int GetX() const
-        {
-            return x;
-        }
-
-        int GetZ() const
-        {
-            return z;
-        }
-
+        GETTER_SETTER(AvailableSections);
+        GETTER_SETTER(Buffer);
+        GETTER_SETTER(BlockEntitiesTags);
+#if PROTOCOL_VERSION > 442 /* > 1.13.2 */
+        GETTER_SETTER(Heightmaps);
+#endif
+#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
+        GETTER_SETTER(Biomes);
+#endif
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */ && PROTOCOL_VERSION < 745 /* < 1.16.2 */
-        bool GetIgnoreOldData() const
-        {
-            return ignore_old_data;
-        }
-#endif
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        int GetAvailableSections() const
-#else
-        const std::vector<unsigned long long int>& GetAvailableSections() const
-#endif
-        {
-            return available_sections;
-        }
-
-#if PROTOCOL_VERSION > 442 /* > 1.13.2 */
-        const NBT::Value& GetHeightmaps() const
-        {
-            return heightmaps;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
-        const std::vector<int>& GetBiomes() const
-        {
-            return biomes;
-        }
-#endif
-
-        const std::vector<unsigned char>& GetBuffer() const
-        {
-            return buffer;
-        }
-
-        const std::vector<NBT::Value>& GetBlockEntitiesTags() const
-        {
-            return block_entities_tags;
-        }
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        bool GetFullChunk() const
-        {
-            return full_chunk;
-        }
+        GETTER_SETTER(IgnoreOldData);
 #endif
 
     protected:
 
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            x = ReadData<int>(iter, length);
-            z = ReadData<int>(iter, length);
+            SetX(ReadData<int>(iter, length));
+            SetZ(ReadData<int>(iter, length));
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            full_chunk = ReadData<bool>(iter, length);
+            SetFullChunk(ReadData<bool>(iter, length));
 #endif
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */ && PROTOCOL_VERSION < 745 /* < 1.16.2 */
-            ignore_old_data = ReadData<bool>(iter, length);
+            SetIgnoreOldData(ReadData<bool>(iter, length));
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            available_sections = ReadData<VarInt>(iter, length);
+            SetAvailableSections(ReadData<VarInt>(iter, length));
 #else
-            available_sections = ReadData<std::vector<unsigned long long int>>(iter, length);
+            SetAvailableSections(ReadData<std::vector<unsigned long long int>>(iter, length));
 #endif
 #if PROTOCOL_VERSION > 442 /* > 1.13.2 */
-            heightmaps = ReadData<NBT::UnnamedValue>(iter, length);
+            SetHeightmaps(ReadData<NBT::UnnamedValue>(iter, length));
 #endif
 #if PROTOCOL_VERSION > 551 /* > 1.14.4 */
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            if (full_chunk)
+            if (GetFullChunk())
             {
 #endif
 #if PROTOCOL_VERSION > 738 /* > 1.16.1 */
-                biomes = ReadData<std::vector<VarInt>>(iter, length);
+                SetBiomes(ReadData<std::vector<VarInt>>(iter, length));
 #else
-                biomes = std::vector<int>(1024);
+                std::vector<int> biomes = std::vector<int>(1024);
                 for (size_t i = 0; i < biomes.size(); ++i)
                 {
                     biomes[i] = ReadData<int>(iter, length);
                 }
+                SetBiomes(biomes);
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             }
 #endif
 #endif
-            buffer = ReadData<std::vector<unsigned char>>(iter, length);
-            block_entities_tags = ReadData<std::vector<NBT::Value>, std::vector<NBT::UnnamedValue>>(iter, length);
+            SetBuffer(ReadData<std::vector<unsigned char>>(iter, length));
+            SetBlockEntitiesTags(ReadData<std::vector<NBT::UnnamedValue>>(iter, length));
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<int>(x, container);
-            WriteData<int>(z, container);
+            WriteData<int>(GetX(), container);
+            WriteData<int>(GetZ(), container);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteData<bool>(full_chunk, container);
+            WriteData<bool>(GetFullChunk(), container);
 #endif
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */ && PROTOCOL_VERSION < 745 /* < 1.16.2 */
-            WriteData<bool>(ignore_old_data, container);
+            WriteData<bool>(GetIgnoreOldData(), container);
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteData<VarInt>(available_sections, container);
+            WriteData<VarInt>(GetAvailableSections(), container);
 #else
-            WriteData<std::vector<unsigned long long int>>(available_sections, container);
+            WriteData<std::vector<unsigned long long int>>(GetAvailableSections(), container);
 #endif
 #if PROTOCOL_VERSION > 442 /* > 1.13.2 */
-            WriteData<NBT::UnnamedValue>(heightmaps, container);
+            WriteData<NBT::UnnamedValue>(GetHeightmaps(), container);
 #endif
 #if PROTOCOL_VERSION > 551 /* > 1.14.4 */
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            if (full_chunk)
+            if (GetFullChunk())
             {
 #endif
 #if PROTOCOL_VERSION > 738 /* > 1.16.1 */
-                WriteData<std::vector<VarInt>>(biomes, container);
+                WriteData<std::vector<VarInt>>(GetBiomes(), container);
 #else
-                for (const auto i : biomes)
+                for (const auto i : GetBiomes())
                 {
                     WriteData<int>(i, container);
                 }
@@ -232,63 +152,10 @@ namespace ProtocolCraft
             }
 #endif
 #endif
-            WriteData<std::vector<unsigned char>>(buffer, container);
-            WriteData<std::vector<NBT::Value>, std::vector<NBT::UnnamedValue>>(block_entities_tags, container);
+            WriteData<std::vector<unsigned char>>(GetBuffer(), container);
+            WriteData<std::vector<NBT::UnnamedValue>>(GetBlockEntitiesTags(), container);
         }
 
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["x"] = x;
-            output["z"] = z;
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */ && PROTOCOL_VERSION < 745 /* < 1.16.2 */
-            output["ignore_old_data"] = ignore_old_data;
-#endif
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            output["available_sections"] = available_sections;
-#else
-            output["available_sections"] = available_sections;
-#endif
-#if PROTOCOL_VERSION > 442 /* > 1.13.2 */
-            output["heightmaps"] = heightmaps;
-#endif
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
-            output["biomes"] = "Vector of " + std::to_string(biomes.size()) + " int";
-#endif
-            output["buffer"] = "Vector of " + std::to_string(buffer.size()) + " unsigned char";
-
-            output["block_entities_tags"] = block_entities_tags;
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            output["full_chunk"] = full_chunk;
-#endif
-
-            return output;
-        }
-
-    private:
-        int x = 0;
-        int z = 0;
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */ && PROTOCOL_VERSION < 745 /* < 1.16.2 */
-        bool ignore_old_data = false;
-#endif
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        int available_sections = 0;
-#else
-        std::vector<unsigned long long int> available_sections;
-#endif
-#if PROTOCOL_VERSION > 442 /* > 1.13.2 */
-        NBT::Value heightmaps;
-#endif
-#if PROTOCOL_VERSION > 551 /* > 1.14.4 */
-        std::vector<int> biomes;
-#endif
-        std::vector<unsigned char> buffer;
-        std::vector<NBT::Value> block_entities_tags;
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        bool full_chunk = false;
-#endif
     };
 } //ProtocolCraft
 #endif

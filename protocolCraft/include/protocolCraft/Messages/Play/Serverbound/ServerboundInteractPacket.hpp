@@ -43,122 +43,60 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Interact";
 
-        virtual ~ServerboundInteractPacket() override
-        {
-
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
-        void SetAction(const int action_)
-        {
-            action = action_;
-        }
-
-        void SetLocationX(const float location_x_)
-        {
-            location_x = location_x_;
-        }
-
-        void SetLocationY(const float location_y_)
-        {
-            location_y = location_y_;
-        }
-
-        void SetLocationZ(const float location_z_)
-        {
-            location_z = location_z_;
-        }
-
-        void SetHand(const int hand_)
-        {
-            hand = hand_;
-        }
-
-#if PROTOCOL_VERSION > 722 /* > 1.15.2 */
-        void SetUsingSecondaryAction(const bool using_secondary_action_)
-        {
-            using_secondary_action = using_secondary_action_;
-        }
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        DECLARE_FIELDS_TYPES(VarInt,   VarInt, float,     float,     float,     VarInt);
+        DECLARE_FIELDS_NAMES(EntityId, Action, LocationX, LocationY, LocationZ, Hand);
+#else
+        DECLARE_FIELDS_TYPES(VarInt,   VarInt, float,     float,     float,     VarInt, bool);
+        DECLARE_FIELDS_NAMES(EntityId, Action, LocationX, LocationY, LocationZ, Hand,   UsingSecondaryAction);
 #endif
 
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-        int GetAction() const
-        {
-            return action;
-        }
-
-        float GetLocationX() const
-        {
-            return location_x;
-        }
-
-        float GetLocationY() const
-        {
-            return location_y;
-        }
-
-        float GetLocationZ() const
-        {
-            return location_z;
-        }
-
-        int GetHand() const
-        {
-            return hand;
-        }
-
+        GETTER_SETTER(EntityId);
+        GETTER_SETTER(Action);
+        GETTER_SETTER(LocationX);
+        GETTER_SETTER(LocationY);
+        GETTER_SETTER(LocationZ);
+        GETTER_SETTER(Hand);
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
-        bool GetUsingSecondaryAction() const
-        {
-            return using_secondary_action;
-        }
+        GETTER_SETTER(UsingSecondaryAction);
 #endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadData<VarInt>(iter, length);
-            action = ReadData<VarInt>(iter, length);
-            if (action == 2)
+            SetEntityId(ReadData<VarInt>(iter, length));
+            SetAction(ReadData<VarInt>(iter, length));
+            if (GetAction() == 2)
             {
-                location_x = ReadData<float>(iter, length);
-                location_y = ReadData<float>(iter, length);
-                location_z = ReadData<float>(iter, length);
+                SetLocationX(ReadData<float>(iter, length));
+                SetLocationY(ReadData<float>(iter, length));
+                SetLocationZ(ReadData<float>(iter, length));
             }
-            if (action == 0 || action == 2)
+            if (GetAction() == 0 || GetAction() == 2)
             {
-                hand = ReadData<VarInt>(iter, length);
+                SetHand(ReadData<VarInt>(iter, length));
             }
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
-            using_secondary_action = ReadData<bool>(iter, length);
+            SetUsingSecondaryAction(ReadData<bool>(iter, length));
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(entity_id, container);
-            WriteData<VarInt>(action, container); 
-            if (action == 2)
+            WriteData<VarInt>(GetEntityId(), container);
+            WriteData<VarInt>(GetAction(), container);
+            if (GetAction() == 2)
             {
-                WriteData<float>(location_x, container);
-                WriteData<float>(location_y, container);
-                WriteData<float>(location_z, container);
+                WriteData<float>(GetLocationX(), container);
+                WriteData<float>(GetLocationY(), container);
+                WriteData<float>(GetLocationZ(), container);
             }
-            if (action == 0 || action == 2)
+            if (GetAction() == 0 || GetAction() == 2)
             {
-                WriteData<VarInt>(hand, container);
+                WriteData<VarInt>(GetHand(), container);
             }
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
-            WriteData<bool>(using_secondary_action, container);
+            WriteData<bool>(GetUsingSecondaryAction(), container);
 #endif
         }
 
@@ -166,35 +104,23 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["entity_id"] = entity_id;
-            output["action"] = action;
-            if (action == 2)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::EntityId)])] = GetEntityId();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Action)])] = GetAction();
+            if (GetAction() == 2)
             {
-                output["location_x"] = location_x;
-                output["location_y"] = location_y;
-                output["location_z"] = location_z;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::LocationX)])] = GetLocationX();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::LocationY)])] = GetLocationY();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::LocationZ)])] = GetLocationZ();
             }
-            if (action == 0 || action == 2)
+            if (GetAction() == 0 || GetAction() == 2)
             {
-                output["hand"] = hand;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Hand)])] = GetHand();
             }
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
-            output["using_secondary_action"] = using_secondary_action;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::UsingSecondaryAction)])] = GetUsingSecondaryAction();
 #endif
 
             return output;
         }
-
-    private:
-        int entity_id = 0;
-        int action = 0;
-        float location_x = 0.0f;
-        float location_y = 0.0f;
-        float location_z = 0.0f;
-        int hand = 0;
-#if PROTOCOL_VERSION > 722 /* > 1.15.2 */
-        bool using_secondary_action = false;
-#endif
-
     };
 } //ProtocolCraft

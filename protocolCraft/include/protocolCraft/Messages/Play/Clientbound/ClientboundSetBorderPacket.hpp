@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #pragma once
 
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -40,136 +40,52 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border";
 
-        virtual ~ClientboundSetBorderPacket() override
-        {
+        DECLARE_FIELDS_TYPES(DiffType<SetBorderType, VarInt>, double,  double,  VarLong,  double,     double,     VarInt,             VarInt,      VarInt);
+        DECLARE_FIELDS_NAMES(Action,                          NewSize, OldSize, LerpTime, NewCenterX, NewCenterZ, NewAbsoluteMaxSize, WarningTime, WarningBlocks);
 
-        }
-
-        void SetAction(const SetBorderType action_)
-        {
-            action = action_;
-        }
-
-        void SetNewAbsoluteMaxSize(const int new_absolute_max_size_)
-        {
-            new_absolute_max_size = new_absolute_max_size_;
-        }
-
-        void SetNewCenterX(const double new_center_x_)
-        {
-            new_center_x = new_center_x_;
-        }
-
-        void SetNewCenterZ(const double new_center_z_)
-        {
-            new_center_z = new_center_z_;
-        }
-
-        void SetNewSize(const double new_size_)
-        {
-            new_size = new_size_;
-        }
-
-        void SetOldSize(const double old_size_)
-        {
-            old_size = old_size_;
-        }
-
-        void SetLerpTime(const long long int lerp_time_)
-        {
-            lerp_time = lerp_time_;
-        }
-
-        void SetWarningTime(const int warning_time_)
-        {
-            warning_time = warning_time_;
-        }
-
-        void SetWarningBlocks(const int warning_blocks_)
-        {
-            warning_blocks = warning_blocks_;
-        }
-
-
-        SetBorderType GetAction() const
-        {
-            return action;
-        }
-
-        int GetNewAbsoluteMaxSize() const
-        {
-            return new_absolute_max_size;
-        }
-
-        double GetNewCenterX() const
-        {
-            return new_center_x;
-        }
-
-        double GetNewCenterZ() const
-        {
-            return new_center_z;
-        }
-
-        double GetNewSize() const
-        {
-            return new_size;
-        }
-
-        double GetOldSize() const
-        {
-            return old_size;
-        }
-
-        long long int GetLerpTime() const
-        {
-            return lerp_time;
-        }
-
-        int GetWarningTime() const
-        {
-            return warning_time;
-        }
-
-        int GetWarningBlocks() const
-        {
-            return warning_blocks;
-        }
-
+        GETTER_SETTER(Action);
+        GETTER_SETTER(NewSize);
+        GETTER_SETTER(OldSize);
+        GETTER_SETTER(LerpTime);
+        GETTER_SETTER(NewCenterX);
+        GETTER_SETTER(NewCenterZ);
+        GETTER_SETTER(NewAbsoluteMaxSize);
+        GETTER_SETTER(WarningTime);
+        GETTER_SETTER(WarningBlocks);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            action = ReadData<SetBorderType, VarInt>(iter, length);
-            switch (action)
+            SetAction(ReadData<SetBorderType, VarInt>(iter, length));
+            switch (GetAction())
             {
             case SetBorderType::SetSize:
-                new_size = ReadData<double>(iter, length);
+                SetNewSize(ReadData<double>(iter, length));
                 break;
             case SetBorderType::LerpSize:
-                old_size = ReadData<double>(iter, length);
-                new_size = ReadData<double>(iter, length);
-                lerp_time = ReadData<VarLong>(iter, length);
+                SetOldSize(ReadData<double>(iter, length));
+                SetNewSize(ReadData<double>(iter, length));
+                SetLerpTime(ReadData<VarLong>(iter, length));
                 break;
             case SetBorderType::SetCenter:
-                new_center_x = ReadData<double>(iter, length);
-                new_center_z = ReadData<double>(iter, length);
+                SetNewCenterX(ReadData<double>(iter, length));
+                SetNewCenterZ(ReadData<double>(iter, length));
                 break;
             case SetBorderType::Initialize:
-                new_center_x = ReadData<double>(iter, length);
-                new_center_z = ReadData<double>(iter, length);
-                old_size = ReadData<double>(iter, length);
-                new_size = ReadData<double>(iter, length);
-                lerp_time = ReadData<VarLong>(iter, length);
-                new_absolute_max_size = ReadData<VarInt>(iter, length);
-                warning_time = ReadData<VarInt>(iter, length);
-                warning_blocks = ReadData<VarInt>(iter, length);
+                SetNewCenterX(ReadData<double>(iter, length));
+                SetNewCenterZ(ReadData<double>(iter, length));
+                SetOldSize(ReadData<double>(iter, length));
+                SetNewSize(ReadData<double>(iter, length));
+                SetLerpTime(ReadData<VarLong>(iter, length));
+                SetNewAbsoluteMaxSize(ReadData<VarInt>(iter, length));
+                SetWarningTime(ReadData<VarInt>(iter, length));
+                SetWarningBlocks(ReadData<VarInt>(iter, length));
                 break;
             case SetBorderType::SetWarningTime:
-                warning_time = ReadData<VarInt>(iter, length);
+                SetWarningTime(ReadData<VarInt>(iter, length));
                 break;
             case SetBorderType::SetWarningBlocks:
-                warning_blocks = ReadData<VarInt>(iter, length);
+                SetWarningBlocks(ReadData<VarInt>(iter, length));
                 break;
             default:
                 break;
@@ -178,36 +94,36 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<SetBorderType, VarInt>(action, container);
-            switch (static_cast<SetBorderType>(action))
+            WriteData<SetBorderType, VarInt>(GetAction(), container);
+            switch (GetAction())
             {
             case SetBorderType::SetSize:
-                WriteData<double>(new_size, container);
+                WriteData<double>(GetNewSize(), container);
                 break;
             case SetBorderType::LerpSize:
-                WriteData<double>(old_size, container);
-                WriteData<double>(new_size, container);
-                WriteData<VarLong>(lerp_time, container);
+                WriteData<double>(GetOldSize(), container);
+                WriteData<double>(GetNewSize(), container);
+                WriteData<VarLong>(GetLerpTime(), container);
                 break;
             case SetBorderType::SetCenter:
-                WriteData<double>(new_center_x, container);
-                WriteData<double>(new_center_z, container);
+                WriteData<double>(GetNewCenterX(), container);
+                WriteData<double>(GetNewCenterZ(), container);
                 break;
             case SetBorderType::Initialize:
-                WriteData<double>(new_center_x, container);
-                WriteData<double>(new_center_z, container);
-                WriteData<double>(old_size, container);
-                WriteData<double>(new_size, container);
-                WriteData<VarLong>(lerp_time, container);
-                WriteData<VarInt>(new_absolute_max_size, container);
-                WriteData<VarInt>(warning_time, container);
-                WriteData<VarInt>(warning_blocks, container);
+                WriteData<double>(GetNewCenterX(), container);
+                WriteData<double>(GetNewCenterZ(), container);
+                WriteData<double>(GetOldSize(), container);
+                WriteData<double>(GetNewSize(), container);
+                WriteData<VarLong>(GetLerpTime(), container);
+                WriteData<VarInt>(GetNewAbsoluteMaxSize(), container);
+                WriteData<VarInt>(GetWarningTime(), container);
+                WriteData<VarInt>(GetWarningBlocks(), container);
                 break;
             case SetBorderType::SetWarningTime:
-                WriteData<VarInt>(warning_time, container);
+                WriteData<VarInt>(GetWarningTime(), container);
                 break;
             case SetBorderType::SetWarningBlocks:
-                WriteData<VarInt>(warning_blocks, container);
+                WriteData<VarInt>(GetWarningBlocks(), container);
                 break;
             default:
                 break;
@@ -218,36 +134,36 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["action"] = action;
-            switch ((SetBorderType)action)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Action)])] = GetAction();
+            switch (GetAction())
             {
             case SetBorderType::SetSize:
-                output["new_size"] = new_size;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NewSize)])] = GetNewSize();
                 break;
             case SetBorderType::LerpSize:
-                output["old_size"] = old_size;
-                output["new_size"] = new_size;
-                output["lerp_time"] = lerp_time;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::OldSize)])] = GetOldSize();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NewSize)])] = GetNewSize();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::LerpTime)])] = GetLerpTime();
                 break;
             case SetBorderType::SetCenter:
-                output["new_center_x"] = new_center_x;
-                output["new_center_z"] = new_center_z;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NewCenterX)])] = GetNewCenterX();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NewCenterZ)])] = GetNewCenterZ();
                 break;
             case SetBorderType::Initialize:
-                output["new_center_x"] = new_center_x;
-                output["new_center_z"] = new_center_z;
-                output["old_size"] = old_size;
-                output["new_size"] = new_size;
-                output["lerp_time"] = lerp_time;
-                output["new_absolute_max_size"] = new_absolute_max_size;
-                output["warning_time"] = warning_time;
-                output["warning_blocks"] = warning_blocks;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NewCenterX)])] = GetNewCenterX();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NewCenterZ)])] = GetNewCenterZ();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::OldSize)])] = GetOldSize();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NewSize)])] = GetNewSize();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::LerpTime)])] = GetLerpTime();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NewAbsoluteMaxSize)])] = GetNewAbsoluteMaxSize();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::WarningTime)])] = GetWarningTime();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::WarningBlocks)])] = GetWarningBlocks();
                 break;
             case SetBorderType::SetWarningTime:
-                output["warning_time"] = warning_time;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::WarningTime)])] = GetWarningTime();
                 break;
             case SetBorderType::SetWarningBlocks:
-                output["warning_blocks"] = warning_blocks;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::WarningBlocks)])] = GetWarningBlocks();
                 break;
             default:
                 break;
@@ -255,18 +171,6 @@ namespace ProtocolCraft
 
             return output;
         }
-
-    private:
-        SetBorderType action;
-        int new_absolute_max_size = 0;
-        double new_center_x = 0.0;
-        double new_center_z = 0.0;
-        double new_size = 0.0;
-        double old_size = 0.0;
-        long long int lerp_time = 0;
-        int warning_blocks = 0;
-        int warning_time = 0;
-
     };
 } //ProtocolCraft
 #endif

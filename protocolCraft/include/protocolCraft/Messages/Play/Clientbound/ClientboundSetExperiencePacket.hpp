@@ -43,73 +43,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Experience";
 
-        virtual ~ClientboundSetExperiencePacket() override
-        {
+        DECLARE_FIELDS_TYPES(float,              VarInt,          VarInt);
+        DECLARE_FIELDS_NAMES(ExperienceProgress, ExperienceLevel, TotalExperience);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetExperienceProgress(const float experience_progress_)
-        {
-            experience_progress = experience_progress_;
-        }
-
-        void SetTotalExperience(const int total_experience_)
-        {
-            total_experience = total_experience_;
-        }
-
-        void SetExperienceLevel(const int experience_level_)
-        {
-            experience_level = experience_level_;
-        }
-
-
-        float GetExperienceProgress() const
-        {
-            return experience_progress;
-        }
-
-        int GetTotalExperience() const
-        {
-            return total_experience;
-        }
-
-        int GetExperienceLevel() const
-        {
-            return experience_level;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            experience_progress = ReadData<float>(iter, length);
-            experience_level = ReadData<VarInt>(iter, length);
-            total_experience = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<float>(experience_progress, container);
-            WriteData<VarInt>(experience_level, container);
-            WriteData<VarInt>(total_experience, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["experience_progress"] = experience_progress;
-            output["experience_level"] = experience_level;
-            output["total_experience"] = total_experience;
-
-            return output;
-        }
-
-    private:
-        float experience_progress = 0.0f;
-        int total_experience = 0;
-        int experience_level = 0;
-
+        GETTER_SETTER(ExperienceProgress);
+        GETTER_SETTER(ExperienceLevel);
+        GETTER_SETTER(TotalExperience);
     };
 } //ProtocolCraft

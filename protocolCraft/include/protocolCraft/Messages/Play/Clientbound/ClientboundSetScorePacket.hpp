@@ -52,151 +52,64 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Score";
 
-        virtual ~ClientboundSetScorePacket() override
-        {
-
-        }
-
-        void SetOwner(const std::string& owner_)
-        {
-            owner = owner_;
-        }
-
-        void SetObjectiveName(const std::string& objective_name_)
-        {
-            objective_name = objective_name_;
-        }
-
-        void SetScore(const int score_)
-        {
-            score = score_;
-        }
-
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        void SetMethod(const SetScoreMethod method_)
-        {
-            method = method_;
-        }
+        DECLARE_FIELDS_TYPES(std::string, DiffType<SetScoreMethod, char>, std::string,   VarInt);
+        DECLARE_FIELDS_NAMES(Owner,       Method,                         ObjectiveName, Score);
 #else
-        void SetDisplay(const std::optional<Chat>& display_)
-        {
-            display = display_;
-        }
-
-        void SetNumberFormat(const std::optional<NumberFormat>& number_format_)
-        {
-            number_format = number_format_;
-        }
+        DECLARE_FIELDS_TYPES(std::string, std::string,   VarInt, std::optional<Chat>, std::optional<NumberFormat>);
+        DECLARE_FIELDS_NAMES(Owner,       ObjectiveName, Score,  Display,             NumberFormat);
+        DECLARE_READ_WRITE_SERIALIZE;
 #endif
 
-
-        const std::string& GetOwner() const
-        {
-            return owner;
-        }
-
-        const std::string& GetObjectiveName() const
-        {
-            return objective_name;
-        }
-
-        int GetScore() const
-        {
-            return score;
-        }
-
+        GETTER_SETTER(Owner);
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        SetScoreMethod GetMethod() const
-        {
-            return method;
-        }
-#else
-        const std::optional<Chat>& GetDisplay() const
-        {
-            return display;
-        }
-
-        const std::optional<NumberFormat>& GetNumberFormat() const
-        {
-            return number_format;
-        }
+        GETTER_SETTER(Method);
+#endif
+        GETTER_SETTER(ObjectiveName);
+        GETTER_SETTER(Score);
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        GETTER_SETTER(Display);
+        GETTER_SETTER(NumberFormat);
 #endif
 
-
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            owner = ReadData<std::string>(iter, length);
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-            method = static_cast<SetScoreMethod>(ReadData<char>(iter, length));
-            objective_name = ReadData<std::string>(iter, length);
-            if (method != SetScoreMethod::Remove)
+            SetOwner(ReadData<std::string>(iter, length));
+            SetMethod(ReadData<SetScoreMethod, char>(iter, length));
+            SetObjectiveName(ReadData<std::string>(iter, length));
+            if (GetMethod() != SetScoreMethod::Remove)
             {
-                score = ReadData<VarInt>(iter, length);
+                SetScore(ReadData<VarInt>(iter, length));
             }
-#else
-            objective_name = ReadData<std::string>(iter, length);
-            score = ReadData<VarInt>(iter, length);
-            display = ReadData<std::optional<Chat>>(iter, length);
-            number_format = ReadData<std::optional<NumberFormat>>(iter, length);
-#endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<std::string>(owner, container);
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-            WriteData<char>(static_cast<char>(method), container);
-            WriteData<std::string>(objective_name, container);
-            if (method != SetScoreMethod::Remove)
+            WriteData<std::string>(GetOwner(), container);
+            WriteData<SetScoreMethod, char>(GetMethod(), container);
+            WriteData<std::string>(GetObjectiveName(), container);
+            if (GetMethod() != SetScoreMethod::Remove)
             {
-                WriteData<VarInt>(score, container);
+                WriteData<VarInt>(GetScore(), container);
             }
-#else
-            WriteData<std::string>(objective_name, container);
-            WriteData<VarInt>(score, container);
-            WriteData<std::optional<Chat>>(display, container);
-            WriteData<std::optional<NumberFormat>>(number_format, container);
-#endif
         }
 
         virtual Json::Value SerializeImpl() const override
         {
             Json::Value output;
 
-            output["owner"] = owner;
-            output["objective_name"] = objective_name;
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-            output["method"] = method;
-            if (method != SetScoreMethod::Remove)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Owner)])] = GetOwner();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::ObjectiveName)])] = GetObjectiveName();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Method)])] = GetMethod();
+            if (GetMethod() != SetScoreMethod::Remove)
             {
-                output["score"] = score;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Score)])] = GetScore();
             }
-#else
-            output["score"] = score;
-            if (display.has_value())
-            {
-                output["display"] = display.value();
-            }
-            if (number_format.has_value())
-            {
-                output["number_format"] = number_format.value();
-            }
-#endif
 
             return output;
         }
-
-    private:
-        std::string owner;
-        std::string objective_name;
-        int score = 0;
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        SetScoreMethod method;
-#else
-        std::optional<Chat> display;
-        std::optional<NumberFormat> number_format;
 #endif
-
     };
 } //ProtocolCraft

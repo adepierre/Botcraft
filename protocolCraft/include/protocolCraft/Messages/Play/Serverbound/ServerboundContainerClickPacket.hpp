@@ -45,213 +45,31 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Click";
 
-        virtual ~ServerboundContainerClickPacket() override
-        {
-
-        }
-
-        void SetContainerId(const unsigned char container_id_)
-        {
-            container_id = container_id_;
-        }
-
-        void SetSlotNum(const short slot_num_)
-        {
-            slot_num = slot_num_;
-        }
-
-        void SetButtonNum(const char button_num_)
-        {
-            button_num = button_num_;
-        }
-
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        void SetUid(const short uid_)
-        {
-            uid = uid_;
-        }
-#endif
-
-        void SetClickType(const int click_type_)
-        {
-            click_type = click_type_;
-        }
-
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        void SetChangedSlots(const std::map<short, Slot>& changed_slots_)
-        {
-            changed_slots = changed_slots_;
-        }
-#endif
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        void SetItemStack(const Slot& item_stack_)
-        {
-            item_stack = item_stack_;
-        }
+        DECLARE_FIELDS_TYPES(unsigned char, short,   char,      short, VarInt,    Slot);
+        DECLARE_FIELDS_NAMES(ContainerId,   SlotNum, ButtonNum, Uid,   ClickType, CarriedItem);
+#elif PROTOCOL_VERSION < 756 /* < 1.17.1 */
+        DECLARE_FIELDS_TYPES(unsigned char, short,   char,      VarInt,    std::map<short, Slot>, Slot);
+        DECLARE_FIELDS_NAMES(ContainerId,   SlotNum, ButtonNum, ClickType, ChangedSlots,          CarriedItem);
 #else
-        void SetCarriedItem(const Slot& carried_item_)
-        {
-            carried_item = carried_item_;
-        }
+        DECLARE_FIELDS_TYPES(unsigned char, VarInt,  short,   char,      VarInt,    std::map<short, Slot>, Slot);
+        DECLARE_FIELDS_NAMES(ContainerId,   StateId, SlotNum, ButtonNum, ClickType, ChangedSlots,          CarriedItem);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-        void SetStateId(const int state_id_)
-        {
-            state_id = state_id_;
-        }
-#endif
-
-        unsigned char GetContainerId() const
-        {
-            return container_id;
-        }
-
-        short GetSlotNum() const
-        {
-            return slot_num;
-        }
-
-        char GetButtonNum() const
-        {
-            return button_num;
-        }
-
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(SlotNum);
+        GETTER_SETTER(ButtonNum);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        short GetUid() const
-        {
-            return uid;
-        }
+        GETTER_SETTER(Uid);
 #endif
-
-        int GetClickType() const
-        {
-            return click_type;
-        }
-
+        GETTER_SETTER(ClickType);
+        GETTER_SETTER(CarriedItem);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        const std::map<short, Slot>& GetChangeSlots() const
-        {
-            return changed_slots;
-        }
+        GETTER_SETTER(ChangedSlots);
 #endif
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        const Slot& GetItemStack() const
-        {
-            return item_stack;
-        }
-#else
-        const Slot& GetCarriedItem() const
-        {
-            return carried_item;
-        }
-#endif
-
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-        int GetStateId() const
-        {
-            return state_id;
-        }
+        GETTER_SETTER(StateId);
 #endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            container_id = ReadData<unsigned char>(iter, length);
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            state_id = ReadData<VarInt>(iter, length);
-#endif
-            slot_num = ReadData<short>(iter, length);
-            button_num = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            uid = ReadData<short>(iter, length);
-#endif
-            click_type = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            changed_slots = ReadData<std::map<short, Slot>>(iter, length);
-#endif
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            item_stack = ReadData<Slot>(iter, length);
-#else
-            carried_item = ReadData<Slot>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<unsigned char>(container_id, container);
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            WriteData<VarInt>(state_id, container);
-#endif
-            WriteData<short>(slot_num, container);
-            WriteData<char>(button_num, container);
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteData<short>(uid, container);
-#endif
-            WriteData<VarInt>(click_type, container);
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            WriteData<std::map<short, Slot>>(changed_slots, container);
-#endif
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteData<Slot>(item_stack, container);
-#else
-            WriteData<Slot>(carried_item, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            output["state_id"] = state_id;
-#endif
-            output["slot_num"] = slot_num;
-            output["button_num"] = button_num;
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            output["uid"] = uid;
-#endif
-            output["click_type"] = click_type;
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-
-            output["changed_slots"] = Json::Object();
-            for (const auto& p : changed_slots)
-            {
-                output["changed_slots"][std::to_string(p.first)] = p.second;
-            }
-#endif
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            output["item_stack"] = item_stack;
-#else
-            output["carried_item"] = carried_item;
-#endif
-
-            return output;
-        }
-
-    private:
-        unsigned char container_id = 0;
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-        int state_id = 0;
-#endif
-        short slot_num = 0;
-        char button_num = 0;
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        short uid = 0;
-#endif
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        Slot item_stack;
-#else
-        Slot carried_item;
-#endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        std::map<short, Slot> changed_slots;
-#endif
-        int click_type = 0;
-
     };
 } //ProtocolCraft

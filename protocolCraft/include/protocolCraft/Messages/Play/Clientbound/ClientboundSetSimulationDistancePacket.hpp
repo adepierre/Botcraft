@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #pragma once
 
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -29,46 +29,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Simulation Distance";
 
-        virtual ~ClientboundSetSimulationDistancePacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(SimulationDistance);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetSimulationDistance(const int simulation_distance_)
-        {
-            simulation_distance = simulation_distance_;
-        }
-
-
-        int GetSimulationDistance() const
-        {
-            return simulation_distance;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            simulation_distance = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(simulation_distance, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["simulation_distance"] = simulation_distance;
-
-            return output;
-        }
-
-    private:
-        int simulation_distance = 0;
-
+        GETTER_SETTER(SimulationDistance);
     };
 } //ProtocolCraft
 #endif

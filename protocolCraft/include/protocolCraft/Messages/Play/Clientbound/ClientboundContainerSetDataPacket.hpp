@@ -42,73 +42,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Set Data";
 
-        virtual ~ClientboundContainerSetDataPacket() override
-        {
+        DECLARE_FIELDS_TYPES(unsigned char, short, short);
+        DECLARE_FIELDS_NAMES(ContainerId,   Id_,   Value);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetContainerId(const unsigned char container_id_)
-        {
-            container_id = container_id_;
-        }
-
-        void SetId_(const short id__)
-        {
-            id_ = id__;
-        }
-
-        void SetValue(const short value_)
-        {
-            value = value_;
-        }
-
-
-        unsigned char GetWindowId() const
-        {
-            return container_id;
-        }
-
-        short GetId_() const
-        {
-            return id_;
-        }
-
-        short GetValue() const
-        {
-            return value;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            container_id = ReadData<unsigned char>(iter, length);
-            id_ = ReadData<short>(iter, length);
-            value = ReadData<short>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<unsigned char>(container_id, container);
-            WriteData<short>(id_, container);
-            WriteData<short>(value, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-            output["id_"] = id_;
-            output["value"] = value;
-
-            return output;
-        }
-
-    private:
-        unsigned char container_id = 0;
-        short id_ = 0;
-        short value = 0;
-
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Value);
     };
 } //ProtocolCraft

@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/CommandNode/CommandNode.hpp"
 
@@ -40,60 +40,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Commands";
 
-        virtual ~ClientboundCommandsPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::vector<CommandNode>, VarInt);
+        DECLARE_FIELDS_NAMES(Nodes,                    RootIndex);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetNodes(const std::vector<CommandNode>& nodes_)
-        {
-            nodes = nodes_;
-        }
-
-        void SetRootIndex(const int root_index_)
-        {
-            root_index = root_index_;
-        }
-
-
-        const std::vector<CommandNode>& GetNodes() const
-        {
-            return nodes;
-        }
-
-        int GetRootIndex() const
-        {
-            return root_index;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            nodes = ReadData<std::vector<CommandNode>>(iter, length);
-            root_index = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::vector<CommandNode>>(nodes, container);
-            WriteData<VarInt>(root_index, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["nodes"] = nodes;
-            output["root_index"] = root_index;
-
-            return output;
-        }
-
-    private:
-        std::vector<CommandNode> nodes;
-        int root_index = 0;
-
+        GETTER_SETTER(Nodes);
+        GETTER_SETTER(RootIndex);
     };
 } //ProtocolCraft
 #endif

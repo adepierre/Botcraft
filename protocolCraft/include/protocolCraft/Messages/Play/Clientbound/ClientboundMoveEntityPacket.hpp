@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #pragma once
 
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -31,43 +31,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Entity";
 
-        virtual ~ClientboundMoveEntityPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(EntityId);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            entity_id = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(entity_id, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["entity_id"] = entity_id;
-
-            return output;
-        }
-
-    private:
-        int entity_id = 0;
+        GETTER_SETTER(EntityId);
     };
 } //ProtocolCraft
 #endif

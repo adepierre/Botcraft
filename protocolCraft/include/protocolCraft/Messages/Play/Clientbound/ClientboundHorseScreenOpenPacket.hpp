@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -41,74 +41,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Horse Screen Open";
 
-        virtual ~ClientboundHorseScreenOpenPacket() override
-        {
+        DECLARE_FIELDS_TYPES(char,        VarInt, int);
+        DECLARE_FIELDS_NAMES(ContainerId, Size,   EntityId);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetContainerId(const char container_id_)
-        {
-            container_id = container_id_;
-        }
-
-        void SetSize(const int size_)
-        {
-            size = size_;
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
-
-        char GetContainerId() const
-        {
-            return container_id;
-        }
-
-        int GetSize() const
-        {
-            return size;
-        }
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            container_id = ReadData<char>(iter, length);
-            size = ReadData<VarInt>(iter, length);
-            entity_id = ReadData<int>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<char>(container_id, container);
-            WriteData<VarInt>(size, container);
-            WriteData<int>(entity_id, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-            output["size"] = size;
-            output["entity_id"] = entity_id;
-
-            return output;
-        }
-
-    private:
-        char container_id = 0;
-        int size = 0;
-        int entity_id = 0;
-
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(Size);
+        GETTER_SETTER(EntityId);
     };
 } //ProtocolCraft
 #endif

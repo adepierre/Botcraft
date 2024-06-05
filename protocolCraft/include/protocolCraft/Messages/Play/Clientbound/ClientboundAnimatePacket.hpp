@@ -35,59 +35,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Animate";
 
-        virtual ~ClientboundAnimatePacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, unsigned char);
+        DECLARE_FIELDS_NAMES(Id_,    Action);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetAction(const unsigned char action_)
-        {
-            action = action_;
-        }
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        unsigned char GetAction() const
-        {
-            return action;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            action = ReadData<unsigned char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<unsigned char>(action, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["action"] = action;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        unsigned char action = 0;
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Action);
     };
 } //ProtocolCraft

@@ -44,42 +44,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Keep Alive";
 
-        virtual ~ServerboundKeepAlivePacket() override
-        {
+        DECLARE_FIELDS_TYPES(long long int);
+        DECLARE_FIELDS_NAMES(Id_);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const long long int l)
-        {
-            id_ = l;
-        }
-
-        long long int GetId_() const
-        {
-            return id_;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<long long int>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<long long int>(id_, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-
-            return output;
-        }
-
-    private:
-        long long int id_ = 0;
+        GETTER_SETTER(Id_);
     };
 } //ProtocolCraft

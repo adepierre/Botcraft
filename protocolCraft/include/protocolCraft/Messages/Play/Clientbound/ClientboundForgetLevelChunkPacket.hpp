@@ -48,86 +48,20 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Forget Level Chunk";
 
-        virtual ~ClientboundForgetLevelChunkPacket() override
-        {
-
-        }
-
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        void SetX(const int x_)
-        {
-            x = x_;
-        }
-
-        void SetZ(const int z_)
-        {
-            z = z_;
-        }
+        DECLARE_FIELDS_TYPES(int, int);
+        DECLARE_FIELDS_NAMES(X,   Z);
 #else
-        void SetPos(const ChunkPos& pos_)
-        {
-            pos = pos_;
-        }
+        DECLARE_FIELDS_TYPES(ChunkPos);
+        DECLARE_FIELDS_NAMES(Pos);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        int GetX() const
-        {
-            return x;
-        }
-
-        int GetZ() const
-        {
-            return z;
-        }
+        GETTER_SETTER(X);
+        GETTER_SETTER(Z);
 #else
-        const ChunkPos& GetPos() const
-        {
-            return pos;
-        }
-#endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            x = ReadData<int>(iter, length);
-            z = ReadData<int>(iter, length);
-#else
-            pos = ReadData<ChunkPos>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            WriteData<int>(x, container);
-            WriteData<int>(z, container);
-#else
-            WriteData<ChunkPos>(pos, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            output["x"] = x;
-            output["z"] = z;
-#else
-            output["pos"] = pos;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        int x = 0;
-        int z = 0;
-#else
-        ChunkPos pos;
+        GETTER_SETTER(Pos);
 #endif
     };
 } //ProtocolCraft

@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #pragma once
 
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
@@ -41,78 +41,30 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Titles";
 
-        virtual ~ClientboundSetTitlesPacket() override
-        {
+        DECLARE_FIELDS_TYPES(DiffType<SetTitlesType, VarInt>, Chat, int,        int,      int);
+        DECLARE_FIELDS_NAMES(Type,                            Text, FadeInTime, StayTime, FadeOutTime);
 
-        }
-
-        void SetType(const SetTitlesType type_)
-        {
-            type = type_;
-        }
-
-        void SetText(const Chat& text_)
-        {
-            text = text_;
-        }
-
-        void SetFadeInTime(const int fade_in_time_)
-        {
-            fade_in_time = fade_in_time_;
-        }
-
-        void SetStayTime(const int stay_time_)
-        {
-            stay_time = stay_time_;
-        }
-
-        void SetFadeOutTime(const int fade_out_time_)
-        {
-            fade_out_time = fade_out_time_;
-        }
-
-
-        SetTitlesType GetType() const
-        {
-            return type;
-        }
-
-        const Chat& GetText() const
-        {
-            return text;
-        }
-
-        int GetFadeInTime() const
-        {
-            return fade_in_time;
-        }
-
-        int GetStayTime() const
-        {
-            return stay_time;
-        }
-
-        int GetFadeOutTime() const
-        {
-            return fade_out_time;
-        }
-
+        GETTER_SETTER(Type);
+        GETTER_SETTER(Text);
+        GETTER_SETTER(FadeInTime);
+        GETTER_SETTER(StayTime);
+        GETTER_SETTER(FadeOutTime);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            type = ReadData<SetTitlesType, VarInt>(iter, length);
-            switch (type)
+            SetType(ReadData<SetTitlesType, VarInt>(iter, length));
+            switch (GetType())
             {
             case SetTitlesType::Title:
             case SetTitlesType::Subtitle:
             case SetTitlesType::ActionBar:
-                text = ReadData<Chat>(iter, length);
+                SetText(ReadData<Chat>(iter, length));
                 break;
             case SetTitlesType::Times:
-                fade_in_time = ReadData<int>(iter, length);
-                stay_time = ReadData<int>(iter, length);
-                fade_out_time = ReadData<int>(iter, length);
+                SetFadeInTime(ReadData<int>(iter, length));
+                SetStayTime(ReadData<int>(iter, length));
+                SetFadeOutTime(ReadData<int>(iter, length));
                 break;
             case SetTitlesType::Clear:
                 break;
@@ -125,18 +77,18 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<SetTitlesType, VarInt>(type, container);
-            switch (type)
+            WriteData<SetTitlesType, VarInt>(GetType(), container);
+            switch (GetType())
             {
             case SetTitlesType::Title:
             case SetTitlesType::Subtitle:
             case SetTitlesType::ActionBar:
-                WriteData<Chat>(text, container);
+                WriteData<Chat>(GetText(), container);
                 break;
             case SetTitlesType::Times:
-                WriteData<int>(fade_in_time, container);
-                WriteData<int>(stay_time, container);
-                WriteData<int>(fade_out_time, container);
+                WriteData<int>(GetFadeInTime(), container);
+                WriteData<int>(GetStayTime(), container);
+                WriteData<int>(GetFadeOutTime(), container);
                 break;
             case SetTitlesType::Clear:
                 break;
@@ -151,18 +103,18 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["type"] = type;
-            switch (type)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Type)])] = GetType();
+            switch (GetType())
             {
             case SetTitlesType::Title:
             case SetTitlesType::Subtitle:
             case SetTitlesType::ActionBar:
-                output["text"] = text;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Text)])] = GetText();
                 break;
             case SetTitlesType::Times:
-                output["fade_in_time"] = fade_in_time;
-                output["stay_time"] = stay_time;
-                output["fade_out_time"] = fade_out_time;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::FadeInTime)])] = GetFadeInTime();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::StayTime)])] = GetStayTime();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::FadeOutTime)])] = GetFadeOutTime();
                 break;
             case SetTitlesType::Clear:
             case SetTitlesType::Reset:
@@ -173,14 +125,6 @@ namespace ProtocolCraft
 
             return output;
         }
-
-    private:
-        SetTitlesType type;
-        Chat text;
-        int fade_in_time = 0;
-        int stay_time = 0;
-        int fade_out_time = 0;
-
     };
 } //ProtocolCraft
 #endif

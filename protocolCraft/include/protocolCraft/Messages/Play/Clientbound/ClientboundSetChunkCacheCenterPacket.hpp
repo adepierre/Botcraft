@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 471 /* > 1.13.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 471 /* > 1.13.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -42,60 +42,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Chunk Cache Center";
 
-        virtual ~ClientboundSetChunkCacheCenterPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, VarInt);
+        DECLARE_FIELDS_NAMES(X,      Z);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetX(const int x_)
-        {
-            x = x_;
-        }
-
-        void SetZ(const int z_)
-        {
-            z = z_;
-        }
-
-
-        int GetX() const
-        {
-            return x;
-        }
-
-        int GetZ() const
-        {
-            return z;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            x = ReadData<VarInt>(iter, length);
-            z = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(x, container);
-            WriteData<VarInt>(z, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["x"] = x;
-            output["z"] = z;
-
-            return output;
-        }
-
-    private:
-        int x = 0;
-        int z = 0;
-
+        GETTER_SETTER(X);
+        GETTER_SETTER(Z);
     };
 } //ProtocolCraft
 #endif

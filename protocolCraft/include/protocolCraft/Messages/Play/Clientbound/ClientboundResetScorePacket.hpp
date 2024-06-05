@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 764 /* > 1.20.3 */
 #pragma once
 
-#if PROTOCOL_VERSION > 764 /* > 1.20.3 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -18,62 +18,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Reset Score";
 
-        virtual ~ClientboundResetScorePacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::string, std::optional<std::string>);
+        DECLARE_FIELDS_NAMES(Owner,       ObjectiveName);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetOwner(const std::string& owner_)
-        {
-            owner = owner_;
-        }
-
-        void GetObjectiveName(const std::optional<std::string>& objective_name_)
-        {
-            objective_name = objective_name_;
-        }
-
-
-        const std::string& GetOwner() const
-        {
-            return owner;
-        }
-
-        const std::optional<std::string>& GetObjectiveName() const
-        {
-            return objective_name;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            owner = ReadData<std::string>(iter, length);
-            objective_name = ReadData<std::optional<std::string>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::string>(owner, container);
-            WriteData<std::optional<std::string>>(objective_name, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["owner"] = owner;
-            if (objective_name.has_value())
-            {
-                output["objective_name"] = objective_name.value();
-            }
-
-            return output;
-        }
-
-    private:
-        std::string owner;
-        std::optional<std::string> objective_name;
-
+        GETTER_SETTER(Owner);
+        GETTER_SETTER(ObjectiveName);
     };
 } //ProtocolCraft
 #endif

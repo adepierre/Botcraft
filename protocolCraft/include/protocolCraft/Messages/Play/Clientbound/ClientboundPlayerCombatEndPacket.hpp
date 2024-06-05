@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
@@ -30,72 +30,19 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Combat End";
 
-        virtual ~ClientboundPlayerCombatEndPacket() override
-        {
-
-        }
-
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        void SetKillerId(const int killer_id_)
-        {
-            killer_id = killer_id_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt,   int);
+        DECLARE_FIELDS_NAMES(Duration, KillerId);
+#else
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Duration);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetDuration(const int duration_)
-        {
-            duration = duration_;
-        }
-
-
+        GETTER_SETTER(Duration);
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        int GetKillerId() const
-        {
-            return killer_id;
-        }
+        GETTER_SETTER(KillerId);
 #endif
-
-        int GetDuration() const
-        {
-            return duration;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            duration = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-            killer_id = ReadData<int>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(duration, container);
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-            WriteData<int>(killer_id, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["duration"] = duration;
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-            output["killer_id"] = killer_id;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-        int killer_id = 0;
-#endif
-        int duration = 0;
-
     };
 } //ProtocolCraft
 #endif

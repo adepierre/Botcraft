@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/KnownPack.hpp"
@@ -14,45 +14,11 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x07;
         static constexpr std::string_view packet_name = "Select Known Packs";
 
-        virtual ~ServerboundSelectKnownPacksPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::vector<KnownPack>);
+        DECLARE_FIELDS_NAMES(KnownPacks);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetKnownPacks(const std::vector<KnownPack>& known_packs_)
-        {
-            known_packs = known_packs_;
-        }
-
-
-        const std::vector<KnownPack>& GetKnownPacks() const
-        {
-            return known_packs;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            known_packs = ReadData<std::vector<KnownPack>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::vector<KnownPack>>(known_packs, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["known_packs"] = known_packs;
-
-            return output;
-        }
-
-    private:
-        std::vector<KnownPack> known_packs;
+        GETTER_SETTER(KnownPacks);
     };
 } // ProtocolCraft
 #endif

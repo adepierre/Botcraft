@@ -14,140 +14,30 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x02;
         static constexpr std::string_view packet_name = "Game Profile";
 
-        virtual ~ClientboundGameProfilePacket() override
-        {
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        DECLARE_FIELDS_TYPES(std::string, std::string);
+        DECLARE_FIELDS_NAMES(Uuid,        Username);
+#elif PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(UUID, std::string);
+        DECLARE_FIELDS_NAMES(Uuid, Username);
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        DECLARE_FIELDS_TYPES(GameProfile);
+        DECLARE_FIELDS_NAMES(GameProfile);
+#else
+        DECLARE_FIELDS_TYPES(GameProfile, bool);
+        DECLARE_FIELDS_NAMES(GameProfile, StrictErrorHandling);
+#endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        GETTER_SETTER(Uuid);
+        GETTER_SETTER(Username);
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        void SetGameProfile(const GameProfile& game_profile_)
-        {
-            game_profile = game_profile_;
-        }
-#else
-#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
-        void SetUUID(const UUID& uuid_)
-        {
-            uuid = uuid_;
-        }
-#else
-        void SetUUID(const std::string& uuid_)
-        {
-            uuid = uuid_;
-        }
-#endif
-
-        void SetUsername(const std::string& username_)
-        {
-            username = username_;
-        }
-
-#endif
-
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        void SetStrictErrorHandling(const bool strict_error_handling_)
-        {
-            strict_error_handling = strict_error_handling_;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        const GameProfile& GetGameProfile() const
-        {
-            return game_profile;
-        }
-#else
-#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
-        const UUID& GetUUID() const
-        {
-            return uuid;
-        }
-#else
-        const std::string& GetUUID() const
-        {
-            return uuid;
-        }
-#endif
-
-        const std::string& GetUsername() const
-        {
-            return username;
-        }
-#endif
-
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        bool GetStrictErrorHandling() const
-        {
-            return strict_error_handling;
-        }
-#endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            game_profile = ReadData<GameProfile>(iter, length);
-#else
-#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
-            uuid = ReadData<UUID>(iter, length);
-#else
-            uuid = ReadData<std::string>(iter, length);
-#endif
-            username = ReadData<std::string>(iter, length);
+        GETTER_SETTER(GameProfile);
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            strict_error_handling = ReadData<bool>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteData<GameProfile>(game_profile, container);
-#else
-#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
-            WriteData<UUID>(uuid, container);
-#else
-            WriteData<std::string>(uuid, container);
-#endif
-            WriteData<std::string>(username, container);
-#endif
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            WriteData<bool>(strict_error_handling, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            output["game_profile"] = game_profile;
-#else
-            output["uuid"] = uuid;
-            output["username"] = username;
-#endif
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            output["strict_error_handling"] = strict_error_handling;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        GameProfile game_profile;
-#else
-#if PROTOCOL_VERSION > 706 /* > 1.15.2 */
-        UUID uuid = {};
-#else
-        // This uuid is not a normal uuid but a regular string
-        std::string uuid;
-#endif
-        std::string username;
-#endif
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        bool strict_error_handling = false;
+        GETTER_SETTER(StrictErrorHandling);
 #endif
     };
 } //ProtocolCraft

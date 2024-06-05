@@ -43,87 +43,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Entity Motion";
 
-        virtual ~ClientboundSetEntityMotionPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, short, short, short);
+        DECLARE_FIELDS_NAMES(Id_,    XA,    YA,    ZA);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetXA(const short x_a_)
-        {
-            x_a = x_a_;
-        }
-
-        void SetYA(const short y_a_)
-        {
-            y_a = y_a_;
-        }
-
-        void SetZA(const short z_a_)
-        {
-            z_a = z_a_;
-        }
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        short GetXA() const
-        {
-            return x_a;
-        }
-
-        short GetYA() const
-        {
-            return y_a;
-        }
-
-        short GetZA() const
-        {
-            return z_a;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            x_a = ReadData<short>(iter, length);
-            y_a = ReadData<short>(iter, length);
-            z_a = ReadData<short>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<short>(x_a, container);
-            WriteData<short>(y_a, container);
-            WriteData<short>(z_a, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["x_a"] = x_a;
-            output["y_a"] = y_a;
-            output["z_a"] = z_a;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        short x_a = 0;
-        short y_a = 0;
-        short z_a = 0;
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(XA);
+        GETTER_SETTER(YA);
+        GETTER_SETTER(ZA);
     };
 } //ProtocolCraft

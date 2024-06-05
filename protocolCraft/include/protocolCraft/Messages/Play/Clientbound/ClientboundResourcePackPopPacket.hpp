@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -18,48 +18,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Ressource Pack Pop";
 
-        virtual ~ClientboundResourcePackPopPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::optional<UUID>);
+        DECLARE_FIELDS_NAMES(Uuid);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetUUID(const std::optional<UUID>& uuid_)
-        {
-            uuid = uuid_;
-        }
-
-
-        const std::optional<UUID>& GetUUID() const
-        {
-            return uuid;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            uuid = ReadData<std::optional<UUID>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::optional<UUID>>(uuid, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            if (uuid.has_value())
-            {
-                output["uuid"] = uuid.value();
-            }
-
-            return output;
-        }
-
-    private:
-        std::optional<UUID> uuid;
-
+        GETTER_SETTER(Uuid);
     };
 } //ProtocolCraft
 #endif

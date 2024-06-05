@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 721 /* < 1.16 */
 #pragma once
 
-#if PROTOCOL_VERSION < 721 /* < 1.16 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -21,102 +21,15 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Add Global Entity";
 
-        virtual ~ClientboundAddGlobalEntityPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, char, double, double, double);
+        DECLARE_FIELDS_NAMES(Id_,    Type, X,      Y,      Z);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
-
-        void SetType(const char type_)
-        {
-            type = type_;
-        }
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        char GetType() const
-        {
-            return type;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            type = ReadData<char>(iter, length);
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<char>(type, container);
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["type"] = type;
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        char type = 0;
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Type);
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
     };
 } //ProtocolCraft
 #endif

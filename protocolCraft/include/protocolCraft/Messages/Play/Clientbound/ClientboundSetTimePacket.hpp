@@ -46,56 +46,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Time";
 
-        virtual ~ClientboundSetTimePacket() override
-        {
+        DECLARE_FIELDS_TYPES(long long int, long long int);
+        DECLARE_FIELDS_NAMES(GameTime,      DayTime);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetGameTime(const long long int game_time_)
-        {
-            game_time = game_time_;
-        }
-
-        void SetDayTime(const long long int day_time_)
-        {
-            day_time = day_time_;
-        }
-
-        long long int GetGameTime() const
-        {
-            return game_time;
-        }
-
-        long long int GetDayTime() const
-        {
-            return day_time;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            game_time = ReadData<long long int>(iter, length);
-            day_time = ReadData<long long int>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<long long int>(game_time, container);
-            WriteData<long long int>(day_time, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["game_time"] = game_time;
-            output["day_time"] = day_time;
-
-            return output;
-        }
-
-    private:
-        long long int game_time = 0;
-        long long int day_time = 0;
+        GETTER_SETTER(GameTime);
+        GETTER_SETTER(DayTime);
     };
 } //ProtocolCraft

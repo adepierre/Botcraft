@@ -27,226 +27,67 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Add Mob";
 
-        virtual ~ClientboundAddMobPacket() override
-        {
-
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetUUID(const UUID& uuid_)
-        {
-            uuid = uuid_;
-        }
-
-        void SetType(const int type_)
-        {
-            type = type_;
-        }
-
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
-
-        void SetYRot(const Angle yRot_)
-        {
-            y_rot = yRot_;
-        }
-
-        void SetXRot(const Angle xRot_)
-        {
-            x_rot = xRot_;
-        }
-
-        void SetYHeadRot(const Angle y_head_rot_)
-        {
-            y_head_rot = y_head_rot_;
-        }
-
-        void SetXd(const short xd_)
-        {
-            xd = xd_;
-        }
-
-        void SetYd(const short yd_)
-        {
-            yd = yd_;
-        }
-
-        void SetZd(const short zd_)
-        {
-            zd = zd_;
-        }
-
-#if PROTOCOL_VERSION < 550 /* < 1.15 */
-        void SetRawMetadata(const std::vector<unsigned char>& raw_metadata_)
-        {
-            raw_metadata = raw_metadata_;
-        }
+#if PROTOCOL_VERSION < 573 /* < 1.15 */
+        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, Angle, Angle, Angle,    short, short, short, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      YRot,  XRot,  YHeadRot, Xd,    Yd,    Zd,    RawMetadata);
+        DECLARE_SERIALIZE;
+#else
+        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, Angle, Angle, Angle,    short, short, short);
+        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      YRot,  XRot,  YHeadRot, Xd,    Yd,    Zd);
+        DECLARE_READ_WRITE_SERIALIZE;
 #endif
 
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        const UUID& GetUUID() const
-        {
-            return uuid;
-        }
-
-        int GetType() const
-        {
-            return type;
-        }
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        Angle GetYRot() const
-        {
-            return y_rot;
-        }
-
-        Angle GetXRot() const
-        {
-            return x_rot;
-        }
-
-        Angle GetYHeadRot() const
-        {
-            return y_head_rot;
-        }
-
-        short GetXd() const
-        {
-            return xd;
-        }
-
-        short GetYd() const
-        {
-            return yd;
-        }
-
-        short GetZd() const
-        {
-            return zd;
-        }
-
-#if PROTOCOL_VERSION < 550 /* < 1.15 */
-        const std::vector<unsigned char>& GetRawMetadata() const
-        {
-            return raw_metadata;
-        }
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Uuid);
+        GETTER_SETTER(Type);
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(YRot);
+        GETTER_SETTER(XRot);
+        GETTER_SETTER(YHeadRot);
+        GETTER_SETTER(Xd);
+        GETTER_SETTER(Yd);
+        GETTER_SETTER(Zd);
+#if PROTOCOL_VERSION < 573 /* < 1.15 */
+        GETTER_SETTER(RawMetadata);
 #endif
-
-
     protected:
+#if PROTOCOL_VERSION < 550 /* < 1.15 */
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            id_ = ReadData<VarInt>(iter, length);
-            uuid = ReadData<UUID>(iter, length);
-            type = ReadData<VarInt>(iter, length);
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-            y_rot = ReadData<Angle>(iter, length);
-            x_rot = ReadData<Angle>(iter, length);
-            y_head_rot = ReadData<Angle>(iter, length);
-            xd = ReadData<short>(iter, length);
-            yd = ReadData<short>(iter, length);
-            zd = ReadData<short>(iter, length);
-#if PROTOCOL_VERSION < 550 /* < 1.15 */
-            raw_metadata = ReadByteArray(iter, length, length);
-#endif
+            SetId_(ReadData<VarInt>(iter, length));
+            SetUUID(ReadData<UUID>(iter, length));
+            SetType(ReadData<VarInt>(iter, length));
+            SetX(ReadData<double>(iter, length));
+            SetY(ReadData<double>(iter, length));
+            SetZ(ReadData<double>(iter, length));
+            SetYRot(ReadData<Angle>(iter, length));
+            SetXRot(ReadData<Angle>(iter, length));
+            SetYHeadRot(ReadData<Angle>(iter, length));
+            SetXd(ReadData<short>(iter, length));
+            SetYd(ReadData<short>(iter, length));
+            SetZd(ReadData<short>(iter, length));
+            SetRawMetadata(ReadByteArray(iter, length, length));
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(id_, container);
-            WriteData<UUID>(uuid, container);
-            WriteData<VarInt>(type, container);
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-            WriteData<Angle>(y_rot, container);
-            WriteData<Angle>(x_rot, container);
-            WriteData<Angle>(y_head_rot, container);
-            WriteData<short>(xd, container);
-            WriteData<short>(yd, container);
-            WriteData<short>(zd, container);
-#if PROTOCOL_VERSION < 550 /* < 1.15 */
-            WriteByteArray(raw_metadata, container);
-#endif
+            WriteData<VarInt>(GetId_(), container);
+            WriteData<UUID>(GetUUID(), container);
+            WriteData<VarInt>(GetType(), container);
+            WriteData<double>(GetX(), container);
+            WriteData<double>(GetY(), container);
+            WriteData<double>(GetZ(), container);
+            WriteData<Angle>(GetYRot(), container);
+            WriteData<Angle>(GetXRot(), container);
+            WriteData<Angle>(GetYHeadRot(), container);
+            WriteData<short>(GetXd(), container);
+            WriteData<short>(GetYd(), container);
+            WriteData<short>(GetZd(), container);
+            WriteByteArray(GetRawMetadata(), container);
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["uuid"] = uuid;
-            output["type"] = type;
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["y_rot"] = y_rot;
-            output["x_rot"] = x_rot;
-            output["y_head_rot"] = y_head_rot;
-            output["xd"] = xd;
-            output["yd"] = yd;
-            output["zd"] = zd;
-#if PROTOCOL_VERSION < 550 /* < 1.15 */
-            output["raw_metadata"] = "Vector of " + std::to_string(raw_metadata.size()) + " unsigned char";
 #endif
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        UUID uuid = {};
-        int type = 0;
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        short xd = 0;
-        short yd = 0;
-        short zd = 0;
-        Angle y_rot = 0;
-        Angle x_rot = 0;
-        Angle y_head_rot = 0;
-#if PROTOCOL_VERSION < 550 /* < 1.15 */
-        std::vector<unsigned char> raw_metadata;
-#endif
-
     };
 } //ProtocolCraft
 #endif

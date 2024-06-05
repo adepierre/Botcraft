@@ -43,59 +43,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Entity Link";
 
-        virtual ~ClientboundSetEntityLinkPacket() override
-        {
+        DECLARE_FIELDS_TYPES(int,      int);
+        DECLARE_FIELDS_NAMES(SourceId, DestId);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetSourceId(const int source_id_)
-        {
-            source_id = source_id_;
-        }
-
-        void SetDestId(const int dest_id_)
-        {
-            dest_id = dest_id_;
-        }
-
-
-        int GetSourceId() const
-        {
-            return source_id;
-        }
-
-        int GetDestId() const
-        {
-            return dest_id;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            source_id = ReadData<int>(iter, length);
-            dest_id = ReadData<int>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<int>(source_id, container);
-            WriteData<int>(dest_id, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["source_id"] = source_id;
-            output["dest_id"] = dest_id;
-
-            return output;
-        }
-
-    private:
-        int source_id = 0;
-        int dest_id = 0;
-
+        GETTER_SETTER(SourceId);
+        GETTER_SETTER(DestId);
     };
 } //ProtocolCraft

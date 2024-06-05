@@ -43,102 +43,37 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Set Content";
 
-        virtual ~ClientboundContainerSetContentPacket() override
-        {
-
-        }
-
-        void SetContainerId(const unsigned char container_id_)
-        {
-            container_id = container_id_;
-        }
-
-        void SetItems(const std::vector<Slot>& items_)
-        {
-            items = items_;
-        }
-
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-        void SetCarriedItem(const Slot& carried_item_)
-        {
-            carried_item = carried_item_;
-        }
-
-        void SetStateId(const int state_id_)
-        {
-            state_id = state_id_;
-        }
+#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
+        DECLARE_FIELDS_TYPES(unsigned char, std::vector<Slot>);
+        DECLARE_FIELDS_NAMES(ContainerId,   Items);
+        DECLARE_SERIALIZE;
+#else
+        DECLARE_FIELDS_TYPES(unsigned char, VarInt,  std::vector<Slot>, Slot);
+        DECLARE_FIELDS_NAMES(ContainerId,   StateId, Items,             CarriedItem);
+        DECLARE_READ_WRITE_SERIALIZE;
 #endif
 
-        unsigned char GetContainerId() const
-        {
-            return container_id;
-        }
-
-        const std::vector<Slot>& GetSlotData() const
-        {
-            return items;
-        }
-
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(Items);
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-        const Slot& GetCarriedItem() const
-        {
-            return carried_item;
-        }
-
-        int GetStateId() const
-        {
-            return state_id;
-        }
+        GETTER_SETTER(StateId);
+        GETTER_SETTER(CarriedItem);
 #endif
 
+#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            container_id = ReadData<unsigned char>(iter, length);
-#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
+            SetContainerId(ReadData<unsigned char>(iter, length));
             // Special case, the data size is a short instead of a varint
-            items = ReadVector<Slot, short>(iter, length, ReadData<Slot>);
-#else
-            state_id = ReadData<VarInt>(iter, length);
-            items = ReadData<std::vector<Slot>>(iter, length);
-            carried_item = ReadData<Slot>(iter, length);
-#endif
+            SetItems(ReadVector<Slot, short>(iter, length, ReadData<Slot>));
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<unsigned char>(container_id, container);
-#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-            WriteVector<Slot, short>(items, container, WriteData<Slot>);
-#else
-            WriteData<VarInt>(state_id, container);
-            WriteData<std::vector<Slot>>(items, container);
-            WriteData<Slot>(carried_item, container);
-#endif
+            WriteData<unsigned char>(GetContainerId(), container);
+            WriteVector<Slot, short>(GetItems(), container, WriteData<Slot>);
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-            output["items"] = items;
-
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-            output["state_id"] = state_id;
-            output["carried_item"] = carried_item;
-#endif
-
-            return output;
-        }
-
-    private:
-        unsigned char container_id = 0;
-        std::vector<Slot> items;
-#if PROTOCOL_VERSION > 755 /* > 1.17 */
-        Slot carried_item;
-        int state_id = 0;
 #endif
     };
 } //ProtocolCraft

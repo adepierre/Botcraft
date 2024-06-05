@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #pragma once
 
-#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #include "protocolCraft/BaseMessage.hpp"
 
 #include <vector>
@@ -23,43 +23,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Enabled Features";
 
-        virtual ~ClientboundUpdateEnabledFeaturesPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::vector<std::string>);
+        DECLARE_FIELDS_NAMES(Features);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetFeatures(const std::vector<std::string>& features_)
-        {
-            features = features_;
-        }
-
-        const std::vector<std::string>& GetFeatures() const
-        {
-            return features;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            features = ReadData<std::vector<std::string>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::vector<std::string>>(features, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["features"] = features;
-
-            return output;
-        }
-
-    private:
-        std::vector<std::string> features;
+        GETTER_SETTER(Features);
     };
 } //ProtocolCraft
 #endif

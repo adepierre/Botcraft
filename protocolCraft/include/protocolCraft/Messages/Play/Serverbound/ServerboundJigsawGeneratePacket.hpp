@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 711 /* > 1.15.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 711 /* > 1.15.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
@@ -36,71 +36,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Jigsaw Generate";
 
-        virtual ~ServerboundJigsawGeneratePacket() override
-        {
+        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt, bool);
+        DECLARE_FIELDS_NAMES(Pos,             Levels, KeepJigsaws);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-        
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetLevels(const int levels_)
-        {
-            levels = levels_;
-        }
-
-        void SetKeepJigsaws(const bool keep_jigsaws_)
-        {
-            keep_jigsaws = keep_jigsaws_;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        int GetLevels() const
-        {
-            return levels;
-        }
-
-        bool GetKeepJigsaws() const
-        {
-            return keep_jigsaws;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            pos = ReadData<NetworkPosition>(iter, length);
-            levels = ReadData<VarInt>(iter, length);
-            keep_jigsaws = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<VarInt>(levels, container);
-            WriteData<bool>(keep_jigsaws, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-            output["levels"] = levels;
-            output["keep_jigsaws"] = keep_jigsaws;
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-        int levels = 0;
-        bool keep_jigsaws = false;
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Levels);
+        GETTER_SETTER(KeepJigsaws);
     };
 } //ProtocolCraft
 #endif

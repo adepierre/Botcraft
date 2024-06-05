@@ -44,54 +44,30 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Equipment";
 
-        virtual ~ClientboundSetEquipmentPacket() override
-        {
-
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-        void SetSlots(const std::map<unsigned char, Slot>& slots_)
-        {
-            slots = slots_;
-        }
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        DECLARE_FIELDS_TYPES(VarInt,   std::pair<VarInt, Slot>);
+        DECLARE_FIELDS_NAMES(EntityId, Slot);
 #else
-        void SetSlot(const std::pair<int, Slot>& slot_)
-        {
-            slot = slot_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt,   std::map<unsigned char, Slot>);
+        DECLARE_FIELDS_NAMES(EntityId, Slots);
 #endif
+        DECLARE_SERIALIZE;
 
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-        const std::map<unsigned char, Slot>& GetSlots() const
-        {
-            return slots;
-        }
+        GETTER_SETTER(EntityId);
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        GETTER_SETTER(Slot);
 #else
-        const std::pair<int, Slot>& GetSlot() const
-        {
-            return slot;
-        }
+        GETTER_SETTER(Slots);
 #endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadData<VarInt>(iter, length);
+            SetEntityId(ReadData<VarInt>(iter, length));
 
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
             bool has_value = true;
-            slots.clear();
+            std::map<unsigned char, Slot> slots;
             while (has_value)
             {
                 unsigned char current_value = ReadData<unsigned char>(iter, length);
@@ -100,55 +76,28 @@ namespace ProtocolCraft
 
                 has_value = current_value & (1 << 7);
             }
+            SetSlots(slots);
 #else
-            slot.first = ReadData<VarInt>(iter, length);
-            slot.second = ReadData<Slot>(iter, length);
+            const int slot_first = ReadData<VarInt>(iter, length);
+            const Slot slot_second = ReadData<Slot>(iter, length);
+            SetSlot({ slot_first, slot_second });
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(entity_id, container);
+            WriteData<VarInt>(GetEntityId(), container);
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
             size_t index = 0;
-            for (const auto& [k, v] : slots)
+            for (const auto& [k, v] : GetSlots())
             {
-                WriteData<unsigned char>(index != slots.size() - 1 ? k | (1 << 7) : k, container);
+                WriteData<unsigned char>(index != GetSlots().size() - 1 ? k | (1 << 7) : k, container);
                 WriteData<Slot>(v, container);
             }
 #else
-            WriteData<VarInt>(slot.first, container);
-            WriteData<Slot>(slot.second, container);
+            WriteData<VarInt>(GetSlot().first, container);
+            WriteData<Slot>(GetSlot().second, container);
 #endif
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["entity_id"] = entity_id;
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-            output["slots"] = Json::Object();
-
-            for (const auto& [k, v] : slots)
-            {
-                output["slots"][std::to_string(k)] = v;
-            }
-#else
-            output["slot_first"] = slot.first;
-            output["slot_second"] = slot.second;
-#endif
-
-            return output;
-        }
-
-    private:
-        int entity_id = 0;
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-        std::map<unsigned char, Slot> slots;
-#else
-        std::pair<int, Slot> slot;
-#endif
-
     };
 } //ProtocolCraft

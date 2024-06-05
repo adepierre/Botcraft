@@ -24,44 +24,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Info Remove";
 
-        virtual ~ClientboundPlayerInfoRemovePacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::vector<UUID>);
+        DECLARE_FIELDS_NAMES(ProfileIds);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetProfileIds(const std::vector<UUID>& profile_ids_)
-        {
-            profile_ids = profile_ids_;
-        }
-
-
-        const std::vector<UUID>& GetProfileIds() const
-        {
-            return profile_ids;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            profile_ids = ReadData<std::vector<UUID>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::vector<UUID>>(profile_ids, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["profile_ids"] = profile_ids;
-
-            return output;
-        }
-
-    private:
-        std::vector<UUID> profile_ids;
+        GETTER_SETTER(ProfileIds);
     };
 } //ProtocolCraft
 #endif

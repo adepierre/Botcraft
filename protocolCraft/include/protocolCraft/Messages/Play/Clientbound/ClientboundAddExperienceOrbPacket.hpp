@@ -30,101 +30,14 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Add Experience Orb";
 
-        virtual ~ClientboundAddExperienceOrbPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt, double, double, double, short);
+        DECLARE_FIELDS_NAMES(Id_,    X,      Y,      Z,      Value);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
-
-        void SetValue(const short value__)
-        {
-            value_ = value__;
-        }
-
-
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        short GetValue() const
-        {
-            return value_;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            id_ = ReadData<VarInt>(iter, length);
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-            value_ = ReadData<short>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(id_, container);
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-            WriteData<short>(value_, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["id_"] = id_;
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["value"] = value_;
-
-            return output;
-        }
-
-    private:
-        int id_ = 0;
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        short value_ = 0;
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(Value);
     };
 } //ProtocolCraft

@@ -44,87 +44,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Player Pos";
 
-        virtual ~ServerboundMovePlayerPacketPos() override
-        {
+        DECLARE_FIELDS_TYPES(double, double, double, bool);
+        DECLARE_FIELDS_NAMES(X,      Y,      Z,      OnGround);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
-
-        void SetOnGround(const bool on_ground_)
-        {
-            on_ground = on_ground_;
-        }
-
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        bool GetOnGround() const
-        {
-            return on_ground;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-            on_ground = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-            WriteData<bool>(on_ground, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["on_ground"] = on_ground;
-
-            return output;
-        }
-
-    private:
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        bool on_ground = false;
-
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(OnGround);
     };
 } //ProtocolCraft

@@ -44,92 +44,19 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Sign Update";
 
-        virtual ~ServerboundSignUpdatePacket() override
-        {
-
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-        void SetIsFrontText(const bool is_front_text_)
-        {
-            is_front_text = is_front_text_;
-        }
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
+        DECLARE_FIELDS_TYPES(NetworkPosition, std::array<std::string, 4>);
+        DECLARE_FIELDS_NAMES(Pos,             Lines);
+#else
+        DECLARE_FIELDS_TYPES(NetworkPosition, bool,        std::array<std::string, 4>);
+        DECLARE_FIELDS_NAMES(Pos,             IsFrontText, Lines);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetLines(const std::array<std::string, 4>& lines_)
-        {
-            lines = lines_;
-        }
-
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Lines);
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-        bool GetIsFrontText() const
-        {
-            return is_front_text;
-        }
+        GETTER_SETTER(IsFrontText);
 #endif
-
-        const std::array<std::string, 4>& GetLines() const
-        {
-            return lines;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            pos = ReadData<NetworkPosition>(iter, length);
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-            is_front_text = ReadData<bool>(iter, length);
-#endif
-            lines = std::array<std::string, 4>();
-            for (int i = 0; i < 4; ++i)
-            {
-                lines[i] = ReadData<std::string>(iter, length);
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<NetworkPosition>(pos, container);
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-            WriteData<bool>(is_front_text, container);
-#endif
-            for (int i = 0; i < 4; ++i)
-            {
-                WriteData<std::string>(lines[i], container);
-            }
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-            output["is_front_text"] = is_front_text;
-#endif
-            output["lines"] = lines;
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-        bool is_front_text = false;
-#endif
-        std::array<std::string, 4> lines;
-
     };
 } //ProtocolCraft

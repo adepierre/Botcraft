@@ -44,73 +44,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Player Rot";
 
-        virtual ~ServerboundMovePlayerPacketRot() override
-        {
+        DECLARE_FIELDS_TYPES(float, float, bool);
+        DECLARE_FIELDS_NAMES(YRot,  XRot,  OnGround);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetYRot(const float yRot_)
-        {
-            yRot = yRot_;
-        }
-
-        void SetXRot(const float xRot_)
-        {
-            xRot = xRot_;
-        }
-
-        void SetOnGround(const bool on_ground_)
-        {
-            on_ground = on_ground_;
-        }
-
-
-        float GetYRot() const
-        {
-            return yRot;
-        }
-
-        float GetXRot() const
-        {
-            return xRot;
-        }
-
-        bool GetOnGround() const
-        {
-            return on_ground;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            yRot = ReadData<float>(iter, length);
-            xRot = ReadData<float>(iter, length);
-            on_ground = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<float>(yRot, container);
-            WriteData<float>(xRot, container);
-            WriteData<bool>(on_ground, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["yRot"] = yRot;
-            output["xRot"] = xRot;
-            output["on_ground"] = on_ground;
-
-            return output;
-        }
-
-    private:
-        float yRot = 0.0f;
-        float xRot = 0.0f;
-        bool on_ground = false;
-
+        GETTER_SETTER(YRot);
+        GETTER_SETTER(XRot);
+        GETTER_SETTER(OnGround);
     };
 } //ProtocolCraft

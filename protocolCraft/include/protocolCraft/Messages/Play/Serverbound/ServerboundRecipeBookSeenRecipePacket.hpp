@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #pragma once
 
-#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
 
@@ -31,44 +31,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Recipe Book Seen Recipe";
 
-        virtual ~ServerboundRecipeBookSeenRecipePacket() override
-        {
+        DECLARE_FIELDS_TYPES(Identifier);
+        DECLARE_FIELDS_NAMES(Recipe);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetRecipe(const Identifier& recipe_)
-        {
-            recipe = recipe_;
-        }
-
-
-        const Identifier& GetRecipe() const
-        {
-            return recipe;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            recipe = ReadData<Identifier>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<Identifier>(recipe, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["recipe"] = recipe;
-
-            return output;
-        }
-
-    private:
-        Identifier recipe;
+        GETTER_SETTER(Recipe);
     };
 } //ProtocolCraft
 #endif

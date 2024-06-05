@@ -50,182 +50,28 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Mob Effect";
 
-        virtual ~ClientboundUpdateMobEffectPacket() override
-        {
-
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
 #if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-        void SetEffectId(const char effect_id_)
-        {
-            effect_id = effect_id_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt,   char,     char,            VarInt,              char);
+        DECLARE_FIELDS_NAMES(EntityId, EffectId, EffectAmplifier, EffectDurationTicks, Flags);
+#elif PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(VarInt,   VarInt,   char,            VarInt,              char);
+        DECLARE_FIELDS_NAMES(EntityId, EffectId, EffectAmplifier, EffectDurationTicks, Flags);
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        DECLARE_FIELDS_TYPES(VarInt,   VarInt,   char,            VarInt,              char,  std::optional<NBT::UnnamedValue>);
+        DECLARE_FIELDS_NAMES(EntityId, EffectId, EffectAmplifier, EffectDurationTicks, Flags, FactorData);
 #else
-        void SetEffectId(const int effect_id_)
-        {
-            effect_id = effect_id_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt,   VarInt,   VarInt,          VarInt,              char);
+        DECLARE_FIELDS_NAMES(EntityId, EffectId, EffectAmplifier, EffectDurationTicks, Flags);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetEffectAmplifier(const char effect_amplifier_)
-        {
-            effect_amplifier = effect_amplifier_;
-        }
-#else
-        void SetEffectAmplifier(const int effect_amplifier_)
-        {
-            effect_amplifier = effect_amplifier_;
-        }
-#endif
-
-        void SetEffectDurationTicks(const int effect_duration_ticks_)
-        {
-            effect_duration_ticks = effect_duration_ticks_;
-        }
-
-        void SetFlags(const char flags_)
-        {
-            flags = flags_;
-        }
-
+        GETTER_SETTER(EntityId);
+        GETTER_SETTER(EffectId);
+        GETTER_SETTER(EffectAmplifier);
+        GETTER_SETTER(EffectDurationTicks);
+        GETTER_SETTER(Flags);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetFactorData(const std::optional<NBT::Value>& factor_data_)
-        {
-            factor_data = factor_data_;
-        }
+        GETTER_SETTER(FactorData);
 #endif
-
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-#if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-        char GetEffectId() const
-        {
-            return effect_id;
-        }
-#else
-        int GetEffectId() const
-        {
-            return effect_id;
-        }
-#endif
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        char GetEffectAmplifier() const
-        {
-            return effect_amplifier;
-        }
-#else
-        int GetEffectAmplifier() const
-        {
-            return effect_amplifier;
-        }
-#endif
-
-        int GetEffectDurationTicks() const
-        {
-            return effect_duration_ticks;
-        }
-
-        char GetFlags() const
-        {
-            return flags;
-        }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        const std::optional<NBT::Value>& GetFactorData() const
-        {
-            return factor_data;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            entity_id = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-            effect_id = ReadData<char>(iter, length);
-#else
-            effect_id = ReadData<VarInt>(iter, length);
-#endif
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            effect_amplifier = ReadData<char>(iter, length);
-#else
-            effect_amplifier = ReadData<VarInt>(iter, length);
-#endif
-            effect_duration_ticks = ReadData<VarInt>(iter, length);
-            flags = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            factor_data = ReadData<std::optional<NBT::Value>, std::optional<NBT::UnnamedValue>>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(entity_id, container);
-#if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-            WriteData<char>(effect_id, container);
-#else
-            WriteData<VarInt>(effect_id, container);
-#endif
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<char>(effect_amplifier, container);
-#else
-            WriteData<VarInt>(effect_amplifier, container);
-#endif
-            WriteData<VarInt>(effect_duration_ticks, container);
-            WriteData<char>(flags, container);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<std::optional<NBT::Value>, std::optional<NBT::UnnamedValue>>(factor_data, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["entity_id"] = entity_id;
-            output["effect_id"] = effect_id;
-            output["effect_amplifier"] = effect_amplifier;
-            output["effect_duration_ticks"] = effect_duration_ticks;
-            output["flags"] = flags;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            if (factor_data.has_value())
-            {
-                output["factor_data"] = factor_data.value();
-            }
-#endif
-
-            return output;
-        }
-
-    private:
-        int entity_id = 0;
-#if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-        char effect_id = 0;
-#else
-        int effect_id = 0;
-#endif
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        char effect_amplifier = 0;
-#else
-        int effect_amplifier = 0;
-#endif
-        int effect_duration_ticks = 0;
-        char flags = 0;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        std::optional<NBT::Value> factor_data;
-#endif
-
     };
 } //ProtocolCraft

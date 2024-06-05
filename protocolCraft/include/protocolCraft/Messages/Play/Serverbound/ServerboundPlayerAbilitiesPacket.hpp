@@ -44,85 +44,19 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Abilities";
 
-        virtual ~ServerboundPlayerAbilitiesPacket() override
-        {
-
-        }
-
-        void SetFlags(const char flags_)
-        {
-            flags = flags_;
-        }
-
-#if PROTOCOL_VERSION < 727 /* < 1.16 */
-        void SetFlyingSpeed(const float flying_speed_)
-        {
-            flying_speed = flying_speed_;
-        }
-
-        void SetWalkingSpeed(const float walking_speed_)
-        {
-            walking_speed = walking_speed_;
-        }
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        DECLARE_FIELDS_TYPES(char,  float,       float);
+        DECLARE_FIELDS_NAMES(Flags, FlyingSpeed, WalkingSpeed);
+#else
+        DECLARE_FIELDS_TYPES(char);
+        DECLARE_FIELDS_NAMES(Flags);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-        char GetFlags() const
-        {
-            return flags;
-        }
-
-#if PROTOCOL_VERSION < 727 /* < 1.16 */
-        float GetFlyingSpeed() const
-        {
-            return flying_speed;
-        }
-
-        float GetWalkingSpeed() const
-        {
-            return walking_speed;
-        }
+        GETTER_SETTER(Flags);
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        GETTER_SETTER(FlyingSpeed);
+        GETTER_SETTER(WalkingSpeed);
 #endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            flags = ReadData<char>(iter, length);
-#if PROTOCOL_VERSION < 727 /* < 1.16 */
-            flying_speed = ReadData<float>(iter, length);
-            walking_speed = ReadData<float>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<char>(flags, container);
-#if PROTOCOL_VERSION < 727 /* < 1.16 */
-            WriteData<float>(flying_speed, container);
-            WriteData<float>(walking_speed, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["flags"] = flags;
-#if PROTOCOL_VERSION < 727 /* < 1.16 */
-            output["flying_speed"] = flying_speed;
-            output["walking_speed"] = walking_speed;
-#endif
-
-            return output;
-        }
-
-    private:
-        char flags = 0;
-#if PROTOCOL_VERSION < 727 /* < 1.16 */
-        float flying_speed = 0.0f;
-        float walking_speed = 0.0f;
-#endif
-
     };
 } //ProtocolCraft

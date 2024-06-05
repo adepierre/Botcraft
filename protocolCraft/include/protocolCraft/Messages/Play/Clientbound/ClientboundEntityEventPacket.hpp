@@ -45,59 +45,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Entity Event";
 
-        virtual ~ClientboundEntityEventPacket() override
-        {
+        DECLARE_FIELDS_TYPES(int,      char);
+        DECLARE_FIELDS_NAMES(EntityId, EventId);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
-        void SetEventId(const char event_id_)
-        {
-            event_id = event_id_;
-        }
-
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-        char GetEventId() const
-        {
-            return event_id;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            entity_id = ReadData<int>(iter, length);
-            event_id = ReadData<char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<int>(entity_id, container);
-            WriteData<char>(event_id, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["entity_id"] = entity_id;
-            output["event_id"] = event_id;
-
-            return output;
-        }
-
-    private:
-        int entity_id = 0;
-        char event_id = 0;
-
+        GETTER_SETTER(EntityId);
+        GETTER_SETTER(EventId);
     };
 } //ProtocolCraft

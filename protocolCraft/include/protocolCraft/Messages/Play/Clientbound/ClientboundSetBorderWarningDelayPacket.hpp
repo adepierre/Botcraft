@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -31,47 +31,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border Warning Delay";
 
-        virtual ~ClientboundSetBorderWarningDelayPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(WarningDelay);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetWarningDelay(const int warning_delay_)
-        {
-            warning_delay = warning_delay_;
-        }
-
-
-        int GetWarningDelay() const
-        {
-            return warning_delay;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            warning_delay = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(warning_delay, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["warning_delay"] = warning_delay;
-
-            return output;
-        }
-
-    private:
-        int warning_delay = 0;
-
+        GETTER_SETTER(WarningDelay);
     };
 } //ProtocolCraft
 #endif

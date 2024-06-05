@@ -44,59 +44,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Paddle Boat";
 
-        virtual ~ServerboundPaddleBoatPacket() override
-        {
+        DECLARE_FIELDS_TYPES(bool, bool);
+        DECLARE_FIELDS_NAMES(Left, Right);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetLeft(const bool left_)
-        {
-            left = left_;
-        }
-
-        void SetRight(const bool right_)
-        {
-            right = right_;
-        }
-
-
-        bool GetLeft() const
-        {
-            return left;
-        }
-
-        bool GetRight() const
-        {
-            return right;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            left = ReadData<bool>(iter, length);
-            right = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<bool>(left, container);
-            WriteData<bool>(right, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["left"] = left;
-            output["right"] = right;
-
-            return output;
-        }
-
-    private:
-        bool left = false;
-        bool right = false;
-
+        GETTER_SETTER(Left);
+        GETTER_SETTER(Right);
     };
 } //ProtocolCraft

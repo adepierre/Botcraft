@@ -1,8 +1,7 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Chat/Chat.hpp"
 
 namespace ProtocolCraft
 {
@@ -30,32 +29,7 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Combat Enter";
 
-        virtual ~ClientboundPlayerCombatEnterPacket() override
-        {
-
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-
-            return output;
-        }
-
-    private:
+        DECLARE_EMPTY;
     };
 } //ProtocolCraft
 #endif

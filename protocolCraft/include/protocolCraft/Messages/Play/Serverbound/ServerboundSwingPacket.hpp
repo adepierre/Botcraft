@@ -41,45 +41,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Swing";
 
-        virtual ~ServerboundSwingPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Hand);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetHand(const int hand_)
-        {
-            hand = hand_;
-        }
-
-
-        int GetHand() const
-        {
-            return hand;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            hand = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(hand, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["hand"] = hand;
-
-            return output;
-        }
-
-    private:
-        int hand = 0;
-
+        GETTER_SETTER(Hand);
     };
 } //ProtocolCraft

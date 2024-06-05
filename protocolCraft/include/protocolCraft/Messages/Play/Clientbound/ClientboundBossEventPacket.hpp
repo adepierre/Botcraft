@@ -38,111 +38,45 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Boss Event";
 
-        virtual ~ClientboundBossEventPacket() override
-        {
+        DECLARE_FIELDS_TYPES(UUID, VarInt,    Chat,  float, VarInt, VarInt,  unsigned char);
+        DECLARE_FIELDS_NAMES(Id_,  Operation, Name_, Pct,   Color,  Overlay, Flags);
 
-        }
-
-        void SetId_(const UUID& id__)
-        {
-            id_ = id__;
-        }
-
-        void SetOperation(const int operation_)
-        {
-            operation = operation_;
-        }
-
-        void SetName_(const Chat& name__)
-        {
-            name_ = name__;
-        }
-
-        void SetPct(const float pct_)
-        {
-            pct = pct_;
-        }
-
-        void SetColor(const int color_)
-        {
-            color = color_;
-        }
-
-        void SetOverlay(const int overlay_)
-        {
-            overlay = overlay_;
-        }
-
-        void SetFlags(const unsigned char flags_)
-        {
-            flags = flags_;
-        }
-
-
-        const UUID& GetId_() const
-        {
-            return id_;
-        }
-
-        int GetOperation() const
-        {
-            return operation;
-        }
-
-        const Chat& GetName_() const
-        {
-            return name_;
-        }
-
-        float GetPct() const
-        {
-            return pct;
-        }
-
-        int GetColor() const
-        {
-            return color;
-        }
-
-        int GetOverlay() const
-        {
-            return overlay;
-        }
-
-        unsigned char GetFlags() const
-        {
-            return flags;
-        }
-
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Operation);
+        GETTER_SETTER(Name_);
+        GETTER_SETTER(Pct);
+        GETTER_SETTER(Color);
+        GETTER_SETTER(Overlay);
+        GETTER_SETTER(Flags);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            id_ = ReadData<UUID>(iter, length);
-            operation = ReadData<VarInt>(iter, length);
-            switch (operation)
+            SetId_(ReadData<UUID>(iter, length));
+            SetOperation(ReadData<VarInt>(iter, length));
+            switch (GetOperation())
             {
             case 0:
-                name_ = ReadData<Chat>(iter, length);
-                pct = ReadData<float>(iter, length);
-                color = ReadData<VarInt>(iter, length);
-                overlay = ReadData<VarInt>(iter, length);
-                flags = ReadData<unsigned char>(iter, length);
+                SetName_(ReadData<Chat>(iter, length));
+                SetPct(ReadData<float>(iter, length));
+                SetColor(ReadData<VarInt>(iter, length));
+                SetOverlay(ReadData<VarInt>(iter, length));
+                SetFlags(ReadData<unsigned char>(iter, length));
                 break;
             case 1:
                 break;
             case 2:
-                pct = ReadData<float>(iter, length);
+                SetPct(ReadData<float>(iter, length));
                 break;
             case 3:
-                name_ = ReadData<Chat>(iter, length);
+                SetName_(ReadData<Chat>(iter, length));
                 break;
             case 4:
-                color = ReadData<VarInt>(iter, length);
-                overlay = ReadData<VarInt>(iter, length);
+                SetColor(ReadData<VarInt>(iter, length));
+                SetOverlay(ReadData<VarInt>(iter, length));
                 break;
             case 5:
-                flags = ReadData<unsigned char>(iter, length);
+                SetFlags(ReadData<unsigned char>(iter, length));
                 break;
             default:
                 break;
@@ -151,31 +85,31 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<UUID>(id_, container);
-            WriteData<VarInt>(operation, container);
-            switch (operation)
+            WriteData<UUID>(GetId_(), container);
+            WriteData<VarInt>(GetOperation(), container);
+            switch (GetOperation())
             {
             case 0:
-                WriteData<Chat>(name_, container);
-                WriteData<float>(pct, container);
-                WriteData<VarInt>(color, container);
-                WriteData<VarInt>(overlay, container);
-                WriteData<unsigned char>(flags, container);
+                WriteData<Chat>(GetName_(), container);
+                WriteData<float>(GetPct(), container);
+                WriteData<VarInt>(GetColor(), container);
+                WriteData<VarInt>(GetOverlay(), container);
+                WriteData<unsigned char>(GetFlags(), container);
                 break;
             case 1:
                 break;
             case 2:
-                WriteData<float>(pct, container);
+                WriteData<float>(GetPct(), container);
                 break;
             case 3:
-                WriteData<Chat>(name_, container);
+                WriteData<Chat>(GetName_(), container);
                 break;
             case 4:
-                WriteData<VarInt>(color, container);
-                WriteData<VarInt>(overlay, container);
+                WriteData<VarInt>(GetColor(), container);
+                WriteData<VarInt>(GetOverlay(), container);
                 break;
             case 5:
-                WriteData<unsigned char>(flags, container);
+                WriteData<unsigned char>(GetFlags(), container);
                 break;
             default:
                 break;
@@ -186,32 +120,32 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["id_"] = id_;
-            output["operation"] = operation;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Id_)])] = GetId_();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Operation)])] = GetOperation();
 
-            switch (operation)
+            switch (GetOperation())
             {
             case 0:
-                output["name_"] = name_;
-                output["pct"] = pct;
-                output["color"] = color;
-                output["overlay"] = overlay;
-                output["flags"] = flags;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Name_)])] = GetName_();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Pct)])] = GetPct();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Color)])] = GetColor();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Overlay)])] = GetOverlay();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Flags)])] = GetFlags();
                 break;
             case 1:
                 break;
             case 2:
-                output["pct"] = pct;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Pct)])] = GetPct();
                 break;
             case 3:
-                output["name_"] = name_;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Name_)])] = GetName_();
                 break;
             case 4:
-                output["color"] = color;
-                output["overlay"] = overlay;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Color)])] = GetColor();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Overlay)])] = GetOverlay();
                 break;
             case 5:
-                output["flags"] = flags;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Flags)])] = GetFlags();
                 break;
             default:
                 break;
@@ -219,15 +153,5 @@ namespace ProtocolCraft
 
             return output;
         }
-
-    private:
-        UUID id_ = {};
-        int operation = 0;
-        Chat name_;
-        float pct = 0.0f;
-        int color = 0;
-        int overlay = 0;
-        unsigned char flags = 0;
-
     };
 } //ProtocolCraft

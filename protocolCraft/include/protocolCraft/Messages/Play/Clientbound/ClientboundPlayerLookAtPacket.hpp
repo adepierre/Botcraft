@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 351 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 351 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -44,109 +44,43 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Face Player";
 
-        virtual ~ClientboundPlayerLookAtPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt,     double, double, double, bool,     VarInt, VarInt);
+        DECLARE_FIELDS_NAMES(FromAnchor, X,      Y,      Z,      AtEntity, Entity, ToAnchor);
 
-        }
-
-        void SetX(const double x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const double y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const double z_)
-        {
-            z = z_;
-        }
-
-        void SetEntity(const int entity_)
-        {
-            entity = entity_;
-        }
-
-        void SetFromAnchor(const int from_anchor_)
-        {
-            from_anchor = from_anchor_;
-        }
-
-        void SetToAnchor(const int to_anchor_)
-        {
-            to_anchor = to_anchor_;
-        }
-
-        void SetAtEntity(const bool at_entity_)
-        {
-            at_entity = at_entity_;
-        }
-
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        int GetEntity() const
-        {
-            return entity;
-        }
-
-        int GetFromAnchor() const
-        {
-            return from_anchor;
-        }
-
-        int GetToAnchor() const
-        {
-            return to_anchor;
-        }
-
-        bool GetAtEntity() const
-        {
-            return at_entity;
-        }
-
+        GETTER_SETTER(FromAnchor);
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(AtEntity);
+        GETTER_SETTER(Entity);
+        GETTER_SETTER(ToAnchor);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            from_anchor = ReadData<VarInt>(iter, length);
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-            at_entity = ReadData<bool>(iter, length);
-            if (at_entity)
+            SetFromAnchor(ReadData<VarInt>(iter, length));
+            SetX(ReadData<double>(iter, length));
+            SetY(ReadData<double>(iter, length));
+            SetZ(ReadData<double>(iter, length));
+            SetAtEntity(ReadData<bool>(iter, length));
+            if (GetAtEntity())
             {
-                entity = ReadData<VarInt>(iter, length);
-                to_anchor = ReadData<VarInt>(iter, length);
+                SetEntity(ReadData<VarInt>(iter, length));
+                SetToAnchor(ReadData<VarInt>(iter, length));
             }
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(from_anchor, container);
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-            WriteData<bool>(at_entity, container);
-            if (at_entity)
+            WriteData<VarInt>(GetFromAnchor(), container);
+            WriteData<double>(GetX(), container);
+            WriteData<double>(GetY(), container);
+            WriteData<double>(GetZ(), container);
+            WriteData<bool>(GetAtEntity(), container);
+            if (GetAtEntity())
             {
-                WriteData<VarInt>(entity, container);
-                WriteData<VarInt>(to_anchor, container);
+                WriteData<VarInt>(GetEntity(), container);
+                WriteData<VarInt>(GetToAnchor(), container);
             }
         }
 
@@ -154,29 +88,19 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["from_anchor"] = from_anchor;
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["at_entity"] = at_entity;
-            if (at_entity)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::FromAnchor)])] = GetFromAnchor();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::X)])] = GetX();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Y)])] = GetY();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Z)])] = GetZ();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::AtEntity)])] = GetAtEntity();
+            if (GetAtEntity())
             {
-                output["entity"] = entity;
-                output["to_anchor"] = to_anchor;
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entity)])] = GetEntity();
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ToAnchor)])] = GetToAnchor();
             }
 
             return output;
         }
-
-    private:
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        int entity = 0;
-        int from_anchor = 0;
-        int to_anchor = 0;
-        bool at_entity = false;
-
     };
 } //ProtocolCraft
 #endif

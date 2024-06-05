@@ -51,181 +51,27 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Sound";
 
-        virtual ~ClientboundSoundPacket() override
-        {
-
-        }
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        void SetSound(const int sound_)
-        {
-            sound = sound_;
-        }
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, int, int, int, float,  float);
+        DECLARE_FIELDS_NAMES(Sound,  Source, X,   Y,   Z,   Volume, Pitch);
+#elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, int, int, int, float,  float, long long int);
+        DECLARE_FIELDS_NAMES(Sound,  Source, X,   Y,   Z,   Volume, Pitch, Seed);
 #else
-        void SetSound(const Holder<SoundEvent>& sound_)
-        {
-            sound = sound_;
-        }
+        DECLARE_FIELDS_TYPES(Holder<SoundEvent>, VarInt, int, int, int, float,  float, long long int);
+        DECLARE_FIELDS_NAMES(Sound,              Source, X,   Y,   Z,   Volume, Pitch, Seed);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetSource(const int source_)
-        {
-            source = source_;
-        }
-
-        void SetX(const int x_)
-        {
-            x = x_;
-        }
-
-        void SetY(const int y_)
-        {
-            y = y_;
-        }
-
-        void SetZ(const int z_)
-        {
-            z = z_;
-        }
-
-        void SetVolume(const float volume_)
-        {
-            volume = volume_;
-        }
-
-        void SetPitch(const float pitch_)
-        {
-            pitch = pitch_;
-        }
-
+        GETTER_SETTER(Sound);
+        GETTER_SETTER(Source);
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(Volume);
+        GETTER_SETTER(Pitch);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        void SetSeed(const long long int seed_)
-        {
-            seed = seed_;
-        }
+        GETTER_SETTER(Seed);
 #endif
-
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        int GetSound() const
-        {
-            return sound;
-        }
-#else
-        const Holder<SoundEvent>& GetSound() const
-        {
-            return sound;
-        }
-#endif
-
-        int GetSource() const
-        {
-            return source;
-        }
-
-        int GetX() const
-        {
-            return x;
-        }
-
-        int GetY() const
-        {
-            return y;
-        }
-
-        int GetZ() const
-        {
-            return z;
-        }
-
-        float GetVolume() const
-        {
-            return volume;
-        }
-
-        float GetPitch() const
-        {
-            return pitch;
-        }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        long long int GetSeed() const
-        {
-            return seed;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            sound = ReadData<VarInt>(iter, length);
-#else
-            sound = ReadData<Holder<SoundEvent>>(iter, length);
-#endif
-            source = ReadData<VarInt>(iter, length);
-            x = ReadData<int>(iter, length);
-            y = ReadData<int>(iter, length);
-            z = ReadData<int>(iter, length);
-            volume = ReadData<float>(iter, length);
-            pitch = ReadData<float>(iter, length);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            seed = ReadData<long long int>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteData<VarInt>(sound, container);
-#else
-            WriteData<Holder<SoundEvent>>(sound, container);
-#endif
-            WriteData<VarInt>(source, container);
-            WriteData<int>(x, container);
-            WriteData<int>(y, container);
-            WriteData<int>(z, container);
-            WriteData<float>(volume, container);
-            WriteData<float>(pitch, container);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteData<long long int>(seed, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["sound"] = sound;
-            output["source"] = source;
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["volume"] = volume;
-            output["pitch"] = pitch;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            output["seed"] = seed;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        int sound = 0;
-#else
-        Holder<SoundEvent> sound;
-#endif
-        int source = 0;
-        int x = 0;
-        int y = 0;
-        int z = 0;
-        float volume = 0.0f;
-        float pitch = 0.0f;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        long long int seed = 0;
-#endif
-
     };
 } //ProtocolCraft

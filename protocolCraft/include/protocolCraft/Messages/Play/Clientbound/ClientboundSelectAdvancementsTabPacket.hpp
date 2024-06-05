@@ -46,48 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Select Advancement Tab";
 
-        virtual ~ClientboundSelectAdvancementsTabPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::optional<std::string>);
+        DECLARE_FIELDS_NAMES(Tab);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetTab(const std::optional<std::string>& tab_)
-        {
-            tab = tab_;
-        }
-
-
-        const std::optional<std::string>& GetTab() const
-        {
-            return tab;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            tab = ReadData<std::optional<std::string>>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::optional<std::string>>(tab, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            if (tab.has_value())
-            {
-                output["tab"] = tab.value();
-            }
-
-            return output;
-        }
-
-    private:
-        std::optional<std::string> tab;
-
+        GETTER_SETTER(Tab);
     };
 } //ProtocolCraft

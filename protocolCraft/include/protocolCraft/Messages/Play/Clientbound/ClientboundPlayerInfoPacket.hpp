@@ -52,43 +52,24 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Info";
 
-        virtual ~ClientboundPlayerInfoPacket() override
-        {
+        DECLARE_FIELDS_TYPES(DiffType<PlayerInfoAction, VarInt>, std::map<UUID, PlayerUpdate>);
+        DECLARE_FIELDS_NAMES(Action,                             Entries);
 
-        }
-
-        void SetAction(const PlayerInfoAction action_)
-        {
-            action = action_;
-        }
-
-        void SetEntries(const std::map<UUID, PlayerUpdate>& entries_)
-        {
-            entries = entries_;
-        }
-
-        PlayerInfoAction GetAction() const
-        {
-            return action;
-        }
-
-        const std::map<UUID, PlayerUpdate>& GetEntries() const
-        {
-            return entries;
-        }
+        GETTER_SETTER(Action);
+        GETTER_SETTER(Entries);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            action = ReadData<PlayerInfoAction, VarInt>(iter, length);
-            switch (action)
+            SetAction(ReadData<PlayerInfoAction, VarInt>(iter, length));
+            switch (GetAction())
             {
             case PlayerInfoAction::AddPlayer:
-                entries = ReadData<std::map<UUID, PlayerUpdate>>(iter, length);
+                SetEntries(ReadData<std::map<UUID, PlayerUpdate>>(iter, length));
                 break;
             case PlayerInfoAction::UpdateGameMode:
                 // Special case, partial read
-                entries = ReadMap<UUID, PlayerUpdate>(iter, length,
+                SetEntries(ReadMap<UUID, PlayerUpdate>(iter, length,
                     [](ReadIterator& i, size_t& l)
                     {
                         const UUID uuid = ReadData<UUID>(i, l);
@@ -97,11 +78,11 @@ namespace ProtocolCraft
 
                         return std::make_pair(uuid, player_update);
                     }
-                );
+                ));
                 break;
             case PlayerInfoAction::UpdateLatency:
                 // Special case, partial read
-                entries = ReadMap<UUID, PlayerUpdate>(iter, length,
+                SetEntries(ReadMap<UUID, PlayerUpdate>(iter, length,
                     [](ReadIterator& i, size_t& l)
                     {
                         const UUID uuid = ReadData<UUID>(i, l);
@@ -110,11 +91,11 @@ namespace ProtocolCraft
 
                         return std::make_pair(uuid, player_update);
                     }
-                );
+                ));
                 break;
             case PlayerInfoAction::UpdateDisplayName:
                 // Special case, partial read
-                entries = ReadMap<UUID, PlayerUpdate>(iter, length,
+                SetEntries(ReadMap<UUID, PlayerUpdate>(iter, length,
                     [](ReadIterator& i, size_t& l)
                     {
                         const UUID uuid = ReadData<UUID>(i, l);
@@ -123,18 +104,18 @@ namespace ProtocolCraft
 
                         return std::make_pair(uuid, player_update);
                     }
-                );
+                ));
                 break;
             case PlayerInfoAction::RemovePlayer:
                 // Special case, partial read
-                entries = ReadMap<UUID, PlayerUpdate>(iter, length,
+                SetEntries(ReadMap<UUID, PlayerUpdate>(iter, length,
                     [](ReadIterator& i, size_t& l)
                     {
                         const UUID uuid = ReadData<UUID>(i, l);
 
                         return std::make_pair(uuid, PlayerUpdate());
                     }
-                );
+                ));
                 break;
             default:
                 break;
@@ -143,15 +124,15 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<PlayerInfoAction, VarInt>(action, container);
-            switch (action)
+            WriteData<PlayerInfoAction, VarInt>(GetAction(), container);
+            switch (GetAction())
             {
             case PlayerInfoAction::AddPlayer:
-                WriteData<std::map<UUID, PlayerUpdate>>(entries, container);
+                WriteData<std::map<UUID, PlayerUpdate>>(GetEntries(), container);
                 break;
             case PlayerInfoAction::UpdateGameMode:
                 // Special case, partial write
-                WriteMap<UUID, PlayerUpdate>(entries, container,
+                WriteMap<UUID, PlayerUpdate>(GetEntries(), container,
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
                         WriteData<UUID>(p.first, c);
@@ -161,7 +142,7 @@ namespace ProtocolCraft
                 break;
             case PlayerInfoAction::UpdateLatency:
                 // Special case, partial write
-                WriteMap<UUID, PlayerUpdate>(entries, container,
+                WriteMap<UUID, PlayerUpdate>(GetEntries(), container,
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
                         WriteData<UUID>(p.first, c);
@@ -171,7 +152,7 @@ namespace ProtocolCraft
                 break;
             case PlayerInfoAction::UpdateDisplayName:
                 // Special case, partial write
-                WriteMap<UUID, PlayerUpdate>(entries, container,
+                WriteMap<UUID, PlayerUpdate>(GetEntries(), container,
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
                         WriteData<UUID>(p.first, c);
@@ -181,7 +162,7 @@ namespace ProtocolCraft
                 break;
             case PlayerInfoAction::RemovePlayer:
                 // Special case, partial write
-                WriteMap<UUID, PlayerUpdate>(entries, container,
+                WriteMap<UUID, PlayerUpdate>(GetEntries(), container,
                     [](const std::pair<const UUID, PlayerUpdate>& p, WriteContainer& c)
                     {
                         WriteData<UUID>(p.first, c);
@@ -197,31 +178,31 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["action"] = action;
-            output["entries"] = Json::Array();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Action)])] = GetAction();
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])] = Json::Array();
 
-            switch (action)
+            switch (GetAction())
             {
             case PlayerInfoAction::AddPlayer:
-                for (const auto& p : entries)
+                for (const auto& p : GetEntries())
                 {
-                    output["entries"].push_back({ {"uuid", p.first}, {"player_info", p.second} });
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])].push_back({ {"uuid", p.first}, {"player_info", p.second} });
                 }
                 break;
             case PlayerInfoAction::UpdateGameMode:
-                for (const auto& p : entries)
+                for (const auto& p : GetEntries())
                 {
-                    output["entries"].push_back({ {"uuid", p.first}, {"game_mode", p.second.GetGameMode()} });
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])].push_back({ {"uuid", p.first}, {"game_mode", p.second.GetGameMode()} });
                 }
                 break;
             case PlayerInfoAction::UpdateLatency:
-                for (const auto& p : entries)
+                for (const auto& p : GetEntries())
                 {
-                    output["entries"].push_back({ {"uuid", p.first}, {"latency", p.second.GetLatency()} });
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])].push_back({ {"uuid", p.first}, {"latency", p.second.GetLatency()} });
                 }
                 break;
             case PlayerInfoAction::UpdateDisplayName:
-                for (const auto& p : entries)
+                for (const auto& p : GetEntries())
                 {
                     Json::Value entry;
                     entry["uuid"] = p.first;
@@ -229,13 +210,13 @@ namespace ProtocolCraft
                     {
                         entry["display_name"] = p.second.GetDisplayName().value().Serialize();
                     }
-                    output["entries"].push_back(entry);
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])].push_back(entry);
                 }
                 break;
             case PlayerInfoAction::RemovePlayer:
-                for (const auto& p : entries)
+                for (const auto& p : GetEntries())
                 {
-                    output["entries"].push_back(p.first);
+                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])].push_back(p.first);
                 }
                 break;
             default:
@@ -244,10 +225,6 @@ namespace ProtocolCraft
 
             return output;
         }
-
-    private:
-        PlayerInfoAction action;
-        std::map<UUID, PlayerUpdate> entries;
     };
 } //ProtocolCraft
 #endif

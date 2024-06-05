@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
 
@@ -41,208 +41,26 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Structure Block";
 
-        virtual ~ServerboundSetStructureBlockPacket() override
-        {
+        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt,     VarInt, std::string, char,    char,    char,    char,  char,  char,  VarInt, VarInt,   std::string, float,     VarLong, char);
+        DECLARE_FIELDS_NAMES(Pos,             UpdateType, Mode,   Name_,       OffsetX, OffsetY, OffsetZ, SizeX, SizeY, SizeZ, Mirror, Rotation, Data,        Integrity, Seed,    Flags);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetUpdateType(const int update_type_)
-        {
-            update_type = update_type_;
-        }
-
-        void SetMode(const int mode_)
-        {
-            mode = mode_;
-        }
-
-        void SetName_(const std::string& name__)
-        {
-            name_ = name__;
-        }
-
-        void SetOffset(const NetworkPosition& offset_)
-        {
-            offset = offset_;
-        }
-
-        void SetSizeX(const NetworkPosition& size_)
-        {
-            size = size_;
-        }
-
-        void SetMirror(const int mirror_)
-        {
-            mirror = mirror_;
-        }
-
-        void SetRotation(const int rotation_)
-        {
-            rotation = rotation_;
-        }
-
-        void SetData(const std::string& data_)
-        {
-            data = data_;
-        }
-
-        void SetIntegrity(const float integrity_)
-        {
-            integrity = integrity_;
-        }
-
-        void SetSeed(const long long int seed_)
-        {
-            seed = seed_;
-        }
-
-        void SetFlags(const char flags_)
-        {
-            flags = flags_;
-        }
-
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        int GetUpdateType() const
-        {
-            return update_type;
-        }
-
-        int GetMode() const
-        {
-            return mode;
-        }
-
-        const std::string& GetName_() const
-        {
-            return name_;
-        }
-
-        const NetworkPosition& GetOffset() const
-        {
-            return offset;
-        }
-
-        const NetworkPosition& GetSize() const
-        {
-            return size;
-        }
-
-        int GetMirror() const
-        {
-            return mirror;
-        }
-
-        int GetRotation() const
-        {
-            return rotation;
-        }
-
-        const std::string& GetData() const
-        {
-            return data;
-        }
-
-        float GetIntegrity() const
-        {
-            return integrity;
-        }
-
-        long long int GetSeed() const
-        {
-            return seed;
-        }
-
-        char GetFlags() const
-        {
-            return flags;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            pos = ReadData<NetworkPosition>(iter, length);
-            update_type = ReadData<VarInt>(iter, length);
-            mode = ReadData<VarInt>(iter, length);
-            name_ = ReadData<std::string>(iter, length);
-            offset.SetX(ReadData<int, char>(iter, length));
-            offset.SetY(ReadData<int, char>(iter, length));
-            offset.SetZ(ReadData<int, char>(iter, length));
-            size.SetX(ReadData<int, char>(iter, length));
-            size.SetY(ReadData<int, char>(iter, length));
-            size.SetZ(ReadData<int, char>(iter, length));
-            mirror = ReadData<VarInt>(iter, length);
-            rotation = ReadData<VarInt>(iter, length);
-            data = ReadData<std::string>(iter, length);
-            integrity = ReadData<float>(iter, length);
-            seed = ReadData<VarLong>(iter, length);
-            flags = ReadData<char>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<VarInt>(update_type, container);
-            WriteData<VarInt>(mode, container);
-            WriteData<std::string>(name_, container);
-            WriteData<int, char>(offset.GetX(), container);
-            WriteData<int, char>(offset.GetY(), container);
-            WriteData<int, char>(offset.GetZ(), container);
-            WriteData<int, char>(size.GetX(), container);
-            WriteData<int, char>(size.GetY(), container);
-            WriteData<int, char>(size.GetZ(), container);
-            WriteData<VarInt>(mirror, container);
-            WriteData<VarInt>(rotation, container);
-            WriteData<std::string>(data, container);
-            WriteData<float>(integrity, container);
-            WriteData<VarLong>(seed, container);
-            WriteData<char>(flags, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-            output["update_type"] = update_type;
-            output["mode"] = mode;
-            output["name_"] = name_;
-            output["offset"] = offset;
-            output["size"] = size;
-            output["mirror"] = mirror;
-            output["rotation"] = rotation;
-            output["data"] = data;
-            output["integrity"] = integrity;
-            output["seed"] = seed;
-            output["flags"] = flags;
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-        int update_type = 0;
-        int mode = 0;
-        std::string name_;
-        NetworkPosition offset;
-        NetworkPosition size;
-        int mirror = 0;
-        int rotation = 0;
-        std::string data;
-        float integrity = 0.0f;
-        long long int seed = 0;
-        char flags = 0;
-
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(UpdateType);
+        GETTER_SETTER(Mode);
+        GETTER_SETTER(Name_);
+        GETTER_SETTER(OffsetX);
+        GETTER_SETTER(OffsetY);
+        GETTER_SETTER(OffsetZ);
+        GETTER_SETTER(SizeX);
+        GETTER_SETTER(SizeY);
+        GETTER_SETTER(SizeZ);
+        GETTER_SETTER(Mirror);
+        GETTER_SETTER(Rotation);
+        GETTER_SETTER(Data);
+        GETTER_SETTER(Integrity);
+        GETTER_SETTER(Seed);
+        GETTER_SETTER(Flags);
     };
 } //ProtocolCraft
 #endif

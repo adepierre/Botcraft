@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -31,47 +31,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border Warning Distance";
 
-        virtual ~ClientboundSetBorderWarningDistancePacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(WarningBlocks);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetWarningBlocks(const int warning_blocks_)
-        {
-            warning_blocks = warning_blocks_;
-        }
-
-
-        int GetWarningBlocks() const
-        {
-            return warning_blocks;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            warning_blocks = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(warning_blocks, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["warning_blocks"] = warning_blocks;
-
-            return output;
-        }
-
-    private:
-        int warning_blocks = 0;
-
+        GETTER_SETTER(WarningBlocks);
     };
 } //ProtocolCraft
 #endif

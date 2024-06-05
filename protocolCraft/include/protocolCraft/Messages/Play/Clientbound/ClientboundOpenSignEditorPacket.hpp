@@ -46,71 +46,18 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Open Signe Editor";
 
-        virtual ~ClientboundOpenSignEditorPacket() override
-        {
-
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-        void SetIsFrontText(const bool is_front_text_)
-        {
-            is_front_text = is_front_text_;
-        }
+#if PROTOCOL_VERSION < 763 /* < 1.20 */
+        DECLARE_FIELDS_TYPES(NetworkPosition);
+        DECLARE_FIELDS_NAMES(Pos);
+#else
+        DECLARE_FIELDS_TYPES(NetworkPosition, bool);
+        DECLARE_FIELDS_NAMES(Pos,             IsFrontText);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
+        GETTER_SETTER(Pos);
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-        bool GetIsFrontText() const
-        {
-            return is_front_text;
-        }
+        GETTER_SETTER(IsFrontText);
 #endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            pos = ReadData<NetworkPosition>(iter, length);
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-            is_front_text = ReadData<bool>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<NetworkPosition>(pos, container);
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-            WriteData<bool>(is_front_text, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-            output["is_front_text"] = is_front_text;
-#endif
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-#if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-        bool is_front_text = false;
-#endif
-
     };
 } //ProtocolCraft

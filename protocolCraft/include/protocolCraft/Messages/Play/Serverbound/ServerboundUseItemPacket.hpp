@@ -43,71 +43,18 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Use Item";
 
-        virtual ~ServerboundUseItemPacket() override
-        {
-
-        }
-
-        void SetHand(const int hand_)
-        {
-            hand = hand_;
-        }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        void SetSequence(const int sequence_)
-        {
-            sequence = sequence_;
-        }
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Hand);
+#else
+        DECLARE_FIELDS_TYPES(VarInt, VarInt);
+        DECLARE_FIELDS_NAMES(Hand,   Sequence);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-
-        int GetHand() const
-        {
-            return hand;
-        }
-
+        GETTER_SETTER(Hand);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        int GetSequence() const
-        {
-            return sequence;
-        }
+        GETTER_SETTER(Sequence);
 #endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            hand = ReadData<VarInt>(iter, length);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            sequence = ReadData<VarInt>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(hand, container);
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteData<VarInt>(sequence, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["hand"] = hand;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            output["sequence"] = sequence;
-#endif
-
-            return output;
-        }
-
-    private:
-        int hand = 0;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        int sequence = 0;
-#endif
-
     };
 } //ProtocolCraft

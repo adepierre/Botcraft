@@ -27,84 +27,14 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Break Ack";
 
-        virtual ~ClientboundBlockBreakAckPacket() override
-        {
+        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt, VarInt, bool);
+        DECLARE_FIELDS_NAMES(Pos,             State,  Action, AllGood);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
-        void SetState(const int state_)
-        {
-            state = state_;
-        }
-
-        void SetAction(const int action_)
-        {
-            action = action_;
-        }
-
-        void SetAllGood(const bool all_good_)
-        {
-            all_good = all_good_;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-        int GetState() const
-        {
-            return state;
-        }
-
-        int GetAction() const
-        {
-            return action;
-        }
-
-        bool GetAllGood() const
-        {
-            return all_good;
-        }
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            pos = ReadData<NetworkPosition>(iter, length);
-            state = ReadData<VarInt>(iter, length);
-            action = ReadData<VarInt>(iter, length);
-            all_good = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<NetworkPosition>(pos, container);
-            WriteData<VarInt>(state, container);
-            WriteData<VarInt>(action, container);
-            WriteData<bool>(all_good, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-            output["state"] = state;
-            output["action"] = action;
-            output["all_good"] = all_good;
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-        int state = 0;
-        int action = 0;
-        bool all_good = false;
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(State);
+        GETTER_SETTER(Action);
+        GETTER_SETTER(AllGood);
     };
 } //ProtocolCraft
 

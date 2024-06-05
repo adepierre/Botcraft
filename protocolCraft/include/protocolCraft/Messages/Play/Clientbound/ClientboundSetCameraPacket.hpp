@@ -46,45 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Camera";
 
-        virtual ~ClientboundSetCameraPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(CameraId);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetCameraId(const int camera_id_)
-        {
-            camera_id = camera_id_;
-        }
-
-
-        int GetCameraId() const
-        {
-            return camera_id;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            camera_id = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(camera_id, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["camera_id"] = camera_id;
-
-            return output;
-        }
-
-    private:
-        int camera_id = 0;
-
+        GETTER_SETTER(CameraId);
     };
 } //ProtocolCraft

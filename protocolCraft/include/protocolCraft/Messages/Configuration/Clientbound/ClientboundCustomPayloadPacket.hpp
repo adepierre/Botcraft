@@ -1,5 +1,5 @@
-#pragma once
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+#pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Utilities/Plugins/PluginLoader.hpp"
@@ -20,58 +20,28 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Custom Payload (Configuration)";
 
-        virtual ~ClientboundCustomPayloadConfigurationPacket() override
-        {
+        DECLARE_FIELDS_TYPES(std::string, std::vector<unsigned char>, std::shared_ptr<PluginObject>);
+        DECLARE_FIELDS_NAMES(Identifier,  RawData,                    ParsedData);
 
-        }
-
-        void SetIdentifier(const std::string& identifier_)
-        {
-            identifier = identifier_;
-        }
-
-        void SetRawData(const std::vector<unsigned char>& raw_data_)
-        {
-            raw_data = raw_data_;
-        }
-
-        void SetParsedData(const std::shared_ptr<PluginObject>& parsed_data_)
-        {
-            parsed_data = parsed_data_;
-        }
-
-
-        const std::string& GetIdentifier() const
-        {
-            return identifier;
-        }
-
-        const std::vector<unsigned char>& GetRawData() const
-        {
-            return raw_data;
-        }
-
-        const std::shared_ptr<PluginObject>& GetParsedData() const
-        {
-            return parsed_data;
-        }
-
+        GETTER_SETTER(Identifier);
+        GETTER_SETTER(RawData);
+        GETTER_SETTER(ParsedData);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            identifier = ReadData<std::string>(iter, length);
-            parsed_data = CreateObjectFromPlugin(identifier.c_str());
-            if (parsed_data == nullptr)
+            SetIdentifier(ReadData<std::string>(iter, length));
+            SetParsedData(CreateObjectFromPlugin(GetIdentifier().c_str()));
+            if (GetParsedData() == nullptr)
             {
-                raw_data = ReadByteArray(iter, length, length);
+                SetRawData(ReadByteArray(iter, length, length));
             }
             else
             {
-                raw_data.clear();
+                SetRawData({});
                 unsigned long long int data_size = static_cast<unsigned long long int>(length);
                 const unsigned char* data_ptr = &(*iter);
-                parsed_data->Read(data_ptr, data_size);
+                GetParsedData()->Read(data_ptr, data_size);
                 iter += length - data_size;
                 length = static_cast<size_t>(data_size);
             }
@@ -79,15 +49,15 @@ namespace ProtocolCraft
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<std::string>(identifier, container);
-            if (parsed_data == nullptr)
+            WriteData<std::string>(GetIdentifier(), container);
+            if (GetParsedData() == nullptr)
             {
-                WriteByteArray(raw_data, container);
+                WriteByteArray(GetRawData(), container);
             }
             else
             {
                 unsigned long long int serialized_length = 0;
-                const unsigned char* serialized = parsed_data->Write(serialized_length);
+                const unsigned char* serialized = GetParsedData()->Write(serialized_length);
                 WriteByteArray(serialized, static_cast<size_t>(serialized_length), container);
             }
         }
@@ -96,24 +66,18 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output["identifier"] = identifier;
-            if (parsed_data == nullptr)
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Identifier)])] = GetIdentifier();
+            if (GetParsedData() == nullptr)
             {
-                output["data"] = "Vector of " + std::to_string(raw_data.size()) + " unsigned chars";
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::RawData)])] = "Vector of " + std::to_string(GetRawData().size()) + " unsigned chars";
             }
             else
             {
-                const std::string json_serialized(parsed_data->Serialize());
-                output["data"] = Json::Parse(json_serialized);
+                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ParsedData)])] = Json::Parse(GetParsedData()->Serialize());
             }
 
             return output;
         }
-
-    private:
-        std::string identifier;
-        std::vector<unsigned char> raw_data;
-        std::shared_ptr<PluginObject> parsed_data;
 
     };
 } //ProtocolCraft

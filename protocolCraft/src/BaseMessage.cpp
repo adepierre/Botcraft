@@ -1,5 +1,6 @@
 #include "protocolCraft/AllClientboundMessages.hpp"
 #include "protocolCraft/AllServerboundMessages.hpp"
+#include "protocolCraft/Utilities/PrivateTemplates.hpp"
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Handler.hpp"
@@ -16,427 +17,452 @@ namespace ProtocolCraft
 
     // Login clientbound
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-    template class BaseMessage<ClientboundCookieRequestLoginPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundCookieRequestLoginPacket);
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-    template class BaseMessage<ClientboundCustomQueryPacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundCustomQueryPacket);
 #endif
-    template class BaseMessage<ClientboundLoginDisconnectPacket>;
-    template class BaseMessage<ClientboundHelloPacket>;
-    template class BaseMessage<ClientboundGameProfilePacket>;
-    template class BaseMessage<ClientboundLoginCompressionPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundLoginDisconnectPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundHelloPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundGameProfilePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundLoginCompressionPacket);
 
     // Status clientbound
-    template class BaseMessage<ClientboundStatusResponsePacket>;
-    template class BaseMessage<ClientboundPongResponseStatusPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundStatusResponsePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPongResponseStatusPacket);
 
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     // Configuration clientbound
-    template class BaseMessage<ClientboundCustomPayloadConfigurationPacket>;
-    template class BaseMessage<ClientboundDisconnectConfigurationPacket>;
-    template class BaseMessage<ClientboundFinishConfigurationPacket>;
-    template class BaseMessage<ClientboundKeepAliveConfigurationPacket>;
-    template class BaseMessage<ClientboundPingConfigurationPacket>;
-    template class BaseMessage<ClientboundRegistryDataPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundCustomPayloadConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundDisconnectConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundFinishConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundKeepAliveConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPingConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundRegistryDataPacket);
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-    template class BaseMessage<ClientboundResourcePackConfigurationPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundResourcePackConfigurationPacket);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-    template class BaseMessage<ClientboundResourcePackPopConfigurationPacket>;
-    template class BaseMessage<ClientboundResourcePackPushConfigurationPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundResourcePackPopConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundResourcePackPushConfigurationPacket);
 #endif
-    template class BaseMessage<ClientboundUpdateEnabledFeaturesPacket>;
-    template class BaseMessage<ClientboundUpdateTagsConfigurationPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundUpdateEnabledFeaturesPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundUpdateTagsConfigurationPacket);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-    template class BaseMessage<ClientboundCookieRequestConfigurationPacket>;
-    template class BaseMessage<ClientboundResetChatPacket>;
-    template class BaseMessage<ClientboundStoreCookieConfigurationPacket>;
-    template class BaseMessage<ClientboundSelectKnownPacksPacket>;
-    template class BaseMessage<ClientboundTransferConfigurationPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundCookieRequestConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundResetChatPacket);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundStoreCookieConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSelectKnownPacksPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundTransferConfigurationPacket);
 #endif
 #endif
 
     // Play clientbound
-    template class BaseMessage<ClientboundUpdateAdvancementsPacket>;
-    template class BaseMessage<ClientboundSetEntityLinkPacket>;
-    template class BaseMessage<ClientboundBlockEventPacket>;
-    template class BaseMessage<ClientboundBlockDestructionPacket>;
-    template class BaseMessage<ClientboundBlockUpdatePacket>;
-    template class BaseMessage<ClientboundBossEventPacket>;
-    template class BaseMessage<ClientboundSetCameraPacket>;
-    template class BaseMessage<ClientboundContainerClosePacket>;
-    template class BaseMessage<ClientboundTakeItemEntityPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundUpdateAdvancementsPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetEntityLinkPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundBlockEventPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundBlockDestructionPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundBlockUpdatePacket);
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundBossEventPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetCameraPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundContainerClosePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundTakeItemEntityPacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    template class BaseMessage<ClientboundPlayerCombatPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundPlayerCombatPacket);
 #endif
 #if PROTOCOL_VERSION == 755 /* 1.17 */
-    template class BaseMessage<ClientboundRemoveEntityPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundRemoveEntityPacket);
 #else
-    template class BaseMessage<ClientboundRemoveEntitiesPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundRemoveEntitiesPacket);
 #endif
 #if PROTOCOL_VERSION > 345 /* > 1.12.2 */
-    template class BaseMessage<ClientboundCommandsPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundCommandsPacket);
 #endif
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
-    template class BaseMessage<ClientboundUpdateRecipesPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundUpdateRecipesPacket);
 #endif
 #if PROTOCOL_VERSION > 351 /* > 1.12.2 */
-    template class BaseMessage<ClientboundPlayerLookAtPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundPlayerLookAtPacket);
 #endif
-    template class BaseMessage<ClientboundChangeDifficultyPacket>;
-    template class BaseMessage<ClientboundMapItemDataPacket>;
-    template class BaseMessage<ClientboundSectionBlocksUpdatePacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundChangeDifficultyPacket);
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundMapItemDataPacket);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundSectionBlocksUpdatePacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    template class BaseMessage<ClientboundContainerAckPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundContainerAckPacket);
 #endif
-    template class BaseMessage<ClientboundGameEventPacket>;
-    template class BaseMessage<ClientboundPlaceGhostRecipePacket>;
-    template class BaseMessage<ClientboundDisconnectPacket>;
-    template class BaseMessage<ClientboundSetDisplayObjectivePacket>;
-    template class BaseMessage<ClientboundForgetLevelChunkPacket>;
-    template class BaseMessage<ClientboundKeepAlivePacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundGameEventPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlaceGhostRecipePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundDisconnectPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetDisplayObjectivePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundForgetLevelChunkPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundKeepAlivePacket);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    template class BaseMessage<ClientboundCustomSoundPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundCustomSoundPacket);
 #endif
 #if PROTOCOL_VERSION > 388 /* > 1.12.2 */
-    template class BaseMessage<ClientboundTagQueryPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundTagQueryPacket);
 #endif
-    template class BaseMessage<ClientboundOpenSignEditorPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundOpenSignEditorPacket);
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-    template class BaseMessage<ClientboundHorseScreenOpenPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundHorseScreenOpenPacket);
 #endif
 #if PROTOCOL_VERSION > 450 /* > 1.13.2 */
-    template class BaseMessage<ClientboundOpenBookPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundOpenBookPacket);
 #endif
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
-    template class BaseMessage<ClientboundLevelChunkPacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundLevelChunkPacket);
 #endif
-    template class BaseMessage<ClientboundLoginPacket>;
-    template class BaseMessage<ClientboundLevelEventPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundLoginPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundLevelEventPacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    template class BaseMessage<ClientboundMoveEntityPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundMoveEntityPacket);
 #endif
-    template class BaseMessage<ClientboundAnimatePacket>;
-    template class BaseMessage<ClientboundSetEquipmentPacket>;
-    template class BaseMessage<ClientboundUpdateMobEffectPacket>;
-    template class BaseMessage<ClientboundRotateHeadPacket>;
-    template class BaseMessage<ClientboundMoveEntityPacketPos>;
-    template class BaseMessage<ClientboundMoveEntityPacketPosRot>;
-    template class BaseMessage<ClientboundMoveEntityPacketRot>;
-    template class BaseMessage<ClientboundSetEntityDataPacket>;
-    template class BaseMessage<ClientboundUpdateAttributesPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundAnimatePacket);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundSetEquipmentPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundUpdateMobEffectPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundRotateHeadPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundMoveEntityPacketPos);
+    DEFINE_MESSAGE_CLASS(ClientboundMoveEntityPacketPosRot);
+    DEFINE_MESSAGE_CLASS(ClientboundMoveEntityPacketRot);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundSetEntityDataPacket);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundUpdateAttributesPacket);
 #if PROTOCOL_VERSION > 450 /* > 1.13.2 */
-    template class BaseMessage<ClientboundSoundEntityPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundSoundEntityPacket);
 #endif
-    template class BaseMessage<ClientboundEntityEventPacket>;
-    template class BaseMessage<ClientboundSetEntityMotionPacket>;
-    template class BaseMessage<ClientboundExplodePacket>;
-    template class BaseMessage<ClientboundLevelParticlesPacket>;
-    template class BaseMessage<ClientboundPlayerPositionPacket>;
-    template class BaseMessage<ClientboundSetHealthPacket>;
-    template class BaseMessage<ClientboundTeleportEntityPacket>;
-    template class BaseMessage<ClientboundPlayerAbilitiesPacket>;
-    template class BaseMessage<ClientboundSetTimePacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundEntityEventPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetEntityMotionPacket);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundExplodePacket);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundLevelParticlesPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerPositionPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetHealthPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundTeleportEntityPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerAbilitiesPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetTimePacket);
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-    template class BaseMessage<ClientboundChatPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundChatPacket);
 #endif
-    template class BaseMessage<ClientboundRespawnPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundRespawnPacket);
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-    template class BaseMessage<ClientboundLightUpdatePacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundLightUpdatePacket);
 #endif
 #if PROTOCOL_VERSION > 493 /* > 1.14.3 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
-    template class BaseMessage<ClientboundBlockBreakAckPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundBlockBreakAckPacket);
 #endif
-    template class BaseMessage<ClientboundBlockEntityDataPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundBlockEntityDataPacket);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    template class BaseMessage<ClientboundPlayerInfoPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundPlayerInfoPacket);
 #endif
-    template class BaseMessage<ClientboundTabListPacket>;
-    template class BaseMessage<ClientboundCustomPayloadPacket>;
-    template class BaseMessage<ClientboundRemoveMobEffectPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundTabListPacket);
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundCustomPayloadPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundRemoveMobEffectPacket);
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-    template class BaseMessage<ClientboundResourcePackPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundResourcePackPacket);
 #endif
-    template class BaseMessage<ClientboundSetObjectivePacket>;
-    template class BaseMessage<ClientboundSelectAdvancementsTabPacket>;
-    template class BaseMessage<ClientboundSetExperiencePacket>;
-    template class BaseMessage<ClientboundContainerSetSlotPacket>;
-    template class BaseMessage<ClientboundCooldownPacket>;
-    template class BaseMessage<ClientboundSetPassengersPacket>;
-    template class BaseMessage<ClientboundSoundPacket>;
-    template class BaseMessage<ClientboundAddExperienceOrbPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetObjectivePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSelectAdvancementsTabPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetExperiencePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundContainerSetSlotPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundCooldownPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetPassengersPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSoundPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundAddExperienceOrbPacket);
 #if PROTOCOL_VERSION < 721 /* < 1.16 */
-    template class BaseMessage<ClientboundAddGlobalEntityPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundAddGlobalEntityPacket);
 #endif
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-    template class BaseMessage<ClientboundAddMobPacket>;
+#if PROTOCOL_VERSION < 573 /* < 1.15 */
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundAddMobPacket)
+#else
+    DEFINE_MESSAGE_CLASS(ClientboundAddMobPacket);
 #endif
-    template class BaseMessage<ClientboundAddEntityPacket>;
+#endif
+    DEFINE_MESSAGE_CLASS(ClientboundAddEntityPacket);
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-    template class BaseMessage<ClientboundAddPaintingPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundAddPaintingPacket);
 #endif
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-    template class BaseMessage<ClientboundAddPlayerPacket>;
+#if PROTOCOL_VERSION < 573 /* < 1.15 */
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundAddPlayerPacket)
+#else
+    DEFINE_MESSAGE_CLASS(ClientboundAddPlayerPacket);
 #endif
-    template class BaseMessage<ClientboundSetDefaultSpawnPositionPacket>;
-    template class BaseMessage<ClientboundAwardStatsPacket>;
+#endif
+    DEFINE_MESSAGE_CLASS(ClientboundSetDefaultSpawnPositionPacket);
+    DEFINE_CUSTOM_SERIALIZED_MESSAGE_CLASS(ClientboundAwardStatsPacket);
 #if PROTOCOL_VERSION > 342 /* > 1.12.2 */
-    template class BaseMessage<ClientboundStopSoundPacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundStopSoundPacket);
 #endif
 #if PROTOCOL_VERSION > 348 /* > 1.12.2 */
-    template class BaseMessage<ClientboundUpdateTagsPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundUpdateTagsPacket);
 #endif
-    template class BaseMessage<ClientboundCommandSuggestionsPacket>;
-    template class BaseMessage<ClientboundSetPlayerTeamPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundCommandSuggestionsPacket);
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetPlayerTeamPacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    template class BaseMessage<ClientboundSetTitlesPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetTitlesPacket);
 #endif
 #if PROTOCOL_VERSION < 461 /* < 1.14 */
-    template class BaseMessage<ClientboundUseBedPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundUseBedPacket);
 #endif
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-    template class BaseMessage<ClientboundMerchantOffersPacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundMerchantOffersPacket);
 #endif
-    template class BaseMessage<ClientboundRecipePacket>;
-    template class BaseMessage<ClientboundSetScorePacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundRecipePacket);
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetScorePacket);
+#else
+    DEFINE_MESSAGE_CLASS(ClientboundSetScorePacket);
+#endif
 #if PROTOCOL_VERSION > 471 /* > 1.13.2 */
-    template class BaseMessage<ClientboundSetChunkCacheCenterPacket>;
-    template class BaseMessage<ClientboundSetChunkCacheRadiusPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundSetChunkCacheCenterPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetChunkCacheRadiusPacket);
 #endif
-    template class BaseMessage<ClientboundMoveVehiclePacket>;
-    template class BaseMessage<ClientboundContainerSetContentPacket>;
-    template class BaseMessage<ClientboundContainerSetDataPacket>;
-    template class BaseMessage<ClientboundOpenScreenPacket>;
-    template class BaseMessage<ClientboundSetCarriedItemPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundMoveVehiclePacket);
+#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundContainerSetContentPacket);
+#else
+    DEFINE_MESSAGE_CLASS(ClientboundContainerSetContentPacket);
+#endif
+    DEFINE_MESSAGE_CLASS(ClientboundContainerSetDataPacket);
+
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundOpenScreenPacket);
+#else
+    DEFINE_MESSAGE_CLASS(ClientboundOpenScreenPacket);
+#endif
+    DEFINE_MESSAGE_CLASS(ClientboundSetCarriedItemPacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    template class BaseMessage<ClientboundSetBorderPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetBorderPacket);
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-    template class BaseMessage<ClientboundAddVibrationSignalPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundAddVibrationSignalPacket);
 #endif
-    template class BaseMessage<ClientboundClearTitlesPacket>;
-    template class BaseMessage<ClientboundInitializeBorderPacket>;
-    template class BaseMessage<ClientboundPingPacket>;
-    template class BaseMessage<ClientboundPlayerCombatEndPacket>;
-    template class BaseMessage<ClientboundPlayerCombatEnterPacket>;
-    template class BaseMessage<ClientboundPlayerCombatKillPacket>;
-    template class BaseMessage<ClientboundSetActionBarTextPacket>;
-    template class BaseMessage<ClientboundSetBorderCenterPacket>;
-    template class BaseMessage<ClientboundSetBorderLerpSizePacket>;
-    template class BaseMessage<ClientboundSetBorderSizePacket>;
-    template class BaseMessage<ClientboundSetBorderWarningDelayPacket>;
-    template class BaseMessage<ClientboundSetBorderWarningDistancePacket>;
-    template class BaseMessage<ClientboundSetSubtitleTextPacket>;
-    template class BaseMessage<ClientboundSetTitleTextPacket>;
-    template class BaseMessage<ClientboundSetTitlesAnimationPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundClearTitlesPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundInitializeBorderPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPingPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerCombatEndPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerCombatEnterPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerCombatKillPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetActionBarTextPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetBorderCenterPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetBorderLerpSizePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetBorderSizePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetBorderWarningDelayPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetBorderWarningDistancePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetSubtitleTextPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetTitleTextPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetTitlesAnimationPacket);
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
-    template class BaseMessage<ClientboundLevelChunkWithLightPacket>;
-    template class BaseMessage<ClientboundSetSimulationDistancePacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundLevelChunkWithLightPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetSimulationDistancePacket);
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    template class BaseMessage<ClientboundBlockChangedAckPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundBlockChangedAckPacket);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    template class BaseMessage<ClientboundChatPreviewPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundChatPreviewPacket);
 #endif
-    template class BaseMessage<ClientboundPlayerChatPacket>;
-    template class BaseMessage<ClientboundServerDataPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerChatPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundServerDataPacket);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    template class BaseMessage<ClientboundSetDisplayChatPreviewPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundSetDisplayChatPreviewPacket);
 #endif
-    template class BaseMessage<ClientboundSystemChatPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundSystemChatPacket);
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
-    template class BaseMessage<ClientboundCustomChatCompletionsPacket>;
-    template class BaseMessage<ClientboundDeleteChatPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundCustomChatCompletionsPacket);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    template class BaseMessage<ClientboundPlayerChatHeaderPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundDeleteChatPacket);
+#else
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundDeleteChatPacket);
+#endif
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerChatHeaderPacket);
 #endif
 #endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-    template class BaseMessage<ClientboundDisguisedChatPacket>;
-    template class BaseMessage<ClientboundPlayerInfoRemovePacket>;
-    template class BaseMessage<ClientboundPlayerInfoUpdatePacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundDisguisedChatPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerInfoRemovePacket);
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundPlayerInfoUpdatePacket);
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-    template class BaseMessage<ClientboundUpdateEnabledFeaturesPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundUpdateEnabledFeaturesPacket);
 #endif
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-    template class BaseMessage<ClientboundBundlePacket>;
-    template class BaseMessage<ClientboundChunksBiomesPacket>;
-    template class BaseMessage<ClientboundDamageEventPacket>;
-    template class BaseMessage<ClientboundHurtAnimationPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundBundlePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundChunksBiomesPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundDamageEventPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundHurtAnimationPacket);
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-    template class BaseMessage<ClientboundChunkBatchFinishedPacket>;
-    template class BaseMessage<ClientboundChunkBatchStartPacket>;
-    template class BaseMessage<ClientboundPongResponsePacket>;
-    template class BaseMessage<ClientboundStartConfigurationPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundChunkBatchFinishedPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundChunkBatchStartPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPongResponsePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundStartConfigurationPacket);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-    template class BaseMessage<ClientboundResetScorePacket>;
-    template class BaseMessage<ClientboundResourcePackPopPacket>;
-    template class BaseMessage<ClientboundResourcePackPushPacket>;
-    template class BaseMessage<ClientboundTickingStatePacket>;
-    template class BaseMessage<ClientboundTickingStepPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundResetScorePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundResourcePackPopPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundResourcePackPushPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundTickingStatePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundTickingStepPacket);
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-    template class BaseMessage<ClientboundCookieRequestPacket>;
-    template class BaseMessage<ClientboundDebugSamplePacket>;
-    template class BaseMessage<ClientboundProjectilePowerPacket>;
-    template class BaseMessage<ClientboundStoreCookiePacket>;
-    template class BaseMessage<ClientboundTransferPacket>;
+    DEFINE_MESSAGE_CLASS(ClientboundCookieRequestPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundDebugSamplePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundProjectilePowerPacket);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundStoreCookiePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundTransferPacket);
 #endif
 
 
     // Explicit instantiation for each serverbound message class
     // Handshaking serverbound
-    template class BaseMessage<ServerboundClientIntentionPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundClientIntentionPacket);
 
     // Login serverbound
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-    template class BaseMessage<ServerboundCookieResponseLoginPacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ServerboundCookieResponseLoginPacket);
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
-    template class BaseMessage<ServerboundCustomQueryPacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ServerboundCustomQueryPacket);
 #endif
-    template class BaseMessage<ServerboundHelloPacket>;
-    template class BaseMessage<ServerboundKeyPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundHelloPacket);
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundKeyPacket);
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-    template class BaseMessage<ServerboundCustomQueryAnswerPacket>;
-    template class BaseMessage<ServerboundLoginAcknowledgedPacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ServerboundCustomQueryAnswerPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundLoginAcknowledgedPacket);
 #endif
 
     // Status serverbound
-    template class BaseMessage<ServerboundStatusRequestPacket>;
-    template class BaseMessage<ServerboundPingRequestStatusPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundStatusRequestPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundPingRequestStatusPacket);
 
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     // Configuration serverbound
-    template class BaseMessage<ServerboundClientInformationConfigurationPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundClientInformationConfigurationPacket);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-    template class BaseMessage<ServerboundCookieResponseConfigurationPacket>;
-    template class BaseMessage<ServerboundSelectKnownPacksPacket>;
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ServerboundCookieResponseConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundSelectKnownPacksPacket);
 #endif
-    template class BaseMessage<ServerboundCustomPayloadConfigurationPacket>;
-    template class BaseMessage<ServerboundFinishConfigurationPacket>;
-    template class BaseMessage<ServerboundKeepAliveConfigurationPacket>;
-    template class BaseMessage<ServerboundPongConfigurationPacket>;
-    template class BaseMessage<ServerboundResourcePackConfigurationPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundCustomPayloadConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundFinishConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundKeepAliveConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundPongConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundResourcePackConfigurationPacket);
 #endif
 
     // Play serverbound
-    template class BaseMessage<ServerboundSeenAdvancementsPacket>;
-    template class BaseMessage<ServerboundSwingPacket>;
-    template class BaseMessage<ServerboundChatPacket>;
-    template class BaseMessage<ServerboundContainerClickPacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundSeenAdvancementsPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundSwingPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundChatPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundContainerClickPacket);
 #if PROTOCOL_VERSION > 476 /* > 1.13.2 */
-    template class BaseMessage<ServerboundContainerButtonClickPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundContainerButtonClickPacket);
 #endif
-    template class BaseMessage<ServerboundClientInformationPacket>;
-    template class BaseMessage<ServerboundClientCommandPacket>;
-    template class BaseMessage<ServerboundContainerClosePacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundClientInformationPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundClientCommandPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundContainerClosePacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    template class BaseMessage<ServerboundContainerAckPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundContainerAckPacket);
 #endif
-    template class BaseMessage<ServerboundPlaceRecipePacket>;
-    template class BaseMessage<ServerboundSetCreativeModeSlotPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundPlaceRecipePacket);
+    DEFINE_MESSAGE_CLASS(ServerboundSetCreativeModeSlotPacket);
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
-    template class BaseMessage<ServerboundEditBookPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundEditBookPacket);
 #endif
 #if PROTOCOL_VERSION < 476 /* < 1.14 */
-    template class BaseMessage<ServerboundEnchantItemPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundEnchantItemPacket);
 #endif
-    template class BaseMessage<ServerboundPlayerCommandPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundPlayerCommandPacket);
 #if PROTOCOL_VERSION > 711 /* > 1.15.2 */
-    template class BaseMessage<ServerboundJigsawGeneratePacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundJigsawGeneratePacket);
 #endif
-    template class BaseMessage<ServerboundSetCarriedItemPacket>;
-    template class BaseMessage<ServerboundInteractPacket>;
-    template class BaseMessage<ServerboundKeepAlivePacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundSetCarriedItemPacket);
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundInteractPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundKeepAlivePacket);
 #if PROTOCOL_VERSION > 463 /* > 1.13.2 */
-    template class BaseMessage<ServerboundLockDifficultyPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundLockDifficultyPacket);
 #endif
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
-    template class BaseMessage<ServerboundRenameItemPacket>;
-    template class BaseMessage<ServerboundPickItemPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundRenameItemPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundPickItemPacket);
 #endif
-    template class BaseMessage<ServerboundPlayerAbilitiesPacket>;
-    template class BaseMessage<ServerboundUseItemOnPacket>;
-    template class BaseMessage<ServerboundPlayerActionPacket>;
-    template class BaseMessage<ServerboundMovePlayerPacketRot>;
+    DEFINE_MESSAGE_CLASS(ServerboundPlayerAbilitiesPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundUseItemOnPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundPlayerActionPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundMovePlayerPacketRot);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-    template class BaseMessage<ServerboundMovePlayerPacketStatusOnly>;
+    DEFINE_MESSAGE_CLASS(ServerboundMovePlayerPacketStatusOnly);
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    template class BaseMessage<ServerboundMovePlayerPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundMovePlayerPacket);
 #endif
-    template class BaseMessage<ServerboundMovePlayerPacketPos>;
-    template class BaseMessage<ServerboundMovePlayerPacketPosRot>;
-    template class BaseMessage<ServerboundCustomPayloadPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundMovePlayerPacketPos);
+    DEFINE_MESSAGE_CLASS(ServerboundMovePlayerPacketPosRot);
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundCustomPayloadPacket);
 #if PROTOCOL_VERSION > 388 /* > 1.12.2 */
-    template class BaseMessage<ServerboundBlockEntityTagQueryPacket>;
-    template class BaseMessage<ServerboundEntityTagQueryPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundBlockEntityTagQueryPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundEntityTagQueryPacket);
 #endif
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
-    template class BaseMessage<ServerboundRecipeBookSeenRecipePacket>;
-    template class BaseMessage<ServerboundRecipeBookChangeSettingsPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundRecipeBookSeenRecipePacket);
+    DEFINE_MESSAGE_CLASS(ServerboundRecipeBookChangeSettingsPacket);
 #else
-    template class BaseMessage<ServerboundRecipeBookUpdatePacket>;
+    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundRecipeBookUpdatePacket);
 #endif
-    template class BaseMessage<ServerboundResourcePackPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundResourcePackPacket);
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
-    template class BaseMessage<ServerboundSelectTradePacket>;
-    template class BaseMessage<ServerboundSetBeaconPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundSelectTradePacket);
+    DEFINE_MESSAGE_CLASS(ServerboundSetBeaconPacket);
 #endif
 #if PROTOCOL_VERSION > 463 /* > 1.13.2 */
-    template class BaseMessage<ServerboundChangeDifficultyPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundChangeDifficultyPacket);
 #endif
-    template class BaseMessage<ServerboundTeleportToEntityPacket>;
-    template class BaseMessage<ServerboundPaddleBoatPacket>;
-    template class BaseMessage<ServerboundPlayerInputPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundTeleportToEntityPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundPaddleBoatPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundPlayerInputPacket);
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-    template class BaseMessage<ServerboundPongPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundPongPacket);
 #endif
-    template class BaseMessage<ServerboundCommandSuggestionPacket>;
-    template class BaseMessage<ServerboundAcceptTeleportationPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundCommandSuggestionPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundAcceptTeleportationPacket);
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
-    template class BaseMessage<ServerboundSetCommandBlockPacket>;
-    template class BaseMessage<ServerboundSetCommandMinecartPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundSetCommandBlockPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundSetCommandMinecartPacket);
 #endif
 #if PROTOCOL_VERSION > 471 /* > 1.13.2 */
-    template class BaseMessage<ServerboundSetJigsawBlockPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundSetJigsawBlockPacket);
 #endif
-    template class BaseMessage<ServerboundSignUpdatePacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundSignUpdatePacket);
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
-    template class BaseMessage<ServerboundSetStructureBlockPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundSetStructureBlockPacket);
 #endif
-    template class BaseMessage<ServerboundUseItemPacket>;
-    template class BaseMessage<ServerboundMoveVehiclePacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundUseItemPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundMoveVehiclePacket);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    template class BaseMessage<ServerboundChatCommandPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundChatCommandPacket);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    template class BaseMessage<ServerboundChatPreviewPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundChatPreviewPacket);
 #endif
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
-    template class BaseMessage<ServerboundChatAckPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundChatAckPacket);
 #endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-    template class BaseMessage<ServerboundChatSessionUpdatePacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundChatSessionUpdatePacket);
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-    template class BaseMessage<ServerboundChunkBatchReceivedPacket>;
-    template class BaseMessage<ServerboundConfigurationAcknowledgedPacket>;
-    template class BaseMessage<ServerboundPingRequestPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundChunkBatchReceivedPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundConfigurationAcknowledgedPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundPingRequestPacket);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-    template class BaseMessage<ServerboundContainerSlotStateChangedPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundContainerSlotStateChangedPacket);
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-    template class BaseMessage<ServerboundChatCommandSignedPacket>;
-    template class BaseMessage<ServerboundCookieResponsePacket>;
-    template class BaseMessage<ServerboundDebugSampleSubscriptionPacket>;
+    DEFINE_MESSAGE_CLASS(ServerboundChatCommandSignedPacket);
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ServerboundCookieResponsePacket);
+    DEFINE_MESSAGE_CLASS(ServerboundDebugSampleSubscriptionPacket);
 #endif
 }

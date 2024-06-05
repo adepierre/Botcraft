@@ -41,45 +41,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Teleport To Entity";
 
-        virtual ~ServerboundTeleportToEntityPacket() override
-        {
+        DECLARE_FIELDS_TYPES(UUID);
+        DECLARE_FIELDS_NAMES(Uuid);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetUuid(const UUID& uuid_)
-        {
-            uuid = uuid_;
-        }
-
-
-        const UUID& GetUuid() const
-        {
-            return uuid;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            uuid = ReadData<UUID>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<UUID>(uuid, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["uuid"] = uuid;
-
-            return output;
-        }
-
-    private:
-        UUID uuid = {};
-
+        GETTER_SETTER(Uuid);
     };
 } //ProtocolCraft

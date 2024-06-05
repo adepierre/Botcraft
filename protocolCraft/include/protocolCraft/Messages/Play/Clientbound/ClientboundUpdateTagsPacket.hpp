@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 348 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/BlockEntityTag.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
@@ -51,134 +51,29 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Tags";
 
-        virtual ~ClientboundUpdateTagsPacket() override
-        {
-
-        }
+#if PROTOCOL_VERSION < 477 /* < 1.14 */
+        DECLARE_FIELDS_TYPES(std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>);
+        DECLARE_FIELDS_NAMES(BlockTags,                   ItemTags,                    FluidTags);
+#elif PROTOCOL_VERSION < 755 /* < 1.17 */
+        DECLARE_FIELDS_TYPES(std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>);
+        DECLARE_FIELDS_NAMES(BlockTags,                   ItemTags,                    FluidTags,                   EntityTags);
+#else
+        DECLARE_FIELDS_TYPES(std::map<Identifier, std::vector<BlockEntityTag>>);
+        DECLARE_FIELDS_NAMES(Tags);
+#endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        void SetBlockTags(const std::vector<BlockEntityTag>& block_tags_)
-        {
-            block_tags = block_tags_;
-        }
-
-        void SetItemTags(const std::vector<BlockEntityTag>& item_tags_)
-        {
-            item_tags = item_tags_;
-        }
-
-        void SetFluidTags(const std::vector<BlockEntityTag>& fluid_tags_)
-        {
-            fluid_tags = fluid_tags_;
-        }
-
-#if PROTOCOL_VERSION > 440 /* > 1.13.2 */
-        void SetEntityTags(const std::vector<BlockEntityTag>& entity_tags_)
-        {
-            entity_tags = entity_tags_;
-        }
+        GETTER_SETTER(BlockTags);
+        GETTER_SETTER(ItemTags);
+        GETTER_SETTER(FluidTags);
 #endif
-#else
-        void SetTags(const std::map<Identifier, std::vector<BlockEntityTag> >& tags_)
-        {
-            tags = tags_;
-        }
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */
+        GETTER_SETTER(EntityTags);
 #endif
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        const std::vector<BlockEntityTag>& GetBlockTags() const
-        {
-            return block_tags;
-        }
-
-        const std::vector<BlockEntityTag>& GetItemTags() const
-        {
-            return item_tags;
-        }
-
-        const std::vector<BlockEntityTag>& GetFluidTags() const
-        {
-            return fluid_tags;
-        }
-
-#if PROTOCOL_VERSION > 440 /* > 1.13.2 */
-        const std::vector<BlockEntityTag>& GetEntityTags() const
-        {
-            return entity_tags;
-        }
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+        GETTER_SETTER(Tags);
 #endif
-#else
-        const std::map<Identifier, std::vector<BlockEntityTag> >& GetTags() const
-        {
-            return tags;
-        }
-#endif
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            block_tags = ReadData<std::vector<BlockEntityTag>>(iter, length);
-            item_tags = ReadData<std::vector<BlockEntityTag>>(iter, length);
-            fluid_tags = ReadData<std::vector<BlockEntityTag>>(iter, length);
-#if PROTOCOL_VERSION > 440 /* > 1.13.2 */
-            entity_tags = ReadData<std::vector<BlockEntityTag>>(iter, length);
-#endif
-#else
-            tags = ReadData<std::map<Identifier, std::vector<BlockEntityTag>>>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteData<std::vector<BlockEntityTag>>(block_tags, container);
-            WriteData<std::vector<BlockEntityTag>>(item_tags, container);
-            WriteData<std::vector<BlockEntityTag>>(fluid_tags, container);
-#if PROTOCOL_VERSION > 440 /* > 1.13.2 */
-            WriteData<std::vector<BlockEntityTag>>(entity_tags, container);
-#endif
-#else
-            WriteData<std::map<Identifier, std::vector<BlockEntityTag>>>(tags, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            output["block_tags"] = block_tags;
-            output["item_tags"] = item_tags;
-            output["fluid_tags"] = fluid_tags;
-#if PROTOCOL_VERSION > 440 /* > 1.13.2 */
-            output["entity_tags"] = entity_tags;
-#endif
-#else
-            output["tags"] = Json::Object();
-
-            for (const auto& p : tags)
-            {
-                output["tags"][p.first.GetFull()] = p.second;
-            }
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        std::vector<BlockEntityTag> block_tags;
-        std::vector<BlockEntityTag> item_tags;
-        std::vector<BlockEntityTag> fluid_tags;
-#if PROTOCOL_VERSION > 440 /* > 1.13.2 */
-        std::vector<BlockEntityTag> entity_tags;
-#endif
-#else
-        std::map<Identifier, std::vector<BlockEntityTag> > tags;
-#endif
-
     };
 } //ProtocolCraft
 #endif

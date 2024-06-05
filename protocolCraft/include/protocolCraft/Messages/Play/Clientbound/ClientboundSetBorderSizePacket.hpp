@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -31,47 +31,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border Size";
 
-        virtual ~ClientboundSetBorderSizePacket() override
-        {
+        DECLARE_FIELDS_TYPES(double);
+        DECLARE_FIELDS_NAMES(Size);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-
-        void SetSize(const double size_)
-        {
-            size = size_;
-        }
-
-
-        double GetSize() const
-        {
-            return size;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            size = ReadData<double>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<double>(size, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["size"] = size;
-
-            return output;
-        }
-
-    private:
-        double size = 0.0;
-
+        GETTER_SETTER(Size);
     };
 } //ProtocolCraft
 #endif

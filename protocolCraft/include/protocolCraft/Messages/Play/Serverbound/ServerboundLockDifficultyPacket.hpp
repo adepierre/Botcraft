@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 463 /* > 1.13.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -40,46 +40,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Lock Difficulty";
 
-        virtual ~ServerboundLockDifficultyPacket() override
-        {
+        DECLARE_FIELDS_TYPES(bool);
+        DECLARE_FIELDS_NAMES(Locked);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetLocked(const bool locked_)
-        {
-            locked = locked_;
-        }
-
-
-        bool GetLocked() const
-        {
-            return locked;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            locked = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<bool>(locked, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["locked"] = locked;
-
-            return output;
-        }
-
-    private:
-        bool locked = false;
-
+        GETTER_SETTER(Locked);
     };
 } //ProtocolCraft
 #endif

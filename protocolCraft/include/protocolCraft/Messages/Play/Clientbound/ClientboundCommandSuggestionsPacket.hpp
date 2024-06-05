@@ -44,120 +44,20 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Command Suggestions";
 
-        virtual ~ClientboundCommandSuggestionsPacket() override
-        {
-
-        }
-
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-        void SetId_(const int id__)
-        {
-            id_ = id__;
-        }
-
-        void SetStart(const int start_)
-        {
-            start = start_;
-        }
-
-        void SetLength(const int length__)
-        {
-            length_ = length__;
-        }
-
-        void SetSuggestions(const std::map<std::string, std::optional<Chat>>& suggestions_)
-        {
-            suggestions = suggestions_;
-        }
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_FIELDS_TYPES(std::vector<std::string>);
+        DECLARE_FIELDS_NAMES(Suggestions);
 #else
-        void SetSuggestions(const std::vector<std::string>& suggestions_)
-        {
-            suggestions = suggestions_;
-        }
+        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt, std::map<std::string, std::optional<Chat>>);
+        DECLARE_FIELDS_NAMES(Id_,    Start,  Length, Suggestions);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-        int GetId_() const
-        {
-            return id_;
-        }
-
-        int GetStart() const
-        {
-            return start;
-        }
-
-        int GetLength() const
-        {
-            return length_;
-        }
-
-        const std::map<std::string, std::optional<Chat>>& GetSuggestions() const
-        {
-            return suggestions;
-        }
-#else
-        const std::vector<std::string>& GetSuggestions() const
-        {
-            return suggestions;
-        }
+        GETTER_SETTER(Suggestions);
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+        GETTER_SETTER(Id_);
+        GETTER_SETTER(Start);
+        GETTER_SETTER(Length);
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-            id_ = ReadData<VarInt>(iter, length);
-            start = ReadData<VarInt>(iter, length);
-            length_ = ReadData<VarInt>(iter, length);
-            suggestions = ReadData<std::map<std::string, std::optional<Chat>>>(iter, length);
-#else
-            suggestions = ReadData<std::vector<std::string>>(iter, length);
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-            WriteData<VarInt>(id_, container);
-            WriteData<VarInt>(start, container);
-            WriteData<VarInt>(length_, container);
-            WriteData<std::map<std::string, std::optional<Chat>>>(suggestions, container);
-#else
-            WriteData<std::vector<std::string>>(suggestions, container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-            output["id_"] = id_;
-            output["start"] = start;
-            output["length_"] = length_;
-            output["suggestions"] = Json::Object();
-            for (const auto& [k, v] : suggestions)
-            {
-                output["suggestions"][k] = v.has_value() ? v.value() : Json::Value();
-            }
-#else
-            output["suggestions"] = suggestions;
-#endif
-
-            return output;
-        }
-
-    private:
-#if PROTOCOL_VERSION > 356 /* > 1.12.2 */
-        int id_ = 0;
-        int start = 0;
-        int length_ = 0;
-        std::map<std::string, std::optional<Chat>> suggestions;
-#else
-        std::vector<std::string> suggestions;
-#endif
-
     };
 } //ProtocolCraft

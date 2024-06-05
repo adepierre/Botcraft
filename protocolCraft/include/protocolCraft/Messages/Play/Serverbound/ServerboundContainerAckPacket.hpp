@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #pragma once
 
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -27,66 +27,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Ack";
 
-        void SetContainerId(const char c)
-        {
-            container_id = c;
-        }
+        DECLARE_FIELDS_TYPES(char, short, bool);
+        DECLARE_FIELDS_NAMES(ContainerId, Uid, Accepted);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetUid(const short s)
-        {
-            uid = s;
-        }
-
-        void SetAccepted(const bool b)
-        {
-            accepted = b;
-        }
-
-        char GetContainerId() const
-        {
-            return container_id;
-        }
-
-        short GetUid() const
-        {
-            return uid;
-        }
-
-        bool GetAccepted() const
-        {
-            return accepted;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            container_id = ReadData<char>(iter, length);
-            uid = ReadData<short>(iter, length);
-            accepted = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<char>(container_id, container);
-            WriteData<short>(uid, container);
-            WriteData<bool>(accepted, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["container_id"] = container_id;
-            output["uid"] = uid;
-            output["accepted"] = accepted;
-
-            return output;
-        }
-
-    private:
-        char container_id = 0;
-        short uid = 0;
-        bool accepted = false;
+        GETTER_SETTER(ContainerId);
+        GETTER_SETTER(Uid);
+        GETTER_SETTER(Accepted);
     };
 } //ProtocolCraft
 #endif

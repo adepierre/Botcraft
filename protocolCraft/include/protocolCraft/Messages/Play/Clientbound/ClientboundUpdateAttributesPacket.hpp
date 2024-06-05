@@ -50,70 +50,35 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Attributes";
 
-        virtual ~ClientboundUpdateAttributesPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt,   std::vector<EntityProperty>);
+        DECLARE_FIELDS_NAMES(EntityId, Attributes);
+        DECLARE_SERIALIZE;
 
-        }
-
-        void SetEntityId(const int entity_id_)
-        {
-            entity_id = entity_id_;
-        }
-
-        void SetAttributes(const std::vector<EntityProperty>& attributes_)
-        {
-            attributes = attributes_;
-        }
-
-
-        int GetEntityId() const
-        {
-            return entity_id;
-        }
-
-        const std::vector<EntityProperty>& GetAttributes() const
-        {
-            return attributes;
-        }
-
+        GETTER_SETTER(EntityId);
+        GETTER_SETTER(Attributes);
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
-            entity_id = ReadData<VarInt>(iter, length);
+            SetEntityId(ReadData<VarInt>(iter, length));
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             // Special case, size is a int instead of a varint
-            attributes = ReadVector<EntityProperty, int>(iter, length, ReadData<EntityProperty>);
+            SetAttributes(ReadVector<EntityProperty, int>(iter, length, ReadData<EntityProperty>));
 #else
-            attributes = ReadData<std::vector<EntityProperty>>(iter, length);
+            SetAttributes(ReadData<std::vector<EntityProperty>>(iter, length));
 #endif
         }
 
         virtual void WriteImpl(WriteContainer& container) const override
         {
-            WriteData<VarInt>(entity_id, container);
+            WriteData<VarInt>(GetEntityId(), container);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             // Special case, size is a int instead of a varint
-            WriteVector<EntityProperty, int>(attributes, container, WriteData<EntityProperty>);
+            WriteVector<EntityProperty, int>(GetAttributes(), container, WriteData<EntityProperty>);
 #else
-            WriteData<std::vector<EntityProperty>>(attributes, container);
+            WriteData<std::vector<EntityProperty>>(GetAttributes(), container);
 #endif
         }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["entity_id"] = entity_id;
-            output["attributes"] = attributes;
-
-            return output;
-        }
-
-    private:
-        int entity_id = 0;
-        std::vector<EntityProperty> attributes;
-
     };
 } //ProtocolCraft

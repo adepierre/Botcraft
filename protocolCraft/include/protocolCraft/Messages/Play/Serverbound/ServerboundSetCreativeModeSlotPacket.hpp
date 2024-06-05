@@ -42,59 +42,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Creative Mode Slot";
 
-        virtual ~ServerboundSetCreativeModeSlotPacket() override
-        {
+        DECLARE_FIELDS_TYPES(short,   Slot);
+        DECLARE_FIELDS_NAMES(SlotNum, ItemStack);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetSlotNum(const short slot_num_)
-        {
-            slot_num = slot_num_;
-        }
-
-        void SetItemStack(const Slot& item_stack_)
-        {
-            item_stack = item_stack_;
-        }
-
-
-        short GetSlotNum() const
-        {
-            return slot_num;
-        }
-
-        const Slot& GetItemStack() const
-        {
-            return item_stack;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            slot_num = ReadData<short>(iter, length);
-            item_stack = ReadData<Slot>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<short>(slot_num, container);
-            WriteData<Slot>(item_stack, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["slot_num"] = slot_num;
-            output["item_stack"] = item_stack;
-
-            return output;
-        }
-
-    private:
-        short slot_num = 0;
-        Slot item_stack;
-
+        GETTER_SETTER(SlotNum);
+        GETTER_SETTER(ItemStack);
     };
 } //ProtocolCraft

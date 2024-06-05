@@ -30,73 +30,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Recipe Book Change Settings";
 
-        virtual ~ServerboundRecipeBookChangeSettingsPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt,   bool,   bool);
+        DECLARE_FIELDS_NAMES(BookType, IsOpen, IsFiltering);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetBookType(const int book_type_)
-        {
-            book_type = book_type_;
-        }
-
-        void SetIsOpen(const bool is_open_)
-        {
-            is_open = is_open_;
-        }
-
-        void SetIsFiltering(const bool is_filtering_)
-        {
-            is_filtering = is_filtering_;
-        }
-
-
-        int GetBookType() const
-        {
-            return book_type;
-        }
-
-        bool GetIsOpen() const
-        {
-            return is_open;
-        }
-
-        bool GetIsFiltering() const
-        {
-            return is_filtering;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            book_type = ReadData<VarInt>(iter, length);
-            is_open = ReadData<bool>(iter, length);
-            is_filtering = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(book_type, container);
-            WriteData<bool>(is_open, container);
-            WriteData<bool>(is_filtering, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["book_type"] = book_type;
-            output["is_open"] = is_open;
-            output["is_filtering"] = is_filtering;
-            
-
-            return output;
-        }
-
-    private:
-        int book_type = 0;
-        bool is_open = false;
-        bool is_filtering = false;
+        GETTER_SETTER(BookType);
+        GETTER_SETTER(IsOpen);
+        GETTER_SETTER(IsFiltering);
     };
 } //ProtocolCraft
 #endif

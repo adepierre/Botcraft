@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 471 /* > 1.13.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 471 /* > 1.13.2 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -42,46 +42,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Chunk Cache Radius";
 
-        virtual ~ClientboundSetChunkCacheRadiusPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt);
+        DECLARE_FIELDS_NAMES(Radius);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetRadius(const int radius_)
-        {
-            radius = radius_;
-        }
-
-
-        int GetRadius() const
-        {
-            return radius;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            radius = ReadData<VarInt>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(radius, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["radius"] = radius;
-
-            return output;
-        }
-
-    private:
-        int radius = 0;
-
+        GETTER_SETTER(Radius);
     };
 } //ProtocolCraft
 #endif

@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -26,45 +26,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Clear Titles";
 
-        virtual ~ClientboundClearTitlesPacket() override
-        {
+        DECLARE_FIELDS_TYPES(bool);
+        DECLARE_FIELDS_NAMES(ResetTimes);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetResetTimes(const bool reset_times_)
-        {
-            reset_times = reset_times_;
-        }
-
-
-        bool GetResetTimes() const
-        {
-            return reset_times;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            reset_times = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<bool>(reset_times, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["reset_times"] = reset_times;
-
-            return output;
-    }
-
-    private:
-        bool reset_times = false;
-
+        GETTER_SETTER(ResetTimes);
     };
 } //ProtocolCraft
 #endif

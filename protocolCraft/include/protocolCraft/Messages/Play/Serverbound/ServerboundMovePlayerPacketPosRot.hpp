@@ -44,112 +44,15 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Player PosRot";
 
-        virtual ~ServerboundMovePlayerPacketPosRot() override
-        {
+        DECLARE_FIELDS_TYPES(double, double, double, float, float, bool);
+        DECLARE_FIELDS_NAMES(X,      Y,      Z,      YRot,  XRot,  OnGround);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetX(const double d)
-        {
-            x = d;
-        }
-
-        void SetY(const double d)
-        {
-            y = d;
-        }
-
-        void SetZ(const double d)
-        {
-            z = d;
-        }
-
-        void SetYRot(const float f)
-        {
-            yRot = f;
-        }
-
-        void SetXRot(const float f)
-        {
-            xRot = f;
-        }
-
-        void SetOnGround(const bool b)
-        {
-            on_ground = b;
-        }
-
-        double GetZ() const
-        {
-            return z;
-        }
-
-        double GetY() const
-        {
-            return y;
-        }
-
-        double GetX() const
-        {
-            return x;
-        }
-
-        float GetYRot() const
-        {
-            return yRot;
-        }
-
-        float GetXRot() const
-        {
-            return xRot;
-        }
-
-        bool GetOnGround() const
-        {
-            return on_ground;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            x = ReadData<double>(iter, length);
-            y = ReadData<double>(iter, length);
-            z = ReadData<double>(iter, length);
-            yRot = ReadData<float>(iter, length);
-            xRot = ReadData<float>(iter, length);
-            on_ground = ReadData<bool>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<double>(x, container);
-            WriteData<double>(y, container);
-            WriteData<double>(z, container);
-            WriteData<float>(yRot, container);
-            WriteData<float>(xRot, container);
-            WriteData<bool>(on_ground, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["x"] = x;
-            output["y"] = y;
-            output["z"] = z;
-            output["yRot"] = yRot;
-            output["xRot"] = xRot;
-            output["on_ground"] = on_ground;
-
-            return output;
-        }
-
-    private:
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        float yRot = 0.0f;
-        float xRot = 0.0f;
-        bool on_ground = false;
+        GETTER_SETTER(X);
+        GETTER_SETTER(Y);
+        GETTER_SETTER(Z);
+        GETTER_SETTER(YRot);
+        GETTER_SETTER(XRot);
+        GETTER_SETTER(OnGround);
     };
 } //ProtocolCraft

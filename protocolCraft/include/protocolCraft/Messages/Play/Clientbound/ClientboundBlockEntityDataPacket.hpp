@@ -39,96 +39,17 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Entity Data";
 
-        virtual ~ClientboundBlockEntityDataPacket() override
-        {
-
-        }
-
-        void SetPos(const NetworkPosition& pos_)
-        {
-            pos = pos_;
-        }
-
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
-        void SetType(const unsigned char type_)
-        {
-            type = type_;
-        }
+        DECLARE_FIELDS_TYPES(NetworkPosition, unsigned char, NBT::UnnamedValue);
+        DECLARE_FIELDS_NAMES(Pos,             Type,          Tag);
 #else
-        void SetType(const int type_)
-        {
-            type = type_;
-        }
+        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt, NBT::UnnamedValue);
+        DECLARE_FIELDS_NAMES(Pos,             Type,   Tag);
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        void SetTag(const NBT::Value& tag_)
-        {
-            tag = tag_;
-        }
-
-        const NetworkPosition& GetPos() const
-        {
-            return pos;
-        }
-
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
-        unsigned char GetType() const
-        {
-            return type;
-        }
-#else
-        int GetType() const
-        {
-            return type;
-        }
-#endif
-
-        const NBT::Value& GetTag() const
-        {
-            return tag;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            pos = ReadData<NetworkPosition>(iter, length);
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
-            type = ReadData<unsigned char>(iter, length);
-#else
-            type = ReadData<VarInt>(iter, length);
-#endif
-            tag = ReadData<NBT::UnnamedValue>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<NetworkPosition>(pos, container);
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
-            WriteData<unsigned char>(type, container);
-#else
-            WriteData<VarInt>(type, container);
-#endif
-            WriteData<NBT::UnnamedValue>(tag, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["pos"] = pos;
-            output["type"] = type;
-            output["tag"] = tag;
-
-            return output;
-        }
-
-    private:
-        NetworkPosition pos;
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
-        unsigned char type = 0;
-#else
-        int type = 0;
-#endif
-        NBT::Value tag;
+        GETTER_SETTER(Pos);
+        GETTER_SETTER(Type);
+        GETTER_SETTER(Tag);
     };
 } //ProtocolCraft

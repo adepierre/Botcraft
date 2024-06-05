@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #pragma once
 
-#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #include "protocolCraft/BaseMessage.hpp"
 
 namespace ProtocolCraft
@@ -20,46 +20,11 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Ping Request";
 
-        virtual ~ServerboundPingRequestPacket() override
-        {
+        DECLARE_FIELDS_TYPES(long long int);
+        DECLARE_FIELDS_NAMES(Time);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetTime(const long long int time_)
-        {
-            time = time_;
-        }
-
-
-        long long int GetTime() const
-        {
-            return time;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            time = ReadData<long long int>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<long long int>(time, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["time"] = time;
-
-            return output;
-        }
-
-    private:
-        long long int time = 0;
-
+        GETTER_SETTER(Time);
     };
 } //ProtocolCraft
 #endif

@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
 #pragma once
 
-#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
 
@@ -47,60 +47,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Tag Query";
 
-        virtual ~ClientboundTagQueryPacket() override
-        {
+        DECLARE_FIELDS_TYPES(VarInt,        NBT::UnnamedValue);
+        DECLARE_FIELDS_NAMES(TransactionId, Tag);
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        }
-
-        void SetTransactionId(const int transaction_id_)
-        {
-            transaction_id = transaction_id_;
-        }
-
-        void SetTag(const NBT::Value& tag_)
-        {
-            tag = tag_;
-        }
-
-
-        int GetTransactionId() const
-        {
-            return transaction_id;
-        }
-
-        const NBT::Value& GetTag() const
-        {
-            return tag;
-        }
-
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            transaction_id = ReadData<VarInt>(iter, length);
-            tag = ReadData<NBT::UnnamedValue>(iter, length);
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(transaction_id, container);
-            WriteData<NBT::UnnamedValue>(tag, container);
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output["transaction_id"] = transaction_id;
-            output["tag"] = tag;
-
-            return output;
-        }
-
-    private:
-        int transaction_id = 0;
-        NBT::Value tag;
-
+        GETTER_SETTER(TransactionId);
+        GETTER_SETTER(Tag);
     };
 } //ProtocolCraft
 #endif
