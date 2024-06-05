@@ -18,7 +18,6 @@
         using FieldsTuple = std::tuple<>;                                 \
         Internal::SerializedType<FieldsTuple>::storage_type fields;       \
         enum class FieldsEnum { None = -1, NUM_FIELDS };                  \
-        static constexpr std::string_view raw_names = "";                 \
         static constexpr std::array<std::string_view, 0> json_names = {}; \
         DECLARE_READ_WRITE_SERIALIZE
 
@@ -32,9 +31,8 @@
 #define DECLARE_FIELDS_NAMES(...)                                                                                          \
     private:                                                                                                               \
         enum class FieldsEnum { None = -1, __VA_ARGS__, NUM_FIELDS };                                                      \
-        static constexpr std::string_view raw_names = #__VA_ARGS__;                                                        \
         static constexpr std::array names =                                                                                \
-            Internal::SplitComma<static_cast<size_t>(FieldsEnum::NUM_FIELDS)>(raw_names);                                  \
+            Internal::SplitComma<static_cast<size_t>(FieldsEnum::NUM_FIELDS)>(#__VA_ARGS__);                               \
         static constexpr std::array json_names_length =                                                                    \
             Internal::GetSnakeCaseSize<static_cast<size_t>(FieldsEnum::NUM_FIELDS)>(names);                                \
         static constexpr std::tuple tuple_json_names =                                                                     \
@@ -90,6 +88,14 @@
     template class BaseMessage<ClassName>
 
 // Define a Message with auto serializable fields, but custom ReadImpl/WriteImpl
-#define DEFINE_SERIALIZED_MESSAGE_CLASS(ClassName)   \
-    DEFINE_SERIALIZE(ClassName);                     \
+#define DEFINE_SERIALIZED_MESSAGE_CLASS(ClassName) \
+    DEFINE_SERIALIZE(ClassName);                   \
     template class BaseMessage<ClassName>
+
+#define DEFINE_CUSTOM_SERIALIZED_MESSAGE_CLASS(ClassName) \
+    DEFINE_READ(ClassName);                               \
+    DEFINE_WRITE(ClassName);                              \
+    template class BaseMessage<ClassName>
+
+// Define a Message with auto serializable fields, but custom Impl methods
+#define DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClassName) template class BaseMessage<ClassName>
