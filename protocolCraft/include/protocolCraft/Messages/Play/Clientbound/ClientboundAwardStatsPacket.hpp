@@ -55,7 +55,7 @@ namespace ProtocolCraft
             Json::Value output;
 
 #if PROTOCOL_VERSION < 346 /* < 1.13 */
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Stats)])] = stats;
+            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Stats)])] = GetStats();
 #else
             output[std::string(json_names[static_cast<size_t>(FieldsEnum::Stats)])] = Json::Array();
             for (const auto& p : GetStats())

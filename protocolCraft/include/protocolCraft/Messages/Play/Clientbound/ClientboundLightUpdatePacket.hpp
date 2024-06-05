@@ -102,7 +102,7 @@ namespace ProtocolCraft
             std::vector<std::vector<char>> sky_updates;
             for (int i = 0; i < 18; ++i)
             {
-                if ((sky_Y_mask >> i) & 1)
+                if ((GetSkyYMask() >> i) & 1)
                 {
                     sky_updates.push_back(ReadData<std::vector<char>>(iter, length)); // Should always contain 2048 chars
                 }
@@ -112,7 +112,7 @@ namespace ProtocolCraft
             std::vector<std::vector<char>> block_updates;
             for (int i = 0; i < 18; ++i)
             {
-                if ((block_Y_mask >> i) & 1)
+                if ((GetBlockYMask() >> i) & 1)
                 {
                     block_updates.push_back(ReadData<std::vector<char>>(iter, length)); // Should always contain 2048 chars
                 }

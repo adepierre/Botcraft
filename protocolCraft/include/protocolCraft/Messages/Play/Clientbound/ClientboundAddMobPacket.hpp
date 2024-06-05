@@ -57,7 +57,7 @@ namespace ProtocolCraft
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
             SetId_(ReadData<VarInt>(iter, length));
-            SetUUID(ReadData<UUID>(iter, length));
+            SetUuid(ReadData<UUID>(iter, length));
             SetType(ReadData<VarInt>(iter, length));
             SetX(ReadData<double>(iter, length));
             SetY(ReadData<double>(iter, length));
@@ -74,7 +74,7 @@ namespace ProtocolCraft
         virtual void WriteImpl(WriteContainer& container) const override
         {
             WriteData<VarInt>(GetId_(), container);
-            WriteData<UUID>(GetUUID(), container);
+            WriteData<UUID>(GetUuid(), container);
             WriteData<VarInt>(GetType(), container);
             WriteData<double>(GetX(), container);
             WriteData<double>(GetY(), container);

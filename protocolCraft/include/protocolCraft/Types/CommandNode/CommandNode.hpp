@@ -56,13 +56,12 @@ namespace ProtocolCraft
             {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
                 SetParser(ReadData<Identifier>(iter, length));
-                std::shared_ptr<BrigadierProperty> properties = BrigadierProperty::CreateProperties(parser);
+                SetProperties(BrigadierProperty::CreateProperties(GetParser()));
 #else
                 SetParserId(ReadData<BrigadierPropertyType, VarInt>(iter, length));
-                std::shared_ptr<BrigadierProperty> properties = BrigadierProperty::CreateProperties(GetParserId());
+                SetProperties(BrigadierProperty::CreateProperties(GetParserId()));
 #endif
-                properties->Read(iter, length);
-                SetProperties(properties);
+                GetProperties()->Read(iter, length);
                 if (GetFlags() & 0x10)
                 {
                     SetSuggestionType(ReadData<Identifier>(iter, length));

@@ -13,7 +13,7 @@ namespace ProtocolCraft
         DECLARE_FIELDS_NAMES(ParentId,                  DisplayData,                       Criteria,                Requirements);
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
         DECLARE_FIELDS_TYPES(std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<Identifier>, std::vector<std::vector<std::string>>, bool);
-        DECLARE_FIELDS_NAMES(ParentId,                  DisplayData,                       Criteria,                Requirements,                          SendsTelementryEvent);
+        DECLARE_FIELDS_NAMES(ParentId,                  DisplayData,                       Criteria,                Requirements,                          SendsTelemetryEvent);
 #else
         DECLARE_FIELDS_TYPES(std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<std::vector<std::string>>, bool);
         DECLARE_FIELDS_NAMES(ParentId,                  DisplayData,                       Requirements,                          SendsTelemetryEvent);

@@ -81,7 +81,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
             SetChunkX(ReadData<int>(iter, length));
             SetChunkZ(ReadData<int>(iter, length));
-            SetRecords(ReadData<std::vector<Records>>(iter, length));
+            SetRecords(ReadData<std::vector<Record>>(iter, length));
 #else
             SetSectionPos(ReadData<long long int>(iter, length));
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
@@ -92,9 +92,8 @@ namespace ProtocolCraft
             std::vector<int> states(data.size());
             for (size_t i = 0; i < data.size(); ++i)
             {
-                const long long int data = ReadData<VarLong>(iter, length);
-                positions[i] = static_cast<short>(data & 0xFFFl);
-                states[i] = static_cast<int>(data >> 12);
+                positions[i] = static_cast<short>(data[i] & 0xFFFl);
+                states[i] = static_cast<int>(data[i] >> 12);
             }
             SetPositions(positions);
             SetStates(states);

@@ -9,10 +9,10 @@ namespace ProtocolCraft
     class RemoteChatSessionData : public NetworkType
     {
         DECLARE_FIELDS_TYPES(UUID, ProfilePublicKey);
-        DECLARE_FIELDS_NAMES(UUID, ProfilePublicKey);
+        DECLARE_FIELDS_NAMES(Uuid, ProfilePublicKey);
         DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(UUID);
+        GETTER_SETTER(Uuid);
         GETTER_SETTER(ProfilePublicKey);
     };
 }

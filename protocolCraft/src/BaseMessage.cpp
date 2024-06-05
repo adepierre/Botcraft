@@ -171,7 +171,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
-    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundAddMobPacket)
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundAddMobPacket);
 #else
     DEFINE_MESSAGE_CLASS(ClientboundAddMobPacket);
 #endif
@@ -182,7 +182,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
-    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundAddPlayerPacket)
+    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundAddPlayerPacket);
 #else
     DEFINE_MESSAGE_CLASS(ClientboundAddPlayerPacket);
 #endif

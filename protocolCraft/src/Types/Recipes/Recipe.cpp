@@ -24,7 +24,9 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(RecipeDataCraftingShapeless);
     DEFINE_NETWORK_TYPE(RecipeDataSimpleCooking);
     DEFINE_NETWORK_TYPE(RecipeDataSimpleCrafting);
+#if PROTOCOL_VERSION > 453 /* > 1.13.2 */
     DEFINE_NETWORK_TYPE(RecipeDataSingleItem);
+#endif
 #if PROTOCOL_VERSION > 732 /* > 1.15.2 */ && PROTOCOL_VERSION < 763 /* < 1.20 */
     DEFINE_NETWORK_TYPE(RecipeDataSmithing);
 #endif

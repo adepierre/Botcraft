@@ -109,9 +109,6 @@
 #include "protocolCraft/Types/Vibrations/BlockPositionSource.hpp"
 #include "protocolCraft/Types/Vibrations/EntityPositionSource.hpp"
 #endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
-#include "protocolCraft/Types/Vibrations/VibrationPath.hpp"
-#endif
 
 namespace ProtocolCraft
 {
@@ -227,9 +224,6 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     DEFINE_NETWORK_TYPE(BlockPositionSource);
     DEFINE_NETWORK_TYPE(EntityPositionSource);
-#endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
-    DEFINE_JSON_NAMES(VibrationPath);
 #endif
 
 }
