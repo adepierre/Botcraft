@@ -129,7 +129,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
                 if (id >= 0
                     && id < first_player_index
                     && !slot.IsEmptySlot()
-                    && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == food_name
+                    && AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() == food_name
                     )
                 {
                     slots_src.push_back(id);
@@ -164,7 +164,7 @@ Status GetSomeFood(BehaviourClient& c, const std::string& food_name)
 
         // Wait until player inventory is updated after the container is closed
         auto start = std::chrono::steady_clock::now();
-        while (AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemID())->GetName() != food_name)
+        while (AssetsManager::getInstance().Items().at(inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemId())->GetName() != food_name)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 10000)
             {
@@ -192,7 +192,7 @@ Status GetBlocksAvailableInInventory(BehaviourClient& c)
             idx < Window::INVENTORY_OFFHAND_INDEX &&
             !slot.IsEmptySlot())
         {
-            blocks_in_inventory.insert(AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName());
+            blocks_in_inventory.insert(AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName());
         }
     }
 
@@ -264,7 +264,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
                 && idx < first_player_index
                 && take_from_chest
                 && !slot.IsEmptySlot()
-                && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() != food_name)
+                && AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() != food_name)
             {
                 slots_src.push_back(idx);
             }
@@ -287,7 +287,7 @@ Status SwapChestsInventory(BehaviourClient& c, const std::string& food_name, con
             else if (idx >= first_player_index
                 && !take_from_chest
                 && !slot.IsEmptySlot()
-                && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() != food_name)
+                && AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() != food_name)
             {
                 slots_src.push_back(idx);
             }
@@ -468,7 +468,7 @@ Status FindNextTask(BehaviourClient& c)
                 }
             }
 
-            // Get all the candidates that are as far as possible from all 
+            // Get all the candidates that are as far as possible from all
             // the other players
             std::vector<int> max_dist_indices;
             double max_dist = 0.0;

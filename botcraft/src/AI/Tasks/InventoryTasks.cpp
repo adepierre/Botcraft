@@ -307,7 +307,7 @@ namespace Botcraft
         // If the currently selected item is the right one, just go for it
         const Slot current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
         if (!current_selected.IsEmptySlot()
-            && AssetsManager::getInstance().Items().at(current_selected.GetItemID())->GetName() == item_name)
+            && AssetsManager::getInstance().Items().at(current_selected.GetItemId())->GetName() == item_name)
 
         {
             return Status::Success;
@@ -321,7 +321,7 @@ namespace Botcraft
                 if (id >= Window::INVENTORY_STORAGE_START
                     && id < Window::INVENTORY_OFFHAND_INDEX
                     && !slot.IsEmptySlot()
-                    && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == item_name)
+                    && AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() == item_name)
                 {
                     inventory_correct_slot_index = id;
                     break;
@@ -377,7 +377,7 @@ namespace Botcraft
         std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
         std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
-        
+
         // Compute the distance from the hand? Might be from somewhere else
         const Vector3<double> hand_pos = local_player->GetPosition() + Vector3<double>(0.0, 1.0, 0.0);
 
@@ -432,7 +432,7 @@ namespace Botcraft
                     {
                         Vector3<double> a_offset = neighbour_offsets[static_cast<int>(a)];
                         Vector3<double> b_offset = neighbour_offsets[static_cast<int>(b)];
-                        return player_orientation.dot(a_offset) > player_orientation.dot(b_offset); 
+                        return player_orientation.dot(a_offset) > player_orientation.dot(b_offset);
                         // a > b because a negative dot product means the vectors are in opposite directions IE the player is looking at the face.
                         // But because we place the block in the inner faces we negate the result.
                     }
@@ -806,7 +806,7 @@ namespace Botcraft
     }
 
     Status LogInventoryContent(BehaviourClient& client, const LogLevel level)
-    {        
+    {
         constexpr std::array variable_names = {
                "LogInventoryContent.level"
         };
@@ -872,8 +872,8 @@ namespace Botcraft
         {
             for (int i = 0; i < trades.size(); ++i)
             {
-                if ((buy && trades[i].GetOutputItem().GetItemID() == item_id)
-                    || (!buy && trades[i].GetInputItem1().GetItemID() == item_id))
+                if ((buy && trades[i].GetOutputItem().GetItemId() == item_id)
+                    || (!buy && trades[i].GetInputItem1().GetItemId() == item_id))
                 {
                     trade_index = i;
                     has_trade_second_item = trades[i].GetInputItem2().has_value();
@@ -914,9 +914,9 @@ namespace Botcraft
                 return Status::Failure;
             }
 
-            correct_items = (buy && trading_container->GetSlot(2).GetItemID() == item_id) ||
+            correct_items = (buy && trading_container->GetSlot(2).GetItemId() == item_id) ||
                 (!buy && !trading_container->GetSlot(2).IsEmptySlot()
-                    && (trading_container->GetSlot(0).GetItemID() == item_id || trading_container->GetSlot(1).GetItemID() == item_id));
+                    && (trading_container->GetSlot(0).GetItemId() == item_id || trading_container->GetSlot(1).GetItemId() == item_id));
             client.Yield();
         } while (!correct_items);
 
@@ -1170,7 +1170,7 @@ namespace Botcraft
                 }
 
                 const int destination_slot = use_inventory_craft ? (1 + x - min_x + (y - min_y) * 2) : (1 + x + 3 * y);
-                
+
                 int source_slot = -1;
                 int source_quantity = -1;
                 // Search for the required item in inventory
@@ -1183,9 +1183,9 @@ namespace Botcraft
                             continue;
                         }
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-                        if (slot.GetBlockID() == inputs[y][x].first && slot.GetItemDamage() == inputs[y][x].second)
+                        if (slot.GetBlockId() == inputs[y][x].first && slot.GetItemDamage() == inputs[y][x].second)
 #else
-                        if (slot.GetItemID() == inputs[y][x])
+                        if (slot.GetItemId() == inputs[y][x])
 #endif
                         {
                             source_slot = id;
@@ -1263,8 +1263,8 @@ namespace Botcraft
 
                 // If it fits in a slot (empty or with the same item)
                 if (slot.IsEmptySlot() ||
-                    (inventory_manager->GetCursor().GetItemID() == slot.GetItemID() &&
-                        slot.GetItemCount() < AssetsManager::getInstance().Items().at(slot.GetItemID())->GetStackSize() - 1)
+                    (inventory_manager->GetCursor().GetItemId() == slot.GetItemId() &&
+                        slot.GetItemCount() < AssetsManager::getInstance().Items().at(slot.GetItemId())->GetStackSize() - 1)
                     )
                 {
                     destination_slot = id;
@@ -1405,13 +1405,7 @@ namespace Botcraft
                     continue;
                 }
 
-                if (!slot.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-                    slot.GetBlockID() == item_id.first && slot.GetItemDamage() == item_id.second
-#else
-                    slot.GetItemID() == item_id
-#endif
-                    )
+                if (!slot.IsEmptySlot() && item_id == slot.GetItemId())
                 {
                     quantity_sum += slot.GetItemCount();
                 }
@@ -1478,7 +1472,7 @@ namespace Botcraft
                 // If this slot is not empty, and not full,
                 // check if "upper" slot with same items that
                 // could fit in it
-                const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetItemID())->GetStackSize() - dst_slot.GetItemCount();
+                const int available_space = AssetsManager::getInstance().Items().at(dst_slot.GetItemId())->GetStackSize() - dst_slot.GetItemCount();
                 if (available_space == 0)
                 {
                     continue;

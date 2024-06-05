@@ -297,7 +297,7 @@ namespace Botcraft
             {
                 for (int block_x = 0; block_x < CHUNK_WIDTH; ++block_x)
                 {
-#if PROTOCOL_VERSION < 358 /* < 1.13 */ 
+#if PROTOCOL_VERSION < 358 /* < 1.13 */
                     SetBiome(block_x, block_z, ReadData<unsigned char>(iter, length));
 #else
                     SetBiome(block_x, block_z, ReadData<int>(iter, length));

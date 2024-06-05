@@ -113,7 +113,7 @@ namespace Botcraft::Utilities
         }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        const NBT::Value& item_nbt = item.GetNBT();
+        const NBT::Value& item_nbt = item.GetNbt();
         if (!item_nbt.HasData())
         {
             return 0;
@@ -171,7 +171,7 @@ namespace Botcraft::Utilities
         }
 
         const std::map<int, int>& enchantments = std::static_pointer_cast<Components::DataComponentTypeItemEnchantments>(c->second)->GetEnchantments();
-        
+
         auto it = enchantments.find(static_cast<int>(enchantment));
         if (it == enchantments.end())
         {
@@ -190,7 +190,7 @@ namespace Botcraft::Utilities
         }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        const NBT::Value& item_nbt = item.GetNBT();
+        const NBT::Value& item_nbt = item.GetNbt();
         if (!item_nbt.HasData())
         {
             return 0;

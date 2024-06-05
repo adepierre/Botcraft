@@ -773,7 +773,7 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
-        for (int i = 0; i < msg.GetRecordCount(); ++i)
+        for (size_t i = 0; i < msg.GetRecords().size(); ++i)
         {
             unsigned char x = (msg.GetRecords()[i].GetHorizontalPosition() >> 4) & 0x0F;
             unsigned char z = msg.GetRecords()[i].GetHorizontalPosition() & 0x0F;
@@ -787,7 +787,7 @@ namespace Botcraft
         const int chunk_y = SECTION_HEIGHT * (msg.GetSectionPos() << 44 >> 44); // 20 bits
 
         const size_t data_size = msg.GetPositions().size();
-        for (int i = 0; i < data_size; ++i)
+        for (size_t i = 0; i < data_size; ++i)
         {
             const unsigned int block_id = msg.GetStates()[i];
 
@@ -945,7 +945,7 @@ namespace Botcraft
         const auto& entries = msg.GetEntries();
         for (size_t i = 0; i < entries.size(); ++i)
         {
-            const std::string dim_name = entries[i].GetId_().GetFull();
+            const std::string dim_name = entries[i].GetId().GetFull();
             // Make sure we use the same indices as minecraft registry
             // Not really useful but just in case
             dimension_index_map.insert({ dim_name, i });

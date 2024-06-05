@@ -69,7 +69,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         loginstart_msg->SetGameProfile(name);
 #else
-        loginstart_msg->SetName(name);
+        loginstart_msg->SetName_(name);
         if (authentifier)
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -374,8 +374,16 @@ namespace Botcraft
 
         if (msg)
         {
-            msg->Read(packet_iterator, length);
-            for (int i = 0; i < subscribed.size(); i++)
+            try
+            {
+                msg->Read(packet_iterator, length);
+            }
+            catch (std::exception)
+            {
+                LOG_FATAL("Parsing exception while parsing message \"" << msg->GetName() << '"');
+                throw;
+            }
+            for (size_t i = 0; i < subscribed.size(); i++)
             {
                 msg->Dispatch(subscribed[i]);
             }
@@ -442,7 +450,7 @@ namespace Botcraft
             encrypted_challenge);
 #endif
 
-        authentifier->JoinServer(msg.GetServerID(), raw_shared_secret, msg.GetPublicKey());
+        authentifier->JoinServer(msg.GetServerId(), raw_shared_secret, msg.GetPublicKey());
 
         std::shared_ptr<ServerboundKeyPacket> response_msg = std::make_shared<ServerboundKeyPacket>();
         response_msg->SetKeyBytes(encrypted_shared_secret);
@@ -562,7 +570,7 @@ namespace Botcraft
             {
                 chat_session_uuid[i] = static_cast<unsigned char>(distrib(rnd));
             }
-            chat_session_data.SetUUID(chat_session_uuid);
+            chat_session_data.SetUuid(chat_session_uuid);
 
             chat_session_msg->SetChatSession(chat_session_data);
             Send(chat_session_msg);

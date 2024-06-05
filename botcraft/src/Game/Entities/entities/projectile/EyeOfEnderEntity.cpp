@@ -23,7 +23,7 @@ namespace Botcraft
 #else
         const static int item_id = AssetsManager::getInstance().GetItemID("minecraft:ender_eye");
         ProtocolCraft::Slot default_slot;
-        default_slot.SetItemID(item_id);
+        default_slot.SetItemId(item_id);
         default_slot.SetItemCount(1);
         SetDataItemStack(default_slot);
 #endif

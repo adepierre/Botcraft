@@ -80,9 +80,9 @@ namespace Botcraft
             {
                 const Item* item;
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-                item = AssetsManager::getInstance().GetItem(std::pair<int, unsigned char>{ main_hand.GetBlockID(), static_cast<unsigned char>(main_hand.GetItemDamage()) });
+                item = AssetsManager::getInstance().GetItem(std::pair<int, unsigned char>{ main_hand.GetBlockId(), static_cast<unsigned char>(main_hand.GetItemDamage()) });
 #else
-                item = AssetsManager::getInstance().GetItem(main_hand.GetItemID());
+                item = AssetsManager::getInstance().GetItem(main_hand.GetItemId());
 #endif
                 if (item != nullptr)
                 {

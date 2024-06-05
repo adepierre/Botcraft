@@ -52,7 +52,7 @@ namespace Botcraft
         }
         return it->second;
     }
-    
+
     std::shared_ptr<Window> InventoryManager::GetPlayerInventory() const
     {
         return GetWindow(Window::PLAYER_INVENTORY_INDEX);
@@ -78,7 +78,7 @@ namespace Botcraft
 
         return -1;
     }
-    
+
     Slot InventoryManager::GetHotbarSelected() const
     {
         std::shared_ptr<Window> inventory = GetPlayerInventory();
@@ -194,7 +194,7 @@ namespace Botcraft
 
         short player_inventory_first_slot = it->second->GetFirstPlayerInventorySlot();
         std::shared_ptr<Window> player_inventory = inventories[Window::PLAYER_INVENTORY_INDEX];
-        
+
         for (int i = 0; i < Window::INVENTORY_HOTBAR_START; ++i)
         {
             player_inventory->SetSlot(Window::INVENTORY_STORAGE_START + i, it->second->GetSlot(player_inventory_first_slot + i));
@@ -256,7 +256,7 @@ namespace Botcraft
         Slot carried_item;
 
         // Process the transaction
-        
+
         // Click on the output of a crafting container
         if ((window->GetType() == InventoryType::PlayerInventory || window->GetType() == InventoryType::Crafting) &&
             transaction->GetSlotNum() == 0)
@@ -274,22 +274,13 @@ namespace Botcraft
             }
 
             const Slot clicked_slot = window->GetSlot(transaction->GetSlotNum());
-            // If cursor is not empty, we can't click if the items are not the same, 
-            if (!cursor.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-                (cursor.GetBlockID() != clicked_slot.GetBlockID()
-                    || cursor.GetItemDamage() != clicked_slot.GetItemDamage())
-#else
-                cursor.GetItemID() != clicked_slot.GetItemID()
-#endif
-                )
+            // If cursor is not empty, we can't click if the items are not the same,
+            if (!cursor.IsEmptySlot() && !cursor.SameItem(clicked_slot))
             {
                 carried_item = cursor;
             }
             // We can't click if the crafted items don't fit in the stack
-            else if (!cursor.IsEmptySlot() &&
-                (cursor.GetItemCount() + clicked_slot.GetItemCount()) > AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize()
-                )
+            else if (!cursor.IsEmptySlot() && (cursor.GetItemCount() + clicked_slot.GetItemCount()) > AssetsManager::getInstance().Items().at(cursor.GetItemId())->GetStackSize())
             {
                 carried_item = cursor;
             }
@@ -355,17 +346,10 @@ namespace Botcraft
                         case 0: // "Left click"
                         {
                             // Special case: left click with same item
-                            if (!cursor.IsEmptySlot() && !clicked_slot.IsEmptySlot()
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-                                && cursor.GetBlockID() == clicked_slot.GetBlockID()
-                                && cursor.GetItemDamage() == clicked_slot.GetItemDamage()
-#else
-                                && cursor.GetItemID() == clicked_slot.GetItemID()
-#endif
-                                )
+                            if (!cursor.IsEmptySlot() && !clicked_slot.IsEmptySlot() && cursor.SameItem(clicked_slot))
                             {
                                 const int sum_count = cursor.GetItemCount() + clicked_slot.GetItemCount();
-                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize();
+                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemId())->GetStackSize();
                                 // The cursor becomes the clicked slot
                                 carried_item = clicked_slot;
                                 carried_item.SetItemCount(std::max(0, sum_count - max_stack_size));
@@ -404,14 +388,9 @@ namespace Botcraft
                                 changed_slots.at(transaction->GetSlotNum()).SetItemCount(1);
                             }
                             // If same items in both
-#if PROTOCOL_VERSION < 347 /* < 1.13 */
-                            else if (cursor.GetBlockID() == clicked_slot.GetBlockID()
-                                && cursor.GetItemDamage() == clicked_slot.GetItemDamage())
-#else
-                            else if (cursor.GetItemID() == clicked_slot.GetItemID())
-#endif
+                            else if (cursor.SameItem(clicked_slot))
                             {
-                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemID())->GetStackSize();
+                                const int max_stack_size = AssetsManager::getInstance().Items().at(cursor.GetItemId())->GetStackSize();
                                 const bool transfer = clicked_slot.GetItemCount() < max_stack_size;
                                 // The cursor loses 1 item if possible
                                 carried_item = clicked_slot;
@@ -451,7 +430,7 @@ namespace Botcraft
         transaction->SetStateId(window->GetStateId());
 #endif
 #else
-        transaction->SetItemStack(window->GetSlot(transaction->GetSlotNum()));
+        transaction->SetCarriedItem(window->GetSlot(transaction->GetSlotNum()));
         output.changed_slots = changed_slots;
         output.carried_item = carried_item;
 
@@ -463,7 +442,7 @@ namespace Botcraft
     void InventoryManager::ApplyTransactionImpl(const InventoryTransaction& transaction)
     {
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        const std::map<short, Slot>& modified_slots = transaction.msg->GetChangeSlots();
+        const std::map<short, Slot>& modified_slots = transaction.msg->GetChangedSlots();
         cursor = transaction.msg->GetCarriedItem();
 #else
         const std::map<short, Slot>& modified_slots = transaction.changed_slots;
@@ -545,7 +524,7 @@ namespace Botcraft
         std::shared_ptr<Window> window = GetWindow(msg.GetContainerId());
         if (window != nullptr)
         {
-            window->SetContent(msg.GetSlotData());
+            window->SetContent(msg.GetItems());
         }
 
 #if PROTOCOL_VERSION > 755 /* > 1.17 */

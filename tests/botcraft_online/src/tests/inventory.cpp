@@ -24,7 +24,7 @@ std::string GetItemName(const ProtocolCraft::Slot& slot)
         return "";
     }
 
-    return Botcraft::AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName();
+    return Botcraft::AssetsManager::getInstance().GetItem(slot.GetItemId())->GetName();
 }
 
 TEST_CASE("receive item")

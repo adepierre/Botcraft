@@ -12,7 +12,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         static const int item_id = AssetsManager::getInstance().GetItemID("minecraft:snowball");
         ProtocolCraft::Slot default_slot;
-        default_slot.SetItemID(item_id);
+        default_slot.SetItemId(item_id);
         default_slot.SetItemCount(1);
         SetDataItemStack(default_slot);
 #endif

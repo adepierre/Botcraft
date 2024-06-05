@@ -230,7 +230,7 @@ Status StartSpawners(BehaviourClient& client)
     Blackboard& blackboard = client.GetBlackboard();
 
     const Position& lever_pos = blackboard.Get<Position>("DispenserFarmBot.stone_lever_position");
-    
+
     const Blockstate* block = world->GetBlock(lever_pos);
 
     if (block == nullptr || block->GetName() != "minecraft:lever")
@@ -319,12 +319,7 @@ Status CleanChest(BehaviourClient& client, const std::string& chest_pos_blackboa
         for (const auto& [id, slot] : container->GetSlots())
         {
             if (id < container->GetFirstPlayerInventorySlot() && !slot.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() != item_to_keep
-#else
-                AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() != item_to_keep
-#endif
-                )
+                AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() != item_to_keep)
             {
                 slots_to_remove.push_back(id);
             }
@@ -420,25 +415,14 @@ Status StoreDispenser(BehaviourClient& client)
     const auto dispenser_id = AssetsManager::getInstance().GetItemID("minecraft:dispenser");
     for (const auto& [idx, slot] : container->GetSlots())
     {
-        if (dst_slot == -1 && idx < container->GetFirstPlayerInventorySlot() && 
-            (slot.IsEmptySlot() || (
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-            slot.GetBlockID() == dispenser_id.first && slot.GetItemDamage() == dispenser_id.second
-#else
-            slot.GetItemID() == dispenser_id
-#endif
-            && slot.GetItemCount() < AssetsManager::getInstance().Items().at(dispenser_id)->GetStackSize() - 1))
-            )
+        if (dst_slot == -1 && idx < container->GetFirstPlayerInventorySlot() &&
+            (slot.IsEmptySlot() ||
+                (slot.GetItemId() == dispenser_id && slot.GetItemCount() < AssetsManager::getInstance().Items().at(dispenser_id)->GetStackSize() - 1))
+        )
         {
             dst_slot = idx;
         }
-        else if (src_slot == -1 && idx >= container->GetFirstPlayerInventorySlot() &&
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-            slot.GetBlockID() == dispenser_id.first && slot.GetItemDamage() == dispenser_id.second
-#else
-            slot.GetItemID() == dispenser_id
-#endif
-            )
+        else if (src_slot == -1 && idx >= container->GetFirstPlayerInventorySlot() && slot.GetItemId() == dispenser_id)
         {
             src_slot = idx;
         }
@@ -578,11 +562,7 @@ Status MineCobblestone(BehaviourClient& client)
         {
             if (src_slot == -1 && idx < shulker_container->GetFirstPlayerInventorySlot())
             {
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                if (!slot.IsEmptySlot() && AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() == "minecraft:cobblestone")
-#else
-                if (!slot.IsEmptySlot() && AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == "minecraft:cobblestone")
-#endif
+                if (!slot.IsEmptySlot() && AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() == "minecraft:cobblestone")
                 {
                     src_slot = idx;
                     quantity = slot.GetItemCount();
@@ -595,13 +575,9 @@ Status MineCobblestone(BehaviourClient& client)
 
             if (src_slot != -1 && idx >= shulker_container->GetFirstPlayerInventorySlot())
             {
-                if (slot.IsEmptySlot() || (slot.GetItemCount() < 64 - quantity &&
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                    AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() == "minecraft:cobblestone"
-#else
-                    AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == "minecraft:cobblestone"
-#endif
-                    ))
+                if (slot.IsEmptySlot() ||
+                    (slot.GetItemCount() < 64 - quantity && AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() == "minecraft:cobblestone")
+                )
                 {
                     dst_slot = idx;
                     break;
@@ -660,13 +636,7 @@ Status TakeFromChest(BehaviourClient& client, const std::string& item_name, cons
     int num_in_inventory = 0;
     for (const auto& [idx, slot] : container->GetSlots())
     {
-        if (!slot.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-            AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() == item_name
-#else
-            AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == item_name
-#endif
-            )
+        if (!slot.IsEmptySlot() && AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() == item_name)
         {
             if (idx < container->GetFirstPlayerInventorySlot())
             {
@@ -735,7 +705,7 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
     std::shared_ptr<EntityManager> entity_manager = client.GetEntityManager();
 
     std::map<int, Vector3<double>> entity_positions;
-    
+
     bool moving_items = true;
     while (moving_items)
     {
@@ -748,11 +718,8 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
                 if (entity->GetType() == EntityType::ItemEntity)
                 {
                     std::shared_ptr<ItemEntity> item = std::static_pointer_cast<ItemEntity>(entity);
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-                    if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetBlockID()).at(item->GetDataItem().GetItemDamage())->GetName() == item_name)
-#else
-                    if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetItemID())->GetName() == item_name)
-#endif
+
+                    if (AssetsManager::getInstance().Items().at(item->GetDataItem().GetItemId())->GetName() == item_name)
                     {
                         entity_positions[id] = entity->GetPosition();
                         moving_items = entity->GetSpeed().SqrNorm() > 0.0001;
@@ -834,13 +801,10 @@ Status DestroyItems(BehaviourClient& client, const std::string& item_name)
     std::vector<short> slots_to_remove;
     for (const auto& [idx, slot] : inventory->GetSlots())
     {
-        if (idx >= inventory->GetFirstPlayerInventorySlot() && !slot.IsEmptySlot() &&
-#if PROTOCOL_VERSION < 340 /* < 1.12.2 */
-            AssetsManager::getInstance().Items().at(slot.GetBlockID()).at(slot.GetItemDamage())->GetName() == item_name
-#else
-            AssetsManager::getInstance().Items().at(slot.GetItemID())->GetName() == item_name
-#endif
-            )
+        if (idx >= inventory->GetFirstPlayerInventorySlot() &&
+            !slot.IsEmptySlot() &&
+            AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() == item_name
+        )
         {
             slots_to_remove.push_back(idx);
         }

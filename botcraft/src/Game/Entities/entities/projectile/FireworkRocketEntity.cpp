@@ -24,7 +24,7 @@ namespace Botcraft
 #else
         const static int item_id = AssetsManager::getInstance().GetItemID("minecraft:firework_rocket");
         ProtocolCraft::Slot default_slot;
-        default_slot.SetItemID(item_id);
+        default_slot.SetItemId(item_id);
         default_slot.SetItemCount(1);
         SetDataIdFireworksItem(default_slot);
 #endif

@@ -315,7 +315,7 @@ namespace Botcraft
                                 {
                                     ImGui::Text("Offhand");
                                 }
-                                const std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemID())->GetName();
+                                const std::string name = AssetsManager::getInstance().Items().at(it->second.GetItemId())->GetName();
                                 if (name != "minecraft:air")
                                 {
                                     ImGui::Text(std::string("    (%i) " + name + " (x%i)").c_str(), i, it->second.GetItemCount());

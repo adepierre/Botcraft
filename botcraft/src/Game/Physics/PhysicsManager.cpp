@@ -22,7 +22,7 @@ namespace Botcraft
     PhysicsManager::PhysicsManager(
 #if USE_GUI
         const std::shared_ptr<Renderer::RenderingManager>& rendering_manager_,
-#endif   
+#endif
         const std::shared_ptr<InventoryManager>& inventory_manager_,
         const std::shared_ptr<EntityManager>& entity_manager_,
         const std::shared_ptr<NetworkManager>& network_manager_,
@@ -30,7 +30,7 @@ namespace Botcraft
     {
 #if USE_GUI
         rendering_manager = rendering_manager_;
-#endif   
+#endif
         inventory_manager = inventory_manager_;
         entity_manager = entity_manager_;
         player = nullptr;
@@ -598,7 +598,7 @@ namespace Botcraft
         {
             const Slot chest_slot = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_CHEST_ARMOR);
             if (!chest_slot.IsEmptySlot() &&
-                chest_slot.GetItemID() == elytra_item->GetId() &&
+                chest_slot.GetItemId() == elytra_item->GetId() &&
                 Utilities::GetDamageCount(chest_slot) < elytra_item->GetMaxDurability() - 1)
             {
                 player->SetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying, true);

@@ -307,7 +307,7 @@ Status ExecuteAction(SimpleBehaviourClient& client)
                 continue;
             }
 
-            const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+            const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemId());
             if (item->GetToolType() == best_tool_type)
             {
                 // Check the tool won't break, with a "large" margin of 5 to be safe
@@ -666,9 +666,9 @@ Status CleanInventory(SimpleBehaviourClient& client)
         // Don't throw lava bucket, food, temp block or tools
         if (idx < Window::INVENTORY_STORAGE_START ||
             slot.IsEmptySlot() ||
-            non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.cend() ||
-            collected_items.find(slot.GetItemID()) != collected_items.cend() ||
-            AssetsManager::getInstance().GetItem(slot.GetItemID())->GetToolType() != ToolType::None)
+            non_tool_items_to_keep.find(slot.GetItemId()) != non_tool_items_to_keep.cend() ||
+            collected_items.find(slot.GetItemId()) != collected_items.cend() ||
+            AssetsManager::getInstance().GetItem(slot.GetItemId())->GetToolType() != ToolType::None)
         {
             continue;
         }
@@ -827,7 +827,7 @@ Status PrepareLayer(SimpleBehaviourClient& client)
     Position current_ladder = blackboard.Get<Position>("Eater.ladder");
 
     std::queue<std::pair<Position, ActionType>> action_queue;
-    
+
     // Special case, once all the layers above ground are done, remove ugly pillar
     if (current_layer == ladder_pillar.y)
     {
@@ -1042,11 +1042,11 @@ Status BaseCampDropItems(SimpleBehaviourClient& client, const bool all_items)
     {
         // Don't throw lava bucket, food, temp block
         if (idx < Window::INVENTORY_STORAGE_START || slot.IsEmptySlot() ||
-            (!all_items && non_tool_items_to_keep.find(slot.GetItemID()) != non_tool_items_to_keep.end()))
+            (!all_items && non_tool_items_to_keep.find(slot.GetItemId()) != non_tool_items_to_keep.end()))
         {
             continue;
         }
-        const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+        const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemId());
         // Don't throw tools with more than 10% durability
         if (!all_items && item->GetToolType() != ToolType::None && Utilities::GetDamageCount(slot) < 9 * item->GetMaxDurability() / 10)
         {
@@ -1107,7 +1107,7 @@ Status BaseCampPickItems(SimpleBehaviourClient& client)
             {
                 continue;
             }
-            item_name = AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName();
+            item_name = AssetsManager::getInstance().GetItem(slot.GetItemId())->GetName();
         }
 
         if (item_name.empty())
@@ -1138,7 +1138,7 @@ Status BaseCampPickItems(SimpleBehaviourClient& client)
                 inventory_empty_slots.push_back(s);
                 continue;
             }
-            if (AssetsManager::getInstance().GetItem(slot.GetItemID())->GetName() == item_name)
+            if (AssetsManager::getInstance().GetItem(slot.GetItemId())->GetName() == item_name)
             {
                 quantity_inventory += slot.GetItemCount();
             }
@@ -1196,7 +1196,7 @@ Botcraft::Status HasToolInInventory(Botcraft::SimpleBehaviourClient& client, con
             continue;
         }
 
-        const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemID());
+        const Item* item = AssetsManager::getInstance().GetItem(slot.GetItemId());
         if (item->GetToolType() == tool_type && Utilities::GetDamageCount(slot) < item->GetMaxDurability() - min_durability)
         {
             return Status::Success;

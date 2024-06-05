@@ -188,7 +188,7 @@ namespace Botcraft
         entity->SetZ(msg.GetZ());
         entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
-        entity->SetUUID(msg.GetUUID());
+        entity->SetUUID(msg.GetUuid());
 
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[msg.GetId_()] = entity;
@@ -205,7 +205,7 @@ namespace Botcraft
         entity->SetZ(msg.GetZ());
         entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
-        entity->SetUUID(msg.GetUUID());
+        entity->SetUUID(msg.GetUuid());
 
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[msg.GetId_()] = entity;
