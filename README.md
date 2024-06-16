@@ -41,7 +41,7 @@ Main features are listed below. To see the evolution of the project, check the [
 
 - Connection to minecraft server (both offline "cracked" mode and online connection with ~~Mojang or~~ Microsoft account)
 - DNS server name resolution with and without SRV record
-- All official releases from 1.12.2 to 1.20.6 supported
+- All official releases from 1.12.2 to 1.21 supported
 - Compression
 - Signed chat system for 1.19+ versions
 - Vanilla physics and collisions ([wiki page](https://github.com/adepierre/Botcraft/wiki/Physics) for details)
@@ -49,7 +49,7 @@ Main features are listed below. To see the evolution of the project, check the [
 - Full entity support (type, data, metadata and attributes)
 - (Optional) Rendering of all the blocks (including entity-blocks like chests, banners...) and entities (bounding box only)
 - Bot programming with a behaviour tree system ([wiki page](https://github.com/adepierre/Botcraft/wiki/Behaviour-system) for details)
-- Extremely resource efficient (CPU/RAM) bots (<5 Mb for AFK bots, <100 Mb for other bots in headless mode)
+- Extremely resource efficient (CPU/RAM) bots (<5 Mb for AFK bots, <60 Mb for other bots in headless mode)
 - Bot control with mouse and keyboard
 - Custom framework to easily test the bot behaviours on a vanilla server ([wiki page](https://github.com/adepierre/Botcraft/wiki/Test-framework) for details)
 
