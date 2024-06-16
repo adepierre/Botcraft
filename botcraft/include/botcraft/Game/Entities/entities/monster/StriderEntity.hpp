@@ -39,8 +39,12 @@ namespace Botcraft
         void SetDataSaddleId(const bool data_saddle_id);
 
         // Attribute stuff
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         // 9e362924-01de-4ddd-a2b2-d0f7a405a174
-        static constexpr std::array<unsigned char, 16> suffocating_modifier_uuid = { 0x9E, 0x36, 0x29, 0x24, 0x1, 0xDE, 0x4D, 0xDD, 0xA2, 0xB2, 0xD0, 0xF7, 0xA4, 0x5, 0xA1, 0x74 };
+        static constexpr std::array<unsigned char, 16> suffocating_modifier_key= { 0x9E, 0x36, 0x29, 0x24, 0x1, 0xDE, 0x4D, 0xDD, 0xA2, 0xB2, 0xD0, 0xF7, 0xA4, 0x5, 0xA1, 0x74 };
+#else
+        inline static const std::string suffocating_modifier_key = "minecraft:suffocating";
+#endif
 
 
     protected:

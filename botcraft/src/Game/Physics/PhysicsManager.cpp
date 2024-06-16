@@ -471,12 +471,16 @@ namespace Botcraft
         if (player->crouching)
 #endif
         {
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+            constexpr float sneak_coefficient = 0.3f;
+#elif PROTOCOL_VERSION < 767 /* < 1.21 */
             float sneak_coefficient = 0.3f;
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             // Get SneakSpeed bonus from pants
             const Slot leggings_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_LEGS_ARMOR);
             sneak_coefficient += Utilities::GetEnchantmentLvl(leggings_armor, Enchantment::SwiftSneak) * 0.15f;
             sneak_coefficient = std::min(std::max(0.0f, sneak_coefficient), 1.0f);
+#else
+            const float sneak_coefficient = static_cast<float>(player->GetAttributePlayerSneakingSpeedValueImpl());
 #endif
             player->inputs.forward_axis *= sneak_coefficient;
             player->inputs.left_axis *= sneak_coefficient;
@@ -534,10 +538,10 @@ namespace Botcraft
     void PhysicsManager::SetSprinting(const bool b) const
     {
         player->SetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting, b);
-        player->RemoveAttributeModifierImpl(EntityAttribute::Type::MovementSpeed, PlayerEntity::speed_modifier_sprinting_uuid);
+        player->RemoveAttributeModifierImpl(EntityAttribute::Type::MovementSpeed, PlayerEntity::speed_modifier_sprinting_key);
         if (b)
         {
-            player->SetAttributeModifierImpl(EntityAttribute::Type::MovementSpeed, PlayerEntity::speed_modifier_sprinting_uuid,
+            player->SetAttributeModifierImpl(EntityAttribute::Type::MovementSpeed, PlayerEntity::speed_modifier_sprinting_key,
                 EntityAttribute::Modifier{
                     0.3,                                                // amount
                     EntityAttribute::Modifier::Operation::MultiplyTotal // operation
@@ -915,16 +919,20 @@ namespace Botcraft
             float water_slow_down = player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting) ? 0.9f : 0.8f;
             float inputs_strength = 0.02f;
 
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
             const Slot boots_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
-            float depth_strider_mult = std::min(Utilities::GetEnchantmentLvl(boots_armor, Enchantment::DepthStrider), static_cast<short>(3));
+            float depth_strider_mult = std::min(static_cast<float>(Utilities::GetEnchantmentLvl(boots_armor, Enchantment::DepthStrider)), 3.0f) / 3.0f;
+#else
+            float depth_strider_mult = static_cast<float>(player->GetAttributeWaterMovementEfficiencyValueImpl());
+#endif
             if (!player->on_ground)
             {
                 depth_strider_mult *= 0.5f;
             }
             if (depth_strider_mult > 0.0)
             {
-                water_slow_down += (0.54600006f - water_slow_down) * depth_strider_mult / 3.0f;
-                inputs_strength += (static_cast<float>(player->GetAttributeMovementSpeedValueImpl()) - inputs_strength) * depth_strider_mult / 3.0f;
+                water_slow_down += (0.54600006f - water_slow_down) * depth_strider_mult;
+                inputs_strength += (static_cast<float>(player->GetAttributeMovementSpeedValueImpl()) - inputs_strength) * depth_strider_mult;
             }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
@@ -1140,6 +1148,7 @@ namespace Botcraft
 
             // Step up if block height delta is < max_up_step
             // If already on ground (or collided with the ground while moving down) and horizontal collision
+            // TODO: changed in 1.21, check if this is still accurate
             if ((player->on_ground || (movement.y != movement_before_collisions.y && movement_before_collisions.y < 0.0)) &&
                 (movement.x != movement_before_collisions.x || movement.z != movement_before_collisions.z))
             {
@@ -1244,11 +1253,13 @@ namespace Botcraft
 
         CheckInsideBlocks();
 
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */ && PROTOCOL_VERSION < 767 /* < 1.21 */
         short soul_speed_lvl = 0;
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         // Get SoulSpeed bonus from boots
         const Slot boots_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
         soul_speed_lvl = Utilities::GetEnchantmentLvl(boots_armor, Enchantment::SoulSpeed);
+#else
+        constexpr short soul_speed_lvl = 0;
 #endif
         float block_speed_factor = 1.0f;
         const Blockstate* feet_block = world->GetBlock(Position(
@@ -1268,6 +1279,11 @@ namespace Botcraft
                 block_speed_factor = 0.4f;
             }
         }
+
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        block_speed_factor = block_speed_factor + static_cast<float>(player->GetAttributeMovementEfficiencyValueImpl()) * (1.0f - block_speed_factor);
+#endif
+
         player->speed.x *= block_speed_factor;
         player->speed.z *= block_speed_factor;
     }

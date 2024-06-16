@@ -1317,6 +1317,13 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+    bool Entity::IsBlockAttachedEntity() const
+    {
+        return false;
+    }
+#endif
+
 
     std::shared_ptr<Entity> Entity::CreateEntity(const EntityType type)
     {

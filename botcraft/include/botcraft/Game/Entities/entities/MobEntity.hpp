@@ -28,7 +28,7 @@ namespace Botcraft
 
         // Attribute stuff
         double GetAttributeFollowRangeValue() const;
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 767 /* < 1.21 */
         double GetAttributeAttackKnockbackValue() const;
 #endif
 

@@ -33,7 +33,7 @@ namespace Botcraft
         PhysicsManager(
 #if USE_GUI
             const std::shared_ptr<Renderer::RenderingManager>& rendering_manager_,
-#endif   
+#endif
             const std::shared_ptr<InventoryManager>& inventory_manager_,
             const std::shared_ptr<EntityManager>& entity_manager_,
             const std::shared_ptr<NetworkManager>& network_manager_,

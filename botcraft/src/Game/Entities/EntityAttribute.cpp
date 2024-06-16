@@ -27,15 +27,15 @@ namespace Botcraft
         up_to_date = false;
     }
 
-    void EntityAttribute::RemoveModifier(const std::array<unsigned char, 16>& uuid)
+    void EntityAttribute::RemoveModifier(const ModifierKey& key)
     {
         // If no element is removed, value is still up to date
-        up_to_date = modifiers.erase(uuid) > 0;
+        up_to_date = modifiers.erase(key) > 0;
     }
 
-    void EntityAttribute::SetModifier(const std::array<unsigned char, 16>& uuid, const Modifier& modifier)
+    void EntityAttribute::SetModifier(const ModifierKey& key, const Modifier& modifier)
     {
-        modifiers[uuid] = modifier;
+        modifiers[key] = modifier;
         up_to_date = false;
     }
 
@@ -49,7 +49,7 @@ namespace Botcraft
         return base_value;
     }
 
-    const std::map<std::array<unsigned char, 16>, EntityAttribute::Modifier>& EntityAttribute::GetModifiers() const
+    const std::map<EntityAttribute::ModifierKey, EntityAttribute::Modifier>& EntityAttribute::GetModifiers() const
     {
         return modifiers;
     }
@@ -63,9 +63,9 @@ namespace Botcraft
         return current_value;
     }
 
-    std::optional<EntityAttribute::Modifier> EntityAttribute::GetModifier(const std::array<unsigned char, 16>& uuid)
+    std::optional<EntityAttribute::Modifier> EntityAttribute::GetModifier(const ModifierKey& key)
     {
-        auto it = modifiers.find(uuid);
+        auto it = modifiers.find(key);
         if (it == modifiers.end())
         {
             return std::optional<Modifier>();
@@ -375,6 +375,35 @@ namespace Botcraft
             break;
         case Type::StepHeight:
             current_value = std::min(10.0, std::max(0.0, current_value));
+            break;
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        case Type::BurningTime:
+            current_value = std::min(1024.0, std::max(0.0, current_value));
+            break;
+        case Type::ExplosionKnockbackResistance:
+            current_value = std::min(1.0, std::max(0.0, current_value));
+            break;
+        case Type::PlayerMiningEfficiency:
+            current_value = std::min(1024.0, std::max(0.0, current_value));
+            break;
+        case Type::MovementEfficiency:
+            current_value = std::min(1.0, std::max(0.0, current_value));
+            break;
+        case Type::OxygenBonus:
+            current_value = std::min(1024.0, std::max(0.0, current_value));
+            break;
+        case Type::PlayerSneakingSpeed:
+            current_value = std::min(1.0, std::max(0.0, current_value));
+            break;
+        case Type::PlayerSubmergedMiningSpeed:
+            current_value = std::min(20.0, std::max(0.0, current_value));
+            break;
+        case Type::PlayerSweepingDamageRatio:
+            current_value = std::min(1.0, std::max(0.0, current_value));
+            break;
+        case Type::WaterMovementEfficiency:
+            current_value = std::min(1.0, std::max(0.0, current_value));
             break;
 #endif
         default:

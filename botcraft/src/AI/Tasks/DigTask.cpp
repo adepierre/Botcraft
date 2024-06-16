@@ -51,7 +51,7 @@ namespace Botcraft
         }
 
         const Blockstate* head_blockstate = world->GetBlock(eyes_block);
-        bool is_head_in_fluid = head_blockstate != nullptr && head_blockstate->IsFluid();
+        const bool is_head_in_fluid = head_blockstate != nullptr && head_blockstate->IsFluid();
 
         // Not breakable
         if (blockstate->IsFluid() ||
@@ -62,17 +62,31 @@ namespace Botcraft
 
         ToolType current_tool_type = ToolType::None;
         ToolMaterial current_tool_material = ToolMaterial::None;
-        unsigned char current_tool_efficiency = 0;
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
+        float efficiency_speed_boost = 0.0f;
+#else
+        const float efficiency_speed_boost = static_cast<float>(local_player->GetAttributePlayerMiningEfficiencyValue());
+#endif
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
+        float submerged_speed_multiplier = 1.0f;
+#else
+        float submerged_speed_multiplier = is_head_in_fluid ? static_cast<float>(local_player->GetAttributePlayerSubmergedMiningSpeedValue()) : 1.0f;
+#endif
         if (!local_player->GetInstabuild())
         {
             std::shared_ptr<InventoryManager> inventory_manager = c.GetInventoryManager();
 
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
             // Check if we have aqua affinity
             if (is_head_in_fluid)
             {
                 const Slot head_armor = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HEAD_ARMOR);
-                is_head_in_fluid = Utilities::GetEnchantmentLvl(head_armor, Enchantment::AquaAffinity) == 0;
+                if (Utilities::GetEnchantmentLvl(head_armor, Enchantment::AquaAffinity) == 0)
+                {
+                    submerged_speed_multiplier = 0.2f;
+                }
             }
+#endif
 
             // Get tool properties
             const Slot main_hand = inventory_manager->GetHotbarSelected();
@@ -89,7 +103,10 @@ namespace Botcraft
                     current_tool_type = item->GetToolType();
                     current_tool_material = item->GetToolMaterial();
                 }
-                current_tool_efficiency = static_cast<unsigned char>(Utilities::GetEnchantmentLvl(main_hand, Enchantment::Efficiency));
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
+                const short efficiency_level = static_cast<unsigned char>(Utilities::GetEnchantmentLvl(main_hand, Enchantment::Efficiency));
+                efficiency_speed_boost = (efficiency_level > 0) * 1.0f + efficiency_level * efficiency_level;
+#endif
             }
         }
 
@@ -123,12 +140,11 @@ namespace Botcraft
             blockstate->GetMiningTimeSeconds(
                 current_tool_type,
                 current_tool_material,
-                current_tool_efficiency,
+                efficiency_speed_boost,
                 haste_amplifier,
                 mining_fatigue_amplifier,
                 is_on_ground,
-                is_head_in_fluid,
-                speed_multiplier
+                speed_multiplier * submerged_speed_multiplier
             );
         if (expected_mining_time_s > 60.0f)
         {

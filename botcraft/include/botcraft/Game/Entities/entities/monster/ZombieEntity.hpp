@@ -56,8 +56,16 @@ namespace Botcraft
         // Attribute stuff
         double GetAttributeSpawnReinforcementsChanceValue() const;
 
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         // b9766b59-9566-4402-bc1f-2ee2a276d836
-        static constexpr std::array<unsigned char, 16> speed_modifier_baby_uuid = { 0xB9, 0x76, 0x6B, 0x59, 0x95, 0x66, 0x44, 0x2, 0xBC, 0x1F, 0x2E, 0xE2, 0xA2, 0x76, 0xD8, 0x36 };
+        static constexpr std::array<unsigned char, 16> speed_modifier_baby_key = { 0xB9, 0x76, 0x6B, 0x59, 0x95, 0x66, 0x44, 0x2, 0xBC, 0x1F, 0x2E, 0xE2, 0xA2, 0x76, 0xD8, 0x36 };
+#else
+        inline static const std::string speed_modifier_baby_key = "minecraft:baby";
+        inline static const std::string reinforcement_caller_charge_key = "minecraft:reinforcement_caller_charge";
+        inline static const std::string zombie_reinforcement_callee_charge_key = "minecraft:reinforcement_callee_charge";
+        inline static const std::string leader_zombie_bonus_key = "minecraft:leader_zombie_bonus";
+        inline static const std::string zombie_random_spawn_bonus_key = "minecraft:zombie_random_spawn_bonus";
+#endif
 
 
     protected:

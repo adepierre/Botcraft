@@ -65,6 +65,12 @@ namespace Botcraft
         double GetAttributePlayerEntityInteractionRangeValue() const;
         double GetAttributePlayerBlockBreakSpeedValue() const;
 #endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        double GetAttributePlayerSubmergedMiningSpeedValue() const;
+        double GetAttributePlayerSneakingSpeedValue() const;
+        double GetAttributePlayerMiningEfficiencyValue() const;
+        double GetAttributePlayerSweepingDamageRatioValue() const;
+#endif
 
     protected:
         virtual double GetEyeHeightImpl() const;
@@ -73,6 +79,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         using Entity::GetColliderImpl; // Required as otherwise GetColliderImpl(Pose) would be found and stop the search for a GetColliderImpl match
         AABB GetColliderImpl(const Pose pose) const;
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        double GetAttributePlayerSneakingSpeedValueImpl() const;
 #endif
 
     };

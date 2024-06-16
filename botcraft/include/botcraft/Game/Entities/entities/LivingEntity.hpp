@@ -73,8 +73,8 @@ namespace Botcraft
         std::optional<EntityAttribute> GetAttribute(const EntityAttribute::Type type) const;
 
         void SetAttributeBaseValue(const EntityAttribute::Type type, const double value);
-        void RemoveAttributeModifier(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid);
-        void SetAttributeModifier(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier);
+        void RemoveAttributeModifier(const EntityAttribute::Type type, const EntityAttribute::ModifierKey& key);
+        void SetAttributeModifier(const EntityAttribute::Type type, const EntityAttribute::ModifierKey& key, const EntityAttribute::Modifier& modifier);
         void ClearModifiers(const EntityAttribute::Type type);
         void AddAttribute(const EntityAttribute& attribute);
 
@@ -94,18 +94,31 @@ namespace Botcraft
         double GetAttributeFallDamageMultiplierValue() const;
         double GetAttributeJumpStrengthValue() const;
 #endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        double GetAttributeOxygenBonusValue() const;
+        double GetAttributeBurningTimeValue() const;
+        double GetAttributeExplosionKnockbackResistanceValue() const;
+        double GetAttributeWaterMovementEfficiencyValue() const;
+        double GetAttributeMovementEfficiencyValue() const;
+        double GetAttributeAttackKnockbackValue() const;
+#endif
 
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         // 87f46a96-686f-4796-b035-22e16ee9e038
-        static constexpr std::array<unsigned char, 16> speed_modifier_soul_speed_uuid = { 0x87, 0xF4, 0x6A, 0x96, 0x68, 0x6F, 0x47, 0x96, 0xB0, 0x35, 0x22, 0xE1, 0x6E, 0xE9, 0xE0, 0x38 };
+        static constexpr std::array<unsigned char, 16> speed_modifier_soul_speed_key = { 0x87, 0xF4, 0x6A, 0x96, 0x68, 0x6F, 0x47, 0x96, 0xB0, 0x35, 0x22, 0xE1, 0x6E, 0xE9, 0xE0, 0x38 };
         // 1eaf83ff-7207-4596-b37a-d7a07b3ec4ce
-        static constexpr std::array<unsigned char, 16> speed_modifier_powder_snow_uuid = { 0x1E, 0xAF, 0x83, 0xFF, 0x72, 0x7, 0x45, 0x96, 0xB3, 0x7A, 0xD7, 0xA0, 0x7B, 0x3E, 0xC4, 0xCE };
+        static constexpr std::array<unsigned char, 16> speed_modifier_powder_snow_key = { 0x1E, 0xAF, 0x83, 0xFF, 0x72, 0x7, 0x45, 0x96, 0xB3, 0x7A, 0xD7, 0xA0, 0x7B, 0x3E, 0xC4, 0xCE };
         // 662a6b8d-da3e-4c1c-8813-96ea6097278d
-        static constexpr std::array<unsigned char, 16> speed_modifier_sprinting_uuid = { 0x66, 0x2A, 0x6B, 0x8D, 0xDA, 0x3E, 0x4C, 0x1C, 0x88, 0x13, 0x96, 0xEA, 0x60, 0x97, 0x27, 0x8D };
+        static constexpr std::array<unsigned char, 16> speed_modifier_sprinting_key = { 0x66, 0x2A, 0x6B, 0x8D, 0xDA, 0x3E, 0x4C, 0x1C, 0x88, 0x13, 0x96, 0xEA, 0x60, 0x97, 0x27, 0x8D };
+#else
+        inline static const std::string speed_modifier_powder_snow_key = "minecraft:powder_snow";
+        inline static const std::string speed_modifier_sprinting_key = "minecraft:sprinting";
+#endif
 
     protected:
         double GetAttributeMovementSpeedValueImpl() const;
-        void RemoveAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid);
-        void SetAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier);
+        void RemoveAttributeModifierImpl(const EntityAttribute::Type type, const EntityAttribute::ModifierKey& key);
+        void SetAttributeModifierImpl(const EntityAttribute::Type type, const EntityAttribute::ModifierKey& key, const EntityAttribute::Modifier& modifier);
         char GetDataLivingEntityFlagsImpl() const;
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         std::optional<Position> GetSleepingPosIdImpl() const;
@@ -114,6 +127,10 @@ namespace Botcraft
         double GetAttributeStepHeightValueImpl() const;
         double GetAttributeGravityValueImpl() const;
         double GetAttributeJumpStrengthValueImpl() const;
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        double GetAttributeWaterMovementEfficiencyValueImpl() const;
+        double GetAttributeMovementEfficiencyValueImpl() const;
 #endif
 
     protected:

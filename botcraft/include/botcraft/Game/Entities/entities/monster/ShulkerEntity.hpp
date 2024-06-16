@@ -48,8 +48,12 @@ namespace Botcraft
         void SetDataColorId(const char data_color_id);
 
         // Attribute stuff
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         // 7e0292f2-9434-48d5-a29f-9583af7df27f
-        static constexpr std::array<unsigned char, 16> covered_armor_modifier_uuid = { 0x7E, 0x2, 0x92, 0xF2, 0x94, 0x34, 0x48, 0xD5, 0xA2, 0x9F, 0x95, 0x83, 0xAF, 0x7D, 0xF2, 0x7F };
+        static constexpr std::array<unsigned char, 16> covered_armor_modifier_key = { 0x7E, 0x2, 0x92, 0xF2, 0x94, 0x34, 0x48, 0xD5, 0xA2, 0x9F, 0x95, 0x83, 0xAF, 0x7D, 0xF2, 0x7F };
+#else
+        inline static const std::string covered_armor_modifier_key = "minecraft:covered";
+#endif
 
 
     protected:

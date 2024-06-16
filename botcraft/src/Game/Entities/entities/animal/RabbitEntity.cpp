@@ -16,6 +16,9 @@ namespace Botcraft
         // Initialize all attributes with default values
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 3.0) });
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 3.0) });
+#endif
     }
 
     RabbitEntity::~RabbitEntity()
@@ -52,6 +55,10 @@ namespace Botcraft
 
         output["metadata"]["data_type_id"] = GetDataTypeId();
 
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        output["attribute"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+#endif
+
         return output;
     }
 
@@ -81,6 +88,14 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_type_id"] = data_type_id;
     }
+
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+    double RabbitEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
+    }
+#endif
 
 
     double RabbitEntity::GetWidthImpl() const

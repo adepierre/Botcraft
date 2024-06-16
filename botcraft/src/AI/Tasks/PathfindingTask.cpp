@@ -269,7 +269,7 @@ namespace Botcraft
 
             // ?
             // x
-            //  
+            //
             // -
             // ?
             // ?
@@ -295,9 +295,9 @@ namespace Botcraft
 
             // ?
             // x
-            //  
+            //
             // -
-            //  
+            //
             // o
             if (!vertical_surroundings[2].IsSolid() &&
                 vertical_surroundings[3].IsClimbable()
@@ -331,8 +331,8 @@ namespace Botcraft
             // ?
             // x
             // ^
-            //  
-            //  
+            //
+            //
             // o
             if (vertical_surroundings[2].IsClimbable()
                 && vertical_surroundings[3].IsEmpty()
@@ -364,10 +364,10 @@ namespace Botcraft
 
             // ?
             // x
-            //  
+            //
             // -
-            //  
-            //  
+            //
+            //
             // Special case here, we can drop down
             // if there is a climbable at the bottom
             if (!vertical_surroundings[2].IsSolid() &&
@@ -781,7 +781,7 @@ namespace Botcraft
                 }
 
                 // -  -  -
-                // x      
+                // x
                 // x     o
                 //--- ?  ?
                 //    ?  ?
@@ -815,8 +815,8 @@ namespace Botcraft
                 }
 
                 // -  -  -
-                // x      
-                // x      
+                // x
+                // x
                 //--- ?  o
                 //    ?  ?
                 //    ?  ?
@@ -847,9 +847,9 @@ namespace Botcraft
                 }
 
                 // -  -  -
-                // x      
-                // x      
-                //--- ?   
+                // x
+                // x
+                //--- ?
                 //    ?  o
                 //    ?  ?
                 if (horizontal_surroundings[7].IsEmpty()
@@ -880,10 +880,10 @@ namespace Botcraft
                 }
 
                 // -  -  -
-                // x      
-                // x      
-                //--- ?   
-                //    ?   
+                // x
+                // x
+                //--- ?
+                //    ?
                 //    ?  o
                 if (horizontal_surroundings[7].IsEmpty()
                     && horizontal_surroundings[8].IsEmpty()
@@ -969,18 +969,16 @@ namespace Botcraft
             it_end_path = came_from.find(it_end_path->second);
             output_deque.push_front(it_end_path->first);
         }
-        
+
         return std::vector<std::pair<Position, float>>(output_deque.begin(), output_deque.end());
     }
 
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
     // a75f87e0-0583-435b-847a-cf0c18ede2d1
-    static constexpr std::array<unsigned char, 16> botcraft_pathfinding_speed_uuid = {
-        0xA7, 0x5F, 0x87, 0xE0,
-        0x05, 0x83,
-        0x43, 0x5B,
-        0x84, 0x7A,
-        0xCF, 0x0C, 0x18, 0xED, 0xE2, 0xD1
-    };
+    static constexpr std::array<unsigned char, 16> botcraft_pathfinding_speed_key= { 0xA7, 0x5F, 0x87, 0xE0, 0x05, 0x83, 0x43, 0x5B, 0x84, 0x7A, 0xCF, 0x0C, 0x18, 0xED, 0xE2, 0xD1 };
+#else
+    static const std::string botcraft_pathfinding_speed_key = "botcraft:speed";
+#endif
 
     bool Move(BehaviourClient& client, std::shared_ptr<LocalPlayer>& local_player, const Vector3<double>& target_position, const float speed_factor, const bool sprint)
     {
@@ -1000,14 +998,14 @@ namespace Botcraft
         {
             local_player->SetAttributeModifier(
                 EntityAttribute::Type::MovementSpeed,
-                botcraft_pathfinding_speed_uuid,
+                botcraft_pathfinding_speed_key,
                 EntityAttribute::Modifier{
                     speed_factor - 1.0f, // -1 as MultiplyTotal will multiply by (1.0 + x)
                     EntityAttribute::Modifier::Operation::MultiplyTotal
                 });
         }
         Utilities::OnEndScope botcraft_speed_modifier_remover([&]() {
-            local_player->RemoveAttributeModifier(EntityAttribute::Type::MovementSpeed, botcraft_pathfinding_speed_uuid);
+            local_player->RemoveAttributeModifier(EntityAttribute::Type::MovementSpeed, botcraft_pathfinding_speed_key);
         });
 
         local_player->LookAt(look_at_target, true);

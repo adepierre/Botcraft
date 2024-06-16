@@ -62,8 +62,12 @@ namespace Botcraft
 
         // Attribute stuff
 
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         // 766bfa64-11f3-11ea-8d71-362b9e155667
-        static constexpr std::array<unsigned char, 16> speed_modifier_baby_uuid = { 0x76, 0x6B, 0xFA, 0x64, 0x11, 0xF3, 0x11, 0xEA, 0x8D, 0x71, 0x36, 0x2B, 0x9E, 0x15, 0x56, 0x67 };
+        static constexpr std::array<unsigned char, 16> speed_modifier_baby_key = { 0x76, 0x6B, 0xFA, 0x64, 0x11, 0xF3, 0x11, 0xEA, 0x8D, 0x71, 0x36, 0x2B, 0x9E, 0x15, 0x56, 0x67 };
+#else
+        inline static const std::string speed_modifier_baby_key = "minecraft:baby";
+#endif
 
 
     protected:

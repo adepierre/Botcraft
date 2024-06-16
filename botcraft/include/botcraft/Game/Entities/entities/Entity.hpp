@@ -213,6 +213,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         virtual bool IsAbstractWindCharge() const;
 #endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        virtual bool IsBlockAttachedEntity() const;
+#endif
 
         // Factory stuff
         static std::shared_ptr<Entity> CreateEntity(const EntityType type);

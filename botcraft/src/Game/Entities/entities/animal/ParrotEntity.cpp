@@ -17,6 +17,9 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 6.0) });
         attributes.insert({ EntityAttribute::Type::FlyingSpeed, EntityAttribute(EntityAttribute::Type::FlyingSpeed, 0.4) });
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.2) });
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 3.0) });
+#endif
     }
 
     ParrotEntity::~ParrotEntity()
@@ -54,6 +57,9 @@ namespace Botcraft
         output["metadata"]["data_variant_id"] = GetDataVariantId();
 
         output["attributes"]["generic.flying_speed"] = GetAttributeFlyingSpeedValue();
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+#endif
 
         return output;
     }
@@ -92,6 +98,13 @@ namespace Botcraft
         return attributes.at(EntityAttribute::Type::FlyingSpeed).GetValue();
     }
 
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+    double ParrotEntity::GetAttributeAttackDamageValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackDamage).GetValue();
+    }
+#endif
 
     double ParrotEntity::GetWidthImpl() const
     {

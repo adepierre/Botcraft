@@ -462,7 +462,14 @@ namespace Botcraft
                 EntityAttribute attribute(type, a.GetValue());
                 for (const auto& m : a.GetModifiers())
                 {
-                    attribute.SetModifier(m.GetUuid(), EntityAttribute::Modifier{ m.GetAmount(), static_cast<EntityAttribute::Modifier::Operation>(m.GetOperation()) });
+                    attribute.SetModifier(
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
+                        m.GetUuid(),
+#else
+                        m.GetId().GetFull(),
+#endif
+                        EntityAttribute::Modifier{ m.GetAmount(), static_cast<EntityAttribute::Modifier::Operation>(m.GetOperation()) }
+                    );
                 }
                 living_entity->AddAttribute(attribute);
             }

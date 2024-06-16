@@ -33,6 +33,12 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::PlayerEntityInteractionRange, EntityAttribute(EntityAttribute::Type::PlayerEntityInteractionRange, 3.0) });
         attributes.insert({ EntityAttribute::Type::PlayerBlockBreakSpeed, EntityAttribute(EntityAttribute::Type::PlayerBlockBreakSpeed, 1.0) });
 #endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        attributes.insert({ EntityAttribute::Type::PlayerSubmergedMiningSpeed, EntityAttribute(EntityAttribute::Type::PlayerSubmergedMiningSpeed, 0.2) });
+        attributes.insert({ EntityAttribute::Type::PlayerSneakingSpeed, EntityAttribute(EntityAttribute::Type::PlayerSneakingSpeed, 0.3) });
+        attributes.insert({ EntityAttribute::Type::PlayerMiningEfficiency, EntityAttribute(EntityAttribute::Type::PlayerMiningEfficiency, 0.0) });
+        attributes.insert({ EntityAttribute::Type::PlayerSweepingDamageRatio, EntityAttribute(EntityAttribute::Type::PlayerSweepingDamageRatio, 0.0) });
+#endif
     }
 
     PlayerEntity::~PlayerEntity()
@@ -125,6 +131,12 @@ namespace Botcraft
         output["attributes"]["player.block_interaction_range"] = GetAttributePlayerBlockInteractionRangeValue();
         output["attributes"]["player.entity_interaction_range"] = GetAttributePlayerEntityInteractionRangeValue();
         output["attributes"]["player.block_break_speed"] = GetAttributePlayerBlockBreakSpeedValue();
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        output["attributes"]["player.submerged_mining_speed"] = GetAttributePlayerSubmergedMiningSpeedValue();
+        output["attributes"]["player.sneaking_speed"] = GetAttributePlayerSneakingSpeedValue();
+        output["attributes"]["player.mining_efficiency"] = GetAttributePlayerMiningEfficiencyValue();
+        output["attributes"]["player.sweeping_damage_ratio"] = GetAttributePlayerSweepingDamageRatioValue();
 #endif
 
         return output;
@@ -258,6 +270,37 @@ namespace Botcraft
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return attributes.at(EntityAttribute::Type::PlayerBlockBreakSpeed).GetValue();
+    }
+#endif
+
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+    double PlayerEntity::GetAttributePlayerSubmergedMiningSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::PlayerSubmergedMiningSpeed).GetValue();
+    }
+
+    double PlayerEntity::GetAttributePlayerSneakingSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetAttributePlayerSneakingSpeedValueImpl();
+    }
+
+    double PlayerEntity::GetAttributePlayerSneakingSpeedValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::PlayerSneakingSpeed).GetValue();
+    }
+
+    double PlayerEntity::GetAttributePlayerMiningEfficiencyValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::PlayerMiningEfficiency).GetValue();
+    }
+
+    double PlayerEntity::GetAttributePlayerSweepingDamageRatioValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::PlayerSweepingDamageRatio).GetValue();
     }
 #endif
 

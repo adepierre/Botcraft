@@ -59,6 +59,14 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::FallDamageMultiplier, EntityAttribute(EntityAttribute::Type::FallDamageMultiplier, 1.0) });
         attributes.insert({ EntityAttribute::Type::JumpStrength, EntityAttribute(EntityAttribute::Type::JumpStrength, 0.42) });
 #endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        attributes.insert({ EntityAttribute::Type::OxygenBonus, EntityAttribute(EntityAttribute::Type::OxygenBonus, 0.0) });
+        attributes.insert({ EntityAttribute::Type::BurningTime, EntityAttribute(EntityAttribute::Type::BurningTime, 1.0) });
+        attributes.insert({ EntityAttribute::Type::ExplosionKnockbackResistance, EntityAttribute(EntityAttribute::Type::ExplosionKnockbackResistance, 0.0) });
+        attributes.insert({ EntityAttribute::Type::WaterMovementEfficiency, EntityAttribute(EntityAttribute::Type::WaterMovementEfficiency, 0.0) });
+        attributes.insert({ EntityAttribute::Type::MovementEfficiency, EntityAttribute(EntityAttribute::Type::MovementEfficiency, 0.0) });
+        attributes.insert({ EntityAttribute::Type::AttackKnockback, EntityAttribute(EntityAttribute::Type::AttackKnockback, 0.0) });
+#endif
     }
 
     LivingEntity::~LivingEntity()
@@ -109,6 +117,14 @@ namespace Botcraft
         output["attributes"]["generic.safe_fall_distance"] = GetAttributeSafeFallDistanceValue();
         output["attributes"]["generic.fall_damage_multiplier"] = GetAttributeFallDamageMultiplierValue();
         output["attributes"]["generic.jump_strength"] = GetAttributeJumpStrengthValue();
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        output["attributes"]["generic.oxygen_bonus"] = GetAttributeOxygenBonusValue();
+        output["attributes"]["generic.burning_time"] = GetAttributeBurningTimeValue();
+        output["attributes"]["generic.explosion_knockback_resistance"] = GetAttributeExplosionKnockbackResistanceValue();
+        output["attributes"]["generic.water_movement_efficiency"] = GetAttributeWaterMovementEfficiencyValue();
+        output["attributes"]["generic.movement_efficiency"] = GetAttributeMovementEfficiencyValue();
+        output["attributes"]["generic.attack_knockback"] = GetAttributeAttackKnockbackValue();
 #endif
 
         return output;
@@ -262,16 +278,16 @@ namespace Botcraft
         it->second.SetBaseValue(value);
     }
 
-    void LivingEntity::RemoveAttributeModifier(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid)
+    void LivingEntity::RemoveAttributeModifier(const EntityAttribute::Type type, const EntityAttribute::ModifierKey& key)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        RemoveAttributeModifierImpl(type, uuid);
+        RemoveAttributeModifierImpl(type, key);
     }
 
-    void LivingEntity::SetAttributeModifier(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier)
+    void LivingEntity::SetAttributeModifier(const EntityAttribute::Type type, const EntityAttribute::ModifierKey& key, const EntityAttribute::Modifier& modifier)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        SetAttributeModifierImpl(type, uuid, modifier);
+        SetAttributeModifierImpl(type, key, modifier);
     }
 
     void LivingEntity::ClearModifiers(const EntityAttribute::Type type)
@@ -383,17 +399,55 @@ namespace Botcraft
     }
 #endif
 
-    void LivingEntity::RemoveAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid)
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+    double LivingEntity::GetAttributeOxygenBonusValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::OxygenBonus).GetValue();
+    }
+
+    double LivingEntity::GetAttributeBurningTimeValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::BurningTime).GetValue();
+    }
+
+    double LivingEntity::GetAttributeExplosionKnockbackResistanceValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::ExplosionKnockbackResistance).GetValue();
+    }
+
+    double LivingEntity::GetAttributeWaterMovementEfficiencyValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetAttributeWaterMovementEfficiencyValueImpl();
+    }
+
+    double LivingEntity::GetAttributeMovementEfficiencyValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetAttributeMovementEfficiencyValueImpl();
+    }
+
+    double LivingEntity::GetAttributeAttackKnockbackValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AttackKnockback).GetValue();
+    }
+#endif
+
+    void LivingEntity::RemoveAttributeModifierImpl(const EntityAttribute::Type type, const EntityAttribute::ModifierKey& key)
     {
         auto it = attributes.find(type);
         if (it == attributes.end())
         {
             return;
         }
-        it->second.RemoveModifier(uuid);
+        it->second.RemoveModifier(key);
     }
 
-    void LivingEntity::SetAttributeModifierImpl(const EntityAttribute::Type type, const std::array<unsigned char, 16>& uuid, const EntityAttribute::Modifier& modifier)
+    void LivingEntity::SetAttributeModifierImpl(const EntityAttribute::Type type, const EntityAttribute::ModifierKey& key, const EntityAttribute::Modifier& modifier)
     {
         auto it = attributes.find(type);
         if (it == attributes.end())
@@ -401,7 +455,7 @@ namespace Botcraft
             LOG_WARNING("Trying to set attribute modifier for " << type << " for a " << GetName() << " but it doesn't have this attribute");
             return;
         }
-        it->second.SetModifier(uuid, modifier);
+        it->second.SetModifier(key, modifier);
     }
 
     char LivingEntity::GetDataLivingEntityFlagsImpl() const
@@ -432,4 +486,17 @@ namespace Botcraft
         return attributes.at(EntityAttribute::Type::JumpStrength).GetValue();
     }
 #endif
+
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+    double LivingEntity::GetAttributeWaterMovementEfficiencyValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::WaterMovementEfficiency).GetValue();
+    }
+
+    double LivingEntity::GetAttributeMovementEfficiencyValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::MovementEfficiency).GetValue();
+    }
+#endif
+
 }

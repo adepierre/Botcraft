@@ -3,12 +3,21 @@
 #include <iosfwd>
 #include <map>
 #include <optional>
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+#include <string>
+#endif
 
 namespace Botcraft
 {
     class EntityAttribute
     {
     public:
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
+        using ModifierKey = std::array<unsigned char, 16>;
+#else
+        using ModifierKey = std::string;
+#endif
+
         enum class Type : char
         {
             Unknown = -1,
@@ -22,6 +31,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             PlayerBlockBreakSpeed,
             PlayerBlockInteractionRange,
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+            BurningTime,
+            ExplosionKnockbackResistance,
+#endif
             PlayerEntityInteractionRange,
             FallDamageMultiplier,
 #endif
@@ -39,14 +52,29 @@ namespace Botcraft
             MaxAbsorption,
 #endif
             MaxHealth,
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+            PlayerMiningEfficiency,
+            MovementEfficiency,
+#endif
             MovementSpeed,
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+            OxygenBonus,
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             SafeFallDistance,
             Scale,
 #endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+            PlayerSneakingSpeed,
+#endif
             ZombieSpawnReinforcementsChance,
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             StepHeight,
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+            PlayerSubmergedMiningSpeed,
+            PlayerSweepingDamageRatio,
+            WaterMovementEfficiency,
 #endif
             NUM_ENTITY_ATTRIBUTES
         };
@@ -69,14 +97,14 @@ namespace Botcraft
 
         void SetBaseValue(const double new_value);
         void ClearModifiers();
-        void RemoveModifier(const std::array<unsigned char, 16>& uuid);
-        void SetModifier(const std::array<unsigned char, 16>& uuid, const Modifier& modifier);
+        void RemoveModifier(const ModifierKey& key);
+        void SetModifier(const ModifierKey& key, const Modifier& modifier);
 
         Type GetType() const;
         double GetBaseValue() const;
-        const std::map<std::array<unsigned char, 16>, Modifier>& GetModifiers() const;
+        const std::map<ModifierKey, Modifier>& GetModifiers() const;
         double GetValue() const;
-        std::optional<Modifier> GetModifier(const std::array<unsigned char, 16>& uuid);
+        std::optional<Modifier> GetModifier(const ModifierKey& key);
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.4 */
         static std::string TypeToString(const Type type);
@@ -91,7 +119,8 @@ namespace Botcraft
         double base_value;
         mutable double current_value;
         mutable bool up_to_date;
-        std::map<std::array<unsigned char, 16>, Modifier> modifiers;
+        std::map<ModifierKey, Modifier> modifiers;
+
     };
     std::ostream& operator<<(std::ostream& os, const EntityAttribute::Type v);
 }

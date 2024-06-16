@@ -33,6 +33,16 @@ namespace Botcraft
 
         void SetDataTypeId(const int data_type_id);
 
+        // Attribute stuff
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        double GetAttributeAttackDamageValue() const;
+#endif
+
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        inline static const std::string killer_bunny_modifier_key = "minecraft:killer_bunny";
+        inline static const std::string evil_attack_power_modifier_key = "minecraft:evil";
+#endif
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

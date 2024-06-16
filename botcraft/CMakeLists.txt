@@ -39,6 +39,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp
     include/botcraft/Game/Entities/entities/animal/armadillo/ArmadilloEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp
+    include/botcraft/Game/Entities/entities/decoration/BlockAttachedEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp
     include/botcraft/Game/Entities/entities/animal/axolotl/AxolotlEntity.hpp
     include/botcraft/Game/Entities/entities/ambient/BatEntity.hpp
@@ -277,6 +278,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/AreaEffectCloudEntity.cpp
     src/Game/Entities/entities/animal/armadillo/ArmadilloEntity.cpp
     src/Game/Entities/entities/decoration/ArmorStandEntity.cpp
+    src/Game/Entities/entities/decoration/BlockAttachedEntity.cpp
     src/Game/Entities/entities/projectile/ArrowEntity.cpp
     src/Game/Entities/entities/animal/axolotl/AxolotlEntity.cpp
     src/Game/Entities/entities/ambient/BatEntity.cpp

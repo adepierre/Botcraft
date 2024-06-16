@@ -24,8 +24,12 @@ namespace Botcraft
         static EntityType GetClassType();
 
         // Attribute stuff
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         // 49455a49-7ec5-45ba-b886-3b90b23a1718
-        static constexpr std::array<unsigned char, 16> speed_modifier_attacking_uuid = { 0x49, 0x45, 0x5A, 0x49, 0x7E, 0xC5, 0x45, 0xBA, 0xB8, 0x86, 0x3B, 0x90, 0xB2, 0x3A, 0x17, 0x18 };
+        static constexpr std::array<unsigned char, 16> speed_modifier_attacking_key= { 0x49, 0x45, 0x5A, 0x49, 0x7E, 0xC5, 0x45, 0xBA, 0xB8, 0x86, 0x3B, 0x90, 0xB2, 0x3A, 0x17, 0x18 };
+#else
+        inline static const std::string speed_modifier_attacking_key = "minecraft:attacking";
+#endif
 
 
     protected:

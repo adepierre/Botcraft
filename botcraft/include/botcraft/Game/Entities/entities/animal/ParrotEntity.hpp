@@ -35,6 +35,9 @@ namespace Botcraft
 
         // Attribute stuff
         double GetAttributeFlyingSpeedValue() const;
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        double GetAttributeAttackDamageValue() const;
+#endif
 
     protected:
         virtual double GetWidthImpl() const override;

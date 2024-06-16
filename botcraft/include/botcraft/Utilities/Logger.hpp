@@ -14,7 +14,7 @@ constexpr const char* file_name(const char* path)
     const char* file = path;
     while (*path)
     {
-        if (*path == '\\' || *path == '/') 
+        if (*path == '\\' || *path == '/')
         {
             file = path + 1;
         }
