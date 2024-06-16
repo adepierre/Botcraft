@@ -62,11 +62,11 @@ TEST_CASE("Testing mining time calculation")
         REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Gold), Catch::Matchers::WithinAbs(20.85, 0.04));
         REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond), Catch::Matchers::WithinAbs(9.4, 0.04));
 
-        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond, 5), Catch::Matchers::WithinAbs(2.25, 0.04));
-        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond, 0, 2), Catch::Matchers::WithinAbs(6.7, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond, 1.0f + 5.0f * 5.0f /*Efficiency 5*/), Catch::Matchers::WithinAbs(2.25, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond, 0.0f, 2), Catch::Matchers::WithinAbs(6.7, 0.04));
 
-        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond, 0, 0, 0, false), Catch::Matchers::WithinAbs(46.9, 0.04));
-        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond, 0, 0, 0, true, true), Catch::Matchers::WithinAbs(46.9, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond, 0.0f, 0, 0, false), Catch::Matchers::WithinAbs(46.9, 0.04));
+        REQUIRE_THAT(blockstate.GetMiningTimeSeconds(ToolType::Pickaxe, ToolMaterial::Diamond, 0.0f, 0, 0, true, 0.2f /*under water*/), Catch::Matchers::WithinAbs(46.9, 0.04));
     }
 
     SECTION("ender_chest")

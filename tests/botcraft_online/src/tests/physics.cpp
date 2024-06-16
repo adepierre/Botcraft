@@ -836,10 +836,18 @@ TEST_CASE("walk on concrete#sneak", "[!mayfail][.physics]")
 
         SendCommandSetItem(bot->GetNetworkManager()->GetMyName(), "minecraft:netherite_leggings", EquipmentSlot::Leggings, { {Enchantment::SwiftSneak, 3} });
 
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        // Wait for the attribute to be updated
+        REQUIRE(Utilities::WaitForCondition([&]() -> bool
+            {
+                return std::abs(bot->GetLocalPlayer()->GetAttributePlayerSneakingSpeedValue() - 0.3) > 1e-5;
+            }, 5000));
+#else
         REQUIRE(Utilities::WaitForCondition([&]() -> bool
             {
                 return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(Window::INVENTORY_LEGS_ARMOR).IsEmptySlot();
             }, 5000));
+#endif
     }
 #endif
 
@@ -1382,10 +1390,18 @@ TEST_CASE("walk on soul sand", "[!mayfail][.physics]")
 
         SendCommandSetItem(bot->GetNetworkManager()->GetMyName(), "minecraft:netherite_boots", EquipmentSlot::Boots, { {Enchantment::SoulSpeed, 3} });
 
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        // Wait for the attribute to be updated
+        REQUIRE(Utilities::WaitForCondition([&]() -> bool
+            {
+                return std::abs(bot->GetLocalPlayer()->GetAttributeMovementEfficiencyValue()) > 1e-5;
+            }, 5000));
+#else
         REQUIRE(Utilities::WaitForCondition([&]() -> bool
             {
                 return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR).IsEmptySlot();
             }, 5000));
+#endif
     }
 #endif
 

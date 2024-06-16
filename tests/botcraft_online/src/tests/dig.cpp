@@ -114,10 +114,18 @@ TEST_CASE("dig underwater")
     {
         GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
         SendCommandSetItem(botname, "minecraft:diamond_helmet", Botcraft::EquipmentSlot::Helmet, Botcraft::Enchantment::AquaAffinity);
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        // Wait for the attribute to be updated
+        CHECK(Botcraft::Utilities::WaitForCondition([&]() -> bool
+            {
+                return std::abs(bot->GetLocalPlayer()->GetAttributePlayerSubmergedMiningSpeedValue() - 1.0) < 1e-5;
+            }, 5000));
+#else
         CHECK(Botcraft::Utilities::WaitForCondition([&]() -> bool
             {
                 return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_HEAD_ARMOR).IsEmptySlot();
             }, 5000));
+#endif
 
         TestDig(bot, dirt, 0.75);
         TestDig(bot, stone, 0.3);
