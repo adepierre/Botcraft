@@ -72,11 +72,11 @@ namespace ProtocolCraft
         GETTER_SETTER(Salt);
         GETTER_SETTER(Signature);
         // Convenient set from a std::vector
-        void SetSignature(const std::vector<unsigned char>& signature)
+        auto& SetSignature(const std::vector<unsigned char>& signature)
         {
             std::array<unsigned char, 256> new_signature{};
             std::copy_n(signature.begin(), 256, new_signature.begin());
-            SetSignature(new_signature);
+            return SetSignature(new_signature);
         }
         GETTER_SETTER(LastSeenMessages);
 #endif

@@ -324,7 +324,7 @@ namespace ProtocolCraft
         return options;
     }
 
-    void Particle::SetParticleType(const ParticleType particle_type_)
+    Particle& Particle::SetParticleType(const ParticleType particle_type_)
     {
         if (particle_type_ <= ParticleType::None || particle_type_ >= ParticleType::NUM_PARTICLE_TYPES)
         {
@@ -386,6 +386,7 @@ namespace ProtocolCraft
             options = std::make_shared<EmptyParticleOptions>();
             break;
         }
+        return *this;
     }
 
     void Particle::ReadOptions(ReadIterator& iter, size_t& length)

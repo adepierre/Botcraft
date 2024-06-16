@@ -60,9 +60,9 @@ namespace ProtocolCraft
         virtual ~Recipe() override;
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetType(const Identifier& type_);
+        Recipe& SetType(const Identifier& type_);
 #else
-        void SetType(const RecipeDataType type_);
+        Recipe& SetType(const RecipeDataType type_);
 #endif
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */

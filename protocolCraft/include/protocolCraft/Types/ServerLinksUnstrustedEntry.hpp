@@ -20,13 +20,14 @@ namespace ProtocolCraft
             return std::get<static_cast<size_t>(FieldsEnum::TypeId)>(fields);
         }
 
-        void SetTypeId(const std::optional<int>& type_id)
+        auto& SetTypeId(const std::optional<int>& type_id)
         {
             std::get<static_cast<size_t>(FieldsEnum::TypeId)>(fields) = type_id;
             if (type_id.has_value())
             {
                 std::get<static_cast<size_t>(FieldsEnum::Uri)>(fields) = {};
             }
+            return *this;
         }
 
 
@@ -35,13 +36,14 @@ namespace ProtocolCraft
             return std::get<static_cast<size_t>(FieldsEnum::Uri)>(fields);
         }
 
-        void SetUri(const std::optional<Chat>& uri)
+        auto& SetUri(const std::optional<Chat>& uri)
         {
             std::get<static_cast<size_t>(FieldsEnum::Uri)>(fields) = uri;
             if (uri.has_value())
             {
                 std::get<static_cast<size_t>(FieldsEnum::TypeId)>(fields) = {};
             }
+            return *this;
         }
 
     protected:

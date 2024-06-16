@@ -27,14 +27,16 @@ namespace ProtocolCraft
         }
 
 
-        void SetRaw(const T& raw_)
+        auto& SetRaw(const T& raw_)
         {
             raw = raw_;
+            return *this;
         }
 
-        void SetFiltered(const std::optional<T>& filtered_)
+        auto& SetFiltered(const std::optional<T>& filtered_)
         {
             filtered = filtered_;
+            return *this;
         }
 
     protected:

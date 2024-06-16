@@ -86,7 +86,7 @@ namespace ProtocolCraft
             virtual ~DataComponentPredicate() override;
 
             const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& GetMap() const;
-            void SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_);
+            DataComponentPredicate& SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_);
 
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
@@ -104,7 +104,7 @@ namespace ProtocolCraft
             virtual ~DataComponentPatch() override;
 
             const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& GetMap() const;
-            void SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_);
+            DataComponentPatch& SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_);
 
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override;

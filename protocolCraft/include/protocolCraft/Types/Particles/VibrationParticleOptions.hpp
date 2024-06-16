@@ -46,30 +46,35 @@ namespace ProtocolCraft
 #endif
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        void SetVibrationPath(const VibrationPath& vibration_path_)
+        auto& SetVibrationPath(const VibrationPath& vibration_path_)
         {
             vibration_path = vibration_path_;
+            return *this;
         }
 #else
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        void SetDestinationType(const PositionSourceType destination_type_)
+        auto& SetDestinationType(const PositionSourceType destination_type_)
         {
             destination_type = destination_type_;
-    }
+            return *this;
+        }
 #else
-        void SetDestinationType(const Identifier& destination_type_)
+        auto& SetDestinationType(const Identifier& destination_type_)
         {
             destination_type = destination_type_;
+            return *this;
         }
 #endif
-        void SetDestination(const std::shared_ptr<PositionSource>& destination_)
+        auto& SetDestination(const std::shared_ptr<PositionSource>& destination_)
         {
             destination = destination_;
+            return *this;
         }
 
-        void SetArrivalInTicks(const int arrival_in_ticks_)
+        auto& SetArrivalInTicks(const int arrival_in_ticks_)
         {
             arrival_in_ticks = arrival_in_ticks_;
+            return *this;
         }
 #endif
 

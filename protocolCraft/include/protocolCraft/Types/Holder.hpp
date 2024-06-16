@@ -16,7 +16,7 @@ namespace ProtocolCraft
         }
 
 
-        int GetID() const
+        int GetId() const
         {
             return id;
         }
@@ -27,14 +27,16 @@ namespace ProtocolCraft
         }
 
 
-        void SetID(const int id_)
+        auto& SetId(const int id_)
         {
             id = id_;
+            return *this;
         }
 
-        void SetValue(const std::optional<T>& value_)
+        auto& SetValue(const std::optional<T>& value_)
         {
             value = value_;
+            return *this;
         }
 
     protected:

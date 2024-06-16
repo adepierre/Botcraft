@@ -24,10 +24,12 @@ namespace ProtocolCraft
         {
             return std::get<static_cast<size_t>(FieldsEnum::BackgroundTexture)>(fields);
         }
-        void SetBackgroundTexture(const std::optional<Identifier>& BackgroundTexture)
+
+        auto& SetBackgroundTexture(const std::optional<Identifier>& BackgroundTexture)
         {
             SetFlags(BackgroundTexture.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
             std::get<static_cast<size_t>(FieldsEnum::BackgroundTexture)>(fields) = BackgroundTexture;
+            return *this;
         }
         GETTER_SETTER(XCoord);
         GETTER_SETTER(YCoord);

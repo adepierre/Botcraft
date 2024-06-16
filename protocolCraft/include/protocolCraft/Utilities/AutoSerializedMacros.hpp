@@ -50,10 +50,10 @@
         std::conditional_t<std::is_arithmetic_v<name##_type::storage_type> || std::is_enum_v<name##_type::storage_type>,     \
             name##_type::storage_type, const name##_type::storage_type&> Get##name() const                                   \
             { return std::get<static_cast<size_t>(FieldsEnum::name)>(fields); }                                              \
-        void Set##name(                                                                                                      \
+        auto& Set##name(                                                                                                     \
             std::conditional_t<std::is_arithmetic_v<name##_type::storage_type> || std::is_enum_v<name##_type::storage_type>, \
             name##_type::storage_type, const name##_type::storage_type&> name)                                               \
-            { std::get<static_cast<size_t>(FieldsEnum::name)>(fields) = name; }                                              \
+            { std::get<static_cast<size_t>(FieldsEnum::name)>(fields) = name; return *this; }                                \
         static_assert(true, "Forcing ;")
 
 // Define ReadImpl virtual function for auto serializable types

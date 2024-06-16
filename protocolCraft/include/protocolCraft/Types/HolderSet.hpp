@@ -28,22 +28,24 @@ namespace ProtocolCraft
         }
 
 
-        void SetKey(const std::optional<Identifier>& key_)
+        auto& SetKey(const std::optional<Identifier>& key_)
         {
             key = key_;
             if (key.has_value())
             {
                 contents.clear();
             }
+            return *this;
         }
 
-        void SetContents(const std::vector<int>& contents_)
+        auto& SetContents(const std::vector<int>& contents_)
         {
             contents = contents_;
             if (contents.size() > 0)
             {
                 key = std::optional<Identifier>();
             }
+            return *this;
         }
 
     protected:
