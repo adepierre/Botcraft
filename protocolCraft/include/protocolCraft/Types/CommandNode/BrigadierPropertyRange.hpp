@@ -7,8 +7,10 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyRange : public BrigadierProperty
     {
-        DECLARE_FIELDS_TYPES(bool);
-        DECLARE_FIELDS_NAMES(Decimals);
+        DECLARE_FIELDS(
+            (bool),
+            (Decimals)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Decimals);

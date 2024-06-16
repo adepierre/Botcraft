@@ -13,11 +13,15 @@ namespace ProtocolCraft
     class PlayerUpdate : public NetworkType
     {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(std::string, std::vector<GameProfileProperty>, VarInt,   VarInt,  std::optional<Chat>);
-        DECLARE_FIELDS_NAMES(Name,        Properties,                       GameMode, Latency, DisplayName);
+        DECLARE_FIELDS(
+            (std::string, std::vector<GameProfileProperty>, VarInt,   VarInt,  std::optional<Chat>),
+            (Name,        Properties,                       GameMode, Latency, DisplayName)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string, std::vector<GameProfileProperty>, VarInt,   VarInt,  std::optional<Chat>, std::optional<ProfilePublicKey>);
-        DECLARE_FIELDS_NAMES(Name,        Properties,                       GameMode, Latency, DisplayName, ProfilePublicKey);
+        DECLARE_FIELDS(
+            (std::string, std::vector<GameProfileProperty>, VarInt,   VarInt,  std::optional<Chat>, std::optional<ProfilePublicKey>),
+            (Name,        Properties,                       GameMode, Latency, DisplayName, ProfilePublicKey)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

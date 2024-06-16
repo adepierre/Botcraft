@@ -21,8 +21,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Tags (Configuration)";
 
-        DECLARE_FIELDS_TYPES(std::map<Identifier, std::vector<BlockEntityTag>>);
-        DECLARE_FIELDS_NAMES(Tags);
+        DECLARE_FIELDS(
+            (std::map<Identifier, std::vector<BlockEntityTag>>),
+            (Tags)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Tags);

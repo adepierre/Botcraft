@@ -13,8 +13,10 @@ namespace ProtocolCraft
     {
         class PropertyMatcher : public NetworkType
         {
-            DECLARE_FIELDS_TYPES(std::string, std::optional<RangedMatcher>, std::optional<ExactMatcher>);
-            DECLARE_FIELDS_NAMES(Name,        RangedMatcher,                ExactMatcher);
+            DECLARE_FIELDS(
+                (std::string, std::optional<RangedMatcher>, std::optional<ExactMatcher>),
+                (Name,        RangedMatcher,                ExactMatcher)
+            );
             DECLARE_SERIALIZE;
 
             GETTER_SETTER(Name);

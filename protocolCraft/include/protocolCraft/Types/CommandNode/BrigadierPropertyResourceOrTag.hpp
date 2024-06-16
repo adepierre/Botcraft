@@ -8,8 +8,10 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyResourceOrTag : public BrigadierProperty
     {
-        DECLARE_FIELDS_TYPES(Identifier);
-        DECLARE_FIELDS_NAMES(Registry);
+        DECLARE_FIELDS(
+            (Identifier),
+            (Registry)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Registry);

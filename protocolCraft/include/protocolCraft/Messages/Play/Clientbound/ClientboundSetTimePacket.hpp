@@ -46,8 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Time";
 
-        DECLARE_FIELDS_TYPES(long long int, long long int);
-        DECLARE_FIELDS_NAMES(GameTime,      DayTime);
+        DECLARE_FIELDS(
+            (long long int, long long int),
+            (GameTime,      DayTime)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(GameTime);

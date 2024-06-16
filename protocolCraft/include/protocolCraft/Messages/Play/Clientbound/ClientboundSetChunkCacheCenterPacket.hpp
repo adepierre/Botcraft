@@ -42,8 +42,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Chunk Cache Center";
 
-        DECLARE_FIELDS_TYPES(VarInt, VarInt);
-        DECLARE_FIELDS_NAMES(X,      Z);
+        DECLARE_FIELDS(
+            (VarInt, VarInt),
+            (X,      Z)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(X);

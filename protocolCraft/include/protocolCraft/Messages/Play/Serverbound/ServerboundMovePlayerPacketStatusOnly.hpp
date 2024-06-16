@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Player Status Only";
 
-        DECLARE_FIELDS_TYPES(bool);
-        DECLARE_FIELDS_NAMES(OnGround);
+        DECLARE_FIELDS(
+            (bool),
+            (OnGround)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(OnGround);

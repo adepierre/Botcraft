@@ -40,11 +40,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Block Entity Data";
 
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
-        DECLARE_FIELDS_TYPES(NetworkPosition, unsigned char, NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(Pos,             Type,          Tag);
+        DECLARE_FIELDS(
+            (NetworkPosition, unsigned char, NBT::UnnamedValue),
+            (Pos,             Type,          Tag)
+        );
 #else
-        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt, NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(Pos,             Type,   Tag);
+        DECLARE_FIELDS(
+            (NetworkPosition, VarInt, NBT::UnnamedValue),
+            (Pos,             Type,   Tag)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -31,14 +31,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Add Entity";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(VarInt, UUID, char, double, double, double, unsigned char, unsigned char, int,  short, short, short);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type, X,      Y,      Z,      XRot,          YRot,          Data, Xa,    Ya,    Za);
+        DECLARE_FIELDS(
+            (VarInt, UUID, char, double, double, double, unsigned char, unsigned char, int,  short, short, short),
+            (Id_,    Uuid, Type, X,      Y,      Z,      XRot,          YRot,          Data, Xa,    Ya,    Za)
+        );
 #elif PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, int,  short, short, short);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      XRot,          YRot,          Data, Xa,    Ya,    Za);
+        DECLARE_FIELDS(
+            (VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, int,  short, short, short),
+            (Id_,    Uuid, Type,   X,      Y,      Z,      XRot,          YRot,          Data, Xa,    Ya,    Za)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    VarInt, short, short, short);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      XRot,          YRot,          YHeadRot, Data,   Xa,    Ya,    Za);
+        DECLARE_FIELDS(
+            (VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    VarInt, short, short, short),
+            (Id_,    Uuid, Type,   X,      Y,      Z,      XRot,          YRot,          YHeadRot, Data,   Xa,    Ya,    Za)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -31,11 +31,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Player Combat End";
 
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(VarInt,   int);
-        DECLARE_FIELDS_NAMES(Duration, KillerId);
+        DECLARE_FIELDS(
+            (VarInt,   int),
+            (Duration, KillerId)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Duration);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Duration)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

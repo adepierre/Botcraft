@@ -10,8 +10,10 @@ namespace ProtocolCraft
     {
         class MobEffectInstanceDetails : public NetworkType
         {
-            DECLARE_FIELDS_TYPES(VarInt,    VarInt,   bool,    bool,          bool,     std::shared_ptr<MobEffectInstanceDetails>);
-            DECLARE_FIELDS_NAMES(Amplifier, Duration, Ambient, ShowParticles, ShowIcon, HiddenEffect);
+            DECLARE_FIELDS(
+                (VarInt,    VarInt,   bool,    bool,          bool,     std::shared_ptr<MobEffectInstanceDetails>),
+                (Amplifier, Duration, Ambient, ShowParticles, ShowIcon, HiddenEffect)
+            );
 
             GETTER_SETTER(Amplifier);
             GETTER_SETTER(Duration);

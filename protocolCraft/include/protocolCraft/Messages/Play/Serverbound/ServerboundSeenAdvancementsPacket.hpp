@@ -42,8 +42,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Seen Advancement";
 
-        DECLARE_FIELDS_TYPES(VarInt, Identifier);
-        DECLARE_FIELDS_NAMES(Action, Tab);
+        DECLARE_FIELDS(
+            (VarInt, Identifier),
+            (Action, Tab)
+        );
 
         GETTER_SETTER(Action);
         GETTER_SETTER(Tab);

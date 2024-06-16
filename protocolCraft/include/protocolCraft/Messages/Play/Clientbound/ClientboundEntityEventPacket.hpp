@@ -45,8 +45,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Entity Event";
 
-        DECLARE_FIELDS_TYPES(int,      char);
-        DECLARE_FIELDS_NAMES(EntityId, EventId);
+        DECLARE_FIELDS(
+            (int,      char),
+            (EntityId, EventId)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(EntityId);

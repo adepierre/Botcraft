@@ -13,11 +13,15 @@ namespace ProtocolCraft
     class CommandNode : public NetworkType
     {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(char,  std::vector<VarInt>, VarInt,       std::string, Identifier, std::shared_ptr<BrigadierProperty>, Identifier);
-        DECLARE_FIELDS_NAMES(Flags, Children,            RedirectNode, Name,        Parser,     Properties,                         SuggestionType);
+        DECLARE_FIELDS(
+            (char,  std::vector<VarInt>, VarInt,       std::string, Identifier, std::shared_ptr<BrigadierProperty>, Identifier),
+            (Flags, Children,            RedirectNode, Name,        Parser,     Properties,                         SuggestionType)
+        );
 #else
-        DECLARE_FIELDS_TYPES(char,  std::vector<VarInt>, VarInt,       std::string, DiffType<BrigadierPropertyType, VarInt>,   std::shared_ptr<BrigadierProperty>, Identifier);
-        DECLARE_FIELDS_NAMES(Flags, Children,            RedirectNode, Name,        ParserId,                                  Properties,                         SuggestionType);
+        DECLARE_FIELDS(
+            (char,  std::vector<VarInt>, VarInt,       std::string, DiffType<BrigadierPropertyType, VarInt>,   std::shared_ptr<BrigadierProperty>, Identifier),
+            (Flags, Children,            RedirectNode, Name,        ParserId,                                  Properties,                         SuggestionType)
+        );
 #endif
 
         GETTER_SETTER(Flags);

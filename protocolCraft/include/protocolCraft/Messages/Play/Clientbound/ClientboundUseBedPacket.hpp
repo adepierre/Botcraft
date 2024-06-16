@@ -20,8 +20,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Use Bed";
 
-        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition);
-        DECLARE_FIELDS_NAMES(EntityId, Location);
+        DECLARE_FIELDS(
+            (VarInt, NetworkPosition),
+            (EntityId, Location)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(EntityId);

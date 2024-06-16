@@ -48,14 +48,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Sound Entity";
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt, float,  float);
-        DECLARE_FIELDS_NAMES(Sound,  Source, Id_,    Volume, Pitch);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, VarInt, float,  float),
+            (Sound,  Source, Id_,    Volume, Pitch)
+        );
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt, float,  float, long long int);
-        DECLARE_FIELDS_NAMES(Sound,  Source, Id_,    Volume, Pitch, Seed);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, VarInt, float,  float, long long int),
+            (Sound,  Source, Id_,    Volume, Pitch, Seed)
+        );
 #else
-        DECLARE_FIELDS_TYPES(Holder<SoundEvent>, VarInt, VarInt, float,  float, long long int);
-        DECLARE_FIELDS_NAMES(Sound,              Source, Id_,    Volume, Pitch, Seed);
+        DECLARE_FIELDS(
+            (Holder<SoundEvent>, VarInt, VarInt, float,  float, long long int),
+            (Sound,              Source, Id_,    Volume, Pitch, Seed)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

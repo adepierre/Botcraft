@@ -8,8 +8,10 @@ namespace ProtocolCraft
 {
     class BlockEntityTag : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(Identifier, std::vector<VarInt>);
-        DECLARE_FIELDS_NAMES(TagName,    Entries);
+        DECLARE_FIELDS(
+            (Identifier, std::vector<VarInt>),
+            (TagName,    Entries)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(TagName);

@@ -8,8 +8,10 @@ namespace ProtocolCraft
 {
     class ServerLinksUnstrustedEntry : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(std::optional<VarInt>, std::optional<Chat>, std::string);
-        DECLARE_FIELDS_NAMES(TypeId,                Uri,                 Link);
+        DECLARE_FIELDS(
+            (std::optional<VarInt>, std::optional<Chat>, std::string),
+            (TypeId,                Uri,                 Link)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(Link);

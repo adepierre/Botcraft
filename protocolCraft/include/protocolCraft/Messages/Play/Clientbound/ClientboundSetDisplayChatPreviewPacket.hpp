@@ -18,8 +18,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Display Chat Preview";
 
-        DECLARE_FIELDS_TYPES(bool);
-        DECLARE_FIELDS_NAMES(Enabled);
+        DECLARE_FIELDS(
+            (bool),
+            (Enabled)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Enabled);

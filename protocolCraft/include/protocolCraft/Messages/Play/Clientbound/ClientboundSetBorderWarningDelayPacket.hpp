@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border Warning Delay";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(WarningDelay);
+        DECLARE_FIELDS(
+            (VarInt),
+            (WarningDelay)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(WarningDelay);

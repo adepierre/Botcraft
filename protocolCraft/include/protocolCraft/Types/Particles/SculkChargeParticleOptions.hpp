@@ -7,8 +7,10 @@ namespace ProtocolCraft
 {
     class SculkChargeParticleOptions : public ParticleOptions
     {
-        DECLARE_FIELDS_TYPES(float);
-        DECLARE_FIELDS_NAMES(Roll);
+        DECLARE_FIELDS(
+            (float),
+            (Roll)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Roll);

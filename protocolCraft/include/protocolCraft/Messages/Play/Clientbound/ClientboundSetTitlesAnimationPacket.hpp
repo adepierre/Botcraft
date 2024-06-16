@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Titles Animation";
 
-        DECLARE_FIELDS_TYPES(int, int, int);
-        DECLARE_FIELDS_NAMES(FadeIn, Stay, FadeOut);
+        DECLARE_FIELDS(
+            (int, int, int),
+            (FadeIn, Stay, FadeOut)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(FadeIn);

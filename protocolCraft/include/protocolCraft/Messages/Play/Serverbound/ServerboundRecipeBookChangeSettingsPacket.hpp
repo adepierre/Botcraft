@@ -30,8 +30,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Recipe Book Change Settings";
 
-        DECLARE_FIELDS_TYPES(VarInt,   bool,   bool);
-        DECLARE_FIELDS_NAMES(BookType, IsOpen, IsFiltering);
+        DECLARE_FIELDS(
+            (VarInt,   bool,   bool),
+            (BookType, IsOpen, IsFiltering)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(BookType);

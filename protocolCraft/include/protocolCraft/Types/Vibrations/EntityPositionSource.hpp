@@ -8,11 +8,15 @@ namespace ProtocolCraft
     class EntityPositionSource : public PositionSource
     {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(SourceEntityId);
+        DECLARE_FIELDS(
+            (VarInt),
+            (SourceEntityId)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,         float);
-        DECLARE_FIELDS_NAMES(SourceEntityId, YOffset);
+        DECLARE_FIELDS(
+            (VarInt,         float),
+            (SourceEntityId, YOffset)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

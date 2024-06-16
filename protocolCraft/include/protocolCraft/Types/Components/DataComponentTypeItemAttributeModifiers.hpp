@@ -11,8 +11,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeItemAttributeModifiers : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(std::vector<ItemAttributeModifiersEntry>, bool);
-            DECLARE_FIELDS_NAMES(Modifiers,                                ShowInTooltip);
+            DECLARE_FIELDS(
+                (std::vector<ItemAttributeModifiersEntry>, bool),
+                (Modifiers,                                ShowInTooltip)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Modifiers);

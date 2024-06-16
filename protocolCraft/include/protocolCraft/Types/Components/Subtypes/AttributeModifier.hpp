@@ -8,8 +8,10 @@ namespace ProtocolCraft
     {
         class AttributeModifier : public NetworkType
         {
-            DECLARE_FIELDS_TYPES(UUID, std::string, double, VarInt);
-            DECLARE_FIELDS_NAMES(Id, Name, Amount, Operation);
+            DECLARE_FIELDS(
+                (UUID, std::string, double, VarInt),
+                (Id, Name, Amount, Operation)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Id);

@@ -38,8 +38,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Update";
 
-        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt);
-        DECLARE_FIELDS_NAMES(Pos,             Blockstate);
+        DECLARE_FIELDS(
+            (NetworkPosition, VarInt),
+            (Pos,             Blockstate)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Pos);

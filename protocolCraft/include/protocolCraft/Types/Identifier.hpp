@@ -6,8 +6,10 @@ namespace ProtocolCraft
 {
     class Identifier : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(std::string, std::string);
-        DECLARE_FIELDS_NAMES(Namespace,   Name);
+        DECLARE_FIELDS(
+            (std::string, std::string),
+            (Namespace,   Name)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(Namespace);

@@ -36,8 +36,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Jigsaw Generate";
 
-        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt, bool);
-        DECLARE_FIELDS_NAMES(Pos,             Levels, KeepJigsaws);
+        DECLARE_FIELDS(
+            (NetworkPosition, VarInt, bool),
+            (Pos,             Levels, KeepJigsaws)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Pos);

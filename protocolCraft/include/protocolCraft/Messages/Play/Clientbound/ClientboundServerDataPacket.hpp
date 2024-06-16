@@ -32,20 +32,30 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Server Data";
 
 #if PROTOCOL_VERSION < 760 /* < 1.19.1 */
-        DECLARE_FIELDS_TYPES(std::optional<Chat>, std::optional<std::string>, bool);
-        DECLARE_FIELDS_NAMES(Motd,                IconBase64,                 PreviewsChat);
+        DECLARE_FIELDS(
+            (std::optional<Chat>, std::optional<std::string>, bool),
+            (Motd,                IconBase64,                 PreviewsChat)
+        );
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(std::optional<Chat>, std::optional<std::string>, bool,         bool);
-        DECLARE_FIELDS_NAMES(Motd,                IconBase64,                 PreviewsChat, EnforcesSecureChat);
+        DECLARE_FIELDS(
+            (std::optional<Chat>, std::optional<std::string>, bool,         bool),
+            (Motd,                IconBase64,                 PreviewsChat, EnforcesSecureChat)
+        );
 #elif PROTOCOL_VERSION < 762 /* < 1.19.4 */
-        DECLARE_FIELDS_TYPES(std::optional<Chat>, std::optional<std::string>, bool);
-        DECLARE_FIELDS_NAMES(Motd,                IconBase64,                 EnforcesSecureChat);
+        DECLARE_FIELDS(
+            (std::optional<Chat>, std::optional<std::string>, bool),
+            (Motd,                IconBase64,                 EnforcesSecureChat)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(Chat, std::optional<std::vector<unsigned char>>, bool);
-        DECLARE_FIELDS_NAMES(Motd, IconBytes,                                 EnforcesSecureChat);
+        DECLARE_FIELDS(
+            (Chat, std::optional<std::vector<unsigned char>>, bool),
+            (Motd, IconBytes,                                 EnforcesSecureChat)
+        );
 #else
-        DECLARE_FIELDS_TYPES(Chat, std::optional<std::vector<unsigned char>>);
-        DECLARE_FIELDS_NAMES(Motd, IconBytes);
+        DECLARE_FIELDS(
+            (Chat, std::optional<std::vector<unsigned char>>),
+            (Motd, IconBytes)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

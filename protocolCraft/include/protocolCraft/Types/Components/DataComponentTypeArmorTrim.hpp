@@ -8,8 +8,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeArmorTrim : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(VarInt,   VarInt,  bool);
-            DECLARE_FIELDS_NAMES(Material, Pattern, ShowInTooltip);
+            DECLARE_FIELDS(
+                (VarInt,   VarInt,  bool),
+                (Material, Pattern, ShowInTooltip)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Material);

@@ -44,14 +44,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Player Chat";
 
 #if PROTOCOL_VERSION < 760 /* < 1.19.1 */
-        DECLARE_FIELDS_TYPES(Chat,          std::optional<Chat>, VarInt, ChatSender, long long int, SaltSignature);
-        DECLARE_FIELDS_NAMES(SignedContent, UnsignedContent,     TypeId, Sender,     Timestamp,     SaltSignature);
+        DECLARE_FIELDS(
+            (Chat,          std::optional<Chat>, VarInt, ChatSender, long long int, SaltSignature),
+            (SignedContent, UnsignedContent,     TypeId, Sender,     Timestamp,     SaltSignature)
+        );
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(PlayerChatMessage, ChatTypeBoundNetwork);
-        DECLARE_FIELDS_NAMES(Message,           ChatType);
+        DECLARE_FIELDS(
+            (PlayerChatMessage, ChatTypeBoundNetwork),
+            (Message,           ChatType)
+        );
 #else
-        DECLARE_FIELDS_TYPES(UUID,   VarInt, std::optional<std::array<unsigned char, 256>>, SignedMessageBody, std::optional<Chat>, FilterMask, ChatTypeBoundNetwork);
-        DECLARE_FIELDS_NAMES(Sender, Index,  Signature,                                     Body,              UnsignedContent,     FilterMask, ChatType);
+        DECLARE_FIELDS(
+            (UUID,   VarInt, std::optional<std::array<unsigned char, 256>>, SignedMessageBody, std::optional<Chat>, FilterMask, ChatTypeBoundNetwork),
+            (Sender, Index,  Signature,                                     Body,              UnsignedContent,     FilterMask, ChatType)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

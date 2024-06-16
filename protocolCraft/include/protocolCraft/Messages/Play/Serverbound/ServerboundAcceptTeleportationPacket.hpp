@@ -29,8 +29,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Accept Teleportation";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Id_);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Id_)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Id_);

@@ -28,8 +28,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Change Difficulty";
 
-        DECLARE_FIELDS_TYPES(char);
-        DECLARE_FIELDS_NAMES(Difficulty);
+        DECLARE_FIELDS(
+            (char),
+            (Difficulty)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Difficulty);

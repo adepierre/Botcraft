@@ -7,8 +7,10 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyTime : public BrigadierProperty
     {
-        DECLARE_FIELDS_TYPES(int);
-        DECLARE_FIELDS_NAMES(Min);
+        DECLARE_FIELDS(
+            (int),
+            (Min)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Min);

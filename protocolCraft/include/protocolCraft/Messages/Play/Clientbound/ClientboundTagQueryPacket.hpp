@@ -47,8 +47,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Tag Query";
 
-        DECLARE_FIELDS_TYPES(VarInt,        NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(TransactionId, Tag);
+        DECLARE_FIELDS(
+            (VarInt,        NBT::UnnamedValue),
+            (TransactionId, Tag)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(TransactionId);

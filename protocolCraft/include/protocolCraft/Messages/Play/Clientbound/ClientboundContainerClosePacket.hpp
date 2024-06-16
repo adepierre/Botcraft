@@ -40,8 +40,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Close";
 
-        DECLARE_FIELDS_TYPES(unsigned char);
-        DECLARE_FIELDS_NAMES(ContainerId);
+        DECLARE_FIELDS(
+            (unsigned char),
+            (ContainerId)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ContainerId);

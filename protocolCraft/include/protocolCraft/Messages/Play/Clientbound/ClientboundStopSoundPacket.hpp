@@ -46,8 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Stop Sound";
 
-        DECLARE_FIELDS_TYPES(std::optional<VarInt>, std::optional<Identifier>);
-        DECLARE_FIELDS_NAMES(Source,                Name_);
+        DECLARE_FIELDS(
+            (std::optional<VarInt>, std::optional<Identifier>),
+            (Source,                Name_)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(Source);

@@ -7,14 +7,20 @@ namespace ProtocolCraft
     class RecipeBookSettings : public NetworkType
     {
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(bool,      bool);
-        DECLARE_FIELDS_NAMES(IsGuiOpen, IsFilteringCraftable);
+        DECLARE_FIELDS(
+            (bool,      bool),
+            (IsGuiOpen, IsFilteringCraftable)
+        );
 #elif PROTOCOL_VERSION < 751 /* < 1.16.2 */
-        DECLARE_FIELDS_TYPES(bool,      bool,                 bool,             bool);
-        DECLARE_FIELDS_NAMES(IsGuiOpen, IsFilteringCraftable, IsFurnaceGuiOpen, IsFurnaceFilteringOpen);
+        DECLARE_FIELDS(
+            (bool,      bool,                 bool,             bool),
+            (IsGuiOpen, IsFilteringCraftable, IsFurnaceGuiOpen, IsFurnaceFilteringOpen)
+        );
 #else
-        DECLARE_FIELDS_TYPES(bool,      bool,                 bool,             bool,                   bool,                     bool,                                bool,            bool);
-        DECLARE_FIELDS_NAMES(IsGuiOpen, IsFilteringCraftable, IsFurnaceGuiOpen, IsFurnaceFilteringOpen, IsBlastingFurnaceGuiOpen, IsBlastingFurnaceFilteringCraftable, IsSmokerGuiOpen, IsSmokerFilteringCraftable);
+        DECLARE_FIELDS(
+            (bool,      bool,                 bool,             bool,                   bool,                     bool,                                bool,            bool),
+            (IsGuiOpen, IsFilteringCraftable, IsFurnaceGuiOpen, IsFurnaceFilteringOpen, IsBlastingFurnaceGuiOpen, IsBlastingFurnaceFilteringCraftable, IsSmokerGuiOpen, IsSmokerFilteringCraftable)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

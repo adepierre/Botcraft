@@ -11,8 +11,10 @@ namespace ProtocolCraft
 {
     class PlayerChatMessage : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(SignedMessageHeader, std::vector<unsigned char>, SignedMessageBody, std::optional<Chat>, FilterMask);
-        DECLARE_FIELDS_NAMES(SignedHeader,        HeaderSignature,            SignedBody,        UnsignedContent,     FilterMask);
+        DECLARE_FIELDS(
+            (SignedMessageHeader, std::vector<unsigned char>, SignedMessageBody, std::optional<Chat>, FilterMask),
+            (SignedHeader,        HeaderSignature,            SignedBody,        UnsignedContent,     FilterMask)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(SignedHeader);

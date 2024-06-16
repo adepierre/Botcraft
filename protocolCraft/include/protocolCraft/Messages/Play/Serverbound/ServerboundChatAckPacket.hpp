@@ -21,11 +21,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Chat Ack";
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(LastSeenMessagesUpdate);
-        DECLARE_FIELDS_NAMES(LastSeenMessages);
+        DECLARE_FIELDS(
+            (LastSeenMessagesUpdate),
+            (LastSeenMessages)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Offset);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Offset)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

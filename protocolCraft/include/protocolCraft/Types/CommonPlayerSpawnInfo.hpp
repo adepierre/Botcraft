@@ -11,11 +11,16 @@ namespace ProtocolCraft
     class CommonPlayerSpawnInfo : public NetworkType
     {
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(Identifier,    Identifier, long long int, unsigned char, unsigned char,    bool,    bool,   std::optional<GlobalPos>, VarInt);
+        DECLARE_FIELDS(
+            (Identifier,    Identifier, long long int, unsigned char, unsigned char,    bool,    bool,   std::optional<GlobalPos>, VarInt),
+            (DimensionType, Dimension,  Seed,          GameType,      PreviousGameType, IsDebug, IsFlat, LastDeathLocation,        PortalCooldown)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,        Identifier, long long int, unsigned char, unsigned char,    bool,    bool,   std::optional<GlobalPos>, VarInt);
+        DECLARE_FIELDS(
+            (VarInt,        Identifier, long long int, unsigned char, unsigned char,    bool,    bool,   std::optional<GlobalPos>, VarInt),
+            (DimensionType, Dimension,  Seed,          GameType,      PreviousGameType, IsDebug, IsFlat, LastDeathLocation,        PortalCooldown)
+        );
 #endif
-        DECLARE_FIELDS_NAMES(DimensionType, Dimension,  Seed,          GameType,      PreviousGameType, IsDebug, IsFlat, LastDeathLocation,        PortalCooldown);
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(DimensionType);

@@ -52,14 +52,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Update Tags";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>);
-        DECLARE_FIELDS_NAMES(BlockTags,                   ItemTags,                    FluidTags);
+        DECLARE_FIELDS(
+            (std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>),
+            (BlockTags,                   ItemTags,                    FluidTags)
+        );
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS_TYPES(std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>);
-        DECLARE_FIELDS_NAMES(BlockTags,                   ItemTags,                    FluidTags,                   EntityTags);
+        DECLARE_FIELDS(
+            (std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>, std::vector<BlockEntityTag>),
+            (BlockTags,                   ItemTags,                    FluidTags,                   EntityTags)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::map<Identifier, std::vector<BlockEntityTag>>);
-        DECLARE_FIELDS_NAMES(Tags);
+        DECLARE_FIELDS(
+            (std::map<Identifier, std::vector<BlockEntityTag>>),
+            (Tags)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -41,8 +41,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Open Book";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Hand);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Hand)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Hand);

@@ -13,8 +13,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Client Information (Configuration)";
 
-        DECLARE_FIELDS_TYPES(ClientInformation);
-        DECLARE_FIELDS_NAMES(ClientInformation);
+        DECLARE_FIELDS(
+            (ClientInformation),
+            (ClientInformation)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ClientInformation);

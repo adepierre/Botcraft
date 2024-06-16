@@ -45,11 +45,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Command Suggestions";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(std::vector<std::string>);
-        DECLARE_FIELDS_NAMES(Suggestions);
+        DECLARE_FIELDS(
+            (std::vector<std::string>),
+            (Suggestions)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt, std::map<std::string, std::optional<Chat>>);
-        DECLARE_FIELDS_NAMES(Id_,    Start,  Length, Suggestions);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, VarInt, std::map<std::string, std::optional<Chat>>),
+            (Id_,    Start,  Length, Suggestions)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

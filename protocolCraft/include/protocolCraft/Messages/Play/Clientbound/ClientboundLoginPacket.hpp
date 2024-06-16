@@ -52,35 +52,55 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Login";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(int,      unsigned char, int,       unsigned char, unsigned char, std::string, bool);
-        DECLARE_FIELDS_NAMES(PlayerId, GameType,      Dimension, Difficulty,    MaxPlayers,    LevelType,   ReducedDebugInfo);
+        DECLARE_FIELDS(
+            (int,      unsigned char, int,       unsigned char, unsigned char, std::string, bool),
+            (PlayerId, GameType,      Dimension, Difficulty,    MaxPlayers,    LevelType,   ReducedDebugInfo)
+        );
 #elif PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS_TYPES(int,      unsigned char, int,       unsigned char, std::string, VarInt,      bool);
-        DECLARE_FIELDS_NAMES(PlayerId, GameType,      Dimension, MaxPlayers,    LevelType,   ChunkRadius, ReducedDebugInfo);
+        DECLARE_FIELDS(
+            (int,      unsigned char, int,       unsigned char, std::string, VarInt,      bool),
+            (PlayerId, GameType,      Dimension, MaxPlayers,    LevelType,   ChunkRadius, ReducedDebugInfo)
+        );
 #elif PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(int,      unsigned char, int,       long long int, unsigned char, std::string, VarInt,      bool,             bool);
-        DECLARE_FIELDS_NAMES(PlayerId, GameType,      Dimension, Seed,          MaxPlayers,    LevelType,   ChunkRadius, ReducedDebugInfo, ShowDeathScreen);
+        DECLARE_FIELDS(
+            (int,      unsigned char, int,       long long int, unsigned char, std::string, VarInt,      bool,             bool),
+            (PlayerId, GameType,      Dimension, Seed,          MaxPlayers,    LevelType,   ChunkRadius, ReducedDebugInfo, ShowDeathScreen)
+        );
 #elif PROTOCOL_VERSION < 751 /* < 1.16.2 */
-        DECLARE_FIELDS_TYPES(int,      unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, Identifier, long long int, unsigned char, VarInt,      bool,             bool,            bool,    bool);
-        DECLARE_FIELDS_NAMES(PlayerId, GameType,      PreviousGameType, Levels,                  RegistryHolder,    Dimension,  Seed,          MaxPlayers,    ChunkRadius, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat);
+        DECLARE_FIELDS(
+            (int,      unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, Identifier, long long int, unsigned char, VarInt,      bool,             bool,            bool,    bool),
+            (PlayerId, GameType,      PreviousGameType, Levels,                  RegistryHolder,    Dimension,  Seed,          MaxPlayers,    ChunkRadius, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat)
+        );
 #elif PROTOCOL_VERSION < 757 /* < 1.18 */
-        DECLARE_FIELDS_TYPES(int,      bool,     unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, NBT::UnnamedValue, Identifier, long long int, VarInt,     VarInt,      bool,             bool,            bool,    bool);
-        DECLARE_FIELDS_NAMES(PlayerId, Hardcore, GameType,      PreviousGameType, Levels,                  RegistryHolder,    DimensionType,     Dimension,  Seed,          MaxPlayers, ChunkRadius, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat);
+        DECLARE_FIELDS(
+            (int,      bool,     unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, NBT::UnnamedValue, Identifier, long long int, VarInt,     VarInt,      bool,             bool,            bool,    bool),
+            (PlayerId, Hardcore, GameType,      PreviousGameType, Levels,                  RegistryHolder,    DimensionType,     Dimension,  Seed,          MaxPlayers, ChunkRadius, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat)
+        );
 #elif PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(int,      bool,     unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, NBT::UnnamedValue, Identifier, long long int, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,    bool);
-        DECLARE_FIELDS_NAMES(PlayerId, Hardcore, GameType,      PreviousGameType, Levels,                  RegistryHolder,    DimensionType,     Dimension,  Seed,          MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat);
+        DECLARE_FIELDS(
+            (int,      bool,     unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, NBT::UnnamedValue, Identifier, long long int, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,    bool),
+            (PlayerId, Hardcore, GameType,      PreviousGameType, Levels,                  RegistryHolder,    DimensionType,     Dimension,  Seed,          MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat)
+        );
 #elif PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(int,      bool,     unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, Identifier,    Identifier, long long int, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,    bool,   std::optional<GlobalPos>);
-        DECLARE_FIELDS_NAMES(PlayerId, Hardcore, GameType,      PreviousGameType, Levels,                  RegistryHolder,    DimensionType, Dimension,  Seed,          MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat, LastDeathLocation);
+        DECLARE_FIELDS(
+            (int,      bool,     unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, Identifier,    Identifier, long long int, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,    bool,   std::optional<GlobalPos>),
+            (PlayerId, Hardcore, GameType,      PreviousGameType, Levels,                  RegistryHolder,    DimensionType, Dimension,  Seed,          MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat, LastDeathLocation)
+        );
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS_TYPES(int,      bool,     unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, Identifier,    Identifier, long long int, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,    bool,   std::optional<GlobalPos>, VarInt);
-        DECLARE_FIELDS_NAMES(PlayerId, Hardcore, GameType,      PreviousGameType, Levels,                  RegistryHolder,    DimensionType, Dimension,  Seed,          MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat, LastDeathLocation,        PortalCooldown);
+        DECLARE_FIELDS(
+            (int,      bool,     unsigned char, unsigned char,    std::vector<Identifier>, NBT::UnnamedValue, Identifier,    Identifier, long long int, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,    bool,   std::optional<GlobalPos>, VarInt),
+            (PlayerId, Hardcore, GameType,      PreviousGameType, Levels,                  RegistryHolder,    DimensionType, Dimension,  Seed,          MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, IsDebug, IsFlat, LastDeathLocation,        PortalCooldown)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(int,      bool,     std::vector<Identifier>, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,              CommonPlayerSpawnInfo);
-        DECLARE_FIELDS_NAMES(PlayerId, Hardcore, Levels,                  MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, DoLimitedCrafting, CommonPlayerSpawnInfo);
+        DECLARE_FIELDS(
+            (int,      bool,     std::vector<Identifier>, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,              CommonPlayerSpawnInfo),
+            (PlayerId, Hardcore, Levels,                  MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, DoLimitedCrafting, CommonPlayerSpawnInfo)
+        );
 #else
-        DECLARE_FIELDS_TYPES(int,      bool,     std::vector<Identifier>, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,              CommonPlayerSpawnInfo, bool);
-        DECLARE_FIELDS_NAMES(PlayerId, Hardcore, Levels,                  MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, DoLimitedCrafting, CommonPlayerSpawnInfo, EnforceSecureChat);
+        DECLARE_FIELDS(
+            (int,      bool,     std::vector<Identifier>, VarInt,     VarInt,      VarInt,             bool,             bool,            bool,              CommonPlayerSpawnInfo, bool),
+            (PlayerId, Hardcore, Levels,                  MaxPlayers, ChunkRadius, SimulationDistance, ReducedDebugInfo, ShowDeathScreen, DoLimitedCrafting, CommonPlayerSpawnInfo, EnforceSecureChat)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

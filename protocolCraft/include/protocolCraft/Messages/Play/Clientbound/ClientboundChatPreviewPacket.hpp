@@ -17,8 +17,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chat Preview";
 
-        DECLARE_FIELDS_TYPES(int,     std::optional<Chat>);
-        DECLARE_FIELDS_NAMES(QueryId, Preview);
+        DECLARE_FIELDS(
+            (int,     std::optional<Chat>),
+            (QueryId, Preview)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(QueryId);

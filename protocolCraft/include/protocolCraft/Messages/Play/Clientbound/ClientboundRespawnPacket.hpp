@@ -61,32 +61,50 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Respawn";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(int,       unsigned char, unsigned char,  std::string);
-        DECLARE_FIELDS_NAMES(Dimension, Difficulty,    PlayerGameType, LevelType);
+        DECLARE_FIELDS(
+            (int,       unsigned char, unsigned char,  std::string),
+            (Dimension, Difficulty,    PlayerGameType, LevelType)
+        );
 #elif PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS_TYPES(int,       unsigned char,  std::string);
-        DECLARE_FIELDS_NAMES(Dimension, PlayerGameType, LevelType);
+        DECLARE_FIELDS(
+            (int,       unsigned char,  std::string),
+            (Dimension, PlayerGameType, LevelType)
+        );
 #elif PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(int,       long long int, unsigned char,  std::string);
-        DECLARE_FIELDS_NAMES(Dimension, Seed,          PlayerGameType, LevelType);
+        DECLARE_FIELDS(
+            (int,       long long int, unsigned char,  std::string),
+            (Dimension, Seed,          PlayerGameType, LevelType)
+        );
 #elif PROTOCOL_VERSION < 751 /* < 1.16.2 */
-        DECLARE_FIELDS_TYPES(Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   bool);
-        DECLARE_FIELDS_NAMES(Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, KeepAllPlayerData);
+        DECLARE_FIELDS(
+            (Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   bool),
+            (Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, KeepAllPlayerData)
+        );
 #elif PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(NBT::UnnamedValue, Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   bool);
-        DECLARE_FIELDS_NAMES(DimensionType,     Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, KeepAllPlayerData);
+        DECLARE_FIELDS(
+            (NBT::UnnamedValue, Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   bool),
+            (DimensionType,     Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, KeepAllPlayerData)
+        );
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(Identifier,    Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   bool,              std::optional<GlobalPos>);
-        DECLARE_FIELDS_NAMES(DimensionType, Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, KeepAllPlayerData, LastDeathLocation);
+        DECLARE_FIELDS(
+            (Identifier,    Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   bool,              std::optional<GlobalPos>),
+            (DimensionType, Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, KeepAllPlayerData, LastDeathLocation)
+        );
 #elif PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(Identifier,    Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   unsigned char, std::optional<GlobalPos>);
-        DECLARE_FIELDS_NAMES(DimensionType, Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, DataToKeep,    LastDeathLocation);
+        DECLARE_FIELDS(
+            (Identifier,    Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   unsigned char, std::optional<GlobalPos>),
+            (DimensionType, Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, DataToKeep,    LastDeathLocation)
+        );
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS_TYPES(Identifier,    Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   unsigned char, std::optional<GlobalPos>, VarInt);
-        DECLARE_FIELDS_NAMES(DimensionType, Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, DataToKeep,    LastDeathLocation,        PortalCooldown);
+        DECLARE_FIELDS(
+            (Identifier,    Identifier, long long int, unsigned char,  unsigned char,          bool,    bool,   unsigned char, std::optional<GlobalPos>, VarInt),
+            (DimensionType, Dimension,  Seed,          PlayerGameType, PreviousPlayerGameType, IsDebug, IsFlat, DataToKeep,    LastDeathLocation,        PortalCooldown)
+        );
 #else
-        DECLARE_FIELDS_TYPES(CommonPlayerSpawnInfo, unsigned char);
-        DECLARE_FIELDS_NAMES(CommonPlayerSpawnInfo, DataToKeep);
+        DECLARE_FIELDS(
+            (CommonPlayerSpawnInfo, unsigned char),
+            (CommonPlayerSpawnInfo, DataToKeep)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

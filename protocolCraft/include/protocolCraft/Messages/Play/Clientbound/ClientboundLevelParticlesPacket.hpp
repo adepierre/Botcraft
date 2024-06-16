@@ -48,11 +48,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Level Particles";
 
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS_TYPES(bool,            float, float, float, float, float, float, float,    int,   Particle);
-        DECLARE_FIELDS_NAMES(OverrideLimiter, X,     Y,     Z,     XDist, YDist, ZDist, MaxSpeed, Count, Particle);
+        DECLARE_FIELDS(
+            (bool,            float, float, float, float, float, float, float,    int,   Particle),
+            (OverrideLimiter, X,     Y,     Z,     XDist, YDist, ZDist, MaxSpeed, Count, Particle)
+        );
 #else
-        DECLARE_FIELDS_TYPES(bool,            double, double, double, float, float, float, float,    int,   Particle);
-        DECLARE_FIELDS_NAMES(OverrideLimiter, X,      Y,      Z,      XDist, YDist, ZDist, MaxSpeed, Count, Particle);
+        DECLARE_FIELDS(
+            (bool,            double, double, double, float, float, float, float,    int,   Particle),
+            (OverrideLimiter, X,      Y,      Z,      XDist, YDist, ZDist, MaxSpeed, Count, Particle)
+        );
 #endif
         DECLARE_SERIALIZE;
 

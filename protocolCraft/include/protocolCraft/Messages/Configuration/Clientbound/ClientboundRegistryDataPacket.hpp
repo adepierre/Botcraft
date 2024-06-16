@@ -29,11 +29,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Registry Data";
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(RegistryHolder);
+        DECLARE_FIELDS(
+            (NBT::UnnamedValue),
+            (RegistryHolder)
+        );
 #else
-        DECLARE_FIELDS_TYPES(Identifier, std::vector<PackedRegistryEntry>);
-        DECLARE_FIELDS_NAMES(Registry,   Entries);
+        DECLARE_FIELDS(
+            (Identifier, std::vector<PackedRegistryEntry>),
+            (Registry,   Entries)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -42,8 +42,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Chunk Cache Radius";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Radius);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Radius)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Radius);

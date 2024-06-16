@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border Warning Distance";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(WarningBlocks);
+        DECLARE_FIELDS(
+            (VarInt),
+            (WarningBlocks)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(WarningBlocks);

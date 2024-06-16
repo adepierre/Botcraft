@@ -22,8 +22,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Changed Ack";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Sequence);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Sequence)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Sequence);

@@ -31,11 +31,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Player Combat Kill";
 
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(VarInt,   int,      Chat);
-        DECLARE_FIELDS_NAMES(PlayerId, KillerId, Message);
+        DECLARE_FIELDS(
+            (VarInt,   int,      Chat),
+            (PlayerId, KillerId, Message)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,   Chat);
-        DECLARE_FIELDS_NAMES(PlayerId, Message);
+        DECLARE_FIELDS(
+            (VarInt,   Chat),
+            (PlayerId, Message)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

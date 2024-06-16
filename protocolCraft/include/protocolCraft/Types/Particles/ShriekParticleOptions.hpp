@@ -7,8 +7,10 @@ namespace ProtocolCraft
 {
     class ShriekParticleOptions : public ParticleOptions
     {
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Delay);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Delay)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Delay);

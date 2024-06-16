@@ -18,8 +18,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Ticking Step";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(TickingSteps);
+        DECLARE_FIELDS(
+            (VarInt),
+            (TickingSteps)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(TickingSteps);

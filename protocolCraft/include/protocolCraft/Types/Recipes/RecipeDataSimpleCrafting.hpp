@@ -10,8 +10,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         DECLARE_EMPTY;
 #else
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(CookingBookCategory);
+        DECLARE_FIELDS(
+            (VarInt),
+            (CookingBookCategory)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #endif
 

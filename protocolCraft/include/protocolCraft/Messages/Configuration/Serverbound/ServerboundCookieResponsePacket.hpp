@@ -15,8 +15,10 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x01;
         static constexpr std::string_view packet_name = "Cookie Response (Configuration)";
 
-        DECLARE_FIELDS_TYPES(Identifier, std::optional<std::vector<unsigned char>>);
-        DECLARE_FIELDS_NAMES(Key,        Payload);
+        DECLARE_FIELDS(
+            (Identifier, std::optional<std::vector<unsigned char>>),
+            (Key,        Payload)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(Key);

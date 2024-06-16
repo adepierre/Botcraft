@@ -7,8 +7,10 @@ namespace ProtocolCraft
 {
     class SaltSignature : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(long long int, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(Salt,          Signature);
+        DECLARE_FIELDS(
+            (long long int, std::vector<unsigned char>),
+            (Salt,          Signature)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Salt);

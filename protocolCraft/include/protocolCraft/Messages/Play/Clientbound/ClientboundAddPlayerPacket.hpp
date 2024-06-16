@@ -33,12 +33,16 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Add Player";
 
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS_TYPES(VarInt,   UUID,     double, double, double, unsigned char, unsigned char, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(EntityId, PlayerId, X,      Y,      Z,      YRot,          XRot,  RawMetadata);
+        DECLARE_FIELDS(
+            (VarInt,   UUID,     double, double, double, unsigned char, unsigned char, std::vector<unsigned char>),
+            (EntityId, PlayerId, X,      Y,      Z,      YRot,          XRot,          RawMetadata)
+        );
         DECLARE_SERIALIZE;
 #else
-        DECLARE_FIELDS_TYPES(VarInt,   UUID,     double, double, double, unsigned char, unsigned char);
-        DECLARE_FIELDS_NAMES(EntityId, PlayerId, X,      Y,      Z,      YRot,          XRot);
+        DECLARE_FIELDS(
+            (VarInt,   UUID,     double, double, double, unsigned char, unsigned char),
+            (EntityId, PlayerId, X,      Y,      Z,      YRot,          XRot)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #endif
 

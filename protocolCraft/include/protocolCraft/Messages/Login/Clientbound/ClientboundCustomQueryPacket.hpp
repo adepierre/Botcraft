@@ -13,8 +13,10 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x04;
         static constexpr std::string_view packet_name = "Custom Query";
 
-        DECLARE_FIELDS_TYPES(VarInt,        Identifier, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(TransactionId, Identifier, Data);
+        DECLARE_FIELDS(
+            (VarInt,        Identifier, std::vector<unsigned char>),
+            (TransactionId, Identifier, Data)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(TransactionId);

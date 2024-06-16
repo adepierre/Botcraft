@@ -46,14 +46,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Container Click";
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS_TYPES(unsigned char, short,   char,      short, VarInt,    Slot);
-        DECLARE_FIELDS_NAMES(ContainerId,   SlotNum, ButtonNum, Uid,   ClickType, CarriedItem);
+        DECLARE_FIELDS(
+            (unsigned char, short,   char,      short, VarInt,    Slot),
+            (ContainerId,   SlotNum, ButtonNum, Uid,   ClickType, CarriedItem)
+        );
 #elif PROTOCOL_VERSION < 756 /* < 1.17.1 */
-        DECLARE_FIELDS_TYPES(unsigned char, short,   char,      VarInt,    std::map<short, Slot>, Slot);
-        DECLARE_FIELDS_NAMES(ContainerId,   SlotNum, ButtonNum, ClickType, ChangedSlots,          CarriedItem);
+        DECLARE_FIELDS(
+            (unsigned char, short,   char,      VarInt,    std::map<short, Slot>, Slot),
+            (ContainerId,   SlotNum, ButtonNum, ClickType, ChangedSlots,          CarriedItem)
+        );
 #else
-        DECLARE_FIELDS_TYPES(unsigned char, VarInt,  short,   char,      VarInt,    std::map<short, Slot>, Slot);
-        DECLARE_FIELDS_NAMES(ContainerId,   StateId, SlotNum, ButtonNum, ClickType, ChangedSlots,          CarriedItem);
+        DECLARE_FIELDS(
+            (unsigned char, VarInt,  short,   char,      VarInt,    std::map<short, Slot>, Slot),
+            (ContainerId,   StateId, SlotNum, ButtonNum, ClickType, ChangedSlots,          CarriedItem)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -13,8 +13,10 @@ namespace ProtocolCraft
     {
         class BlockPredicate : public NetworkType
         {
-            DECLARE_FIELDS_TYPES(std::optional<HolderSet>, std::optional<StatePropertiesPredicate>, std::optional<NBT::UnnamedValue>);
-            DECLARE_FIELDS_NAMES(Blocks,                   Properties,                              Nbt);
+            DECLARE_FIELDS(
+                (std::optional<HolderSet>, std::optional<StatePropertiesPredicate>, std::optional<NBT::UnnamedValue>),
+                (Blocks,                   Properties,                              Nbt)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Blocks);

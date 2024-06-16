@@ -18,8 +18,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Ticking State";
 
-        DECLARE_FIELDS_TYPES(float,    bool);
-        DECLARE_FIELDS_NAMES(TickRate, IsFrozen);
+        DECLARE_FIELDS(
+            (float,    bool),
+            (TickRate, IsFrozen)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(TickRate);

@@ -45,17 +45,25 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Light Update";
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt,   VarInt,     VarInt,        VarInt,          std::vector<std::vector<char>>, std::vector<std::vector<char>>);
-        DECLARE_FIELDS_NAMES(X,      Z,      SkyYMask, BlockYMask, EmptySkyYMask, EmptyBlockYMask, SkyUpdates,                     BlockUpdates);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, VarInt,   VarInt,     VarInt,        VarInt,          std::vector<std::vector<char>>, std::vector<std::vector<char>>),
+            (X,      Z,      SkyYMask, BlockYMask, EmptySkyYMask, EmptyBlockYMask, SkyUpdates,                     BlockUpdates)
+        );
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, bool,       VarInt,   VarInt,     VarInt,        VarInt,          std::vector<std::vector<char>>, std::vector<std::vector<char>>);
-        DECLARE_FIELDS_NAMES(X,      Z,      TrustEdges, SkyYMask, BlockYMask, EmptySkyYMask, EmptyBlockYMask, SkyUpdates,                     BlockUpdates);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, bool,       VarInt,   VarInt,     VarInt,        VarInt,          std::vector<std::vector<char>>, std::vector<std::vector<char>>),
+            (X,      Z,      TrustEdges, SkyYMask, BlockYMask, EmptySkyYMask, EmptyBlockYMask, SkyUpdates,                     BlockUpdates)
+        );
 #elif PROTOCOL_VERSION < 757 /* < 1.18 */
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, bool,       std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>,          std::vector<std::vector<char>>, std::vector<std::vector<char>>);
-        DECLARE_FIELDS_NAMES(X,      Z,      TrustEdges, SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                              SkyUpdates,                     BlockUpdates);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, bool,       std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>,          std::vector<std::vector<char>>, std::vector<std::vector<char>>),
+            (X,      Z,      TrustEdges, SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                              SkyUpdates,                     BlockUpdates)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, ClientboundLightUpdatePacketData);
-        DECLARE_FIELDS_NAMES(X,      Z,      LightData);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, ClientboundLightUpdatePacketData),
+            (X,      Z,      LightData)
+        );
 #endif
 
         DECLARE_SERIALIZE;

@@ -41,8 +41,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Command Block";
 
-        DECLARE_FIELDS_TYPES(NetworkPosition, std::string, VarInt, char);
-        DECLARE_FIELDS_NAMES(Pos,             Command,     Mode,   Flags);
+        DECLARE_FIELDS(
+            (NetworkPosition, std::string, VarInt, char),
+            (Pos,             Command,     Mode,   Flags)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Pos);

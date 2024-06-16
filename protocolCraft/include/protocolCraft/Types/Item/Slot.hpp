@@ -12,17 +12,25 @@ namespace ProtocolCraft
     class Slot : public NetworkType
     {
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(short,   char,      short,      NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(BlockId, ItemCount, ItemDamage, Nbt);
+        DECLARE_FIELDS(
+            (short,   char,      short,      NBT::UnnamedValue),
+            (BlockId, ItemCount, ItemDamage, Nbt)
+        );
 #elif PROTOCOL_VERSION < 404 /* < 1.13.2 */
-        DECLARE_FIELDS_TYPES(short,  char,      NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(ItemId, ItemCount, Nbt);
+        DECLARE_FIELDS(
+            (short,  char,      NBT::UnnamedValue),
+            (ItemId, ItemCount, Nbt)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(bool,    VarInt, char,      NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(Present, ItemId, ItemCount, Nbt);
+        DECLARE_FIELDS(
+            (bool,    VarInt, char,      NBT::UnnamedValue),
+            (Present, ItemId, ItemCount, Nbt)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,    VarInt, Components::DataComponentPatch);
-        DECLARE_FIELDS_NAMES(ItemCount, ItemId, Components);
+        DECLARE_FIELDS(
+            (VarInt,    VarInt, Components::DataComponentPatch),
+            (ItemCount, ItemId, Components)
+        );
 #endif
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */

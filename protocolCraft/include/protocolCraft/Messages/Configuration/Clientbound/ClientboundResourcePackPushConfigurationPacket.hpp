@@ -19,8 +19,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Resource Pack Push (Configuration)";
 
-        DECLARE_FIELDS_TYPES(UUID, std::string, std::string, bool,     std::optional<Chat>);
-        DECLARE_FIELDS_NAMES(Uuid, Url,         Hash,        Required, Prompt);
+        DECLARE_FIELDS(
+            (UUID, std::string, std::string, bool,     std::optional<Chat>),
+            (Uuid, Url,         Hash,        Required, Prompt)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Uuid);

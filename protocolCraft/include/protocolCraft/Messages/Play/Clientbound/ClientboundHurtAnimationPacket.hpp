@@ -20,8 +20,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Hurt Animation";
 
-        DECLARE_FIELDS_TYPES(VarInt, float);
-        DECLARE_FIELDS_NAMES(Id_, Yaw);
+        DECLARE_FIELDS(
+            (VarInt, float),
+            (Id_, Yaw)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Id_);

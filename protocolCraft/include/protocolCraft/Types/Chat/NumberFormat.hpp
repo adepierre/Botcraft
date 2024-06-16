@@ -9,8 +9,10 @@ namespace ProtocolCraft
 {
     class NumberFormat : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(VarInt, std::optional<Chat>);
-        DECLARE_FIELDS_NAMES(Type,   Format);
+        DECLARE_FIELDS(
+            (VarInt, std::optional<Chat>),
+            (Type,   Format)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(Type);

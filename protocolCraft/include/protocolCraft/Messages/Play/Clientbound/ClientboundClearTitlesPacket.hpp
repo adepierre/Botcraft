@@ -26,8 +26,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Clear Titles";
 
-        DECLARE_FIELDS_TYPES(bool);
-        DECLARE_FIELDS_NAMES(ResetTimes);
+        DECLARE_FIELDS(
+            (bool),
+            (ResetTimes)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ResetTimes);

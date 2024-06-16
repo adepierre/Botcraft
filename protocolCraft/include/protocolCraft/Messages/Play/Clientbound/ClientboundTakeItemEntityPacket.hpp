@@ -47,8 +47,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Take Item Entity";
 
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt);
-        DECLARE_FIELDS_NAMES(ItemId, PlayerId, Amount);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, VarInt),
+            (ItemId, PlayerId, Amount)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ItemId);

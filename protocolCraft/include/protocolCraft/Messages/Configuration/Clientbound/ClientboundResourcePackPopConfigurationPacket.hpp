@@ -18,8 +18,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Resource Pack Pop (Configuration)";
 
-        DECLARE_FIELDS_TYPES(UUID);
-        DECLARE_FIELDS_NAMES(Uuid);
+        DECLARE_FIELDS(
+            (UUID),
+            (Uuid)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Uuid);

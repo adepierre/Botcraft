@@ -9,8 +9,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypePotionContents : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(std::optional<VarInt>, std::optional<int>, std::vector<MobEffectInstance>);
-            DECLARE_FIELDS_NAMES(PotionId,              CustomColor,        CustomEffects);
+            DECLARE_FIELDS(
+                (std::optional<VarInt>, std::optional<int>, std::vector<MobEffectInstance>),
+                (PotionId,              CustomColor,        CustomEffects)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(PotionId);

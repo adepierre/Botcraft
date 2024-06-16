@@ -50,8 +50,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Attributes";
 
-        DECLARE_FIELDS_TYPES(VarInt,   std::vector<EntityProperty>);
-        DECLARE_FIELDS_NAMES(EntityId, Attributes);
+        DECLARE_FIELDS(
+            (VarInt,   std::vector<EntityProperty>),
+            (EntityId, Attributes)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(EntityId);

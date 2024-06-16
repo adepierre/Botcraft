@@ -18,8 +18,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Slot State Changed";
 
-        DECLARE_FIELDS_TYPES(VarInt, VarInt,      bool);
-        DECLARE_FIELDS_NAMES(SlotId, ContainerId, NewState);
+        DECLARE_FIELDS(
+            (VarInt, VarInt,      bool),
+            (SlotId, ContainerId, NewState)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(SlotId);

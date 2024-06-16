@@ -29,8 +29,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Initialize Border";
 
-        DECLARE_FIELDS_TYPES(double,     double,     double,  double,  VarLong,  VarInt,             VarInt,        VarInt);
-        DECLARE_FIELDS_NAMES(NewCenterX, NewCenterZ, OldSize, NewSize, LerpTime, NewAbsoluteMaxSize, WarningBlocks, WarningTime);
+        DECLARE_FIELDS(
+            (double,     double,     double,  double,  VarLong,  VarInt,             VarInt,        VarInt),
+            (NewCenterX, NewCenterZ, OldSize, NewSize, LerpTime, NewAbsoluteMaxSize, WarningBlocks, WarningTime)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(NewCenterX);

@@ -48,11 +48,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Place Recipe";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(char,        VarInt, bool);
-        DECLARE_FIELDS_NAMES(ContainerId, Recipe, ShiftDown);
+        DECLARE_FIELDS(
+            (char,        VarInt, bool),
+            (ContainerId, Recipe, ShiftDown)
+        );
 #else
-        DECLARE_FIELDS_TYPES(char,        Identifier, bool);
-        DECLARE_FIELDS_NAMES(ContainerId, Recipe,     ShiftDown);
+        DECLARE_FIELDS(
+            (char,        Identifier, bool),
+            (ContainerId, Recipe,     ShiftDown)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

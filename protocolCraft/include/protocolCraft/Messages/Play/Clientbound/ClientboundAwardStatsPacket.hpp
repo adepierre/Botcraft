@@ -38,11 +38,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Award Stats";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(std::map<std::string, VarInt>);
-        DECLARE_FIELDS_NAMES(Stats);
+        DECLARE_FIELDS(
+            (std::map<std::string, VarInt>),
+            (Stats)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::map<std::pair<VarInt, VarInt>, VarInt>);
-        DECLARE_FIELDS_NAMES(Stats);
+        DECLARE_FIELDS(
+            (std::map<std::pair<VarInt, VarInt>, VarInt>),
+            (Stats)
+        );
 #endif
         DECLARE_READ;
         DECLARE_WRITE;

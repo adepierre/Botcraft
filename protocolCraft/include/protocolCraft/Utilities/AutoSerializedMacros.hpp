@@ -19,24 +19,24 @@
         static constexpr std::array<std::string_view, 0> json_names = {}; \
         DECLARE_READ_WRITE_SERIALIZE
 
-// Creates a tuple with the given types, adds FieldsTupleAccessor as friend
-#define DECLARE_FIELDS_TYPES(...)                                  \
-    private:                                                       \
-        using FieldsTuple = std::tuple<__VA_ARGS__>;               \
-        Internal::SerializedType<FieldsTuple>::storage_type fields
-
-// Initialize fields names, must have the same number of elements than FieldsTuple
-#define DECLARE_FIELDS_NAMES(...)                                                                                          \
+#define _ARGS(...) __VA_ARGS__
+#define _STR_ARGS(...) #__VA_ARGS__
+// Creates a tuple with the given types, and names its elements with Names. Both sets should be comma separated values between ()
+#define DECLARE_FIELDS(Types, Names)                                                                                       \
     private:                                                                                                               \
-        enum class FieldsEnum { None = -1, __VA_ARGS__, NUM_FIELDS };                                                      \
+        using FieldsTuple = std::tuple<_ARGS Types>;                                                                       \
+        Internal::SerializedType<FieldsTuple>::storage_type fields;                                                        \
+    private:                                                                                                               \
+        enum class FieldsEnum { None = -1, _ARGS Names, NUM_FIELDS };                                                      \
         static constexpr std::array names =                                                                                \
-            Internal::SplitComma<static_cast<size_t>(FieldsEnum::NUM_FIELDS)>(#__VA_ARGS__);                               \
+            Internal::SplitComma<static_cast<size_t>(FieldsEnum::NUM_FIELDS)>(_STR_ARGS Names);                            \
         static constexpr std::array json_names_length =                                                                    \
             Internal::GetSnakeCaseSize<static_cast<size_t>(FieldsEnum::NUM_FIELDS)>(names);                                \
         static constexpr std::tuple tuple_json_names =                                                                     \
             Internal::ArrayToSnakeCaseTuple<static_cast<size_t>(FieldsEnum::NUM_FIELDS), json_names_length>(names);        \
         static constexpr std::array json_names = Internal::TupleOfArraysToArrayOfStr(tuple_json_names);                    \
         static_assert(std::size(json_names) == std::tuple_size_v<FieldsTuple>, "Fields types and names count don't match")
+
 
 // Basically just a Get and a Set function, by value if it's a simple type, and by const ref if not
 // We don't use ::type in using name##_type so IDE autocomplete can still return the proper type

@@ -39,11 +39,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Custom Sound";
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(std::string, VarInt, int, int, int, float,  float);
-        DECLARE_FIELDS_NAMES(Name_,       Source, X,   Y,   Z,   Volume, Pitch);
+        DECLARE_FIELDS(
+            (std::string, VarInt, int, int, int, float,  float),
+            (Name_,       Source, X,   Y,   Z,   Volume, Pitch)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string, VarInt, int, int, int, float,  float, long long int);
-        DECLARE_FIELDS_NAMES(Name_,       Source, X,   Y,   Z,   Volume, Pitch, Seed);
+        DECLARE_FIELDS(
+            (std::string, VarInt, int, int, int, float,  float, long long int),
+            (Name_,       Source, X,   Y,   Z,   Volume, Pitch, Seed)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

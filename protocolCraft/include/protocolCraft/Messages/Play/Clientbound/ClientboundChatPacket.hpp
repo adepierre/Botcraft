@@ -33,11 +33,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Chat";
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(Chat,    char);
-        DECLARE_FIELDS_NAMES(Message, Type);
+        DECLARE_FIELDS(
+            (Chat,    char),
+            (Message, Type)
+        );
 #else
-        DECLARE_FIELDS_TYPES(Chat,    char, UUID);
-        DECLARE_FIELDS_NAMES(Message, Type, Sender);
+        DECLARE_FIELDS(
+            (Chat,    char, UUID),
+            (Message, Type, Sender)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

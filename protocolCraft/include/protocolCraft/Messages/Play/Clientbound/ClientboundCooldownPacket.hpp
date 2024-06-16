@@ -43,8 +43,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Cooldown";
 
-        DECLARE_FIELDS_TYPES(VarInt, VarInt);
-        DECLARE_FIELDS_NAMES(Item,   Duration);
+        DECLARE_FIELDS(
+            (VarInt, VarInt),
+            (Item,   Duration)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Item);

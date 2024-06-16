@@ -43,8 +43,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Pick Item";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Slot);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Slot)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Slot);

@@ -32,8 +32,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Title Text";
 
-        DECLARE_FIELDS_TYPES(Chat);
-        DECLARE_FIELDS_NAMES(Text);
+        DECLARE_FIELDS(
+            (Chat),
+            (Text)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Text);

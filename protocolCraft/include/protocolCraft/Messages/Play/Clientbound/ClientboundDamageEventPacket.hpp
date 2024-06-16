@@ -20,8 +20,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Damage Event";
 
-        DECLARE_FIELDS_TYPES(VarInt,   VarInt,       VarInt,        VarInt,         std::optional<std::array<double, 3>>);
-        DECLARE_FIELDS_NAMES(EntityId, SourceTypeId, SourceCauseId, SourceDirectId, SourcePosition);
+        DECLARE_FIELDS(
+            (VarInt,   VarInt,       VarInt,        VarInt,         std::optional<std::array<double, 3>>),
+            (EntityId, SourceTypeId, SourceCauseId, SourceDirectId, SourcePosition)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(EntityId);

@@ -45,8 +45,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Custom Payload";
 
-        DECLARE_FIELDS_TYPES(std::string, std::vector<unsigned char>, std::shared_ptr<PluginObject>);
-        DECLARE_FIELDS_NAMES(Identifier,  RawData,                    ParsedData);
+        DECLARE_FIELDS(
+            (std::string, std::vector<unsigned char>, std::shared_ptr<PluginObject>),
+            (Identifier,  RawData,                    ParsedData)
+        );
 
         GETTER_SETTER(Identifier);
         GETTER_SETTER(RawData);

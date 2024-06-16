@@ -28,12 +28,16 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Add Mob";
 
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    short, short, short, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      YRot,          XRot,                  YHeadRot, Xd,    Yd,    Zd,    RawMetadata);
+        DECLARE_FIELDS(
+            (VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    short, short, short, std::vector<unsigned char>),
+            (Id_,    Uuid, Type,   X,      Y,      Z,      YRot,          XRot,                  YHeadRot, Xd,    Yd,    Zd,    RawMetadata)
+        );
         DECLARE_SERIALIZE;
 #else
-        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    short, short, short);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      YRot,          XRot,                  YHeadRot, Xd,    Yd,    Zd);
+        DECLARE_FIELDS(
+            (VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    short, short, short),
+            (Id_,    Uuid, Type,   X,      Y,      Z,      YRot,          XRot,                  YHeadRot, Xd,    Yd,    Zd)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #endif
 

@@ -49,11 +49,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Forget Level Chunk";
 
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS_TYPES(int, int);
-        DECLARE_FIELDS_NAMES(X,   Z);
+        DECLARE_FIELDS(
+            (int, int),
+            (X,   Z)
+        );
 #else
-        DECLARE_FIELDS_TYPES(ChunkPos);
-        DECLARE_FIELDS_NAMES(Pos);
+        DECLARE_FIELDS(
+            (ChunkPos),
+            (Pos)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

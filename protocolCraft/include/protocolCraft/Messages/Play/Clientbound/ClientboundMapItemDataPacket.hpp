@@ -45,14 +45,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Map Item Data";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(VarInt, char,  bool,             std::vector<MapDecoration>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(MapId,  Scale, TrackingPosition, Decorations,                Width,         Height,        StartX,        StartZ,        MapColors);
+        DECLARE_FIELDS(
+            (VarInt, char,  bool,             std::vector<MapDecoration>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>),
+            (MapId,  Scale, TrackingPosition, Decorations,                Width,         Height,        StartX,        StartZ,        MapColors)
+        );
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS_TYPES(VarInt, char,  bool,             bool,   std::vector<MapDecoration>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(MapId,  Scale, TrackingPosition, Locked, Decorations,                Width,         Height,        StartX,        StartZ,        MapColors);
+        DECLARE_FIELDS(
+            (VarInt, char,  bool,             bool,   std::vector<MapDecoration>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>),
+            (MapId,  Scale, TrackingPosition, Locked, Decorations,                Width,         Height,        StartX,        StartZ,        MapColors)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, char,  bool,   std::optional<std::vector<MapDecoration>>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(MapId,  Scale, Locked, Decorations,                               Width,         Height,        StartX,        StartZ,        MapColors);
+        DECLARE_FIELDS(
+            (VarInt, char,  bool,   std::optional<std::vector<MapDecoration>>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>),
+            (MapId,  Scale, Locked, Decorations,                               Width,         Height,        StartX,        StartZ,        MapColors)
+        );
 #endif
         GETTER_SETTER(MapId);
         GETTER_SETTER(Scale);

@@ -44,17 +44,25 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Client Information";
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS_TYPES(std::string, char,         VarInt,         bool,       unsigned char,      VarInt);
-        DECLARE_FIELDS_NAMES(Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand);
+        DECLARE_FIELDS(
+            (std::string, char,         VarInt,         bool,       unsigned char,      VarInt),
+            (Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand)
+        );
 #elif PROTOCOL_VERSION < 757 /* < 1.18 */
-        DECLARE_FIELDS_TYPES(std::string, char,         VarInt,         bool,       unsigned char,      VarInt,   bool);
-        DECLARE_FIELDS_NAMES(Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand, TextFilteringEnabled);
+        DECLARE_FIELDS(
+            (std::string, char,         VarInt,         bool,       unsigned char,      VarInt,   bool),
+            (Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand, TextFilteringEnabled)
+        );
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS_TYPES(std::string, char,         VarInt,         bool,       unsigned char,      VarInt,   bool,                 bool);
-        DECLARE_FIELDS_NAMES(Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand, TextFilteringEnabled, AllowListing);
+        DECLARE_FIELDS(
+            (std::string, char,         VarInt,         bool,       unsigned char,      VarInt,   bool,                 bool),
+            (Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand, TextFilteringEnabled, AllowListing)
+        );
 #else
-        DECLARE_FIELDS_TYPES(ClientInformation);
-        DECLARE_FIELDS_NAMES(ClientInformation);
+        DECLARE_FIELDS(
+            (ClientInformation),
+            (ClientInformation)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -16,8 +16,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chunk Batch Finished";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(BatchSize);
+        DECLARE_FIELDS(
+            (VarInt),
+            (BatchSize)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(BatchSize);

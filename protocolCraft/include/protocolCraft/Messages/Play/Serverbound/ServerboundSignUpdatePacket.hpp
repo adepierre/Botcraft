@@ -45,11 +45,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Sign Update";
 
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(NetworkPosition, std::array<std::string, 4>);
-        DECLARE_FIELDS_NAMES(Pos,             Lines);
+        DECLARE_FIELDS(
+            (NetworkPosition, std::array<std::string, 4>),
+            (Pos,             Lines)
+        );
 #else
-        DECLARE_FIELDS_TYPES(NetworkPosition, bool,        std::array<std::string, 4>);
-        DECLARE_FIELDS_NAMES(Pos,             IsFrontText, Lines);
+        DECLARE_FIELDS(
+            (NetworkPosition, bool,        std::array<std::string, 4>),
+            (Pos,             IsFrontText, Lines)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

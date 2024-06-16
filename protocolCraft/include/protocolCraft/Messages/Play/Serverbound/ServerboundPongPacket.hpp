@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Pong";
 
-        DECLARE_FIELDS_TYPES(int);
-        DECLARE_FIELDS_NAMES(Id_);
+        DECLARE_FIELDS(
+            (int),
+            (Id_)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Id_);

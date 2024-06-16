@@ -43,8 +43,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Entity Data";
 
-        DECLARE_FIELDS_TYPES(VarInt, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(Id_, PackedItems);
+        DECLARE_FIELDS(
+            (VarInt, std::vector<unsigned char>),
+            (Id_, PackedItems)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(Id_);

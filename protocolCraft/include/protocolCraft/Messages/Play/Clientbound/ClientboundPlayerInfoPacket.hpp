@@ -52,8 +52,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Info";
 
-        DECLARE_FIELDS_TYPES(DiffType<PlayerInfoAction, VarInt>, std::map<UUID, PlayerUpdate>);
-        DECLARE_FIELDS_NAMES(Action,                             Entries);
+        DECLARE_FIELDS(
+            (DiffType<PlayerInfoAction, VarInt>, std::map<UUID, PlayerUpdate>),
+            (Action,                             Entries)
+        );
 
         GETTER_SETTER(Action);
         GETTER_SETTER(Entries);

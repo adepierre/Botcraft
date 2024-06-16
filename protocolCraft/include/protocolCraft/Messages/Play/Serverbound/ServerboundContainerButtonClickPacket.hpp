@@ -38,11 +38,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Container Button Click";
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(char,        char);
-        DECLARE_FIELDS_NAMES(ContainerId, ButtonId);
+        DECLARE_FIELDS(
+            (char,        char),
+            (ContainerId, ButtonId)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,      VarInt);
-        DECLARE_FIELDS_NAMES(ContainerId, ButtonId);
+        DECLARE_FIELDS(
+            (VarInt,      VarInt),
+            (ContainerId, ButtonId)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

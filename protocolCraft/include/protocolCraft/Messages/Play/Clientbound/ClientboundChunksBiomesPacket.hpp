@@ -21,8 +21,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chunks Biome";
 
-        DECLARE_FIELDS_TYPES(std::vector<ChunkBiomeData>);
-        DECLARE_FIELDS_NAMES(ChunkBiomeData);
+        DECLARE_FIELDS(
+            (std::vector<ChunkBiomeData>),
+            (ChunkBiomeData)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ChunkBiomeData);

@@ -44,8 +44,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Player Pos";
 
-        DECLARE_FIELDS_TYPES(double, double, double, bool);
-        DECLARE_FIELDS_NAMES(X,      Y,      Z,      OnGround);
+        DECLARE_FIELDS(
+            (double, double, double, bool),
+            (X,      Y,      Z,      OnGround)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(X);

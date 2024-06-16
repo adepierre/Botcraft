@@ -24,8 +24,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Info Remove";
 
-        DECLARE_FIELDS_TYPES(std::vector<UUID>);
-        DECLARE_FIELDS_NAMES(ProfileIds);
+        DECLARE_FIELDS(
+            (std::vector<UUID>),
+            (ProfileIds)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ProfileIds);

@@ -43,8 +43,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Entity Rot";
 
-        DECLARE_FIELDS_TYPES(VarInt,   unsigned char, unsigned char, bool);
-        DECLARE_FIELDS_NAMES(EntityId, XRot,          YRot,          OnGround);
+        DECLARE_FIELDS(
+            (VarInt,   unsigned char, unsigned char, bool),
+            (EntityId, XRot,          YRot,          OnGround)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(EntityId);

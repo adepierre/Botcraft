@@ -15,14 +15,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Key";
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(std::vector<unsigned char>, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(KeyBytes,                   Nonce);
+        DECLARE_FIELDS(
+            (std::vector<unsigned char>, std::vector<unsigned char>),
+            (KeyBytes,                   Nonce)
+        );
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(std::vector<unsigned char>, std::vector<unsigned char>, SaltSignature);
-        DECLARE_FIELDS_NAMES(KeyBytes,                   Nonce,                      SaltSignature);
+        DECLARE_FIELDS(
+            (std::vector<unsigned char>, std::vector<unsigned char>, SaltSignature),
+            (KeyBytes,                   Nonce,                      SaltSignature)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::vector<unsigned char>, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(KeyBytes,                   EncryptedChallenge);
+        DECLARE_FIELDS(
+            (std::vector<unsigned char>, std::vector<unsigned char>),
+            (KeyBytes,                   EncryptedChallenge)
+        );
 #endif
 
         GETTER_SETTER(KeyBytes);

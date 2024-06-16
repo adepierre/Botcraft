@@ -44,8 +44,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Face Player";
 
-        DECLARE_FIELDS_TYPES(VarInt,     double, double, double, bool,     VarInt, VarInt);
-        DECLARE_FIELDS_NAMES(FromAnchor, X,      Y,      Z,      AtEntity, Entity, ToAnchor);
+        DECLARE_FIELDS(
+            (VarInt,     double, double, double, bool,     VarInt, VarInt),
+            (FromAnchor, X,      Y,      Z,      AtEntity, Entity, ToAnchor)
+        );
 
         GETTER_SETTER(FromAnchor);
         GETTER_SETTER(X);

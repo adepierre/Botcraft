@@ -46,11 +46,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Player Action";
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, char);
-        DECLARE_FIELDS_NAMES(Action, Pos,             Direction);
+        DECLARE_FIELDS(
+            (VarInt, NetworkPosition, char),
+            (Action, Pos,             Direction)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, char,      VarInt);
-        DECLARE_FIELDS_NAMES(Action, Pos,             Direction, Sequence);
+        DECLARE_FIELDS(
+            (VarInt, NetworkPosition, char,      VarInt),
+            (Action, Pos,             Direction, Sequence)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -9,8 +9,10 @@ namespace ProtocolCraft
 {
     class AdvancementDisplay : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(Chat,  Chat,        Slot, VarInt,    int,   std::optional<Identifier>, float,  float);
-        DECLARE_FIELDS_NAMES(Title, Description, Icon, FrameType, Flags, BackgroundTexture,         XCoord, YCoord);
+        DECLARE_FIELDS(
+            (Chat,  Chat,        Slot, VarInt,    int,   std::optional<Identifier>, float,  float),
+            (Title, Description, Icon, FrameType, Flags, BackgroundTexture,         XCoord, YCoord)
+        );
         // Manually declare read/write because of the flags thing
         DECLARE_SERIALIZE;
 

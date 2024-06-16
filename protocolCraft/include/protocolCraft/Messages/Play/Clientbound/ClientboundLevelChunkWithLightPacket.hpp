@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Level Chunk With Light";
 
-        DECLARE_FIELDS_TYPES(int, int, ClientboundLevelChunkPacketData, ClientboundLightUpdatePacketData);
-        DECLARE_FIELDS_NAMES(X,   Z,   ChunkData,                       LightData);
+        DECLARE_FIELDS(
+            (int, int, ClientboundLevelChunkPacketData, ClientboundLightUpdatePacketData),
+            (X,   Z,   ChunkData,                       LightData)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(X);

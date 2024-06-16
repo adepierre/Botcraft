@@ -42,8 +42,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Merchant Offers";
 
-        DECLARE_FIELDS_TYPES(VarInt,      std::vector<MerchantOffer>, VarInt,        VarInt,     bool,        bool);
-        DECLARE_FIELDS_NAMES(ContainerId, Offers,                     VillagerLevel, VillagerXp, ShowProgress, CanRestock);
+        DECLARE_FIELDS(
+            (VarInt,      std::vector<MerchantOffer>, VarInt,        VarInt,     bool,        bool),
+            (ContainerId, Offers,                     VillagerLevel, VillagerXp, ShowProgress, CanRestock)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(ContainerId);

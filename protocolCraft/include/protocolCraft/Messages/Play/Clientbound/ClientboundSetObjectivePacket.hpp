@@ -51,14 +51,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Objective";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(std::string,   char,   std::string, std::string);
-        DECLARE_FIELDS_NAMES(ObjectiveName, Method, DisplayName, RenderType);
+        DECLARE_FIELDS(
+            (std::string,   char,   std::string, std::string),
+            (ObjectiveName, Method, DisplayName, RenderType)
+        );
 #elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_FIELDS_TYPES(std::string,   char,   Chat,        VarInt);
-        DECLARE_FIELDS_NAMES(ObjectiveName, Method, DisplayName, RenderType);
+        DECLARE_FIELDS(
+            (std::string,   char,   Chat,        VarInt),
+            (ObjectiveName, Method, DisplayName, RenderType)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string,   char,   Chat,        VarInt,     NumberFormat);
-        DECLARE_FIELDS_NAMES(ObjectiveName, Method, DisplayName, RenderType, NumberFormat);
+        DECLARE_FIELDS(
+            (std::string,   char,   Chat,        VarInt,     NumberFormat),
+            (ObjectiveName, Method, DisplayName, RenderType, NumberFormat)
+        );
 #endif
 
         GETTER_SETTER(ObjectiveName);
