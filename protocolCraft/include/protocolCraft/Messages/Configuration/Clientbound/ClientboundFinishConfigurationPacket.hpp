@@ -9,7 +9,7 @@ namespace ProtocolCraft
     public:
 #if   PROTOCOL_VERSION < 766 /* < 1.20.5 */
         static constexpr int packet_id = 0x02;
-#elif PROTOCOL_VERSION == 766 /* 1.20.5/6 */
+#elif PROTOCOL_VERSION == 766 /* 1.20.5/6 */ || PROTOCOL_VERSION == 767 /* 1.21 */
         static constexpr int packet_id = 0x03;
 #else
 #error "Protocol version not implemented"

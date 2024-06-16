@@ -26,7 +26,9 @@
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundKeepAlivePacket.hpp"
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundPingPacket.hpp"
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundRegistryDataPacket.hpp"
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateTagsPacket.hpp"
 #endif
@@ -40,6 +42,10 @@
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundStoreCookiePacket.hpp"
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundSelectKnownPacksPacket.hpp"
 #include "protocolCraft/Messages/Configuration/Clientbound/ClientboundTransferPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundCustomReportDetailsPacket.hpp"
+#include "protocolCraft/Messages/Configuration/Clientbound/ClientboundServerLinksPacket.hpp"
 #endif
 
 // Play clientbound
@@ -270,6 +276,10 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundStoreCookiePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTransferPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundCustomReportDetailsPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundServerLinksPacket.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -312,6 +322,10 @@ namespace ProtocolCraft
         ClientboundStoreCookieConfigurationPacket,
         ClientboundSelectKnownPacksPacket,
         ClientboundTransferConfigurationPacket,
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        ClientboundCustomReportDetailsConfigurationPacket,
+        ClientboundServerLinksConfigurationPacket,
 #endif
         ClientboundUpdateEnabledFeaturesPacket,
         ClientboundUpdateTagsConfigurationPacket
@@ -548,6 +562,10 @@ namespace ProtocolCraft
         ClientboundProjectilePowerPacket,
         ClientboundStoreCookiePacket,
         ClientboundTransferPacket,
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        ClientboundCustomReportDetailsPacket,
+        ClientboundServerLinksPacket,
 #endif
         ClientboundSetCarriedItemPacket
     >;

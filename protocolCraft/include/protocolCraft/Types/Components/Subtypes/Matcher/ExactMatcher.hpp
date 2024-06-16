@@ -1,6 +1,6 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #pragma once
-#include "protocolCraft/Types/Components/Subtypes/Matcher/ValueMatcher.hpp"
+#include "protocolCraft/NetworkType.hpp"
 
 #include <string>
 
@@ -8,7 +8,7 @@ namespace ProtocolCraft
 {
     namespace Components
     {
-        class ExactMatcher : public ValueMatcher
+        class ExactMatcher : public NetworkType
         {
             DECLARE_FIELDS_TYPES(std::string);
             DECLARE_FIELDS_NAMES(Value);

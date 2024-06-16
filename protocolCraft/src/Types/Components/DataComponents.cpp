@@ -40,6 +40,9 @@
 #include "protocolCraft/Types/Components/DataComponentTypeUnit.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeWritableBookContent.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeWrittenBookContent.hpp"
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+#include "protocolCraft/Types/Components/DataComponentTypeJukeboxPlayable.hpp"
+#endif
 
 #include "protocolCraft/Utilities/PrivateTemplates.hpp"
 
@@ -58,6 +61,7 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
         DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
         DEFINE_NETWORK_TYPE(ToolRule);
+        DEFINE_SERIALIZE(PropertyMatcher);
 
         DEFINE_NETWORK_TYPE(DataComponentTypeAdventureModePredicate);
         DEFINE_NETWORK_TYPE(DataComponentTypeArmorTrim);
@@ -97,6 +101,9 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypeUnit);
         DEFINE_NETWORK_TYPE(DataComponentTypeWritableBookContent);
         DEFINE_NETWORK_TYPE(DataComponentTypeWrittenBookContent);
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        DEFINE_NETWORK_TYPE(DataComponentTypeJukeboxPlayable);
+#endif
 
         std::string_view DataComponentTypesToString(const DataComponentTypes type)
         {
@@ -143,6 +150,9 @@ namespace ProtocolCraft
                 "block_entity_data",
                 "instrument",
                 "ominous_bottle_amplifier",
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+                "jukebox_playable",
+#endif
                 "recipes",
                 "lodestone_tracker",
                 "firework_explosion",
@@ -234,6 +244,10 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypeItemEnchantments>();
             case DataComponentTypes::Lore:
                 return std::make_shared<DataComponentTypeItemLore>();
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+            case DataComponentTypes::JukeboxPlayable:
+                return std::make_shared<DataComponentTypeJukeboxPlayable>();
+#endif
             case DataComponentTypes::Bees:
                 return std::make_shared<DataComponentTypeListBeehiveBlockEntityOccupant>();
             case DataComponentTypes::LodestoneTracker:

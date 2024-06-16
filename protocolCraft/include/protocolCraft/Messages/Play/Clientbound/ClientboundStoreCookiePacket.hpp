@@ -11,7 +11,7 @@ namespace ProtocolCraft
     class ClientboundStoreCookiePacket : public BaseMessage<ClientboundStoreCookiePacket>
     {
     public:
-#if   PROTOCOL_VERSION == 766 /* 1.20.5/6 */
+#if   PROTOCOL_VERSION == 766 /* 1.20.5/6 */ || PROTOCOL_VERSION == 767 /* 1.21 */
         static constexpr int packet_id = 0x6B;
 #else
 #error "Protocol version not implemented"

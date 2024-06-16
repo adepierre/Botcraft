@@ -56,6 +56,9 @@ namespace ProtocolCraft
             BlockEntityData,
             Instrument,
             OminousBottleAmplifier,
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+            JukeboxPlayable,
+#endif
             Recipes,
             LodestoneTracker,
             FireworkExplosion,

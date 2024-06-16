@@ -66,6 +66,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCooldownPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomChatCompletionsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomPayloadPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomReportDetailsPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundCustomSoundPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDamageEventPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundDebugSamplePacket.hpp
@@ -125,6 +126,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSectionBlocksUpdatePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSelectAdvancementsTabPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundServerDataPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundServerLinksPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetActionBarTextPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderCenterPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderLerpSizePacket.hpp
@@ -250,6 +252,7 @@ set(protocolCraft_PUBLIC_HDR
 
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundCookieRequestPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundCustomPayloadPacket.hpp
+    include/protocolCraft/Messages/Configuration/Clientbound/ClientboundCustomReportDetailsPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundDisconnectPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundFinishConfigurationPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundKeepAlivePacket.hpp
@@ -260,6 +263,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPopConfigurationPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundResourcePackPushConfigurationPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundSelectKnownPacksPacket.hpp
+    include/protocolCraft/Messages/Configuration/Clientbound/ClientboundServerLinksPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundStoreCookiePacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundTransferPacket.hpp
     include/protocolCraft/Messages/Configuration/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp
@@ -301,6 +305,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/PlayerUpdate.hpp
     include/protocolCraft/Types/Record.hpp
     include/protocolCraft/Types/SaltSignature.hpp
+    include/protocolCraft/Types/ServerLinksUnstrustedEntry.hpp
 
     include/protocolCraft/Types/Chat/Chat.hpp
     include/protocolCraft/Types/Chat/ChatMessageContent.hpp
@@ -353,6 +358,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/DataComponentTypeItemContainerContents.hpp
     include/protocolCraft/Types/Components/DataComponentTypeItemEnchantments.hpp
     include/protocolCraft/Types/Components/DataComponentTypeItemLore.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeJukeboxPlayable.hpp
     include/protocolCraft/Types/Components/DataComponentTypeListBeehiveBlockEntityOccupant.hpp
     include/protocolCraft/Types/Components/DataComponentTypeLodestoneTracker.hpp
     include/protocolCraft/Types/Components/DataComponentTypeMapId.hpp
@@ -384,7 +390,6 @@ set(protocolCraft_PUBLIC_HDR
 
     include/protocolCraft/Types/Components/Subtypes/Matcher/ExactMatcher.hpp
     include/protocolCraft/Types/Components/Subtypes/Matcher/RangedMatcher.hpp
-    include/protocolCraft/Types/Components/Subtypes/Matcher/ValueMatcher.hpp
 
     include/protocolCraft/Types/GameProfile/GameProfile.hpp
     include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp

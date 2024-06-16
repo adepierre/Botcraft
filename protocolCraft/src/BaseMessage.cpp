@@ -55,6 +55,10 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundSelectKnownPacksPacket);
     DEFINE_MESSAGE_CLASS(ClientboundTransferConfigurationPacket);
 #endif
+#if PROTOCOL_VERSION > 766 /* > 1.21 */
+    DEFINE_MESSAGE_CLASS(ClientboundCustomReportDetailsConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundServerLinksConfigurationPacket);
+#endif
 #endif
 
     // Play clientbound
@@ -313,6 +317,10 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundProjectilePowerPacket);
     DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundStoreCookiePacket);
     DEFINE_MESSAGE_CLASS(ClientboundTransferPacket);
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.21 */
+    DEFINE_MESSAGE_CLASS(ClientboundCustomReportDetailsPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundServerLinksPacket);
 #endif
 
 

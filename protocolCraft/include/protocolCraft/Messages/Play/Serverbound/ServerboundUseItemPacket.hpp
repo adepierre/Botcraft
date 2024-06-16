@@ -35,7 +35,7 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x35;
 #elif PROTOCOL_VERSION == 765 /* 1.20.3/4 */
         static constexpr int packet_id = 0x36;
-#elif PROTOCOL_VERSION == 766 /* 1.20.5/6 */
+#elif PROTOCOL_VERSION == 766 /* 1.20.5/6 */ || PROTOCOL_VERSION == 767 /* 1.21 */
         static constexpr int packet_id = 0x39;
 #else
 #error "Protocol version not implemented"
@@ -46,15 +46,22 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         DECLARE_FIELDS_TYPES(VarInt);
         DECLARE_FIELDS_NAMES(Hand);
-#else
+#elif PROTOCOL_VERSION < 767 /* < 1.21*/
         DECLARE_FIELDS_TYPES(VarInt, VarInt);
         DECLARE_FIELDS_NAMES(Hand,   Sequence);
+#else
+        DECLARE_FIELDS_TYPES(VarInt, VarInt,   float, float);
+        DECLARE_FIELDS_NAMES(Hand,   Sequence, YRot,  XRot);
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Hand);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         GETTER_SETTER(Sequence);
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        GETTER_SETTER(YRot);
+        GETTER_SETTER(XRot);
 #endif
     };
 } //ProtocolCraft

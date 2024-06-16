@@ -33,7 +33,7 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x20;
 #elif PROTOCOL_VERSION == 764 /* 1.20.2 */ || PROTOCOL_VERSION == 765 /* 1.20.3/4 */
         static constexpr int packet_id = 0x21;
-#elif PROTOCOL_VERSION == 766 /* 1.20.5/6 */
+#elif PROTOCOL_VERSION == 766 /* 1.20.5/6 */ || PROTOCOL_VERSION == 767 /* 1.21 */
         static constexpr int packet_id = 0x23;
 #else
 #error "Protocol version not implemented"
@@ -41,12 +41,21 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Horse Screen Open";
 
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         DECLARE_FIELDS_TYPES(char,        VarInt, int);
         DECLARE_FIELDS_NAMES(ContainerId, Size,   EntityId);
+#else
+        DECLARE_FIELDS_TYPES(char,        VarInt,           int);
+        DECLARE_FIELDS_NAMES(ContainerId, InventoryColumns, EntityId);
+#endif
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ContainerId);
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         GETTER_SETTER(Size);
+#else
+        GETTER_SETTER(InventoryColumns);
+#endif
         GETTER_SETTER(EntityId);
     };
 } //ProtocolCraft
