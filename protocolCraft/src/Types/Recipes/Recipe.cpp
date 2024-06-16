@@ -16,7 +16,7 @@
 #include "protocolCraft/Types/Recipes/RecipeDataSmithingTransform.hpp"
 #include "protocolCraft/Types/Recipes/RecipeDataSmithingTrim.hpp"
 #endif
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 namespace ProtocolCraft
 {

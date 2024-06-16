@@ -1,7 +1,5 @@
 #pragma once
 
-#include "protocolCraft/Utilities/ConstexprStrProcessing.hpp"
-
 // Declare ReadImpl virtual function for auto serializable types
 #define DECLARE_READ protected: virtual void ReadImpl(ReadIterator& iter, size_t& length) override
 // Declare WriteImpl virtual function for auto serializable types
@@ -57,21 +55,40 @@
         static_assert(true, "Forcing ;")
 
 // Define ReadImpl virtual function for auto serializable types
-#define DEFINE_READ(ClassName)                                     \
-    void ClassName::ReadImpl(ReadIterator& iter, size_t& length) { \
-        ReadTuple<FieldsTuple>(fields, iter, length);              \
+#define DEFINE_READ(ClassName)                                                                   \
+    void ClassName::ReadImpl(ReadIterator& iter, size_t& length) {                               \
+        Internal::loop<std::tuple_size_v<FieldsTuple>>([&](auto i) {                             \
+            using TupleElement = Internal::SerializedType<std::tuple_element_t<i, FieldsTuple>>; \
+            std::get<i>(fields) = ReadData<                                                      \
+                typename TupleElement::storage_type,                                             \
+                typename TupleElement::serialization_type>(iter, length);                        \
+        });                                                                                      \
     } static_assert(true, "Forcing ;")
 
 // Define WriteImpl virtual function for auto serializable types
-#define DEFINE_WRITE(ClassName)                                  \
-    void ClassName::WriteImpl(WriteContainer& container) const { \
-        WriteTuple<FieldsTuple>(fields, container);              \
+#define DEFINE_WRITE(ClassName)                                                                  \
+    void ClassName::WriteImpl(WriteContainer& container) const {                                 \
+        Internal::loop<std::tuple_size_v<FieldsTuple>>([&](auto i) {                             \
+            using TupleElement = Internal::SerializedType<std::tuple_element_t<i, FieldsTuple>>; \
+            WriteData<                                                                           \
+                typename TupleElement::storage_type,                                             \
+                typename TupleElement::serialization_type>(std::get<i>(fields), container);      \
+        });                                                                                      \
     } static_assert(true, "Forcing ;")
 
 // Define SerializeImpl virtual function for auto serializable types
-#define DEFINE_SERIALIZE(ClassName)                             \
-    Json::Value ClassName::SerializeImpl() const {              \
-        return SerializeTuple<FieldsTuple>(fields, json_names); \
+#define DEFINE_SERIALIZE(ClassName)                                                              \
+    Json::Value ClassName::SerializeImpl() const {                                               \
+        Json::Value output;                                                                      \
+        Internal::loop<std::tuple_size_v<FieldsTuple>>([&](auto i) {                             \
+            using TupleElement = Internal::SerializedType<std::tuple_element_t<i, FieldsTuple>>; \
+            const std::optional<Json::Value> serialized =                                        \
+                SerializeType<typename TupleElement::storage_type>(std::get<i>(fields));         \
+            if (serialized.has_value()) {                                                        \
+                output[std::string(json_names[i])] = serialized.value();                         \
+            }                                                                                    \
+        });                                                                                      \
+        return output;                                                                           \
     } static_assert(true, "Forcing ;")
 
 // Define a NetworkType with auto serializable fields

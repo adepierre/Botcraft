@@ -33,12 +33,12 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Add Player";
 
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS_TYPES(VarInt,   UUID,     double, double, double, Angle, Angle, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(EntityId, PlayerId, X,      Y,      Z,      YRot,  XRot,  RawMetadata);
+        DECLARE_FIELDS_TYPES(VarInt,   UUID,     double, double, double, unsigned char, unsigned char, std::vector<unsigned char>);
+        DECLARE_FIELDS_NAMES(EntityId, PlayerId, X,      Y,      Z,      YRot,          XRot,  RawMetadata);
         DECLARE_SERIALIZE;
 #else
-        DECLARE_FIELDS_TYPES(VarInt,   UUID,     double, double, double, Angle, Angle);
-        DECLARE_FIELDS_NAMES(EntityId, PlayerId, X,      Y,      Z,      YRot,  XRot);
+        DECLARE_FIELDS_TYPES(VarInt,   UUID,     double, double, double, unsigned char, unsigned char);
+        DECLARE_FIELDS_NAMES(EntityId, PlayerId, X,      Y,      Z,      YRot,          XRot);
         DECLARE_READ_WRITE_SERIALIZE;
 #endif
 
@@ -61,8 +61,8 @@ namespace ProtocolCraft
             SetX(ReadData<double>(iter, length));
             SetY(ReadData<double>(iter, length));
             SetZ(ReadData<double>(iter, length));
-            SetYRot(ReadData<Angle>(iter, length));
-            SetXRot(ReadData<Angle>(iter, length));
+            SetYRot(ReadData<unsigned char>(iter, length));
+            SetXRot(ReadData<unsigned char>(iter, length));
             SetRawMetadata(ReadByteArray(iter, length, length));
         }
 
@@ -73,8 +73,8 @@ namespace ProtocolCraft
             WriteData<double>(GetX(), container);
             WriteData<double>(GetY(), container);
             WriteData<double>(GetZ(), container);
-            WriteData<Angle>(GetYRot(), container);
-            WriteData<Angle>(GetXRot(), container);
+            WriteData<unsigned char>(GetYRot(), container);
+            WriteData<unsigned char>(GetXRot(), container);
             WriteByteArray(GetRawMetadata(), container);
         }
 #endif

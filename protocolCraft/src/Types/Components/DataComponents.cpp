@@ -44,7 +44,7 @@
 #include "protocolCraft/Types/Components/DataComponentTypeJukeboxPlayable.hpp"
 #endif
 
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 namespace ProtocolCraft
 {

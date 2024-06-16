@@ -3,6 +3,7 @@
 #include "protocolCraft/BinaryReadWrite.hpp"
 #include "protocolCraft/Utilities/Json.hpp"
 #include "protocolCraft/Utilities/AutoSerializedMacros.hpp"
+#include "protocolCraft/Utilities/ConstexprStrProcessing.hpp"
 
 namespace ProtocolCraft
 {

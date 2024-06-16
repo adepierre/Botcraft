@@ -47,7 +47,7 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Rotate Head";
 
-        DECLARE_FIELDS_TYPES(VarInt, Angle);
+        DECLARE_FIELDS_TYPES(VarInt,   unsigned char);
         DECLARE_FIELDS_NAMES(EntityId, YHeadRot);
         DECLARE_READ_WRITE_SERIALIZE;
 

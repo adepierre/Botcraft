@@ -17,7 +17,6 @@ namespace ProtocolCraft
     using ReadIterator = std::vector<unsigned char>::const_iterator;
     using WriteContainer = std::vector<unsigned char>;
 
-    using Angle = unsigned char;
     using UUID = std::array<unsigned char, 16>;
 
     using VarInt = VarType<int>;
@@ -208,7 +207,6 @@ namespace ProtocolCraft
 
             return output;
         }
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         // std::bitset
         else if constexpr (Internal::IsBitset<StorageType> && std::is_same_v<SerializationType, StorageType>)
         {
@@ -222,7 +220,6 @@ namespace ProtocolCraft
 
             return output;
         }
-#endif
         else
         {
             static_assert(Internal::dependant_false<SerializationType>, "Types not supported in ReadData");
@@ -345,7 +342,6 @@ namespace ProtocolCraft
                 WriteData<typename StorageType::mapped_type, typename SerializationType::mapped_type>(p.second, container);
             }
         }
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         // std::bitset
         else if constexpr (Internal::IsBitset<StorageType> && Internal::IsBitset<SerializationType>)
         {
@@ -360,7 +356,6 @@ namespace ProtocolCraft
             }
             WriteByteArray(bytes, container);
         }
-#endif
         else
         {
             static_assert(Internal::dependant_false<SerializationType>, "Types not supported in WriteData");

@@ -1,5 +1,5 @@
 #include "protocolCraft/Types/Particles/Particle.hpp"
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 #include "protocolCraft/Types/Particles/ParticleOptions.hpp"
 #include "protocolCraft/Types/Particles/BlockParticleOptions.hpp"

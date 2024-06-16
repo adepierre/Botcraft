@@ -1,5 +1,5 @@
 #include "protocolCraft/NetworkType.hpp"
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 #include "protocolCraft/Types/Advancement.hpp"
 #include "protocolCraft/Types/AdvancementDisplay.hpp"
