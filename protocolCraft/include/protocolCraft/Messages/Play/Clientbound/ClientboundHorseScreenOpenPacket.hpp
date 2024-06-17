@@ -42,11 +42,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Horse Screen Open";
 
 #if PROTOCOL_VERSION < 767 /* < 1.21 */
-        DECLARE_FIELDS_TYPES(char,        VarInt, int);
-        DECLARE_FIELDS_NAMES(ContainerId, Size,   EntityId);
+        DECLARE_FIELDS(
+            (char,        VarInt, int),
+            (ContainerId, Size,   EntityId)
+        );
 #else
-        DECLARE_FIELDS_TYPES(char,        VarInt,           int);
-        DECLARE_FIELDS_NAMES(ContainerId, InventoryColumns, EntityId);
+        DECLARE_FIELDS(
+            (char,        VarInt,           int),
+            (ContainerId, InventoryColumns, EntityId)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

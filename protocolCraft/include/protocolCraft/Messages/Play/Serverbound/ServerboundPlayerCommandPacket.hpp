@@ -44,8 +44,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Command";
 
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, VarInt);
-        DECLARE_FIELDS_NAMES(Id_,    Action, Data);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, VarInt),
+            (Id_,    Action, Data)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Id_);

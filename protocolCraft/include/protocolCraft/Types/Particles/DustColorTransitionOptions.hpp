@@ -7,11 +7,16 @@ namespace ProtocolCraft
 {
     class DustColorTransitionOptions : public ParticleOptions
     {
-        DECLARE_FIELDS_TYPES(float,   float,     float,    float, float, float,   float);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_NAMES(FromRed, FromGreen, FromBlue, Scale, ToRed, ToGreen, ToBlue);
+        DECLARE_FIELDS(
+            (float,   float,     float,    float, float, float,   float),
+            (FromRed, FromGreen, FromBlue, Scale, ToRed, ToGreen, ToBlue)
+        );
 #else
-        DECLARE_FIELDS_NAMES(FromRed, FromGreen, FromBlue, ToRed, ToGreen, ToBlue, Scale);
+        DECLARE_FIELDS(
+            (float,   float,     float,    float, float,   float,  float),
+            (FromRed, FromGreen, FromBlue, ToRed, ToGreen, ToBlue, Scale)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

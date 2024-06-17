@@ -47,11 +47,15 @@ namespace ProtocolCraft
     class Recipe : public NetworkType
     {
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(Identifier, Identifier, std::shared_ptr<RecipeData>);
-        DECLARE_FIELDS_NAMES(RecipeId,   Type,       Data);
+        DECLARE_FIELDS(
+            (Identifier, Identifier, std::shared_ptr<RecipeData>),
+            (RecipeId,   Type,       Data)
+        );
 #else
-        DECLARE_FIELDS_TYPES(Identifier, RecipeDataType, std::shared_ptr<RecipeData>);
-        DECLARE_FIELDS_NAMES(RecipeId,   Type,           Data);
+        DECLARE_FIELDS(
+            (Identifier, RecipeDataType, std::shared_ptr<RecipeData>),
+            (RecipeId,   Type,           Data)
+        );
 #endif
 
         GETTER_SETTER(RecipeId);
@@ -60,9 +64,9 @@ namespace ProtocolCraft
         virtual ~Recipe() override;
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetType(const Identifier& type_);
+        Recipe& SetType(const Identifier& type_);
 #else
-        void SetType(const RecipeDataType type_);
+        Recipe& SetType(const RecipeDataType type_);
 #endif
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */

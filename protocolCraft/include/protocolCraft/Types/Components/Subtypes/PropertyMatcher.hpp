@@ -13,8 +13,10 @@ namespace ProtocolCraft
     {
         class PropertyMatcher : public NetworkType
         {
-            DECLARE_FIELDS_TYPES(std::string, std::optional<RangedMatcher>, std::optional<ExactMatcher>);
-            DECLARE_FIELDS_NAMES(Name,        RangedMatcher,                ExactMatcher);
+            DECLARE_FIELDS(
+                (std::string, std::optional<RangedMatcher>, std::optional<ExactMatcher>),
+                (Name,        RangedMatcher,                ExactMatcher)
+            );
             DECLARE_SERIALIZE;
 
             GETTER_SETTER(Name);
@@ -24,13 +26,14 @@ namespace ProtocolCraft
                 return std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields);
             }
 
-            void SetRangedMatcher(const std::optional<RangedMatcher>& ranged_matcher)
+            auto& SetRangedMatcher(const std::optional<RangedMatcher>& ranged_matcher)
             {
                 std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields) = ranged_matcher;
                 if (ranged_matcher.has_value())
                 {
                     std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields) = {};
                 }
+                return *this;
             }
 
 
@@ -39,13 +42,14 @@ namespace ProtocolCraft
                 return std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields);
             }
 
-            void SetExactMatcher(const std::optional<ExactMatcher>& exact_matcher)
+            auto& SetExactMatcher(const std::optional<ExactMatcher>& exact_matcher)
             {
                 std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields) = exact_matcher;
                 if (exact_matcher.has_value())
                 {
                     std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields) = {};
                 }
+                return *this;
             }
 
         protected:

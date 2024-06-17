@@ -9,8 +9,10 @@ namespace ProtocolCraft
 {
     class RecipeDataSingleItem : public RecipeData
     {
-        DECLARE_FIELDS_TYPES(std::string, Ingredient, Slot);
-        DECLARE_FIELDS_NAMES(Group,       Ingredient, Result);
+        DECLARE_FIELDS(
+            (std::string, Ingredient, Slot),
+            (Group,       Ingredient, Result)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Group);

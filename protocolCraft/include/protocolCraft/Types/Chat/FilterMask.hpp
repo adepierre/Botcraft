@@ -7,8 +7,10 @@ namespace ProtocolCraft
 {
     class FilterMask : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(VarInt, std::optional<std::vector<long long int>>);
-        DECLARE_FIELDS_NAMES(Type, Mask);
+        DECLARE_FIELDS(
+            (VarInt, std::optional<std::vector<long long int>>),
+            (Type, Mask)
+        );
         DECLARE_SERIALIZE;
 
     public:
@@ -17,13 +19,15 @@ namespace ProtocolCraft
         {
             return std::get<static_cast<size_t>(FieldsEnum::Mask)>(fields);
         }
-        void SetMask(const std::optional<std::vector<long long int>>& Mask)
+
+        auto& SetMask(const std::optional<std::vector<long long int>>& Mask)
         {
             if (Mask.has_value())
             {
                 SetType(2);
             }
             std::get<static_cast<size_t>(FieldsEnum::Mask)>(fields) = Mask;
+            return *this;
         }
 
     protected:

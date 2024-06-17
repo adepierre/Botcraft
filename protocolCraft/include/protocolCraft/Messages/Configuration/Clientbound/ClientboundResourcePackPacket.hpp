@@ -13,8 +13,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Resource Pack (Configuration)";
 
-        DECLARE_FIELDS_TYPES(std::string, std::string, bool,     std::optional<Chat>);
-        DECLARE_FIELDS_NAMES(Url,         Hash,        Required, Prompt);
+        DECLARE_FIELDS(
+            (std::string, std::string, bool,     std::optional<Chat>),
+            (Url,         Hash,        Required, Prompt)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Url);

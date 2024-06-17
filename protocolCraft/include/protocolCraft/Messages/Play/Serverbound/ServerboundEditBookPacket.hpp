@@ -50,14 +50,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Edit Book";
 
 #if PROTOCOL_VERSION < 401 /* < 1.13.1 */
-        DECLARE_FIELDS_TYPES(Slot, bool);
-        DECLARE_FIELDS_NAMES(Book, Signing);
+        DECLARE_FIELDS(
+            (Slot, bool),
+            (Book, Signing)
+        );
 #elif PROTOCOL_VERSION < 756 /* < 1.17.1 */
-        DECLARE_FIELDS_TYPES(Slot, bool,    VarInt);
-        DECLARE_FIELDS_NAMES(Book, Signing, Slot);
+        DECLARE_FIELDS(
+            (Slot, bool,    VarInt),
+            (Book, Signing, Slot)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, std::vector<std::string>, std::optional<std::string>);
-        DECLARE_FIELDS_NAMES(Slot,   Pages,                    Title);
+        DECLARE_FIELDS(
+            (VarInt, std::vector<std::string>, std::optional<std::string>),
+            (Slot,   Pages,                    Title)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

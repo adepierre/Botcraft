@@ -29,11 +29,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Add Painting";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(VarInt, UUID, std::string, NetworkPosition, char);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Title,       Pos,             Direction);
+        DECLARE_FIELDS(
+            (VarInt, UUID, std::string, NetworkPosition, char),
+            (Id_,    Uuid, Title,       Pos,             Direction)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, NetworkPosition, char);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Motive, Pos,             Direction);
+        DECLARE_FIELDS(
+            (VarInt, UUID, VarInt, NetworkPosition, char),
+            (Id_,    Uuid, Motive, Pos,             Direction)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -437,10 +437,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Vibrations/VibrationPath.hpp
 
     include/protocolCraft/Utilities/AutoSerializedMacros.hpp
+    include/protocolCraft/Utilities/AutoSerializedToJson.hpp
     include/protocolCraft/Utilities/ConstexprStrProcessing.hpp
     include/protocolCraft/Utilities/GZip.hpp
     include/protocolCraft/Utilities/Json.hpp
-    include/protocolCraft/Utilities/PrivateTemplates.hpp
     include/protocolCraft/Utilities/RecursiveWrapper.hpp
     include/protocolCraft/Utilities/Templates.hpp
 

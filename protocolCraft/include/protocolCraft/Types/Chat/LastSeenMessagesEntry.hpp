@@ -10,12 +10,16 @@ namespace ProtocolCraft
     class LastSeenMessagesEntry : public NetworkType
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(UUID,      std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(ProfileId, LastSignature);
+        DECLARE_FIELDS(
+            (UUID,      std::vector<unsigned char>),
+            (ProfileId, LastSignature)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #else
-        DECLARE_FIELDS_TYPES(VarInt, std::optional<std::vector<unsigned char>>);
-        DECLARE_FIELDS_NAMES(Id,     LastSignature);
+        DECLARE_FIELDS(
+            (VarInt, std::optional<std::vector<unsigned char>>),
+            (Id,     LastSignature)
+        );
         DECLARE_SERIALIZE;
 #endif
 

@@ -47,11 +47,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Open Signe Editor";
 
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(NetworkPosition);
-        DECLARE_FIELDS_NAMES(Pos);
+        DECLARE_FIELDS(
+            (NetworkPosition),
+            (Pos)
+        );
 #else
-        DECLARE_FIELDS_TYPES(NetworkPosition, bool);
-        DECLARE_FIELDS_NAMES(Pos,             IsFrontText);
+        DECLARE_FIELDS(
+            (NetworkPosition, bool),
+            (Pos,             IsFrontText)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

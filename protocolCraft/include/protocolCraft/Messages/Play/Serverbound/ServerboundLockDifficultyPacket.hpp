@@ -40,8 +40,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Lock Difficulty";
 
-        DECLARE_FIELDS_TYPES(bool);
-        DECLARE_FIELDS_NAMES(Locked);
+        DECLARE_FIELDS(
+            (bool),
+            (Locked)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Locked);

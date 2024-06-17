@@ -14,8 +14,10 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x07;
         static constexpr std::string_view packet_name = "Select Known Packs";
 
-        DECLARE_FIELDS_TYPES(std::vector<KnownPack>);
-        DECLARE_FIELDS_NAMES(KnownPacks);
+        DECLARE_FIELDS(
+            (std::vector<KnownPack>),
+            (KnownPacks)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(KnownPacks);

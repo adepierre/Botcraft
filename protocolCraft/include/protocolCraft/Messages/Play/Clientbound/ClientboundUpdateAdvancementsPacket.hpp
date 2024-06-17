@@ -52,8 +52,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Advancements";
 
-        DECLARE_FIELDS_TYPES(bool,  std::map<Identifier, Advancement>, std::vector<Identifier>, std::map<Identifier, AdvancementProgress>);
-        DECLARE_FIELDS_NAMES(Reset, Added,                             Removed,                 Progress);
+        DECLARE_FIELDS(
+            (bool,  std::map<Identifier, Advancement>, std::vector<Identifier>, std::map<Identifier, AdvancementProgress>),
+            (Reset, Added,                             Removed,                 Progress)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Reset);

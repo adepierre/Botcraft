@@ -18,8 +18,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Debug Sample";
 
-        DECLARE_FIELDS_TYPES(std::vector<long long int>, VarInt);
-        DECLARE_FIELDS_NAMES(Sample, DebugSampleType);
+        DECLARE_FIELDS(
+            (std::vector<long long int>, VarInt),
+            (Sample, DebugSampleType)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Sample);

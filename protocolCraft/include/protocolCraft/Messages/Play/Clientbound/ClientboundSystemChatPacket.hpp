@@ -30,11 +30,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "System Chat";
 
 #if PROTOCOL_VERSION < 760 /* < 1.19.1 */
-        DECLARE_FIELDS_TYPES(Chat,    VarInt);
-        DECLARE_FIELDS_NAMES(Content, TypeId);
+        DECLARE_FIELDS(
+            (Chat,    VarInt),
+            (Content, TypeId)
+        );
 #else
-        DECLARE_FIELDS_TYPES(Chat,    bool);
-        DECLARE_FIELDS_NAMES(Content, Overlay);
+        DECLARE_FIELDS(
+            (Chat,    bool),
+            (Content, Overlay)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

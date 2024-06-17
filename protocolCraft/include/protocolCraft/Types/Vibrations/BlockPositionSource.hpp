@@ -8,8 +8,10 @@ namespace ProtocolCraft
 {
     class BlockPositionSource : public PositionSource
     {
-        DECLARE_FIELDS_TYPES(NetworkPosition);
-        DECLARE_FIELDS_NAMES(Pos);
+        DECLARE_FIELDS(
+            (NetworkPosition),
+            (Pos)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Pos);

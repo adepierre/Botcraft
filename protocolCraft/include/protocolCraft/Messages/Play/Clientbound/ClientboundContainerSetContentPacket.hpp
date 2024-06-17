@@ -44,12 +44,16 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Container Set Content";
 
 #if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-        DECLARE_FIELDS_TYPES(unsigned char, std::vector<Slot>);
-        DECLARE_FIELDS_NAMES(ContainerId,   Items);
+        DECLARE_FIELDS(
+            (unsigned char, std::vector<Slot>),
+            (ContainerId,   Items)
+        );
         DECLARE_SERIALIZE;
 #else
-        DECLARE_FIELDS_TYPES(unsigned char, VarInt,  std::vector<Slot>, Slot);
-        DECLARE_FIELDS_NAMES(ContainerId,   StateId, Items,             CarriedItem);
+        DECLARE_FIELDS(
+            (unsigned char, VarInt,  std::vector<Slot>, Slot),
+            (ContainerId,   StateId, Items,             CarriedItem)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #endif
 

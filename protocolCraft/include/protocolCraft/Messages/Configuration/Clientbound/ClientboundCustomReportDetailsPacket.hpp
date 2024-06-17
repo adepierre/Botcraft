@@ -16,8 +16,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Custom Report Details (Configuration)";
 
-        DECLARE_FIELDS_TYPES(std::map<std::string, std::string>);
-        DECLARE_FIELDS_NAMES(Details);
+        DECLARE_FIELDS(
+            (std::map<std::string, std::string>),
+            (Details)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Details);

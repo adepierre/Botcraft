@@ -43,8 +43,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Entity Link";
 
-        DECLARE_FIELDS_TYPES(int,      int);
-        DECLARE_FIELDS_NAMES(SourceId, DestId);
+        DECLARE_FIELDS(
+            (int,      int),
+            (SourceId, DestId)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(SourceId);

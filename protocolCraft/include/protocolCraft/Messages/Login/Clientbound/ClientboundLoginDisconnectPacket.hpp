@@ -14,11 +14,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Login Disconnect";
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_FIELDS_TYPES(Chat);
-        DECLARE_FIELDS_NAMES(Reason);
+        DECLARE_FIELDS(
+            (Chat),
+            (Reason)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string);
-        DECLARE_FIELDS_NAMES(Reason);
+        DECLARE_FIELDS(
+            (std::string),
+            (Reason)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

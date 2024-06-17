@@ -16,7 +16,7 @@
 #include "protocolCraft/Types/Recipes/RecipeDataSmithingTransform.hpp"
 #include "protocolCraft/Types/Recipes/RecipeDataSmithingTrim.hpp"
 #endif
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 namespace ProtocolCraft
 {
@@ -41,7 +41,7 @@ namespace ProtocolCraft
     }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-    void Recipe::SetType(const Identifier& type_)
+    Recipe& Recipe::SetType(const Identifier& type_)
     {
         std::get<static_cast<size_t>(FieldsEnum::Type)>(fields) = type_;
         const std::string full = type_.GetFull();
@@ -96,9 +96,10 @@ namespace ProtocolCraft
         {
             std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSimpleCrafting>();
         }
+        return *this;
     }
 #else
-    void Recipe::SetType(const RecipeDataType type_)
+    Recipe& Recipe::SetType(const RecipeDataType type_)
     {
         if (type_ <= RecipeDataType::None || type_ >= RecipeDataType::NUM_RECIPE_DATA_TYPES)
         {
@@ -151,6 +152,7 @@ namespace ProtocolCraft
             std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = nullptr;
             break;
         }
+        return *this;
     }
 #endif
 

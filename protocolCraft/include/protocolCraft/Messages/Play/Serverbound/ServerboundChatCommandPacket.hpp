@@ -30,17 +30,25 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Chat Command";
 
 #if PROTOCOL_VERSION < 760 /* < 1.19.1 */
-        DECLARE_FIELDS_TYPES(std::string, long long int, std::map<std::string, std::vector<unsigned char>>, bool);
-        DECLARE_FIELDS_NAMES(Command,     Timestamp,     ArgumentSignatures,                                SignedPreview);
+        DECLARE_FIELDS(
+            (std::string, long long int, std::map<std::string, std::vector<unsigned char>>, bool),
+            (Command,     Timestamp,     ArgumentSignatures,                                SignedPreview)
+        );
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(std::string, long long int, long long int, std::map<std::string, std::vector<unsigned char>>, bool,          LastSeenMessagesUpdate);
-        DECLARE_FIELDS_NAMES(Command,     Timestamp,     Salt,          ArgumentSignatures,                                SignedPreview, LastSeenMessages);
+        DECLARE_FIELDS(
+            (std::string, long long int, long long int, std::map<std::string, std::vector<unsigned char>>, bool,          LastSeenMessagesUpdate),
+            (Command,     Timestamp,     Salt,          ArgumentSignatures,                                SignedPreview, LastSeenMessages)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(std::string, long long int, long long int, std::map<std::string, std::vector<unsigned char>>, LastSeenMessagesUpdate);
-        DECLARE_FIELDS_NAMES(Command,     Timestamp,     Salt,          ArgumentSignatures,                                LastSeenMessages);
+        DECLARE_FIELDS(
+            (std::string, long long int, long long int, std::map<std::string, std::vector<unsigned char>>, LastSeenMessagesUpdate),
+            (Command,     Timestamp,     Salt,          ArgumentSignatures,                                LastSeenMessages)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string);
-        DECLARE_FIELDS_NAMES(Command);
+        DECLARE_FIELDS(
+            (std::string),
+            (Command)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -43,8 +43,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Entity PosRot";
 
-        DECLARE_FIELDS_TYPES(VarInt,   short, short, short, unsigned char, unsigned char, bool);
-        DECLARE_FIELDS_NAMES(EntityId, XA,    YA,    ZA,    YRot,          XRot,          OnGround);
+        DECLARE_FIELDS(
+            (VarInt,   short, short, short, unsigned char, unsigned char, bool),
+            (EntityId, XA,    YA,    ZA,    YRot,          XRot,          OnGround)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(EntityId);

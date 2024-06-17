@@ -1,6 +1,6 @@
 #include "protocolCraft/AllClientboundMessages.hpp"
 #include "protocolCraft/AllServerboundMessages.hpp"
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Handler.hpp"

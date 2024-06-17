@@ -20,8 +20,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Ping Request";
 
-        DECLARE_FIELDS_TYPES(long long int);
-        DECLARE_FIELDS_NAMES(Time);
+        DECLARE_FIELDS(
+            (long long int),
+            (Time)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Time);

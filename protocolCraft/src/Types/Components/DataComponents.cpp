@@ -44,7 +44,7 @@
 #include "protocolCraft/Types/Components/DataComponentTypeJukeboxPlayable.hpp"
 #endif
 
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 namespace ProtocolCraft
 {
@@ -299,9 +299,10 @@ namespace ProtocolCraft
             return map;
         }
 
-        void DataComponentPredicate::SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_)
+        DataComponentPredicate& DataComponentPredicate::SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_)
         {
             map = map_;
+            return *this;
         }
 
         void DataComponentPredicate::ReadImpl(ReadIterator& iter, size_t& length)
@@ -362,9 +363,10 @@ namespace ProtocolCraft
             return map;
         }
 
-        void DataComponentPatch::SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_)
+        DataComponentPatch& DataComponentPatch::SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_)
         {
             map = map_;
+            return *this;
         }
 
         void DataComponentPatch::ReadImpl(ReadIterator& iter, size_t& length)

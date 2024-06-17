@@ -40,8 +40,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Rename Item";
 
-        DECLARE_FIELDS_TYPES(std::string);
-        DECLARE_FIELDS_NAMES(Name_);
+        DECLARE_FIELDS(
+            (std::string),
+            (Name_)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Name_);

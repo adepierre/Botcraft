@@ -12,8 +12,10 @@ namespace ProtocolCraft
 {
     class VibrationPath : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(NetworkPosition, Identifier,      std::shared_ptr<PositionSource>, VarInt);
-        DECLARE_FIELDS_NAMES(Origin,          DestinationType, Destination,                     ArrivalInTicks);
+        DECLARE_FIELDS(
+            (NetworkPosition, Identifier,      std::shared_ptr<PositionSource>, VarInt),
+            (Origin,          DestinationType, Destination,                     ArrivalInTicks)
+        );
 
         GETTER_SETTER(Origin);
         GETTER_SETTER(DestinationType);

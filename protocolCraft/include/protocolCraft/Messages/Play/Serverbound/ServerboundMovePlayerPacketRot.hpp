@@ -44,8 +44,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Move Player Rot";
 
-        DECLARE_FIELDS_TYPES(float, float, bool);
-        DECLARE_FIELDS_NAMES(YRot,  XRot,  OnGround);
+        DECLARE_FIELDS(
+            (float, float, bool),
+            (YRot,  XRot,  OnGround)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(YRot);

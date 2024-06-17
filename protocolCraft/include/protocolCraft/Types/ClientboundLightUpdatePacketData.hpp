@@ -8,12 +8,16 @@ namespace ProtocolCraft
     class ClientboundLightUpdatePacketData : public NetworkType
     {
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(bool,       std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<std::vector<char>>, std::vector<std::vector<char>>);
-        DECLARE_FIELDS_NAMES(TrustEdges, SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                     SkyUpdates,                     BlockUpdates);
+        DECLARE_FIELDS(
+            (bool,       std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<std::vector<char>>, std::vector<std::vector<char>>),
+            (TrustEdges, SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                     SkyUpdates,                     BlockUpdates)
+        );
 
 #else
-        DECLARE_FIELDS_TYPES(std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<std::vector<char>>, std::vector<std::vector<char>>);
-        DECLARE_FIELDS_NAMES(SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                     SkyUpdates,                     BlockUpdates);
+        DECLARE_FIELDS(
+            (std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<std::vector<char>>, std::vector<std::vector<char>>),
+            (SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                     SkyUpdates,                     BlockUpdates)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

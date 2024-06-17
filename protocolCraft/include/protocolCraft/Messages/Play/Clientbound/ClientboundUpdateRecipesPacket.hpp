@@ -47,8 +47,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Recipes";
 
-        DECLARE_FIELDS_TYPES(std::vector<Recipe>);
-        DECLARE_FIELDS_NAMES(Recipes);
+        DECLARE_FIELDS(
+            (std::vector<Recipe>),
+            (Recipes)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Recipes);

@@ -17,8 +17,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Chat Header";
 
-        DECLARE_FIELDS_TYPES(SignedMessageHeader, std::vector<unsigned char>, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(Header,              HeaderSignature,            BodyDigest);
+        DECLARE_FIELDS(
+            (SignedMessageHeader, std::vector<unsigned char>, std::vector<unsigned char>),
+            (Header,              HeaderSignature,            BodyDigest)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Header);

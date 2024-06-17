@@ -50,14 +50,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Section Blocks Update";
 
 #if PROTOCOL_VERSION < 751 /* < 1.16.2 */
-        DECLARE_FIELDS_TYPES(int,    int,    std::vector<Record>);
-        DECLARE_FIELDS_NAMES(ChunkX, ChunkZ, Records);
+        DECLARE_FIELDS(
+            (int,    int,    std::vector<Record>),
+            (ChunkX, ChunkZ, Records)
+        );
 #elif PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(long long int, bool,                 std::vector<short>, std::vector<int>);
-        DECLARE_FIELDS_NAMES(SectionPos,    SuppressLightUpdates, Positions,          States);
+        DECLARE_FIELDS(
+            (long long int, bool,                 std::vector<short>, std::vector<int>),
+            (SectionPos,    SuppressLightUpdates, Positions,          States)
+        );
 #else
-        DECLARE_FIELDS_TYPES(long long int, std::vector<short>, std::vector<int>);
-        DECLARE_FIELDS_NAMES(SectionPos,    Positions,          States);
+        DECLARE_FIELDS(
+            (long long int, std::vector<short>, std::vector<int>),
+            (SectionPos,    Positions,          States)
+        );
 #endif
         DECLARE_SERIALIZE;
 

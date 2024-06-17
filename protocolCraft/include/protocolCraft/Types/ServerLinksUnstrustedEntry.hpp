@@ -8,8 +8,10 @@ namespace ProtocolCraft
 {
     class ServerLinksUnstrustedEntry : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(std::optional<VarInt>, std::optional<Chat>, std::string);
-        DECLARE_FIELDS_NAMES(TypeId,                Uri,                 Link);
+        DECLARE_FIELDS(
+            (std::optional<VarInt>, std::optional<Chat>, std::string),
+            (TypeId,                Uri,                 Link)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(Link);
@@ -20,13 +22,14 @@ namespace ProtocolCraft
             return std::get<static_cast<size_t>(FieldsEnum::TypeId)>(fields);
         }
 
-        void SetTypeId(const std::optional<int>& type_id)
+        auto& SetTypeId(const std::optional<int>& type_id)
         {
             std::get<static_cast<size_t>(FieldsEnum::TypeId)>(fields) = type_id;
             if (type_id.has_value())
             {
                 std::get<static_cast<size_t>(FieldsEnum::Uri)>(fields) = {};
             }
+            return *this;
         }
 
 
@@ -35,13 +38,14 @@ namespace ProtocolCraft
             return std::get<static_cast<size_t>(FieldsEnum::Uri)>(fields);
         }
 
-        void SetUri(const std::optional<Chat>& uri)
+        auto& SetUri(const std::optional<Chat>& uri)
         {
             std::get<static_cast<size_t>(FieldsEnum::Uri)>(fields) = uri;
             if (uri.has_value())
             {
                 std::get<static_cast<size_t>(FieldsEnum::TypeId)>(fields) = {};
             }
+            return *this;
         }
 
     protected:

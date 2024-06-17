@@ -3,8 +3,6 @@
 #include "protocolCraft/AllClientboundMessages.hpp"
 #include "protocolCraft/AllServerboundMessages.hpp"
 
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
-
 namespace ProtocolCraft
 {
     namespace
@@ -14,16 +12,13 @@ namespace ProtocolCraft
         {
             std::shared_ptr<Message> output = nullptr;
 
-            loop < std::tuple_size<TypesTuple>{} > (
-                [&](auto i)
+            Internal::loop<std::tuple_size_v<TypesTuple>>([&](auto i) {
+                using TupleElement = std::tuple_element_t<i, TypesTuple>;
+                if (id == TupleElement::packet_id)
                 {
-                    using TupleElement = std::tuple_element_t<i, TypesTuple>;
-                    if (id == TupleElement::packet_id)
-                    {
-                        output = std::make_shared<TupleElement>();
-                    }
+                    output = std::make_shared<TupleElement>();
                 }
-            );
+            });
 
             return output;
         }

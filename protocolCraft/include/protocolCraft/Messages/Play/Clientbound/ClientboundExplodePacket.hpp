@@ -54,17 +54,25 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Explode";
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(float, float, float, float, std::vector<NetworkPosition>, float,      float,      float);
-        DECLARE_FIELDS_NAMES(X,     Y,     Z,     Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ);
+        DECLARE_FIELDS(
+            (float, float, float, float, std::vector<NetworkPosition>, float,      float,      float),
+            (X,     Y,     Z,     Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ)
+        );
 #elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_FIELDS_TYPES(double, double, double, float, std::vector<NetworkPosition>, float,      float,      float);
-        DECLARE_FIELDS_NAMES(X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ);
+        DECLARE_FIELDS(
+            (double, double, double, float, std::vector<NetworkPosition>, float,      float,      float),
+            (X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(double, double, double, float, std::vector<NetworkPosition>, float,      float,      float,      VarInt,           Particle,                Particle,                SoundEvent);
-        DECLARE_FIELDS_NAMES(X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound);
+        DECLARE_FIELDS(
+            (double, double, double, float, std::vector<NetworkPosition>, float,      float,      float,      VarInt,           Particle,                Particle,                SoundEvent),
+            (X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound)
+        );
 #else
-        DECLARE_FIELDS_TYPES(double, double, double, float, std::vector<NetworkPosition>, float,      float,      float,      VarInt,           Particle,                Particle,                Holder<SoundEvent>);
-        DECLARE_FIELDS_NAMES(X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound);
+        DECLARE_FIELDS(
+            (double, double, double, float, std::vector<NetworkPosition>, float,      float,      float,      VarInt,           Particle,                Particle,                Holder<SoundEvent>),
+            (X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound)
+        );
 #endif
         DECLARE_SERIALIZE;
 

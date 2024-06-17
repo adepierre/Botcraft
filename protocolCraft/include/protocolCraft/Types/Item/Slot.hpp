@@ -12,17 +12,25 @@ namespace ProtocolCraft
     class Slot : public NetworkType
     {
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(short,   char,      short,      NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(BlockId, ItemCount, ItemDamage, Nbt);
+        DECLARE_FIELDS(
+            (short,   char,      short,      NBT::UnnamedValue),
+            (BlockId, ItemCount, ItemDamage, Nbt)
+        );
 #elif PROTOCOL_VERSION < 404 /* < 1.13.2 */
-        DECLARE_FIELDS_TYPES(short,  char,      NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(ItemId, ItemCount, Nbt);
+        DECLARE_FIELDS(
+            (short,  char,      NBT::UnnamedValue),
+            (ItemId, ItemCount, Nbt)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(bool,    VarInt, char,      NBT::UnnamedValue);
-        DECLARE_FIELDS_NAMES(Present, ItemId, ItemCount, Nbt);
+        DECLARE_FIELDS(
+            (bool,    VarInt, char,      NBT::UnnamedValue),
+            (Present, ItemId, ItemCount, Nbt)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,    VarInt, Components::DataComponentPatch);
-        DECLARE_FIELDS_NAMES(ItemCount, ItemId, Components);
+        DECLARE_FIELDS(
+            (VarInt,    VarInt, Components::DataComponentPatch),
+            (ItemCount, ItemId, Components)
+        );
 #endif
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
@@ -46,16 +54,16 @@ namespace ProtocolCraft
         Slot()
         {
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-            SetBlockId(0);
+            std::get<static_cast<size_t>(FieldsEnum::BlockId)>(fields) = 0;
 #elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            SetItemId(-1);
+            std::get<static_cast<size_t>(FieldsEnum::ItemId)>(fields) = -1;
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            SetPresent(false);
-            SetItemId(-1);
+            std::get<static_cast<size_t>(FieldsEnum::Present)>(fields) = false;
+            std::get<static_cast<size_t>(FieldsEnum::ItemId)>(fields) = -1;
 #elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            SetItemId(0);
+            std::get<static_cast<size_t>(FieldsEnum::ItemId)>(fields) = 0;
 #endif
-            SetItemCount(0);
+            std::get<static_cast<size_t>(FieldsEnum::ItemCount)>(fields) = 0;
         }
 
         virtual ~Slot() override
@@ -101,7 +109,7 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        void SetItemCount(const char item_count_)
+        auto& SetItemCount(const char item_count_)
         {
             std::get<static_cast<size_t>(FieldsEnum::ItemCount)>(fields) = item_count_;
             if (item_count_ == 0)
@@ -116,11 +124,13 @@ namespace ProtocolCraft
 #endif
                 SetNbt(NBT::Value());
             }
+            return *this;
         }
 #else
-        void SetItemCount(const int item_count_)
+        auto& SetItemCount(const int item_count_)
         {
             std::get<static_cast<size_t>(FieldsEnum::ItemCount)>(fields) = item_count_;
+            return *this;
         }
 #endif
 

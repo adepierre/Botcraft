@@ -10,17 +10,25 @@ namespace ProtocolCraft
     class RecipeDataCraftingShaped : public RecipeData
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, std::string, std::vector<Ingredient>, Slot);
-        DECLARE_FIELDS_NAMES(Width,  Height, Group,       Ingredients,             Result);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, std::string, std::vector<Ingredient>, Slot),
+            (Width,  Height, Group,       Ingredients,             Result)
+        );
 #elif PROTOCOL_VERSION < 762 /* < 1.19.4 */
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, std::string, VarInt,              std::vector<Ingredient>, Slot);
-        DECLARE_FIELDS_NAMES(Width,  Height, Group,       CookingBookCategory, Ingredients,             Result);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, std::string, VarInt,              std::vector<Ingredient>, Slot),
+            (Width,  Height, Group,       CookingBookCategory, Ingredients,             Result)
+        );
 #elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, std::string, VarInt,              std::vector<Ingredient>, Slot,   bool);
-        DECLARE_FIELDS_NAMES(Width,  Height, Group,       CookingBookCategory, Ingredients,             Result, ShowNotification);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, std::string, VarInt,              std::vector<Ingredient>, Slot,   bool),
+            (Width,  Height, Group,       CookingBookCategory, Ingredients,             Result, ShowNotification)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string, VarInt,              VarInt, VarInt, std::vector<Ingredient>, Slot,   bool);
-        DECLARE_FIELDS_NAMES(Group,       CookingBookCategory, Width,  Height, Ingredients,             Result, ShowNotification);
+        DECLARE_FIELDS(
+            (std::string, VarInt,              VarInt, VarInt, std::vector<Ingredient>, Slot,   bool),
+            (Group,       CookingBookCategory, Width,  Height, Ingredients,             Result, ShowNotification)
+        );
 #endif
         DECLARE_SERIALIZE;
 

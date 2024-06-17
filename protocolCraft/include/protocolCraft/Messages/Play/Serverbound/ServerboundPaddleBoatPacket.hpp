@@ -44,8 +44,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Paddle Boat";
 
-        DECLARE_FIELDS_TYPES(bool, bool);
-        DECLARE_FIELDS_NAMES(Left, Right);
+        DECLARE_FIELDS(
+            (bool, bool),
+            (Left, Right)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Left);

@@ -28,14 +28,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Recipe Book Update";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(VarInt,  VarInt, bool,    bool);
-        DECLARE_FIELDS_NAMES(Purpose, Recipe, GuiOpen, FilteringCraftable);
+        DECLARE_FIELDS(
+            (VarInt,  VarInt, bool,    bool),
+            (Purpose, Recipe, GuiOpen, FilteringCraftable)
+        );
 #elif PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(VarInt,  Identifier, bool,    bool,               bool,           bool);
-        DECLARE_FIELDS_NAMES(Purpose, Recipe,     GuiOpen, FilteringCraftable, FurnaceGuiOpen, FurnaceFilteringCraftable);
+        DECLARE_FIELDS(
+            (VarInt,  Identifier, bool,    bool,               bool,           bool),
+            (Purpose, Recipe,     GuiOpen, FilteringCraftable, FurnaceGuiOpen, FurnaceFilteringCraftable)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,  Identifier, bool,    bool,               bool,           bool,                      bool,                bool,                           bool,          bool);
-        DECLARE_FIELDS_NAMES(Purpose, Recipe,     GuiOpen, FilteringCraftable, FurnaceGuiOpen, FurnaceFilteringCraftable, BlastFurnaceGuiOpen, BlastFurnaceFilteringCraftable, SmokerGuiOpen, SmokerFilteringCraftable);
+        DECLARE_FIELDS(
+            (VarInt,  Identifier, bool,    bool,               bool,           bool,                      bool,                bool,                           bool,          bool),
+            (Purpose, Recipe,     GuiOpen, FilteringCraftable, FurnaceGuiOpen, FurnaceFilteringCraftable, BlastFurnaceGuiOpen, BlastFurnaceFilteringCraftable, SmokerGuiOpen, SmokerFilteringCraftable)
+        );
 #endif
 
         GETTER_SETTER(Purpose);

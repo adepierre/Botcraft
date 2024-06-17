@@ -11,14 +11,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Hello";
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(std::string, std::vector<unsigned char>, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(ServerId,    PublicKey,                  Nonce);
+        DECLARE_FIELDS(
+            (std::string, std::vector<unsigned char>, std::vector<unsigned char>),
+            (ServerId,    PublicKey,                  Nonce)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(std::string, std::vector<unsigned char>, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(ServerId,    PublicKey,                  Challenge);
+        DECLARE_FIELDS(
+            (std::string, std::vector<unsigned char>, std::vector<unsigned char>),
+            (ServerId,    PublicKey,                  Challenge)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string, std::vector<unsigned char>, std::vector<unsigned char>, bool);
-        DECLARE_FIELDS_NAMES(ServerId,    PublicKey,                  Challenge,                  ShouldAuthenticate);
+        DECLARE_FIELDS(
+            (std::string, std::vector<unsigned char>, std::vector<unsigned char>, bool),
+            (ServerId,    PublicKey,                  Challenge,                  ShouldAuthenticate)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

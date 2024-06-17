@@ -1,6 +1,6 @@
 #if PROTOCOL_VERSION > 344 /* > 1.12.2 */
 #include "protocolCraft/Types/CommandNode/BrigadierProperty.hpp"
-#include "protocolCraft/Utilities/PrivateTemplates.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyDouble.hpp"
 #include "protocolCraft/Types/CommandNode/BrigadierPropertyFloat.hpp"

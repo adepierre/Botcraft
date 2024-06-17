@@ -42,8 +42,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Creative Mode Slot";
 
-        DECLARE_FIELDS_TYPES(short,   Slot);
-        DECLARE_FIELDS_NAMES(SlotNum, ItemStack);
+        DECLARE_FIELDS(
+            (short,   Slot),
+            (SlotNum, ItemStack)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(SlotNum);

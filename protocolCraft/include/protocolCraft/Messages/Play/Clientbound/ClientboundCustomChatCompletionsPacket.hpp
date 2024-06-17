@@ -24,8 +24,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Custom Chat Completion Packet";
 
-        DECLARE_FIELDS_TYPES(VarInt, std::vector<std::string>);
-        DECLARE_FIELDS_NAMES(Action, Entries);
+        DECLARE_FIELDS(
+            (VarInt, std::vector<std::string>),
+            (Action, Entries)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Action);

@@ -22,8 +22,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chat Session Update";
 
-        DECLARE_FIELDS_TYPES(RemoteChatSessionData);
-        DECLARE_FIELDS_NAMES(ChatSession);
+        DECLARE_FIELDS(
+            (RemoteChatSessionData),
+            (ChatSession)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ChatSession);

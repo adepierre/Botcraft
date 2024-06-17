@@ -10,8 +10,10 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x00;
         static constexpr std::string_view packet_name = "Client Intention";
 
-        DECLARE_FIELDS_TYPES(VarInt         , std::string, unsigned short, VarInt);
-        DECLARE_FIELDS_NAMES(ProtocolVersion, HostName   , Port          , Intention);
+        DECLARE_FIELDS(
+            (VarInt         , std::string, unsigned short, VarInt),
+            (ProtocolVersion, HostName   , Port          , Intention)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ProtocolVersion);

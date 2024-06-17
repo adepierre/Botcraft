@@ -45,11 +45,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Equipment";
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(VarInt,   std::pair<VarInt, Slot>);
-        DECLARE_FIELDS_NAMES(EntityId, Slot);
+        DECLARE_FIELDS(
+            (VarInt,   std::pair<VarInt, Slot>),
+            (EntityId, Slot)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,   std::map<unsigned char, Slot>);
-        DECLARE_FIELDS_NAMES(EntityId, Slots);
+        DECLARE_FIELDS(
+            (VarInt,   std::map<unsigned char, Slot>),
+            (EntityId, Slots)
+        );
 #endif
         DECLARE_SERIALIZE;
 

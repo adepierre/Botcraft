@@ -48,11 +48,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Ressource Pack";
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS_TYPES(std::string, std::string);
-        DECLARE_FIELDS_NAMES(Url,         Hash);
+        DECLARE_FIELDS(
+            (std::string, std::string),
+            (Url,         Hash)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string, std::string, bool,     std::optional<Chat>);
-        DECLARE_FIELDS_NAMES(Url,         Hash,        Required, Prompt);
+        DECLARE_FIELDS(
+            (std::string, std::string, bool,     std::optional<Chat>),
+            (Url,         Hash,        Required, Prompt)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -7,8 +7,10 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyString : public BrigadierProperty
     {
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(ReadType);
+        DECLARE_FIELDS(
+            (VarInt),
+            (ReadType)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ReadType);

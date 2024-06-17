@@ -29,8 +29,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Simulation Distance";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(SimulationDistance);
+        DECLARE_FIELDS(
+            (VarInt),
+            (SimulationDistance)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(SimulationDistance);

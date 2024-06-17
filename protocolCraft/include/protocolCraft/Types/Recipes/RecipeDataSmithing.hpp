@@ -9,8 +9,10 @@ namespace ProtocolCraft
 {
     class RecipeDataSmithing : public RecipeData
     {
-        DECLARE_FIELDS_TYPES(Ingredient, Ingredient, Slot);
-        DECLARE_FIELDS_NAMES(Base,       Ingredient, Result);
+        DECLARE_FIELDS(
+            (Ingredient, Ingredient, Slot),
+            (Base,       Ingredient, Result)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Base);

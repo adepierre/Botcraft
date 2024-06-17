@@ -46,8 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Select Advancement Tab";
 
-        DECLARE_FIELDS_TYPES(std::optional<std::string>);
-        DECLARE_FIELDS_NAMES(Tab);
+        DECLARE_FIELDS(
+            (std::optional<std::string>),
+            (Tab)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Tab);

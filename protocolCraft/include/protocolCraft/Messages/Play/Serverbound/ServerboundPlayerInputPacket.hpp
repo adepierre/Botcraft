@@ -44,8 +44,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Input";
 
-        DECLARE_FIELDS_TYPES(float, float, unsigned char);
-        DECLARE_FIELDS_NAMES(Xxa,   Zza,   Flags);
+        DECLARE_FIELDS(
+            (float, float, unsigned char),
+            (Xxa,   Zza,   Flags)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Xxa);

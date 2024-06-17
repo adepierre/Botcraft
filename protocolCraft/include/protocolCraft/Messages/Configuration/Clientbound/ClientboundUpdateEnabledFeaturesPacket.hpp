@@ -23,8 +23,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Update Enabled Features";
 
-        DECLARE_FIELDS_TYPES(std::vector<std::string>);
-        DECLARE_FIELDS_NAMES(Features);
+        DECLARE_FIELDS(
+            (std::vector<std::string>),
+            (Features)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Features);

@@ -44,11 +44,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Command Suggestion";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(std::string, bool,          std::optional<NetworkPosition>);
-        DECLARE_FIELDS_NAMES(Command,     AssumeCommand, LookedAtBlock);
+        DECLARE_FIELDS(
+            (std::string, bool,          std::optional<NetworkPosition>),
+            (Command,     AssumeCommand, LookedAtBlock)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, std::string);
-        DECLARE_FIELDS_NAMES(Id_,    Command);
+        DECLARE_FIELDS(
+            (VarInt, std::string),
+            (Id_,    Command)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

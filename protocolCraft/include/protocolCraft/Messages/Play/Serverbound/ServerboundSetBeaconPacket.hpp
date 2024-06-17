@@ -41,11 +41,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Beacon";
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(VarInt,  VarInt);
-        DECLARE_FIELDS_NAMES(Primary, Secondary);
+        DECLARE_FIELDS(
+            (VarInt,  VarInt),
+            (Primary, Secondary)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::optional<VarInt>,  std::optional<VarInt>);
-        DECLARE_FIELDS_NAMES(Primary,                Secondary);
+        DECLARE_FIELDS(
+            (std::optional<VarInt>,  std::optional<VarInt>),
+            (Primary,                Secondary)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

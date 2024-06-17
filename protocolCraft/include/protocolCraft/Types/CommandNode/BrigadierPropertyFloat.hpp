@@ -9,8 +9,10 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyFloat : public BrigadierProperty
     {
-        DECLARE_FIELDS_TYPES(char,  float, float);
-        DECLARE_FIELDS_NAMES(Flags, Min,   Max);
+        DECLARE_FIELDS(
+            (char,  float, float),
+            (Flags, Min,   Max)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(Flags);

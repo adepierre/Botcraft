@@ -42,8 +42,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Set Data";
 
-        DECLARE_FIELDS_TYPES(unsigned char, short, short);
-        DECLARE_FIELDS_NAMES(ContainerId,   Id_,   Value);
+        DECLARE_FIELDS(
+            (unsigned char, short, short),
+            (ContainerId,   Id_,   Value)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ContainerId);

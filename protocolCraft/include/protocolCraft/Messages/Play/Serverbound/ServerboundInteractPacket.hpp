@@ -44,11 +44,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Interact";
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(VarInt,   VarInt, float,     float,     float,     VarInt);
-        DECLARE_FIELDS_NAMES(EntityId, Action, LocationX, LocationY, LocationZ, Hand);
+        DECLARE_FIELDS(
+            (VarInt,   VarInt, float,     float,     float,     VarInt),
+            (EntityId, Action, LocationX, LocationY, LocationZ, Hand)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,   VarInt, float,     float,     float,     VarInt, bool);
-        DECLARE_FIELDS_NAMES(EntityId, Action, LocationX, LocationY, LocationZ, Hand,   UsingSecondaryAction);
+        DECLARE_FIELDS(
+            (VarInt,   VarInt, float,     float,     float,     VarInt, bool),
+            (EntityId, Action, LocationX, LocationY, LocationZ, Hand,   UsingSecondaryAction)
+        );
 #endif
 
         GETTER_SETTER(EntityId);

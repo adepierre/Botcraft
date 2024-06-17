@@ -22,8 +22,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chat Command Signed";
 
-        DECLARE_FIELDS_TYPES(std::string, long long int, long long int, std::map<std::string, std::vector<unsigned char>>, LastSeenMessagesUpdate);
-        DECLARE_FIELDS_NAMES(Command,     Timestamp,     Salt,          ArgumentSignatures,                                LastSeenMessages);
+        DECLARE_FIELDS(
+            (std::string, long long int, long long int, std::map<std::string, std::vector<unsigned char>>, LastSeenMessagesUpdate),
+            (Command,     Timestamp,     Salt,          ArgumentSignatures,                                LastSeenMessages)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Command);

@@ -10,8 +10,10 @@ namespace ProtocolCraft
     {
         class ExactMatcher : public NetworkType
         {
-            DECLARE_FIELDS_TYPES(std::string);
-            DECLARE_FIELDS_NAMES(Value);
+            DECLARE_FIELDS(
+                (std::string),
+                (Value)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Value);

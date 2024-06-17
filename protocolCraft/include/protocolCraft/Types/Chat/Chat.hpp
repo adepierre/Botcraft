@@ -23,9 +23,10 @@ namespace ProtocolCraft
         }
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        void SetRawText(const std::string& s)
+        auto& SetRawText(const std::string& s)
         {
             raw_text = s;
+            return *this;
         }
 #endif
 

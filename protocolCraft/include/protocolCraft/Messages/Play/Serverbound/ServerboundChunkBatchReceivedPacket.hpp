@@ -18,8 +18,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Chunk Batch Received";
 
-        DECLARE_FIELDS_TYPES(float);
-        DECLARE_FIELDS_NAMES(DesiredChunksPerTick);
+        DECLARE_FIELDS(
+            (float),
+            (DesiredChunksPerTick)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(DesiredChunksPerTick);

@@ -47,11 +47,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Player Team";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(std::string, char,   std::string, std::string,  std::string,  char,    std::string,       std::string,   char,  std::vector<std::string>);
-        DECLARE_FIELDS_NAMES(Name_,       Method, DisplayName, PlayerPrefix, PlayerSuffix, Options, NametagVisibility, CollisionRule, Color, Players);
+        DECLARE_FIELDS(
+            (std::string, char,   std::string, std::string,  std::string,  char,    std::string,       std::string,   char,  std::vector<std::string>),
+            (Name_,       Method, DisplayName, PlayerPrefix, PlayerSuffix, Options, NametagVisibility, CollisionRule, Color, Players)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string, char,   Chat,        char,    std::string,       std::string,   VarInt, Chat,        Chat,         std::vector<std::string>);
-        DECLARE_FIELDS_NAMES(Name_,       Method, DisplayName, Options, NametagVisibility, CollisionRule, Color,  PlayerPrefix, PlayerSuffix, Players);
+        DECLARE_FIELDS(
+            (std::string, char,   Chat,        char,    std::string,       std::string,   VarInt, Chat,        Chat,         std::vector<std::string>),
+            (Name_,       Method, DisplayName, Options, NametagVisibility, CollisionRule, Color,  PlayerPrefix, PlayerSuffix, Players)
+        );
 #endif
 
         GETTER_SETTER(Name_);

@@ -10,11 +10,15 @@ namespace ProtocolCraft
     class MapDecoration : public NetworkType
     {
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(char,       char, char);
-        DECLARE_FIELDS_NAMES(RotAndType, X,    Z);
+        DECLARE_FIELDS(
+            (char,       char, char),
+            (RotAndType, X,    Z)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, char, char, char, std::optional<Chat>);
-        DECLARE_FIELDS_NAMES(Type,   X,    Z,    Rot,  DisplayName);
+        DECLARE_FIELDS(
+            (VarInt, char, char, char, std::optional<Chat>),
+            (Type,   X,    Z,    Rot,  DisplayName)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

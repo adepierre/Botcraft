@@ -46,8 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Disconnect";
 
-        DECLARE_FIELDS_TYPES(Chat);
-        DECLARE_FIELDS_NAMES(Reason);
+        DECLARE_FIELDS(
+            (Chat),
+            (Reason)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Reason);

@@ -43,8 +43,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Entity Motion";
 
-        DECLARE_FIELDS_TYPES(VarInt, short, short, short);
-        DECLARE_FIELDS_NAMES(Id_,    XA,    YA,    ZA);
+        DECLARE_FIELDS(
+            (VarInt, short, short, short),
+            (Id_,    XA,    YA,    ZA)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Id_);

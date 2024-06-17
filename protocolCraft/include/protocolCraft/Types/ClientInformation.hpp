@@ -7,8 +7,10 @@ namespace ProtocolCraft
 {
     class ClientInformation : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(std::string, char,         VarInt,         bool,       unsigned char,      VarInt,   bool,                 bool);
-        DECLARE_FIELDS_NAMES(Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand, TestFilteringEnabled, AllowsListing);
+        DECLARE_FIELDS(
+            (std::string, char,         VarInt,         bool,       unsigned char,      VarInt,   bool,                 bool),
+            (Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand, TestFilteringEnabled, AllowsListing)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Language);

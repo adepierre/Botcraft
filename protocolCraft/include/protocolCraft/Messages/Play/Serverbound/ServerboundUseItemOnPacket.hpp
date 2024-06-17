@@ -43,14 +43,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Use Item On";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt,    VarInt, float,           float,           float);
-        DECLARE_FIELDS_NAMES(Location,        Direction, Hand,   CursorPositionX, CursorPositionY, CursorPositionZ);
+        DECLARE_FIELDS(
+            (NetworkPosition, VarInt,    VarInt, float,           float,           float),
+            (Location,        Direction, Hand,   CursorPositionX, CursorPositionY, CursorPositionZ)
+        );
 #elif PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, VarInt,    float,           float,           float,           bool);
-        DECLARE_FIELDS_NAMES(Hand,   Location,        Direction, CursorPositionX, CursorPositionY, CursorPositionZ, Inside);
+        DECLARE_FIELDS(
+            (VarInt, NetworkPosition, VarInt,    float,           float,           float,           bool),
+            (Hand,   Location,        Direction, CursorPositionX, CursorPositionY, CursorPositionZ, Inside)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, NetworkPosition, VarInt,    float,           float,           float,           bool,   VarInt);
-        DECLARE_FIELDS_NAMES(Hand,   Location,        Direction, CursorPositionX, CursorPositionY, CursorPositionZ, Inside, Sequence);
+        DECLARE_FIELDS(
+            (VarInt, NetworkPosition, VarInt,    float,           float,           float,           bool,   VarInt),
+            (Hand,   Location,        Direction, CursorPositionX, CursorPositionY, CursorPositionZ, Inside, Sequence)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

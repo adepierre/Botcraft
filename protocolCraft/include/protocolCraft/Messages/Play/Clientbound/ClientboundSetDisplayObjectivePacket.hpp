@@ -44,11 +44,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Display Objective";
 
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS_TYPES(char, std::string);
-        DECLARE_FIELDS_NAMES(Slot, ObjectiveName);
+        DECLARE_FIELDS(
+            (char, std::string),
+            (Slot, ObjectiveName)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, std::string);
-        DECLARE_FIELDS_NAMES(Slot,   ObjectiveName);
+        DECLARE_FIELDS(
+            (VarInt, std::string),
+            (Slot,   ObjectiveName)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -46,8 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Remove Entities";
 
-        DECLARE_FIELDS_TYPES(std::vector<VarInt>);
-        DECLARE_FIELDS_NAMES(EntityIds);
+        DECLARE_FIELDS(
+            (std::vector<VarInt>),
+            (EntityIds)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(EntityIds);

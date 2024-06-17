@@ -17,11 +17,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Projectile Power";
 
 #if PROTOCOL_VERSION < 767 /* < 1.21 */
-        DECLARE_FIELDS_TYPES(VarInt, double, double, double);
-        DECLARE_FIELDS_NAMES(Id_,    XPower, YPower, ZPower);
+        DECLARE_FIELDS(
+            (VarInt, double, double, double),
+            (Id_,    XPower, YPower, ZPower)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, double);
-        DECLARE_FIELDS_NAMES(Id_,    AccelerationPower);
+        DECLARE_FIELDS(
+            (VarInt, double),
+            (Id_,    AccelerationPower)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border Size";
 
-        DECLARE_FIELDS_TYPES(double);
-        DECLARE_FIELDS_NAMES(Size);
+        DECLARE_FIELDS(
+            (double),
+            (Size)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Size);

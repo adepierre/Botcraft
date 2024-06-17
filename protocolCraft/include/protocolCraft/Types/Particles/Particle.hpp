@@ -266,7 +266,7 @@ namespace ProtocolCraft
         ParticleType GetParticleType() const;
         std::shared_ptr<ParticleOptions> GetOptions() const;
 
-        void SetParticleType(const ParticleType particle_type_);
+        Particle& SetParticleType(const ParticleType particle_type_);
 
         void ReadOptions(ReadIterator& iter, size_t& length);
         void WriteOptions(WriteContainer& container) const;

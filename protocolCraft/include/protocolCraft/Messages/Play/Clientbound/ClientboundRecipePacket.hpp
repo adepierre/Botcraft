@@ -55,11 +55,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Recipe";
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS_TYPES(DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<VarInt>, std::vector<VarInt>);
-        DECLARE_FIELDS_NAMES(State,                         BookSettings,       Recipes,             ToHighlight);
+        DECLARE_FIELDS(
+            (DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<VarInt>, std::vector<VarInt>),
+            (State,                         BookSettings,       Recipes,             ToHighlight)
+        );
 #else
-        DECLARE_FIELDS_TYPES(DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<Identifier>, std::vector<Identifier>);
-        DECLARE_FIELDS_NAMES(State,                         BookSettings,       Recipes,                 ToHighlight);
+        DECLARE_FIELDS(
+            (DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<Identifier>, std::vector<Identifier>),
+            (State,                         BookSettings,       Recipes,                 ToHighlight)
+        );
 #endif
 
         GETTER_SETTER(State);

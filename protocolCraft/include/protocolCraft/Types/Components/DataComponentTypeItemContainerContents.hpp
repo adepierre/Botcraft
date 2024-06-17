@@ -9,8 +9,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeItemContainerContents : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(std::vector<Slot>);
-            DECLARE_FIELDS_NAMES(Items);
+            DECLARE_FIELDS(
+                (std::vector<Slot>),
+                (Items)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Items);

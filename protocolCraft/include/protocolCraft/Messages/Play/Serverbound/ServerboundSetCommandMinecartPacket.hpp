@@ -40,8 +40,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Command Minecart";
 
-        DECLARE_FIELDS_TYPES(VarInt, std::string, bool);
-        DECLARE_FIELDS_NAMES(Entity, Command,     TrackOutput);
+        DECLARE_FIELDS(
+            (VarInt, std::string, bool),
+            (Entity, Command,     TrackOutput)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Entity);

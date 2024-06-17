@@ -6,8 +6,10 @@ namespace ProtocolCraft
 {
     class NetworkPosition : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(int, int, int);
-        DECLARE_FIELDS_NAMES(X,   Y,   Z);
+        DECLARE_FIELDS(
+            (int, int, int),
+            (X,   Y,   Z)
+        );
         DECLARE_SERIALIZE;
 
         GETTER_SETTER(X);

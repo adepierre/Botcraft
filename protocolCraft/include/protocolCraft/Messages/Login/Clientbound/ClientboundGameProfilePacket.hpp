@@ -15,17 +15,25 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Game Profile";
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(std::string, std::string);
-        DECLARE_FIELDS_NAMES(Uuid,        Username);
+        DECLARE_FIELDS(
+            (std::string, std::string),
+            (Uuid,        Username)
+        );
 #elif PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(UUID, std::string);
-        DECLARE_FIELDS_NAMES(Uuid, Username);
+        DECLARE_FIELDS(
+            (UUID, std::string),
+            (Uuid, Username)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(GameProfile);
-        DECLARE_FIELDS_NAMES(GameProfile);
+        DECLARE_FIELDS(
+            (GameProfile),
+            (GameProfile)
+        );
 #else
-        DECLARE_FIELDS_TYPES(GameProfile, bool);
-        DECLARE_FIELDS_NAMES(GameProfile, StrictErrorHandling);
+        DECLARE_FIELDS(
+            (GameProfile, bool),
+            (GameProfile, StrictErrorHandling)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

@@ -40,8 +40,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Commands";
 
-        DECLARE_FIELDS_TYPES(std::vector<CommandNode>, VarInt);
-        DECLARE_FIELDS_NAMES(Nodes,                    RootIndex);
+        DECLARE_FIELDS(
+            (std::vector<CommandNode>, VarInt),
+            (Nodes,                    RootIndex)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Nodes);

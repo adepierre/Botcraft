@@ -48,11 +48,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Default Spawn Position";
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS_TYPES(NetworkPosition);
-        DECLARE_FIELDS_NAMES(Location);
+        DECLARE_FIELDS(
+            (NetworkPosition),
+            (Location)
+        );
 #else
-        DECLARE_FIELDS_TYPES(NetworkPosition, float);
-        DECLARE_FIELDS_NAMES(Location,        Angle);
+        DECLARE_FIELDS(
+            (NetworkPosition, float),
+            (Location,        Angle)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

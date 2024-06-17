@@ -25,13 +25,17 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Delete Chat";
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(MessageSignature);
+        DECLARE_FIELDS(
+            (std::vector<unsigned char>),
+            (MessageSignature)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #else
         // TODO: That looks like a Holder<std::array<unsigned char, 256>>
-        DECLARE_FIELDS_TYPES(VarInt,             std::array<unsigned char, 256>);
-        DECLARE_FIELDS_NAMES(MessageSignatureId, MessageSignature);
+        DECLARE_FIELDS(
+            (VarInt,             std::array<unsigned char, 256>),
+            (MessageSignatureId, MessageSignature)
+        );
 #endif
 
         GETTER_SETTER(MessageSignature);

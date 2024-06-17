@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Entity Tag Query";
 
-        DECLARE_FIELDS_TYPES(VarInt,        NetworkPosition);
-        DECLARE_FIELDS_NAMES(TransactionId, Pos);
+        DECLARE_FIELDS(
+            (VarInt,        NetworkPosition),
+            (TransactionId, Pos)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(TransactionId);

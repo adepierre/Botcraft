@@ -48,8 +48,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Tab List";
 
-        DECLARE_FIELDS_TYPES(Chat,   Chat);
-        DECLARE_FIELDS_NAMES(Header, Footer);
+        DECLARE_FIELDS(
+            (Chat,   Chat),
+            (Header, Footer)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Header);

@@ -47,11 +47,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Open Screen";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(unsigned char, std::string, Chat,  unsigned char, int);
-        DECLARE_FIELDS_NAMES(ContainerId,   Type,        Title, NumberOfSlots, Id_);
+        DECLARE_FIELDS(
+            (unsigned char, std::string, Chat,  unsigned char, int),
+            (ContainerId,   Type,        Title, NumberOfSlots, Id_)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,      VarInt, Chat);
-        DECLARE_FIELDS_NAMES(ContainerId, Type,   Title);
+        DECLARE_FIELDS(
+            (VarInt,      VarInt, Chat),
+            (ContainerId, Type,   Title)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #endif
 

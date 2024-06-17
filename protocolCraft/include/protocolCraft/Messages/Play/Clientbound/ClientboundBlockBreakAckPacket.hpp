@@ -27,8 +27,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Block Break Ack";
 
-        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt, VarInt, bool);
-        DECLARE_FIELDS_NAMES(Pos,             State,  Action, AllGood);
+        DECLARE_FIELDS(
+            (NetworkPosition, VarInt, VarInt, bool),
+            (Pos,             State,  Action, AllGood)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Pos);

@@ -43,8 +43,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Health";
 
-        DECLARE_FIELDS_TYPES(float,  VarInt, float);
-        DECLARE_FIELDS_NAMES(Health, Food,   FoodSaturation);
+        DECLARE_FIELDS(
+            (float,  VarInt, float),
+            (Health, Food,   FoodSaturation)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Health);

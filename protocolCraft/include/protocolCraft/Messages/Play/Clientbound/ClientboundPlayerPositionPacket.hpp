@@ -46,14 +46,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Player Position";
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS_TYPES(double, double, double, float, float, char,              VarInt);
-        DECLARE_FIELDS_NAMES(X,      Y,      Z,      YRot,  XRot,  RelativeArguments, Id_);
+        DECLARE_FIELDS(
+            (double, double, double, float, float, char,              VarInt),
+            (X,      Y,      Z,      YRot,  XRot,  RelativeArguments, Id_)
+        );
 #elif PROTOCOL_VERSION < 762 /* < 1.19.4 */
-        DECLARE_FIELDS_TYPES(double, double, double, float, float, char,              VarInt, bool);
-        DECLARE_FIELDS_NAMES(X,      Y,      Z,      YRot,  XRot,  RelativeArguments, Id_,    DismountVehicle);
+        DECLARE_FIELDS(
+            (double, double, double, float, float, char,              VarInt, bool),
+            (X,      Y,      Z,      YRot,  XRot,  RelativeArguments, Id_,    DismountVehicle)
+        );
 #else
-        DECLARE_FIELDS_TYPES(double, double, double, float, float, char,              VarInt);
-        DECLARE_FIELDS_NAMES(X,      Y,      Z,      YRot,  XRot,  RelativeArguments, Id_);
+        DECLARE_FIELDS(
+            (double, double, double, float, float, char,              VarInt),
+            (X,      Y,      Z,      YRot,  XRot,  RelativeArguments, Id_)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

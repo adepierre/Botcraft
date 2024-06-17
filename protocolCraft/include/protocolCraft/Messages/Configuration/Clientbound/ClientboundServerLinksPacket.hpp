@@ -17,8 +17,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Server Links (Configuration)";
 
-        DECLARE_FIELDS_TYPES(std::vector<ServerLinksUnstrustedEntry>);
-        DECLARE_FIELDS_NAMES(Links);
+        DECLARE_FIELDS(
+            (std::vector<ServerLinksUnstrustedEntry>),
+            (Links)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Links);

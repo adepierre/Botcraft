@@ -11,8 +11,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeBannerPatternLayers : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(std::vector<BannerPatternLayer>);
-            DECLARE_FIELDS_NAMES(Layers);
+            DECLARE_FIELDS(
+                (std::vector<BannerPatternLayer>),
+                (Layers)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Layers);

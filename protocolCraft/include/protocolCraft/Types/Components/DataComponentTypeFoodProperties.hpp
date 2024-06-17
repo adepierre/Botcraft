@@ -11,8 +11,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeFoodProperties : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(VarInt,    float,      bool,         float,      std::vector<PossibleEffect>);
-            DECLARE_FIELDS_NAMES(Nutrition, Saturation, CanAlwaysEat, EatSeconds, Effects);
+            DECLARE_FIELDS(
+                (VarInt,    float,      bool,         float,      std::vector<PossibleEffect>),
+                (Nutrition, Saturation, CanAlwaysEat, EatSeconds, Effects)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Nutrition);

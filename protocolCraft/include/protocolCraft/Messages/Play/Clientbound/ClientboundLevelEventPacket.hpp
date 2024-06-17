@@ -46,8 +46,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Level Event";
 
-        DECLARE_FIELDS_TYPES(int,  NetworkPosition, int,  bool);
-        DECLARE_FIELDS_NAMES(Type, Pos,             Data, GlobalEvent);
+        DECLARE_FIELDS(
+            (int,  NetworkPosition, int,  bool),
+            (Type, Pos,             Data, GlobalEvent)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Type);

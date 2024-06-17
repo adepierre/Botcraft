@@ -41,8 +41,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Structure Block";
 
-        DECLARE_FIELDS_TYPES(NetworkPosition, VarInt,     VarInt, std::string, char,    char,    char,    char,  char,  char,  VarInt, VarInt,   std::string, float,     VarLong, char);
-        DECLARE_FIELDS_NAMES(Pos,             UpdateType, Mode,   Name_,       OffsetX, OffsetY, OffsetZ, SizeX, SizeY, SizeZ, Mirror, Rotation, Data,        Integrity, Seed,    Flags);
+        DECLARE_FIELDS(
+            (NetworkPosition, VarInt,     VarInt, std::string, char,    char,    char,    char,  char,  char,  VarInt, VarInt,   std::string, float,     VarLong, char),
+            (Pos,             UpdateType, Mode,   Name_,       OffsetX, OffsetY, OffsetZ, SizeX, SizeY, SizeZ, Mirror, Rotation, Data,        Integrity, Seed,    Flags)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Pos);

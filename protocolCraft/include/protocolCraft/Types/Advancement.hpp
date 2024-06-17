@@ -9,14 +9,20 @@ namespace ProtocolCraft
     class Advancement : public NetworkType
     {
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS_TYPES(std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<Identifier>, std::vector<std::vector<std::string>>);
-        DECLARE_FIELDS_NAMES(ParentId,                  DisplayData,                       Criteria,                Requirements);
+        DECLARE_FIELDS(
+            (std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<Identifier>, std::vector<std::vector<std::string>>),
+            (ParentId,                  DisplayData,                       Criteria,                Requirements)
+        );
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS_TYPES(std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<Identifier>, std::vector<std::vector<std::string>>, bool);
-        DECLARE_FIELDS_NAMES(ParentId,                  DisplayData,                       Criteria,                Requirements,                          SendsTelemetryEvent);
+        DECLARE_FIELDS(
+            (std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<Identifier>, std::vector<std::vector<std::string>>, bool),
+            (ParentId,                  DisplayData,                       Criteria,                Requirements,                          SendsTelemetryEvent)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<std::vector<std::string>>, bool);
-        DECLARE_FIELDS_NAMES(ParentId,                  DisplayData,                       Requirements,                          SendsTelemetryEvent);
+        DECLARE_FIELDS(
+            (std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<std::vector<std::string>>, bool),
+            (ParentId,                  DisplayData,                       Requirements,                          SendsTelemetryEvent)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

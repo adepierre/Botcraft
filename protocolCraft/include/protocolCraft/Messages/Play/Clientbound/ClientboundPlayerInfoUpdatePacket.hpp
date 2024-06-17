@@ -55,8 +55,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Info Update";
 
-        DECLARE_FIELDS_TYPES(std::vector<PlayerInfoUpdateAction>, std::map<UUID, PlayerInfoUpdateEntry>);
-        DECLARE_FIELDS_NAMES(Actions,                             Entries);
+        DECLARE_FIELDS(
+            (std::vector<PlayerInfoUpdateAction>, std::map<UUID, PlayerInfoUpdateEntry>),
+            (Actions,                             Entries)
+        );
 
         GETTER_SETTER(Actions);
         GETTER_SETTER(Entries);

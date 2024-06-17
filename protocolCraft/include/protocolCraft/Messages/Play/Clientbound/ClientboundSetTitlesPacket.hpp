@@ -41,8 +41,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Titles";
 
-        DECLARE_FIELDS_TYPES(DiffType<SetTitlesType, VarInt>, Chat, int,        int,      int);
-        DECLARE_FIELDS_NAMES(Type,                            Text, FadeInTime, StayTime, FadeOutTime);
+        DECLARE_FIELDS(
+            (DiffType<SetTitlesType, VarInt>, Chat, int,        int,      int),
+            (Type,                            Text, FadeInTime, StayTime, FadeOutTime)
+        );
 
         GETTER_SETTER(Type);
         GETTER_SETTER(Text);

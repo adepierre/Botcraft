@@ -9,8 +9,10 @@ namespace ProtocolCraft
     {
         class ItemAttributeModifiersEntry : public NetworkType
         {
-            DECLARE_FIELDS_TYPES(VarInt,    AttributeModifier, VarInt);
-            DECLARE_FIELDS_NAMES(Attribute, Modifier,          Slot);
+            DECLARE_FIELDS(
+                (VarInt,    AttributeModifier, VarInt),
+                (Attribute, Modifier,          Slot)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Attribute);

@@ -35,8 +35,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Animate";
 
-        DECLARE_FIELDS_TYPES(VarInt, unsigned char);
-        DECLARE_FIELDS_NAMES(Id_,    Action);
+        DECLARE_FIELDS(
+            (VarInt, unsigned char),
+            (Id_,    Action)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Id_);

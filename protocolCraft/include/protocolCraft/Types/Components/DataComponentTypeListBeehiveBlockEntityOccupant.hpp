@@ -9,8 +9,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeListBeehiveBlockEntityOccupant : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(DataComponentTypeCustomData, VarInt,      VarInt);
-            DECLARE_FIELDS_NAMES(EntityData,                  TicksInHive, MinTicksInHive);
+            DECLARE_FIELDS(
+                (DataComponentTypeCustomData, VarInt,      VarInt),
+                (EntityData,                  TicksInHive, MinTicksInHive)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(EntityData);

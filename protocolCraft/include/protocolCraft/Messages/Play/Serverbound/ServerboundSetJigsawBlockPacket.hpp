@@ -40,14 +40,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Jigsaw Block";
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(NetworkPosition, Identifier,     Identifier, std::string);
-        DECLARE_FIELDS_NAMES(Pos,             AttachmentType, TargetPool, FinalState);
+        DECLARE_FIELDS(
+            (NetworkPosition, Identifier,     Identifier, std::string),
+            (Pos,             AttachmentType, TargetPool, FinalState)
+        );
 #elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_FIELDS_TYPES(NetworkPosition, Identifier, Identifier, Identifier, std::string, std::string);
-        DECLARE_FIELDS_NAMES(Pos,             Name_,      Target,     Pool,       FinaleState, Joint);
+        DECLARE_FIELDS(
+            (NetworkPosition, Identifier, Identifier, Identifier, std::string, std::string),
+            (Pos,             Name_,      Target,     Pool,       FinaleState, Joint)
+        );
 #else
-        DECLARE_FIELDS_TYPES(NetworkPosition, Identifier, Identifier, Identifier, std::string, std::string, VarInt,            VarInt);
-        DECLARE_FIELDS_NAMES(Pos,             Name_,      Target,     Pool,       FinaleState, Joint,       SelectionPriority, PlacementPriority);
+        DECLARE_FIELDS(
+            (NetworkPosition, Identifier, Identifier, Identifier, std::string, std::string, VarInt,            VarInt),
+            (Pos,             Name_,      Target,     Pool,       FinaleState, Joint,       SelectionPriority, PlacementPriority)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

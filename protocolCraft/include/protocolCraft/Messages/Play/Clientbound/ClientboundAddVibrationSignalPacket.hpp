@@ -18,8 +18,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Add Vibration Signal";
 
-        DECLARE_FIELDS_TYPES(VibrationPath);
-        DECLARE_FIELDS_NAMES(VibrationPath);
+        DECLARE_FIELDS(
+            (VibrationPath),
+            (VibrationPath)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(VibrationPath);

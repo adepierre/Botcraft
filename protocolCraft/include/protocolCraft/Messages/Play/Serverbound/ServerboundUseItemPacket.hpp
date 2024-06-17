@@ -44,14 +44,20 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Use Item";
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Hand);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Hand)
+        );
 #elif PROTOCOL_VERSION < 767 /* < 1.21*/
-        DECLARE_FIELDS_TYPES(VarInt, VarInt);
-        DECLARE_FIELDS_NAMES(Hand,   Sequence);
+        DECLARE_FIELDS(
+            (VarInt, VarInt),
+            (Hand,   Sequence)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, VarInt,   float, float);
-        DECLARE_FIELDS_NAMES(Hand,   Sequence, YRot,  XRot);
+        DECLARE_FIELDS(
+            (VarInt, VarInt,   float, float),
+            (Hand,   Sequence, YRot,  XRot)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

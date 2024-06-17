@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border Center";
 
-        DECLARE_FIELDS_TYPES(double,     double);
-        DECLARE_FIELDS_NAMES(NewCenterX, NewCenterZ);
+        DECLARE_FIELDS(
+            (double,     double),
+            (NewCenterX, NewCenterZ)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(NewCenterX);

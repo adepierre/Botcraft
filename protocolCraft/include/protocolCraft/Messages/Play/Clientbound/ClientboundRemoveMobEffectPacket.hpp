@@ -46,11 +46,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Remove Mob Effect";
 
 #if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-        DECLARE_FIELDS_TYPES(VarInt,   char);
-        DECLARE_FIELDS_NAMES(EntityId, Effect);
+        DECLARE_FIELDS(
+            (VarInt,   char),
+            (EntityId, Effect)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt,   VarInt);
-        DECLARE_FIELDS_NAMES(EntityId, Effect);
+        DECLARE_FIELDS(
+            (VarInt,   VarInt),
+            (EntityId, Effect)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

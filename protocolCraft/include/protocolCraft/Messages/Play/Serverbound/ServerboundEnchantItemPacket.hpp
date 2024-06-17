@@ -19,8 +19,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Enchant item";
 
-        DECLARE_FIELDS_TYPES(char, char);
-        DECLARE_FIELDS_NAMES(ContainerId, Enchantment);
+        DECLARE_FIELDS(
+            (char, char),
+            (ContainerId, Enchantment)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ContainerId);

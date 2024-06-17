@@ -9,8 +9,10 @@ namespace ProtocolCraft
 {
     class AdvancementDisplay : public NetworkType
     {
-        DECLARE_FIELDS_TYPES(Chat,  Chat,        Slot, VarInt,    int,   std::optional<Identifier>, float,  float);
-        DECLARE_FIELDS_NAMES(Title, Description, Icon, FrameType, Flags, BackgroundTexture,         XCoord, YCoord);
+        DECLARE_FIELDS(
+            (Chat,  Chat,        Slot, VarInt,    int,   std::optional<Identifier>, float,  float),
+            (Title, Description, Icon, FrameType, Flags, BackgroundTexture,         XCoord, YCoord)
+        );
         // Manually declare read/write because of the flags thing
         DECLARE_SERIALIZE;
 
@@ -24,10 +26,12 @@ namespace ProtocolCraft
         {
             return std::get<static_cast<size_t>(FieldsEnum::BackgroundTexture)>(fields);
         }
-        void SetBackgroundTexture(const std::optional<Identifier>& BackgroundTexture)
+
+        auto& SetBackgroundTexture(const std::optional<Identifier>& BackgroundTexture)
         {
             SetFlags(BackgroundTexture.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
             std::get<static_cast<size_t>(FieldsEnum::BackgroundTexture)>(fields) = BackgroundTexture;
+            return *this;
         }
         GETTER_SETTER(XCoord);
         GETTER_SETTER(YCoord);

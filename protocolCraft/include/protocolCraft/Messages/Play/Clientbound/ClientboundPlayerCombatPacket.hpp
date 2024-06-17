@@ -32,8 +32,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Combat";
 
-        DECLARE_FIELDS_TYPES(VarInt, VarInt, int, VarInt, Chat);
-        DECLARE_FIELDS_NAMES(Event, Duration, KillerId, PlayerId, Message);
+        DECLARE_FIELDS(
+            (VarInt, VarInt, int, VarInt, Chat),
+            (Event, Duration, KillerId, PlayerId, Message)
+        );
 
         GETTER_SETTER(Event);
         GETTER_SETTER(Duration);

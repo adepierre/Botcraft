@@ -14,14 +14,20 @@ namespace ProtocolCraft
     class EntityProperty : public NetworkType
     {
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(std::string, double, std::vector<EntityModifierData>);
-        DECLARE_FIELDS_NAMES(Key,         Value,  Modifiers);
+        DECLARE_FIELDS(
+            (std::string, double, std::vector<EntityModifierData>),
+            (Key,         Value,  Modifiers)
+        );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS_TYPES(Identifier,  double, std::vector<EntityModifierData>);
-        DECLARE_FIELDS_NAMES(Key,         Value,  Modifiers);
+        DECLARE_FIELDS(
+            (Identifier,  double, std::vector<EntityModifierData>),
+            (Key,         Value,  Modifiers)
+        );
 #else
-        DECLARE_FIELDS_TYPES(VarInt, double, std::vector<EntityModifierData>);
-        DECLARE_FIELDS_NAMES(Key,    Value,  Modifiers);
+        DECLARE_FIELDS(
+            (VarInt, double, std::vector<EntityModifierData>),
+            (Key,    Value,  Modifiers)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

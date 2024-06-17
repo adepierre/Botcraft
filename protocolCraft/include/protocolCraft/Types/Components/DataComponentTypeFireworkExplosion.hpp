@@ -8,8 +8,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeFireworkExplosion : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(int,   std::vector<int>, std::vector<int>, bool,     bool);
-            DECLARE_FIELDS_NAMES(Shape, Colors,           FadeColors,       HasTrail, HasTwinkle);
+            DECLARE_FIELDS(
+                (int,   std::vector<int>, std::vector<int>, bool,     bool),
+                (Shape, Colors,           FadeColors,       HasTrail, HasTwinkle)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Shape);

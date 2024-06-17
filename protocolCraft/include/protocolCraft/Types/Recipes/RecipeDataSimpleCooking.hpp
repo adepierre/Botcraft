@@ -10,11 +10,15 @@ namespace ProtocolCraft
     class RecipeDataSimpleCooking : public RecipeData
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS_TYPES(std::string, Ingredient, Slot,   float,      VarInt);
-        DECLARE_FIELDS_NAMES(Group,       Ingredient, Result, Experience, CookingTime);
+        DECLARE_FIELDS(
+            (std::string, Ingredient, Slot,   float,      VarInt),
+            (Group,       Ingredient, Result, Experience, CookingTime)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string, VarInt,              Ingredient, Slot,   float,      VarInt);
-        DECLARE_FIELDS_NAMES(Group,       CookingBookCategory, Ingredient, Result, Experience, CookingTime);
+        DECLARE_FIELDS(
+            (std::string, VarInt,              Ingredient, Slot,   float,      VarInt),
+            (Group,       CookingBookCategory, Ingredient, Result, Experience, CookingTime)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

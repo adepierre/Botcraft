@@ -38,8 +38,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Boss Event";
 
-        DECLARE_FIELDS_TYPES(UUID, VarInt,    Chat,  float, VarInt, VarInt,  unsigned char);
-        DECLARE_FIELDS_NAMES(Id_,  Operation, Name_, Pct,   Color,  Overlay, Flags);
+        DECLARE_FIELDS(
+            (UUID, VarInt,    Chat,  float, VarInt, VarInt,  unsigned char),
+            (Id_,  Operation, Name_, Pct,   Color,  Overlay, Flags)
+        );
 
         GETTER_SETTER(Id_);
         GETTER_SETTER(Operation);

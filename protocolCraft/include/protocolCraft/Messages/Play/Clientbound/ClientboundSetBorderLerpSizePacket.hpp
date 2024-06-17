@@ -31,8 +31,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border Lerp Size";
 
-        DECLARE_FIELDS_TYPES(double, double, VarLong);
-        DECLARE_FIELDS_NAMES(OldSize, NewSize, LerpTime);
+        DECLARE_FIELDS(
+            (double, double, VarLong),
+            (OldSize, NewSize, LerpTime)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(OldSize);

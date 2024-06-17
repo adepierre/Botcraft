@@ -29,8 +29,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Container Ack";
 
-        DECLARE_FIELDS_TYPES(char,        short, bool);
-        DECLARE_FIELDS_NAMES(ContainerId, Uid,   Accepted);
+        DECLARE_FIELDS(
+            (char,        short, bool),
+            (ContainerId, Uid,   Accepted)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ContainerId);

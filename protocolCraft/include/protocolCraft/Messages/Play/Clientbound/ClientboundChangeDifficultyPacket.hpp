@@ -38,11 +38,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Change Difficulty";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS_TYPES(unsigned char);
-        DECLARE_FIELDS_NAMES(Difficulty);
+        DECLARE_FIELDS(
+            (unsigned char),
+            (Difficulty)
+        );
 #else
-        DECLARE_FIELDS_TYPES(unsigned char, bool);
-        DECLARE_FIELDS_NAMES(Difficulty,    Locked);
+        DECLARE_FIELDS(
+            (unsigned char, bool),
+            (Difficulty,    Locked)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

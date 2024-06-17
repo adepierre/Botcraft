@@ -40,8 +40,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Select Trade";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(Item);
+        DECLARE_FIELDS(
+            (VarInt),
+            (Item)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Item);

@@ -45,11 +45,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Player Abilities";
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS_TYPES(char,  float,       float);
-        DECLARE_FIELDS_NAMES(Flags, FlyingSpeed, WalkingSpeed);
+        DECLARE_FIELDS(
+            (char,  float,       float),
+            (Flags, FlyingSpeed, WalkingSpeed)
+        );
 #else
-        DECLARE_FIELDS_TYPES(char);
-        DECLARE_FIELDS_NAMES(Flags);
+        DECLARE_FIELDS(
+            (char),
+            (Flags)
+        );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
 

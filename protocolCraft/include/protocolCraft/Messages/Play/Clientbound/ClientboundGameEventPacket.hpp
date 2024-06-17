@@ -45,8 +45,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Game Event";
 
-        DECLARE_FIELDS_TYPES(unsigned char, float);
-        DECLARE_FIELDS_NAMES(Type,          Param);
+        DECLARE_FIELDS(
+            (unsigned char, float),
+            (Type,          Param)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Type);

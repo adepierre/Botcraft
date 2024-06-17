@@ -13,8 +13,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeResolvableProfile : public DataComponentType
         {
-            DECLARE_FIELDS_TYPES(std::optional<std::string>, std::optional<UUID>, std::vector<GameProfileProperty>);
-            DECLARE_FIELDS_NAMES(Name,                       Uuid,                Properties);
+            DECLARE_FIELDS(
+                (std::optional<std::string>, std::optional<UUID>, std::vector<GameProfileProperty>),
+                (Name,                       Uuid,                Properties)
+            );
             DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Name);

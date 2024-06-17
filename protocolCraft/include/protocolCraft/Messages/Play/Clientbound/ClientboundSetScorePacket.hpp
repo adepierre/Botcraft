@@ -53,11 +53,15 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Score";
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_FIELDS_TYPES(std::string, DiffType<SetScoreMethod, char>, std::string,   VarInt);
-        DECLARE_FIELDS_NAMES(Owner,       Method,                         ObjectiveName, Score);
+        DECLARE_FIELDS(
+            (std::string, DiffType<SetScoreMethod, char>, std::string,   VarInt),
+            (Owner,       Method,                         ObjectiveName, Score)
+        );
 #else
-        DECLARE_FIELDS_TYPES(std::string, std::string,   VarInt, std::optional<Chat>, std::optional<NumberFormat>);
-        DECLARE_FIELDS_NAMES(Owner,       ObjectiveName, Score,  Display,             NumberFormat);
+        DECLARE_FIELDS(
+            (std::string, std::string,   VarInt, std::optional<Chat>, std::optional<NumberFormat>),
+            (Owner,       ObjectiveName, Score,  Display,             NumberFormat)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #endif
 

@@ -28,12 +28,16 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Add Mob";
 
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, Angle, Angle, Angle,    short, short, short, std::vector<unsigned char>);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      YRot,  XRot,  YHeadRot, Xd,    Yd,    Zd,    RawMetadata);
+        DECLARE_FIELDS(
+            (VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    short, short, short, std::vector<unsigned char>),
+            (Id_,    Uuid, Type,   X,      Y,      Z,      YRot,          XRot,                  YHeadRot, Xd,    Yd,    Zd,    RawMetadata)
+        );
         DECLARE_SERIALIZE;
 #else
-        DECLARE_FIELDS_TYPES(VarInt, UUID, VarInt, double, double, double, Angle, Angle, Angle,    short, short, short);
-        DECLARE_FIELDS_NAMES(Id_,    Uuid, Type,   X,      Y,      Z,      YRot,  XRot,  YHeadRot, Xd,    Yd,    Zd);
+        DECLARE_FIELDS(
+            (VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    short, short, short),
+            (Id_,    Uuid, Type,   X,      Y,      Z,      YRot,          XRot,                  YHeadRot, Xd,    Yd,    Zd)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 #endif
 
@@ -62,9 +66,9 @@ namespace ProtocolCraft
             SetX(ReadData<double>(iter, length));
             SetY(ReadData<double>(iter, length));
             SetZ(ReadData<double>(iter, length));
-            SetYRot(ReadData<Angle>(iter, length));
-            SetXRot(ReadData<Angle>(iter, length));
-            SetYHeadRot(ReadData<Angle>(iter, length));
+            SetYRot(ReadData<unsigned char>(iter, length));
+            SetXRot(ReadData<unsigned char>(iter, length));
+            SetYHeadRot(ReadData<unsigned char>(iter, length));
             SetXd(ReadData<short>(iter, length));
             SetYd(ReadData<short>(iter, length));
             SetZd(ReadData<short>(iter, length));
@@ -79,9 +83,9 @@ namespace ProtocolCraft
             WriteData<double>(GetX(), container);
             WriteData<double>(GetY(), container);
             WriteData<double>(GetZ(), container);
-            WriteData<Angle>(GetYRot(), container);
-            WriteData<Angle>(GetXRot(), container);
-            WriteData<Angle>(GetYHeadRot(), container);
+            WriteData<unsigned char>(GetYRot(), container);
+            WriteData<unsigned char>(GetXRot(), container);
+            WriteData<unsigned char>(GetYHeadRot(), container);
             WriteData<short>(GetXd(), container);
             WriteData<short>(GetYd(), container);
             WriteData<short>(GetZd(), container);

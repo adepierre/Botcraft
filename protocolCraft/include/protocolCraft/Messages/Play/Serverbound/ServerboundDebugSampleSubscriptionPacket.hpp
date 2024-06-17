@@ -16,8 +16,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Debug Sample Subscription";
 
-        DECLARE_FIELDS_TYPES(VarInt);
-        DECLARE_FIELDS_NAMES(SampleType);
+        DECLARE_FIELDS(
+            (VarInt),
+            (SampleType)
+        );
         DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(SampleType);

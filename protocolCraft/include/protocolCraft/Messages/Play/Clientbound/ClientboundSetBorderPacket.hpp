@@ -40,8 +40,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Border";
 
-        DECLARE_FIELDS_TYPES(DiffType<SetBorderType, VarInt>, double,  double,  VarLong,  double,     double,     VarInt,             VarInt,      VarInt);
-        DECLARE_FIELDS_NAMES(Action,                          NewSize, OldSize, LerpTime, NewCenterX, NewCenterZ, NewAbsoluteMaxSize, WarningTime, WarningBlocks);
+        DECLARE_FIELDS(
+            (DiffType<SetBorderType, VarInt>, double,  double,  VarLong,  double,     double,     VarInt,             VarInt,      VarInt),
+            (Action,                          NewSize, OldSize, LerpTime, NewCenterX, NewCenterZ, NewAbsoluteMaxSize, WarningTime, WarningBlocks)
+        );
 
         GETTER_SETTER(Action);
         GETTER_SETTER(NewSize);
