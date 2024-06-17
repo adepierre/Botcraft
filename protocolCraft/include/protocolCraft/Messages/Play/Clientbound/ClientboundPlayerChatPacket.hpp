@@ -61,7 +61,7 @@ namespace ProtocolCraft
         GETTER_SETTER(Timestamp);
         GETTER_SETTER(SaltSignature);
 #endif
-#if PROTOCOL_VERSION == 761 /* 1.19.3 */
+#if PROTOCOL_VERSION == 760 /* 1.19.2 */
         GETTER_SETTER(Message);
         GETTER_SETTER(ChatType);
 #else
