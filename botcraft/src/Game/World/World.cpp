@@ -716,7 +716,7 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
+#if PROTOCOL_VERSION < 751 /* < 1.16.2 */
         for (const auto& d : msg.GetRegistryHolder()["dimension"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
@@ -726,9 +726,11 @@ namespace Botcraft
         for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
+            dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
             dimension_height[dim_name] = static_cast<unsigned int>(d["element"]["height"].get<int>());
             dimension_min_y[dim_name] = d["element"]["min_y"].get<int>();
-            dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
+#endif
         }
 #endif
 #endif
