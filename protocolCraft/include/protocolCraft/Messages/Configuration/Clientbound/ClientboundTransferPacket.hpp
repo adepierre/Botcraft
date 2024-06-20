@@ -10,7 +10,7 @@ namespace ProtocolCraft
     class ClientboundTransferConfigurationPacket : public BaseMessage<ClientboundTransferConfigurationPacket>
     {
     public:
-        static constexpr int packet_id = 0x05;
+        static constexpr int packet_id = 0x0B;
         static constexpr std::string_view packet_name = "Transfer (Configuration)";
 
         DECLARE_FIELDS(

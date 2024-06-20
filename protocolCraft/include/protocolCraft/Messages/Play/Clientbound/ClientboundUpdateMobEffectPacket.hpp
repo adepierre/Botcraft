@@ -14,7 +14,7 @@ namespace ProtocolCraft
         static constexpr int packet_id = 0x4F;
 #elif PROTOCOL_VERSION == 393 /* 1.13 */ || PROTOCOL_VERSION == 401 /* 1.13.1 */ ||  \
       PROTOCOL_VERSION == 404 /* 1.13.2 */
-        static constexpr int packet_id = 0x52;
+        static constexpr int packet_id = 0x53;
 #elif PROTOCOL_VERSION == 477 /* 1.14 */ || PROTOCOL_VERSION == 480 /* 1.14.1 */ ||  \
       PROTOCOL_VERSION == 485 /* 1.14.2 */ || PROTOCOL_VERSION == 490 /* 1.14.3 */ ||  \
       PROTOCOL_VERSION == 498 /* 1.14.4 */
