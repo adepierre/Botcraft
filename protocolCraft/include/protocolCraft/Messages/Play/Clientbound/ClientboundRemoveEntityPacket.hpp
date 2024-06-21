@@ -20,7 +20,7 @@ namespace ProtocolCraft
             (VarInt),
             (EntityId)
         );
-        DECLARE_READ_WRITE_SERIALIZE(EntityId);
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(EntityId);
     };
