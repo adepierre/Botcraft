@@ -79,6 +79,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
         GETTER_SETTER(Salt);
         GETTER_SETTER(Signature);
+        GETTER_SETTER(LastSeenMessages);
+#endif
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         // Convenient set from a std::vector
         auto& SetSignature(const std::vector<unsigned char>& signature)
         {
@@ -86,7 +89,6 @@ namespace ProtocolCraft
             std::copy_n(signature.begin(), 256, new_signature.begin());
             return SetSignature(new_signature);
         }
-        GETTER_SETTER(LastSeenMessages);
 #endif
     };
 } //ProtocolCraft
