@@ -11,7 +11,6 @@ namespace ProtocolCraft
     class ClientboundStoreCookieConfigurationPacket : public BaseMessage<ClientboundStoreCookieConfigurationPacket>
     {
     public:
-        static constexpr int packet_id = 0x0A;
         static constexpr std::string_view packet_name = "Store Cookie (Configuration)";
 
         DECLARE_FIELDS(

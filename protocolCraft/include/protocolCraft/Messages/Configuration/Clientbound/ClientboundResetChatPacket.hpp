@@ -8,7 +8,6 @@ namespace ProtocolCraft
     class ClientboundResetChatPacket : public BaseMessage<ClientboundResetChatPacket>
     {
     public:
-        static constexpr int packet_id = 0x06;
         static constexpr std::string_view packet_name = "Reset Chat";
         DECLARE_EMPTY;
     };

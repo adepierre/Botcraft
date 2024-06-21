@@ -11,7 +11,6 @@ namespace ProtocolCraft
     class ServerboundKeyPacket : public BaseMessage<ServerboundKeyPacket>
     {
     public:
-        static constexpr int packet_id = 0x01;
         static constexpr std::string_view packet_name = "Key";
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */

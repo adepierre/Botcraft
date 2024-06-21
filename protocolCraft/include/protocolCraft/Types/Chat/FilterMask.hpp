@@ -9,7 +9,7 @@ namespace ProtocolCraft
     {
         DECLARE_FIELDS(
             (VarInt, std::optional<std::vector<long long int>>),
-            (Type, Mask)
+            (Type,   Mask)
         );
         DECLARE_SERIALIZE;
 

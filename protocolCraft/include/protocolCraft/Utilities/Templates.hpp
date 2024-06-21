@@ -35,7 +35,7 @@ namespace ProtocolCraft
 
         template <typename T, typename Tuple>                   constexpr int get_tuple_index                                = 0;
         template <typename T, typename... Rest>                 constexpr int get_tuple_index<T, std::tuple<T, Rest...>>     = 0;
-        template <typename T, typename First, typename... Rest> constexpr int get_tuple_index<T, std::tuple<First, Rest...>> = 1 + get_index<T, std::tuple<Rest...>>;
+        template <typename T, typename First, typename... Rest> constexpr int get_tuple_index<T, std::tuple<First, Rest...>> = 1 + get_tuple_index<T, std::tuple<Rest...>>;
 
         // Template black magic to loop at compile time
         template<std::size_t... indices, class LoopBody>

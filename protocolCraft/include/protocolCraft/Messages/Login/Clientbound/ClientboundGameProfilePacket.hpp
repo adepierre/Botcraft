@@ -11,7 +11,6 @@ namespace ProtocolCraft
     class ClientboundGameProfilePacket : public BaseMessage<ClientboundGameProfilePacket>
     {
     public:
-        static constexpr int packet_id = 0x02;
         static constexpr std::string_view packet_name = "Game Profile";
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */

@@ -7,7 +7,6 @@ namespace ProtocolCraft
     class ServerboundPingRequestStatusPacket : public BaseMessage<ServerboundPingRequestStatusPacket>
     {
     public:
-        static constexpr int packet_id = 0x01;
         static constexpr std::string_view packet_name = "Ping Request (Status)";
 
         DECLARE_FIELDS(

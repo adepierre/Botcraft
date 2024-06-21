@@ -9,7 +9,6 @@ namespace ProtocolCraft
     class ServerboundClientInformationConfigurationPacket : public BaseMessage<ServerboundClientInformationConfigurationPacket>
     {
     public:
-        static constexpr int packet_id = 0x00;
 
         static constexpr std::string_view packet_name = "Client Information (Configuration)";
 

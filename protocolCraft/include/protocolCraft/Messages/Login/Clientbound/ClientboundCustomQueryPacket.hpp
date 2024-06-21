@@ -10,7 +10,6 @@ namespace ProtocolCraft
     class ClientboundCustomQueryPacket : public BaseMessage<ClientboundCustomQueryPacket>
     {
     public:
-        static constexpr int packet_id = 0x04;
         static constexpr std::string_view packet_name = "Custom Query";
 
         DECLARE_FIELDS(

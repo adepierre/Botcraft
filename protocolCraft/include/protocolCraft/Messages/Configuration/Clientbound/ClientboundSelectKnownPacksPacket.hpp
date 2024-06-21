@@ -11,7 +11,6 @@ namespace ProtocolCraft
     class ClientboundSelectKnownPacksPacket : public BaseMessage<ClientboundSelectKnownPacksPacket>
     {
     public:
-        static constexpr int packet_id = 0x0E;
         static constexpr std::string_view packet_name = "Select Known Packs";
 
         DECLARE_FIELDS(

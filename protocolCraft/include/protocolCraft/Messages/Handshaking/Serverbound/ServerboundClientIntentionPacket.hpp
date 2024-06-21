@@ -7,7 +7,6 @@ namespace ProtocolCraft
     class ServerboundClientIntentionPacket : public BaseMessage<ServerboundClientIntentionPacket>
     {
     public:
-        static constexpr int packet_id = 0x00;
         static constexpr std::string_view packet_name = "Client Intention";
 
         DECLARE_FIELDS(

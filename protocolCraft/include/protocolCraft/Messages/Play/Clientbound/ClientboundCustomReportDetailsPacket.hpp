@@ -8,11 +8,6 @@ namespace ProtocolCraft
     class ClientboundCustomReportDetailsPacket : public BaseMessage<ClientboundCustomReportDetailsPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 767 /* 1.21 */
-        static constexpr int packet_id = 0x7A;
-#else
-#error "Protocol version not implemented"
-#endif
 
         static constexpr std::string_view packet_name = "Custom Report Details";
 

@@ -9,12 +9,6 @@ namespace ProtocolCraft
     class ClientboundAddVibrationSignalPacket : public BaseMessage<ClientboundAddVibrationSignalPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 755 /* 1.17 */ || PROTOCOL_VERSION == 756 /* 1.17.1 */ ||  \
-      PROTOCOL_VERSION == 757 /* 1.18/.1 */ || PROTOCOL_VERSION == 758 /* 1.18.2 */
-        static constexpr int packet_id = 0x05;
-#else
-#error "Protocol version not implemented"
-#endif
 
         static constexpr std::string_view packet_name = "Add Vibration Signal";
 

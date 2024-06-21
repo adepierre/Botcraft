@@ -9,11 +9,6 @@ namespace ProtocolCraft
     class ClientboundServerLinksConfigurationPacket : public BaseMessage<ClientboundServerLinksConfigurationPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 767 /* 1.21 */
-        static constexpr int packet_id = 0x10;
-#else
-#error "Protocol version not implemented"
-#endif
 
         static constexpr std::string_view packet_name = "Server Links (Configuration)";
 

@@ -9,7 +9,6 @@ namespace ProtocolCraft
     class ClientboundCookieRequestLoginPacket : public BaseMessage<ClientboundCookieRequestLoginPacket>
     {
     public:
-        static constexpr int packet_id = 0x05;
         static constexpr std::string_view packet_name = "Cookie Request (Login)";
 
         DECLARE_FIELDS(

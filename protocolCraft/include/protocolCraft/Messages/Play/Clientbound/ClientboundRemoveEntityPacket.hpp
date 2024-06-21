@@ -8,11 +8,6 @@ namespace ProtocolCraft
     class ClientboundRemoveEntityPacket : public BaseMessage<ClientboundRemoveEntityPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 755 /* 1.17 */
-        static constexpr int packet_id = 0x3A;
-#else
-#error "Protocol version not implemented"
-#endif
 
         static constexpr std::string_view packet_name = "Remove Entity";
 

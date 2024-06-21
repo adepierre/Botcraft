@@ -10,7 +10,6 @@ namespace ProtocolCraft
     class ClientboundLoginDisconnectPacket : public BaseMessage<ClientboundLoginDisconnectPacket>
     {
     public:
-        static constexpr int packet_id = 0x00;
         static constexpr std::string_view packet_name = "Login Disconnect";
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */

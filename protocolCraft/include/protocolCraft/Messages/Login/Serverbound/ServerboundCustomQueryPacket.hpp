@@ -8,7 +8,6 @@ namespace ProtocolCraft
     class ServerboundCustomQueryPacket : public BaseMessage<ServerboundCustomQueryPacket>
     {
     public:
-        static constexpr int packet_id = 0x02;
         static constexpr std::string_view packet_name = "Custom Query";
 
         DECLARE_FIELDS(

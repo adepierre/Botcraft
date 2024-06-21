@@ -11,7 +11,6 @@ namespace ProtocolCraft
     class ServerboundHelloPacket : public BaseMessage<ServerboundHelloPacket>
     {
     public:
-        static constexpr int packet_id = 0x00;
         static constexpr std::string_view packet_name = "Hello";
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */

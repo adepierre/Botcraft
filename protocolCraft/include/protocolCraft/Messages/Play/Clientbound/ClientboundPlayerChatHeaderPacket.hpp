@@ -9,11 +9,6 @@ namespace ProtocolCraft
     class ClientboundPlayerChatHeaderPacket : public BaseMessage<ClientboundPlayerChatHeaderPacket>
     {
     public:
-#if   PROTOCOL_VERSION == 760 /* 1.19.1/2 */
-        static constexpr int packet_id = 0x32;
-#else
-#error "Protocol version not implemented"
-#endif
 
         static constexpr std::string_view packet_name = "Player Chat Header";
 

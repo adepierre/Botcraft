@@ -8,7 +8,6 @@ namespace ProtocolCraft
     class ServerboundLoginAcknowledgedPacket : public BaseMessage<ServerboundLoginAcknowledgedPacket>
     {
     public:
-        static constexpr int packet_id = 0x03;
         static constexpr std::string_view packet_name = "Login Acknowledged";
 
         DECLARE_EMPTY;

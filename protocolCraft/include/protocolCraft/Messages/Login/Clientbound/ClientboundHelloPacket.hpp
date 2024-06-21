@@ -7,7 +7,6 @@ namespace ProtocolCraft
     class ClientboundHelloPacket : public BaseMessage<ClientboundHelloPacket>
     {
     public:
-        static constexpr int packet_id = 0x01;
         static constexpr std::string_view packet_name = "Hello";
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */

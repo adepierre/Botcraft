@@ -7,7 +7,6 @@ namespace ProtocolCraft
     class ClientboundLoginCompressionPacket : public BaseMessage<ClientboundLoginCompressionPacket>
     {
     public:
-        static constexpr int packet_id = 0x03;
         static constexpr std::string_view packet_name = "Login Compression";
 
         DECLARE_FIELDS(

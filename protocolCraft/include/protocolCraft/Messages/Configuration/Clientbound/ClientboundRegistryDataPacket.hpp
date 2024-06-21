@@ -18,13 +18,6 @@ namespace ProtocolCraft
     class ClientboundRegistryDataPacket : public BaseMessage<ClientboundRegistryDataPacket>
     {
     public:
-#if   PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        static constexpr int packet_id = 0x05;
-#elif PROTOCOL_VERSION == 766 /* 1.20.5/6 */ || PROTOCOL_VERSION == 767 /* 1.21 */
-        static constexpr int packet_id = 0x07;
-#else
-#error "Protocol version not implemented"
-#endif
 
         static constexpr std::string_view packet_name = "Registry Data";
 

@@ -9,7 +9,6 @@ namespace ProtocolCraft
     class ClientboundResourcePackConfigurationPacket : public BaseMessage<ClientboundResourcePackConfigurationPacket>
     {
     public:
-        static constexpr int packet_id = 0x06;
 
         static constexpr std::string_view packet_name = "Resource Pack (Configuration)";
 
