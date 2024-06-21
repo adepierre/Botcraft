@@ -30,6 +30,13 @@ namespace ProtocolCraft
                 std::declval<input_t>()...
             ));
 
+        template <typename T, typename Tuple> constexpr bool tuple_contains_type = false;
+        template <typename T, typename... Ts> constexpr bool tuple_contains_type<T, std::tuple<Ts...>> = std::disjunction_v<std::is_same<T, Ts>...>;
+
+        template <typename T, typename Tuple>                   constexpr int get_tuple_index                                = 0;
+        template <typename T, typename... Rest>                 constexpr int get_tuple_index<T, std::tuple<T, Rest...>>     = 0;
+        template <typename T, typename First, typename... Rest> constexpr int get_tuple_index<T, std::tuple<First, Rest...>> = 1 + get_index<T, std::tuple<Rest...>>;
+
         // Template black magic to loop at compile time
         template<std::size_t... indices, class LoopBody>
         void loop_impl(std::index_sequence<indices...>, LoopBody&& loop_body) {

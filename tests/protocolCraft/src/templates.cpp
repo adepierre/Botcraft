@@ -133,3 +133,29 @@ TEST_CASE("Network Type extraction")
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>, TestClass>>::serialization_type, std::tuple<int, VarType<int>, TestClass>>);
 
 }
+
+TEST_CASE("Tuple manipulation")
+{
+    SECTION("Concat")
+    {
+        STATIC_REQUIRE(std::is_same_v<
+            Internal::tuple_cat_t<std::tuple<int, char>, std::tuple<float, double>>,
+            std::tuple<int, char, float, double>
+        >);
+    }
+
+    SECTION("Contains")
+    {
+        STATIC_REQUIRE(Internal::contains_type<int, std::tuple<int, char>>);
+        STATIC_REQUIRE_FALSE(Internal::contains_type<double, std::tuple<int, char>>);
+    }
+
+    SECTION("Get Index")
+    {
+        STATIC_REQUIRE(Internal::get_index<double, std::tuple<double, float, int, char>> == 0);
+        STATIC_REQUIRE(Internal::get_index<float, std::tuple<double, float, int, char>> == 1);
+        STATIC_REQUIRE(Internal::get_index<int, std::tuple<double, float, int, char>> == 2);
+        STATIC_REQUIRE(Internal::get_index<char, std::tuple<double, float, int, char>> == 3);
+        STATIC_REQUIRE(Internal::get_index<short, std::tuple<double, float, int, char>> == 4);
+    }
+}
