@@ -94,10 +94,10 @@ namespace ProtocolCraft
         }
         else if constexpr (Internal::IsPair<T>)
         {
-            return {
+            return Json::Value({
                 { "first",  val.first },
                 { "second",  val.second }
-            };
+            });
         }
         else
         {
