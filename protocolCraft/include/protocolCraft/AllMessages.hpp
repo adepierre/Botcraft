@@ -1,7 +1,5 @@
 #pragma once
 
-#include <tuple>
-
 #include "protocolCraft/Utilities/Templates.hpp"
 #include "protocolCraft/AllClientboundMessages.hpp"
 #include "protocolCraft/AllServerboundMessages.hpp"

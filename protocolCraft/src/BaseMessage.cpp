@@ -7,6 +7,53 @@
 
 namespace ProtocolCraft
 {
+    template<typename TDerived>
+    int BaseMessage<TDerived>::GetId() const
+    {
+        if constexpr (Internal::tuple_contains_type<TDerived, AllClientboundPlayMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllClientboundPlayMessages>;
+        }
+        else if constexpr (Internal::tuple_contains_type<TDerived, AllServerboundPlayMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllServerboundPlayMessages>;
+        }
+        else if constexpr (Internal::tuple_contains_type<TDerived, AllClientboundStatusMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllClientboundStatusMessages>;
+        }
+        else if constexpr (Internal::tuple_contains_type<TDerived, AllServerboundStatusMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllServerboundStatusMessages>;
+        }
+        else if constexpr (Internal::tuple_contains_type<TDerived, AllClientboundLoginMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllClientboundLoginMessages>;
+        }
+        else if constexpr (Internal::tuple_contains_type<TDerived, AllServerboundLoginMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllServerboundLoginMessages>;
+        }
+        else if constexpr (Internal::tuple_contains_type<TDerived, AllServerboundHandshakingMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllServerboundHandshakingMessages>;
+        }
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
+        else if constexpr (Internal::tuple_contains_type<TDerived, AllServerboundConfigurationMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllServerboundConfigurationMessages>;
+        }
+        else if constexpr (Internal::tuple_contains_type<TDerived, AllClientboundConfigurationMessages>)
+        {
+            return Internal::get_tuple_index<TDerived, AllClientboundConfigurationMessages>;
+        }
+#endif
+        else
+        {
+            static_assert(Internal::dependant_false<TDerived>, "Trying to define a packet which is not in protocol tuples");
+        }
+    }
+
     template <typename TDerived>
     void BaseMessage<TDerived>::DispatchImpl(Handler* handler)
     {

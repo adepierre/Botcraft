@@ -12,7 +12,7 @@ namespace ProtocolCraft
     public:
         virtual ~BaseMessage() override {};
 
-        virtual int GetId() const override { return TDerived::packet_id; }
+        virtual int GetId() const override;
         virtual std::string_view GetName() const override { return TDerived::packet_name; }
         virtual std::shared_ptr<Message> Clone() const override { return std::make_shared<TDerived>(*reinterpret_cast<const TDerived*>(this)); }
     protected:
