@@ -389,6 +389,7 @@ namespace ProtocolCraft
         return *this;
     }
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     void Particle::ReadOptions(ReadIterator& iter, size_t& length)
     {
         if (options != nullptr)
@@ -404,6 +405,7 @@ namespace ProtocolCraft
             options->Write(container);
         }
     }
+#endif
 
     void Particle::ReadImpl(ReadIterator& iter, size_t& length)
     {

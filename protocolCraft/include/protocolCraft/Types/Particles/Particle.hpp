@@ -268,8 +268,10 @@ namespace ProtocolCraft
 
         Particle& SetParticleType(const ParticleType particle_type_);
 
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         void ReadOptions(ReadIterator& iter, size_t& length);
         void WriteOptions(WriteContainer& container) const;
+#endif
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
