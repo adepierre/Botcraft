@@ -12,11 +12,12 @@ namespace Botcraft
 {
     class Entity;
     class LocalPlayer;
+    class NetworkManager;
 
     class EntityManager : public ProtocolCraft::Handler
     {
     public:
-        EntityManager();
+        EntityManager(const std::shared_ptr<NetworkManager>& network_manager);
 
         std::shared_ptr<LocalPlayer> GetLocalPlayer();
 
@@ -73,5 +74,7 @@ namespace Botcraft
         std::shared_ptr<LocalPlayer> local_player;
 
         mutable std::shared_mutex entity_manager_mutex;
+
+        std::shared_ptr<NetworkManager> network_manager;
     };
 } // Botcraft

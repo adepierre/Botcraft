@@ -177,7 +177,7 @@ namespace Botcraft
         }
 
         inventory_manager = std::make_shared<InventoryManager>();
-        entity_manager = std::make_shared<EntityManager>();
+        entity_manager = std::make_shared<EntityManager>(network_manager);
         // Subscribe them to the network manager
         network_manager->AddHandler(world.get());
         network_manager->AddHandler(inventory_manager.get());
