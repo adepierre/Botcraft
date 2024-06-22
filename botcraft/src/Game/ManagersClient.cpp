@@ -160,6 +160,10 @@ namespace Botcraft
         {
             return it->second;
         }
+        else if (entity_manager == nullptr || entity_manager->GetLocalPlayer() == nullptr)
+        {
+            return "";
+        }
         else if (uuid == entity_manager->GetLocalPlayer()->GetUUID())
         {
             return network_manager->GetMyName();
