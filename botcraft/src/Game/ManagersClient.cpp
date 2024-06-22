@@ -167,10 +167,6 @@ namespace Botcraft
         return "";
     }
 
-    void ManagersClient::Handle(Message& msg)
-    {
-
-    }
 
     void ManagersClient::Handle(ClientboundGameProfilePacket& msg)
     {

@@ -45,7 +45,6 @@ namespace Botcraft
         void StopPhysics();
 
     protected:
-        virtual void Handle(ProtocolCraft::Message& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
 
     private:

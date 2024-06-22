@@ -48,7 +48,6 @@ namespace Botcraft
         void OnNewRawData(const std::vector<unsigned char>& packet);
 
 
-        virtual void Handle(ProtocolCraft::Message& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundLoginCompressionPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundHelloPacket& msg) override;

@@ -71,10 +71,6 @@ namespace Botcraft
         }
     }
 
-    void PhysicsManager::Handle(ProtocolCraft::Message& msg)
-    {
-
-    }
 
     void PhysicsManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
     {

@@ -22,10 +22,10 @@ namespace Botcraft
         class RenderingManager;
     }
 #endif
-    
+
     /// @brief A client containing the different managers,
     /// and performing client-side physics.
-    /// Can be inherited if you want to handle other packets 
+    /// Can be inherited if you want to handle other packets
     /// without a need of any behaviour tree stuff.
     class ManagersClient : public ConnectionClient
     {
@@ -62,7 +62,6 @@ namespace Botcraft
         int GetDayTime() const;
 
     protected:
-        virtual void Handle(ProtocolCraft::Message& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;

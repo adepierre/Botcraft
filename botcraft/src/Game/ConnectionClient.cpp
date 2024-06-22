@@ -75,11 +75,6 @@ namespace Botcraft
     }
 
 
-    void ConnectionClient::Handle(Message& msg)
-    {
-
-    }
-
     void ConnectionClient::Handle(ClientboundLoginDisconnectPacket& msg)
     {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */

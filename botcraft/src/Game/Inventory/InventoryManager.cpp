@@ -483,10 +483,6 @@ namespace Botcraft
     }
 #endif
 
-    void InventoryManager::Handle(Message& msg)
-    {
-
-    }
 
     void InventoryManager::Handle(ClientboundContainerSetSlotPacket& msg)
     {

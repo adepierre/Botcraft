@@ -55,7 +55,7 @@ namespace Botcraft
         /// @param transaction The transaction to update with the modifications
         /// @return An InventoryTransaction with various info, depending on the version
         InventoryTransaction PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
-        
+
         /// @brief Apply a given transaction to a container
         /// @param transaction The transaction to apply
         void ApplyTransaction(const InventoryTransaction& transaction);
@@ -78,7 +78,6 @@ namespace Botcraft
 #endif
 
     private:
-        virtual void Handle(ProtocolCraft::Message& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg) override;

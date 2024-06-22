@@ -717,10 +717,6 @@ namespace Botcraft
         /*
         *  Packet handling methods
         */
-        void RenderingManager::Handle(ProtocolCraft::Message& msg)
-        {
-
-        }
 
         void RenderingManager::Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg)
         {

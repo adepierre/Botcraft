@@ -399,10 +399,6 @@ namespace Botcraft
         process_condition.notify_all();
     }
 
-    void NetworkManager::Handle(Message& msg)
-    {
-
-    }
 
     void NetworkManager::Handle(ClientboundLoginCompressionPacket& msg)
     {

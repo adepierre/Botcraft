@@ -5,7 +5,7 @@
 namespace Botcraft
 {
     class NetworkManager;
-    
+
     /// @brief The base client handling connection with a server.
     /// Only processes packets required to maintain the connection.
     class ConnectionClient : public ProtocolCraft::Handler
@@ -33,12 +33,11 @@ namespace Botcraft
         /// @brief Send a command in the game chat
         /// @param command The command to send (with no / at start)
         void SendChatCommand(const std::string& command);
-        
+
         /// @brief Ask to respawn when dead
         void Respawn();
 
     protected:
-        virtual void Handle(ProtocolCraft::Message& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket& msg) override;
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
@@ -48,7 +47,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         virtual void Handle(ProtocolCraft::ClientboundDisconnectConfigurationPacket& msg) override;
 #endif
-        
+
     protected:
         std::shared_ptr<NetworkManager> network_manager;
 

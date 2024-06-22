@@ -90,8 +90,7 @@ namespace Botcraft
         protected:
             void WaitForRenderingUpdate();
 
-            virtual void Handle(ProtocolCraft::Message& msg) override;
-            
+
             // Chunk stuff
             virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
             virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
@@ -160,7 +159,7 @@ namespace Botcraft
             bool behaviour_open;
 
             std::thread rendering_thread;// OpenGL thread
-            
+
             double mouse_last_x;
             double mouse_last_y;
             bool first_mouse;
@@ -192,8 +191,8 @@ namespace Botcraft
             std::unordered_set<int> entities_to_update;
             std::mutex mutex_updating;
             std::condition_variable condition_update;
-            // Thread used to update the rendered data with current data 
-            std::thread thread_updating_renderable; 
+            // Thread used to update the rendered data with current data
+            std::thread thread_updating_renderable;
         };
     } // Renderer
 } // Botcraft
