@@ -47,14 +47,12 @@ TEST_CASE("Is Type")
     STATIC_REQUIRE_FALSE(Internal::IsPair<std::optional<std::pair<char, int>>>);
 
     // Bitset
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     STATIC_REQUIRE(Internal::IsBitset<std::bitset<5>>);
     STATIC_REQUIRE(Internal::IsBitset<std::bitset<0>>);
     STATIC_REQUIRE(Internal::IsBitset<std::bitset<42>>);
     STATIC_REQUIRE_FALSE(Internal::IsBitset<int>);
     STATIC_REQUIRE_FALSE(Internal::IsBitset<std::vector<int>>);
     STATIC_REQUIRE_FALSE(Internal::IsBitset<std::map<char, int>>);
-#endif
 }
 
 TEST_CASE("Network Type extraction")
@@ -127,10 +125,10 @@ TEST_CASE("Network Type extraction")
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, int>>::serialization_type, std::tuple<int, int>>);
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, VarType<int>>>::storage_type, std::tuple<int, int>>);
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, VarType<int>>>::serialization_type, std::tuple<int, VarType<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>>>::storage_type, std::tuple<int, TestEnum>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>>>::serialization_type, std::tuple<int, VarType<int>>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>, TestClass>>::storage_type, std::tuple<int, TestEnum, TestClass>>);
-    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, DiffType<TestEnum, VarType<int>>, TestClass>>::serialization_type, std::tuple<int, VarType<int>, TestClass>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, Internal::DiffType<TestEnum, VarType<int>>>>::storage_type, std::tuple<int, TestEnum>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, Internal::DiffType<TestEnum, VarType<int>>>>::serialization_type, std::tuple<int, VarType<int>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, Internal::DiffType<TestEnum, VarType<int>>, TestClass>>::storage_type, std::tuple<int, TestEnum, TestClass>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, Internal::DiffType<TestEnum, VarType<int>>, TestClass>>::serialization_type, std::tuple<int, VarType<int>, TestClass>>);
 
 }
 

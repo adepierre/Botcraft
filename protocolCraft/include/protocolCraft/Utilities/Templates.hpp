@@ -19,10 +19,11 @@ namespace ProtocolCraft
     template <typename T>
     struct VarType { using underlying_type = T; };
 
-    template <typename T1, typename T2> struct DiffType {};
 
     namespace Internal
     {
+        template <typename T1, typename T2> struct DiffType {};
+
         // Concat multiple tuples in one big tuple
         template<typename ... input_t>
         using tuple_cat_t =

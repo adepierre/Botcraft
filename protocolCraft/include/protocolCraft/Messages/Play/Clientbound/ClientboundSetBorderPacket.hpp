@@ -22,8 +22,8 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Border";
 
         DECLARE_FIELDS(
-            (DiffType<SetBorderType, VarInt>, double,  double,  VarLong,  double,     double,     VarInt,             VarInt,      VarInt),
-            (Action,                          NewSize, OldSize, LerpTime, NewCenterX, NewCenterZ, NewAbsoluteMaxSize, WarningTime, WarningBlocks)
+            (Internal::DiffType<SetBorderType, VarInt>, double,  double,  VarLong,  double,     double,     VarInt,             VarInt,      VarInt),
+            (Action,                                    NewSize, OldSize, LerpTime, NewCenterX, NewCenterZ, NewAbsoluteMaxSize, WarningTime, WarningBlocks)
         );
 
         GETTER_SETTER(Action);

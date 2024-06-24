@@ -21,13 +21,13 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
         DECLARE_FIELDS(
-            (DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<VarInt>, std::vector<VarInt>),
-            (State,                         BookSettings,       Recipes,             ToHighlight)
+            (Internal::DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<VarInt>, std::vector<VarInt>),
+            (State,                                   BookSettings,       Recipes,             ToHighlight)
         );
 #else
         DECLARE_FIELDS(
-            (DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<Identifier>, std::vector<Identifier>),
-            (State,                         BookSettings,       Recipes,                 ToHighlight)
+            (Internal::DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<Identifier>, std::vector<Identifier>),
+            (State,                                   BookSettings,       Recipes,                 ToHighlight)
         );
 #endif
 

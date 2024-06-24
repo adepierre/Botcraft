@@ -19,8 +19,8 @@ namespace ProtocolCraft
         );
 #else
         DECLARE_FIELDS(
-            (char,  std::vector<VarInt>, VarInt,       std::string, DiffType<BrigadierPropertyType, VarInt>,   std::shared_ptr<BrigadierProperty>, Identifier),
-            (Flags, Children,            RedirectNode, Name,        ParserId,                                  Properties,                         SuggestionType)
+            (char,  std::vector<VarInt>, VarInt,       std::string, Internal::DiffType<BrigadierPropertyType, VarInt>, std::shared_ptr<BrigadierProperty>, Identifier),
+            (Flags, Children,            RedirectNode, Name,        ParserId,                                          Properties,                         SuggestionType)
         );
 #endif
 

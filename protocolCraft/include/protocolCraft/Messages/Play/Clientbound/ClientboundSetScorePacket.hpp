@@ -21,8 +21,8 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         DECLARE_FIELDS(
-            (std::string, DiffType<SetScoreMethod, char>, std::string,   VarInt),
-            (Owner,       Method,                         ObjectiveName, Score)
+            (std::string, Internal::DiffType<SetScoreMethod, char>, std::string,   VarInt),
+            (Owner,       Method,                                   ObjectiveName, Score)
         );
 #else
         DECLARE_FIELDS(
