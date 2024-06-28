@@ -562,7 +562,7 @@ else()
 endif(MSVC)
 
 if (MSVC)
-    target_compile_options(botcraft PRIVATE "$<$<CONFIG:Debug>:/bigobj>")
+    target_compile_options(botcraft PRIVATE "/bigobj")
 endif (MSVC)
 
 # Set version header

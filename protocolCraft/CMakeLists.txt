@@ -523,7 +523,7 @@ else()
 endif(MSVC)
 
 if (MSVC)
-    target_compile_options(protocolCraft PRIVATE "$<$<CONFIG:Debug>:/bigobj>")
+    target_compile_options(protocolCraft PRIVATE "/bigobj")
 endif (MSVC)
 
 # Set version
