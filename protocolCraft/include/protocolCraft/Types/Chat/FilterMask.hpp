@@ -7,14 +7,16 @@ namespace ProtocolCraft
 {
     class FilterMask : public NetworkType
     {
+        DECLARE_CONDITION(IsType2, GetType() == 2);
+
         DECLARE_FIELDS(
-            (VarInt, std::optional<std::vector<long long int>>),
+            (VarInt, Internal::Conditioned<std::vector<long long int>, &FilterMask::IsType2>),
             (Type,   Mask)
         );
-        DECLARE_SERIALIZE;
+        DECLARE_READ_WRITE_SERIALIZE;
 
-    public:
         GETTER_SETTER(Type);
+    public:
         const std::optional<std::vector<long long int>>& GetMask() const
         {
             return std::get<static_cast<size_t>(FieldsEnum::Mask)>(fields);
@@ -28,29 +30,6 @@ namespace ProtocolCraft
             }
             std::get<static_cast<size_t>(FieldsEnum::Mask)>(fields) = Mask;
             return *this;
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetType(ReadData<VarInt>(iter, length));
-            if (GetType() == 2)
-            {
-                SetMask(ReadData<std::vector<long long int>>(iter, length));
-            }
-            else
-            {
-                SetMask({});
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(GetType(), container);
-            if (GetType() == 2) // Should always have value if type is 2
-            {
-                WriteData<std::vector<long long int>>(GetMask().value(), container);
-            }
         }
     };
 }

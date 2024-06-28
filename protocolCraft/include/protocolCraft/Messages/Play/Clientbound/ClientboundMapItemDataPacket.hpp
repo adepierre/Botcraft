@@ -11,22 +11,25 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Map Item Data";
 
+        DECLARE_CONDITION(HasWidth, GetWidth() > 0);
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
         DECLARE_FIELDS(
-            (VarInt, char,  bool,             std::vector<MapDecoration>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>),
-            (MapId,  Scale, TrackingPosition, Decorations,                Width,         Height,        StartX,        StartZ,        MapColors)
+            (VarInt, char,  bool,             std::vector<MapDecoration>, unsigned char, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<std::vector<unsigned char>, &THIS::HasWidth>),
+            (MapId,  Scale, TrackingPosition, Decorations,                Width,         Height,                                                StartX,                                                StartZ,                                                MapColors)
         );
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
         DECLARE_FIELDS(
-            (VarInt, char,  bool,             bool,   std::vector<MapDecoration>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>),
-            (MapId,  Scale, TrackingPosition, Locked, Decorations,                Width,         Height,        StartX,        StartZ,        MapColors)
+            (VarInt, char,  bool,             bool,   std::vector<MapDecoration>, unsigned char, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<std::vector<unsigned char>, &THIS::HasWidth>),
+            (MapId,  Scale, TrackingPosition, Locked, Decorations,                Width,         Height,                                                StartX,                                                StartZ,                                                MapColors)
         );
 #else
         DECLARE_FIELDS(
-            (VarInt, char,  bool,   std::optional<std::vector<MapDecoration>>, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>),
-            (MapId,  Scale, Locked, Decorations,                               Width,         Height,        StartX,        StartZ,        MapColors)
+            (VarInt, char,  bool,   std::optional<std::vector<MapDecoration>>, unsigned char, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<unsigned char, &THIS::HasWidth>, Internal::Conditioned<std::vector<unsigned char>, &THIS::HasWidth>),
+            (MapId,  Scale, Locked, Decorations,                               Width,         Height,                                                StartX,                                                StartZ,                                                MapColors)
         );
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
+
         GETTER_SETTER(MapId);
         GETTER_SETTER(Scale);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -41,91 +44,5 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         GETTER_SETTER(Locked);
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetMapId(ReadData<VarInt>(iter, length));
-            SetScale(ReadData<char>(iter, length));
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            SetTrackingPosition(ReadData<bool>(iter, length));
-#endif
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-            SetLocked(ReadData<bool>(iter, length));
-#endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            SetDecorations(ReadData<std::optional<std::vector<MapDecoration>>>(iter, length));
-#else
-            SetDecorations(ReadData<std::vector<MapDecoration>>(iter, length));
-#endif
-
-            SetWidth(ReadData<unsigned char>(iter, length));
-            if (GetWidth() > 0)
-            {
-                SetHeight(ReadData<unsigned char>(iter, length));
-                SetStartX(ReadData<unsigned char>(iter, length));
-                SetStartZ(ReadData<unsigned char>(iter, length));
-                SetMapColors(ReadData<std::vector<unsigned char>>(iter, length));
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer & container) const override
-        {
-            WriteData<VarInt>(GetMapId(), container);
-            WriteData<char>(GetScale(), container);
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            WriteData<bool>(GetTrackingPosition(), container);
-#endif
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-            WriteData<bool>(GetLocked(), container);
-#endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            WriteData<std::optional<std::vector<MapDecoration>>>(GetDecorations(), container);
-#else
-            WriteData<std::vector<MapDecoration>>(GetDecorations(), container);
-#endif
-
-            WriteData<unsigned char>(GetWidth(), container);
-            if (GetWidth() > 0)
-            {
-                WriteData<unsigned char>(GetHeight(), container);
-                WriteData<unsigned char>(GetStartX(), container);
-                WriteData<unsigned char>(GetStartZ(), container);
-                WriteData<std::vector<unsigned char>>(GetMapColors(), container);
-            }
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::MapId)])] = GetMapId();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Scale)])] = GetScale();
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::TrackingPosition)])] = GetTrackingPosition();
-#endif
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Locked)])] = GetLocked();
-#endif
-
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-            if (GetDecorations().has_value())
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Decorations)])] = GetDecorations().value();
-            }
-#else
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Decorations)])] = GetDecorations();
-#endif
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Width)])] = GetWidth();
-            if (GetWidth() > 0)
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Height)])] = GetHeight();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::StartX)])] = GetStartX();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::StartZ)])] = GetStartZ();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::MapColors)])] = "Vector of " + std::to_string(GetMapColors().size()) + " unsigned chars";
-            }
-
-            return output;
-        }
     };
 } //ProtocolCraft

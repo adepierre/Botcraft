@@ -18,5 +18,8 @@ namespace ProtocolCraft
     protected:
         // We can't have definition in hpp file as Handler is still an incomplete class at this point
         virtual void DispatchImpl(Handler* handler) override;
+
+        // Convenience to access "current" class when implementing TDerived
+        using THIS = TDerived;
     };
 }

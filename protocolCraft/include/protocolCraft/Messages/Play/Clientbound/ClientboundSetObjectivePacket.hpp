@@ -17,22 +17,25 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Objective";
 
+        DECLARE_CONDITION(Method02, GetMethod() == 0 || GetMethod() == 2);
+
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
         DECLARE_FIELDS(
-            (std::string,   char,   std::string, std::string),
-            (ObjectiveName, Method, DisplayName, RenderType)
+            (std::string,   char,   Internal::Conditioned<std::string, &THIS::Method02>, Internal::Conditioned<std::string, &THIS::Method02>),
+            (ObjectiveName, Method, DisplayName,                                         RenderType)
         );
 #elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
         DECLARE_FIELDS(
-            (std::string,   char,   Chat,        VarInt),
-            (ObjectiveName, Method, DisplayName, RenderType)
+            (std::string,   char,   Internal::Conditioned<Chat, &THIS::Method02>, Internal::Conditioned<VarInt, &THIS::Method02>),
+            (ObjectiveName, Method, DisplayName,                                  RenderType)
         );
 #else
         DECLARE_FIELDS(
-            (std::string,   char,   Chat,        VarInt,     NumberFormat),
-            (ObjectiveName, Method, DisplayName, RenderType, NumberFormat)
+            (std::string,   char,   Internal::Conditioned<Chat, &THIS::Method02>, Internal::Conditioned<VarInt, &THIS::Method02>, Internal::Conditioned<NumberFormat, &THIS::Method02>),
+            (ObjectiveName, Method, DisplayName,                                  RenderType,                                     NumberFormat)
         );
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(ObjectiveName);
         GETTER_SETTER(Method);
@@ -41,68 +44,5 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         GETTER_SETTER(NumberFormat);
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetObjectiveName(ReadData<std::string>(iter, length));
-            SetMethod(ReadData<char>(iter, length));
-            if (GetMethod() == 0 || GetMethod() == 2)
-            {
-#if PROTOCOL_VERSION < 390 /* < 1.13 */
-                SetDisplayName(ReadData<std::string>(iter, length));
-#else
-                SetDisplayName(ReadData<Chat>(iter, length));
-#endif
-#if PROTOCOL_VERSION < 349 /* < 1.13 */
-                SetRenderType(ReadData<std::string>(iter, length));
-#else
-                SetRenderType(ReadData<VarInt>(iter, length));
-#endif
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-                SetNumberFormat(ReadData<NumberFormat>(iter, length));
-#endif
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::string>(GetObjectiveName(), container);
-            WriteData<char>(GetMethod(), container);
-            if (GetMethod() == 0 || GetMethod() == 2)
-            {
-#if PROTOCOL_VERSION < 390 /* < 1.13 */
-                WriteData<std::string>(GetDisplayName(), container);
-#else
-                WriteData<Chat>(GetDisplayName(), container);
-#endif
-#if PROTOCOL_VERSION < 349 /* < 1.13 */
-                WriteData<std::string>(GetRenderType(), container);
-#else
-                WriteData<VarInt>(GetRenderType(), container);
-#endif
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-                WriteData<NumberFormat>(GetNumberFormat(), container);
-#endif
-            }
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::ObjectiveName)])] = GetObjectiveName();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Method)])] = GetMethod();
-            if (GetMethod() == 0 || GetMethod() == 2)
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::DisplayName)])] = GetDisplayName();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::RenderType)])] = GetRenderType();
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::NumberFormat)])] = GetNumberFormat();
-#endif
-            }
-
-            return output;
-        }
     };
 } //ProtocolCraft

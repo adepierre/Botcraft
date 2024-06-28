@@ -11,10 +11,13 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Face Player";
 
+        DECLARE_CONDITION(HasEntity, GetAtEntity());
+
         DECLARE_FIELDS(
-            (VarInt,     double, double, double, bool,     VarInt, VarInt),
-            (FromAnchor, X,      Y,      Z,      AtEntity, Entity, ToAnchor)
+            (VarInt,     double, double, double, bool,     Internal::Conditioned<VarInt, &THIS::HasEntity>, Internal::Conditioned<VarInt, &THIS::HasEntity>),
+            (FromAnchor, X,      Y,      Z,      AtEntity, Entity,                                          ToAnchor)
         );
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(FromAnchor);
         GETTER_SETTER(X);
@@ -23,53 +26,6 @@ namespace ProtocolCraft
         GETTER_SETTER(AtEntity);
         GETTER_SETTER(Entity);
         GETTER_SETTER(ToAnchor);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetFromAnchor(ReadData<VarInt>(iter, length));
-            SetX(ReadData<double>(iter, length));
-            SetY(ReadData<double>(iter, length));
-            SetZ(ReadData<double>(iter, length));
-            SetAtEntity(ReadData<bool>(iter, length));
-            if (GetAtEntity())
-            {
-                SetEntity(ReadData<VarInt>(iter, length));
-                SetToAnchor(ReadData<VarInt>(iter, length));
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(GetFromAnchor(), container);
-            WriteData<double>(GetX(), container);
-            WriteData<double>(GetY(), container);
-            WriteData<double>(GetZ(), container);
-            WriteData<bool>(GetAtEntity(), container);
-            if (GetAtEntity())
-            {
-                WriteData<VarInt>(GetEntity(), container);
-                WriteData<VarInt>(GetToAnchor(), container);
-            }
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::FromAnchor)])] = GetFromAnchor();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::X)])] = GetX();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Y)])] = GetY();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Z)])] = GetZ();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::AtEntity)])] = GetAtEntity();
-            if (GetAtEntity())
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entity)])] = GetEntity();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ToAnchor)])] = GetToAnchor();
-            }
-
-            return output;
-        }
     };
 } //ProtocolCraft
 #endif

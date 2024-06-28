@@ -1,5 +1,4 @@
 #pragma once
-
 #include "protocolCraft/BaseMessage.hpp"
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
@@ -19,9 +18,12 @@ namespace ProtocolCraft
             (KeyBytes,                   Nonce)
         );
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        DECLARE_CONDITION(HasNonce, GetHasNonce());
+        DECLARE_CONDITION(HasSaltSignature, !GetHasNonce());
+
         DECLARE_FIELDS(
-            (std::vector<unsigned char>, std::vector<unsigned char>, SaltSignature),
-            (KeyBytes,                   Nonce,                      SaltSignature)
+            (std::vector<unsigned char>, bool,     Internal::Conditioned<std::vector<unsigned char>, &THIS::HasNonce>, Internal::Conditioned<SaltSignature, &THIS::HasSaltSignature>),
+            (KeyBytes,                   HasNonce, Nonce,                                                              SaltSignature)
         );
 #else
         DECLARE_FIELDS(
@@ -29,88 +31,46 @@ namespace ProtocolCraft
             (KeyBytes,                   EncryptedChallenge)
         );
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(KeyBytes);
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
         GETTER_SETTER(Nonce);
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        GETTER_SETTER(SaltSignature);
+    protected:
+        bool GetHasNonce() const
+        {
+            return std::get<static_cast<size_t>(FieldsEnum::HasNonce)>(fields);
+        }
+
+        GETTER(Nonce);
+        GETTER(SaltSignature);
+    public:
+        auto& SetNonce(const std::optional<std::vector<unsigned char>>& Nonce)
+        {
+            std::get<static_cast<size_t>(FieldsEnum::Nonce)>(fields) = Nonce;
+            std::get<static_cast<size_t>(FieldsEnum::HasNonce)>(fields) = Nonce.has_value();
+            if (Nonce.has_value())
+            {
+                std::get<static_cast<size_t>(FieldsEnum::SaltSignature)>(fields) = std::nullopt;
+            }
+            return *this;
+        }
+
+        auto& SetSaltSignature(const std::optional<SaltSignature>& SaltSignature)
+        {
+            std::get<static_cast<size_t>(FieldsEnum::SaltSignature)>(fields) = SaltSignature;
+            std::get<static_cast<size_t>(FieldsEnum::HasNonce)>(fields) = !SaltSignature.has_value();
+            if (SaltSignature.has_value())
+            {
+                std::get<static_cast<size_t>(FieldsEnum::Nonce)>(fields) = std::nullopt;
+            }
+            return *this;
+        }
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19 */
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         GETTER_SETTER(EncryptedChallenge);
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetKeyBytes(ReadData<std::vector<unsigned char>>(iter, length));
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            const bool has_nonce = ReadData<bool>(iter, length);
-            if (has_nonce)
-            {
-                const int nonce_length = ReadData<VarInt>(iter, length);
-                SetNonce(ReadByteArray(iter, length, nonce_length));
-            }
-            else
-            {
-                SetSaltSignature(ReadData<SaltSignature>(iter, length));
-            }
-#else
-            SetNonce(ReadData<std::vector<unsigned char>>(iter, length));
-#endif
-#else
-            SetEncryptedChallenge(ReadData<std::vector<unsigned char>>(iter, length));
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<std::vector<unsigned char>>(GetKeyBytes(), container);
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            WriteData<bool>(GetSaltSignature().GetSignature().empty(), container);
-            if (GetSaltSignature().GetSignature().empty())
-            {
-                WriteData<VarInt>(static_cast<int>(GetNonce().size()), container);
-                WriteByteArray(GetNonce(), container);
-            }
-            else
-            {
-                WriteData<SaltSignature>(GetSaltSignature(), container);
-            }
-#else
-            WriteData<std::vector<unsigned char>>(GetNonce(), container);
-#endif
-#else
-            WriteData<std::vector<unsigned char>>(GetEncryptedChallenge(), container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::KeyBytes)])] = "Vector of " + std::to_string(GetKeyBytes().size()) + " unsigned char";
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            if (GetSaltSignature().GetSignature().empty())
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Nonce)])] = "Vector of " + std::to_string(GetNonce().size()) + " unsigned char";
-            }
-            else
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::SaltSignature)])] = GetSaltSignature();
-            }
-#else
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Nonce)])] = "Vector of " + std::to_string(GetNonce().size()) + " unsigned char";
-#endif
-#else
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::EncryptedChallenge)])] = "Vector of " + std::to_string(GetEncryptedChallenge().size()) + " unsigned char";
-#endif
-
-            return output;
-        }
     };
 } // ProtocolCraft

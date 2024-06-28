@@ -61,7 +61,7 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
         DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
         DEFINE_NETWORK_TYPE(ToolRule);
-        DEFINE_SERIALIZE(PropertyMatcher);
+        DEFINE_NETWORK_TYPE(PropertyMatcher);
 
         DEFINE_NETWORK_TYPE(DataComponentTypeAdventureModePredicate);
         DEFINE_NETWORK_TYPE(DataComponentTypeArmorTrim);

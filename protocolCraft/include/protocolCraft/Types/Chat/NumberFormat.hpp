@@ -1,6 +1,5 @@
-#pragma once
-
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#pragma once
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
@@ -9,37 +8,16 @@ namespace ProtocolCraft
 {
     class NumberFormat : public NetworkType
     {
+        DECLARE_CONDITION(HasFormat, GetType() != 0);
+
         DECLARE_FIELDS(
-            (VarInt, std::optional<Chat>),
+            (VarInt, Internal::Conditioned<Chat, &NumberFormat::HasFormat>),
             (Type,   Format)
         );
-        DECLARE_SERIALIZE;
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Type);
         GETTER_SETTER(Format);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetType(ReadData<VarInt>(iter, length));
-            if (GetType() != 0)
-            {
-                SetFormat(ReadData<Chat>(iter, length));
-            }
-            else
-            {
-                SetFormat({});
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(GetType(), container);
-            if (GetType() != 0)
-            {
-                WriteData<Chat>(GetFormat().value(), container);
-            }
-        }
     };
 } // ProtocolCraft
 #endif

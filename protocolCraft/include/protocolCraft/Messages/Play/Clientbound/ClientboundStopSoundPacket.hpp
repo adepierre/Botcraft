@@ -12,34 +12,31 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Stop Sound";
 
+        DECLARE_CONDITION(Flags1, GetFlags() & 0x01);
+        DECLARE_CONDITION(Flags2, GetFlags() & 0x02);
+
         DECLARE_FIELDS(
-            (std::optional<VarInt>, std::optional<Identifier>),
-            (Source,                Name_)
+            (char,  Internal::Conditioned<VarInt, &ClientboundStopSoundPacket::Flags1>, Internal::Conditioned<Identifier, &ClientboundStopSoundPacket::Flags2>),
+            (Flags, Source,                                                             Name_)
         );
-        DECLARE_SERIALIZE;
+        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(Source);
-        GETTER_SETTER(Name_);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+        GETTER_SETTER(Flags);
+        GETTER       (Source);
+        GETTER       (Name_);
+    public:
+        auto& SetSource(const std::optional<int>& Source)
         {
-            const char flags = ReadData<char>(iter, length);
-            SetSource(flags & 0x01 ? ReadData<VarInt>(iter, length) : std::optional<int>());
-            SetName_(flags & 0x02 ? ReadData<Identifier>(iter, length) : std::optional<Identifier>());
+            SetFlags(Source.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
+            std::get<static_cast<size_t>(FieldsEnum::Source)>(fields) = Source;
+            return *this;
         }
 
-        virtual void WriteImpl(WriteContainer& container) const override
+        auto& SetName_(const std::optional<Identifier>& Name_)
         {
-            WriteData<char>(static_cast<char>((static_cast<int>(GetName_().has_value()) << 1) | static_cast<int>(GetSource().has_value())), container);
-            if (GetSource().has_value())
-            {
-                WriteData<VarInt>(GetSource().value(), container);
-            }
-            if (GetName_().has_value())
-            {
-                WriteData<Identifier>(GetName_().value(), container);
-            }
+            SetFlags(Name_.has_value() ? (GetFlags() | 0x02) : (GetFlags() & ~0x02));
+            std::get<static_cast<size_t>(FieldsEnum::Name_)>(fields) = Name_;
+            return *this;
         }
     };
 } //ProtocolCraft

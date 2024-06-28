@@ -22,9 +22,12 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Titles";
 
+        DECLARE_CONDITION(HasText, GetType() == SetTitlesType::Title || GetType() == SetTitlesType::Subtitle || GetType() == SetTitlesType::ActionBar);
+        DECLARE_CONDITION(HasTimes, GetType() == SetTitlesType::Times);
+
         DECLARE_FIELDS(
-            (Internal::DiffType<SetTitlesType, VarInt>, Chat, int,        int,      int),
-            (Type,                                      Text, FadeInTime, StayTime, FadeOutTime)
+            (Internal::DiffType<SetTitlesType, VarInt>, Internal::Conditioned<Chat, &ClientboundSetTitlesPacket::HasText>, Internal::Conditioned<int, &ClientboundSetTitlesPacket::HasTimes>, Internal::Conditioned<int, &ClientboundSetTitlesPacket::HasTimes>, Internal::Conditioned<int, &ClientboundSetTitlesPacket::HasTimes>),
+            (Type,                                      Text,                                                              FadeInTime,                                                        StayTime,                                                          FadeOutTime)
         );
 
         GETTER_SETTER(Type);
@@ -32,82 +35,6 @@ namespace ProtocolCraft
         GETTER_SETTER(FadeInTime);
         GETTER_SETTER(StayTime);
         GETTER_SETTER(FadeOutTime);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetType(ReadData<SetTitlesType, VarInt>(iter, length));
-            switch (GetType())
-            {
-            case SetTitlesType::Title:
-            case SetTitlesType::Subtitle:
-            case SetTitlesType::ActionBar:
-                SetText(ReadData<Chat>(iter, length));
-                break;
-            case SetTitlesType::Times:
-                SetFadeInTime(ReadData<int>(iter, length));
-                SetStayTime(ReadData<int>(iter, length));
-                SetFadeOutTime(ReadData<int>(iter, length));
-                break;
-            case SetTitlesType::Clear:
-                break;
-            case SetTitlesType::Reset:
-                break;
-            default:
-                break;
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<SetTitlesType, VarInt>(GetType(), container);
-            switch (GetType())
-            {
-            case SetTitlesType::Title:
-            case SetTitlesType::Subtitle:
-            case SetTitlesType::ActionBar:
-                WriteData<Chat>(GetText(), container);
-                break;
-            case SetTitlesType::Times:
-                WriteData<int>(GetFadeInTime(), container);
-                WriteData<int>(GetStayTime(), container);
-                WriteData<int>(GetFadeOutTime(), container);
-                break;
-            case SetTitlesType::Clear:
-                break;
-            case SetTitlesType::Reset:
-                break;
-            default:
-                break;
-            }
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Type)])] = GetType();
-            switch (GetType())
-            {
-            case SetTitlesType::Title:
-            case SetTitlesType::Subtitle:
-            case SetTitlesType::ActionBar:
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Text)])] = GetText();
-                break;
-            case SetTitlesType::Times:
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::FadeInTime)])] = GetFadeInTime();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::StayTime)])] = GetStayTime();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::FadeOutTime)])] = GetFadeOutTime();
-                break;
-            case SetTitlesType::Clear:
-            case SetTitlesType::Reset:
-                break;
-            default:
-                break;
-            }
-
-            return output;
-        }
     };
 } //ProtocolCraft
 #endif

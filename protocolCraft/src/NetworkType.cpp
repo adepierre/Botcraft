@@ -89,6 +89,7 @@
 #endif
 
 // Items
+#include "protocolCraft/Types/Item/Slot.hpp"
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/Item/ItemCost.hpp"
 #endif
@@ -117,7 +118,7 @@ namespace ProtocolCraft
 {
     // All NetworkType auto serializable methods can be defined here
     DEFINE_NETWORK_TYPE(Advancement);
-    DEFINE_SERIALIZE(AdvancementDisplay);
+    DEFINE_NETWORK_TYPE(AdvancementDisplay);
     DEFINE_NETWORK_TYPE(AdvancementProgress);
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     DEFINE_NETWORK_TYPE(BlockEntityInfo);
@@ -166,7 +167,7 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(SaltSignature);
 #endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
-    DEFINE_SERIALIZE(ServerLinksUnstrustedEntry);
+    DEFINE_NETWORK_TYPE(ServerLinksUnstrustedEntry);
 #endif
 
     // Chat
@@ -178,7 +179,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
     DEFINE_NETWORK_TYPE(ChatTypeBoundNetwork);
-    DEFINE_SERIALIZE(FilterMask);
+    DEFINE_NETWORK_TYPE(FilterMask);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_NETWORK_TYPE(LastSeenMessagesEntry);
 #else
@@ -187,7 +188,7 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(LastSeenMessagesUpdate);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-    DEFINE_SERIALIZE(NumberFormat);
+    DEFINE_NETWORK_TYPE(NumberFormat);
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
     DEFINE_NETWORK_TYPE(PlayerChatMessage);
@@ -208,6 +209,7 @@ namespace ProtocolCraft
 #endif
 
     // Items
+    DEFINE_NETWORK_TYPE(Slot);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     DEFINE_NETWORK_TYPE(ItemCost);
 #endif

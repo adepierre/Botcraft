@@ -114,12 +114,12 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundBlockEventPacket);
     DEFINE_MESSAGE_CLASS(ClientboundBlockDestructionPacket);
     DEFINE_MESSAGE_CLASS(ClientboundBlockUpdatePacket);
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundBossEventPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundBossEventPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetCameraPacket);
     DEFINE_MESSAGE_CLASS(ClientboundContainerClosePacket);
     DEFINE_MESSAGE_CLASS(ClientboundTakeItemEntityPacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundPlayerCombatPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerCombatPacket);
 #endif
 #if PROTOCOL_VERSION == 755 /* 1.17 */
     DEFINE_MESSAGE_CLASS(ClientboundRemoveEntityPacket);
@@ -133,10 +133,10 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundUpdateRecipesPacket);
 #endif
 #if PROTOCOL_VERSION > 351 /* > 1.12.2 */
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundPlayerLookAtPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerLookAtPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundChangeDifficultyPacket);
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundMapItemDataPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundMapItemDataPacket);
     DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundSectionBlocksUpdatePacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     DEFINE_MESSAGE_CLASS(ClientboundContainerAckPacket);
@@ -209,7 +209,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     DEFINE_MESSAGE_CLASS(ClientboundResourcePackPacket);
 #endif
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetObjectivePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetObjectivePacket);
     DEFINE_MESSAGE_CLASS(ClientboundSelectAdvancementsTabPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetExperiencePacket);
     DEFINE_MESSAGE_CLASS(ClientboundContainerSetSlotPacket);
@@ -241,15 +241,15 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundSetDefaultSpawnPositionPacket);
     DEFINE_CUSTOM_SERIALIZED_MESSAGE_CLASS(ClientboundAwardStatsPacket);
 #if PROTOCOL_VERSION > 342 /* > 1.12.2 */
-    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundStopSoundPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundStopSoundPacket);
 #endif
 #if PROTOCOL_VERSION > 348 /* > 1.12.2 */
     DEFINE_MESSAGE_CLASS(ClientboundUpdateTagsPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundCommandSuggestionsPacket);
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetPlayerTeamPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetPlayerTeamPacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetTitlesPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetTitlesPacket);
 #endif
 #if PROTOCOL_VERSION < 461 /* < 1.14 */
     DEFINE_MESSAGE_CLASS(ClientboundUseBedPacket);
@@ -257,12 +257,8 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundMerchantOffersPacket);
 #endif
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundRecipePacket);
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetScorePacket);
-#else
+    DEFINE_MESSAGE_CLASS(ClientboundRecipePacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetScorePacket);
-#endif
 #if PROTOCOL_VERSION > 471 /* > 1.13.2 */
     DEFINE_MESSAGE_CLASS(ClientboundSetChunkCacheCenterPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetChunkCacheRadiusPacket);
@@ -274,15 +270,10 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundContainerSetContentPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundContainerSetDataPacket);
-
-#if PROTOCOL_VERSION < 477 /* < 1.14 */
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundOpenScreenPacket);
-#else
     DEFINE_MESSAGE_CLASS(ClientboundOpenScreenPacket);
-#endif
     DEFINE_MESSAGE_CLASS(ClientboundSetCarriedItemPacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundSetBorderPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetBorderPacket);
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
@@ -383,7 +374,7 @@ namespace ProtocolCraft
     DEFINE_SERIALIZED_MESSAGE_CLASS(ServerboundCustomQueryPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ServerboundHelloPacket);
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundKeyPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundKeyPacket);
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     DEFINE_SERIALIZED_MESSAGE_CLASS(ServerboundCustomQueryAnswerPacket);
     DEFINE_MESSAGE_CLASS(ServerboundLoginAcknowledgedPacket);
@@ -408,7 +399,7 @@ namespace ProtocolCraft
 #endif
 
     // Play serverbound
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundSeenAdvancementsPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundSeenAdvancementsPacket);
     DEFINE_MESSAGE_CLASS(ServerboundSwingPacket);
     DEFINE_MESSAGE_CLASS(ServerboundChatPacket);
     DEFINE_MESSAGE_CLASS(ServerboundContainerClickPacket);
@@ -434,7 +425,7 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ServerboundJigsawGeneratePacket);
 #endif
     DEFINE_MESSAGE_CLASS(ServerboundSetCarriedItemPacket);
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundInteractPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundInteractPacket);
     DEFINE_MESSAGE_CLASS(ServerboundKeepAlivePacket);
 #if PROTOCOL_VERSION > 463 /* > 1.13.2 */
     DEFINE_MESSAGE_CLASS(ServerboundLockDifficultyPacket);
@@ -464,7 +455,7 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ServerboundRecipeBookSeenRecipePacket);
     DEFINE_MESSAGE_CLASS(ServerboundRecipeBookChangeSettingsPacket);
 #else
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundRecipeBookUpdatePacket);
+    DEFINE_MESSAGE_CLASS(ServerboundRecipeBookUpdatePacket);
 #endif
     DEFINE_MESSAGE_CLASS(ServerboundResourcePackPacket);
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */

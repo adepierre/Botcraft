@@ -13,73 +13,48 @@ namespace ProtocolCraft
     {
         class PropertyMatcher : public NetworkType
         {
+        private: using THIS = PropertyMatcher;
+
+            DECLARE_CONDITION(IsExactMatcher, GetIsExactMatcher());
+            DECLARE_CONDITION(IsRangedMatcher, !GetIsExactMatcher());
+
             DECLARE_FIELDS(
-                (std::string, std::optional<RangedMatcher>, std::optional<ExactMatcher>),
-                (Name,        RangedMatcher,                ExactMatcher)
+                (std::string, bool,           Internal::Conditioned<RangedMatcher, &THIS::IsRangedMatcher>, Internal::Conditioned<ExactMatcher, &THIS::IsExactMatcher>),
+                (Name,        IsExactMatcher, RangedMatcher,                                                ExactMatcher)
             );
-            DECLARE_SERIALIZE;
+            DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Name);
+            GETTER       (RangedMatcher);
+            GETTER       (ExactMatcher);
 
-            const std::optional<RangedMatcher>& GetRangedMatcher() const
+        protected:
+            bool GetIsExactMatcher() const
             {
-                return std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields);
+                return std::get<static_cast<size_t>(FieldsEnum::IsExactMatcher)>(fields);
             }
 
+        public:
             auto& SetRangedMatcher(const std::optional<RangedMatcher>& ranged_matcher)
             {
                 std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields) = ranged_matcher;
+                std::get<static_cast<size_t>(FieldsEnum::IsExactMatcher)>(fields) = !ranged_matcher.has_value();
                 if (ranged_matcher.has_value())
                 {
-                    std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields) = {};
+                    std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields) = std::nullopt;
                 }
                 return *this;
-            }
-
-
-            const std::optional<ExactMatcher>& GetExactMatcher() const
-            {
-                return std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields);
             }
 
             auto& SetExactMatcher(const std::optional<ExactMatcher>& exact_matcher)
             {
                 std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields) = exact_matcher;
+                std::get<static_cast<size_t>(FieldsEnum::IsExactMatcher)>(fields) = exact_matcher.has_value();
                 if (exact_matcher.has_value())
                 {
-                    std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields) = {};
+                    std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields) = std::nullopt;
                 }
                 return *this;
-            }
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                SetName(ReadData<std::string>(iter, length));
-                const bool is_exact_matcher = ReadData<bool>(iter, length);
-                if (is_exact_matcher)
-                {
-                    SetExactMatcher(ReadData<ExactMatcher>(iter, length));
-                }
-                else
-                {
-                    SetRangedMatcher(ReadData<RangedMatcher>(iter, length));
-                }
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<std::string>(GetName(), container);
-                const bool is_exact_matcher = GetExactMatcher().has_value();
-                WriteData<bool>(is_exact_matcher, container);
-                if (is_exact_matcher)
-                {
-                    WriteData<ExactMatcher>(GetExactMatcher().value(), container);
-                }
-                else
-                {
-                    WriteData<RangedMatcher>(GetRangedMatcher().value(), container);
-                }
             }
         };
     }

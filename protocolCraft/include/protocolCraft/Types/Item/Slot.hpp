@@ -11,27 +11,33 @@ namespace ProtocolCraft
 {
     class Slot : public NetworkType
     {
+        // We don't store conditioned values as optional in Slot cause we already have a IsEmptySlot function to check for data presence
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
+        DECLARE_CONDITION(HasContent, GetBlockId() != -1);
         DECLARE_FIELDS(
-            (short,   char,      short,      NBT::UnnamedValue),
-            (BlockId, ItemCount, ItemDamage, Nbt)
+            (short,   Internal::Conditioned<char, &Slot::HasContent, false>, Internal::Conditioned<short, &Slot::HasContent, false>, Internal::Conditioned<NBT::UnnamedValue, &Slot::HasContent, false>),
+            (BlockId, ItemCount,                                             ItemDamage,                                             Nbt)
         );
 #elif PROTOCOL_VERSION < 404 /* < 1.13.2 */
+        DECLARE_CONDITION(HasContent, GetItemId() != -1);
         DECLARE_FIELDS(
-            (short,  char,      NBT::UnnamedValue),
-            (ItemId, ItemCount, Nbt)
+            (short,  Internal::Conditioned<char, &Slot::HasContent, false>, Internal::Conditioned<NBT::UnnamedValue, &Slot::HasContent, false>),
+            (ItemId, ItemCount,                                             Nbt)
         );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        DECLARE_CONDITION(HasContent, GetPresent());
         DECLARE_FIELDS(
-            (bool,    VarInt, char,      NBT::UnnamedValue),
-            (Present, ItemId, ItemCount, Nbt)
+            (bool,    Internal::Conditioned<VarInt, &Slot::HasContent, false>, Internal::Conditioned<char, &Slot::HasContent, false>, Internal::Conditioned<NBT::UnnamedValue, &Slot::HasContent, false>),
+            (Present, ItemId,                                                  ItemCount,                                             Nbt)
         );
 #else
+        DECLARE_CONDITION(HasContent, GetItemCount() > 0);
         DECLARE_FIELDS(
-            (VarInt,    VarInt, Components::DataComponentPatch),
-            (ItemCount, ItemId, Components)
+            (VarInt,    Internal::Conditioned<VarInt, &Slot::HasContent, false>, Internal::Conditioned<Components::DataComponentPatch, &Slot::HasContent, false>),
+            (ItemCount, ItemId,                                                  Components)
         );
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
         GETTER_SETTER(BlockId);
@@ -146,138 +152,6 @@ namespace ProtocolCraft
         std::tuple_element_t<static_cast<size_t>(FieldsEnum::ItemCount), decltype(fields)> GetItemCount() const
         {
             return std::get<static_cast<size_t>(FieldsEnum::ItemCount)>(fields);
-        }
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-            SetBlockId(ReadData<short>(iter, length));
-            if (GetBlockId() == -1)
-            {
-                return;
-            }
-
-            SetItemCount(ReadData<char>(iter, length));
-            SetItemDamage(ReadData<short>(iter, length));
-#elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            SetItemId(ReadData<short>(iter, length));
-            if (GetItemId() == -1)
-            {
-                return;
-            }
-
-            SetItemCount(ReadData<char>(iter, length));
-#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            SetPresent(ReadData<bool>(iter, length));
-            if (!GetPresent())
-            {
-                return;
-            }
-
-            SetItemId(ReadData<VarInt>(iter, length));
-            SetItemCount(ReadData<char>(iter, length));
-#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            SetItemCount(ReadData<VarInt>(iter, length));
-            if (GetItemCount() <= 0)
-            {
-                return;
-            }
-            SetItemId(ReadData<VarInt>(iter, length));
-#endif
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            SetNbt(ReadData<NBT::UnnamedValue>(iter, length));
-#else
-            SetComponents(ReadData<Components::DataComponentPatch>(iter, length));
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-            WriteData<short>(GetBlockId(), container);
-            if (GetBlockId() == -1)
-            {
-                return;
-            }
-            WriteData<char>(GetItemCount(), container);
-            WriteData<short>(GetItemDamage(), container);
-#elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            WriteData<short>(GetItemId(), container);
-            if (GetItemId() == -1)
-            {
-                return;
-            }
-            WriteData<char>(GetItemCount(), container);
-#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<bool>(GetPresent(), container);
-            if (!GetPresent())
-            {
-                return;
-            }
-            WriteData<VarInt>(GetItemId(), container);
-            WriteData<char>(GetItemCount(), container);
-#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            if (IsEmptySlot())
-            {
-                WriteData<VarInt>(0, container);
-                return;
-            }
-            WriteData<VarInt>(GetItemCount(), container);
-            WriteData<VarInt>(GetItemId(), container);
-#endif
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<NBT::UnnamedValue>(GetNbt(), container);
-#else
-            WriteData<Components::DataComponentPatch>(GetComponents(), container);
-#endif
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::BlockId)])] = GetBlockId();
-            if (GetBlockId() != -1)
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemDamage)])] = GetItemDamage();
-            }
-#elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemId)])] = GetItemId();
-#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Present)])] = GetPresent();
-            if (GetPresent())
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemId)])] = GetItemId();
-            }
-#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            if (GetItemCount() > 0)
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemId)])] = GetItemId();
-            }
-#endif
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-            if(GetBlockId() != -1)
-#elif PROTOCOL_VERSION < 402 /* < 1.13.2 */
-            if(GetItemId() != -1)
-#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            if (GetPresent())
-#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
-            if (GetItemCount() > 0)
-#endif
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ItemCount)])] = GetItemCount();
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-                if (GetNbt().HasData())
-                {
-                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::Nbt)])] = GetNbt();
-                }
-#else
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Components)])] = GetComponents();
-#endif
-            }
-            return output;
         }
     };
 } // ProtocolCraft

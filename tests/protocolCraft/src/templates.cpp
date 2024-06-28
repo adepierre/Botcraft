@@ -2,6 +2,20 @@
 
 #include "protocolCraft/Utilities/Templates.hpp"
 
+enum class TestEnum
+{
+    Zero,
+    One,
+    Two,
+    Three
+};
+
+struct TestClass
+{
+    bool True() const { return true; }
+    bool False() const { return false; }
+};
+
 using namespace ProtocolCraft;
 
 TEST_CASE("Is Type")
@@ -57,18 +71,6 @@ TEST_CASE("Is Type")
 
 TEST_CASE("Network Type extraction")
 {
-    enum class TestEnum
-    {
-        One,
-        Two,
-        Three
-    };
-
-    struct TestClass
-    {
-
-    };
-
     // Simple type
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<int>::storage_type, int>);
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<int>::serialization_type, int>);
@@ -120,6 +122,16 @@ TEST_CASE("Network Type extraction")
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::pair<std::vector<int>, std::vector<VarType<int>>>>::storage_type, std::pair<std::vector<int>, std::vector<int>>>);
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::pair<std::vector<int>, std::vector<VarType<int>>>>::serialization_type, std::pair<std::vector<int>, std::vector<VarType<int>>>>);
 
+    // Conditioned
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<Internal::Conditioned<int, &TestClass::True>>::storage_type, std::optional<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<Internal::Conditioned<int, &TestClass::True>>::serialization_type, int>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<Internal::Conditioned<int, &TestClass::True, false>>::storage_type, int>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<Internal::Conditioned<int, &TestClass::True, false>>::serialization_type, int>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<Internal::Conditioned<VarType<int>, &TestClass::True>>::storage_type, std::optional<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<Internal::Conditioned<VarType<int>, &TestClass::True>>::serialization_type, VarType<int>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<Internal::Conditioned<VarType<int>, &TestClass::True, false>>::storage_type, int>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<Internal::Conditioned<VarType<int>, &TestClass::True, false>>::serialization_type, VarType<int>>);
+
     // Tuple
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, int>>::storage_type, std::tuple<int, int>>);
     STATIC_REQUIRE(std::is_same_v<typename Internal::SerializedType<std::tuple<int, int>>::serialization_type, std::tuple<int, int>>);
@@ -144,16 +156,37 @@ TEST_CASE("Tuple manipulation")
 
     SECTION("Contains")
     {
-        STATIC_REQUIRE(Internal::contains_type<int, std::tuple<int, char>>);
-        STATIC_REQUIRE_FALSE(Internal::contains_type<double, std::tuple<int, char>>);
+        STATIC_REQUIRE(Internal::tuple_contains_type<int, std::tuple<int, char>>);
+        STATIC_REQUIRE_FALSE(Internal::tuple_contains_type<double, std::tuple<int, char>>);
     }
 
     SECTION("Get Index")
     {
-        STATIC_REQUIRE(Internal::get_index<double, std::tuple<double, float, int, char>> == 0);
-        STATIC_REQUIRE(Internal::get_index<float, std::tuple<double, float, int, char>> == 1);
-        STATIC_REQUIRE(Internal::get_index<int, std::tuple<double, float, int, char>> == 2);
-        STATIC_REQUIRE(Internal::get_index<char, std::tuple<double, float, int, char>> == 3);
-        STATIC_REQUIRE(Internal::get_index<short, std::tuple<double, float, int, char>> == 4);
+        STATIC_REQUIRE(Internal::get_tuple_index<double, std::tuple<double, float, int, char>> == 0);
+        STATIC_REQUIRE(Internal::get_tuple_index<float,  std::tuple<double, float, int, char>> == 1);
+        STATIC_REQUIRE(Internal::get_tuple_index<int,    std::tuple<double, float, int, char>> == 2);
+        STATIC_REQUIRE(Internal::get_tuple_index<char,   std::tuple<double, float, int, char>> == 3);
+        STATIC_REQUIRE(Internal::get_tuple_index<short,  std::tuple<double, float, int, char>> == 4);
     }
+}
+
+TEST_CASE("Conditioned")
+{
+    SECTION("Store as optional")
+    {
+        STATIC_REQUIRE(Internal::Conditioned<int, &TestClass::True>::stored_as_optional == true);
+        STATIC_REQUIRE(Internal::Conditioned<int, &TestClass::False>::stored_as_optional == true);
+        STATIC_REQUIRE(Internal::Conditioned<int, &TestClass::True,  true>::stored_as_optional == true);
+        STATIC_REQUIRE(Internal::Conditioned<int, &TestClass::False, true>::stored_as_optional == true);
+        STATIC_REQUIRE(Internal::Conditioned<int, &TestClass::True,  false>::stored_as_optional == false);
+        STATIC_REQUIRE(Internal::Conditioned<int, &TestClass::False, false>::stored_as_optional == false);
+    }
+
+    SECTION("Evaluate")
+    {
+        TestClass test;
+        REQUIRE(Internal::Conditioned<int, &TestClass::True>::Evaluate(&test));
+        REQUIRE_FALSE(Internal::Conditioned<int, &TestClass::False>::Evaluate(&test));
+    }
+
 }
