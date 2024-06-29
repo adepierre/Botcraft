@@ -49,6 +49,7 @@ namespace Botcraft
     void TCP_Com::SendPacket(const std::vector<unsigned char>& msg)
     {
         std::vector<unsigned char> sized_packet;
+        sized_packet.reserve(msg.size() + 5);
         ProtocolCraft::WriteData<ProtocolCraft::VarInt>(static_cast<int>(msg.size()), sized_packet);
         sized_packet.insert(sized_packet.end(), msg.begin(), msg.end());
 
@@ -310,7 +311,7 @@ namespace Botcraft
         }
         LOG_WARNING("SRV DNS lookup failed to find an address");
 
-        // If we are here either the port was given or the SRV failed 
+        // If we are here either the port was given or the SRV failed
         // In both cases we need to assume the given address is the correct one
         port = (port == 0) ? 25565 : port;
         ip = addressOnly;

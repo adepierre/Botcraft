@@ -132,6 +132,7 @@ namespace Botcraft
         {
             std::lock_guard<std::mutex> lock(mutex_send);
             std::vector<unsigned char> msg_data;
+            msg_data.reserve(256);
             msg->Write(msg_data);
             if (compression == -1)
             {
@@ -148,6 +149,7 @@ namespace Botcraft
                 else
                 {
                     std::vector<unsigned char> compressed_msg;
+                    compressed_msg.reserve(msg_data.size() + 5);
                     WriteData<VarInt>(static_cast<int>(msg_data.size()), compressed_msg);
                     std::vector<unsigned char> compressed_data = Compress(msg_data);
                     compressed_msg.insert(compressed_msg.end(), compressed_data.begin(), compressed_data.end());
