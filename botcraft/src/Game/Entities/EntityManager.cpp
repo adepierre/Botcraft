@@ -142,50 +142,6 @@ namespace Botcraft
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg)
-    {
-        if (msg.GetRelativeArguments() & 0x01)
-        {
-            local_player->SetX(local_player->GetX() + msg.GetX());
-        }
-        else
-        {
-            local_player->SetX(msg.GetX());
-            local_player->SetSpeedX(0.0);
-        }
-        if (msg.GetRelativeArguments() & 0x02)
-        {
-            local_player->SetY(local_player->GetY() + msg.GetY());
-        }
-        else
-        {
-            local_player->SetY(msg.GetY());
-            local_player->SetSpeedY(0.0);
-        }
-        if (msg.GetRelativeArguments() & 0x04)
-        {
-            local_player->SetZ(local_player->GetZ() + msg.GetZ());
-        }
-        else
-        {
-            local_player->SetZ(msg.GetZ());
-            local_player->SetSpeedZ(0.0);
-        }
-        (msg.GetRelativeArguments() & 0x08) ? local_player->SetYaw(local_player->GetYaw() + msg.GetYRot()) : local_player->SetYaw(msg.GetYRot());
-        (msg.GetRelativeArguments() & 0x10) ? local_player->SetPitch(local_player->GetPitch() + msg.GetXRot()) : local_player->SetPitch(msg.GetXRot());
-
-        // Send player updated position with onground set to false to mimic vanilla client behaviour
-        std::shared_ptr<ProtocolCraft::ServerboundMovePlayerPacketPosRot> updated_position_msg = std::make_shared<ProtocolCraft::ServerboundMovePlayerPacketPosRot>();
-        updated_position_msg->SetX(local_player->GetX());
-        updated_position_msg->SetY(local_player->GetY());
-        updated_position_msg->SetZ(local_player->GetZ());
-        updated_position_msg->SetYRot(local_player->GetYaw());
-        updated_position_msg->SetXRot(local_player->GetPitch());
-        updated_position_msg->SetOnGround(false);
-
-        network_manager->Send(updated_position_msg);
-    }
-
     void EntityManager::Handle(ProtocolCraft::ClientboundAddEntityPacket& msg)
     {
 #if PROTOCOL_VERSION < 458 /* < 1.14 */

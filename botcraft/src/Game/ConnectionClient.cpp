@@ -116,8 +116,7 @@ namespace Botcraft
 
     void ConnectionClient::Handle(ClientboundPlayerPositionPacket& msg)
     {
-        // Confirmations have to be sent from here, as there is no
-        // EntityManager with only a ConnectionClient
+        // Confirmations have to be sent from here, as there is no PhysicsManager with a ConnectionClient
         std::shared_ptr<ServerboundAcceptTeleportationPacket> confirm_msg = std::make_shared<ServerboundAcceptTeleportationPacket>();
         confirm_msg->SetId_(msg.GetId_());
 

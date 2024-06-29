@@ -46,6 +46,7 @@ namespace Botcraft
 
     protected:
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg) override;
 
     private:
         void Physics();
@@ -93,6 +94,7 @@ namespace Botcraft
         std::shared_ptr<World> world;
 
         std::atomic<bool> should_run;
+        bool teleported;
 
         int ticks_since_last_position_sent;
 

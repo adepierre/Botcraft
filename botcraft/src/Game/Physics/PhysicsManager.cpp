@@ -38,6 +38,7 @@ namespace Botcraft
         world = world_;
 
         should_run = false;
+        teleported = false;
         ticks_since_last_position_sent = 0;
 
         const AssetsManager& assets_manager = AssetsManager::getInstance();
@@ -76,7 +77,68 @@ namespace Botcraft
     {
         // Reset the player because *some* non vanilla servers
         // sends new login packets
-        player = nullptr;
+        if (player != nullptr)
+        {
+            // If we already have a player, we need to make sure we're not in the middle
+            // of a physics update while swapping the player with the new one
+            std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+            player = entity_manager->GetLocalPlayer();
+        }
+        else
+        {
+            player = entity_manager->GetLocalPlayer();
+        }
+    }
+
+    void PhysicsManager::Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg)
+    {
+        if (player == nullptr)
+        {
+            LOG_WARNING("Received a PlayerPosition packet without a player");
+            return;
+        }
+
+        std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+        if (msg.GetRelativeArguments() & 0x01)
+        {
+            player->position.x = player->position.x + msg.GetX();
+        }
+        else
+        {
+            player->position.x = msg.GetX();
+            player->speed.x = 0.0;
+        }
+        if (msg.GetRelativeArguments() & 0x02)
+        {
+            player->position.y = player->position.y + msg.GetY();
+        }
+        else
+        {
+            player->position.y = msg.GetY();
+            player->speed.y = 0.0;
+        }
+        if (msg.GetRelativeArguments() & 0x04)
+        {
+            player->position.z = player->position.z + msg.GetZ();
+        }
+        else
+        {
+            player->position.z = msg.GetZ();
+            player->speed.z = 0.0;
+        }
+        player->yaw = msg.GetRelativeArguments() & 0x08 ? player->yaw + msg.GetYRot() : msg.GetYRot();
+        player->pitch = msg.GetRelativeArguments() & 0x10 ? player->pitch + msg.GetXRot() : msg.GetXRot();
+        player->UpdateVectors();
+
+        player->previous_position = player->position;
+        player->previous_yaw = player->yaw;
+        player->previous_pitch = player->pitch;
+
+        // Defer sending the position update to the next physics tick
+        // Sending it now causes huge slow down of the tests (lag when
+        // botcraft_0 is teleported to place structure block/signs).
+        // I'm not sure what causes this behaviour (server side?)
+        teleported = true;
     }
 
     void PhysicsManager::Physics()
@@ -90,17 +152,27 @@ namespace Botcraft
 
             if (network_manager->GetConnectionState() == ConnectionState::Play)
             {
-                if (player == nullptr)
-                {
-                    player = entity_manager->GetLocalPlayer();
-                }
-
                 if (player != nullptr && !std::isnan(player->GetY()))
                 {
                     // As PhysicsManager is a friend of LocalPlayer, we can lock the whole entity
                     // while physics is processed. This also means we can't use public interface
                     // as it's thread-safe by design and would deadlock because of this global lock
                     std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+
+                    // Send player updated position with onground set to false to mimic vanilla client behaviour
+                    if (teleported)
+                    {
+                        std::shared_ptr<ProtocolCraft::ServerboundMovePlayerPacketPosRot> updated_position_msg = std::make_shared<ProtocolCraft::ServerboundMovePlayerPacketPosRot>();
+                        updated_position_msg->SetX(player->position.x);
+                        updated_position_msg->SetY(player->position.y);
+                        updated_position_msg->SetZ(player->position.z);
+                        updated_position_msg->SetYRot(player->yaw);
+                        updated_position_msg->SetXRot(player->pitch);
+                        updated_position_msg->SetOnGround(false);
+
+                        network_manager->Send(updated_position_msg);
+                        teleported = false;
+                    }
                     PhysicsTick();
                 }
             }
