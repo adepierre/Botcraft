@@ -13,8 +13,8 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Custom Payload";
 
         DECLARE_FIELDS(
-            (std::string, std::vector<unsigned char>, std::shared_ptr<PluginObject>),
-            (Identifier,  RawData,                    ParsedData)
+            (std::string, Internal::Vector<unsigned char, void, 0>, std::shared_ptr<PluginObject>),
+            (Identifier,  RawData,                                  ParsedData)
         );
 
         GETTER_SETTER(Identifier);
@@ -28,7 +28,7 @@ namespace ProtocolCraft
             SetParsedData(CreateObjectFromPlugin(GetIdentifier().c_str()));
             if (GetParsedData() == nullptr)
             {
-                SetRawData(ReadByteArray(iter, length, length));
+                SetRawData(ReadData<Internal::Vector<unsigned char, void, 0>>(iter, length));
             }
             else
             {
@@ -46,7 +46,7 @@ namespace ProtocolCraft
             WriteData<std::string>(GetIdentifier(), container);
             if (GetParsedData() == nullptr)
             {
-                WriteByteArray(GetRawData(), container);
+                WriteData<Internal::Vector<unsigned char, void, 0>>(GetRawData(), container);
             }
             else
             {

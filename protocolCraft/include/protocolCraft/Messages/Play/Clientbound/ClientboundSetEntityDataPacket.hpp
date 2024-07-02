@@ -11,25 +11,12 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Entity Data";
 
         DECLARE_FIELDS(
-            (VarInt, std::vector<unsigned char>),
-            (Id_, PackedItems)
+            (VarInt, Internal::Vector<unsigned char, void, 0>),
+            (Id_,    PackedItems)
         );
-        DECLARE_SERIALIZE;
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Id_);
         GETTER_SETTER(PackedItems);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetId_(ReadData<VarInt>(iter, length));
-            SetPackedItems(ReadByteArray(iter, length, length));
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(GetId_(), container);
-            WriteByteArray(GetPackedItems(), container);
-        }
     };
 } //ProtocolCraft

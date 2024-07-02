@@ -14,26 +14,13 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Store Cookie";
 
         DECLARE_FIELDS(
-            (Identifier, std::vector<unsigned char>),
+            (Identifier, Internal::Vector<unsigned char, void, 0>),
             (Key,        Payload)
         );
-        DECLARE_SERIALIZE;
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Key);
         GETTER_SETTER(Payload);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetKey(ReadData<Identifier>(iter, length));
-            SetPayload(ReadByteArray(iter, length, length));
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<Identifier>(GetKey(), container);
-            WriteByteArray(GetPayload(), container);
-        }
     };
 }
 #endif

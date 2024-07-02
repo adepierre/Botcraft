@@ -131,20 +131,49 @@ namespace ProtocolCraft
             return static_cast<StorageType>(output);
         }
         // std::vector // std::array
-        else if constexpr ((Internal::IsVector<StorageType> && Internal::IsVector<SerializationType>) ||
-            (Internal::IsArray<StorageType> && Internal::IsArray<SerializationType>))
+        else if constexpr (
+            Internal::IsVector<SerializationType> ||
+            Internal::IsArray<SerializationType> ||
+            Internal::IsGenericVector<SerializationType>)
         {
             size_t N;
             StorageType output{};
-            if constexpr (Internal::IsVector<StorageType>)
+            // std::vector
+            if constexpr (Internal::IsVector<SerializationType>)
             {
+                static_assert(Internal::IsVector<StorageType>, "StorageType should be a std::vector");
                 N = ReadData<size_t, VarInt>(iter, length);
                 output.resize(N);
             }
+            // std::array
+            else if constexpr (Internal::IsArray<SerializationType>)
+            {
+                static_assert(Internal::IsArray<StorageType>, "StorageType should be a std::array");
+                N = std::size(output);
+            }
+            // Internal::Vector
             else
             {
-                static_assert(Internal::IsArray<StorageType>, "StorageType should be an array");
-                N = std::size(output);
+                // std::array but expressed with GenericVector
+                if constexpr (SerializationType::size > 0)
+                {
+                    static_assert(Internal::IsArray<StorageType>, "StorageType should be a std::array");
+                    N = SerializationType::size;
+                }
+                // Special case, "all remaining data"
+                else if constexpr (std::is_same_v<typename SerializationType::size_type, void>)
+                {
+                    static_assert(std::is_same_v<StorageType, std::vector<unsigned char>>, "Only std::vector<unsigned char> is supported for \"all remaining data\"");
+                    N = length;
+                    output.resize(N);
+                }
+                // Generic case for vector prefixed with size
+                else
+                {
+                    static_assert(Internal::IsVector<StorageType>, "StorageType should be a std::vector");
+                    N = ReadData<size_t, typename SerializationType::size_type>(iter, length);
+                    output.resize(N);
+                }
             }
 
             // If we need to read char/unsigned char, just memcpy it
@@ -289,16 +318,41 @@ namespace ProtocolCraft
             static_cast<SerializationType>(value).Write(container);
         }
         // std::vector // std::array
-        else if constexpr ((Internal::IsVector<StorageType> && Internal::IsVector<SerializationType>) ||
-            (Internal::IsArray<StorageType> && Internal::IsArray<SerializationType>))
+        else if constexpr (
+            Internal::IsVector<SerializationType> ||
+            Internal::IsArray<SerializationType> ||
+            Internal::IsGenericVector<SerializationType>)
         {
-            if constexpr (Internal::IsVector<StorageType>)
+            // std::vector
+            if constexpr (Internal::IsVector<SerializationType>)
             {
+                static_assert(Internal::IsVector<StorageType>, "StorageType should be a std::vector");
                 WriteData<int, VarInt>(static_cast<int>(value.size()), container);
             }
+            // std::array
+            else if constexpr (Internal::IsArray<SerializationType>)
+            {
+                static_assert(Internal::IsArray<StorageType>, "StorageType should be a std::array");
+            }
+            // Internal::Vector
             else
             {
-                static_assert(Internal::IsArray<StorageType>, "StorageType should be an array");
+                // std::array but expressed with GenericVector
+                if constexpr (SerializationType::size > 0)
+                {
+                    static_assert(Internal::IsArray<StorageType>, "StorageType should be a std::array");
+                }
+                // Special case, "all remaining data"
+                else if constexpr (std::is_same_v<typename SerializationType::size_type, void>)
+                {
+                    static_assert(std::is_same_v<StorageType, std::vector<unsigned char>>, "Only std::vector<unsigned char> is supported for \"all remaining data\"");
+                }
+                // Generic case for vector prefixed with size
+                else
+                {
+                    static_assert(Internal::IsVector<StorageType>, "StorageType should be a std::vector");
+                    WriteData<int, typename SerializationType::size_type>(static_cast<int>(value.size()), container);
+                }
             }
 
             // If we need to write char/unsigned char, just copy the data

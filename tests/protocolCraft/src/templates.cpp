@@ -36,6 +36,15 @@ TEST_CASE("Is Type")
     STATIC_REQUIRE_FALSE(Internal::IsVector<std::optional<int>>);
     STATIC_REQUIRE_FALSE(Internal::IsVector<std::map<int, int>>);
 
+    // Generic Vector
+    STATIC_REQUIRE(Internal::IsGenericVector<Internal::Vector<int>>);
+    STATIC_REQUIRE(Internal::IsGenericVector<Internal::Vector<int, VarType<int>>>);
+    STATIC_REQUIRE(Internal::IsGenericVector<Internal::Vector<int, VarType<int>, 5>>);
+    STATIC_REQUIRE(Internal::IsGenericVector<Internal::Vector<int, VarType<int>, 5>>);
+    STATIC_REQUIRE_FALSE(Internal::IsGenericVector<int>);
+    STATIC_REQUIRE_FALSE(Internal::IsGenericVector<std::vector<int>>);
+    STATIC_REQUIRE_FALSE(Internal::IsGenericVector<std::map<int, int>>);
+
     // Map
     STATIC_REQUIRE(Internal::IsMap<std::map<int, int>>);
     STATIC_REQUIRE(Internal::IsMap<std::map<char, int>>);
