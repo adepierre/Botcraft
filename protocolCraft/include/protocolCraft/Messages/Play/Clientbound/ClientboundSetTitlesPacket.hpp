@@ -26,9 +26,10 @@ namespace ProtocolCraft
         DECLARE_CONDITION(HasTimes, GetType() == SetTitlesType::Times);
 
         DECLARE_FIELDS(
-            (Internal::DiffType<SetTitlesType, VarInt>, Internal::Conditioned<Chat, &ClientboundSetTitlesPacket::HasText>, Internal::Conditioned<int, &ClientboundSetTitlesPacket::HasTimes>, Internal::Conditioned<int, &ClientboundSetTitlesPacket::HasTimes>, Internal::Conditioned<int, &ClientboundSetTitlesPacket::HasTimes>),
-            (Type,                                      Text,                                                              FadeInTime,                                                        StayTime,                                                          FadeOutTime)
+            (Internal::DiffType<SetTitlesType, VarInt>, Internal::Conditioned<Chat, &THIS::HasText>, Internal::Conditioned<int, &THIS::HasTimes>, Internal::Conditioned<int, &THIS::HasTimes>, Internal::Conditioned<int, &THIS::HasTimes>),
+            (Type,                                      Text,                                        FadeInTime,                                  StayTime,                                    FadeOutTime)
         );
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(Type);
         GETTER_SETTER(Text);

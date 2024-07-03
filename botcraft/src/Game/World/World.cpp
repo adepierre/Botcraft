@@ -854,9 +854,14 @@ namespace Botcraft
 #else
             LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBuffer(), msg.GetAvailableSections());
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            if (msg.GetFullChunk())
+            if (msg.GetBiomes().has_value())
             {
-                LoadBiomesInChunk(msg.GetX(), msg.GetZ(), msg.GetBiomes());
+#if PROTOCOL_VERSION < 751 /* < 1.16.2 */
+                // Copy to convert the std::array to std::vector
+                LoadBiomesInChunk(msg.GetX(), msg.GetZ(), std::vector<int>(msg.GetBiomes().value().begin(), msg.GetBiomes().value().end()));
+#else
+                LoadBiomesInChunk(msg.GetX(), msg.GetZ(), msg.GetBiomes().value());
+#endif
             }
 #else
             LoadBiomesInChunk(msg.GetX(), msg.GetZ(), msg.GetBiomes());

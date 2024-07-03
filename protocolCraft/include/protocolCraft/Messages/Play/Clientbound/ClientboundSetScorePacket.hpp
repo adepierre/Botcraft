@@ -22,9 +22,9 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Set Score";
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_CONDITION(NotRemove, GetMethod() != SetScoreMethod::Remove)
+        DECLARE_CONDITION(NotRemove, GetMethod() != SetScoreMethod::Remove);
         DECLARE_FIELDS(
-            (std::string, Internal::DiffType<SetScoreMethod, char>, std::string,   Internal::Conditioned<VarInt, &ClientboundSetScorePacket::NotRemove>),
+            (std::string, Internal::DiffType<SetScoreMethod, char>, std::string,   Internal::Conditioned<VarInt, &THIS::NotRemove>),
             (Owner,       Method,                                   ObjectiveName, Score)
         );
 #else

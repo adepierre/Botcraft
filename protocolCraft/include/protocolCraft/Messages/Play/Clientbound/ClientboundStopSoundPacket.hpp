@@ -16,8 +16,8 @@ namespace ProtocolCraft
         DECLARE_CONDITION(Flags2, GetFlags() & 0x02);
 
         DECLARE_FIELDS(
-            (char,  Internal::Conditioned<VarInt, &ClientboundStopSoundPacket::Flags1>, Internal::Conditioned<Identifier, &ClientboundStopSoundPacket::Flags2>),
-            (Flags, Source,                                                             Name_)
+            (char,  Internal::Conditioned<VarInt, &THIS::Flags1>, Internal::Conditioned<Identifier, &THIS::Flags2>),
+            (Flags, Source,                                       Name_)
         );
         DECLARE_READ_WRITE_SERIALIZE;
 

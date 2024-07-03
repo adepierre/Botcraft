@@ -36,7 +36,7 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
         DECLARE_FIELDS(
             (PlayerChatMessage, ChatTypeBoundNetwork),
-            (Message,           ChatType)
+            (Message_,          ChatType)
         );
 #else
         DECLARE_FIELDS(
@@ -53,7 +53,7 @@ namespace ProtocolCraft
         GETTER_SETTER(SaltSignature);
 #endif
 #if PROTOCOL_VERSION == 760 /* 1.19.2 */
-        GETTER_SETTER(Message);
+        GETTER_SETTER(Message_);
         GETTER_SETTER(ChatType);
 #else
         GETTER_SETTER(Sender);

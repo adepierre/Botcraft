@@ -14,7 +14,7 @@ namespace ProtocolCraft
         DECLARE_CONDITION(HasTab, GetAction() == 0);
 
         DECLARE_FIELDS(
-            (VarInt, Internal::Conditioned<Identifier, &ServerboundSeenAdvancementsPacket::HasTab>),
+            (VarInt, Internal::Conditioned<Identifier, &THIS::HasTab>),
             (Action, Tab)
         );
         DECLARE_READ_WRITE_SERIALIZE;

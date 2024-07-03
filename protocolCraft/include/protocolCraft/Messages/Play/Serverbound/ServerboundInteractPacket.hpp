@@ -15,13 +15,13 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
         DECLARE_FIELDS(
-            (VarInt,   VarInt, Internal::Conditioned<float, &ServerboundInteractPacket::Action2>, Internal::Conditioned<float, &ServerboundInteractPacket::Action2>, Internal::Conditioned<float, &ServerboundInteractPacket::Action2>, Internal::Conditioned<VarInt, &ServerboundInteractPacket::Action0_2>),
-            (EntityId, Action, LocationX,                                                         LocationY,                                                         LocationZ,                                                         Hand)
+            (VarInt,   VarInt, Internal::Conditioned<float, &THIS::Action2>, Internal::Conditioned<float, &THIS::Action2>, Internal::Conditioned<float, &THIS::Action2>, Internal::Conditioned<VarInt, &THIS::Action0_2>),
+            (EntityId, Action, LocationX,                                    LocationY,                                    LocationZ,                                    Hand)
         );
 #else
         DECLARE_FIELDS(
-            (VarInt,   VarInt, Internal::Conditioned<float, &ServerboundInteractPacket::Action2>, Internal::Conditioned<float, &ServerboundInteractPacket::Action2>, Internal::Conditioned<float, &ServerboundInteractPacket::Action2>, Internal::Conditioned<VarInt, &ServerboundInteractPacket::Action0_2>, bool),
-            (EntityId, Action, LocationX,                                                         LocationY,                                                         LocationZ,                                                         Hand,                                                                 UsingSecondaryAction)
+            (VarInt,   VarInt, Internal::Conditioned<float, &THIS::Action2>, Internal::Conditioned<float, &THIS::Action2>, Internal::Conditioned<float, &THIS::Action2>, Internal::Conditioned<VarInt, &THIS::Action0_2>, bool),
+            (EntityId, Action, LocationX,                                    LocationY,                                    LocationZ,                                    Hand,                                            UsingSecondaryAction)
         );
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
