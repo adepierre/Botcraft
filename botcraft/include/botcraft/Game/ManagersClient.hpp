@@ -62,6 +62,7 @@ namespace Botcraft
         int GetDayTime() const;
 
     protected:
+        using ConnectionClient::Handle; // Don't hide all Handle() functions from base classes
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;

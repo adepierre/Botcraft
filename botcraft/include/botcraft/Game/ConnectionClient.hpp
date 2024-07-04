@@ -38,6 +38,7 @@ namespace Botcraft
         void Respawn();
 
     protected:
+        using ProtocolCraft::Handler::Handle; // Don't hide all Handle() functions from base classes
         virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket& msg) override;
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
