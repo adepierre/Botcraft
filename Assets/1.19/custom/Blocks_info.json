@@ -11117,7 +11117,7 @@
         {
             "hardness": 0.2,
             "name": "minecraft:mangrove_leaves",
-            "render": "leaves",
+            "render": "block",
             "solid": true,
             "tintType": "leaves",
             "transparent": true,

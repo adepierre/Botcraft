@@ -473,7 +473,7 @@ namespace Botcraft
                         {
                             BestTool best_tool;
                             best_tool.tool_type = GetToolTypeFromString(tool["tool"].get_string());
-                            
+
                             if (tool.contains("min_material") && tool["min_material"].is_string())
                             {
                                 best_tool.min_material = GetToolMaterialFromString(tool["min_material"].get_string());
@@ -543,7 +543,7 @@ namespace Botcraft
                 {
                     TintType tint_type = TintType::None;
                     std::string tint_type_string = val.get_string();
-                    
+
                     if (tint_type_string == "grass")
                     {
                         tint_type = TintType::Grass;
@@ -726,7 +726,7 @@ namespace Botcraft
                     }
                     else
                     {
-                        // We want to be sure that blockstates[id][0] exists    
+                        // We want to be sure that blockstates[id][0] exists
                         if (render == "fluid")
                         {
                             blockstates[props.id];
@@ -827,6 +827,10 @@ namespace Botcraft
                     props.path = blockstate_name.substr(10);
                     blockstates[props.id] = std::make_unique<Blockstate>(props);
                 }
+                else
+                {
+                    LOG_WARNING("No known rendering method defined for block: " << blockstate_name);
+                }
             }
         }
         FlattenBlocks();
@@ -904,7 +908,7 @@ namespace Botcraft
             {
                 rainfall = element["rainfall"].get_number<float>();
             }
-            
+
             if (element.contains("temperature"))
             {
                 temperature = element["temperature"].get_number<float>();
