@@ -21,7 +21,7 @@ namespace std
     {
         inline size_t operator()(const pair<int, int>& p) const
         {
-            hash<float> hasher;
+            hash<int> hasher;
             size_t value = hasher(p.first);
             value ^= hasher(p.second) + 0x9e3779b9 + (value << 6) + (value >> 2);
             return value;
